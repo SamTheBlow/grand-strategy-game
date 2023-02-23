@@ -1,0 +1,99 @@
+[gd_scene load_steps=2 format=2]
+
+[ext_resource path="res://TestProvince.gd" type="Script" id=1]
+
+[node name="TestData" type="Node2D"]
+
+[node name="Shapes" type="Node2D" parent="."]
+
+[node name="Shape1" type="Polygon2D" parent="Shapes"]
+position = Vector2( 323, 225 )
+polygon = PoolVector2Array( 81, 5, 180, 12, 357, 159, 90, 127, 0, 0 )
+script = ExtResource( 1 )
+links = PoolIntArray( 2, 3, 5, 6, 7, 8 )
+
+[node name="Shape2" type="Polygon2D" parent="Shapes"]
+position = Vector2( 315, 63 )
+polygon = PoolVector2Array( 156, 40, 292, 17, 314, 152, 75, 136, 0, 0 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 5, 3, 4 )
+
+[node name="Shape3" type="Polygon2D" parent="Shapes"]
+position = Vector2( 554, 232 )
+polygon = PoolVector2Array( 186, 12, 307, 91, 228, 201, 126, 134, -19, 0 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 2, 4, 7, 10 )
+
+[node name="Shape4" type="Polygon2D" parent="Shapes"]
+position = Vector2( 638, 69 )
+polygon = PoolVector2Array( 186, 12, 307, 91, 135, 154, 7, 149, -19, 0 )
+script = ExtResource( 1 )
+links = PoolIntArray( 2, 3 )
+
+[node name="Shape5" type="Polygon2D" parent="Shapes"]
+position = Vector2( 45, 67 )
+polygon = PoolVector2Array( 239, -21, 312, 130, 255, 125, 67, 197, -19, 0 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 2, 6 )
+
+[node name="Shape6" type="Polygon2D" parent="Shapes"]
+position = Vector2( 72, 292 )
+polygon = PoolVector2Array( 212, -75, 318, 67, 229, 156, 51, 100, 9, -2 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 5, 8, 9 )
+
+[node name="Shape7" type="Polygon2D" parent="Shapes"]
+position = Vector2( 402, 369 )
+polygon = PoolVector2Array( 300, 30, 338, 51, 216, 185, 134, 203, 117, 10 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 3, 8, 10 )
+
+[node name="Shape8" type="Polygon2D" parent="Shapes"]
+position = Vector2( 200, 369 )
+polygon = PoolVector2Array( 208, -2, 304, 8, 312, 156, 142, 208, 108, 93 )
+script = ExtResource( 1 )
+links = PoolIntArray( 1, 6, 7, 9 )
+
+[node name="Shape9" type="Polygon2D" parent="Shapes"]
+position = Vector2( -62, 371 )
+polygon = PoolVector2Array( 177, 37, 355, 97, 383, 204, 154, 195, 108, 93 )
+script = ExtResource( 1 )
+links = PoolIntArray( 6, 8 )
+
+[node name="Shape10" type="Polygon2D" parent="Shapes"]
+position = Vector2( 574, 396 )
+polygon = PoolVector2Array( 177, 37, 216, 66, 382, 136, 166, 190, 86, 132 )
+script = ExtResource( 1 )
+links = PoolIntArray( 3, 7 )
+
+[node name="Positions" type="Node2D" parent="."]
+
+[node name="ArmyHost1" type="Position2D" parent="Positions"]
+position = Vector2( 474, 296 )
+
+[node name="ArmyHost2" type="Position2D" parent="Positions"]
+position = Vector2( 478, 154 )
+
+[node name="ArmyHost3" type="Position2D" parent="Positions"]
+position = Vector2( 716, 314 )
+
+[node name="ArmyHost4" type="Position2D" parent="Positions"]
+position = Vector2( 751, 146 )
+
+[node name="ArmyHost5" type="Position2D" parent="Positions"]
+position = Vector2( 185, 140 )
+
+[node name="ArmyHost6" type="Position2D" parent="Positions"]
+position = Vector2( 241, 335 )
+
+[node name="ArmyHost7" type="Position2D" parent="Positions"]
+position = Vector2( 600, 458 )
+
+[node name="ArmyHost8" type="Position2D" parent="Positions"]
+position = Vector2( 414, 472 )
+
+[node name="ArmyHost9" type="Position2D" parent="Positions"]
+position = Vector2( 176, 499 )
+
+[node name="ArmyHost10" type="Position2D" parent="Positions"]
+position = Vector2( 762, 522 )

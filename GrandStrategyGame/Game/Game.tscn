@@ -1,0 +1,91 @@
+[gd_scene load_steps=10 format=2]
+
+[ext_resource path="res://Game/Game.gd" type="Script" id=1]
+[ext_resource path="res://TestData.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Game/Province.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Game/Countries/Country.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Game/Armies/Army.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Game/NumberOfTroops.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Game/Provinces.gd" type="Script" id=7]
+[ext_resource path="res://Game/PlayerAI.gd" type="Script" id=8]
+[ext_resource path="res://Game/Rules/RuleSeventyToWin.gd" type="Script" id=9]
+
+[node name="Game" type="Node2D"]
+script = ExtResource( 1 )
+world_data = ExtResource( 2 )
+province_scene = ExtResource( 3 )
+army_scene = ExtResource( 5 )
+number_of_troops_scene = ExtResource( 6 )
+
+[node name="Actions" type="Node" parent="."]
+
+[node name="Provinces" type="Node" parent="."]
+script = ExtResource( 7 )
+
+[node name="Countries" type="Node" parent="."]
+
+[node name="Country1" parent="Countries" instance=ExtResource( 4 )]
+country_name = "Player 1"
+color = Color( 1, 0.65, 0.65, 1 )
+
+[node name="Country2" parent="Countries" instance=ExtResource( 4 )]
+country_name = "Player 2"
+color = Color( 0.65, 0.65, 1, 1 )
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Button" type="Button" parent="CanvasLayer"]
+anchor_left = 0.85
+anchor_top = 0.85
+anchor_right = 0.95
+anchor_bottom = 0.95
+text = "End Turn"
+
+[node name="CanvasLayer2" type="CanvasLayer" parent="."]
+
+[node name="GameOverScreen" type="ColorRect" parent="CanvasLayer2"]
+visible = false
+anchor_left = 0.3
+anchor_top = 0.3
+anchor_right = 0.7
+anchor_bottom = 0.7
+color = Color( 0.5, 0.5, 0.5, 1 )
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/GameOverScreen"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 32.0
+margin_top = 32.0
+margin_right = -32.0
+margin_bottom = -32.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/GameOverScreen/MarginContainer"]
+margin_right = 345.0
+margin_bottom = 176.0
+
+[node name="GameOver" type="Label" parent="CanvasLayer2/GameOverScreen/MarginContainer/VBoxContainer"]
+margin_right = 345.0
+margin_bottom = 14.0
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+text = "Game Over"
+align = 1
+valign = 1
+
+[node name="Winner" type="Label" parent="CanvasLayer2/GameOverScreen/MarginContainer/VBoxContainer"]
+margin_top = 90.0
+margin_right = 345.0
+margin_bottom = 104.0
+size_flags_vertical = 6
+text = "(Sample text)"
+align = 1
+valign = 1
+
+[node name="PlayerAI" type="Node" parent="."]
+script = ExtResource( 8 )
+
+[node name="Rules" type="Node" parent="."]
+
+[node name="Rule" type="Node" parent="Rules"]
+script = ExtResource( 9 )
+
+[connection signal="pressed" from="CanvasLayer/Button" to="." method="end_turn"]
