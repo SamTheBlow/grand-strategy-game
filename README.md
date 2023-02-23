@@ -1,7 +1,10 @@
 # grand-strategy-game (temporary name)
 A grand strategy game made in Godot.
+
 The latest release is just the bare minimum of a working game.
+
 The plan is to slowly expand the game over time.
+
 
 If you want to contribute in any way, please do!
 
