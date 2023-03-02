@@ -7,9 +7,9 @@ extends Polygon2D
 # 1 - selected
 # 2 - neighbouring the selected province (target)
 # 3 - neighbouring the selected province
-var draw_status = 0 setget set_draw_status
-var outline_color = Color.webgray setget set_color
-var outline_width = 10.0 setget set_width
+var draw_status:int = 0 : set = set_draw_status
+var outline_color:Color = Color.WEB_GRAY : set = set_outline_color
+var outline_width:float = 10.0 : set = set_width
 
 func _draw():
 	if draw_status == 0:
@@ -29,14 +29,14 @@ func draw_outline(poly, ocolor, width):
 		draw_circle(poly[i], radius, ocolor)
 	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
 
-func set_draw_status(status):
-	draw_status = status
-	update()
+func set_draw_status(draw_status_:int):
+	draw_status = draw_status_
+	queue_redraw()
 
-func set_color(color):
-	outline_color = color
-	update()
+func set_outline_color(outline_color_:Color):
+	outline_color = outline_color_
+	queue_redraw()
 
-func set_width(new_width):
-	outline_width = new_width
-	update()
+func set_width(outline_width_:float):
+	outline_width = outline_width_
+	queue_redraw()

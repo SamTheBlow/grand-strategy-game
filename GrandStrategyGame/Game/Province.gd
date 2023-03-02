@@ -2,30 +2,30 @@ extends Node2D
 class_name Province
 
 var links:Array
-var owner_country:Country = null setget set_owner_country
+var owner_country:Country = null : set = set_owner_country
 
 func set_owner_country(country:Country):
 	if country == owner_country:
 		return
 	owner_country = country
 	if country == null:
-		$Shape.color = Color.white
+		$Shape.color = Color.WHITE
 	else:
 		$Shape.color = country.color
 
-func get_shape() -> PoolVector2Array:
+func get_shape() -> PackedVector2Array:
 	return $Shape.polygon
 
-func set_shape(polygon:PoolVector2Array):
+func set_shape(polygon:PackedVector2Array):
 	$Shape.polygon = polygon
 
 func select():
 	$Shape.draw_status = 1
 
-func unselect():
+func deselect():
 	if $Shape.draw_status == 1:
 		for neighbour in links:
-			neighbour.unselect()
+			neighbour.deselect()
 	$Shape.draw_status = 0
 
 func show_neighbours(display_type):

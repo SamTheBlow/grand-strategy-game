@@ -1,41 +1,42 @@
-[gd_scene load_steps=17 format=2]
+[gd_scene load_steps=17 format=3 uid="uid://nsr6s2fs6cdv"]
 
-[ext_resource path="res://Game/Game.gd" type="Script" id=1]
-[ext_resource path="res://WorldMaps/WorldTest2.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Game/Province.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Game/Rules.gd" type="Script" id=4]
-[ext_resource path="res://Rules/RuleTurnLimit.gd" type="Script" id=5]
-[ext_resource path="res://Game/NumberOfTroops.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Game/Provinces.gd" type="Script" id=7]
-[ext_resource path="res://Rules/Fortress/RuleFortress.gd" type="Script" id=8]
-[ext_resource path="res://Rules/RuleProvincePercentageToWin.gd" type="Script" id=9]
-[ext_resource path="res://Rules/MinArmySize.gd" type="Script" id=10]
-[ext_resource path="res://Rules/Combat/Combat2.gd" type="Script" id=11]
-[ext_resource path="res://Rules/NewProvinceOwnership.gd" type="Script" id=12]
-[ext_resource path="res://Game/PlayerHuman.gd" type="Script" id=13]
-[ext_resource path="res://Rules/Population/RulePopulation.gd" type="Script" id=14]
-[ext_resource path="res://Rules/Population/RuleAutoRecruit.gd" type="Script" id=15]
-[ext_resource path="res://Rules/Population/RulePopGrowth.gd" type="Script" id=16]
+[ext_resource type="Script" path="res://Game/Game.gd" id="1"]
+[ext_resource type="PackedScene" uid="uid://bfwkhtqd0hdhu" path="res://WorldMaps/WorldTest2.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b84osglwabeev" path="res://Game/Province.tscn" id="3"]
+[ext_resource type="Script" path="res://Game/Rules.gd" id="4"]
+[ext_resource type="Script" path="res://Rules/RuleTurnLimit.gd" id="5"]
+[ext_resource type="PackedScene" path="res://Game/NumberOfTroops.tscn" id="6"]
+[ext_resource type="Script" path="res://Game/Provinces.gd" id="7"]
+[ext_resource type="Script" path="res://Rules/Fortress/RuleFortress.gd" id="8"]
+[ext_resource type="Script" path="res://Rules/RuleProvincePercentageToWin.gd" id="9"]
+[ext_resource type="Script" path="res://Rules/MinArmySize.gd" id="10"]
+[ext_resource type="Script" path="res://Rules/Combat/Combat2.gd" id="11"]
+[ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
+[ext_resource type="Script" path="res://Game/PlayerHuman.gd" id="13"]
+[ext_resource type="Script" path="res://Rules/Population/RulePopulation.gd" id="14"]
+[ext_resource type="Script" path="res://Rules/Population/RuleAutoRecruit.gd" id="15"]
+[ext_resource type="Script" path="res://Rules/Population/RulePopGrowth.gd" id="16"]
 
 [node name="Game" type="Node2D"]
-script = ExtResource( 1 )
-world_scene = ExtResource( 2 )
-province_scene = ExtResource( 3 )
-number_of_troops_scene = ExtResource( 6 )
+script = ExtResource("1")
+world_scene = ExtResource("2")
+province_scene = ExtResource("3")
+number_of_troops_scene = ExtResource("6")
 
 [node name="Provinces" type="Node" parent="."]
-script = ExtResource( 7 )
+script = ExtResource("7")
 
 [node name="Players" type="Node" parent="."]
 
 [node name="You" type="Node" parent="Players"]
-script = ExtResource( 13 )
+script = ExtResource("13")
 
 [node name="Countries" type="Node" parent="."]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="Button" type="Button" parent="CanvasLayer"]
+anchors_preset = -1
 anchor_left = 0.85
 anchor_top = 0.85
 anchor_right = 0.95
@@ -46,69 +47,68 @@ text = "End Turn"
 
 [node name="GameOverScreen" type="ColorRect" parent="CanvasLayer2"]
 visible = false
+anchors_preset = -1
 anchor_left = 0.3
 anchor_top = 0.3
 anchor_right = 0.7
 anchor_bottom = 0.7
-color = Color( 0.5, 0.5, 0.5, 1 )
+color = Color(0.5, 0.5, 0.5, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer2/GameOverScreen"]
+layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
-margin_left = 32.0
-margin_top = 32.0
-margin_right = -32.0
-margin_bottom = -32.0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = -32.0
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer2/GameOverScreen/MarginContainer"]
-margin_right = 345.0
-margin_bottom = 176.0
+layout_mode = 2
 
 [node name="GameOver" type="Label" parent="CanvasLayer2/GameOverScreen/MarginContainer/VBoxContainer"]
-margin_right = 345.0
-margin_bottom = 14.0
-custom_colors/font_color = Color( 0, 0, 0, 1 )
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Game Over"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Winner" type="Label" parent="CanvasLayer2/GameOverScreen/MarginContainer/VBoxContainer"]
-margin_top = 90.0
-margin_right = 345.0
-margin_bottom = 104.0
+layout_mode = 2
 size_flags_vertical = 6
+theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "(Sample text)"
-align = 1
-valign = 1
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Rules" type="Node" parent="."]
-script = ExtResource( 4 )
+script = ExtResource("4")
 
 [node name="NewProvinceOwnership" type="Node" parent="Rules"]
-script = ExtResource( 12 )
+script = ExtResource("12")
 
 [node name="PercentageToWin" type="Node" parent="Rules"]
-script = ExtResource( 9 )
+script = ExtResource("9")
 
 [node name="TurnLimit" type="Node" parent="Rules"]
-script = ExtResource( 5 )
+script = ExtResource("5")
 
 [node name="MinArmySize" type="Node" parent="Rules"]
-script = ExtResource( 10 )
+script = ExtResource("10")
 
 [node name="Combat" type="Node" parent="Rules"]
-script = ExtResource( 11 )
+script = ExtResource("11")
 
 [node name="Fortresses" type="Node" parent="Rules"]
-script = ExtResource( 8 )
+script = ExtResource("8")
 
 [node name="Populations" type="Node" parent="Rules"]
-script = ExtResource( 14 )
+script = ExtResource("14")
 
 [node name="PopGrowth" type="Node" parent="Rules"]
-script = ExtResource( 16 )
+script = ExtResource("16")
 
 [node name="AutoRecruit" type="Node" parent="Rules"]
-script = ExtResource( 15 )
+script = ExtResource("15")
 
 [connection signal="pressed" from="CanvasLayer/Button" to="." method="end_turn"]

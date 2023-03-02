@@ -18,4 +18,4 @@ func _on_start_of_turn(provinces, current_turn:int):
 			winning_player_index = i
 	
 	# End the game
-	game_over(ownership[winning_player_index][0])
+	declare_game_over(ownership[winning_player_index][0])

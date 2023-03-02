@@ -1,18 +1,18 @@
 extends Node2D
 
-export (PackedScene) var country1
-export (PackedScene) var country2
-export (PackedScene) var army_scene
+@export var country1:PackedScene
+@export var country2:PackedScene
+@export var army_scene:PackedScene
 
 func get_playable_countries() -> Array:
-	return [country1.instance(), country2.instance()]
+	return [country1.instantiate(), country2.instantiate()]
 
 func populate_provinces(provinces, player):
 	var number_of_players = 2
 	var start_province = [provinces[4], provinces[9]]
 	for i in number_of_players:
 		start_province[i].set_owner_country(player[i])
-		var army = army_scene.instance()
+		var army = army_scene.instantiate()
 		army.owner_country = player[i]
 		army.troop_count = 100
 		start_province[i].get_node("Armies").add_army(army)

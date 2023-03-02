@@ -11,5 +11,5 @@ func _on_start_of_turn(provinces, _current_turn:int):
 	var number_of_provinces = provinces.size()
 	for o in ownership:
 		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
-			game_over(o[0])
+			declare_game_over(o[0])
 			break

@@ -1,14 +1,14 @@
 extends Node2D
 
-export (PackedScene) var world_scene
-export (PackedScene) var province_scene
-export (PackedScene) var number_of_troops_scene
+@export var world_scene:PackedScene
+@export var province_scene:PackedScene
+@export var number_of_troops_scene:PackedScene
 
 var current_turn:int = 1
 
 func _ready():
-	var world = world_scene.instance()
-	var scenario = world.get_node("Scenarios/Scenario2")
+	var world = world_scene.instantiate()
+	var scenario = world.get_node("Scenarios/Scenario1")
 	
 	var countries = scenario.get_playable_countries()
 	$Players/You.playing_country = countries[0]
@@ -27,7 +27,7 @@ func _ready():
 	var province_count = shapes.get_child_count()
 	for i in province_count:
 		# Setup the province itself
-		var province_instance = province_scene.instance()
+		var province_instance = province_scene.instantiate()
 		var shape = shapes.get_child(i)
 		links.append(shape.links)
 		province_instance.set_shape(shape.polygon)
@@ -57,7 +57,7 @@ func _process(_delta):
 		for i in province_count:
 			var province = $Provinces.get_child(i)
 			var local_mouse_position = mouse_position - province.position
-			if Geometry.is_point_in_polygon(local_mouse_position, province.get_shape()):
+			if Geometry2D.is_point_in_polygon(local_mouse_position, province.get_shape()):
 				select_province(province)
 				selected_province = true
 				break
@@ -77,9 +77,9 @@ func select_province(province:Province):
 			var army = selected_armies.get_active_armies_of(player_country)[0]
 			if selected_armies.army_can_be_moved_to(army, province):
 				# Show interface for selecting a number of troops
-				var troop_ui = number_of_troops_scene.instance()
+				var troop_ui = number_of_troops_scene.instantiate()
 				troop_ui.setup(army, selected_province, province)
-				troop_ui.connect("move_troops", self, "move_troops")
+				troop_ui.connect("move_troops",Callable(self,"move_troops"))
 				$CanvasLayer.add_child(troop_ui)
 				return
 	$Provinces.select_province(province)

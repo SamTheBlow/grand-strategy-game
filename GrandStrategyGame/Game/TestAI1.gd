@@ -37,6 +37,7 @@ func find_target_province(links, army:Army, province:Province, c:int):
 	if number_of_targets > 0:
 		# Split the troops evenly
 		# If there's more targets than available troops, don't split at all
+		@warning_ignore("integer_division")
 		var troops_to_send:int = army.troop_count / number_of_targets
 		if troops_to_send > 0:
 			var partition = []

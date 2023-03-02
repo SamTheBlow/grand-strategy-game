@@ -39,5 +39,5 @@ func province_count_per_country(provinces:Array) -> Array:
 				ownership[index][1] += 1
 	return ownership
 
-func game_over(winner:Country):
+func declare_game_over(winner:Country):
 	emit_signal("game_over", winner)

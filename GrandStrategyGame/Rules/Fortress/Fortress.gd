@@ -2,7 +2,7 @@
 extends ProvinceComponent
 class_name Fortress
 
-var is_built:bool = false setget set_is_built
+var is_built:bool = false : set = set_is_built
 
 func init(is_built_:bool, position_:Vector2):
 	is_built = is_built_

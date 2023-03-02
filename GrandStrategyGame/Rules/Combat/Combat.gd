@@ -13,7 +13,7 @@ func _on_start_of_turn(provinces, _current_turn:int):
 		for i in number_of_armies:
 			for j in range(i + 1, number_of_armies):
 				if armies[i].owner_country != armies[j].owner_country:
-					attack(armies[i], armies[j], province)
+					resolve_battle(armies[i], armies[j], province)
 
 func _on_action_played(action:Action):
 	if action is ActionArmyMovement:
@@ -24,15 +24,15 @@ func resolve_battles(army:Army, province:Province):
 	var number_of_armies = armies.size()
 	for i in number_of_armies:
 		if army.owner_country != armies[i].owner_country:
-			attack(army, armies[i], province)
+			resolve_battle(army, armies[i], province)
 
-func attack(attacker:Army, defender:Army, province:Province):
-	var attack = Attack.new(attacker, defender, province)
+func resolve_battle(attacker:Army, defender:Army, province:Province):
+	var battle = Attack.new(attacker, defender, province)
 	
 	# Allow other rules to affect the outcome
-	emit_signal("attack", attack)
+	emit_signal("attack", battle)
 	
-	var delta:int = attacker.troop_count * attack.attacker_efficiency - defender.troop_count * attack.defender_efficiency
+	var delta:int = attacker.troop_count * battle.attacker_efficiency - defender.troop_count
 	if delta > 0:
 		attacker.set_troop_count(delta)
 		defender.queue_free()

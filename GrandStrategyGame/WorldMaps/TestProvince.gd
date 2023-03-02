@@ -1,3 +1,3 @@
 extends Polygon2D
 
-export (PoolIntArray) var links
+@export var links:PackedInt32Array
