@@ -1,6 +1,6 @@
 extends Node
 
-onready var selected_province:Province = null
+var selected_province:Province = null
 
 func select_province(province):
 	if selected_province == province:

@@ -36,19 +36,3 @@ func gray_out():
 
 func stop_animations():
 	$Movement.stop(true)
-
-func attack(opponent:Army):
-	var delta = troop_count - opponent.troop_count
-	if delta > 0:
-		set_troop_count(delta)
-		opponent.queue_free()
-	elif delta < 0:
-		opponent.set_troop_count(-delta)
-		queue_free()
-	else:
-		opponent.queue_free()
-		queue_free()
-
-# Temporary......
-func location():
-	return get_parent().get_parent()

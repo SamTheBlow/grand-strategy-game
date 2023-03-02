@@ -1,0 +1,120 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://Countries/Country2.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Game/Armies/Army.tscn" type="PackedScene" id=2]
+[ext_resource path="res://WorldMaps/TestProvince.gd" type="Script" id=3]
+[ext_resource path="res://Countries/Country1.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Countries/Country3.tscn" type="PackedScene" id=5]
+[ext_resource path="res://WorldMaps/Scenario3.gd" type="Script" id=6]
+[ext_resource path="res://Rules/Fortress/Fortress.tscn" type="PackedScene" id=7]
+
+[sub_resource type="GDScript" id=1]
+script/source = "extends Node2D
+
+export (PackedScene) var country1
+export (PackedScene) var country2
+export (PackedScene) var army_scene
+
+func get_playable_countries() -> Array:
+	return [country1.instance(), country2.instance()]
+
+func populate_provinces(provinces, player):
+	var number_of_players = 2
+	var start_province = [provinces[4], provinces[9]]
+	for i in number_of_players:
+		start_province[i].set_owner_country(player[i])
+		var army = army_scene.instance()
+		army.owner_country = player[i]
+		army.troop_count = 100
+		start_province[i].add_troops(army)
+"
+
+[node name="TestData" type="Node2D"]
+
+[node name="Shapes" type="Node2D" parent="."]
+
+[node name="Shape1" type="Polygon2D" parent="Shapes"]
+position = Vector2( 640, 403 )
+polygon = PoolVector2Array( 169, 7, 285, -69, 357, 159, 104, 137, 17, 53 )
+script = ExtResource( 3 )
+links = PoolIntArray( 4, 3, 2 )
+
+[node name="Shape2" type="Polygon2D" parent="Shapes"]
+position = Vector2( 386, 392 )
+polygon = PoolVector2Array( 99, 18, 219, 56, 314, 152, 93, 154, -18, 79 )
+script = ExtResource( 3 )
+links = PoolIntArray( 1, 3, 6 )
+
+[node name="Shape3" type="Polygon2D" parent="Shapes"]
+position = Vector2( 408, 240 )
+polygon = PoolVector2Array( 206, 16, 381, 152, 228, 201, 91, 156, -19, 0 )
+script = ExtResource( 3 )
+links = PoolIntArray( 1, 2, 4, 5, 6, 7 )
+
+[node name="Shape4" type="Polygon2D" parent="Shapes"]
+position = Vector2( 622, 96 )
+polygon = PoolVector2Array( 263, -31, 362, 170, 191, 293, 7, 149, 102, 39 )
+script = ExtResource( 3 )
+links = PoolIntArray( 1, 3, 5 )
+
+[node name="Shape5" type="Polygon2D" parent="Shapes"]
+position = Vector2( 440, -5 )
+polygon = PoolVector2Array( 93, 25, 460, 43, 255, 125, 157, 242, -45, 229 )
+script = ExtResource( 3 )
+links = PoolIntArray( 3, 4, 7 )
+
+[node name="Shape6" type="Polygon2D" parent="Shapes"]
+position = Vector2( 111, 307 )
+polygon = PoolVector2Array( 279, 7, 345, 93, 229, 156, 7, 71, -74, -113 )
+script = ExtResource( 3 )
+links = PoolIntArray( 2, 3, 7 )
+
+[node name="Shape7" type="Polygon2D" parent="Shapes"]
+position = Vector2( -28, 44 )
+polygon = PoolVector2Array( 504, -3, 383, 173, 433, 247, 84, 118, 236, 17 )
+script = ExtResource( 3 )
+links = PoolIntArray( 3, 5, 6 )
+
+[node name="Positions" type="Node2D" parent="."]
+
+[node name="ArmyHost1" type="Position2D" parent="Positions"]
+position = Vector2( 844, 477 )
+
+[node name="ArmyHost2" type="Position2D" parent="Positions"]
+position = Vector2( 519, 487 )
+
+[node name="ArmyHost3" type="Position2D" parent="Positions"]
+position = Vector2( 581, 340 )
+
+[node name="ArmyHost4" type="Position2D" parent="Positions"]
+position = Vector2( 810, 229 )
+
+[node name="ArmyHost5" type="Position2D" parent="Positions"]
+position = Vector2( 576, 118 )
+
+[node name="ArmyHost6" type="Position2D" parent="Positions"]
+position = Vector2( 241, 335 )
+
+[node name="ArmyHost7" type="Position2D" parent="Positions"]
+position = Vector2( 271, 142 )
+
+[node name="FortressPositions" type="Node2D" parent="."]
+
+[node name="Fort4" type="Position2D" parent="FortressPositions"]
+position = Vector2( 878, 164 )
+
+[node name="Scenarios" type="Node2D" parent="."]
+
+[node name="Scenario1" type="Node2D" parent="Scenarios"]
+script = SubResource( 1 )
+country1 = ExtResource( 4 )
+country2 = ExtResource( 1 )
+army_scene = ExtResource( 2 )
+
+[node name="Scenario2" type="Node2D" parent="Scenarios"]
+script = ExtResource( 6 )
+country1 = ExtResource( 4 )
+country2 = ExtResource( 1 )
+country3 = ExtResource( 5 )
+army_scene = ExtResource( 2 )
+fortress_scene = ExtResource( 7 )

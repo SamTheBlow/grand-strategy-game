@@ -9,6 +9,6 @@ func _init(army_:Army = null, destination_:Province = null):
 	destination = destination_
 
 func play_action():
-	destination.add_troops(army)
+	destination.get_node("Armies").add_army(army)
 	army.is_active = true
 	.play_action()

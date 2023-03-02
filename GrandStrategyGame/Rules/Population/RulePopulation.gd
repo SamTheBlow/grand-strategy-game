@@ -1,0 +1,2 @@
+extends Rule
+class_name RulePopulation

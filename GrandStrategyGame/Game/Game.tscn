@@ -1,36 +1,37 @@
-[gd_scene load_steps=10 format=2]
+[gd_scene load_steps=17 format=2]
 
 [ext_resource path="res://Game/Game.gd" type="Script" id=1]
-[ext_resource path="res://TestData.tscn" type="PackedScene" id=2]
+[ext_resource path="res://WorldMaps/WorldTest2.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Game/Province.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Game/Countries/Country.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Game/Armies/Army.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Game/Rules.gd" type="Script" id=4]
+[ext_resource path="res://Rules/RuleTurnLimit.gd" type="Script" id=5]
 [ext_resource path="res://Game/NumberOfTroops.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Game/Provinces.gd" type="Script" id=7]
-[ext_resource path="res://Game/PlayerAI.gd" type="Script" id=8]
-[ext_resource path="res://Game/Rules/RuleSeventyToWin.gd" type="Script" id=9]
+[ext_resource path="res://Rules/Fortress/RuleFortress.gd" type="Script" id=8]
+[ext_resource path="res://Rules/RuleProvincePercentageToWin.gd" type="Script" id=9]
+[ext_resource path="res://Rules/MinArmySize.gd" type="Script" id=10]
+[ext_resource path="res://Rules/Combat/Combat2.gd" type="Script" id=11]
+[ext_resource path="res://Rules/NewProvinceOwnership.gd" type="Script" id=12]
+[ext_resource path="res://Game/PlayerHuman.gd" type="Script" id=13]
+[ext_resource path="res://Rules/Population/RulePopulation.gd" type="Script" id=14]
+[ext_resource path="res://Rules/Population/RuleAutoRecruit.gd" type="Script" id=15]
+[ext_resource path="res://Rules/Population/RulePopGrowth.gd" type="Script" id=16]
 
 [node name="Game" type="Node2D"]
 script = ExtResource( 1 )
-world_data = ExtResource( 2 )
+world_scene = ExtResource( 2 )
 province_scene = ExtResource( 3 )
-army_scene = ExtResource( 5 )
 number_of_troops_scene = ExtResource( 6 )
-
-[node name="Actions" type="Node" parent="."]
 
 [node name="Provinces" type="Node" parent="."]
 script = ExtResource( 7 )
 
+[node name="Players" type="Node" parent="."]
+
+[node name="You" type="Node" parent="Players"]
+script = ExtResource( 13 )
+
 [node name="Countries" type="Node" parent="."]
-
-[node name="Country1" parent="Countries" instance=ExtResource( 4 )]
-country_name = "Player 1"
-color = Color( 1, 0.65, 0.65, 1 )
-
-[node name="Country2" parent="Countries" instance=ExtResource( 4 )]
-country_name = "Player 2"
-color = Color( 0.65, 0.65, 1, 1 )
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
@@ -80,12 +81,34 @@ text = "(Sample text)"
 align = 1
 valign = 1
 
-[node name="PlayerAI" type="Node" parent="."]
+[node name="Rules" type="Node" parent="."]
+script = ExtResource( 4 )
+
+[node name="NewProvinceOwnership" type="Node" parent="Rules"]
+script = ExtResource( 12 )
+
+[node name="PercentageToWin" type="Node" parent="Rules"]
+script = ExtResource( 9 )
+
+[node name="TurnLimit" type="Node" parent="Rules"]
+script = ExtResource( 5 )
+
+[node name="MinArmySize" type="Node" parent="Rules"]
+script = ExtResource( 10 )
+
+[node name="Combat" type="Node" parent="Rules"]
+script = ExtResource( 11 )
+
+[node name="Fortresses" type="Node" parent="Rules"]
 script = ExtResource( 8 )
 
-[node name="Rules" type="Node" parent="."]
+[node name="Populations" type="Node" parent="Rules"]
+script = ExtResource( 14 )
 
-[node name="Rule" type="Node" parent="Rules"]
-script = ExtResource( 9 )
+[node name="PopGrowth" type="Node" parent="Rules"]
+script = ExtResource( 16 )
+
+[node name="AutoRecruit" type="Node" parent="Rules"]
+script = ExtResource( 15 )
 
 [connection signal="pressed" from="CanvasLayer/Button" to="." method="end_turn"]
