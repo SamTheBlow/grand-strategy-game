@@ -1,6 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://bapb5aiqwu7tu"]
-
-[ext_resource type="Script" path="res://Rules/Population/Population.gd" id="1"]
-
-[node name="Population" type="Node2D"]
-script = ExtResource("1")
