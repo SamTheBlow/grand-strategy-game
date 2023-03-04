@@ -13,8 +13,10 @@ func _process(_delta):
 		var relative_width:float = anchor_right - anchor_left
 		var relative_height:float = anchor_bottom - anchor_top
 		anchor_left = relative_starting_position.x + delta_x
+		anchor_left = clampf(anchor_left, 0, 1 - relative_width)
 		anchor_right = anchor_left + relative_width
 		anchor_top = relative_starting_position.y + delta_y
+		anchor_top = clampf(anchor_top, 0, 1 - relative_height)
 		anchor_bottom = anchor_top + relative_height
 
 func _input(event):
