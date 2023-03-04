@@ -53,7 +53,7 @@ func _ready():
 
 func _on_game_over(country:Country):
 	$CanvasLayer/GameOverScreen.show()
-	$CanvasLayer/GameOverScreen/MarginContainer/VBoxContainer/Winner.text = country.country_name + " wins!"
+	$CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer/Winner.text = country.country_name + " wins!"
 
 func _on_province_selected(province:Province):
 	var player_country = $Players/You.playing_country

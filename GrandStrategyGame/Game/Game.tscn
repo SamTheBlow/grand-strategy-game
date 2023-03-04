@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://nsr6s2fs6cdv"]
+[gd_scene load_steps=20 format=3 uid="uid://nsr6s2fs6cdv"]
 
 [ext_resource type="Script" path="res://Game/Game.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://bfwkhtqd0hdhu" path="res://WorldMaps/WorldTest2.tscn" id="2"]
@@ -9,7 +9,9 @@
 [ext_resource type="Script" path="res://Game/WorldBackground.gd" id="6_mgprh"]
 [ext_resource type="Script" path="res://Game/Provinces.gd" id="7"]
 [ext_resource type="Script" path="res://Rules/Fortress/RuleFortress.gd" id="8"]
+[ext_resource type="Script" path="res://Game/Draggable.gd" id="8_fjf5u"]
 [ext_resource type="Script" path="res://Rules/RuleProvincePercentageToWin.gd" id="9"]
+[ext_resource type="Script" path="res://Game/DragSource.gd" id="9_jlbtm"]
 [ext_resource type="Script" path="res://Rules/MinArmySize.gd" id="10"]
 [ext_resource type="Script" path="res://Rules/Combat/Combat2.gd" id="11"]
 [ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
@@ -47,17 +49,30 @@ anchor_right = 0.95
 anchor_bottom = 0.95
 text = "End Turn"
 
-[node name="GameOverScreen" type="ColorRect" parent="CanvasLayer"]
+[node name="GameOverScreen" type="Control" parent="CanvasLayer"]
 visible = false
-anchors_preset = -1
-anchor_left = 0.3
-anchor_top = 0.3
-anchor_right = 0.7
-anchor_bottom = 0.7
-offset_bottom = 3.05176e-05
-color = Color(0.5, 0.5, 0.5, 1)
+layout_mode = 3
+anchor_left = 0.25
+anchor_top = 0.25
+anchor_right = 0.75
+anchor_bottom = 0.75
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_fjf5u")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameOverScreen"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameOverScreen"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.5, 0.5, 0.5, 1)
+script = ExtResource("9_jlbtm")
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameOverScreen/ColorRect"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -66,17 +81,17 @@ offset_top = 32.0
 offset_right = -32.0
 offset_bottom = -32.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameOverScreen/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer"]
 layout_mode = 2
 
-[node name="GameOver" type="Label" parent="CanvasLayer/GameOverScreen/MarginContainer/VBoxContainer"]
+[node name="GameOver" type="Label" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Game Over"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Winner" type="Label" parent="CanvasLayer/GameOverScreen/MarginContainer/VBoxContainer"]
+[node name="Winner" type="Label" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -116,3 +131,4 @@ script = ExtResource("15")
 
 [connection signal="clicked" from="Background" to="." method="_on_background_clicked"]
 [connection signal="pressed" from="CanvasLayer/Button" to="." method="end_turn"]
+[connection signal="dragged" from="CanvasLayer/GameOverScreen/ColorRect" to="CanvasLayer/GameOverScreen" method="_on_dragged"]
