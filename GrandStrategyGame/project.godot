@@ -15,6 +15,10 @@ run/main_scene="res://Game/Game.tscn"
 config/features=PackedStringArray("4.0")
 config/icon="res://icon.png"
 
+[filesystem]
+
+import/blender/enabled=false
+
 [gui]
 
 common/drop_mouse_on_gui_input_disabled=true

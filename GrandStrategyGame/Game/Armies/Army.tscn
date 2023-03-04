@@ -51,6 +51,7 @@ offset_left = -24.0
 offset_top = 8.0
 offset_right = 24.0
 offset_bottom = 32.0
+mouse_filter = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="ColorRect"]
 layout_mode = 1
@@ -66,6 +67,7 @@ grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="ColorRect/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 
 [node name="TroopCount" type="Label" parent="ColorRect"]
 layout_mode = 2

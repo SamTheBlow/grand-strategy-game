@@ -1,6 +1,8 @@
-# Code was borrowed from here:
+# Some code was borrowed from here:
 # https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
 extends Polygon2D
+
+signal clicked
 
 # Draw status:
 # 0 - unselected
@@ -10,6 +12,14 @@ extends Polygon2D
 var draw_status:int = 0 : set = set_draw_status
 var outline_color:Color = Color.WEB_GRAY : set = set_outline_color
 var outline_width:float = 10.0 : set = set_width
+
+func _unhandled_input(event):
+	if event is InputEventMouseButton and event.pressed and not event.is_echo() and event.button_index == MOUSE_BUTTON_LEFT:
+		var mouse_position = get_viewport().get_mouse_position()
+		var local_mouse_position = mouse_position - global_position
+		if Geometry2D.is_point_in_polygon(local_mouse_position, polygon):
+			get_viewport().set_input_as_handled()
+			emit_signal("clicked")
 
 func _draw():
 	if draw_status == 0:

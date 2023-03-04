@@ -1,6 +1,8 @@
 extends Node2D
 class_name Province
 
+signal selected
+
 var links:Array
 var owner_country:Country = null : set = set_owner_country
 
@@ -40,3 +42,6 @@ func is_linked_to(province:Province):
 
 func add_component(component:ProvinceComponent):
 	add_child(component)
+
+func _on_shape_clicked():
+	emit_signal("selected", self)

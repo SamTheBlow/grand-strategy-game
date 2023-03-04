@@ -13,7 +13,7 @@ var province:Province
 # into one army of 47 and one army of 53.
 var troop_partition:PackedInt32Array
 
-func _init(army_:Army = null,province_:Province = null,troop_partition_:PackedInt32Array = []):
+func _init(army_:Army = null, province_:Province = null, troop_partition_:PackedInt32Array = []):
 	army = army_
 	province = province_
 	troop_partition = troop_partition_
