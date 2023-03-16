@@ -8,7 +8,7 @@ If you want to contribute in any way, please do!
 
 # How to play
 All you need to install is [Godot 3.5.1](https://github.com/godotengine/godot/releases/tag/3.5.1-stable).
-- Download this game's code;
+- Download [this game's code](https://github.com/SamTheBlow/grand-strategy-game/releases/latest);
 - Extract it on your computer;
 - Open Godot;
 - Have Godot scan the folder where you just extracted the code;
