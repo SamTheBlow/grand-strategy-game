@@ -1,6 +1,9 @@
 extends Control
 class_name Draggable
 
+## This signal will trigger on every frame where this object is being dragged.
+signal is_dragged
+
 var is_being_dragged:bool = false
 var relative_starting_position:Vector2 = Vector2.ZERO
 var relative_mouse_origin:Vector2 = Vector2.ZERO
@@ -18,6 +21,7 @@ func _process(_delta):
 		anchor_top = relative_starting_position.y + delta_y
 		anchor_top = clampf(anchor_top, 0, 1 - relative_height)
 		anchor_bottom = anchor_top + relative_height
+		emit_signal("is_dragged", self)
 
 func _input(event):
 	if event is InputEventMouseButton and not event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
@@ -35,3 +39,17 @@ func get_relative_mouse_position() -> Vector2:
 	return Vector2( \
 		mouse_position.x / window_size.x, \
 		mouse_position.y / window_size.y)
+
+## Experimental; do not use. Only works for objects anchored to the top-left corner
+func clamp_to(control:Control):
+	var delta_x:float = anchor_left - control.anchor_right
+	var delta_y:float = anchor_top - control.anchor_bottom
+	if delta_x < 0 and delta_y < 0:
+		if delta_x < delta_y:
+			var relative_height:float = anchor_bottom - anchor_top
+			anchor_top = control.anchor_bottom
+			anchor_bottom = anchor_top + relative_height
+		else:
+			var relative_width:float = anchor_right - anchor_left
+			anchor_left = control.anchor_right
+			anchor_right = anchor_left + relative_width

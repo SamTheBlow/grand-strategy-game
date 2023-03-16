@@ -60,12 +60,23 @@ layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
+[node name="Spacing1" type="Control" parent="Draggable/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
 [node name="TroopSlider" type="HSlider" parent="Draggable/MarginContainer/VBoxContainer"]
 layout_mode = 2
 value = 100.0
 scrollable = false
 
-[node name="Control" type="Control" parent="Draggable/MarginContainer/VBoxContainer"]
+[node name="TroopNumber" type="Label" parent="Draggable/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Tex"
+horizontal_alignment = 1
+
+[node name="Spacing2" type="Control" parent="Draggable/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -91,5 +102,6 @@ size_flags_horizontal = 3
 text = "Confirm"
 
 [connection signal="dragged" from="Draggable/ColorRect" to="Draggable" method="_on_dragged"]
+[connection signal="value_changed" from="Draggable/MarginContainer/VBoxContainer/TroopSlider" to="." method="_on_troop_slider_value_changed"]
 [connection signal="pressed" from="Draggable/MarginContainer/VBoxContainer/HBoxContainer/Cancel" to="." method="_on_Cancel_pressed"]
 [connection signal="pressed" from="Draggable/MarginContainer/VBoxContainer/HBoxContainer/Confirm" to="." method="_on_Confirm_pressed"]

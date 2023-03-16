@@ -9,8 +9,8 @@ extends Node2D
 func get_playable_countries() -> Array:
 	return [country1.instantiate(), country2.instantiate(), country3.instantiate()]
 
-func get_new_ai_for(_country:Country) -> PlayerAI:
-	if _country.country_name == "Player 2":
+func get_new_ai_for(country:Country) -> PlayerAI:
+	if country.country_name == "Player 2":
 		return TestAI1.new()
 	else:
 		return TestAI2.new()
@@ -28,7 +28,7 @@ func populate_provinces(provinces, players):
 	for i in number_of_provinces:
 		# Setup fortresses
 		var fortress = fortress_scene.instantiate()
-		var fortress_position = get_parent().get_parent().get_node("FortressPositions/Fort4").position - provinces[i].global_position
+		var fortress_position = get_parent().get_parent().get_node("Shapes/Shape" + str(i + 1) + "/Fortress").position
 		var fortress_built = false
 		if i == 3:
 			fortress_built = true

@@ -6,4 +6,4 @@ class_name RulePopGrowth
 func _on_start_of_turn(provinces, _current_turn):
 	for province in provinces:
 		var population:int = province.get_node("Population").population_count
-		province.get_node("Population").population_count += population >> 1
+		province.get_node("Population").population_count += int(population * 0.1)

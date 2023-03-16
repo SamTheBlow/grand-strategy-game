@@ -1,8 +1,8 @@
-extends Node
+extends Node2D
 
 var selected_province:Province = null
 
-func select_province(province):
+func select_province(province:Province):
 	if selected_province == province:
 		return
 	if a_province_is_selected():
@@ -17,3 +17,11 @@ func unselect_province():
 
 func a_province_is_selected() -> bool:
 	return selected_province != null
+
+func get_provinces() -> Array[Province]:
+	var result:Array[Province] = []
+	var children:Array[Node] = get_children()
+	for child in children:
+		if child is Province:
+			result.append(child)
+	return result

@@ -1,17 +1,18 @@
-[gd_scene load_steps=20 format=3 uid="uid://nsr6s2fs6cdv"]
+[gd_scene load_steps=22 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://Game/Game.gd" id="1"]
-[ext_resource type="PackedScene" uid="uid://bfwkhtqd0hdhu" path="res://WorldMaps/WorldTest2.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://b5xxmav3oee4g" path="res://WorldMaps/WorldTest3.tscn" id="2_iymnr"]
 [ext_resource type="PackedScene" uid="uid://b84osglwabeev" path="res://Game/Province.tscn" id="3"]
 [ext_resource type="Script" path="res://Game/Rules.gd" id="4"]
-[ext_resource type="Script" path="res://Rules/RuleTurnLimit.gd" id="5"]
+[ext_resource type="Script" path="res://Game/Camera.gd" id="5_imugo"]
 [ext_resource type="PackedScene" uid="uid://1ttn3nlw3hrk" path="res://Game/NumberOfTroops.tscn" id="6"]
 [ext_resource type="Script" path="res://Game/WorldBackground.gd" id="6_mgprh"]
 [ext_resource type="Script" path="res://Game/Provinces.gd" id="7"]
-[ext_resource type="Script" path="res://Rules/Fortress/RuleFortress.gd" id="8"]
-[ext_resource type="Script" path="res://Game/Draggable.gd" id="8_fjf5u"]
+[ext_resource type="Script" path="res://Game/GameUI.gd" id="8_lvg7v"]
 [ext_resource type="Script" path="res://Rules/RuleProvincePercentageToWin.gd" id="9"]
+[ext_resource type="Script" path="res://Game/GameOverPopup.gd" id="9_1vpac"]
 [ext_resource type="Script" path="res://Game/DragSource.gd" id="9_jlbtm"]
+[ext_resource type="Script" path="res://Game/Chat/Chat.gd" id="9_xx55i"]
 [ext_resource type="Script" path="res://Rules/MinArmySize.gd" id="10"]
 [ext_resource type="Script" path="res://Rules/Combat/Combat2.gd" id="11"]
 [ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
@@ -19,17 +20,25 @@
 [ext_resource type="Script" path="res://Rules/Population/RulePopulation.gd" id="14"]
 [ext_resource type="Script" path="res://Rules/Population/RuleAutoRecruit.gd" id="15"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopGrowth.gd" id="16"]
+[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Game/Armies/Army.tscn" id="22_7mphk"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
-world_scene = ExtResource("2")
+world_scene = ExtResource("2_iymnr")
 province_scene = ExtResource("3")
 number_of_troops_scene = ExtResource("6")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+anchor_mode = 0
+limit_left = 0
+limit_top = 0
+position_smoothing_enabled = true
+script = ExtResource("5_imugo")
 
 [node name="Background" type="Node2D" parent="."]
 script = ExtResource("6_mgprh")
 
-[node name="Provinces" type="Node" parent="."]
+[node name="Provinces" type="Node2D" parent="."]
 script = ExtResource("7")
 
 [node name="Players" type="Node" parent="."]
@@ -41,17 +50,114 @@ script = ExtResource("13")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Button" type="Button" parent="CanvasLayer"]
+[node name="GameUI" type="Control" parent="CanvasLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_lvg7v")
+
+[node name="Chat" type="Control" parent="CanvasLayer/GameUI"]
+layout_mode = 1
+anchor_top = 0.7
+anchor_right = 0.3
+anchor_bottom = 1.0
+script = ExtResource("9_xx55i")
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/Chat"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.25098)
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/Chat/ColorRect"]
+layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.85
-anchor_top = 0.85
-anchor_right = 0.95
-anchor_bottom = 0.95
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="Log" type="Control" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85098, 0.85098, 0.85098, 0.501961)
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+bbcode_enabled = true
+scroll_following = true
+
+[node name="Spacing" type="Control" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="Input" type="LineEdit" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+placeholder_text = "Type here"
+
+[node name="BottomRight" type="Control" parent="CanvasLayer/GameUI"]
+layout_mode = 1
+anchor_left = 0.8
+anchor_top = 0.8
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/BottomRight"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.25098)
+
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/BottomRight"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.8
+
+[node name="EndTurn" type="Button" parent="CanvasLayer/GameUI/BottomRight/MarginContainer"]
+layout_mode = 2
 text = "End Turn"
 
-[node name="GameOverScreen" type="Control" parent="CanvasLayer"]
+[node name="GameOverScreen" type="Control" parent="CanvasLayer/GameUI"]
 visible = false
-layout_mode = 3
+layout_mode = 1
 anchor_left = 0.25
 anchor_top = 0.25
 anchor_right = 0.75
@@ -59,9 +165,9 @@ anchor_bottom = 0.75
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("8_fjf5u")
+script = ExtResource("9_1vpac")
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameOverScreen"]
+[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/GameOverScreen"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,7 +178,7 @@ mouse_filter = 1
 color = Color(0.5, 0.5, 0.5, 1)
 script = ExtResource("9_jlbtm")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameOverScreen/ColorRect"]
+[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -81,17 +187,17 @@ offset_top = 32.0
 offset_right = -32.0
 offset_bottom = -32.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer"]
 layout_mode = 2
 
-[node name="GameOver" type="Label" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
+[node name="GameOver" type="Label" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Game Over"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Winner" type="Label" parent="CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Winner" type="Label" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -108,17 +214,11 @@ script = ExtResource("12")
 [node name="PercentageToWin" type="Node" parent="Rules"]
 script = ExtResource("9")
 
-[node name="TurnLimit" type="Node" parent="Rules"]
-script = ExtResource("5")
-
 [node name="MinArmySize" type="Node" parent="Rules"]
 script = ExtResource("10")
 
 [node name="Combat" type="Node" parent="Rules"]
 script = ExtResource("11")
-
-[node name="Fortresses" type="Node" parent="Rules"]
-script = ExtResource("8")
 
 [node name="Populations" type="Node" parent="Rules"]
 script = ExtResource("14")
@@ -128,7 +228,10 @@ script = ExtResource("16")
 
 [node name="AutoRecruit" type="Node" parent="Rules"]
 script = ExtResource("15")
+army_scene = ExtResource("22_7mphk")
 
 [connection signal="clicked" from="Background" to="." method="_on_background_clicked"]
-[connection signal="pressed" from="CanvasLayer/Button" to="." method="end_turn"]
-[connection signal="dragged" from="CanvasLayer/GameOverScreen/ColorRect" to="CanvasLayer/GameOverScreen" method="_on_dragged"]
+[connection signal="requested_province_info" from="CanvasLayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
+[connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Input" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
+[connection signal="pressed" from="CanvasLayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
+[connection signal="dragged" from="CanvasLayer/GameUI/GameOverScreen/ColorRect" to="CanvasLayer/GameUI/GameOverScreen" method="_on_dragged"]

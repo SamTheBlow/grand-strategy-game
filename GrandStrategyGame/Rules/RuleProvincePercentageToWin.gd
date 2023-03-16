@@ -1,7 +1,7 @@
 extends Rule
 class_name RuleProvincePercentageToWin
 
-var percentage_to_win:float = 70.0
+@export_range(0.0, 100.0, 0.1) var percentage_to_win:float = 70.0
 
 func _on_start_of_turn(provinces, _current_turn:int):
 	# Get how many provinces each country has

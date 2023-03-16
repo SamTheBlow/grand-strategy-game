@@ -11,9 +11,10 @@ func setup(army_:Army, source_:Province, destination_:Province):
 	army = army_
 	source = source_
 	destination = destination_
-	var troop_slider = $Draggable/MarginContainer/VBoxContainer/TroopSlider
+	var troop_slider:Slider = $Draggable/MarginContainer/VBoxContainer/TroopSlider
 	troop_slider.max_value = army.troop_count
 	troop_slider.value = troop_slider.max_value
+	update_troop_display(troop_slider.value, troop_slider.max_value)
 
 func _on_Cancel_pressed():
 	emit_signal("cancelled")
@@ -24,3 +25,11 @@ func _on_Confirm_pressed():
 	if troop_count != 0:
 		emit_signal("move_troops", army, troop_count, source, destination)
 	queue_free()
+
+func _on_troop_slider_value_changed(value:float):
+	var troop_slider:Slider = $Draggable/MarginContainer/VBoxContainer/TroopSlider
+	update_troop_display(troop_slider.value, troop_slider.max_value)
+
+func update_troop_display(value:float, max_value:float):
+	var text:String = str(value) + " | " + str(max_value - value)
+	$Draggable/MarginContainer/VBoxContainer/TroopNumber.text = text

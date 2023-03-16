@@ -1,8 +1,7 @@
+# Test AI. Always tries to move its armies to the nearest targets.
+# It also leaves some troops idle to defend.
 extends PlayerAI
 class_name TestAI2
-
-# This AI is a copy/paste of TestAI1, except for one small change:
-# it will keep some troops idle instead of moving all of them.
 
 func play(provinces:Array):
 	# Obtain a list of all of your armies
@@ -13,29 +12,38 @@ func play(provinces:Array):
 		province_armies.append(province.get_node("Armies").get_armies_of(playing_country))
 	
 	# Move each army to a designated target
+	var movements:Array[ActionArmyMovement] = []
 	var number_of_provinces = provinces.size()
 	for i in number_of_provinces:
 		var links = []
 		for link in provinces[i].links:
 			links.append([link])
 		for army in province_armies[i]:
-			find_target_province(links, army, provinces[i], 0)
+			movements.append_array(find_target_province(links, army, provinces[i], 0))
+	
+	# Play out all of the actions (temporary)
+	for movement in movements:
+		movement.play_action()
 
 # Links here take the form of [[p1, p2], [p3, p4], ...]
 # where p1, p3 are direct links, p2 and p4 are links of the links, etc.
 # In this case, p2 is a link of p1 and p4 is a link of p3.
 # (This is a recursive function.)
-func find_target_province(links, army:Army, province:Province, c:int):
+func find_target_province(links:Array, army:Army, province:Province, c:int) -> Array[ActionArmyMovement]:
+	var movements:Array[ActionArmyMovement] = []
+	
 	# Prevent infinite loop if it's impossible to find a target to capture
 	if c>=100:
-		return
+		return []
+	
 	# Get a list of all the provinces you don't own
-	var targets = []
+	var targets:Array = []
 	for link in links:
 		var furthest_link = link.size() - 1
 		if link[furthest_link].owner_country != playing_country:
 			targets.append(link)
-	var number_of_targets = targets.size()
+	
+	var number_of_targets:int = targets.size()
 	# If there's any, send troops evenly to each province
 	if number_of_targets > 0:
 		# Split the troops evenly
@@ -55,14 +63,15 @@ func find_target_province(links, army:Army, province:Province, c:int):
 			# Connecting actions to the Rules node will be done from the Game script.
 			get_parent().get_parent().get_node("Rules").connect_action(action_split)
 			action_split.play_action()
+		
 		# Get all the armies and move them
-		var armies_in_province = province.get_node("Armies").get_armies_of(playing_country)
-		var number_of_armies_to_move = armies_in_province.size() - 1
+		var armies_in_province:Array[Army] = province.get_node("Armies").get_armies_of(playing_country)
+		var number_of_armies_to_move:int = armies_in_province.size() - 1
 		for i in number_of_armies_to_move:
-			var action_move = ActionArmyMovement.new(armies_in_province[i + 1], targets[i][0])
+			var action_move:ActionArmyMovement = ActionArmyMovement.new(armies_in_province[i + 1], targets[i][0])
 			# TODO refactor
 			get_parent().get_parent().get_node("Rules").connect_action(action_move)
-			action_move.play_action()
+			movements.append(action_move)
 	else:
 		# Build new links
 		var new_links = []
@@ -83,4 +92,5 @@ func find_target_province(links, army:Army, province:Province, c:int):
 					new_links.append(link_appended)
 					already_searched_provinces.append(next_link)
 		# Find a province further away
-		find_target_province(new_links, army, province, c + 1)
+		movements = find_target_province(new_links, army, province, c + 1)
+	return movements

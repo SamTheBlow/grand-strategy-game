@@ -12,52 +12,54 @@ func add_army(army:Army):
 
 # Avoids interacting with armies that are queued for deletion.
 # This is somewhat annoying.
-func get_alive_armies() -> Array:
-	var result = []
-	var armies = get_children()
+func get_alive_armies() -> Array[Army]:
+	var result:Array[Army] = []
+	var armies:Array[Node] = get_children()
 	for army in armies:
 		if army.is_queued_for_deletion() == false:
+			# We assume that all children are armies
 			result.append(army)
 	return result
 
 func merge_armies():
-	var armies = get_alive_armies()
-	var number_of_armies = armies.size()
+	var armies:Array[Army] = get_alive_armies()
+	var number_of_armies:int = armies.size()
 	for i in number_of_armies:
 		for j in range(i + 1, number_of_armies):
 			if armies[i].owner_country == armies[j].owner_country:
 				armies[i].queue_free()
 				armies[j].troop_count += armies[i].troop_count
+				break
 
-func get_armies_of(country:Country) -> Array:
-	var result = []
-	var armies = get_alive_armies()
+func get_armies_of(country:Country) -> Array[Army]:
+	var result:Array[Army] = []
+	var armies:Array[Army] = get_alive_armies()
 	for army in armies:
 		if army.owner_country == country:
 			result.append(army)
 	return result
 
-func get_active_armies_of(country:Country) -> Array:
-	var result = []
-	var armies = get_alive_armies()
+func get_active_armies_of(country:Country) -> Array[Army]:
+	var result:Array[Army] = []
+	var armies:Array[Army] = get_alive_armies()
 	for army in armies:
-		if army.owner_country == country && army.is_active:
+		if army.owner_country == country and army.is_active:
 			result.append(army)
 	return result
 
 func country_has_active_army(country:Country) -> bool:
-	var armies = get_alive_armies()
+	var armies:Array[Army] = get_alive_armies()
 	for army in armies:
-		if army.owner_country == country && army.is_active:
+		if army.owner_country == country and army.is_active:
 			return true
 	return false
 
 func army_can_be_moved_to(army:Army, destination:Province) -> bool:
 	# The army can be moved if...
 	# - It is indeed in this province.
-	var army_is_here = army.get_parent() == self
+	var army_is_here:bool = army.get_parent() == self
 	# - This province is linked to the destination province.
-	var is_neighbour = get_parent().is_linked_to(destination)
+	var is_neighbour:bool = get_parent().is_linked_to(destination)
 	return army_is_here && is_neighbour
 
 func move_army_to(army:Army, destination:Province):

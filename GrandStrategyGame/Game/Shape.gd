@@ -16,7 +16,8 @@ var outline_width:float = 10.0 : set = set_width
 func _unhandled_input(event):
 	if event is InputEventMouseButton and event.pressed and not event.is_echo() and event.button_index == MOUSE_BUTTON_LEFT:
 		var mouse_position = get_viewport().get_mouse_position()
-		var local_mouse_position = mouse_position - global_position
+		var mouse_position_in_world = mouse_position / get_viewport().get_camera_2d().zoom + get_viewport().get_camera_2d().position
+		var local_mouse_position = mouse_position_in_world - global_position
 		if Geometry2D.is_point_in_polygon(local_mouse_position, polygon):
 			get_viewport().set_input_as_handled()
 			emit_signal("clicked")

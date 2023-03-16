@@ -1,7 +1,7 @@
 extends Rule
 class_name RuleTurnLimit
 
-var final_turn:int = 10
+@export var final_turn:int = 10
 
 func _on_start_of_turn(provinces, current_turn:int):
 	if current_turn <= final_turn:

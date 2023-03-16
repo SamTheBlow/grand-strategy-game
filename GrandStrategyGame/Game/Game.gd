@@ -10,10 +10,14 @@ func _ready():
 	var world = world_scene.instantiate()
 	var scenario = world.get_node("Scenarios/Scenario1")
 	
+	# Set the camera's limits
+	$Camera2D.limit_right = world.get_node("WorldSize").position.x
+	$Camera2D.limit_bottom = world.get_node("WorldSize").position.y
+	
 	var countries = scenario.get_playable_countries()
 	$Players/You.playing_country = countries[0]
 	for country in countries:
-		if country != countries[0]:
+		if country != $Players/You.playing_country:
 			var country_ai = scenario.get_new_ai_for(country)
 			country_ai.init(country)
 			$Players.add_child(country_ai)
@@ -21,7 +25,6 @@ func _ready():
 	
 	# Setup provinces
 	var shapes = world.get_node("Shapes")
-	var army_positions = world.get_node("Positions")
 	var links = []
 	var provinces = []
 	var province_count = shapes.get_child_count()
@@ -36,7 +39,7 @@ func _ready():
 		# Setup the armies component
 		var armies = Armies.new()
 		armies.name = "Armies"
-		armies.position_army_host = army_positions.get_child(i).position
+		armies.position_army_host = shape.get_node("ArmyHost").global_position
 		province_instance.add_component(armies)
 		# Connect the signals
 		province_instance.connect("selected", Callable(self, "_on_province_selected"))
@@ -52,8 +55,9 @@ func _ready():
 	scenario.populate_provinces($Provinces.get_children(), countries)
 
 func _on_game_over(country:Country):
-	$CanvasLayer/GameOverScreen.show()
-	$CanvasLayer/GameOverScreen/ColorRect/MarginContainer/VBoxContainer/Winner.text = country.country_name + " wins!"
+	var game_over_node:GameOver = $CanvasLayer/GameUI/GameOverScreen
+	game_over_node.show()
+	game_over_node.set_text(country.country_name + " wins!")
 
 func _on_province_selected(province:Province):
 	var player_country = $Players/You.playing_country
@@ -121,9 +125,18 @@ func end_turn():
 				action.queue_free()
 	
 	# Merge armies
-	var provinces = $Provinces.get_children()
+	var provinces:Array[Province] = $Provinces.get_provinces()
 	for province in provinces:
 		province.get_node("Armies").merge_armies()
 	
 	current_turn += 1
 	$Rules.start_of_turn(provinces, current_turn)
+
+func _on_chat_requested_province_info():
+	if not $Provinces.a_province_is_selected():
+		$CanvasLayer/GameUI/Chat.system_message("No province selected.")
+		return
+	
+	var selected_province = $Provinces.selected_province
+	var population_count = selected_province.get_node("Population").population_count
+	$CanvasLayer/GameUI/Chat.system_message("Population count: " + str(population_count))
