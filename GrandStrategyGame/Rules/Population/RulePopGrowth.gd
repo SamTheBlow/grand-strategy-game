@@ -1,9 +1,11 @@
+class_name RulePopGrowth
+extends Rule
 # Basic rule for testing
 # Increases a province's population at an exponential rate
-extends Rule
-class_name RulePopGrowth
 
-func _on_start_of_turn(provinces, _current_turn):
+
+func _on_start_of_turn(provinces: Array[Province], _current_turn: int):
 	for province in provinces:
-		var population:int = province.get_node("Population").population_count
-		province.get_node("Population").population_count += int(population * 0.1)
+		var population_node := province.get_node("Population") as Population
+		var population_count: int = population_node.population_count
+		population_node.population_count += int(population_count * 0.1)

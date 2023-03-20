@@ -1,8 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://bfwkhtqd0hdhu"]
+[gd_scene load_steps=8 format=3]
 
 [ext_resource type="PackedScene" path="res://Countries/Country2.tscn" id="1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Game/Armies/Army.tscn" id="2"]
-[ext_resource type="Script" path="res://WorldMaps/TestProvince.gd" id="3"]
+[ext_resource type="Script" path="res://WorldMaps/ProvinceTestData.gd" id="3"]
 [ext_resource type="PackedScene" path="res://Countries/Country1.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://u7xb8adqtmcv" path="res://Countries/Country3.tscn" id="5"]
 [ext_resource type="Script" path="res://WorldMaps/Scenario3.gd" id="6"]

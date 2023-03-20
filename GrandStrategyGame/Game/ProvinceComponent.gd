@@ -1,2 +1,2 @@
-extends Node2D
 class_name ProvinceComponent
+extends Node2D

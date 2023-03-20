@@ -1,15 +1,23 @@
-extends Node
 class_name Player
+extends Node
 
-var playing_country:Country
+
+var playing_country: Country
+
 
 func _ready():
-	var actions_node = Node.new()
+	var actions_node := Node.new()
 	actions_node.name = "Actions"
 	add_child(actions_node)
 
-func init(playing_country_:Country):
+
+func init(playing_country_: Country):
 	playing_country = playing_country_
 
-func get_actions() -> Array:
-	return $Actions.get_children()
+
+func get_actions() -> Array[Action]:
+	var output: Array[Action] = []
+	var actions: Array[Node] = $Actions.get_children()
+	for action in actions:
+		output.append(action as Action)
+	return output

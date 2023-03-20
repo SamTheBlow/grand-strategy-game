@@ -1,2 +1,2 @@
-extends Control
 class_name GameUI
+extends Control

@@ -1,8 +1,17 @@
+class_name WorldBackground
 extends Node2D
+
 
 signal clicked
 
-func _unhandled_input(event):
-	if event is InputEventMouseButton and event.pressed and not event.is_echo() and event.button_index == MOUSE_BUTTON_LEFT:
-		get_viewport().set_input_as_handled()
-		emit_signal("clicked")
+
+func _unhandled_input(event: InputEvent):
+	if event is InputEventMouseButton:
+		var event_typed := event as InputEventMouseButton
+		if (
+			event_typed.pressed
+			and not event_typed.is_echo()
+			and event_typed.button_index == MOUSE_BUTTON_LEFT
+		):
+			get_viewport().set_input_as_handled()
+			emit_signal("clicked")

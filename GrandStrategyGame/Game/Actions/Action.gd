@@ -1,7 +1,9 @@
-extends Node
 class_name Action
+extends Node
+
 
 signal action_played
+
 
 # The subclass is expected to call this when it is done
 func play_action():

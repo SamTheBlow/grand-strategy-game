@@ -1,18 +1,31 @@
+class_name Scenario1
 extends Node2D
+# Temporary basic scenario for testing
 
-@export var country1:PackedScene
-@export var country2:PackedScene
-@export var army_scene:PackedScene
 
-func get_playable_countries() -> Array:
-	return [country1.instantiate(), country2.instantiate()]
+@export var country1: PackedScene
+@export var country2: PackedScene
+@export var army_scene: PackedScene
 
-func populate_provinces(provinces, player):
-	var number_of_players = 2
-	var start_province = [provinces[4], provinces[9]]
+
+func get_playable_countries() -> Array[Country]:
+	return [
+		country1.instantiate() as Country,
+		country2.instantiate() as Country,
+	]
+
+
+func populate_provinces(provinces: Array[Province], countries: Array[Country]):
+	var starting_provinces: Array[Province] = [
+		provinces[4],
+		provinces[9],
+	]
+	
+	var number_of_players: int = 2
 	for i in number_of_players:
-		start_province[i].set_owner_country(player[i])
-		var army = army_scene.instantiate()
-		army.owner_country = player[i]
+		starting_provinces[i].set_owner_country(countries[i])
+		var army := army_scene.instantiate() as Army
+		army.owner_country = countries[i]
 		army.troop_count = 100
-		start_province[i].get_node("Armies").add_army(army)
+		var armies := starting_provinces[i].get_node("Armies") as Armies
+		armies.add_army(army)
