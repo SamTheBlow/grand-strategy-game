@@ -49,7 +49,7 @@ func _ready():
 		var armies := Armies.new()
 		armies.name = "Armies"
 		var army_host_node := shape.get_node("ArmyHost") as Marker2D
-		armies.position_army_host = army_host_node.global_position
+		armies.position_army_host = army_host_node.position + shape.position
 		province_instance.add_component(armies)
 		
 		# Connect the signals
