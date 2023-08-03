@@ -26,7 +26,7 @@ position = Vector2(4000, 2000)
 position = Vector2(139, 1779)
 polygon = PackedVector2Array(94, -62, 210, -34, 314, -46, 366, -32, 309, 51, 340, 176, 205, 164, 90, 127, 27, 71, 0, 0, 34, -45)
 script = ExtResource("1_klkwd")
-links = PackedInt32Array(2)
+links = PackedInt32Array(2, 3)
 
 [node name="ArmyHost" type="Marker2D" parent="Shapes/Shape1"]
 position = Vector2(164, 61)
@@ -44,7 +44,7 @@ position = Vector2(163, 91)
 position = Vector2(243, 1500)
 polygon = PackedVector2Array(358, 12, 345, 168, 287, 220, 225, 209, 231, 144, 197, 65, 136, 23, 140, -51, 194, -85, 253, -92)
 script = ExtResource("1_klkwd")
-links = PackedInt32Array(2, 4, 5)
+links = PackedInt32Array(1, 2, 4, 5)
 
 [node name="ArmyHost" type="Marker2D" parent="Shapes/Shape3"]
 position = Vector2(260, 44)
