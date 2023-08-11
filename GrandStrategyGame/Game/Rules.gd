@@ -20,16 +20,36 @@ func _ready():
 			)
 
 
-func start_of_turn(provinces: Array[Province], current_turn: int):
+func start_of_turn(game_state: GameState):
 	var rules: Array[Node] = get_children()
 	for rule in rules:
-		(rule as Rule)._on_start_of_turn(provinces, current_turn)
+		(rule as Rule)._on_start_of_turn(game_state)
 
 
-func action_is_legal(action: Action) -> bool:
+func action_is_legal(game_state: GameState, action: Action) -> bool:
+	if action is ActionArmySplit:
+		var action_split := action as ActionArmySplit
+		if game_state.provinces().index_of(action_split._province_key) == -1:
+			push_warning("Someone attempted to split an army in a province that doesn't exist")
+			return false
+		if game_state.armies(action_split._province_key).index_of(action_split._army_key) == -1:
+			push_warning("Someone attempted to split an army that doesn't exist")
+			return false
+	elif action is ActionArmyMovement:
+		var action_movement := action as ActionArmyMovement
+		if game_state.provinces().index_of(action_movement._province_key) == -1:
+			push_warning("Someone attempted to move an army from a province that doesn't exist")
+			return false
+		if game_state.armies(action_movement._province_key).index_of(action_movement._army_key) == -1:
+			push_warning("Someone attempted to move an army that doesn't exist")
+			return false
+		if game_state.provinces().index_of(action_movement._destination_key) == -1:
+			push_warning("Someone attempted to move an army to a province that doesn't exist")
+			return false
+	
 	var rules: Array[Node] = get_children()
 	for rule in rules:
-		if not (rule as Rule).action_is_legal(action):
+		if not (rule as Rule).action_is_legal(game_state, action):
 			return false
 	return true
 
@@ -38,5 +58,5 @@ func connect_action(action: Action):
 	var rules: Array[Node] = get_children()
 	for rule in rules:
 		var _connect_error = action.connect(
-			"action_played", Callable(rule, "_on_action_played")
+			"action_applied", Callable(rule, "_on_action_applied")
 		)

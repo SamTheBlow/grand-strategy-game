@@ -5,5 +5,5 @@ extends Player
 # If you want to make your own AI, make a subclass of this class.
 
 ## This is where the AI generates its actions based on a given game state
-func play(_provinces: Array[Province]):
-	pass
+func play(_game_state: GameState) -> Array[Action]:
+	return []

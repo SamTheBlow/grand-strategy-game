@@ -3,6 +3,7 @@ extends Node
 
 
 var playing_country: Country
+var _key: String
 
 
 func _ready():
@@ -11,8 +12,8 @@ func _ready():
 	add_child(actions_node)
 
 
-func init(playing_country_: Country):
-	playing_country = playing_country_
+func key() -> String:
+	return _key
 
 
 func get_actions() -> Array[Action]:

@@ -7,9 +7,15 @@ signal selected
 var links: Array[Province] = []
 var owner_country: Country = null : set = set_owner_country
 
+var _key: String
+
 
 func _on_shape_clicked():
 	emit_signal("selected", self)
+
+
+func key() -> String:
+	return _key
 
 
 func province_shape() -> ProvinceShape:

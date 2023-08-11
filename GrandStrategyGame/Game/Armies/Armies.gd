@@ -35,6 +35,14 @@ func merge_armies():
 				break
 
 
+func army_with_key(key: String) -> Army:
+	var armies: Array[Army] = get_alive_armies()
+	for army in armies:
+		if army.key() == key:
+			return army
+	return null
+
+
 func get_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
 	var armies: Array[Army] = get_alive_armies()

@@ -30,3 +30,11 @@ func get_provinces() -> Array[Province]:
 	for child in children:
 		output.append(child as Province)
 	return output
+
+
+func province_with_key(key: String) -> Province:
+	var provinces: Array[Province] = get_provinces()
+	for province in provinces:
+		if province.key() == key:
+			return province
+	return null

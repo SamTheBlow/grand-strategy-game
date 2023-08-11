@@ -14,18 +14,19 @@
 [ext_resource type="Script" path="res://Game/DragSource.gd" id="9_jlbtm"]
 [ext_resource type="Script" path="res://Game/Chat/Chat.gd" id="9_xx55i"]
 [ext_resource type="Script" path="res://Rules/MinArmySize.gd" id="10"]
-[ext_resource type="Script" path="res://Rules/Combat/Combat2.gd" id="11"]
 [ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
 [ext_resource type="Script" path="res://Game/PlayerHuman.gd" id="13"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopulation.gd" id="14"]
 [ext_resource type="Script" path="res://Rules/Population/RuleAutoRecruit.gd" id="15"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopGrowth.gd" id="16"]
+[ext_resource type="Script" path="res://Rules/Combat/Combat.gd" id="18_gs62p"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Game/Armies/Army.tscn" id="22_7mphk"]
 
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
 world_scene = ExtResource("2_iymnr")
 province_scene = ExtResource("3")
+army_scene = ExtResource("22_7mphk")
 number_of_troops_scene = ExtResource("6")
 
 [node name="Camera2D" type="Camera2D" parent="."]
@@ -218,7 +219,7 @@ script = ExtResource("9")
 script = ExtResource("10")
 
 [node name="Combat" type="Node" parent="Rules"]
-script = ExtResource("11")
+script = ExtResource("18_gs62p")
 
 [node name="Populations" type="Node" parent="Rules"]
 script = ExtResource("14")

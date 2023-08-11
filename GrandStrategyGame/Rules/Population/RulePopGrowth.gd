@@ -4,8 +4,10 @@ extends Rule
 # Increases a province's population at an exponential rate
 
 
-func _on_start_of_turn(provinces: Array[Province], _current_turn: int):
+func _on_start_of_turn(game_state: GameState):
+	var provinces: Array[GameStateData] = game_state.provinces().data()
 	for province in provinces:
-		var population_node := province.get_node("Population") as Population
-		var population_count: int = population_node.population_count
-		population_node.population_count += int(population_count * 0.1)
+		var population: GameStateInt = (
+			game_state.province_population(province.get_key())
+		)
+		population.data += int(population.data * 0.1)

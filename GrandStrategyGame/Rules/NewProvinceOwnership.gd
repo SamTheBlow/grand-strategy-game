@@ -2,9 +2,26 @@ class_name RuleNewProvinceOwnership
 extends Rule
 
 
-func _on_start_of_turn(provinces: Array[Province], _current_turn: int):
-	for province in provinces:
-		province.owner_country = new_owner_of(province)
+func _on_start_of_turn(game_state: GameState):
+	var provinces_node: Provinces = (
+		get_parent().get_parent().get_node("Provinces") as Provinces
+	)
+	var province_nodes: Array[Province] = provinces_node.get_provinces()
+	
+	for province in province_nodes:
+		var new_owner: Country = new_owner_of(province)
+		
+		# Internal change
+		var province_owner: GameStateString = (
+			game_state.province_owner(province.key())
+		)
+		if new_owner == null:
+			province_owner.data = "-1"
+		else:
+			province_owner.data = String(new_owner.key())
+		
+		# Visual change
+		province.owner_country = new_owner
 
 
 func new_owner_of(province: Province) -> Country:

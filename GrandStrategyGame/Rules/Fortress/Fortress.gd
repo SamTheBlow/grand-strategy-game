@@ -14,9 +14,3 @@ func init(is_built_: bool, position_: Vector2):
 func set_is_built(value: bool):
 	visible = value
 	is_built = value
-
-
-# Double the defender's defense during a battle
-func _on_battle_started(attack: Attack):
-	if is_built:
-		attack.attacker_efficiency *= 0.5

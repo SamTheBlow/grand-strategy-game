@@ -5,6 +5,8 @@ extends Node2D
 var owner_country: Country = null : set = set_owner_country
 var troop_count: int = 1 : set = set_troop_count
 
+var _key: String
+
 # Lets the game know this army can still perform actions
 var is_active: bool = true : set = set_active
 
@@ -29,6 +31,10 @@ func _process(delta: float):
 			position = new_position
 
 
+func key() -> String:
+	return _key
+
+
 func set_owner_country(value: Country):
 	owner_country = value
 	($ColorRect as ColorRect).color = owner_country.color
@@ -48,10 +54,11 @@ func set_active(value: bool):
 		z_index = 5
 
 
-func play_movement_to(destination: Vector2):
+func play_movement_to(source: Vector2, destination: Vector2):
 	self.is_active = false
 	animation_is_playing = true
-	original_position = position
+	position = source
+	original_position = source
 	target_position = destination
 
 

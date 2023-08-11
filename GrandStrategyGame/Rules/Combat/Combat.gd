@@ -1,57 +1,75 @@
 class_name RuleCombat
 extends Rule
+## Gives the defender a slight advantage in combat.
 
 
 signal battle_started
+signal battle_ended
 
 
-# Resolve battles at the start of each turn
-# This is in case that for example a game starts with battles to be resolved
-# Although... how would we determine which army is the attacker? Hmm.
-func _on_start_of_turn(provinces: Array[Province], _current_turn: int):
-	for province in provinces:
-		var armies_node := province.get_node("Armies") as Armies
-		var armies: Array[Army] = armies_node.get_alive_armies()
-		
-		var number_of_armies: int = armies.size()
-		for i in number_of_armies:
-			for j in range(i + 1, number_of_armies):
-				if armies[i].owner_country != armies[j].owner_country:
-					resolve_battle(armies[i], armies[j], province)
-
-
-func _on_action_played(action: Action):
+func _on_action_applied(
+	action: Action,
+	game_state: GameState
+) -> void:
 	if action is ActionArmyMovement:
-		var action_typed := action as ActionArmyMovement
-		resolve_battles(action_typed.army, action_typed.destination)
+		var movement := action as ActionArmyMovement
+		var province_key: String = movement._destination_key
+		var army_key: String = movement._new_army_key
+		movement._battles = resolve_battles(game_state, province_key, army_key)
 
 
-func resolve_battles(army: Army, province: Province):
-	var armies_node := province.get_node("Armies") as Armies
-	var armies: Array[Army] = armies_node.get_alive_armies()
+func resolve_battles(
+	game_state: GameState,
+	province_key: String,
+	army_key: String
+) -> Array[Battle]:
+	var output: Array[Battle] = []
 	
+	# We use a duplicate of the army data because when we resolve battles,
+	# there is a chance that we erase armies from the original array.
+	var armies: Array[GameStateData] = (
+		(game_state.armies(province_key).duplicate() as GameStateArray).data()
+	)
+	var army_owner: String = game_state.army_owner(province_key, army_key).data
 	var number_of_armies: int = armies.size()
 	for i in number_of_armies:
-		if army.owner_country != armies[i].owner_country:
-			resolve_battle(army, armies[i], province)
+		var other_army_key: String = armies[i].get_key()
+		var other_army_owner: String = (
+			game_state.army_owner(province_key, other_army_key).data
+		)
+		if other_army_owner != army_owner:
+			output.append(resolve_battle(
+				game_state,
+				province_key,
+				army_key,
+				other_army_key
+			))
+		
+		# If the army died in battle, stop
+		if game_state.armies(province_key).index_of(army_key) == -1:
+			break
+	
+	return output
 
 
-func resolve_battle(attacker: Army, defender: Army, province: Province):
-	var battle := Attack.new(attacker, defender, province)
+func resolve_battle(
+	game_state: GameState,
+	province_key: String,
+	attacker_key: String,
+	defender_key: String
+) -> Battle:
+	var battle := Battle.new(
+		province_key,
+		attacker_key,
+		defender_key
+	)
+	battle.attacker_efficiency *= 0.9
 	
 	# Allow other rules to affect the outcome
 	emit_signal("battle_started", battle)
 	
-	var delta: int = (
-		int(attacker.troop_count * battle.attacker_efficiency)
-		- defender.troop_count
-	)
-	if delta > 0:
-		attacker.set_troop_count(delta)
-		defender.queue_free()
-	elif delta < 0:
-		attacker.queue_free()
-		defender.set_troop_count(-delta)
-	else:
-		attacker.queue_free()
-		defender.queue_free()
+	battle.apply_outcome(game_state)
+	
+	emit_signal("battle_ended", game_state, battle)
+	
+	return battle

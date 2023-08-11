@@ -1,11 +1,18 @@
 class_name Action
 extends Node
+## An abstract class for actions.
+## Actions are the things players do that affect the game state.
 
 
-signal action_played
+signal action_applied
 
 
-# The subclass is expected to call this when it is done
-func play_action():
-	emit_signal("action_played", self)
-	queue_free()
+## When processing an action, it is always assumed that it is a legal action.
+## Therefore, please check that the action is legal before processing it.
+func apply_to(game_state: GameState) -> void:
+	emit_signal("action_applied", self, game_state)
+
+
+## Returns armies that were removed from the game.
+func update_visuals(_provinces_node: Provinces) -> Array[Army]:
+	return []

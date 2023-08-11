@@ -1,11 +1,10 @@
-[gd_scene load_steps=15 format=3 uid="uid://dt7gjsuwry1nc"]
+[gd_scene load_steps=14 format=3 uid="uid://dt7gjsuwry1nc"]
 
 [ext_resource type="Script" path="res://WorldMaps/ProvinceTestData.gd" id="1_klkwd"]
 [ext_resource type="Script" path="res://WorldMaps/Scenario4.gd" id="2_7xeus"]
 [ext_resource type="PackedScene" uid="uid://ciulqa12hqugv" path="res://Countries/UK.tscn" id="3_vacq7"]
 [ext_resource type="PackedScene" uid="uid://bkmf8dr023xe1" path="res://Countries/France.tscn" id="4_p2x2c"]
 [ext_resource type="PackedScene" uid="uid://dbctt7evrxl7d" path="res://Countries/Germany.tscn" id="5_otql5"]
-[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Game/Armies/Army.tscn" id="5_woqc2"]
 [ext_resource type="PackedScene" uid="uid://bmwci6w6oibs7" path="res://Countries/Russia.tscn" id="6_sai0n"]
 [ext_resource type="PackedScene" uid="uid://d3eh1iokpkdkw" path="res://Countries/Italy.tscn" id="7_l1o2m"]
 [ext_resource type="PackedScene" uid="uid://55f1wncy4fkb" path="res://Countries/Poland.tscn" id="8_dnf0r"]
@@ -684,4 +683,3 @@ position = Vector2(1489, -410)
 [node name="Scenario1" type="Node2D" parent="Scenarios"]
 script = ExtResource("2_7xeus")
 country_scenes = Array[PackedScene]([ExtResource("3_vacq7"), ExtResource("4_p2x2c"), ExtResource("5_otql5"), ExtResource("6_sai0n"), ExtResource("7_l1o2m"), ExtResource("8_dnf0r"), ExtResource("9_vlnq7"), ExtResource("10_tarmn"), ExtResource("11_guykm"), ExtResource("12_o0l80"), ExtResource("13_kaabc")])
-army_scene = ExtResource("5_woqc2")

@@ -10,15 +10,15 @@ signal game_over
 var listen_to: Array = []
 
 
-func _on_start_of_turn(_provinces: Array[Province], _current_turn: int):
+func _on_start_of_turn(_game_state: GameState):
 	pass
 
 
-func _on_action_played(_action: Action):
+func _on_action_applied(_action: Action, _game_state: GameState):
 	pass
 
 
-func action_is_legal(_action: Action) -> bool:
+func action_is_legal(_game_state: GameState, _action: Action) -> bool:
 	return true
 
 
