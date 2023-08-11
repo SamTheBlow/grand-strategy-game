@@ -215,8 +215,8 @@ func new_ai_player(
 	var ai_data: GameStateArray = player_data.get_array("ai")
 	var ai_class_name := String(ai_data.get_string("class_name").data)
 	match ai_class_name:
-		"TestAI2":
-			return TestAI2.new()
+		"TestAI1":
+			return TestAI1.new()
 	return null # Shouldn't happen
 
 

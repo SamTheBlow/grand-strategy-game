@@ -48,7 +48,7 @@ func generate_game_state() -> GameState:
 		var player_data: Array[GameStateData] = []
 		player_data.append(GameStateString.new("playing_country", str(i)))
 		var ai_data: Array[GameStateData] = []
-		ai_data.append(GameStateString.new("class_name", "TestAI2"))
+		ai_data.append(GameStateString.new("class_name", "TestAI1"))
 		player_data.append(GameStateArray.new("ai", ai_data, false))
 		players_data.append(GameStateArray.new(str(i), player_data, true))
 	
