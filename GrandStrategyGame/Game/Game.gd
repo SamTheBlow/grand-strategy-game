@@ -55,7 +55,7 @@ func _ready():
 		$Provinces.add_child(provinces[i])
 	
 	# Setup the game's scenario
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario4
+	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
 	game_state = scenario.generate_game_state()
 	
 	var countries: Array[Country] = game_state.new_countries()
