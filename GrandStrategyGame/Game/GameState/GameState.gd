@@ -21,8 +21,9 @@ func duplicate() -> GameState:
 
 
 func new_countries() -> Array[Country]:
-	var countries_data: Array[GameStateData] = \
+	var countries_data: Array[GameStateData] = (
 		data().get_array("countries").data()
+	)
 	var number_of_countries: int = countries_data.size()
 	var output: Array[Country] = []
 	for i in number_of_countries:

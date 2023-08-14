@@ -18,7 +18,6 @@ func fortress_is_built(
 	game_state: GameState,
 	province_key: String,
 ) -> bool:
-	return game_state \
-		.province(province_key) \
-		.get_array("fortress") \
-		.get_bool("is_built").data
+	var province: GameStateArray = game_state.province(province_key)
+	var fortress: GameStateArray = province.get_array("fortress")
+	return fortress.get_bool("is_built").data

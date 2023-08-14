@@ -60,9 +60,10 @@ func _ready():
 	
 	var countries: Array[Country] = game_state.new_countries()
 	var you := $Players/You as PlayerHuman
-	var playing_country_key: String = \
+	you.playing_country = country_with_key(
+		countries,
 		game_state.player_country(game_state.human_player())
-	you.playing_country = country_with_key(countries, playing_country_key)
+	)
 	($CanvasLayer/GameUI/Chat as Chat).system_message(
 		"You are playing as " + you.playing_country.country_name
 	)

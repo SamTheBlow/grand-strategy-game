@@ -71,8 +71,7 @@ func generate_game_state() -> GameState:
 		# Links
 		var links_data: Array[GameStateData] = []
 		var province_links: PackedInt32Array = (
-			get_parent().get_parent().get_node("Shapes") \
-			.get_node("Shape" + str(i + 1)) as ProvinceTestData
+			%Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
 		).links
 		var number_of_links: int = province_links.size()
 		for j in number_of_links:

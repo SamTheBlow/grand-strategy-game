@@ -20,6 +20,7 @@
 position = Vector2(4000, 2000)
 
 [node name="Shapes" type="Node2D" parent="."]
+unique_name_in_owner = true
 
 [node name="Shape1" type="Polygon2D" parent="Shapes"]
 position = Vector2(139, 1779)

@@ -12,23 +12,9 @@ func _ready():
 # Delete all insufficiently large armies
 func _on_battle_ended(game_state: GameState, battle: Battle) -> void:
 	var province: GameStateArray = game_state.province(battle._province_key)
-	var armies: GameStateArray = province.get_array("armies")
-	var army_attacker: GameStateArray = (
-		armies.get_array(battle._attacking_army_key)
-	)
-	if (
-		army_attacker != null \
-		and army_attacker.get_int("troop_count").data < minimum_army_size
-	):
-		armies.data().erase(army_attacker)
-	var army_defender: GameStateArray = (
-		armies.get_array(battle._defending_army_key)
-	)
-	if (
-		army_defender != null \
-		and army_defender.get_int("troop_count").data < minimum_army_size
-	):
-		armies.data().erase(army_defender)
+	var armies_data: GameStateArray = province.get_array("armies")
+	_apply_to_army(armies_data, battle._attacking_army_key)
+	_apply_to_army(armies_data, battle._defending_army_key)
 
 
 func _on_battle_ended_visuals(provinces: Provinces, battle: Battle) -> void:
@@ -52,6 +38,17 @@ func action_is_legal(_game_state: GameState, action: Action) -> bool:
 				push_warning("Someone tried to split an army, but at least one of the resulting armies was too small!")
 				return false
 	return true
+
+
+func _apply_to_army(armies_data: GameStateArray, army_key: String) -> void:
+	var army_data: GameStateArray = armies_data.get_array(army_key)
+	
+	if army_data == null:
+		return
+	
+	var attacker_troop_count: int = army_data.get_int("troop_count").data
+	if attacker_troop_count < minimum_army_size:
+		armies_data.data().erase(army_data)
 
 
 # Unused
