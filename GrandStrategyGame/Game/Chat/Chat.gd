@@ -14,12 +14,12 @@ func _on_input_text_submitted(new_text: String):
 		# Commands
 		match new_text:
 			"/help":
-				system_message( \
-				"\n" + \
-				"/help - Gives a list of every command\n" + \
-				"/test - Test command, has no effect\n" + \
-				"/infop - Gives info on selected province\n" + \
-				"/fs - Toggle fullscreen")
+				system_message_multiline([
+					"/help - Gives a list of every command",
+					"/test - Test command, has no effect",
+					"/infop - Gives info on selected province",
+					"/fs - Toggle fullscreen",
+				])
 			"/test":
 				system_message("[b]Test successful[/b]")
 			"/infop":
@@ -55,6 +55,13 @@ func system_message(new_text: String):
 		+ "System: " + new_text
 		+ "[/color][/i]\n"
 	)
+
+
+func system_message_multiline(text_lines: Array[String]):
+	var message: String = ""
+	for text_line in text_lines:
+		message += "\n" + text_line
+	system_message(message)
 
 
 func new_message(new_text: String):
