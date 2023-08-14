@@ -77,7 +77,7 @@ func _ready():
 		$Countries.add_child(countries[i])
 	
 	for i in number_of_provinces:
-		var province_key: String = game_state.provinces().data()[i].get_key()
+		var province_key: String = game_state.provinces().data()[i].key()
 		provinces[i]._key = province_key
 		
 		# Owner
@@ -95,7 +95,7 @@ func _ready():
 		var number_of_armies: int = armies.size()
 		for j in number_of_armies:
 			var army_key: String = (
-				game_state.armies(province_key).data()[j].get_key()
+				game_state.armies(province_key).data()[j].key()
 			)
 			
 			armies[j].owner_country = country_with_key(
@@ -194,7 +194,7 @@ func new_ai_players(
 		var player_data_array := player_data as GameStateArray
 		var new_player: PlayerAI = new_ai_player(
 			players_data,
-			player_data.get_key()
+			player_data.key()
 		)
 		var playing_country_key := String(
 			player_data_array.get_string("playing_country").data
@@ -202,7 +202,7 @@ func new_ai_players(
 		new_player.playing_country = (
 			country_with_key(countries, playing_country_key)
 		)
-		new_player._key = player_data.get_key()
+		new_player._key = player_data.key()
 		output.append(new_player)
 	return output
 

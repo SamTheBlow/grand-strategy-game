@@ -33,7 +33,7 @@ func resolve_battles(
 	var army_owner: String = game_state.army_owner(province_key, army_key).data
 	var number_of_armies: int = armies.size()
 	for i in number_of_armies:
-		var other_army_key: String = armies[i].get_key()
+		var other_army_key: String = armies[i].key()
 		var other_army_owner: String = (
 			game_state.army_owner(province_key, other_army_key).data
 		)

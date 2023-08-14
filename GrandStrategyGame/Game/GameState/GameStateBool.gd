@@ -5,9 +5,9 @@ extends GameStateData
 var data: bool = false
 
 
-func _init(key: String, value: bool):
-	super(key)
-	data = value
+func _init(key_: String, data_: bool):
+	super(key_)
+	data = data_
 
 
 func duplicate() -> GameStateData:

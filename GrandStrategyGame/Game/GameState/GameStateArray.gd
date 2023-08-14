@@ -9,11 +9,11 @@ var _data: Array[GameStateData] = []
 
 
 func _init(
-	key: String,
+	key_: String,
 	data_: Array[GameStateData],
 	is_ordered_list_: bool
 ):
-	super(key)
+	super(key_)
 	_data = data_
 	_is_ordered_list = is_ordered_list_
 
@@ -31,48 +31,48 @@ func duplicate() -> GameStateData:
 
 
 ## It's the same thing as duplicate(), but here you can give it a new key
-func clone(key: String) -> GameStateData:
+func clone(key_: String) -> GameStateData:
 	var output: Array[GameStateData] = []
 	for game_state_data in _data:
 		output.append(game_state_data.duplicate())
-	return GameStateArray.new(key, output, is_ordered_list())
+	return GameStateArray.new(key_, output, is_ordered_list())
 
 
 
 ## Returns -1 if the key doesn't match anything.
-func index_of(key: String) -> int:
+func index_of(key_: String) -> int:
 	var size: int = _data.size()
 	for i in size:
-		if _data[i].get_key() == key:
+		if _data[i].key() == key_:
 			return i
 	return -1
 
 
-func get_data(key: String) -> GameStateData:
-	var index: int = index_of(key)
+func get_data(key_: String) -> GameStateData:
+	var index: int = index_of(key_)
 	if index == -1:
 		return null
 	return _data[index]
 
 
-func get_array(key: String) -> GameStateArray:
-	return get_data(key) as GameStateArray
+func get_array(key_: String) -> GameStateArray:
+	return get_data(key_) as GameStateArray
 
 
-func get_int(key: String) -> GameStateInt:
-	return get_data(key) as GameStateInt
+func get_int(key_: String) -> GameStateInt:
+	return get_data(key_) as GameStateInt
 
 
-func get_float(key: String) -> GameStateFloat:
-	return get_data(key) as GameStateFloat
+func get_float(key_: String) -> GameStateFloat:
+	return get_data(key_) as GameStateFloat
 
 
-func get_string(key: String) -> GameStateString:
-	return get_data(key) as GameStateString
+func get_string(key_: String) -> GameStateString:
+	return get_data(key_) as GameStateString
 
 
-func get_bool(key: String) -> GameStateBool:
-	return get_data(key) as GameStateBool
+func get_bool(key_: String) -> GameStateBool:
+	return get_data(key_) as GameStateBool
 
 
 ## Gives a random positive number that isn't already an existing key.

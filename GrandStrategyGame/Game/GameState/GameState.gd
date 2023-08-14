@@ -30,7 +30,7 @@ func new_countries() -> Array[Country]:
 		var country: Country = Country.new()
 		country.country_name = String(country_data.get_string("name").data)
 		country.color = Color.hex(country_data.get_int("color").data)
-		country._key = country_data.get_key()
+		country._key = country_data.key()
 		output.append(country)
 	return output
 
@@ -81,7 +81,7 @@ func new_province_armies(
 	var armies_data: Array[GameStateData] = armies(province_key).data()
 	for army_data in armies_data:
 		var new_army := army_scene.instantiate() as Army
-		new_army._key = army_data.get_key()
+		new_army._key = army_data.key()
 		output.append(new_army)
 	return output
 

@@ -17,7 +17,7 @@ func play(game_state: GameState) -> Array[Action]:
 		
 		# Find the nearest target province for each of your armies
 		var armies: Array[GameStateData] = (
-			game_state.armies(province.get_key()).data()
+			game_state.armies(province.key()).data()
 		)
 		for army_data in armies:
 			var army := army_data as GameStateArray
@@ -26,8 +26,8 @@ func play(game_state: GameState) -> Array[Action]:
 					_find_target_province(
 						game_state,
 						links,
-						province.get_key(),
-						army.get_key(),
+						province.key(),
+						army.key(),
 						0
 					)
 				)

@@ -4,11 +4,11 @@ class_name GameStateData
 var _key: String = ""
 
 
-func _init(key: String):
-	_key = key
+func _init(key_: String):
+	_key = key_
 
 
-func get_key() -> String:
+func key() -> String:
 	return _key
 
 
