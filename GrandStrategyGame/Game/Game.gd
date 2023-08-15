@@ -79,6 +79,7 @@ func _ready() -> void:
 	for i in number_of_provinces:
 		var province_key: String = game_state.provinces().data()[i].key()
 		provinces[i]._key = province_key
+		provinces[i].name = province_key # TODO put this in some constructor
 		
 		# Owner
 		var owner_key: String = game_state.province_owner(province_key).data
@@ -204,6 +205,7 @@ func new_ai_players(
 				country_with_key(countries, playing_country_key)
 		)
 		new_player._key = player_data.key()
+		new_player.name = player_data.key()
 		output.append(new_player)
 	return output
 

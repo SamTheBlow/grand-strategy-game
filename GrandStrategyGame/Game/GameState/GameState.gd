@@ -32,6 +32,7 @@ func new_countries() -> Array[Country]:
 		country.country_name = String(country_data.get_string("name").data)
 		country.color = Color.hex(country_data.get_int("color").data)
 		country._key = country_data.key()
+		country.name = country_data.key() # TODO put this in some constructor
 		output.append(country)
 	return output
 

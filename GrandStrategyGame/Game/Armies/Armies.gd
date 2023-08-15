@@ -10,6 +10,7 @@ func add_army(army: Army) -> void:
 	army.position = position_army_host - global_position
 	if army.get_parent():
 		army.get_parent().remove_child(army)
+	army.name = army.key()
 	add_child(army)
 
 
