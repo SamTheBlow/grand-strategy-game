@@ -174,8 +174,9 @@ func _on_chat_requested_province_info() -> void:
 		return
 	
 	var selected_province: Province = provinces_node.selected_province
-	var population_node := selected_province.get_node("Population") as Population
-	var population_count: int = population_node.population_count
+	var population_count: int = (
+			game_state.province_population(selected_province.key()).data
+	)
 	chat_node.system_message("Population count: " + str(population_count))
 
 
