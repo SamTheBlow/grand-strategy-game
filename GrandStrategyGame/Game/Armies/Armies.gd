@@ -80,9 +80,3 @@ func army_can_be_moved_to(army: Army, destination: Province) -> bool:
 	var is_neighbour: bool = this_province.is_linked_to(destination)
 	
 	return army_is_here and is_neighbour
-
-
-func move_army_to(army: Army, destination: Province) -> void:
-	if army_can_be_moved_to(army, destination):
-		var armies_node := destination.get_node("Armies") as Armies
-		armies_node.add_troops(army)
