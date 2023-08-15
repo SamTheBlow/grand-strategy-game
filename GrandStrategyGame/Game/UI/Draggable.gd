@@ -26,8 +26,15 @@ func _process(_delta) -> void:
 		emit_signal("is_dragged", self)
 
 
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		var event_typed := event as InputEventMouseMotion
+		if (
+				is_being_dragged
+				and event_typed.button_mask == MOUSE_BUTTON_MASK_LEFT
+		):
+			get_viewport().set_input_as_handled()
+	elif event is InputEventMouseButton:
 		var event_typed := event as InputEventMouseButton
 		if (
 				not event_typed.pressed
