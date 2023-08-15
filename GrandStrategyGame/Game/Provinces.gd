@@ -2,10 +2,10 @@ class_name Provinces
 extends Node2D
 
 
-var selected_province: Province = null
+var selected_province: Province
 
 
-func select_province(province: Province):
+func select_province(province: Province) -> void:
 	if selected_province == province:
 		return
 	if a_province_is_selected():
@@ -14,7 +14,7 @@ func select_province(province: Province):
 	selected_province.select()
 
 
-func unselect_province():
+func unselect_province() -> void:
 	if a_province_is_selected():
 		selected_province.deselect()
 	selected_province = null

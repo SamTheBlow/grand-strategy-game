@@ -2,10 +2,10 @@ class_name GameStateString
 extends GameStateData
 
 
-var data: String = ""
+var data: String
 
 
-func _init(key_: String, data_: String):
+func _init(key_: String, data_: String) -> void:
 	super(key_)
 	data = data_
 

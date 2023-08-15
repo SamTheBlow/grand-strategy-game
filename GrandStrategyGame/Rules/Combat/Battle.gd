@@ -12,10 +12,10 @@ var _delta: int
 
 
 func _init(
-	province_key: String,
-	attacking_army_key: String,
-	defending_army_key: String
-):
+		province_key: String,
+		attacking_army_key: String,
+		defending_army_key: String
+) -> void:
 	_province_key = province_key
 	_attacking_army_key = attacking_army_key
 	_defending_army_key = defending_army_key
@@ -23,25 +23,25 @@ func _init(
 
 func apply_outcome(game_state: GameState) -> void:
 	var attacker_troop_count: GameStateInt = (
-		game_state.army_troop_count(_province_key, _attacking_army_key)
+			game_state.army_troop_count(_province_key, _attacking_army_key)
 	)
 	var defender_troop_count: GameStateInt = (
-		game_state.army_troop_count(_province_key, _defending_army_key)
+			game_state.army_troop_count(_province_key, _defending_army_key)
 	)
 	
 	var armies_data: Array[GameStateData] = (
-		game_state.armies(_province_key).data()
+			game_state.armies(_province_key).data()
 	)
-	var attacking_army_data: GameStateData = game_state.army(
-		_province_key, _attacking_army_key
+	var attacking_army_data: GameStateData = (
+			game_state.army(_province_key, _attacking_army_key)
 	)
-	var defending_army_data: GameStateData = game_state.army(
-		_province_key, _defending_army_key
+	var defending_army_data: GameStateData = (
+			game_state.army(_province_key, _defending_army_key)
 	)
 	
 	_delta = (
-		int(attacker_troop_count.data * attacker_efficiency)
-		- defender_troop_count.data
+			int(attacker_troop_count.data * attacker_efficiency)
+			- defender_troop_count.data
 	)
 	#print("Battle occured. Attacker ", _attacking_army_key, " ; Defender ", _defending_army_key, " ; Delta ", _delta, " (", "battle was a tie" if _delta == 0 else ("attacker won" if _delta > 0 else "defender won"), ")")
 	if _delta > 0:
@@ -58,9 +58,8 @@ func apply_outcome(game_state: GameState) -> void:
 func update_visuals(provinces: Provinces) -> Array[Army]:
 	var output: Array[Army] = []
 	
-	var armies_node := (
-		provinces.province_with_key(_province_key).get_node("Armies") as Armies
-	)
+	var province_node: Province = provinces.province_with_key(_province_key)
+	var armies_node := province_node.get_node("Armies") as Armies
 	var attacker: Army = armies_node.army_with_key(_attacking_army_key)
 	var defender: Army = armies_node.army_with_key(_defending_army_key)
 	

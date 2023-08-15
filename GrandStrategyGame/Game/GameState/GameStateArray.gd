@@ -9,10 +9,10 @@ var _data: Array[GameStateData] = []
 
 
 func _init(
-	key_: String,
-	data_: Array[GameStateData],
-	is_ordered_list_: bool
-):
+		key_: String,
+		data_: Array[GameStateData],
+		is_ordered_list_: bool
+) -> void:
 	super(key_)
 	_data = data_
 	_is_ordered_list = is_ordered_list_
@@ -36,7 +36,6 @@ func clone(key_: String) -> GameStateData:
 	for game_state_data in _data:
 		output.append(game_state_data.duplicate())
 	return GameStateArray.new(key_, output, is_ordered_list())
-
 
 
 ## Returns -1 if the key doesn't match anything.

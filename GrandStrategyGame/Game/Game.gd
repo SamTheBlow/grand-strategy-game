@@ -11,7 +11,7 @@ var simulation: GameState
 var deletion_queue: Array[Army]
 
 
-func _ready():
+func _ready() -> void:
 	var world: Node = world_scene.instantiate()
 	
 	# Set the camera's limits
@@ -43,7 +43,7 @@ func _ready():
 		
 		# Connect the signals
 		province_instance.connect(
-			"selected", Callable(self, "_on_province_selected")
+				"selected", Callable(self, "_on_province_selected")
 		)
 	
 	# Setup links
@@ -61,15 +61,15 @@ func _ready():
 	var countries: Array[Country] = game_state.new_countries()
 	var you := $Players/You as PlayerHuman
 	you.playing_country = country_with_key(
-		countries,
-		game_state.player_country(game_state.human_player())
+			countries,
+			game_state.player_country(game_state.human_player())
 	)
 	($CanvasLayer/GameUI/Chat as Chat).system_message(
-		"You are playing as " + you.playing_country.country_name
+			"You are playing as " + you.playing_country.country_name
 	)
 	var ai_players: Array[PlayerAI] = new_ai_players(
-		game_state.data().get_array("players"),
-		countries
+			game_state.data().get_array("players"),
+			countries
 	)
 	var number_of_countries: int = countries.size()
 	for i in number_of_countries:
@@ -85,27 +85,27 @@ func _ready():
 		var owner_key: String = game_state.province_owner(province_key).data
 		if owner_key != "-1":
 			provinces[i].set_owner_country(
-				country_with_key(countries, owner_key)
+					country_with_key(countries, owner_key)
 			)
 		
 		# Armies
 		var armies_node := provinces[i].get_node("Armies") as Armies
 		var armies: Array[Army] = (
-			game_state.new_province_armies(province_key, army_scene)
+				game_state.new_province_armies(province_key, army_scene)
 		)
 		var number_of_armies: int = armies.size()
 		for j in number_of_armies:
 			var army_key: String = (
-				game_state.armies(province_key).data()[j].key()
+					game_state.armies(province_key).data()[j].key()
 			)
 			
 			armies[j].owner_country = country_with_key(
-				countries,
-				String(game_state.army_owner(province_key, army_key).data)
+					countries,
+					String(game_state.army_owner(province_key, army_key).data)
 			)
 			armies[j].troop_count = game_state.army_troop_count(
-				province_key,
-				army_key
+					province_key,
+					army_key
 			).data
 			armies_node.add_army(armies[j])
 		
@@ -118,13 +118,13 @@ func _ready():
 	simulation = game_state.duplicate()
 
 
-func _on_game_over(country: Country):
+func _on_game_over(country: Country) -> void:
 	var game_over_node := $CanvasLayer/GameUI/GameOverScreen as GameOver
 	game_over_node.show()
 	game_over_node.set_text(country.country_name + " wins!")
 
 
-func _on_province_selected(province: Province):
+func _on_province_selected(province: Province) -> void:
 	var player_country: Country = ($Players/You as PlayerHuman).playing_country
 	var provinces_node := $Provinces as Provinces
 	if provinces_node.a_province_is_selected():
@@ -138,10 +138,12 @@ func _on_province_selected(province: Province):
 				troop_ui.name = "RecruitUI"
 				troop_ui.setup(army, selected_province, province)
 				troop_ui.connect(
-					"cancelled", Callable(self, "_on_recruit_cancelled")
+						"cancelled",
+						Callable(self, "_on_recruit_cancelled")
 				)
 				troop_ui.connect(
-					"move_troops", Callable(self, "new_action_army_movement")
+						"move_troops",
+						Callable(self, "new_action_army_movement")
 				)
 				$CanvasLayer.add_child(troop_ui)
 				return
@@ -154,15 +156,15 @@ func _on_province_selected(province: Province):
 		province.show_neighbours(3)
 
 
-func _on_background_clicked():
+func _on_background_clicked() -> void:
 	unselect_province()
 
 
-func _on_recruit_cancelled():
+func _on_recruit_cancelled() -> void:
 	unselect_province()
 
 
-func _on_chat_requested_province_info():
+func _on_chat_requested_province_info() -> void:
 	var provinces_node := $Provinces as Provinces
 	var chat_node := $CanvasLayer/GameUI/Chat as Chat
 	
@@ -173,9 +175,7 @@ func _on_chat_requested_province_info():
 	var selected_province: Province = provinces_node.selected_province
 	var population_node := selected_province.get_node("Population") as Population
 	var population_count: int = population_node.population_count
-	chat_node.system_message(
-		"Population count: " + str(population_count)
-	)
+	chat_node.system_message("Population count: " + str(population_count))
 
 
 func country_with_key(countries: Array[Country], key: String) -> Country:
@@ -186,22 +186,22 @@ func country_with_key(countries: Array[Country], key: String) -> Country:
 
 
 func new_ai_players(
-	players_data: GameStateArray,
-	countries: Array[Country]
+		players_data: GameStateArray,
+		countries: Array[Country]
 ) -> Array[PlayerAI]:
 	var output: Array[PlayerAI] = []
 	var players_data_array: Array[GameStateData] = players_data.data()
 	for player_data in players_data_array:
 		var player_data_array := player_data as GameStateArray
 		var new_player: PlayerAI = new_ai_player(
-			players_data,
-			player_data.key()
+				players_data,
+				player_data.key()
 		)
 		var playing_country_key := String(
-			player_data_array.get_string("playing_country").data
+				player_data_array.get_string("playing_country").data
 		)
 		new_player.playing_country = (
-			country_with_key(countries, playing_country_key)
+				country_with_key(countries, playing_country_key)
 		)
 		new_player._key = player_data.key()
 		output.append(new_player)
@@ -209,8 +209,8 @@ func new_ai_players(
 
 
 func new_ai_player(
-	players_data: GameStateArray,
-	player_key: String
+		players_data: GameStateArray,
+		player_key: String
 ) -> PlayerAI:
 	var player_data: GameStateArray = players_data.get_array(player_key)
 	var ai_data: GameStateArray = player_data.get_array("ai")
@@ -221,16 +221,16 @@ func new_ai_player(
 	return null # Shouldn't happen
 
 
-func unselect_province():
+func unselect_province() -> void:
 	($Provinces as Provinces).unselect_province()
 
 
 func new_action_army_movement(
-	army: Army,
-	number_of_troops: int,
-	source: Province,
-	destination: Province
-):
+		army: Army,
+		number_of_troops: int,
+		source: Province,
+		destination: Province
+) -> void:
 	unselect_province()
 	
 	var rules_node := $Rules as Rules
@@ -243,13 +243,13 @@ func new_action_army_movement(
 	# Split the army into two if needed
 	if army.troop_count > number_of_troops:
 		var new_army_key: String = (
-			local_simulation.armies(source.key()).new_unique_key()
+				local_simulation.armies(source.key()).new_unique_key()
 		)
 		var action_split := ActionArmySplit.new(
-			source.key(),
-			army.key(),
-			[army.troop_count - number_of_troops, number_of_troops],
-			[new_army_key]
+				source.key(),
+				army.key(),
+				[army.troop_count - number_of_troops, number_of_troops],
+				[new_army_key]
 		)
 		if not rules_node.action_is_legal(local_simulation, action_split):
 			return
@@ -260,13 +260,13 @@ func new_action_army_movement(
 		moving_army_key = new_army_key
 	
 	var moving_army_new_key: String = (
-		local_simulation.armies(destination.key()).new_unique_key()
+			local_simulation.armies(destination.key()).new_unique_key()
 	)
 	var action_move := ActionArmyMovement.new(
-		source.key(),
-		moving_army_key,
-		destination.key(),
-		moving_army_new_key
+			source.key(),
+			moving_army_key,
+			destination.key(),
+			moving_army_new_key
 	)
 	if not rules_node.action_is_legal(local_simulation, action_move):
 		return
@@ -278,7 +278,7 @@ func new_action_army_movement(
 	simulation = local_simulation
 	for action in actions:
 		deletion_queue.append_array(
-			action.update_visuals($Provinces as Provinces)
+				action.update_visuals($Provinces as Provinces)
 		)
 		actions_node.add_child(action)
 	
@@ -286,19 +286,19 @@ func new_action_army_movement(
 	var source_armies_node := source.get_node("Armies") as Armies
 	var destination_armies_node := destination.get_node("Armies") as Armies
 	var moving_army: Army = (
-		destination_armies_node.army_with_key(moving_army_new_key)
+			destination_armies_node.army_with_key(moving_army_new_key)
 	)
 	var source_position: Vector2 = (
-		source_armies_node.position_army_host - destination.position
+			source_armies_node.position_army_host - destination.position
 	)
 	var target_position: Vector2 = (
-		destination_armies_node.position_army_host
-		- destination_armies_node.global_position
+			destination_armies_node.position_army_host
+			- destination_armies_node.global_position
 	)
 	moving_army.play_movement_to(source_position, target_position)
 
 
-func end_turn():
+func end_turn() -> void:
 	#print("************************************ End of turn ****************************************")
 	var provinces_node := $Provinces as Provinces
 	var provinces: Array[Province] = provinces_node.get_provinces()
@@ -320,7 +320,7 @@ func end_turn():
 				action.apply_to(game_state)
 				if not player is PlayerHuman:
 					deletion_queue.append_array(
-						action.update_visuals(provinces_node)
+							action.update_visuals(provinces_node)
 					)
 			action.queue_free()
 		

@@ -7,5 +7,5 @@ extends ProvinceComponent
 var population_count: int = 0
 
 
-func _init(population_count_: int):
+func _init(population_count_: int) -> void:
 	population_count = population_count_

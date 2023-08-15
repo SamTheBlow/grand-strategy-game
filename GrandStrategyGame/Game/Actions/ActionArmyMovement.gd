@@ -11,11 +11,11 @@ var _battles: Array[Battle] = []
 
 
 func _init(
-	province_key: String,
-	army_key: String,
-	destination_key: String,
-	new_army_key: String,
-):
+		province_key: String,
+		army_key: String,
+		destination_key: String,
+		new_army_key: String
+) -> void:
 	_province_key = province_key
 	_army_key = army_key
 	_destination_key = destination_key
@@ -39,17 +39,17 @@ func apply_to(game_state: GameState) -> void:
 
 func update_visuals(provinces: Provinces) -> Array[Army]:
 	var source_province_node: Province = (
-		provinces.province_with_key(_province_key)
+			provinces.province_with_key(_province_key)
 	)
 	var source_armies_node := (
-		source_province_node.get_node("Armies") as Armies
+			source_province_node.get_node("Armies") as Armies
 	)
 	var army_node: Army = source_armies_node.army_with_key(_army_key)
 	var destination_province_node: Province = (
-		provinces.province_with_key(_destination_key)
+			provinces.province_with_key(_destination_key)
 	)
 	var destination_armies_node := (
-		destination_province_node.get_node("Armies") as Armies
+			destination_province_node.get_node("Armies") as Armies
 	)
 	destination_armies_node.add_army(army_node)
 	army_node._key = _new_army_key

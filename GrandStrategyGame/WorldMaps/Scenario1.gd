@@ -38,10 +38,10 @@ func generate_game_state() -> GameState:
 	for i in number_of_countries:
 		var country_data: Array[GameStateData] = []
 		country_data.append(
-			GameStateString.new("name", countries[i].country_name)
+				GameStateString.new("name", countries[i].country_name)
 		)
 		country_data.append(
-			GameStateInt.new("color", countries[i].color.to_rgba32())
+				GameStateInt.new("color", countries[i].color.to_rgba32())
 		)
 		countries_data.append(GameStateArray.new(str(i), country_data, false))
 		
@@ -54,7 +54,7 @@ func generate_game_state() -> GameState:
 	
 	var provinces_data: Array[GameStateData] = []
 	var number_of_provinces: int = (
-		get_parent().get_parent().get_node("Shapes").get_child_count()
+			get_parent().get_parent().get_node("Shapes").get_child_count()
 	)
 	for i in number_of_provinces:
 		var province_data: Array[GameStateData] = []
@@ -71,12 +71,12 @@ func generate_game_state() -> GameState:
 		# Links
 		var links_data: Array[GameStateData] = []
 		var province_links: PackedInt32Array = (
-			%Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
+				%Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
 		).links
 		var number_of_links: int = province_links.size()
 		for j in number_of_links:
 			links_data.append(
-				GameStateString.new(str(j), str(province_links[j] - 1))
+					GameStateString.new(str(j), str(province_links[j] - 1))
 			)
 		province_data.append(GameStateArray.new("links", links_data, true))
 		

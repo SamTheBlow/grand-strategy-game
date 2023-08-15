@@ -6,7 +6,7 @@ var playing_country: Country
 var _key: String
 
 
-func _ready():
+func _ready() -> void:
 	var actions_node := Node.new()
 	actions_node.name = "Actions"
 	add_child(actions_node)

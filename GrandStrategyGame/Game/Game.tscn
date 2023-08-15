@@ -114,7 +114,8 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
 
-[node name="RichTextLabel" type="RichTextLabel" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+[node name="ChatText" type="RichTextLabel" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 bbcode_enabled = true
@@ -124,7 +125,8 @@ scroll_following = true
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="Input" type="LineEdit" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+[node name="ChatInput" type="LineEdit" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Type here"
 
@@ -233,6 +235,6 @@ army_scene = ExtResource("22_7mphk")
 
 [connection signal="clicked" from="Background" to="." method="_on_background_clicked"]
 [connection signal="requested_province_info" from="CanvasLayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
-[connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Input" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
+[connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="CanvasLayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
 [connection signal="dragged" from="CanvasLayer/GameUI/GameOverScreen/ColorRect" to="CanvasLayer/GameUI/GameOverScreen" method="_on_dragged"]

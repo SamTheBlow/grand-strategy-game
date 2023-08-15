@@ -7,20 +7,20 @@ extends ColorRect
 signal dragged
 
 
-func _unhandled_input(event: InputEvent):
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var event_typed := event as InputEventMouseButton
 		if (
-			event_typed.pressed
-			and event_typed.button_index == MOUSE_BUTTON_LEFT
+				event_typed.pressed
+				and event_typed.button_index == MOUSE_BUTTON_LEFT
 		):
 			var mouse_position: Vector2 = get_viewport().get_mouse_position()
 			if (
-				is_visible_in_tree()
-				and mouse_position.x >= global_position.x
-				and mouse_position.x <= global_position.x + size.x
-				and mouse_position.y >= global_position.y
-				and mouse_position.y <= global_position.y + size.y
+					is_visible_in_tree()
+					and mouse_position.x >= global_position.x
+					and mouse_position.x <= global_position.x + size.x
+					and mouse_position.y >= global_position.y
+					and mouse_position.y <= global_position.y + size.y
 			):
 				get_viewport().set_input_as_handled()
 				emit_signal("dragged")

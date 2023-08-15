@@ -6,9 +6,9 @@ extends Rule
 @export var army_scene: PackedScene
 
 
-func _on_start_of_turn(game_state: GameState):
+func _on_start_of_turn(game_state: GameState) -> void:
 	var provinces_node: Provinces = (
-		get_parent().get_parent().get_node("Provinces") as Provinces
+			get_parent().get_parent().get_node("Provinces") as Provinces
 	)
 	
 	var provinces: Array[GameStateData] = game_state.provinces().data()
@@ -23,7 +23,7 @@ func _on_start_of_turn(game_state: GameState):
 				GameStateInt.new("troop_count", province_population),
 			]
 			var new_army := GameStateArray.new(
-				province.new_unique_key(), new_army_data, false
+					province.new_unique_key(), new_army_data, false
 			)
 			province.get_array("armies").data().append(new_army)
 			# Bad code!!!
@@ -32,7 +32,7 @@ func _on_start_of_turn(game_state: GameState):
 			# Visual change
 			var new_army_node := army_scene.instantiate() as Army
 			var province_node: Province = (
-				provinces_node.province_with_key(province.key())
+					provinces_node.province_with_key(province.key())
 			)
 			new_army_node.owner_country = province_node.owner_country
 			new_army_node.troop_count = province_population

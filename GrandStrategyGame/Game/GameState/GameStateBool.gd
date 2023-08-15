@@ -2,10 +2,10 @@ class_name GameStateBool
 extends GameStateData
 
 
-var data: bool = false
+var data: bool
 
 
-func _init(key_: String, data_: bool):
+func _init(key_: String, data_: bool) -> void:
 	super(key_)
 	data = data_
 

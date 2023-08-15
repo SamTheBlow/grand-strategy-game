@@ -6,11 +6,11 @@ extends ProvinceComponent
 var is_built: bool = false : set = set_is_built
 
 
-func init(is_built_: bool, position_: Vector2):
+func init(is_built_: bool, position_: Vector2) -> void:
 	is_built = is_built_
 	position = position_
 
 
-func set_is_built(value: bool):
+func set_is_built(value: bool) -> void:
 	visible = value
 	is_built = value

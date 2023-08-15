@@ -2,9 +2,9 @@ class_name RuleNewProvinceOwnership
 extends Rule
 
 
-func _on_start_of_turn(game_state: GameState):
+func _on_start_of_turn(game_state: GameState) -> void:
 	var provinces_node: Provinces = (
-		get_parent().get_parent().get_node("Provinces") as Provinces
+			get_parent().get_parent().get_node("Provinces") as Provinces
 	)
 	var province_nodes: Array[Province] = provinces_node.get_provinces()
 	
@@ -13,7 +13,7 @@ func _on_start_of_turn(game_state: GameState):
 		
 		# Internal change
 		var province_owner: GameStateString = (
-			game_state.province_owner(province.key())
+				game_state.province_owner(province.key())
 		)
 		if new_owner == null:
 			province_owner.data = "-1"

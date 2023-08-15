@@ -10,7 +10,7 @@ var owner_country: Country = null : set = set_owner_country
 var _key: String
 
 
-func _on_shape_clicked():
+func _on_shape_clicked() -> void:
 	emit_signal("selected", self)
 
 
@@ -22,7 +22,7 @@ func province_shape() -> ProvinceShape:
 	return $Shape as ProvinceShape
 
 
-func set_owner_country(country: Country):
+func set_owner_country(country: Country) -> void:
 	if country == owner_country:
 		return
 	owner_country = country
@@ -38,15 +38,15 @@ func get_shape() -> PackedVector2Array:
 	return province_shape().polygon
 
 
-func set_shape(polygon: PackedVector2Array):
+func set_shape(polygon: PackedVector2Array) -> void:
 	province_shape().polygon = polygon
 
 
-func select():
+func select() -> void:
 	province_shape().draw_status = 1
 
 
-func deselect():
+func deselect() -> void:
 	var shape_node: ProvinceShape = province_shape()
 	if shape_node.draw_status == 1:
 		for link in links:
@@ -54,12 +54,12 @@ func deselect():
 	shape_node.draw_status = 0
 
 
-func show_neighbours(display_type: int):
+func show_neighbours(display_type: int) -> void:
 	for link in links:
 		link.show_as_neighbour(display_type)
 
 
-func show_as_neighbour(display_type: int):
+func show_as_neighbour(display_type: int) -> void:
 	province_shape().draw_status = display_type
 
 
@@ -67,5 +67,5 @@ func is_linked_to(province: Province) -> bool:
 	return links.has(province)
 
 
-func add_component(component: ProvinceComponent):
+func add_component(component: ProvinceComponent) -> void:
 	add_child(component)

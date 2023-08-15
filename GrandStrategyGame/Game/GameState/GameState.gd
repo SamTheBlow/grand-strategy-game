@@ -5,7 +5,7 @@ class_name GameState
 var _data: GameStateArray
 
 
-func _init(data_: GameStateArray):
+func _init(data_: GameStateArray) -> void:
 	_data = data_
 
 
@@ -22,13 +22,13 @@ func duplicate() -> GameState:
 
 func new_countries() -> Array[Country]:
 	var countries_data: Array[GameStateData] = (
-		data().get_array("countries").data()
+			data().get_array("countries").data()
 	)
 	var number_of_countries: int = countries_data.size()
 	var output: Array[Country] = []
 	for i in number_of_countries:
 		var country_data := countries_data[i] as GameStateArray
-		var country: Country = Country.new()
+		var country := Country.new()
 		country.country_name = String(country_data.get_string("name").data)
 		country.color = Color.hex(country_data.get_int("color").data)
 		country._key = country_data.key()
@@ -75,8 +75,8 @@ func army(province_key: String, army_key: String) -> GameStateArray:
 
 
 func new_province_armies(
-	province_key: String,
-	army_scene: PackedScene
+		province_key: String,
+		army_scene: PackedScene
 ) -> Array[Army]:
 	var output: Array[Army] = []
 	var armies_data: Array[GameStateData] = armies(province_key).data()

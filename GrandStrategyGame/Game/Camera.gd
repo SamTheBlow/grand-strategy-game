@@ -8,14 +8,14 @@ var zoom_increment: float = 0.075
 var zoom_rate: float = 8.0
 
 
-func _ready():
+func _ready() -> void:
 	get_tree().get_root().connect(
-		"size_changed",
-		Callable(self, "_on_screen_resize")
+			"size_changed",
+			Callable(self, "_on_screen_resize")
 	)
 
 
-func _unhandled_input(event: InputEvent):
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion:
 		var event_typed := event as InputEventMouseMotion
 		if event_typed.button_mask == MOUSE_BUTTON_MASK_LEFT:
@@ -23,10 +23,10 @@ func _unhandled_input(event: InputEvent):
 			# All of this assumes the camera's
 			# anchor mode is Fixed TopLeft.
 			var max_x: float = (
-				limit_right - get_viewport_rect().size.x / zoom.x
+					limit_right - get_viewport_rect().size.x / zoom.x
 			)
 			var max_y: float = (
-				limit_bottom - get_viewport_rect().size.y / zoom.y
+					limit_bottom - get_viewport_rect().size.y / zoom.y
 			)
 			position.x = clampf(position.x, 0.0, max_x)
 			position.y = clampf(position.y, 0.0, max_y)
@@ -39,12 +39,12 @@ func _unhandled_input(event: InputEvent):
 				zoom_out()
 
 
-func zoom_in():
+func zoom_in() -> void:
 	target_zoom = minf(target_zoom + zoom_increment, max_zoom)
 	set_physics_process(true)
 
 
-func zoom_out():
+func zoom_out() -> void:
 	target_zoom = maxf(target_zoom - zoom_increment, get_minimum_zoom())
 	set_physics_process(true)
 
@@ -56,12 +56,12 @@ func get_minimum_zoom() -> float:
 	return maxf(min_zoom_x, min_zoom_y)
 
 
-func _physics_process(delta: float):
+func _physics_process(delta: float) -> void:
 	zoom = zoom.lerp(target_zoom * Vector2.ONE, zoom_rate * delta)
 	set_physics_process(not is_equal_approx(zoom.x, target_zoom))
 
 
-func _on_screen_resize():
+func _on_screen_resize() -> void:
 	var minimum_zoom: float = get_minimum_zoom()
 	if zoom.x < minimum_zoom or zoom.y < minimum_zoom:
 		zoom = minimum_zoom * Vector2.ONE

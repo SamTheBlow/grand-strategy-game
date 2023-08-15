@@ -5,7 +5,7 @@ extends Rule
 var minimum_army_size: int = 10
 
 
-func _ready():
+func _ready() -> void:
 	listen_to = [["Combat", "battle_ended", "_on_battle_ended"]]
 
 
@@ -35,7 +35,10 @@ func action_is_legal(_game_state: GameState, action: Action) -> bool:
 		var partition: Array[int] = action_split._troop_partition
 		for p in partition:
 			if p < minimum_army_size:
-				push_warning("Someone tried to split an army, but at least one of the resulting armies was too small!")
+				push_warning(
+						"Someone tried to split an army, but at least one
+						of the resulting armies was too small!"
+				)
 				return false
 	return true
 

@@ -10,7 +10,7 @@ var relative_starting_position := Vector2.ZERO
 var relative_mouse_origin := Vector2.ZERO
 
 
-func _process(_delta):
+func _process(_delta) -> void:
 	if is_being_dragged:
 		var relative_position: Vector2 = get_relative_mouse_position()
 		var delta_x: float = relative_position.x - relative_mouse_origin.x
@@ -26,18 +26,18 @@ func _process(_delta):
 		emit_signal("is_dragged", self)
 
 
-func _input(event: InputEvent):
+func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var event_typed := event as InputEventMouseButton
 		if (
-			not event_typed.pressed
-			and event_typed.button_index == MOUSE_BUTTON_LEFT
+				not event_typed.pressed
+				and event_typed.button_index == MOUSE_BUTTON_LEFT
 		):
 			is_being_dragged = false
 
 
 ## Connect signals to this
-func _on_dragged():
+func _on_dragged() -> void:
 	is_being_dragged = true
 	relative_starting_position = Vector2(anchor_left, anchor_top)
 	relative_mouse_origin = get_relative_mouse_position()
@@ -47,8 +47,8 @@ func get_relative_mouse_position() -> Vector2:
 	var mouse_position: Vector2 = get_viewport().get_mouse_position()
 	var window_size: Vector2 = get_viewport().get_visible_rect().size
 	return Vector2(
-		mouse_position.x / window_size.x,
-		mouse_position.y / window_size.y
+			mouse_position.x / window_size.x,
+			mouse_position.y / window_size.y
 	)
 
 

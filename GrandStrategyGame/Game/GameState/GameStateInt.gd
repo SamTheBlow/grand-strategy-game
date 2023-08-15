@@ -2,10 +2,10 @@ class_name GameStateInt
 extends GameStateData
 
 
-var data: int = 0
+var data: int
 
 
-func _init(key_: String, data_: int):
+func _init(key_: String, data_: int) -> void:
 	super(key_)
 	data = data_
 

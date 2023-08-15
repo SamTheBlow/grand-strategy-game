@@ -14,11 +14,11 @@ var _new_army_keys: Array[String]
 
 
 func _init(
-	province_key: String,
-	army_key: String,
-	troop_partition: Array[int],
-	new_army_keys: Array[String],
-):
+		province_key: String,
+		army_key: String,
+		troop_partition: Array[int],
+		new_army_keys: Array[String]
+) -> void:
 	_province_key = province_key
 	_army_key = army_key
 	_troop_partition = troop_partition
@@ -38,9 +38,10 @@ func apply_to(game_state: GameState) -> void:
 		armies.data().append(army_clone)
 	
 	# Reduce the original army's troop count
-	game_state.army_troop_count(
-		_province_key, _army_key
-	).data = _troop_partition[0]
+	var army_troop_count: GameStateInt = (
+			game_state.army_troop_count(_province_key, _army_key)
+	)
+	army_troop_count.data = _troop_partition[0]
 	
 	#print("Army ", _army_key, " in province ", _province_key, " was split into ", _new_army_keys)
 	super(game_state)

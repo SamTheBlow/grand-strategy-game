@@ -8,8 +8,8 @@ signal battle_ended
 
 
 func _on_action_applied(
-	action: Action,
-	game_state: GameState
+		action: Action,
+		game_state: GameState
 ) -> void:
 	if action is ActionArmyMovement:
 		var movement := action as ActionArmyMovement
@@ -19,30 +19,29 @@ func _on_action_applied(
 
 
 func resolve_battles(
-	game_state: GameState,
-	province_key: String,
-	army_key: String
+		game_state: GameState,
+		province_key: String,
+		army_key: String
 ) -> Array[Battle]:
 	var output: Array[Battle] = []
 	
 	# We use a duplicate of the army data because when we resolve battles,
 	# there is a chance that we erase armies from the original array.
-	var armies: Array[GameStateData] = (
-		(game_state.armies(province_key).duplicate() as GameStateArray).data()
-	)
+	var _armies := game_state.armies(province_key) as GameStateArray
+	var armies: Array[GameStateData] = _armies.duplicate().data()
 	var army_owner: String = game_state.army_owner(province_key, army_key).data
 	var number_of_armies: int = armies.size()
 	for i in number_of_armies:
 		var other_army_key: String = armies[i].key()
 		var other_army_owner: String = (
-			game_state.army_owner(province_key, other_army_key).data
+				game_state.army_owner(province_key, other_army_key).data
 		)
 		if other_army_owner != army_owner:
 			output.append(resolve_battle(
-				game_state,
-				province_key,
-				army_key,
-				other_army_key
+					game_state,
+					province_key,
+					army_key,
+					other_army_key
 			))
 		
 		# If the army died in battle, stop
@@ -53,15 +52,15 @@ func resolve_battles(
 
 
 func resolve_battle(
-	game_state: GameState,
-	province_key: String,
-	attacker_key: String,
-	defender_key: String
+		game_state: GameState,
+		province_key: String,
+		attacker_key: String,
+		defender_key: String
 ) -> Battle:
 	var battle := Battle.new(
-		province_key,
-		attacker_key,
-		defender_key
+			province_key,
+			attacker_key,
+			defender_key
 	)
 	battle.attacker_efficiency *= 0.9
 	

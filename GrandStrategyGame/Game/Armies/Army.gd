@@ -16,15 +16,16 @@ var animation_is_playing: bool = false
 var animation_speed: float = 1.0
 
 
-func _process(delta: float):
+func _process(delta: float) -> void:
 	if animation_is_playing:
 		var new_position: Vector2 = (
-			position
-			+ (target_position - original_position) * animation_speed * delta
+				position
+				+ (target_position - original_position)
+				* animation_speed * delta
 		)
 		if (
-			new_position.distance_squared_to(original_position)
-			>= target_position.distance_squared_to(original_position)
+				new_position.distance_squared_to(original_position)
+				>= target_position.distance_squared_to(original_position)
 		):
 			stop_animations()
 		else:
@@ -35,17 +36,17 @@ func key() -> String:
 	return _key
 
 
-func set_owner_country(value: Country):
+func set_owner_country(value: Country) -> void:
 	owner_country = value
 	($ColorRect as ColorRect).color = owner_country.color
 
 
-func set_troop_count(value: int):
+func set_troop_count(value: int) -> void:
 	troop_count = value
 	($ColorRect/TroopCount as Label).text = str(troop_count)
 
 
-func set_active(value: bool):
+func set_active(value: bool) -> void:
 	is_active = value
 	if is_active:
 		modulate = Color(1.0, 1.0, 1.0, 1.0)
@@ -54,7 +55,7 @@ func set_active(value: bool):
 		z_index = 5
 
 
-func play_movement_to(source: Vector2, destination: Vector2):
+func play_movement_to(source: Vector2, destination: Vector2) -> void:
 	self.is_active = false
 	animation_is_playing = true
 	position = source
@@ -62,12 +63,12 @@ func play_movement_to(source: Vector2, destination: Vector2):
 	target_position = destination
 
 
-func gray_out():
+func gray_out() -> void:
 	var v: float = 0.5
 	modulate = Color(v, v, v, 1.0)
 
 
-func stop_animations():
+func stop_animations() -> void:
 	if animation_is_playing:
 		animation_is_playing = false
 		position = target_position

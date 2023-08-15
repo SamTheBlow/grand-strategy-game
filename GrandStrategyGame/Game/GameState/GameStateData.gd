@@ -1,10 +1,10 @@
 class_name GameStateData
 
 
-var _key: String = ""
+var _key: String
 
 
-func _init(key_: String):
+func _init(key_: String) -> void:
 	_key = key_
 
 

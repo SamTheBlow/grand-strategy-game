@@ -5,7 +5,7 @@ extends ProvinceComponent
 var position_army_host: Vector2
 
 
-func add_army(army: Army):
+func add_army(army: Army) -> void:
 	army.stop_animations()
 	army.position = position_army_host - global_position
 	if army.get_parent():
@@ -24,7 +24,7 @@ func get_alive_armies() -> Array[Army]:
 	return result
 
 
-func merge_armies():
+func merge_armies() -> void:
 	var armies: Array[Army] = get_alive_armies()
 	var number_of_armies: int = armies.size()
 	for i in number_of_armies:
@@ -82,7 +82,7 @@ func army_can_be_moved_to(army: Army, destination: Province) -> bool:
 	return army_is_here and is_neighbour
 
 
-func move_army_to(army: Army, destination: Province):
+func move_army_to(army: Army, destination: Province) -> void:
 	if army_can_be_moved_to(army, destination):
 		var armies_node := destination.get_node("Armies") as Armies
 		armies_node.add_troops(army)

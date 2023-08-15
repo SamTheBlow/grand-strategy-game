@@ -10,11 +10,11 @@ signal game_over
 var listen_to: Array = []
 
 
-func _on_start_of_turn(_game_state: GameState):
+func _on_start_of_turn(_game_state: GameState) -> void:
 	pass
 
 
-func _on_action_applied(_action: Action, _game_state: GameState):
+func _on_action_applied(_action: Action, _game_state: GameState) -> void:
 	pass
 
 
@@ -23,7 +23,7 @@ func action_is_legal(_game_state: GameState, _action: Action) -> bool:
 
 
 # TODO this is not really the best place for this...
-# ---> this will probably go in the GameState class or something like that.
+# ---> this will probably go in a CountryState class or something like that.
 # Count how many provinces each country has
 func province_count_per_country(provinces: Array[Province]) -> Array:
 	var output: Array = []
@@ -46,5 +46,5 @@ func province_count_per_country(provinces: Array[Province]) -> Array:
 	return output
 
 
-func declare_game_over(winner: Country):
+func declare_game_over(winner: Country) -> void:
 	emit_signal("game_over", winner)
