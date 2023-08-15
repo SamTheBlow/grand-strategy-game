@@ -25,9 +25,11 @@ func _unhandled_input(event: InputEvent) -> void:
 				and event_typed.button_index == MOUSE_BUTTON_LEFT
 		):
 			var mouse_position: Vector2 = get_viewport().get_mouse_position()
+			var camera: Camera2D = get_viewport().get_camera_2d()
 			var mouse_position_in_world: Vector2 = (
-					mouse_position / get_viewport().get_camera_2d().zoom
-					+ get_viewport().get_camera_2d().position
+					(mouse_position - get_viewport_rect().size * 0.5)
+					/ camera.zoom
+					+ camera.get_screen_center_position()
 			)
 			var local_mouse_position: Vector2 = (
 					mouse_position_in_world - global_position
