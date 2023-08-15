@@ -1,8 +1,8 @@
-[gd_scene load_steps=4 format=3]
+[gd_scene load_steps=4 format=3 uid="uid://by865efl4iwy"]
 
-[ext_resource type="Script" path="res://Game/RecruitUI.gd" id="1"]
-[ext_resource type="Script" path="res://Game/Draggable.gd" id="2_8p024"]
-[ext_resource type="Script" path="res://Game/DragSource.gd" id="3_3bk0o"]
+[ext_resource type="Script" path="res://Game/UI/NumberOfTroops/RecruitUI.gd" id="1_05f0x"]
+[ext_resource type="Script" path="res://Game/UI/Draggable.gd" id="2_4uf07"]
+[ext_resource type="Script" path="res://Game/UI/DragSource.gd" id="3_eyhmy"]
 
 [node name="NumberOfTroops" type="Control"]
 layout_mode = 3
@@ -12,7 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("1")
+script = ExtResource("1_05f0x")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -30,7 +30,7 @@ anchor_top = 0.25
 anchor_right = 0.75
 anchor_bottom = 0.75
 mouse_filter = 2
-script = ExtResource("2_8p024")
+script = ExtResource("2_4uf07")
 
 [node name="ColorRect" type="ColorRect" parent="Draggable"]
 layout_mode = 1
@@ -42,7 +42,7 @@ grow_vertical = 2
 focus_mode = 2
 mouse_filter = 1
 color = Color(0.5, 0.5, 0.5, 1)
-script = ExtResource("3_3bk0o")
+script = ExtResource("3_eyhmy")
 
 [node name="MarginContainer" type="MarginContainer" parent="Draggable"]
 layout_mode = 1

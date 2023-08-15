@@ -2,20 +2,20 @@
 
 [ext_resource type="Script" path="res://Game/Game.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://WorldMaps/WorldTest1.tscn" id="2_ahotg"]
-[ext_resource type="PackedScene" uid="uid://t1nvvlswjfas" path="res://Game/Province.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://t1nvvlswjfas" path="res://Game/Provinces/Province.tscn" id="3_1sfo8"]
 [ext_resource type="Script" path="res://Game/Rules.gd" id="4"]
 [ext_resource type="Script" path="res://Game/Camera.gd" id="5_imugo"]
-[ext_resource type="PackedScene" path="res://Game/NumberOfTroops.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://Game/UI/NumberOfTroops/NumberOfTroops.tscn" id="5_x16m1"]
 [ext_resource type="Script" path="res://Game/WorldBackground.gd" id="6_mgprh"]
-[ext_resource type="Script" path="res://Game/Provinces.gd" id="7"]
-[ext_resource type="Script" path="res://Game/GameUI.gd" id="8_lvg7v"]
+[ext_resource type="Script" path="res://Game/Provinces/Provinces.gd" id="8_efalc"]
 [ext_resource type="Script" path="res://Rules/RuleProvincePercentageToWin.gd" id="9"]
-[ext_resource type="Script" path="res://Game/GameOverPopup.gd" id="9_1vpac"]
-[ext_resource type="Script" path="res://Game/DragSource.gd" id="9_jlbtm"]
+[ext_resource type="Script" path="res://Game/Players/PlayerHuman.gd" id="9_4knpm"]
 [ext_resource type="Script" path="res://Game/Chat/Chat.gd" id="9_xx55i"]
 [ext_resource type="Script" path="res://Rules/MinArmySize.gd" id="10"]
+[ext_resource type="Script" path="res://Game/UI/GameUI.gd" id="10_g0hqp"]
 [ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
-[ext_resource type="Script" path="res://Game/PlayerHuman.gd" id="13"]
+[ext_resource type="Script" path="res://Game/UI/GameOverPopup.gd" id="12_vsryl"]
+[ext_resource type="Script" path="res://Game/UI/DragSource.gd" id="13_0wvjj"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopulation.gd" id="14"]
 [ext_resource type="Script" path="res://Rules/Population/RuleAutoRecruit.gd" id="15"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopGrowth.gd" id="16"]
@@ -25,9 +25,9 @@
 [node name="Game" type="Node2D"]
 script = ExtResource("1")
 world_scene = ExtResource("2_ahotg")
-province_scene = ExtResource("3")
+province_scene = ExtResource("3_1sfo8")
 army_scene = ExtResource("22_7mphk")
-number_of_troops_scene = ExtResource("6")
+number_of_troops_scene = ExtResource("5_x16m1")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
@@ -40,12 +40,12 @@ script = ExtResource("5_imugo")
 script = ExtResource("6_mgprh")
 
 [node name="Provinces" type="Node2D" parent="."]
-script = ExtResource("7")
+script = ExtResource("8_efalc")
 
 [node name="Players" type="Node" parent="."]
 
 [node name="You" type="Node" parent="Players"]
-script = ExtResource("13")
+script = ExtResource("9_4knpm")
 
 [node name="Countries" type="Node" parent="."]
 
@@ -59,7 +59,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("8_lvg7v")
+script = ExtResource("10_g0hqp")
 
 [node name="Chat" type="Control" parent="CanvasLayer/GameUI"]
 layout_mode = 1
@@ -168,7 +168,7 @@ anchor_bottom = 0.75
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-script = ExtResource("9_1vpac")
+script = ExtResource("12_vsryl")
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/GameOverScreen"]
 layout_mode = 1
@@ -179,7 +179,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 color = Color(0.5, 0.5, 0.5, 1)
-script = ExtResource("9_jlbtm")
+script = ExtResource("13_0wvjj")
 
 [node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect"]
 layout_mode = 0
