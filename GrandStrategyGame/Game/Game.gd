@@ -4,7 +4,6 @@ extends Node2D
 @export var world_scene: PackedScene
 @export var province_scene: PackedScene
 @export var army_scene: PackedScene
-@export var number_of_troops_scene: PackedScene
 
 var game_state: GameState
 var simulation: GameState
@@ -134,15 +133,16 @@ func _on_province_selected(province: Province) -> void:
 			var army: Army = selected_armies.get_active_armies_of(player_country)[0]
 			if selected_armies.army_can_be_moved_to(army, province):
 				# Show interface for selecting a number of troops
-				var troop_ui := number_of_troops_scene.instantiate() as RecruitUI
+				var troop_ui := (
+						TroopUI.new_popup(army, selected_province, province)
+				)
 				troop_ui.name = "RecruitUI"
-				troop_ui.setup(army, selected_province, province)
 				troop_ui.connect(
 						"cancelled",
 						Callable(self, "_on_recruit_cancelled")
 				)
 				troop_ui.connect(
-						"move_troops",
+						"army_moved",
 						Callable(self, "new_action_army_movement")
 				)
 				$CanvasLayer.add_child(troop_ui)

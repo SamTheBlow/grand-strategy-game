@@ -1,11 +1,10 @@
-[gd_scene load_steps=22 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=21 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://Game/Game.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://WorldMaps/WorldTest1.tscn" id="2_ahotg"]
 [ext_resource type="PackedScene" uid="uid://t1nvvlswjfas" path="res://Game/Provinces/Province.tscn" id="3_1sfo8"]
 [ext_resource type="Script" path="res://Game/Rules.gd" id="4"]
 [ext_resource type="Script" path="res://Game/Camera.gd" id="5_imugo"]
-[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://Game/UI/NumberOfTroops/NumberOfTroops.tscn" id="5_x16m1"]
 [ext_resource type="Script" path="res://Game/WorldBackground.gd" id="6_mgprh"]
 [ext_resource type="Script" path="res://Game/Provinces/Provinces.gd" id="8_efalc"]
 [ext_resource type="Script" path="res://Rules/RuleProvincePercentageToWin.gd" id="9"]
@@ -27,7 +26,6 @@ script = ExtResource("1")
 world_scene = ExtResource("2_ahotg")
 province_scene = ExtResource("3_1sfo8")
 army_scene = ExtResource("22_7mphk")
-number_of_troops_scene = ExtResource("5_x16m1")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
