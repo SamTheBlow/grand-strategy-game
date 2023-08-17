@@ -3,6 +3,8 @@ extends Control
 
 
 signal requested_province_info
+signal save_requested
+signal load_requested
 
 @onready var chat_log := %ChatText as RichTextLabel
 @onready var chat_input := %ChatInput as LineEdit
@@ -12,19 +14,21 @@ func _on_input_text_submitted(new_text: String) -> void:
 	# Submit the message
 	if new_text.begins_with("/"):
 		# Commands
-		match new_text:
-			"/help":
+		match new_text.trim_prefix("/"):
+			"help":
 				system_message_multiline([
 						"/help - Gives a list of every command",
 						"/test - Test command, has no effect",
 						"/infop - Gives info on selected province",
 						"/fs - Toggle fullscreen",
+						"/save - Save the current game state",
+						"/load - Load the saved game state",
 				])
-			"/test":
+			"test":
 				system_message("[b]Test successful[/b]")
-			"/infop":
+			"infop":
 				emit_signal("requested_province_info")
-			"/fs":
+			"fs":
 				var mode: int = DisplayServer.window_get_mode()
 				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
 					DisplayServer.window_set_mode(
@@ -36,6 +40,12 @@ func _on_input_text_submitted(new_text: String) -> void:
 							DisplayServer.WINDOW_MODE_FULLSCREEN
 					)
 					system_message("Switched to fullscreen")
+			"save":
+				system_message("Saving the game...")
+				emit_signal("save_requested")
+			"load":
+				system_message("Loading the save file...")
+				emit_signal("load_requested")
 			_:
 				system_message(
 						'"[color=black]' + new_text + '[/color]"'

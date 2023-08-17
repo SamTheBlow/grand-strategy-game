@@ -12,3 +12,7 @@ func _init(key_: String, data_: bool) -> void:
 
 func duplicate() -> GameStateData:
 	return GameStateBool.new(String(_key), data)
+
+
+func to_raw_data() -> Variant:
+	return data

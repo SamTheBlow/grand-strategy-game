@@ -12,3 +12,7 @@ func _init(key_: String, data_: float) -> void:
 
 func duplicate() -> GameStateData:
 	return GameStateFloat.new(String(_key), data)
+
+
+func to_raw_data() -> Variant:
+	return data

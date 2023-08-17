@@ -30,6 +30,23 @@ func duplicate() -> GameStateData:
 	return clone(String(_key))
 
 
+func to_raw_data() -> Variant:
+	if _is_ordered_list:
+		var output: Array = []
+		
+		for element in _data:
+			output.append({ element.key(): element.to_raw_data() })
+		
+		return output
+	else:
+		var output: Dictionary = {}
+		
+		for element in _data:
+			output[element.key()] = element.to_raw_data()
+		
+		return output
+
+
 ## It's the same thing as duplicate(), but here you can give it a new key
 func clone(key_: String) -> GameStateData:
 	var output: Array[GameStateData] = []

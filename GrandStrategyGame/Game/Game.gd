@@ -1,6 +1,8 @@
 extends Node2D
 
 
+const SAVE_FILE_PATH: String = "user://gamesave.json"
+
 @export var world_scene: PackedScene
 @export var province_scene: PackedScene
 @export var army_scene: PackedScene
@@ -55,7 +57,11 @@ func _ready() -> void:
 	
 	# Setup the game's scenario
 	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	game_state = scenario.generate_game_state()
+	load_game_state(scenario.generate_game_state())
+
+
+func load_game_state(new_game_state: GameState) -> void:
+	game_state = new_game_state
 	
 	var countries: Array[Country] = game_state.new_countries()
 	var you := $Players/You as PlayerHuman
@@ -76,6 +82,8 @@ func _ready() -> void:
 			$Players.add_child(ai_players[i])
 		$Countries.add_child(countries[i])
 	
+	var provinces: Array[Province] = ($Provinces as Provinces).get_provinces()
+	var number_of_provinces: int = provinces.size()
 	for i in number_of_provinces:
 		var province_key: String = game_state.provinces().data()[i].key()
 		provinces[i]._key = province_key
@@ -362,3 +370,38 @@ func merge_armies(armies: Array[GameStateData]) -> void:
 				army_j.get_int("troop_count").data += troop_count_i
 				break
 		i += 1
+
+
+func load_game() -> void:
+	var chat := %Chat as Chat
+	
+	var new_game_state: GameState = GameSaveJSON.new(SAVE_FILE_PATH).load_state()
+	
+	if new_game_state == null:
+		var error_message: String = "Failed to load the game"
+		push_error(error_message)
+		chat.system_message(error_message)
+		return
+	
+	#load_game_state(new_game_state)
+	#chat.new_message("[b]Game state loaded[/b]")
+	chat.system_message(
+			"(The game state loaded successfully, "
+			+ "but loading is not fully implemented yet)"
+	)
+
+
+func save_game() -> void:
+	var chat := %Chat as Chat
+	
+	var error: int = (
+			GameSaveJSON.new(SAVE_FILE_PATH).save_state(game_state)
+	)
+	
+	if error != OK:
+		var error_message: String = "Failed to save the game"
+		push_error(error_message)
+		chat.system_message(error_message)
+		return
+	
+	chat.new_message("[b]Game state saved[/b]")
