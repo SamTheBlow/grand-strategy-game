@@ -1,5 +1,4 @@
 class_name Battle
-extends Node
 
 
 var _province_key: String
