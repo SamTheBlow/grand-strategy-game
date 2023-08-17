@@ -116,12 +116,6 @@ func load_game_state(new_game_state: GameState) -> void:
 					army_key
 			).data
 			armies_node.add_army(armies[j])
-		
-		# Populations
-		var population: int = game_state.province_population(province_key).data
-		var population_node := Population.new(population)
-		population_node.name = "Population"
-		provinces[i].add_component(population_node)
 	
 	simulation = game_state.duplicate()
 

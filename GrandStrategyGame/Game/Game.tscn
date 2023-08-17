@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=20 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://Game/Game.gd" id="1"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://WorldMaps/WorldTest1.tscn" id="2_ahotg"]
@@ -15,7 +15,6 @@
 [ext_resource type="Script" path="res://Rules/NewProvinceOwnership.gd" id="12"]
 [ext_resource type="Script" path="res://Game/UI/GameOverPopup.gd" id="12_vsryl"]
 [ext_resource type="Script" path="res://Game/UI/DragSource.gd" id="13_0wvjj"]
-[ext_resource type="Script" path="res://Rules/Population/RulePopulation.gd" id="14"]
 [ext_resource type="Script" path="res://Rules/Population/RuleAutoRecruit.gd" id="15"]
 [ext_resource type="Script" path="res://Rules/Population/RulePopGrowth.gd" id="16"]
 [ext_resource type="Script" path="res://Rules/Combat/Combat.gd" id="18_gs62p"]
@@ -221,9 +220,6 @@ script = ExtResource("10")
 
 [node name="Combat" type="Node" parent="Rules"]
 script = ExtResource("18_gs62p")
-
-[node name="Populations" type="Node" parent="Rules"]
-script = ExtResource("14")
 
 [node name="PopGrowth" type="Node" parent="Rules"]
 script = ExtResource("16")
