@@ -32,8 +32,8 @@ func action_is_legal(game_state: GameState, action: Action) -> bool:
 		var action_split := action as ActionArmySplit
 		if game_state.provinces().index_of(action_split._province_key) == -1:
 			push_warning(
-					"Someone attempted to split an army
-					in a province that doesn't exist"
+					"Someone attempted to split an army"
+					+ " in a province that doesn't exist"
 			)
 			return false
 		if game_state.armies(action_split._province_key).index_of(action_split._army_key) == -1:
@@ -45,8 +45,8 @@ func action_is_legal(game_state: GameState, action: Action) -> bool:
 		var action_movement := action as ActionArmyMovement
 		if game_state.provinces().index_of(action_movement._province_key) == -1:
 			push_warning(
-					"Someone attempted to move an army
-					from a province that doesn't exist"
+					"Someone attempted to move an army"
+					+ " from a province that doesn't exist"
 			)
 			return false
 		if game_state.armies(action_movement._province_key).index_of(action_movement._army_key) == -1:
@@ -56,8 +56,8 @@ func action_is_legal(game_state: GameState, action: Action) -> bool:
 			return false
 		if game_state.provinces().index_of(action_movement._destination_key) == -1:
 			push_warning(
-					"Someone attempted to move an army
-					to a province that doesn't exist"
+					"Someone attempted to move an army"
+					+ " to a province that doesn't exist"
 			)
 			return false
 	
