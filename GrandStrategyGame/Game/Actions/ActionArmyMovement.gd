@@ -51,8 +51,8 @@ func update_visuals(provinces: Provinces) -> Array[Army]:
 	var destination_armies_node := (
 			destination_province_node.get_node("Armies") as Armies
 	)
-	destination_armies_node.add_army(army_node)
 	army_node._key = _new_army_key
+	destination_armies_node.add_army(army_node)
 	
 	var output: Array[Army] = []
 	for battle in _battles:
