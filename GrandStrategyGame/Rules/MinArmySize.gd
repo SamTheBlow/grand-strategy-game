@@ -17,15 +17,22 @@ func _on_battle_ended(game_state: GameState, battle: Battle) -> void:
 	_apply_to_army(armies_data, battle._defending_army_key)
 
 
-func _on_battle_ended_visuals(provinces: Provinces, battle: Battle) -> void:
+func _on_battle_ended_visuals(
+		provinces: Provinces,
+		battle: Battle
+) -> Array[Army]:
+	var output: Array[Army] = []
+	
 	var province: Province = provinces.province_with_key(battle._province_key)
 	var armies := province.get_node("Armies") as Armies
 	var army_attacker: Army = armies.army_with_key(battle._attacking_army_key)
 	if army_attacker != null and army_attacker.troop_count < minimum_army_size:
-		army_attacker.queue_free()
+		output.append(army_attacker)
 	var army_defender: Army = armies.army_with_key(battle._defending_army_key)
 	if army_defender != null and army_defender.troop_count < minimum_army_size:
-		army_defender.queue_free()
+		output.append(army_defender)
+	
+	return output
 
 
 # Prevent players from creating armies that are too small

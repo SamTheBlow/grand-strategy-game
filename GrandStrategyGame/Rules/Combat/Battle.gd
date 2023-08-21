@@ -73,6 +73,6 @@ func update_visuals(provinces: Provinces) -> Array[Army]:
 		output.append(defender)
 	
 	# Bad code! Do not try this at home!
-	(provinces.get_tree().current_scene.get_node("Game/Rules/MinArmySize") as RuleMinArmySize)._on_battle_ended_visuals(provinces, self)
+	output.append_array((provinces.get_tree().current_scene.get_node("Game/Rules/MinArmySize") as RuleMinArmySize)._on_battle_ended_visuals(provinces, self))
 	
 	return output
