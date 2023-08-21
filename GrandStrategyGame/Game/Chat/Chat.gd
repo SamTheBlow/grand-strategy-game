@@ -18,14 +18,11 @@ func _on_input_text_submitted(new_text: String) -> void:
 			"help":
 				system_message_multiline([
 						"/help - Gives a list of every command",
-						"/test - Test command, has no effect",
 						"/infop - Gives info on selected province",
 						"/fs - Toggle fullscreen",
 						"/save - Save the current game state",
 						"/load - Load the saved game state",
 				])
-			"test":
-				system_message("[b]Test successful[/b]")
 			"infop":
 				emit_signal("requested_province_info")
 			"fs":
