@@ -36,8 +36,8 @@ func action_is_legal(_game_state: GameState, action: Action) -> bool:
 		for p in partition:
 			if p < minimum_army_size:
 				push_warning(
-						"Someone tried to split an army, but at least one
-						of the resulting armies was too small!"
+						"Someone tried to split an army, but at least one"
+						+ " of the resulting armies was too small!"
 				)
 				return false
 	return true
