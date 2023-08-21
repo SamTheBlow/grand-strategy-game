@@ -1,7 +1,6 @@
+class_name Game
 extends Node2D
 
-
-const SAVE_FILE_PATH: String = "user://gamesave.json"
 
 @export var world_scene: PackedScene
 @export var province_scene: PackedScene
@@ -10,114 +9,6 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 var game_state: GameState
 var simulation: GameState
 var deletion_queue: Array[Army]
-
-
-func _ready() -> void:
-	var world: Node = world_scene.instantiate()
-	
-	# Set the camera's limits
-	var camera := $Camera2D as Camera2D
-	var world_size_node := world.get_node("WorldSize") as Marker2D
-	camera.limit_right = int(world_size_node.position.x)
-	camera.limit_bottom = int(world_size_node.position.y)
-	
-	# Setup provinces
-	var shapes: Node = world.get_node("Shapes")
-	var links: Array = []
-	var provinces: Array[Province] = []
-	var number_of_provinces: int = shapes.get_child_count()
-	for i in number_of_provinces:
-		# Setup the province itself
-		var province_instance := province_scene.instantiate() as Province
-		var shape := shapes.get_child(i) as ProvinceTestData
-		links.append(shape.links)
-		province_instance.set_shape(shape.polygon)
-		province_instance.position = shape.position
-		provinces.append(province_instance)
-		
-		# Setup the armies component
-		var armies := Armies.new()
-		armies.name = "Armies"
-		var army_host_node := shape.get_node("ArmyHost") as Marker2D
-		armies.position_army_host = army_host_node.position + shape.position
-		province_instance.add_component(armies)
-		
-		# Connect the signals
-		province_instance.connect(
-				"selected", Callable(self, "_on_province_selected")
-		)
-	
-	# Setup links
-	for i in number_of_provinces:
-		provinces[i].links = []
-		var number_of_links: int = links[i].size()
-		for j in number_of_links:
-			provinces[i].links.append(provinces[links[i][j] - 1])
-		$Provinces.add_child(provinces[i])
-	
-	# Setup the game's scenario
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	load_game_state(scenario.generate_game_state())
-
-
-func load_game_state(new_game_state: GameState) -> void:
-	game_state = new_game_state
-	
-	var countries: Array[Country] = game_state.new_countries()
-	var you := $Players/You as PlayerHuman
-	you.playing_country = country_with_key(
-			countries,
-			game_state.player_country(game_state.human_player())
-	)
-	($CanvasLayer/GameUI/Chat as Chat).system_message(
-			"You are playing as " + you.playing_country.country_name
-	)
-	var ai_players: Array[PlayerAI] = new_ai_players(
-			game_state.data().get_array("players"),
-			countries
-	)
-	var number_of_countries: int = countries.size()
-	for i in number_of_countries:
-		if ai_players[i].playing_country != you.playing_country:
-			$Players.add_child(ai_players[i])
-		$Countries.add_child(countries[i])
-	
-	var provinces: Array[Province] = ($Provinces as Provinces).get_provinces()
-	var number_of_provinces: int = provinces.size()
-	for i in number_of_provinces:
-		var province_key: String = game_state.provinces().data()[i].key()
-		provinces[i]._key = province_key
-		provinces[i].name = province_key # TODO put this in some constructor
-		
-		# Owner
-		var owner_key: String = game_state.province_owner(province_key).data
-		if owner_key != "-1":
-			provinces[i].set_owner_country(
-					country_with_key(countries, owner_key)
-			)
-		
-		# Armies
-		var armies_node := provinces[i].get_node("Armies") as Armies
-		var armies: Array[Army] = (
-				game_state.new_province_armies(province_key, army_scene)
-		)
-		var number_of_armies: int = armies.size()
-		for j in number_of_armies:
-			var army_key: String = (
-					game_state.armies(province_key).data()[j].key()
-			)
-			
-			armies[j].owner_country = country_with_key(
-					countries,
-					String(game_state.army_owner(province_key, army_key).data)
-			)
-			armies[j].troop_count = game_state.army_troop_count(
-					province_key,
-					army_key
-			).data
-			armies_node.add_army(armies[j])
-	
-	simulation = game_state.duplicate()
 
 
 func _on_game_over(country: Country) -> void:
@@ -180,6 +71,108 @@ func _on_chat_requested_province_info() -> void:
 			game_state.province_population(selected_province.key()).data
 	)
 	chat_node.system_message("Population count: " + str(population_count))
+
+
+func load_world(world: Node) -> void:
+	# Set the camera's limits
+	var camera := $Camera2D as Camera2D
+	var world_size_node := world.get_node("WorldSize") as Marker2D
+	camera.limit_right = int(world_size_node.position.x)
+	camera.limit_bottom = int(world_size_node.position.y)
+	
+	# Setup provinces
+	var shapes: Node = world.get_node("Shapes")
+	var links: Array = []
+	var provinces: Array[Province] = []
+	var number_of_provinces: int = shapes.get_child_count()
+	for i in number_of_provinces:
+		# Setup the province itself
+		var province_instance := province_scene.instantiate() as Province
+		var shape := shapes.get_child(i) as ProvinceTestData
+		links.append(shape.links)
+		province_instance.set_shape(shape.polygon)
+		province_instance.position = shape.position
+		provinces.append(province_instance)
+		
+		# Setup the armies component
+		var armies := Armies.new()
+		armies.name = "Armies"
+		var army_host_node := shape.get_node("ArmyHost") as Marker2D
+		armies.position_army_host = army_host_node.position + shape.position
+		province_instance.add_component(armies)
+		
+		# Connect the signals
+		province_instance.connect(
+				"selected", Callable(self, "_on_province_selected")
+		)
+	
+	# Setup links
+	for i in number_of_provinces:
+		provinces[i].links = []
+		var number_of_links: int = links[i].size()
+		for j in number_of_links:
+			provinces[i].links.append(provinces[links[i][j] - 1])
+		$Provinces.add_child(provinces[i])
+
+
+func load_game_state(new_game_state: GameState) -> void:
+	game_state = new_game_state
+	
+	var countries: Array[Country] = game_state.new_countries()
+	var you := $Players/You as PlayerHuman
+	you.playing_country = country_with_key(
+			countries,
+			game_state.player_country(game_state.human_player())
+	)
+	($CanvasLayer/GameUI/Chat as Chat).system_message(
+			"You are playing as " + you.playing_country.country_name
+	)
+	var ai_players: Array[PlayerAI] = new_ai_players(
+			game_state.data().get_array("players"),
+			countries
+	)
+	var number_of_countries: int = countries.size()
+	for i in number_of_countries:
+		if ai_players[i].playing_country != you.playing_country:
+			$Players.add_child(ai_players[i])
+		$Countries.add_child(countries[i])
+	
+	var provinces: Array[Province] = ($Provinces as Provinces).get_provinces()
+	var number_of_provinces: int = provinces.size()
+	for i in number_of_provinces:
+		var province_key: String = game_state.provinces().data()[i].key()
+		provinces[i]._key = province_key
+		provinces[i].name = province_key # TODO put this in some constructor
+		
+		# Owner
+		var owner_key: String = game_state.province_owner(province_key).data
+		if owner_key != "-1":
+			provinces[i].set_owner_country(
+					country_with_key(countries, owner_key)
+			)
+		
+		# Armies
+		var armies_node := provinces[i].get_node("Armies") as Armies
+		var armies: Array[Army] = (
+				game_state.new_province_armies(province_key, army_scene)
+		)
+		var number_of_armies: int = armies.size()
+		for j in number_of_armies:
+			var army_key: String = (
+					game_state.armies(province_key).data()[j].key()
+			)
+			
+			armies[j].owner_country = country_with_key(
+					countries,
+					String(game_state.army_owner(province_key, army_key).data)
+			)
+			armies[j].troop_count = game_state.army_troop_count(
+					province_key,
+					army_key
+			).data
+			armies_node.add_army(armies[j])
+	
+	simulation = game_state.duplicate()
 
 
 func country_with_key(countries: Array[Country], key: String) -> Country:
@@ -364,38 +357,3 @@ func merge_armies(armies: Array[GameStateData]) -> void:
 				army_j.get_int("troop_count").data += troop_count_i
 				break
 		i += 1
-
-
-func load_game() -> void:
-	var chat := %Chat as Chat
-	
-	var new_game_state: GameState = GameSaveJSON.new(SAVE_FILE_PATH).load_state()
-	
-	if new_game_state == null:
-		var error_message: String = "Failed to load the game"
-		push_error(error_message)
-		chat.system_message(error_message)
-		return
-	
-	#load_game_state(new_game_state)
-	#chat.new_message("[b]Game state loaded[/b]")
-	chat.system_message(
-			"(The game state loaded successfully, "
-			+ "but loading is not fully implemented yet)"
-	)
-
-
-func save_game() -> void:
-	var chat := %Chat as Chat
-	
-	var error: int = (
-			GameSaveJSON.new(SAVE_FILE_PATH).save_state(game_state)
-	)
-	
-	if error != OK:
-		var error_message: String = "Failed to save the game"
-		push_error(error_message)
-		chat.system_message(error_message)
-		return
-	
-	chat.new_message("[b]Game state saved[/b]")

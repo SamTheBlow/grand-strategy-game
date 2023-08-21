@@ -33,6 +33,8 @@ static func from_raw_data(
 	elif raw_data is int:
 		return GameStateInt.new(key_, raw_data as int)
 	elif raw_data is float:
+		if is_equal_approx(raw_data as float, int(raw_data as float)):
+			return GameStateInt.new(key_, int(raw_data as float))
 		return GameStateFloat.new(key_, raw_data as float)
 	elif raw_data is String:
 		return GameStateString.new(key_, raw_data as String)

@@ -229,9 +229,7 @@ script = ExtResource("15")
 army_scene = ExtResource("22_7mphk")
 
 [connection signal="clicked" from="Background" to="." method="_on_background_clicked"]
-[connection signal="load_requested" from="CanvasLayer/GameUI/Chat" to="." method="load_game"]
 [connection signal="requested_province_info" from="CanvasLayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
-[connection signal="save_requested" from="CanvasLayer/GameUI/Chat" to="." method="save_game"]
 [connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="CanvasLayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
 [connection signal="dragged" from="CanvasLayer/GameUI/GameOverScreen/ColorRect" to="CanvasLayer/GameUI/GameOverScreen" method="_on_dragged"]

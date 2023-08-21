@@ -27,7 +27,7 @@ func _on_start_of_turn(game_state: GameState) -> void:
 			)
 			province.get_array("armies").data().append(new_army)
 			# Bad code!!!
-			get_tree().current_scene.merge_armies(province.get_array("armies").data())
+			get_tree().current_scene.get_node("Game").merge_armies(province.get_array("armies").data())
 			
 			# Visual change
 			var new_army_node := army_scene.instantiate() as Army
