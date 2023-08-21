@@ -25,7 +25,7 @@ func _init(
 func apply_to(game_state: GameState) -> void:
 	var destination_armies: GameStateArray = game_state.armies(_destination_key)
 	var army_source: GameStateArray = game_state.army(_province_key, _army_key)
-	var army_clone := army_source.clone(_new_army_key) as GameStateArray
+	var army_clone := army_source.clone(_new_army_key)
 	
 	# Remove the old army from the source province
 	game_state.armies(_province_key).data().erase(army_source)

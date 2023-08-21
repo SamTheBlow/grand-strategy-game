@@ -33,7 +33,7 @@ func apply_to(game_state: GameState) -> void:
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
 		var unique_key: String = _new_army_keys[i]
-		var army_clone := army_source.clone(unique_key) as GameStateArray
+		var army_clone := army_source.clone(unique_key)
 		army_clone.get_int("troop_count").data = _troop_partition[i + 1]
 		armies.data().append(army_clone)
 	

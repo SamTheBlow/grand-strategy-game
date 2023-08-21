@@ -27,7 +27,7 @@ func data() -> Array[GameStateData]:
 
 
 func duplicate() -> GameStateData:
-	return clone(String(_key))
+	return clone(key())
 
 
 func to_raw_data() -> Variant:
@@ -48,11 +48,11 @@ func to_raw_data() -> Variant:
 
 
 ## It's the same thing as duplicate(), but here you can give it a new key
-func clone(key_: String) -> GameStateData:
+func clone(new_key: String) -> GameStateArray:
 	var output: Array[GameStateData] = []
 	for game_state_data in _data:
 		output.append(game_state_data.duplicate())
-	return GameStateArray.new(key_, output, is_ordered_list())
+	return GameStateArray.new(new_key, output, is_ordered_list())
 
 
 ## Returns -1 if the key doesn't match anything.
