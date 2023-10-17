@@ -1,4 +1,4 @@
-class_name ProvinceShape
+class_name ProvinceShapePolygon2D
 extends Polygon2D
 # See:
 # https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline

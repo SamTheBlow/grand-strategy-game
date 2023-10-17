@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://t1nvvlswjfas"]
 
 [ext_resource type="Script" path="res://Game/Provinces/Province.gd" id="1"]
-[ext_resource type="Script" path="res://Game/Provinces/ProvinceShape.gd" id="2_bds3o"]
+[ext_resource type="Script" path="res://Game/Provinces/ProvinceShapePolygon2D.gd" id="2_bds3o"]
 
 [node name="Province" type="Node2D"]
 script = ExtResource("1")

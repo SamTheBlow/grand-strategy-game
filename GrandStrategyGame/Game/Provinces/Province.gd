@@ -18,8 +18,8 @@ func key() -> String:
 	return _key
 
 
-func province_shape() -> ProvinceShape:
-	return $Shape as ProvinceShape
+func province_shape() -> ProvinceShapePolygon2D:
+	return $Shape as ProvinceShapePolygon2D
 
 
 func set_owner_country(country: Country) -> void:
@@ -27,7 +27,7 @@ func set_owner_country(country: Country) -> void:
 		return
 	owner_country = country
 	
-	var shape_node: ProvinceShape = province_shape()
+	var shape_node: ProvinceShapePolygon2D = province_shape()
 	if country:
 		shape_node.color = country.color
 	else:
@@ -47,7 +47,7 @@ func select() -> void:
 
 
 func deselect() -> void:
-	var shape_node: ProvinceShape = province_shape()
+	var shape_node: ProvinceShapePolygon2D = province_shape()
 	if shape_node.draw_status == 1:
 		for link in links:
 			link.deselect()
