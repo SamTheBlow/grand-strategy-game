@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dt6nec6bgdbvk"]
-
-[ext_resource type="Script" path="res://Game/Countries/Country.gd" id="1_41uey"]
-
-[node name="Country" type="Node"]
-script = ExtResource("1_41uey")
-country_name = "Austria"
-color = Color(0.75, 1, 1, 1)

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4afxrqxaje7k"]
+
+[ext_resource type="Script" path="res://Scripts/Countries/Country.gd" id="1_rt1jg"]
+
+[node name="Country" type="Node"]
+script = ExtResource("1_rt1jg")
+country_name = "Algeria"
+color = Color(0.5, 0.75, 0.375, 1)

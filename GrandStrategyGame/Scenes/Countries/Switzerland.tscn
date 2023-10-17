@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://cbwihxmhhes20"]
+
+[ext_resource type="Script" path="res://Scripts/Countries/Country.gd" id="1_3t4mp"]
+
+[node name="Country" type="Node"]
+script = ExtResource("1_3t4mp")
+country_name = "Switzerland"
+color = Color(0.75, 0.4375, 0.375, 1)
