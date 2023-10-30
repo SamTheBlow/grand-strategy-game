@@ -1,5 +1,5 @@
 class_name Armies
-extends ProvinceComponent
+extends Node2D
 
 
 var position_army_host: Vector2

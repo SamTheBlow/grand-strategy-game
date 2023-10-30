@@ -1,2 +1,0 @@
-class_name ProvinceComponent
-extends Node2D

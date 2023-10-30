@@ -86,20 +86,18 @@ func load_world(world: Node) -> void:
 	var provinces: Array[Province] = []
 	var number_of_provinces: int = shapes.get_child_count()
 	for i in number_of_provinces:
-		# Setup the province itself
+		# Setup the province
 		var province_instance := province_scene.instantiate() as Province
 		var shape := shapes.get_child(i) as ProvinceTestData
 		links.append(shape.links)
 		province_instance.set_shape(shape.polygon)
 		province_instance.position = shape.position
-		provinces.append(province_instance)
 		
-		# Setup the armies component
-		var armies := Armies.new()
-		armies.name = "Armies"
-		var army_host_node := shape.get_node("ArmyHost") as Marker2D
-		armies.position_army_host = army_host_node.position + shape.position
-		province_instance.add_component(armies)
+		var army_host_node := shape.get_node("ArmyHost") as Node2D
+		var position_army_host: Vector2 = army_host_node.global_position
+		province_instance.setup_armies(position_army_host)
+		
+		provinces.append(province_instance)
 		
 		# Connect the signals
 		province_instance.connect(

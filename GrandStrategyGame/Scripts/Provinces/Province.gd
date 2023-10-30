@@ -4,6 +4,9 @@ extends Node2D
 
 signal selected
 
+# This node's children for easy access
+var _armies: Armies
+
 var links: Array[Province] = []
 var owner_country: Country = null : set = set_owner_country
 
@@ -12,6 +15,14 @@ var _key: String
 
 func _on_shape_clicked() -> void:
 	emit_signal("selected", self)
+
+
+## Only call this once during initialization
+func setup_armies(position_army_host: Vector2) -> void:
+	_armies = Armies.new()
+	_armies.name = "Armies"
+	_armies.position_army_host = position_army_host
+	add_child(_armies)
 
 
 func key() -> String:
@@ -65,7 +76,3 @@ func show_as_neighbour(display_type: int) -> void:
 
 func is_linked_to(province: Province) -> bool:
 	return links.has(province)
-
-
-func add_component(component: ProvinceComponent) -> void:
-	add_child(component)
