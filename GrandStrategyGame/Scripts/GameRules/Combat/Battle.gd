@@ -6,7 +6,7 @@ var _attacking_army_key: String
 var _defending_army_key: String
 var attacker_efficiency: float = 1.0
 
-# This is horrible code, but I don't have time to rework this class
+# TODO bad code
 var _delta: int
 
 
@@ -54,25 +54,19 @@ func apply_outcome(game_state: GameState) -> void:
 		armies_data.erase(defending_army_data)
 
 
-func update_visuals(provinces: Provinces) -> Array[Army]:
-	var output: Array[Army] = []
-	
+func update_visuals(provinces: Provinces) -> void:
 	var province_node: Province = provinces.province_with_key(_province_key)
 	var armies_node := province_node.get_node("Armies") as Armies
 	var attacker: Army = armies_node.army_with_key(_attacking_army_key)
 	var defender: Army = armies_node.army_with_key(_defending_army_key)
 	
 	if _delta > 0:
-		attacker.set_troop_count(_delta)
-		output.append(defender)
+		# TODO bad code
+		attacker._army_size.remove(attacker._army_size.current_size() - _delta)
+		defender.destroy()
 	elif _delta < 0:
-		output.append(attacker)
-		defender.set_troop_count(-_delta)
+		attacker.destroy()
+		defender._army_size.remove(defender._army_size.current_size() + _delta)
 	else:
-		output.append(attacker)
-		output.append(defender)
-	
-	# Bad code! Do not try this at home!
-	output.append_array((provinces.get_tree().current_scene.get_node("Game/Rules/MinArmySize") as RuleMinArmySize)._on_battle_ended_visuals(provinces, self))
-	
-	return output
+		attacker.destroy()
+		defender.destroy()

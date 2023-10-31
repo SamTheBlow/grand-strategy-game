@@ -26,7 +26,7 @@ func _on_start_of_turn(game_state: GameState) -> void:
 
 func new_owner_of(province: Province) -> Country:
 	var armies_node := province.get_node("Armies") as Armies
-	var armies: Array[Army] = armies_node.get_alive_armies()
+	var armies: Array[Army] = armies_node._armies
 	var new_owner: Country = province.owner_country
 	for army in armies:
 		if army.owner_country == province.owner_country:

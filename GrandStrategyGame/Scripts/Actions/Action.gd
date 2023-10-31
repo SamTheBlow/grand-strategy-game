@@ -13,6 +13,5 @@ func apply_to(game_state: GameState) -> void:
 	emit_signal("action_applied", self, game_state)
 
 
-## Returns armies that were removed from the game.
-func update_visuals(_provinces_node: Provinces) -> Array[Army]:
-	return []
+func update_visuals(_provinces_node: Provinces, _is_simulation: bool) -> void:
+	pass

@@ -41,7 +41,7 @@ static func new_popup(
 	popup._source = source
 	popup._destination = destination
 	var slider: Slider = popup._troop_slider()
-	slider.max_value = popup._army.troop_count
+	slider.max_value = popup._army.current_size()
 	slider.value = slider.max_value
 	popup._new_slider_value()
 	

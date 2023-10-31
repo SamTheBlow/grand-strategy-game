@@ -35,7 +35,7 @@ func _on_start_of_turn(game_state: GameState) -> void:
 					provinces_node.province_with_key(province.key())
 			)
 			new_army_node.owner_country = province_node.owner_country
-			new_army_node.troop_count = province_population
+			new_army_node.setup(province_population)
 			new_army_node._key = new_army.key()
 			var armies_node := province_node.get_node("Armies") as Armies
 			armies_node.add_army(new_army_node)

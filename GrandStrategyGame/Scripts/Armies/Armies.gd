@@ -4,41 +4,42 @@ extends Node2D
 
 var position_army_host: Vector2
 
+var _armies: Array[Army]
+
+
+func remove_army(army: Army) -> void:
+	army.disconnect("destroyed", Callable(self, "remove_army"))
+	_armies.erase(army)
+	remove_child(army)
+
 
 func add_army(army: Army) -> void:
 	army.stop_animations()
 	army.position = position_army_host - global_position
 	if army.get_parent():
-		army.get_parent().remove_child(army)
+		(army.get_parent() as Armies).remove_army(army)
 	army.name = army.key()
+	
+	army.connect("destroyed", Callable(self, "remove_army"))
+	_armies.append(army)
 	add_child(army)
 
 
-# Avoids interacting with armies that are queued for deletion.
-# This is somewhat annoying.
-func get_alive_armies() -> Array[Army]:
-	var result: Array[Army] = []
-	var armies: Array[Node] = get_children()
-	for army in armies:
-		if army.is_queued_for_deletion() == false:
-			result.append(army as Army)
-	return result
-
-
 func merge_armies() -> void:
-	var armies: Array[Army] = get_alive_armies()
-	var number_of_armies: int = armies.size()
+	# We make a copy because we will be removing
+	# elements from the original array
+	var copy := _armies.duplicate() as Array[Army]
+	var number_of_armies: int = _armies.size()
 	for i in number_of_armies:
 		for j in range(i + 1, number_of_armies):
-			if armies[i].owner_country == armies[j].owner_country:
-				armies[i].queue_free()
-				armies[j].troop_count += armies[i].troop_count
+			if copy[i].owner_country == copy[j].owner_country:
+				copy[j]._army_size.add(copy[i].current_size())
+				remove_army(copy[i])
 				break
 
 
 func army_with_key(key: String) -> Army:
-	var armies: Array[Army] = get_alive_armies()
-	for army in armies:
+	for army in _armies:
 		if army.key() == key:
 			return army
 	return null
@@ -46,8 +47,7 @@ func army_with_key(key: String) -> Army:
 
 func get_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
-	var armies: Array[Army] = get_alive_armies()
-	for army in armies:
+	for army in _armies:
 		if army.owner_country == country:
 			result.append(army)
 	return result
@@ -55,16 +55,14 @@ func get_armies_of(country: Country) -> Array[Army]:
 
 func get_active_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
-	var armies: Array[Army] = get_alive_armies()
-	for army in armies:
+	for army in _armies:
 		if army.owner_country == country and army.is_active:
 			result.append(army)
 	return result
 
 
 func country_has_active_army(country: Country) -> bool:
-	var armies: Array[Army] = get_alive_armies()
-	for army in armies:
+	for army in _armies:
 		if army.owner_country == country and army.is_active:
 			return true
 	return false

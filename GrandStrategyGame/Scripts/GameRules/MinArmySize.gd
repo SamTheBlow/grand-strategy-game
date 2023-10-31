@@ -1,5 +1,6 @@
 class_name RuleMinArmySize
 extends Rule
+## Getting rid of this class (WIP)
 
 
 var minimum_army_size: int = 10
@@ -15,24 +16,6 @@ func _on_battle_ended(game_state: GameState, battle: Battle) -> void:
 	var armies_data: GameStateArray = province.get_array("armies")
 	_apply_to_army(armies_data, battle._attacking_army_key)
 	_apply_to_army(armies_data, battle._defending_army_key)
-
-
-func _on_battle_ended_visuals(
-		provinces: Provinces,
-		battle: Battle
-) -> Array[Army]:
-	var output: Array[Army] = []
-	
-	var province: Province = provinces.province_with_key(battle._province_key)
-	var armies := province.get_node("Armies") as Armies
-	var army_attacker: Army = armies.army_with_key(battle._attacking_army_key)
-	if army_attacker != null and army_attacker.troop_count < minimum_army_size:
-		output.append(army_attacker)
-	var army_defender: Army = armies.army_with_key(battle._defending_army_key)
-	if army_defender != null and army_defender.troop_count < minimum_army_size:
-		output.append(army_defender)
-	
-	return output
 
 
 # Prevent players from creating armies that are too small
@@ -59,16 +42,3 @@ func _apply_to_army(armies_data: GameStateArray, army_key: String) -> void:
 	var attacker_troop_count: int = army_data.get_int("troop_count").data
 	if attacker_troop_count < minimum_army_size:
 		armies_data.data().erase(army_data)
-
-
-# Unused
-func _delete_small_armies(game_state: GameState) -> void:
-	var provinces: Array[GameStateData] = game_state.provinces().data()
-	for province_data in provinces:
-		var province := province_data as GameStateArray
-		var armies: Array[GameStateData] = province.get_array("armies").data()
-		for army_data in armies:
-			var army := army_data as GameStateArray
-			var troop_count: int = army.get_int("troop_count").data
-			if troop_count < minimum_army_size:
-				armies.erase(army)

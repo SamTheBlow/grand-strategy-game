@@ -2,8 +2,10 @@ class_name Army
 extends Node2D
 
 
+signal destroyed(Army)
+
+var _army_size: ArmySize
 var owner_country: Country = null : set = set_owner_country
-var troop_count: int = 1 : set = set_troop_count
 
 var _key: String
 
@@ -32,18 +34,39 @@ func _process(delta: float) -> void:
 			position = new_position
 
 
+func _on_army_size_changed() -> void:
+	_update_troop_count_label()
+
+
+## Only call once during setup. Make sure the scene is fully loaded first.
+## army_size must be greater or equal to 10
+func setup(army_size: int) -> void:
+	_army_size = ArmySize.new(army_size, 10)
+	_army_size.connect(
+			"size_changed", Callable(self, "_on_army_size_changed")
+	)
+	_army_size.connect(
+			"became_too_small", Callable(self, "destroy")
+	)
+	_update_troop_count_label()
+
+
 func key() -> String:
 	return _key
+
+
+func destroy() -> void:
+	destroyed.emit(self)
+	queue_free()
+
+
+func current_size() -> int:
+	return _army_size.current_size()
 
 
 func set_owner_country(value: Country) -> void:
 	owner_country = value
 	($ColorRect as ColorRect).color = owner_country.color
-
-
-func set_troop_count(value: int) -> void:
-	troop_count = value
-	($ColorRect/TroopCount as Label).text = str(troop_count)
 
 
 func set_active(value: bool) -> void:
@@ -73,3 +96,8 @@ func stop_animations() -> void:
 		animation_is_playing = false
 		position = target_position
 		gray_out()
+
+
+func _update_troop_count_label() -> void:
+	var troop_count_label := $ColorRect/TroopCount as Label
+	troop_count_label.text = str(_army_size.current_size())

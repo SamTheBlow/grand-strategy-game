@@ -47,7 +47,7 @@ func apply_to(game_state: GameState) -> void:
 	super(game_state)
 
 
-func update_visuals(provinces: Provinces) -> Array[Army]:
+func update_visuals(provinces: Provinces, _is_simulation: bool) -> void:
 	var province_node: Province = provinces.province_with_key(_province_key)
 	var armies_node: Armies = province_node.get_node("Armies") as Armies
 	var army_node: Army = armies_node.army_with_key(_army_key)
@@ -59,11 +59,9 @@ func update_visuals(provinces: Provinces) -> Array[Army]:
 		# Remember, an Army has children like a Sprite2D, UI, etc.
 		var army_node_clone := army_node.duplicate(7) as Army
 		army_node_clone.owner_country = army_node.owner_country
-		army_node_clone.troop_count = _troop_partition[i + 1]
+		army_node_clone.setup(_troop_partition[i + 1])
 		army_node_clone._key = _new_army_keys[i]
 		armies_node.add_army(army_node_clone)
 	
 	# Reduce the original army's troop count
-	army_node.set_troop_count(_troop_partition[0])
-	
-	return []
+	army_node.setup(_troop_partition[0])

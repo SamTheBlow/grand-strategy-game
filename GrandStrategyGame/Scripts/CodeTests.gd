@@ -49,7 +49,7 @@ func _performance_test() -> void:
 
 
 func _unit_test() -> void:
-	print("[UNIT TEST] Starting unit test")
+	print("[UNIT TEST] Starting unit tests...")
 	
 	# Run unit tests here
 	BitArray._unit_test()
@@ -69,5 +69,7 @@ func _unit_test() -> void:
 	ProvincesBlueprintFromText._unit_test()
 	
 	CustomRulesFromFiles._unit_test()
+	
+	ArmySize._unit_test()
 	
 	print("[UNIT TEST] All tests passed!")

@@ -8,7 +8,6 @@ extends Node2D
 
 var game_state: GameState
 var simulation: GameState
-var deletion_queue: Array[Army]
 
 
 func _on_game_over(country: Country) -> void:
@@ -164,10 +163,9 @@ func load_game_state(new_game_state: GameState) -> void:
 					countries,
 					String(game_state.army_owner(province_key, army_key).data)
 			)
-			armies[j].troop_count = game_state.army_troop_count(
-					province_key,
-					army_key
-			).data
+			armies[j].setup(
+					game_state.army_troop_count(province_key,army_key).data
+			)
 			armies_node.add_army(armies[j])
 	
 	simulation = game_state.duplicate()
@@ -237,14 +235,14 @@ func new_action_army_movement(
 	var moving_army_key: String = army.key()
 	
 	# Split the army into two if needed
-	if army.troop_count > number_of_troops:
+	if army.current_size() > number_of_troops:
 		var new_army_key: String = (
 				local_simulation.armies(source.key()).new_unique_key()
 		)
 		var action_split := ActionArmySplit.new(
 				source.key(),
 				army.key(),
-				[army.troop_count - number_of_troops, number_of_troops],
+				[army.current_size() - number_of_troops, number_of_troops],
 				[new_army_key]
 		)
 		if not rules_node.action_is_legal(local_simulation, action_split):
@@ -273,25 +271,8 @@ func new_action_army_movement(
 	# Everything was okay, so now we can submit the actions
 	simulation = local_simulation
 	for action in actions:
-		deletion_queue.append_array(
-				action.update_visuals($Provinces as Provinces)
-		)
+		action.update_visuals($Provinces as Provinces, true)
 		actions_node.add_child(action)
-	
-	# Play the movement animation
-	var source_armies_node := source.get_node("Armies") as Armies
-	var destination_armies_node := destination.get_node("Armies") as Armies
-	var moving_army: Army = (
-			destination_armies_node.army_with_key(moving_army_new_key)
-	)
-	var source_position: Vector2 = (
-			source_armies_node.position_army_host - destination.position
-	)
-	var target_position: Vector2 = (
-			destination_armies_node.position_army_host
-			- destination_armies_node.global_position
-	)
-	moving_army.play_movement_to(source_position, target_position)
 
 
 func end_turn() -> void:
@@ -314,21 +295,13 @@ func end_turn() -> void:
 				rules_node.connect_action(action)
 			if rules_node.action_is_legal(game_state, action):
 				action.apply_to(game_state)
-				if not player is PlayerHuman:
-					deletion_queue.append_array(
-							action.update_visuals(provinces_node)
-					)
+				action.update_visuals(provinces_node, false)
 			action.queue_free()
 		
 		# Merge armies
 		for province in provinces:
 			merge_armies(game_state.armies(province.key()).data())
 			(province.get_node("Armies") as Armies).merge_armies()
-		
-		# Remove the simulated armies from play
-		for army in deletion_queue:
-			army.queue_free()
-		deletion_queue.clear()
 		
 		#print("--- End of player's turn")
 	

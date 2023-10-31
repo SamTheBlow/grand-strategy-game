@@ -37,7 +37,11 @@ func apply_to(game_state: GameState) -> void:
 	super(game_state)
 
 
-func update_visuals(provinces: Provinces) -> Array[Army]:
+func update_visuals(provinces: Provinces, is_simulation: bool) -> void:
+	if is_simulation:
+		_update_visuals_simulation(provinces)
+		return
+	
 	var source_province_node: Province = (
 			provinces.province_with_key(_province_key)
 	)
@@ -54,8 +58,22 @@ func update_visuals(provinces: Provinces) -> Array[Army]:
 	army_node._key = _new_army_key
 	destination_armies_node.add_army(army_node)
 	
-	var output: Array[Army] = []
 	for battle in _battles:
-		output.append_array(battle.update_visuals(provinces))
+		battle.update_visuals(provinces)
+
+
+func _update_visuals_simulation(provinces: Provinces) -> void:
+	var source: Province = provinces.province_with_key(_province_key)
+	var destination: Province = provinces.province_with_key(_destination_key)
+	var source_armies := source.get_node("Armies") as Armies
+	var destination_armies := destination.get_node("Armies") as Armies
 	
-	return output
+	var moving_army: Army = source_armies.army_with_key(_army_key)
+	var source_position: Vector2 = (
+			source_armies.position_army_host
+			- source_armies.global_position
+	)
+	var target_position: Vector2 = (
+			destination_armies.position_army_host - source.position
+	)
+	moving_army.play_movement_to(source_position, target_position)
