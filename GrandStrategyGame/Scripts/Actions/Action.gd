@@ -11,7 +11,3 @@ signal action_applied
 ## Therefore, please check that the action is legal before processing it.
 func apply_to(game_state: GameState) -> void:
 	emit_signal("action_applied", self, game_state)
-
-
-func update_visuals(_provinces_node: Provinces, _is_simulation: bool) -> void:
-	pass

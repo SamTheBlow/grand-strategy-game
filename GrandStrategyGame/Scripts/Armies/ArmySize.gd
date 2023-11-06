@@ -71,6 +71,10 @@ func _set_size(new_size: int) -> void:
 	size_changed.emit()
 
 
+func as_JSON() -> int:
+	return current_size()
+
+
 static func _unit_test() -> void:
 	var army_size_1 := ArmySize.new(1, 1, 0)
 	assert(army_size_1.current_size() == 1)

@@ -4,10 +4,11 @@ extends Node2D
 
 signal destroyed(Army)
 
-var _army_size: ArmySize
-var owner_country: Country = null : set = set_owner_country
+var id: int
 
-var _key: String
+var army_size := ArmySize.new()
+var _owner_country := Country.new()
+
 
 # Lets the game know this army can still perform actions
 var is_active: bool = true : set = set_active
@@ -40,19 +41,15 @@ func _on_army_size_changed() -> void:
 
 ## Only call once during setup. Make sure the scene is fully loaded first.
 ## army_size must be greater or equal to 10
-func setup(army_size: int) -> void:
-	_army_size = ArmySize.new(army_size, 10)
-	_army_size.connect(
+func setup(army_size_: int) -> void:
+	army_size = ArmySize.new(army_size_, 10)
+	army_size.connect(
 			"size_changed", Callable(self, "_on_army_size_changed")
 	)
-	_army_size.connect(
+	army_size.connect(
 			"became_too_small", Callable(self, "destroy")
 	)
 	_update_troop_count_label()
-
-
-func key() -> String:
-	return _key
 
 
 func destroy() -> void:
@@ -60,13 +57,13 @@ func destroy() -> void:
 	queue_free()
 
 
-func current_size() -> int:
-	return _army_size.current_size()
+func owner_country() -> Country:
+	return _owner_country
 
 
 func set_owner_country(value: Country) -> void:
-	owner_country = value
-	($ColorRect as ColorRect).color = owner_country.color
+	_owner_country = value
+	($ColorRect as ColorRect).color = _owner_country.color
 
 
 func set_active(value: bool) -> void:
@@ -100,4 +97,23 @@ func stop_animations() -> void:
 
 func _update_troop_count_label() -> void:
 	var troop_count_label := $ColorRect/TroopCount as Label
-	troop_count_label.text = str(_army_size.current_size())
+	troop_count_label.text = str(army_size.current_size())
+
+
+static func from_JSON(json_data: Dictionary, game_state: GameState) -> Army:
+	var army := preload("res://Scenes/Army.tscn").instantiate() as Army
+	army.id = json_data["id"]
+	army.setup(json_data["army_size"])
+	army.set_owner_country(game_state.countries.country_from_id(
+			json_data["owner_country_id"]
+	))
+	army.name = str(army.id)
+	return army
+
+
+func as_JSON() -> Dictionary:
+	return {
+		"id": id,
+		"army_size": army_size.as_JSON(),
+		"owner_country_id": _owner_country.id,
+	}

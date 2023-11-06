@@ -2,47 +2,56 @@ class_name Province
 extends Node2D
 
 
-signal selected
+signal selected(Province)
 
-# This node's children for easy access
-var _armies: Armies
+var id: int
 
+# Nodes
+var armies: Armies
+var population: Population
+
+# Other data
 var links: Array[Province] = []
-var owner_country: Country = null : set = set_owner_country
-
-var _key: String
+var _owner_country := Country.new()
 
 
 func _on_shape_clicked() -> void:
-	emit_signal("selected", self)
+	selected.emit(self)
 
 
-## Only call this once during initialization
 func setup_armies(position_army_host: Vector2) -> void:
-	_armies = Armies.new()
-	_armies.name = "Armies"
-	_armies.position_army_host = position_army_host
-	add_child(_armies)
+	armies = Armies.new()
+	armies.name = "Armies"
+	armies.position_army_host = position_army_host
+	add_child(armies)
 
 
-func key() -> String:
-	return _key
+func setup_population(population_size: int) -> void:
+	population = Population.new()
+	population.name = "Population"
+	population.population_size = population_size
+	add_child(population)
 
 
 func province_shape() -> ProvinceShapePolygon2D:
 	return $Shape as ProvinceShapePolygon2D
 
 
+func has_owner_country() -> bool:
+	return _owner_country.id >= 0
+
+
+func owner_country() -> Country:
+	return _owner_country
+
+
 func set_owner_country(country: Country) -> void:
-	if country == owner_country:
+	if country == _owner_country:
 		return
-	owner_country = country
+	_owner_country = country
 	
 	var shape_node: ProvinceShapePolygon2D = province_shape()
-	if country:
-		shape_node.color = country.color
-	else:
-		shape_node.color = Color.WHITE
+	shape_node.color = country.color
 
 
 func get_shape() -> PackedVector2Array:
@@ -76,3 +85,53 @@ func show_as_neighbour(display_type: int) -> void:
 
 func is_linked_to(province: Province) -> bool:
 	return links.has(province)
+
+
+static func from_JSON(json_data: Dictionary, game_state: GameState) -> Province:
+	var province := preload("res://Scenes/Province.tscn").instantiate() as Province
+	province.id = json_data["id"]
+	province.name = str(province.id)
+	var shape: PackedVector2Array = []
+	for i in json_data["shape"]["x"].size():
+		shape.append(Vector2(
+				json_data["shape"]["x"][i], json_data["shape"]["y"][i]
+		))
+	province.set_shape(shape)
+	province.position = (
+			Vector2(json_data["position"]["x"], json_data["position"]["y"])
+	)
+	province.set_owner_country(
+			game_state.countries.country_from_id(json_data["owner_country_id"])
+	)
+	province.setup_population(json_data["population"]["size"])
+	province.setup_armies(Vector2(
+			json_data["position_army_host_x"],
+			json_data["position_army_host_y"]
+	))
+	province.armies.setup_from_JSON(json_data["armies"], game_state)
+	return province
+
+
+func as_JSON() -> Dictionary:
+	var links_JSON: Array = []
+	for link in links:
+		links_JSON.append(link.id)
+	
+	var shape_vertices := Array(province_shape().polygon)
+	var shape_vertices_x: Array = []
+	var shape_vertices_y: Array = []
+	for i in shape_vertices.size():
+		shape_vertices_x.append(shape_vertices[i].x)
+		shape_vertices_y.append(shape_vertices[i].y)
+	
+	return {
+		"id": id,
+		"shape": {"x": shape_vertices_x, "y": shape_vertices_y},
+		"position": {"x": position.x, "y": position.y},
+		"armies": armies.as_JSON(),
+		"population": population.as_JSON(),
+		"links": links_JSON,
+		"owner_country_id": _owner_country.id,
+		"position_army_host_x": armies.position_army_host.x,
+		"position_army_host_y": armies.position_army_host.y,
+	}

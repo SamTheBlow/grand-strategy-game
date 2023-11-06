@@ -5,7 +5,7 @@ extends GameSave
 
 func save_state(game_state: GameState) -> int:
 	var file: FileAccess = FileAccess.open(_file_path, FileAccess.WRITE)
-	file.store_string(JSON.stringify(game_state.data().to_raw_data(), "\t"))
+	file.store_string(JSON.stringify(game_state.as_JSON(), "\t"))
 	file.close()
 	return OK
 
@@ -17,9 +17,16 @@ func load_state() -> GameState:
 	file.close()
 	
 	if error != OK:
-		push_error("Failed to load save file")
+		push_error("Failed to load JSON save file")
 		return null
 	
-	return GameState.new(
-			GameStateData.from_raw_data(json.data) as GameStateArray
-	)
+	if not json.data is Dictionary:
+		return null
+	
+	var builder := GameStateFromJSON.new(json.data as Dictionary)
+	error = builder.build()
+	
+	if error != OK:
+		return null
+	
+	return builder.game_state

@@ -5,10 +5,8 @@ extends Rule
 @export_range(0.0, 100.0, 0.1) var percentage_to_win: float = 70.0
 
 
-func _on_start_of_turn(_game_state: GameState) -> void:
-	var provinces_node: Provinces = (
-			get_parent().get_parent().get_node("Provinces") as Provinces
-	)
+func _on_start_of_turn(game_state: GameState) -> void:
+	var provinces_node: Provinces = game_state.world.provinces
 	var province_nodes: Array[Province] = provinces_node.get_provinces()
 	
 	# Get how many provinces each country has

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dt7gjsuwry1nc"]
+[gd_scene load_steps=17 format=3 uid="uid://dt7gjsuwry1nc"]
 
 [ext_resource type="Script" path="res://TestData/WorldMaps/ProvinceTestData.gd" id="1_klkwd"]
 [ext_resource type="Script" path="res://TestData/WorldMaps/Scenario1.gd" id="2_ubikp"]
@@ -13,10 +13,14 @@
 [ext_resource type="PackedScene" uid="uid://dt6nec6bgdbvk" path="res://Scenes/Countries/Austria.tscn" id="11_guykm"]
 [ext_resource type="PackedScene" uid="uid://doufticn0whcs" path="res://Scenes/Countries/Morocco.tscn" id="12_o0l80"]
 [ext_resource type="PackedScene" uid="uid://b4afxrqxaje7k" path="res://Scenes/Countries/Algeria.tscn" id="13_kaabc"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://Scenes/world_2d.tscn" id="14_ambny"]
+[ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://Scenes/Province.tscn" id="15_55msn"]
+[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Scenes/Army.tscn" id="16_320pj"]
 
 [node name="TestData" type="Node2D"]
 
 [node name="WorldSize" type="Marker2D" parent="."]
+unique_name_in_owner = true
 position = Vector2(4000, 2000)
 
 [node name="Shapes" type="Node2D" parent="."]
@@ -684,3 +688,6 @@ position = Vector2(1489, -410)
 [node name="Scenario1" type="Node2D" parent="Scenarios"]
 script = ExtResource("2_ubikp")
 country_scenes = Array[PackedScene]([ExtResource("3_vacq7"), ExtResource("4_p2x2c"), ExtResource("5_otql5"), ExtResource("6_sai0n"), ExtResource("7_l1o2m"), ExtResource("8_dnf0r"), ExtResource("9_vlnq7"), ExtResource("10_tarmn"), ExtResource("11_guykm"), ExtResource("12_o0l80"), ExtResource("13_kaabc")])
+world_scene = ExtResource("14_ambny")
+province_scene = ExtResource("15_55msn")
+army_scene = ExtResource("16_320pj")

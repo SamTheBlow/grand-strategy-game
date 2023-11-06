@@ -4,48 +4,43 @@ extends PlayerAI
 # It also leaves some troops idle to defend.
 
 
-func play(game_state: GameState) -> Array[Action]:
-	var actions: Array[Action] = []
+func play(game_state: GameState) -> void:
+	var result: Array[Action] = []
 	
-	var my_country_key: String = game_state.player_country(key())
-	
-	var provinces: Array[GameStateData] = game_state.provinces().data()
+	var provinces: Array[Province] = game_state.world.provinces.get_provinces()
 	var number_of_provinces: int = provinces.size()
 	for i in number_of_provinces:
-		var province := provinces[i] as GameStateArray
-		var links: Array = _new_link_tree(province)
+		var province: Province = provinces[i]
+		var link_tree: Array = _new_link_tree(province)
 		
 		# Find the nearest target province for each of your armies
-		var armies: Array[GameStateData] = (
-				game_state.armies(province.key()).data()
-		)
-		for army_data in armies:
-			var army := army_data as GameStateArray
-			if army.get_string("owner").data == my_country_key:
+		var armies: Array[Army] = province.armies.armies
+		for army in armies:
+			if army.owner_country().equals(playing_country):
 				var new_actions: Array[Action] = _find_target_province(
 						game_state,
-						links,
-						province.key(),
-						army.key(),
+						link_tree,
+						province,
+						army,
 						0
 				)
-				actions.append_array(new_actions)
+				result.append_array(new_actions)
 	
-	return actions
+	actions = result
 
 
-# Links here take the form of [[p1, p2], [p3, p4], ...]
+# A link tree takes the form of [[p1, p2], [p3, p4], ...]
 # where p1, p3 are direct links, p2 and p4 are links of the links, etc.
 # In this case, p2 is a link of p1 and p4 is a link of p3.
 # (This is a recursive function.)
 func _find_target_province(
 		game_state: GameState,
-		links: Array,
-		province_key: String,
-		army_key: String,
+		link_tree: Array,
+		province: Province,
+		army: Army,
 		depth: int
 ) -> Array[Action]:
-	var actions: Array[Action] = []
+	var new_actions: Array[Action] = []
 	
 	# Prevent infinite loop if it's impossible to find a target to capture
 	if depth >= 100:
@@ -53,27 +48,23 @@ func _find_target_province(
 	
 	# Get a list of all the provinces you don't own
 	var targets: Array = []
-	for link in links:
-		var furthest_link: int = link.size() - 1
-		var link_owner_key := String(
-				game_state.province_owner(link[furthest_link]).data
-		)
-		if link_owner_key != playing_country.key():
-			targets.append(link)
+	for link_branch in link_tree:
+		var furthest_link: int = link_branch.size() - 1
+		var link_owner: Country = link_branch[furthest_link].owner_country()
+		if not link_owner.equals(playing_country):
+			targets.append(link_branch)
 	
 	# If there's any, send troops evenly to each province
 	var number_of_targets: int = targets.size()
 	if number_of_targets > 0:
 		# Split the troops evenly
 		# If there's more targets than available troops, don't split at all
-		var troop_count: int = (
-				game_state.army_troop_count(province_key, army_key).data
-		)
+		var troop_count: int = army.army_size.current_size()
 		var number_of_armies: int = number_of_targets + 1
 		@warning_ignore("integer_division")
 		var troops_per_army: int = troop_count / number_of_armies
 		
-		var new_army_keys: Array[String] = []
+		var new_army_ids: Array[int] = []
 		
 		if troops_per_army >= 10:
 			# Create the partition
@@ -82,70 +73,62 @@ func _find_target_province(
 				troop_partition.append(troops_per_army)
 			troop_partition[0] += troop_count % number_of_armies
 			
-			# Get unique keys for the new armies
-			var armies_data: GameStateArray = game_state.armies(province_key)
-			new_army_keys = armies_data.new_unique_keys(number_of_targets)
+			# Get unique ids for the new armies
+			new_army_ids = (
+					province.armies.new_unique_army_ids(number_of_targets)
+			)
 			
 			var action := ActionArmySplit.new(
-					province_key,
-					army_key,
+					province.id,
+					army.id,
 					troop_partition,
-					new_army_keys
+					new_army_ids
 			)
-			#print("New split action created for army ", army_key, ". The new keys are: ", new_army_keys)
-			actions.append(action)
+			#print("New split action created for army ", army.id, ". The new ids are: ", new_army_ids)
+			new_actions.append(action)
 		
 		# Move your armies towards the targets
-		var number_of_armies_to_move: int = new_army_keys.size()
+		var number_of_armies_to_move: int = new_army_ids.size()
 		for i in number_of_armies_to_move:
 			var action := ActionArmyMovement.new(
-					province_key,
-					new_army_keys[i],
-					targets[i][0],
-					game_state.armies(targets[i][0]).new_unique_key()
+					province.id,
+					new_army_ids[i],
+					targets[i][0].id,
+					targets[i][0].armies.new_unique_army_id()
 			)
-			#print("New movement action created for army ", new_army_keys[i])
-			actions.append(action)
+			#print("New movement action created for army ", new_army_ids[i])
+			new_actions.append(action)
 	else:
-		# Build new links
-		var new_links: Array = []
+		# Make a new link tree
+		var new_link_tree: Array = []
 		
 		# Make a list of all the provinces we've already searched
-		var already_searched_provinces: Array[String] = [province_key]
-		for link in links:
-			for l in link:
-				if already_searched_provinces.find(l) == -1:
-					already_searched_provinces.append(l)
+		var already_searched_provinces: Array[Province] = [province]
+		for link_branch in link_tree:
+			for link in link_branch:
+				if already_searched_provinces.find(link) == -1:
+					already_searched_provinces.append(link)
 		
 		# Get the linked provinces that have not been searched yet
-		for link in links:
-			var furthest_link: int = link.size() - 1
-			var next_links: Array[GameStateData] = (
-					game_state.province_links(link[furthest_link]).data()
-			)
-			for next_link_data in next_links:
-				var next_link := String(
-						(next_link_data as GameStateString).data
-				)
+		for link_branch in link_tree:
+			var furthest_link: int = link_branch.size() - 1
+			var next_links: Array[Province] = link_branch[furthest_link].links
+			for next_link in next_links:
 				if already_searched_provinces.find(next_link) == -1:
-					var link_appended: Array = link.duplicate()
-					link_appended.append(next_link)
-					new_links.append(link_appended)
+					var new_branch: Array = link_branch.duplicate()
+					new_branch.append(next_link)
+					new_link_tree.append(new_branch)
 					already_searched_provinces.append(next_link)
 		
 		# Find a province further away
-		actions = _find_target_province(
-				game_state, new_links, province_key, army_key, depth + 1
+		new_actions = _find_target_province(
+				game_state, new_link_tree, province, army, depth + 1
 		)
-	return actions
+	return new_actions
 
 
-func _new_link_tree(province: GameStateArray) -> Array:
-	var links: Array = []
-	var province_links: Array[GameStateData] = (
-			province.get_array("links").data()
-	)
-	for province_link_data in province_links:
-		var province_link := province_link_data as GameStateString
-		links.append([String(province_link.data)])
-	return links
+func _new_link_tree(province: Province) -> Array:
+	var link_tree: Array = []
+	for link in province.links:
+		link_tree.append([link])
+	return link_tree

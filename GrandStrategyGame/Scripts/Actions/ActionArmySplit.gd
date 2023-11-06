@@ -2,66 +2,50 @@ class_name ActionArmySplit
 extends Action
 
 
-var _province_key: String
-var _army_key: String
+var _province_id: int
+var _army_id: int
 
 # This array contains the number of troops in each army.
 # So for example, [47, 53] would split an army of 100 troops
 # into one army of 47 and one army of 53.
 var _troop_partition: Array[int]
 
-var _new_army_keys: Array[String]
+var _new_army_ids: Array[int]
 
 
 func _init(
-		province_key: String,
-		army_key: String,
+		province_id: int,
+		army_id: int,
 		troop_partition: Array[int],
-		new_army_keys: Array[String]
+		new_army_ids: Array[int]
 ) -> void:
-	_province_key = province_key
-	_army_key = army_key
+	_province_id = province_id
+	_army_id = army_id
 	_troop_partition = troop_partition
-	_new_army_keys = new_army_keys
+	_new_army_ids = new_army_ids
 
 
 func apply_to(game_state: GameState) -> void:
-	var armies: GameStateArray = game_state.armies(_province_key)
-	var army_source: GameStateArray = game_state.army(_province_key, _army_key)
-	
-	# Create the new armies
-	var number_of_clones: int = _troop_partition.size() - 1
-	for i in number_of_clones:
-		var unique_key: String = _new_army_keys[i]
-		var army_clone := army_source.clone(unique_key)
-		army_clone.get_int("troop_count").data = _troop_partition[i + 1]
-		armies.data().append(army_clone)
-	
-	# Reduce the original army's troop count
-	var army_troop_count: GameStateInt = (
-			game_state.army_troop_count(_province_key, _army_key)
+	var armies: Armies = (
+			game_state.world.provinces.province_from_id(_province_id).armies
 	)
-	army_troop_count.data = _troop_partition[0]
-	
-	#print("Army ", _army_key, " in province ", _province_key, " was split into ", _new_army_keys)
-	super(game_state)
-
-
-func update_visuals(provinces: Provinces, _is_simulation: bool) -> void:
-	var province_node: Province = provinces.province_with_key(_province_key)
-	var armies_node: Armies = province_node.get_node("Armies") as Armies
-	var army_node: Army = armies_node.army_with_key(_army_key)
+	var army: Army = armies.army_from_id(_army_id)
 	
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
+		# Create the new army
+		
 		# We clone the existing army instead of instancing a new one
 		# because then we would need to have the Army scene.
 		# Remember, an Army has children like a Sprite2D, UI, etc.
-		var army_node_clone := army_node.duplicate(7) as Army
-		army_node_clone.owner_country = army_node.owner_country
-		army_node_clone.setup(_troop_partition[i + 1])
-		army_node_clone._key = _new_army_keys[i]
-		armies_node.add_army(army_node_clone)
+		var army_clone := army.duplicate(7) as Army
+		army_clone.id = _new_army_ids[i]
+		army_clone.set_owner_country(army.owner_country())
+		army_clone.setup(_troop_partition[i + 1])
+		armies.add_army(army_clone)
+		
+		# Reduce the original army's troop count
+		army.army_size.remove(_troop_partition[i + 1])
 	
-	# Reduce the original army's troop count
-	army_node.setup(_troop_partition[0])
+	#print("Army ", _army_key, " in province ", _province_key, " was split into ", _new_army_keys)
+	super(game_state)

@@ -2,23 +2,33 @@ class_name Player
 extends Node
 
 
+var id: int
+
 var playing_country: Country
-var _key: String
+
+var actions: Array[Action] = []
 
 
-func _ready() -> void:
-	var actions_node := Node.new()
-	actions_node.name = "Actions"
-	add_child(actions_node)
+func add_action(action: Action) -> void:
+	actions.append(action)
 
 
-func key() -> String:
-	return _key
+func clear_actions() -> void:
+	actions.clear()
 
 
-func get_actions() -> Array[Action]:
-	var output: Array[Action] = []
-	var actions: Array[Node] = $Actions.get_children()
-	for action in actions:
-		output.append(action as Action)
-	return output
+static func from_JSON(json_data: Dictionary, countries: Countries) -> Player:
+	var player := TestAI1.new()
+	player.id = json_data["id"]
+	player.playing_country = (
+			countries.country_from_id(json_data["playing_country_id"])
+	)
+	player.name = str(player.id)
+	return player
+
+
+func as_JSON() -> Dictionary:
+	return {
+		"id": id,
+		"playing_country_id": playing_country.id,
+	}

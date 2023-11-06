@@ -2,27 +2,23 @@ class_name TroopUI
 extends Control
 
 
-signal cancelled
-signal army_moved
+signal cancelled()
+signal army_movement_requested(a: Army, b: int, c: Province, d: Province)
 
-const _SCENE := (
-		preload("res://Scenes/NumberOfTroops.tscn") as PackedScene
-)
 
 var _army: Army
 var _source: Province
 var _destination: Province
 
 
-func _on_Cancel_pressed() -> void:
-	emit_signal("cancelled")
+func _on_cancel_pressed() -> void:
+	cancelled.emit()
 	queue_free()
 
 
-func _on_Confirm_pressed() -> void:
+func _on_confirm_pressed() -> void:
 	var troop_count := int(_troop_slider().value)
-	if troop_count != 0:
-		emit_signal("army_moved", _army, troop_count, _source, _destination)
+	army_movement_requested.emit(_army, troop_count, _source, _destination)
 	queue_free()
 
 
@@ -33,15 +29,19 @@ func _on_troop_slider_value_changed(_value: float) -> void:
 static func new_popup(
 		army: Army,
 		source: Province,
-		destination: Province
+		destination: Province,
+		scene: PackedScene
 ) -> TroopUI:
-	var popup := _SCENE.instantiate() as TroopUI
+	# WARNING (Godot 4.1.2)
+	# You can't preload the scene here. If you do,
+	# you'll get weird error messages and the scene will become corrupt
+	var popup := scene.instantiate() as TroopUI
 	
 	popup._army = army
 	popup._source = source
 	popup._destination = destination
 	var slider: Slider = popup._troop_slider()
-	slider.max_value = popup._army.current_size()
+	slider.max_value = popup._army.army_size.current_size()
 	slider.value = slider.max_value
 	popup._new_slider_value()
 	

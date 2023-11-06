@@ -1,52 +1,24 @@
-[gd_scene load_steps=20 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=7 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://Scripts/Game.gd" id="1_nxdol"]
-[ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://TestData/WorldMaps/WorldTest1.tscn" id="2_52vrg"]
-[ext_resource type="PackedScene" uid="uid://t1nvvlswjfas" path="res://Scenes/Province.tscn" id="3_mylst"]
-[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://Scenes/Army.tscn" id="4_j4qua"]
-[ext_resource type="Script" path="res://Scripts/Camera.gd" id="5_k84bb"]
-[ext_resource type="Script" path="res://Scripts/WorldBackground.gd" id="6_5oytd"]
-[ext_resource type="Script" path="res://Scripts/Provinces/Provinces.gd" id="7_t3b0f"]
-[ext_resource type="Script" path="res://Scripts/Players/PlayerHuman.gd" id="8_d7h0s"]
+[ext_resource type="Script" path="res://Scripts/Camera.gd" id="2_11ib6"]
 [ext_resource type="Script" path="res://Scripts/UI/GameUI.gd" id="9_r7y4h"]
 [ext_resource type="Script" path="res://Scripts/Chat/Chat.gd" id="10_r38u1"]
 [ext_resource type="Script" path="res://Scripts/UI/GameOverPopup.gd" id="11_iutli"]
 [ext_resource type="Script" path="res://Scripts/UI/DragSource.gd" id="12_wvc5p"]
-[ext_resource type="Script" path="res://Scripts/Rules.gd" id="13_ossbb"]
-[ext_resource type="Script" path="res://Scripts/GameRules/NewProvinceOwnership.gd" id="14_ocij8"]
-[ext_resource type="Script" path="res://Scripts/GameRules/RuleProvincePercentageToWin.gd" id="15_c0ana"]
-[ext_resource type="Script" path="res://Scripts/GameRules/MinArmySize.gd" id="16_ikmmk"]
-[ext_resource type="Script" path="res://Scripts/GameRules/Combat/Combat.gd" id="17_7s2ur"]
-[ext_resource type="Script" path="res://Scripts/GameRules/Population/RulePopGrowth.gd" id="18_0bx58"]
-[ext_resource type="Script" path="res://Scripts/GameRules/Population/RuleAutoRecruit.gd" id="19_bmwhb"]
 
-[node name="Game" type="Node2D"]
+[node name="Game" type="Node"]
 script = ExtResource("1_nxdol")
-world_scene = ExtResource("2_52vrg")
-province_scene = ExtResource("3_mylst")
-army_scene = ExtResource("4_j4qua")
 
-[node name="Camera2D" type="Camera2D" parent="."]
+[node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
 limit_left = 0
 limit_top = 0
 position_smoothing_enabled = true
-script = ExtResource("5_k84bb")
-
-[node name="Background" type="Node2D" parent="."]
-script = ExtResource("6_5oytd")
-
-[node name="Provinces" type="Node2D" parent="."]
-script = ExtResource("7_t3b0f")
-
-[node name="Players" type="Node" parent="."]
-
-[node name="You" type="Node" parent="Players"]
-script = ExtResource("8_d7h0s")
-
-[node name="Countries" type="Node" parent="."]
+script = ExtResource("2_11ib6")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 2
 
 [node name="GameUI" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -206,29 +178,6 @@ text = "(Sample text)"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Rules" type="Node" parent="."]
-script = ExtResource("13_ossbb")
-
-[node name="NewProvinceOwnership" type="Node" parent="Rules"]
-script = ExtResource("14_ocij8")
-
-[node name="PercentageToWin" type="Node" parent="Rules"]
-script = ExtResource("15_c0ana")
-
-[node name="MinArmySize" type="Node" parent="Rules"]
-script = ExtResource("16_ikmmk")
-
-[node name="Combat" type="Node" parent="Rules"]
-script = ExtResource("17_7s2ur")
-
-[node name="PopGrowth" type="Node" parent="Rules"]
-script = ExtResource("18_0bx58")
-
-[node name="AutoRecruit" type="Node" parent="Rules"]
-script = ExtResource("19_bmwhb")
-army_scene = ExtResource("4_j4qua")
-
-[connection signal="clicked" from="Background" to="." method="_on_background_clicked"]
 [connection signal="requested_province_info" from="CanvasLayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
 [connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="CanvasLayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]

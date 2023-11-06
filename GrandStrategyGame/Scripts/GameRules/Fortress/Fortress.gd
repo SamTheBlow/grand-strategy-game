@@ -1,5 +1,5 @@
 class_name Fortress
-extends ProvinceComponent
+extends Node2D
 # In the future, methods could be added to build/destroy the fortress
 
 

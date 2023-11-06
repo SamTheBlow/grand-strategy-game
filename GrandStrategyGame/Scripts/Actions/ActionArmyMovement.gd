@@ -2,76 +2,63 @@ class_name ActionArmyMovement
 extends Action
 
 
-var _province_key: String
-var _army_key: String
-var _destination_key: String
-var _new_army_key: String
+var _province_id: int
+var _army_id: int
+var _destination_province_id: int
+var _new_army_id: int
 
 var _battles: Array[Battle] = []
 
 
 func _init(
-		province_key: String,
-		army_key: String,
-		destination_key: String,
-		new_army_key: String
+		province_id: int,
+		army_id: int,
+		destination_province_id: int,
+		new_army_id: int
 ) -> void:
-	_province_key = province_key
-	_army_key = army_key
-	_destination_key = destination_key
-	_new_army_key = new_army_key
+	_province_id = province_id
+	_army_id = army_id
+	_destination_province_id = destination_province_id
+	_new_army_id = new_army_id
 
 
 func apply_to(game_state: GameState) -> void:
-	var destination_armies: GameStateArray = game_state.armies(_destination_key)
-	var army_source: GameStateArray = game_state.army(_province_key, _army_key)
-	var army_clone := army_source.clone(_new_army_key)
+	var armies: Armies = (
+			game_state.world.provinces.province_from_id(_province_id).armies
+	)
+	var army: Army = armies.army_from_id(_army_id)
+	var destination_armies: Armies = (
+			game_state.world.provinces
+			.province_from_id(_destination_province_id).armies
+	)
 	
-	# Remove the old army from the source province
-	game_state.armies(_province_key).data().erase(army_source)
+	# Move the army to the destination province
+	army.id = _new_army_id
+	destination_armies.add_army(army)
 	
-	# Add the new army to the destination province
-	destination_armies.data().append(army_clone)
+	# Make the battles happen
+	for battle in _battles:
+		battle.apply_to(game_state)
 	
-	#print("Province ", _province_key, " got its army ", _army_key, " moved to province ", _destination_key, " with new key ", _new_army_key)
+	#print("Province ", _province_id, " got its army ", _army_id, " moved to province ", _destination_province_id, " with new id ", _new_army_id)
 	super(game_state)
 
 
-func update_visuals(provinces: Provinces, is_simulation: bool) -> void:
-	if is_simulation:
-		_update_visuals_simulation(provinces)
-		return
+func simulate_to(game_state: GameState) -> void:
+	# Play the movement animation
+	var source: Province = (
+			game_state.world.provinces.province_from_id(_province_id)
+	)
+	var destination: Province = (
+			game_state.world.provinces
+			.province_from_id(_destination_province_id)
+	)
+	var source_armies: Armies = source.armies
+	var destination_armies: Armies = destination.armies
 	
-	var source_province_node: Province = (
-			provinces.province_with_key(_province_key)
-	)
-	var source_armies_node := (
-			source_province_node.get_node("Armies") as Armies
-	)
-	var army_node: Army = source_armies_node.army_with_key(_army_key)
-	var destination_province_node: Province = (
-			provinces.province_with_key(_destination_key)
-	)
-	var destination_armies_node := (
-			destination_province_node.get_node("Armies") as Armies
-	)
-	army_node._key = _new_army_key
-	destination_armies_node.add_army(army_node)
-	
-	for battle in _battles:
-		battle.update_visuals(provinces)
-
-
-func _update_visuals_simulation(provinces: Provinces) -> void:
-	var source: Province = provinces.province_with_key(_province_key)
-	var destination: Province = provinces.province_with_key(_destination_key)
-	var source_armies := source.get_node("Armies") as Armies
-	var destination_armies := destination.get_node("Armies") as Armies
-	
-	var moving_army: Army = source_armies.army_with_key(_army_key)
+	var moving_army: Army = source_armies.army_from_id(_army_id)
 	var source_position: Vector2 = (
-			source_armies.position_army_host
-			- source_armies.global_position
+			source_armies.position_army_host - source_armies.global_position
 	)
 	var target_position: Vector2 = (
 			destination_armies.position_army_host - source.position

@@ -1,13 +1,23 @@
 class_name Game
-extends Node2D
+extends Node
 
 
-@export var world_scene: PackedScene
-@export var province_scene: PackedScene
-@export var army_scene: PackedScene
+# The true, actual game state
+var _game_state: GameState
 
-var game_state: GameState
-var simulation: GameState
+# A simulation of the game state (this is what the player sees)
+var _simulation: GameState
+
+var _your_id: int
+
+@onready var chat := %Chat as Chat
+
+
+func _ready() -> void:
+	chat.system_message(
+			"You are playing as " + _game_state.players
+			.player_from_id(_your_id).playing_country.country_name
+	)
 
 
 func _on_game_over(country: Country) -> void:
@@ -17,314 +27,187 @@ func _on_game_over(country: Country) -> void:
 
 
 func _on_province_selected(province: Province) -> void:
-	var player_country: Country = ($Players/You as PlayerHuman).playing_country
-	var provinces_node := $Provinces as Provinces
-	if provinces_node.a_province_is_selected():
+	var your_country: Country = (
+			_simulation.countries.country_from_id(_your_id)
+	)
+	var provinces_node: Provinces = _simulation.world.provinces
+	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
-		var selected_armies := selected_province.get_node("Armies") as Armies
-		if selected_armies.country_has_active_army(player_country):
-			var army: Army = selected_armies.get_active_armies_of(player_country)[0]
+		var selected_armies: Armies = selected_province.armies
+		if selected_armies.country_has_active_army(your_country):
+			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
 			if selected_armies.army_can_be_moved_to(army, province):
 				# Show interface for selecting a number of troops
-				var troop_ui := (
-						TroopUI.new_popup(army, selected_province, province)
-				)
+				var troop_ui: TroopUI = (TroopUI.new_popup(
+					army, selected_province, province,
+					preload("res://Scenes/NumberOfTroops.tscn")
+				))
 				troop_ui.name = "RecruitUI"
 				troop_ui.connect(
 						"cancelled",
 						Callable(self, "_on_recruit_cancelled")
 				)
 				troop_ui.connect(
-						"army_moved",
+						"army_movement_requested",
 						Callable(self, "new_action_army_movement")
 				)
 				$CanvasLayer.add_child(troop_ui)
 				return
 	provinces_node.select_province(province)
 	
-	var armies_node := province.get_node("Armies") as Armies
-	if armies_node.country_has_active_army(player_country):
+	var armies_node: Armies = province.armies
+	if armies_node.country_has_active_army(your_country):
 		province.show_neighbours(2)
 	else:
 		province.show_neighbours(3)
 
 
-func _on_background_clicked() -> void:
-	unselect_province()
-
-
 func _on_recruit_cancelled() -> void:
-	unselect_province()
+	deselect_province()
 
 
 func _on_chat_requested_province_info() -> void:
-	var provinces_node := $Provinces as Provinces
-	var chat_node := $CanvasLayer/GameUI/Chat as Chat
-	
-	if not provinces_node.a_province_is_selected():
-		chat_node.system_message("No province selected.")
+	var selected_province_simulation: Province = (
+			_simulation.world.provinces.selected_province
+	)
+	if not selected_province_simulation:
+		chat.system_message("No province selected.")
 		return
 	
-	var selected_province: Province = provinces_node.selected_province
-	var population_count: int = (
-			game_state.province_population(selected_province.key()).data
+	var selected_province_id: int = selected_province_simulation.id
+	var selected_province: Province = (
+			_game_state.world.provinces.province_from_id(selected_province_id)
 	)
-	chat_node.system_message("Population count: " + str(population_count))
+	var population_size: int = selected_province.population.population_size
+	chat.system_message("Population size: " + str(population_size))
 
 
-func load_world(world: Node) -> void:
-	# Set the camera's limits
-	var camera := $Camera2D as Camera2D
-	var world_size_node := world.get_node("WorldSize") as Marker2D
-	camera.limit_right = int(world_size_node.position.x)
-	camera.limit_bottom = int(world_size_node.position.y)
+func load_game_state(game_state: GameState, your_id: int) -> void:
+	_game_state = game_state
+	_game_state.setup()
+	($Camera as Camera2D).limit_right = _game_state.world.camera_limit_x
+	($Camera as Camera2D).limit_bottom = _game_state.world.camera_limit_y
+	_game_state.connect_to_provinces(Callable(self, "_on_province_selected"))
+	_game_state.connect("game_over", Callable(self, "_on_game_over"))
+	_simulation = game_state.copy()
 	
-	# Setup provinces
-	var shapes: Node = world.get_node("Shapes")
-	var links: Array = []
-	var provinces: Array[Province] = []
-	var number_of_provinces: int = shapes.get_child_count()
-	for i in number_of_provinces:
-		# Setup the province
-		var province_instance := province_scene.instantiate() as Province
-		var shape := shapes.get_child(i) as ProvinceTestData
-		links.append(shape.links)
-		province_instance.set_shape(shape.polygon)
-		province_instance.position = shape.position
-		
-		var army_host_node := shape.get_node("ArmyHost") as Node2D
-		var position_army_host: Vector2 = army_host_node.global_position
-		province_instance.setup_armies(position_army_host)
-		
-		provinces.append(province_instance)
-		
-		# Connect the signals
-		province_instance.connect(
-				"selected", Callable(self, "_on_province_selected")
-		)
+	# TODO bad code DRY
+	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
 	
-	# Setup links
-	for i in number_of_provinces:
-		provinces[i].links = []
-		var number_of_links: int = links[i].size()
-		for j in number_of_links:
-			provinces[i].links.append(provinces[links[i][j] - 1])
-		$Provinces.add_child(provinces[i])
-
-
-func load_game_state(new_game_state: GameState) -> void:
-	game_state = new_game_state
+	add_child(_simulation)
+	# The game state needs to be above the UI stuff
+	# in order for input handling to work in the correct order
+	move_child(_simulation, 0)
 	
-	var countries: Array[Country] = game_state.new_countries()
-	var you := $Players/You as PlayerHuman
-	you.playing_country = country_with_key(
-			countries,
-			game_state.player_country(game_state.human_player())
-	)
-	($CanvasLayer/GameUI/Chat as Chat).system_message(
-			"You are playing as " + you.playing_country.country_name
-	)
-	var ai_players: Array[PlayerAI] = new_ai_players(
-			game_state.data().get_array("players"),
-			countries
-	)
-	var number_of_countries: int = countries.size()
-	for i in number_of_countries:
-		if ai_players[i].playing_country != you.playing_country:
-			$Players.add_child(ai_players[i])
-		$Countries.add_child(countries[i])
-	
-	var provinces: Array[Province] = ($Provinces as Provinces).get_provinces()
-	var number_of_provinces: int = provinces.size()
-	for i in number_of_provinces:
-		var province_key: String = game_state.provinces().data()[i].key()
-		provinces[i]._key = province_key
-		provinces[i].name = province_key # TODO put this in some constructor
-		
-		# Owner
-		var owner_key: String = game_state.province_owner(province_key).data
-		if owner_key != "-1":
-			provinces[i].set_owner_country(
-					country_with_key(countries, owner_key)
-			)
-		
-		# Armies
-		var armies_node := provinces[i].get_node("Armies") as Armies
-		var armies: Array[Army] = (
-				game_state.new_province_armies(province_key, army_scene)
-		)
-		var number_of_armies: int = armies.size()
-		for j in number_of_armies:
-			var army_key: String = (
-					game_state.armies(province_key).data()[j].key()
-			)
-			
-			armies[j].owner_country = country_with_key(
-					countries,
-					String(game_state.army_owner(province_key, army_key).data)
-			)
-			armies[j].setup(
-					game_state.army_troop_count(province_key,army_key).data
-			)
-			armies_node.add_army(armies[j])
-	
-	simulation = game_state.duplicate()
+	_your_id = your_id
 
 
-func country_with_key(countries: Array[Country], key: String) -> Country:
-	for country in countries:
-		if country.key() == key:
-			return country
-	return null
-
-
-func new_ai_players(
-		players_data: GameStateArray,
-		countries: Array[Country]
-) -> Array[PlayerAI]:
-	var output: Array[PlayerAI] = []
-	var players_data_array: Array[GameStateData] = players_data.data()
-	for player_data in players_data_array:
-		var player_data_array := player_data as GameStateArray
-		var new_player: PlayerAI = new_ai_player(
-				players_data,
-				player_data.key()
-		)
-		var playing_country_key := String(
-				player_data_array.get_string("playing_country").data
-		)
-		new_player.playing_country = (
-				country_with_key(countries, playing_country_key)
-		)
-		new_player._key = player_data.key()
-		new_player.name = player_data.key()
-		output.append(new_player)
-	return output
-
-
-func new_ai_player(
-		players_data: GameStateArray,
-		player_key: String
-) -> PlayerAI:
-	var player_data: GameStateArray = players_data.get_array(player_key)
-	var ai_data: GameStateArray = player_data.get_array("ai")
-	var ai_class_name := String(ai_data.get_string("class_name").data)
-	match ai_class_name:
-		"TestAI1":
-			return TestAI1.new()
-	return null # Shouldn't happen
-
-
-func unselect_province() -> void:
-	($Provinces as Provinces).unselect_province()
+func deselect_province() -> void:
+	_simulation.world.provinces.deselect_province()
 
 
 func new_action_army_movement(
 		army: Army,
 		number_of_troops: int,
-		source: Province,
-		destination: Province
+		source_province: Province,
+		destination_province: Province
 ) -> void:
-	unselect_province()
+	deselect_province()
 	
-	var rules_node := $Rules as Rules
-	var actions_node: Node = $Players/You/Actions
-	
-	var local_simulation: GameState = simulation.duplicate()
+	var local_simulation: GameState = _simulation.copy()
 	var actions: Array[Action] = []
-	var moving_army_key: String = army.key()
+	var moving_army_id: int = army.id
+	var army_size: int = army.army_size.current_size()
 	
 	# Split the army into two if needed
-	if army.current_size() > number_of_troops:
-		var new_army_key: String = (
-				local_simulation.armies(source.key()).new_unique_key()
+	if army_size > number_of_troops:
+		var new_army_id: int = (
+				local_simulation.world.provinces
+				.province_from_id(source_province.id)
+				.armies.new_unique_army_id()
 		)
 		var action_split := ActionArmySplit.new(
-				source.key(),
-				army.key(),
-				[army.current_size() - number_of_troops, number_of_troops],
-				[new_army_key]
+				source_province.id,
+				army.id,
+				[army_size - number_of_troops, number_of_troops],
+				[new_army_id]
 		)
-		if not rules_node.action_is_legal(local_simulation, action_split):
+		if not _game_state.rules.action_is_legal(local_simulation, action_split):
 			return
 		actions.append(action_split)
-		rules_node.connect_action(action_split)
+		_game_state.rules.connect_action(action_split)
 		action_split.apply_to(local_simulation)
 		
-		moving_army_key = new_army_key
+		moving_army_id = new_army_id
 	
-	var moving_army_new_key: String = (
-			local_simulation.armies(destination.key()).new_unique_key()
+	var moving_army_new_id: int = (
+			local_simulation.world.provinces
+			.province_from_id(destination_province.id)
+			.armies.new_unique_army_id()
 	)
 	var action_move := ActionArmyMovement.new(
-			source.key(),
-			moving_army_key,
-			destination.key(),
-			moving_army_new_key
+			source_province.id,
+			moving_army_id,
+			destination_province.id,
+			moving_army_new_id
 	)
-	if not rules_node.action_is_legal(local_simulation, action_move):
+	if not _game_state.rules.action_is_legal(local_simulation, action_move):
 		return
 	actions.append(action_move)
-	rules_node.connect_action(action_move)
+	_game_state.rules.connect_action(action_move)
 	action_move.apply_to(local_simulation)
 	
 	# Everything was okay, so now we can submit the actions
-	simulation = local_simulation
+	var you: Player = _simulation.players.player_from_id(_your_id)
 	for action in actions:
-		action.update_visuals($Provinces as Provinces, true)
-		actions_node.add_child(action)
+		if action.has_method("simulate_to"):
+			action.simulate_to(_simulation)
+		else:
+			action.apply_to(_simulation)
+		you.add_action(action)
 
 
 func end_turn() -> void:
-	#print("************************************ End of turn ****************************************")
-	var provinces_node := $Provinces as Provinces
-	var provinces: Array[Province] = provinces_node.get_provinces()
-	var rules_node := $Rules as Rules
-	var players: Array[Node] = $Players.get_children()
-	for player in players:
-		var actions: Array[Action]
-		if player is PlayerAI:
-			# Have the AI play their moves
-			actions = (player as PlayerAI).play(game_state.duplicate())
-		else:
-			actions = (player as Player).get_actions()
-		
-		# Process every player's actions
-		for action in actions:
-			if not player is PlayerHuman:
-				rules_node.connect_action(action)
-			if rules_node.action_is_legal(game_state, action):
-				action.apply_to(game_state)
-				action.update_visuals(provinces_node, false)
-			action.queue_free()
-		
-		# Merge armies
-		for province in provinces:
-			merge_armies(game_state.armies(province.key()).data())
-			(province.get_node("Armies") as Armies).merge_armies()
-		
-		#print("--- End of player's turn")
+	#print("********** End of turn **********")
 	
-	var current_turn: GameStateInt = game_state.data().get_int("turn")
-	current_turn.data += 1
-	rules_node.start_of_turn(game_state)
+	# Always play the human's turn first
+	_play_player_turn(_simulation.players.player_from_id(_your_id))
+	# Then play the other players' turn
+	for player in _simulation.players.players:
+		if player.id == _your_id:
+			continue
+		_play_player_turn(player)
 	
-	simulation = game_state.duplicate()
+	_game_state.turn.new_turn()
+	_game_state.rules.start_of_turn(_game_state)
+	
+	# Update the visible game state
+	remove_child(_simulation)
+	_simulation = _game_state.copy()
+	
+	# TODO bad code DRY
+	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
+	
+	add_child(_simulation)
+	# TODO bad code DRY
+	move_child(_simulation, 0)
 
 
-func merge_armies(armies: Array[GameStateData]) -> void:
-	var i: int = 0
-	while i < armies.size():
-		var army_i := armies[i] as GameStateArray
-		for j in range(i + 1, armies.size()):
-			var army_j := armies[j] as GameStateArray
-			
-			var owner_i: String = army_i.get_string("owner").data
-			var owner_j: String = army_j.get_string("owner").data
-			if owner_i == owner_j:
-				armies.remove_at(i)
-				i -= 1
-				var troop_count_i: int = army_i.get_int("troop_count").data
-				army_j.get_int("troop_count").data += troop_count_i
-				break
-		i += 1
+func _play_player_turn(player: Player) -> void:
+	# Have the AI play its moves
+	if player.id != _your_id:
+		(player as PlayerAI).play(_game_state.copy())
+	
+	# Process the player's actions
+	var actions: Array[Action] = (player as Player).actions
+	for action in actions:
+		if player.id != _your_id:
+			_game_state.rules.connect_action(action)
+		if _game_state.rules.action_is_legal(_game_state, action):
+			action.apply_to(_game_state)
+	
+	# Merge armies
+	for province in _game_state.world.provinces.get_provinces():
+		province.armies.merge_armies()
+	
+	#print("--- End of player's turn")
