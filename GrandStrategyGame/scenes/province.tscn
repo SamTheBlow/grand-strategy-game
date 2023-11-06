@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cppfb8jwghnqt"]
+
+[ext_resource type="Script" path="res://scripts/provinces/province.gd" id="1_mdkkc"]
+[ext_resource type="Script" path="res://scripts/provinces/province_shape_polygon_2d.gd" id="2_okqgr"]
+
+[node name="Province" type="Node2D"]
+script = ExtResource("1_mdkkc")
+
+[node name="Shape" type="Polygon2D" parent="."]
+script = ExtResource("2_okqgr")
+
+[connection signal="clicked" from="Shape" to="." method="_on_shape_clicked"]

@@ -11,13 +11,13 @@ config_version=5
 [application]
 
 config/name="Grand strategy game"
-run/main_scene="res://Scenes/Main.tscn"
+run/main_scene="res://scenes/main.tscn"
 config/features=PackedStringArray("4.1")
-config/icon="res://Assets/icon.png"
+config/icon="res://assets/icon.png"
 
 [autoload]
 
-CodeTests="*res://Scripts/CodeTests.gd"
+CodeTests="*res://scripts/code_tests.gd"
 
 [filesystem]
 

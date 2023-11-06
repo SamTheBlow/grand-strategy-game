@@ -1,8 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dvp650lpeo0aa"]
-
-[ext_resource type="Script" path="res://Scripts/Countries/Country.gd" id="1_75cot"]
-
-[node name="Country" type="Node"]
-script = ExtResource("1_75cot")
-country_name = "Ireland"
-color = Color(0.376471, 0.74902, 0.376471, 1)
