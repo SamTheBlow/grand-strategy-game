@@ -2,8 +2,8 @@ class_name GameState
 extends Node
 
 
-signal game_over(Country)
-signal province_selected(Province)
+signal game_over(winner: Country)
+signal province_selected(province: Province)
 
 # Nodes
 var rules: Rules

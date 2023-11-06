@@ -47,5 +47,8 @@ func apply_to(game_state: GameState) -> void:
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])
 	
-	#print("Army ", _army_key, " in province ", _province_key, " was split into ", _new_army_keys)
+	#print(
+	#		"Army ", _army_key, " in province ", _province_key,
+	#		" was split into ", _new_army_keys
+	#)
 	super(game_state)

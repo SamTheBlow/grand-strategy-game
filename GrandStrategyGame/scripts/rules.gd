@@ -2,7 +2,7 @@ class_name Rules
 extends Node
 
 
-signal game_over(Country)
+signal game_over(winner: Country)
 
 @export var fortresses: bool = false
 

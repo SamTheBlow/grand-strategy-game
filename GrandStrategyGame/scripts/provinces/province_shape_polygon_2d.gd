@@ -4,7 +4,7 @@ extends Polygon2D
 # https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
 
 
-signal clicked
+signal clicked()
 
 # Draw status:
 # 0 - unselected
@@ -36,7 +36,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			)
 			if Geometry2D.is_point_in_polygon(local_mouse_position, polygon):
 				get_viewport().set_input_as_handled()
-				emit_signal("clicked")
+				clicked.emit()
 
 
 func _draw() -> void:

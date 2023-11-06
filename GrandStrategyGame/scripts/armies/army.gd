@@ -2,7 +2,7 @@ class_name Army
 extends Node2D
 
 
-signal destroyed(Army)
+signal destroyed(army: Army)
 
 var id: int
 

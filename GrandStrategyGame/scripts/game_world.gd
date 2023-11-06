@@ -2,7 +2,7 @@ class_name GameWorld
 extends Node
 
 
-signal province_selected(Province)
+signal province_selected(province: Province)
 
 var provinces: Provinces
 

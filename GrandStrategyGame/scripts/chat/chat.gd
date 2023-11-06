@@ -2,9 +2,9 @@ class_name Chat
 extends Control
 
 
-signal requested_province_info
-signal save_requested
-signal load_requested
+signal requested_province_info()
+signal save_requested()
+signal load_requested()
 
 @onready var chat_log := %ChatText as RichTextLabel
 @onready var chat_input := %ChatInput as LineEdit
@@ -24,7 +24,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 						"/load - Load the saved game state",
 				])
 			"infop":
-				emit_signal("requested_province_info")
+				requested_province_info.emit()
 			"fs":
 				var mode: int = DisplayServer.window_get_mode()
 				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
@@ -39,10 +39,10 @@ func _on_input_text_submitted(new_text: String) -> void:
 					system_message("Switched to fullscreen")
 			"save":
 				system_message("Saving the game...")
-				emit_signal("save_requested")
+				save_requested.emit()
 			"load":
 				system_message("Loading the save file...")
-				emit_signal("load_requested")
+				load_requested.emit()
 			_:
 				system_message(
 						'"[color=black]' + new_text + '[/color]"'

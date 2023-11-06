@@ -2,7 +2,7 @@ class_name Province
 extends Node2D
 
 
-signal selected(Province)
+signal selected(this_province: Province)
 
 var id: int
 

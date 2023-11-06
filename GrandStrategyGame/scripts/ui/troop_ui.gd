@@ -3,7 +3,12 @@ extends Control
 
 
 signal cancelled()
-signal army_movement_requested(a: Army, b: int, c: Province, d: Province)
+signal army_movement_requested(
+	army: Army,
+	troop_count: int,
+	source: Province,
+	destination: Province
+)
 
 
 var _army: Army

@@ -4,7 +4,7 @@ extends ColorRect
 # on things other than a rectangle.
 
 
-signal dragged
+signal dragged()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -23,4 +23,4 @@ func _unhandled_input(event: InputEvent) -> void:
 					and mouse_position.y <= global_position.y + size.y
 			):
 				get_viewport().set_input_as_handled()
-				emit_signal("dragged")
+				dragged.emit()

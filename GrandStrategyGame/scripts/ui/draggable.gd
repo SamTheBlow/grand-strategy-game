@@ -2,8 +2,8 @@ class_name Draggable
 extends Control
 
 
-## This signal will trigger on every frame where this object is being dragged.
-signal is_dragged
+## This signal will trigger on every frame when this object is being dragged.
+signal is_dragged(this_object: Draggable)
 
 var is_being_dragged: bool = false
 var relative_starting_position := Vector2.ZERO
@@ -23,7 +23,7 @@ func _process(_delta) -> void:
 		anchor_top = relative_starting_position.y + delta_y
 		anchor_top = clampf(anchor_top, 0, 1 - relative_height)
 		anchor_bottom = anchor_top + relative_height
-		emit_signal("is_dragged", self)
+		is_dragged.emit(self)
 
 
 func _unhandled_input(event: InputEvent) -> void:

@@ -2,7 +2,7 @@ class_name WorldBackground
 extends Node2D
 
 
-signal clicked
+signal clicked()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -14,4 +14,4 @@ func _unhandled_input(event: InputEvent) -> void:
 				and event_typed.button_index == MOUSE_BUTTON_LEFT
 		):
 			get_viewport().set_input_as_handled()
-			emit_signal("clicked")
+			clicked.emit()

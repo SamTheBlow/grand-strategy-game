@@ -2,7 +2,7 @@ class_name Rule
 extends Node
 
 
-signal game_over(Country)
+signal game_over(winner: Country)
 
 ## A list of every signal this rule would like to listen to.
 ## Each element is an array of size 3: [rule_name, signal_name, method_name]

@@ -3,8 +3,8 @@ extends Rule
 ## Gives the defender a slight advantage in combat.
 
 
-signal battle_started
-signal battle_ended
+signal battle_started(battle: Battle)
+signal battle_ended(game_state: GameState, batle: Battle)
 
 
 func _on_action_applied(
@@ -56,10 +56,10 @@ func resolve_battle(
 	battle.attacker_efficiency *= 0.9
 	
 	# Allow other rules to affect the outcome
-	emit_signal("battle_started", battle)
+	battle_started.emit(battle)
 	
 	battle.apply_to(game_state)
 	
-	emit_signal("battle_ended", game_state, battle)
+	battle_ended.emit(game_state, battle)
 	
 	return battle
