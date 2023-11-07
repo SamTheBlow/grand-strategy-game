@@ -20,10 +20,10 @@ script = ExtResource("2_xf1ng")
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2
 
-[node name="GameUI" type="Control" parent="CanvasLayer"]
+[node name="GameUI" type="Control" parent="UILayer"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,7 +33,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("3_2xknq")
 
-[node name="Chat" type="Control" parent="CanvasLayer/GameUI"]
+[node name="Chat" type="Control" parent="UILayer/GameUI"]
 unique_name_in_owner = true
 layout_mode = 1
 anchor_top = 0.7
@@ -41,7 +41,7 @@ anchor_right = 0.3
 anchor_bottom = 1.0
 script = ExtResource("4_0kwm4")
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/Chat"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/Chat"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -50,7 +50,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.25098)
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/Chat/ColorRect"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/Chat/ColorRect"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -61,14 +61,14 @@ offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer"]
 layout_mode = 2
 
-[node name="Log" type="Control" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Log" type="Control" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -77,7 +77,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.85098, 0.85098, 0.85098, 0.501961)
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -87,30 +87,30 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
 
-[node name="ChatText" type="RichTextLabel" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+[node name="ChatText" type="RichTextLabel" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 bbcode_enabled = true
 scroll_following = true
 
-[node name="Spacing" type="Control" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Spacing" type="Control" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="ChatInput" type="LineEdit" parent="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
+[node name="ChatInput" type="LineEdit" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Type here"
 
-[node name="BottomRight" type="Control" parent="CanvasLayer/GameUI"]
+[node name="BottomRight" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
 anchor_left = 0.8
 anchor_top = 0.8
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/BottomRight"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/BottomRight"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -119,7 +119,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.25098)
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/BottomRight"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/BottomRight"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.2
@@ -127,11 +127,12 @@ anchor_top = 0.2
 anchor_right = 0.8
 anchor_bottom = 0.8
 
-[node name="EndTurn" type="Button" parent="CanvasLayer/GameUI/BottomRight/MarginContainer"]
+[node name="EndTurn" type="Button" parent="UILayer/GameUI/BottomRight/MarginContainer"]
 layout_mode = 2
 text = "End Turn"
 
-[node name="GameOverScreen" type="Control" parent="CanvasLayer/GameUI"]
+[node name="GameOverPopup" type="Control" parent="UILayer/GameUI"]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchor_left = 0.25
@@ -143,7 +144,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("5_s4mjp")
 
-[node name="ColorRect" type="ColorRect" parent="CanvasLayer/GameUI/GameOverScreen"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/GameOverPopup"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -154,7 +155,7 @@ mouse_filter = 1
 color = Color(0.5, 0.5, 0.5, 1)
 script = ExtResource("6_pwyey")
 
-[node name="MarginContainer" type="MarginContainer" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/GameOverPopup/ColorRect"]
 layout_mode = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -163,17 +164,17 @@ offset_top = 32.0
 offset_right = -32.0
 offset_bottom = -32.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer"]
 layout_mode = 2
 
-[node name="GameOver" type="Label" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
+[node name="GameOver" type="Label" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "Game Over"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Winner" type="Label" parent="CanvasLayer/GameUI/GameOverScreen/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Winner" type="Label" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 6
 theme_override_colors/font_color = Color(1, 1, 1, 1)
@@ -181,7 +182,7 @@ text = "(Sample text)"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="requested_province_info" from="CanvasLayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
-[connection signal="text_submitted" from="CanvasLayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="CanvasLayer/GameUI/Chat" method="_on_input_text_submitted"]
-[connection signal="pressed" from="CanvasLayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
-[connection signal="dragged" from="CanvasLayer/GameUI/GameOverScreen/ColorRect" to="CanvasLayer/GameUI/GameOverScreen" method="_on_dragged"]
+[connection signal="requested_province_info" from="UILayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
+[connection signal="text_submitted" from="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="UILayer/GameUI/Chat" method="_on_input_text_submitted"]
+[connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
+[connection signal="dragged" from="UILayer/GameUI/GameOverPopup/ColorRect" to="UILayer/GameUI/GameOverPopup" method="_on_dragged"]

@@ -21,7 +21,7 @@ func _ready() -> void:
 
 
 func _on_game_over(country: Country) -> void:
-	var game_over_node := $CanvasLayer/GameUI/GameOverScreen as GameOver
+	var game_over_node := %GameOverPopup as GameOver
 	game_over_node.show()
 	game_over_node.set_text(country.country_name + " wins!")
 
@@ -51,7 +51,7 @@ func _on_province_selected(province: Province) -> void:
 						"army_movement_requested",
 						Callable(self, "new_action_army_movement")
 				)
-				$CanvasLayer.add_child(troop_ui)
+				$UILayer.add_child(troop_ui)
 				return
 	provinces_node.select_province(province)
 	

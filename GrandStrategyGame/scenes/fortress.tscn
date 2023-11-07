@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://du8rkqxh3dp3r"]
 
-[ext_resource type="Script" path="res://scripts/game_rules/fortress/fortress.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/fortress.gd" id="1"]
 [ext_resource type="Texture2D" uid="uid://bydv133bsc0h3" path="res://assets/icon.png" id="2"]
 
 [node name="Fortress" type="Node2D"]

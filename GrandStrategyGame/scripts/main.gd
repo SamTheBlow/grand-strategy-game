@@ -33,7 +33,7 @@ func new_game(game_state: GameState, your_id: int) -> void:
 
 
 func _chat() -> Chat:
-	return get_node("Game/CanvasLayer/GameUI/Chat") as Chat
+	return (get_node("Game") as Game).chat as Chat
 
 
 func _on_load_requested() -> void:
