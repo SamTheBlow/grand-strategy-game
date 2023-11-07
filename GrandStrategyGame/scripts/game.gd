@@ -94,10 +94,7 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	# TODO bad code DRY
 	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
 	
-	add_child(_simulation)
-	# The game state needs to be above the UI stuff
-	# in order for input handling to work in the correct order
-	move_child(_simulation, 0)
+	$WorldLayer.add_child(_simulation)
 	
 	_your_id = your_id
 
@@ -155,7 +152,6 @@ func new_action_army_movement(
 		return
 	actions.append(action_move)
 	_game_state.rules.connect_action(action_move)
-	action_move.apply_to(local_simulation)
 	
 	# Everything was okay, so now we can submit the actions
 	var you: Player = _simulation.players.player_from_id(_your_id)
@@ -188,9 +184,7 @@ func end_turn() -> void:
 	# TODO bad code DRY
 	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
 	
-	add_child(_simulation)
-	# TODO bad code DRY
-	move_child(_simulation, 0)
+	$WorldLayer.add_child(_simulation)
 
 
 func _play_player_turn(player: Player) -> void:

@@ -17,6 +17,9 @@ limit_top = 0
 position_smoothing_enabled = true
 script = ExtResource("2_xf1ng")
 
+[node name="WorldLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = 2
 

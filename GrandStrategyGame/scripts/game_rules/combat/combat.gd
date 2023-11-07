@@ -3,6 +3,7 @@ extends Rule
 ## Gives the defender a slight advantage in combat.
 
 
+# These are both unused right now...
 signal battle_started(battle: Battle)
 signal battle_ended(game_state: GameState, batle: Battle)
 
