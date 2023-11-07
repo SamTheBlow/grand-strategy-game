@@ -78,24 +78,12 @@ func action_is_legal(game_state: GameState, action: Action) -> bool:
 	return true
 
 
-func connect_action(action: Action) -> void:
-	var rules: Array[Node] = get_children()
-	for rule in rules:
-		var _connect_error = action.connect(
-				"action_applied",
-				Callable(rule, "_on_action_applied")
-		)
-
-
 static func build() -> Rules:
 	var game_rules := Rules.new()
 	game_rules.name = "Rules"
 	game_rules.add_child(RuleNewProvinceOwnership.new())
 	game_rules.add_child(RuleProvincePercentageToWin.new())
 	game_rules.add_child(RuleMinArmySize.new())
-	var rule_combat := RuleCombat.new()
-	rule_combat.name = "Combat"
-	game_rules.add_child(rule_combat)
 	game_rules.add_child(RulePopGrowth.new())
 	game_rules.add_child(RuleAutoRecruit.new())
 	return game_rules

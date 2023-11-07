@@ -14,10 +14,6 @@ func _on_start_of_turn(_game_state: GameState) -> void:
 	pass
 
 
-func _on_action_applied(_action: Action, _game_state: GameState) -> void:
-	pass
-
-
 func action_is_legal(_game_state: GameState, _action: Action) -> bool:
 	return true
 

@@ -23,6 +23,8 @@ func add_army(army: Army) -> void:
 	army.connect("destroyed", Callable(self, "remove_army"))
 	armies.append(army)
 	add_child(army)
+	
+	army.resolve_battles(armies)
 
 
 func merge_armies() -> void:

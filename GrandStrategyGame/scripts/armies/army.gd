@@ -95,6 +95,18 @@ func stop_animations() -> void:
 		gray_out()
 
 
+func resolve_battles(armies: Array[Army]) -> void:
+	for other_army in armies:
+		if other_army.owner_country() != owner_country():
+			fight(other_army)
+
+
+func fight(army: Army) -> void:
+	var battle := Battle.new(self, army)
+	battle.attacker_efficiency *= 0.9
+	battle.apply()
+
+
 func _update_troop_count_label() -> void:
 	var troop_count_label := $ColorRect/TroopCount as Label
 	troop_count_label.text = str(army_size.current_size())

@@ -7,8 +7,6 @@ var _army_id: int
 var _destination_province_id: int
 var _new_army_id: int
 
-var _battles: Array[Battle] = []
-
 
 func _init(
 		province_id: int,
@@ -36,11 +34,11 @@ func apply_to(game_state: GameState) -> void:
 	army.id = _new_army_id
 	destination_armies.add_army(army)
 	
-	# Make the battles happen
-	for battle in _battles:
-		battle.apply_to(game_state)
-	
-	#print("Province ", _province_id, " got its army ", _army_id, " moved to province ", _destination_province_id, " with new id ", _new_army_id)
+	#print(
+	#		"Province ", _province_id, " got its army ", _army_id,
+	#		" moved to province ", _destination_province_id,
+	#		" with new id ", _new_army_id
+	#)
 	super(game_state)
 
 

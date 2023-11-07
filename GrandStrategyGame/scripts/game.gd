@@ -132,7 +132,6 @@ func new_action_army_movement(
 		if not _game_state.rules.action_is_legal(local_simulation, action_split):
 			return
 		actions.append(action_split)
-		_game_state.rules.connect_action(action_split)
 		action_split.apply_to(local_simulation)
 		
 		moving_army_id = new_army_id
@@ -151,7 +150,6 @@ func new_action_army_movement(
 	if not _game_state.rules.action_is_legal(local_simulation, action_move):
 		return
 	actions.append(action_move)
-	_game_state.rules.connect_action(action_move)
 	
 	# Everything was okay, so now we can submit the actions
 	var you: Player = _simulation.players.player_from_id(_your_id)
@@ -178,7 +176,7 @@ func end_turn() -> void:
 	_game_state.rules.start_of_turn(_game_state)
 	
 	# Update the visible game state
-	remove_child(_simulation)
+	$WorldLayer.remove_child(_simulation)
 	_simulation = _game_state.copy()
 	
 	# TODO bad code DRY
@@ -195,8 +193,6 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		if player.id != _your_id:
-			_game_state.rules.connect_action(action)
 		if _game_state.rules.action_is_legal(_game_state, action):
 			action.apply_to(_game_state)
 	

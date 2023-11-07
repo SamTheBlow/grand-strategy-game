@@ -1,41 +1,42 @@
 class_name Battle
 
 
-var _province_id: int
-var _attacking_army_id: int
-var _defending_army_id: int
+var _attacking_army: Army
+var _defending_army: Army
 var attacker_efficiency: float = 1.0
 
 
 func _init(
-		province_id: int,
-		attacking_army_id: int,
-		defending_army_id: int
+		attacking_army: Army,
+		defending_army: Army
 ) -> void:
-	_province_id = province_id
-	_attacking_army_id = attacking_army_id
-	_defending_army_id = defending_army_id
+	_attacking_army = attacking_army
+	_defending_army = defending_army
 
 
-func apply_to(game_state: GameState) -> void:
-	var armies: Armies = (
-			game_state.world.provinces.province_from_id(_province_id).armies
-	)
-	var attacker: Army = armies.army_from_id(_attacking_army_id)
-	var defender: Army = armies.army_from_id(_defending_army_id)
-	
+func apply() -> void:
 	var delta: int = (
-			int(attacker.army_size.current_size() * attacker_efficiency)
-			- defender.army_size.current_size()
+			int(_attacking_army.army_size.current_size() * attacker_efficiency)
+			- _defending_army.army_size.current_size()
 	)
-	#print("Battle occured. Attacker ", attacker.id, " ; Defender ", defender.id, " ; Delta ", delta, " (", "battle was a tie" if delta == 0 else ("attacker won" if delta > 0 else "defender won"), ")")
+	#print(
+	#		"Battle occured. Attacker ", _attacking_army.id,
+	#		" ; Defender ", _defending_army.id,
+	#		" ; Delta ", delta,
+	#		" (", "battle was a tie" if delta == 0 else
+	#		("attacker won" if delta > 0 else "defender won"), ")"
+	#)
 	if delta > 0:
 		# TODO bad code
-		attacker.army_size.remove(attacker.army_size.current_size() - delta)
-		defender.destroy()
+		_attacking_army.army_size.remove(
+				_attacking_army.army_size.current_size() - delta
+		)
+		_defending_army.destroy()
 	elif delta < 0:
-		attacker.destroy()
-		defender.army_size.remove(defender.army_size.current_size() + delta)
+		_attacking_army.destroy()
+		_defending_army.army_size.remove(
+				_defending_army.army_size.current_size() + delta
+		)
 	else:
-		attacker.destroy()
-		defender.destroy()
+		_attacking_army.destroy()
+		_defending_army.destroy()
