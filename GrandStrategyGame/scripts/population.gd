@@ -11,7 +11,7 @@ func _on_new_turn() -> void:
 	population_size += int(population_size * 0.1)
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"size": population_size,
 	}

@@ -16,7 +16,7 @@ func equals(country: Country) -> bool:
 	)
 
 
-static func from_JSON(json_data: Dictionary) -> Country:
+static func from_json(json_data: Dictionary) -> Country:
 	var country := Country.new()
 	country.id = json_data["id"]
 	country.country_name = json_data["country_name"]
@@ -25,7 +25,7 @@ static func from_JSON(json_data: Dictionary) -> Country:
 	return country
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"id": id,
 		"country_name": country_name,

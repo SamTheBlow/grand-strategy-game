@@ -126,7 +126,7 @@ static func quick_setup(
 	return army
 
 
-static func from_JSON(
+static func from_json(
 	json_data: Dictionary,
 	game_state: GameState,
 	army_scene: PackedScene
@@ -142,9 +142,9 @@ static func from_JSON(
 	)
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"id": id,
-		"army_size": army_size.as_JSON(),
+		"army_size": army_size.as_json(),
 		"owner_country_id": _owner_country.id,
 	}

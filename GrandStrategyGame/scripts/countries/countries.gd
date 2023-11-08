@@ -19,8 +19,8 @@ func country_from_id(id: int) -> Country:
 	return Country.new()
 
 
-func as_JSON() -> Array:
+func as_json() -> Array:
 	var array: Array = []
 	for country in countries:
-		array.append(country.as_JSON())
+		array.append(country.as_json())
 	return array

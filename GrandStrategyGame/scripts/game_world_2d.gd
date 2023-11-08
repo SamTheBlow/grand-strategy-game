@@ -16,9 +16,9 @@ func init() -> void:
 	background.connect("clicked", Callable(provinces, "deselect_province"))
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"camera_limit_x": camera_limit_x,
 		"camera_limit_y": camera_limit_y,
-		"provinces": provinces.as_JSON(),
+		"provinces": provinces.as_json(),
 	}

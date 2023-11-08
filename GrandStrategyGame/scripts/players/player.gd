@@ -17,7 +17,7 @@ func clear_actions() -> void:
 	actions.clear()
 
 
-static func from_JSON(json_data: Dictionary, countries: Countries) -> Player:
+static func from_json(json_data: Dictionary, countries: Countries) -> Player:
 	var player := TestAI1.new()
 	player.id = json_data["id"]
 	player.playing_country = (
@@ -27,7 +27,7 @@ static func from_JSON(json_data: Dictionary, countries: Countries) -> Player:
 	return player
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"id": id,
 		"playing_country_id": playing_country.id,

@@ -29,7 +29,7 @@ func build() -> int:
 	if not _json_data.has("countries"):
 		return ERR_PARSE_ERROR
 	for country_data in _json_data["countries"]:
-		result.countries.add_country(Country.from_JSON(country_data))
+		result.countries.add_country(Country.from_json(country_data))
 	result.add_child(result.countries)
 	
 	# Players
@@ -39,7 +39,7 @@ func build() -> int:
 		return ERR_PARSE_ERROR
 	for player_data in _json_data["players"]:
 		result.players.add_player(
-				Player.from_JSON(player_data, result.countries)
+				Player.from_json(player_data, result.countries)
 		)
 	result.add_child(result.players)
 	
@@ -61,7 +61,7 @@ func build() -> int:
 	# Provinces
 	for province_data in _json_data["world"]["provinces"]:
 		game_world_2d.provinces.add_province(
-				Province.from_JSON(province_data, result)
+				Province.from_json(province_data, result)
 		)
 	# 2nd loop for links
 	for province_data in _json_data["world"]["provinces"]:

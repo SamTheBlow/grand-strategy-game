@@ -48,18 +48,18 @@ func connect_to_provinces(callable: Callable) -> void:
 
 
 func copy() -> GameState:
-	var builder := GameStateFromJSON.new(as_JSON())
+	var builder := GameStateFromJSON.new(as_json())
 	builder.build()
 	return builder.game_state
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
-		"rules": rules.as_JSON(),
-		"countries": countries.as_JSON(),
-		"players": players.as_JSON(),
-		"world": world.as_JSON(),
-		"turn": turn.as_JSON(),
+		"rules": rules.as_json(),
+		"countries": countries.as_json(),
+		"players": players.as_json(),
+		"world": world.as_json(),
+		"turn": turn.as_json(),
 	}
 
 

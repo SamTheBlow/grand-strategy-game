@@ -116,7 +116,7 @@ func is_linked_to(province: Province) -> bool:
 	return links.has(province)
 
 
-static func from_JSON(json_data: Dictionary, game_state: GameState) -> Province:
+static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
 	var province := preload("res://scenes/province.tscn").instantiate() as Province
 	province.id = json_data["id"]
 	province.name = str(province.id)
@@ -137,14 +137,14 @@ static func from_JSON(json_data: Dictionary, game_state: GameState) -> Province:
 			json_data["position_army_host_x"],
 			json_data["position_army_host_y"]
 	))
-	province.armies.setup_from_JSON(json_data["armies"], game_state)
+	province.armies.setup_from_json(json_data["armies"], game_state)
 	return province
 
 
-func as_JSON() -> Dictionary:
-	var links_JSON: Array = []
+func as_json() -> Dictionary:
+	var links_json: Array = []
 	for link in links:
-		links_JSON.append(link.id)
+		links_json.append(link.id)
 	
 	var shape_vertices := Array(province_shape().polygon)
 	var shape_vertices_x: Array = []
@@ -157,9 +157,9 @@ func as_JSON() -> Dictionary:
 		"id": id,
 		"shape": {"x": shape_vertices_x, "y": shape_vertices_y},
 		"position": {"x": position.x, "y": position.y},
-		"armies": armies.as_JSON(),
-		"population": population.as_JSON(),
-		"links": links_JSON,
+		"armies": armies.as_json(),
+		"population": population.as_json(),
+		"links": links_json,
 		"owner_country_id": _owner_country.id,
 		"position_army_host_x": armies.position_army_host.x,
 		"position_army_host_y": armies.position_army_host.y,

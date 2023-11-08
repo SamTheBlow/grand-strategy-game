@@ -17,5 +17,5 @@ func _on_turn_limit_exceeded() -> void:
 	game_over.emit()
 
 
-func as_JSON() -> int:
+func as_json() -> int:
 	return _turn

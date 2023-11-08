@@ -59,7 +59,7 @@ static func build() -> Rules:
 	return game_rules
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
 		"fortress": fortresses,
 	}

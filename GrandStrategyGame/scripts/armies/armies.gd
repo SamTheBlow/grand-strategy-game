@@ -103,14 +103,14 @@ func army_can_be_moved_to(army: Army, destination: Province) -> bool:
 	return army_is_here and is_neighbour
 
 
-func setup_from_JSON(json_data: Array, game_state: GameState) -> void:
+func setup_from_json(json_data: Array, game_state: GameState) -> void:
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data in json_data:
-		add_army(Army.from_JSON(army_data, game_state, army_scene))
+		add_army(Army.from_json(army_data, game_state, army_scene))
 
 
-func as_JSON() -> Array:
+func as_json() -> Array:
 	var array: Array = []
 	for army in armies:
-		array.append(army.as_JSON())
+		array.append(army.as_json())
 	return array

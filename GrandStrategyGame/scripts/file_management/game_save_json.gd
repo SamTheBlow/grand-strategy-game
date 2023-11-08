@@ -5,7 +5,7 @@ extends GameSave
 
 func save_state(game_state: GameState) -> int:
 	var file: FileAccess = FileAccess.open(_file_path, FileAccess.WRITE)
-	file.store_string(JSON.stringify(game_state.as_JSON(), "\t"))
+	file.store_string(JSON.stringify(game_state.as_json(), "\t"))
 	file.close()
 	return OK
 

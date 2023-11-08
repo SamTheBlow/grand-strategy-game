@@ -71,7 +71,7 @@ func _set_size(new_size: int) -> void:
 	size_changed.emit()
 
 
-func as_JSON() -> int:
+func as_json() -> int:
 	return current_size()
 
 

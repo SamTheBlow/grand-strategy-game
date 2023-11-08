@@ -11,7 +11,7 @@ func connect_to_provinces(callable: Callable) -> void:
 	provinces.connect_to_provinces(callable)
 
 
-func as_JSON() -> Dictionary:
+func as_json() -> Dictionary:
 	return {
-		"provinces": provinces.as_JSON(),
+		"provinces": provinces.as_json(),
 	}
