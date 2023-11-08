@@ -15,6 +15,35 @@ var links: Array[Province] = []
 var _owner_country := Country.new()
 
 
+func _on_new_turn() -> void:
+	_determine_new_owner()
+	_auto_recruit()
+
+
+func _determine_new_owner() -> void:
+	var new_owner: Country = owner_country()
+	for army in armies.armies:
+		# If this province's owner has a army here,
+		# then it can't be taken by someone else
+		if army.owner_country() == owner_country():
+			return
+		new_owner = army.owner_country()
+	set_owner_country(new_owner)
+
+
+func _auto_recruit() -> void:
+	if not has_owner_country():
+		return
+	
+	armies.add_army(Army.quick_setup(
+			armies.new_unique_army_id(),
+			population.population_size,
+			owner_country(),
+			preload("res://scenes/army.tscn")
+	))
+	armies.merge_armies()
+
+
 func _on_shape_clicked() -> void:
 	selected.emit(self)
 

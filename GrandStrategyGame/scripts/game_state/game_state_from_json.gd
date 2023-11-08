@@ -78,7 +78,9 @@ func build() -> int:
 	
 	# Turn
 	if _json_data.has("turn"):
-		result.turn = GameTurn.new(_json_data["turn"])
+		result.setup_turn(_json_data["turn"])
+	else:
+		result.setup_turn()
 	
 	game_state = result
 	return OK

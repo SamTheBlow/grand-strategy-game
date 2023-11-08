@@ -2,33 +2,7 @@ class_name Rules
 extends Node
 
 
-signal game_over(winner: Country)
-
 @export var fortresses: bool = false
-
-
-func setup() -> void:
-	if fortresses:
-		pass
-	
-	var rules: Array[Node] = get_children()
-	for rule in rules:
-		rule.connect("game_over", Callable(self, "_on_game_over"))
-		for signal_to_connect in (rule as Rule).listen_to:
-			get_node(signal_to_connect[0]).connect(
-					signal_to_connect[1],
-					Callable(rule, signal_to_connect[2])
-			)
-
-
-func _on_game_over(winner: Country) -> void:
-	game_over.emit(winner)
-
-
-func start_of_turn(game_state: GameState) -> void:
-	var rules: Array[Node] = get_children()
-	for rule in rules:
-		(rule as Rule)._on_start_of_turn(game_state)
 
 
 func action_is_legal(game_state: GameState, action: Action) -> bool:
@@ -81,11 +55,7 @@ func action_is_legal(game_state: GameState, action: Action) -> bool:
 static func build() -> Rules:
 	var game_rules := Rules.new()
 	game_rules.name = "Rules"
-	game_rules.add_child(RuleNewProvinceOwnership.new())
-	game_rules.add_child(RuleProvincePercentageToWin.new())
 	game_rules.add_child(RuleMinArmySize.new())
-	game_rules.add_child(RulePopGrowth.new())
-	game_rules.add_child(RuleAutoRecruit.new())
 	return game_rules
 
 

@@ -84,7 +84,6 @@ func _on_chat_requested_province_info() -> void:
 
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
-	_game_state.setup()
 	($Camera as Camera2D).limit_right = _game_state.world.camera_limit_x
 	($Camera as Camera2D).limit_bottom = _game_state.world.camera_limit_y
 	_game_state.connect_to_provinces(Callable(self, "_on_province_selected"))
@@ -172,8 +171,7 @@ func end_turn() -> void:
 			continue
 		_play_player_turn(player)
 	
-	_game_state.turn.new_turn()
-	_game_state.rules.start_of_turn(_game_state)
+	_game_state.propagate_call("_on_new_turn")
 	
 	# Update the visible game state
 	$WorldLayer.remove_child(_simulation)

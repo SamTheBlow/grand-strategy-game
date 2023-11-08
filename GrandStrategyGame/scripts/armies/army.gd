@@ -112,19 +112,34 @@ func _update_troop_count_label() -> void:
 	troop_count_label.text = str(army_size.current_size())
 
 
+static func quick_setup(
+	id_: int,
+	army_size_: int,
+	owner_country_: Country,
+	army_scene: PackedScene
+) -> Army:
+	var army := army_scene.instantiate() as Army
+	army.id = id_
+	army.setup(army_size_)
+	army.set_owner_country(owner_country_)
+	army.name = str(army.id)
+	return army
+
+
 static func from_JSON(
 	json_data: Dictionary,
 	game_state: GameState,
 	army_scene: PackedScene
 ) -> Army:
-	var army := army_scene.instantiate() as Army
-	army.id = json_data["id"]
-	army.setup(json_data["army_size"])
-	army.set_owner_country(game_state.countries.country_from_id(
-			json_data["owner_country_id"]
-	))
-	army.name = str(army.id)
-	return army
+	var owner_country_: Country = (
+			game_state.countries.country_from_id(json_data["owner_country_id"])
+	)
+	return quick_setup(
+			json_data["id"],
+			json_data["army_size"],
+			owner_country_,
+			army_scene
+	)
 
 
 func as_JSON() -> Dictionary:

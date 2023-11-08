@@ -135,4 +135,6 @@ func generate_game_state() -> GameState:
 	game_state.world = world
 	game_state.add_child(world)
 	
+	game_state.setup_turn()
+	
 	return game_state

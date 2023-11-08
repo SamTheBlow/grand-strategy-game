@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://dfqddg4djlj7d"]
+
+[ext_resource type="Script" path="res://scripts/game_turn.gd" id="1_yivot"]
+[ext_resource type="Script" path="res://scripts/turn_limit.gd" id="2_1uwuc"]
+
+[node name="Turn" type="Node"]
+script = ExtResource("1_yivot")
+
+[node name="TurnLimit" type="Node" parent="."]
+script = ExtResource("2_1uwuc")
+
+[connection signal="exceeded" from="TurnLimit" to="." method="_on_turn_limit_exceeded"]
