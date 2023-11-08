@@ -4,6 +4,7 @@ extends Rule
 
 
 func _on_start_of_turn(game_state: GameState) -> void:
+	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for province in game_state.world.provinces.get_provinces():
 		if not province.has_owner_country():
 			continue
@@ -13,5 +14,5 @@ func _on_start_of_turn(game_state: GameState) -> void:
 			"army_size": province.population.population_size,
 			"owner_country_id": province.owner_country().id,
 		}
-		province.armies.add_army(Army.from_JSON(json_data, game_state))
+		province.armies.add_army(Army.from_JSON(json_data, game_state, army_scene))
 		province.armies.merge_armies()
