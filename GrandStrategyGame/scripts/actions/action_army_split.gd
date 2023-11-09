@@ -25,24 +25,40 @@ func _init(
 	_new_army_ids = new_army_ids
 
 
-func apply_to(game_state: GameState) -> void:
-	var armies: Armies = (
-			game_state.world.provinces.province_from_id(_province_id).armies
+func apply_to(game_state: GameState, _is_simulation: bool) -> void:
+	var province: Province = (
+			game_state.world.provinces.province_from_id(_province_id)
 	)
-	var army: Army = armies.army_from_id(_army_id)
+	if not province:
+		push_warning(
+				"Tried to split an army in a province that doesn't exist"
+		)
+		return
+	
+	var army: Army = province.armies.army_from_id(_army_id)
+	if not army:
+		push_warning("Tried to split an army that doesn't exist")
+		return
+	
+	# TODO bad code, shouldn't be in this class
+	for army_size in _troop_partition:
+		if army_size < 10:
+			push_warning(
+					"Tried to split an army, but at least one"
+					+ " of the resulting armies was too small!"
+			)
+			return
 	
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
 		# Create the new army
-		
-		# We clone the existing army instead of instancing a new one
-		# because then we would need to have the Army scene.
-		# Remember, an Army has children like a Sprite2D, UI, etc.
-		var army_clone := army.duplicate(7) as Army
-		army_clone.id = _new_army_ids[i]
-		army_clone.set_owner_country(army.owner_country())
-		army_clone.setup(_troop_partition[i + 1])
-		armies.add_army(army_clone)
+		var army_clone: Army = Army.quick_setup(
+				_new_army_ids[i],
+				_troop_partition[i + 1],
+				army.owner_country(),
+				preload("res://scenes/army.tscn")
+		)
+		province.armies.add_army(army_clone)
 		
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])
@@ -51,4 +67,3 @@ func apply_to(game_state: GameState) -> void:
 	#		"Army ", _army_key, " in province ", _province_key,
 	#		" was split into ", _new_army_keys
 	#)
-	super(game_state)

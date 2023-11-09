@@ -110,15 +110,14 @@ func new_action_army_movement(
 ) -> void:
 	deselect_province()
 	
-	var local_simulation: GameState = _simulation.copy()
-	var actions: Array[Action] = []
+	var you: Player = _simulation.players.player_from_id(_your_id)
 	var moving_army_id: int = army.id
-	var army_size: int = army.army_size.current_size()
 	
 	# Split the army into two if needed
+	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
 		var new_army_id: int = (
-				local_simulation.world.provinces
+				_simulation.world.provinces
 				.province_from_id(source_province.id)
 				.armies.new_unique_army_id()
 		)
@@ -128,15 +127,13 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		if not _game_state.rules.action_is_legal(local_simulation, action_split):
-			return
-		actions.append(action_split)
-		action_split.apply_to(local_simulation)
+		action_split.apply_to(_simulation, true)
+		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
 	
 	var moving_army_new_id: int = (
-			local_simulation.world.provinces
+			_simulation.world.provinces
 			.province_from_id(destination_province.id)
 			.armies.new_unique_army_id()
 	)
@@ -146,18 +143,8 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	if not _game_state.rules.action_is_legal(local_simulation, action_move):
-		return
-	actions.append(action_move)
-	
-	# Everything was okay, so now we can submit the actions
-	var you: Player = _simulation.players.player_from_id(_your_id)
-	for action in actions:
-		if action.has_method("simulate_to"):
-			action.simulate_to(_simulation)
-		else:
-			action.apply_to(_simulation)
-		you.add_action(action)
+	action_move.apply_to(_simulation, true)
+	you.add_action(action_move)
 
 
 func end_turn() -> void:
@@ -191,8 +178,7 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		if _game_state.rules.action_is_legal(_game_state, action):
-			action.apply_to(_game_state)
+		action.apply_to(_game_state, false)
 	
 	# Merge armies
 	for province in _game_state.world.provinces.get_provinces():
