@@ -5,6 +5,7 @@ extends Control
 signal requested_province_info()
 signal save_requested()
 signal load_requested()
+signal exit_to_main_menu_requested()
 
 @onready var chat_log := %ChatText as RichTextLabel
 @onready var chat_input := %ChatInput as LineEdit
@@ -22,6 +23,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 						"/fs - Toggle fullscreen",
 						"/save - Save the current game state",
 						"/load - Load the saved game state",
+						"/mainmenu - Go back to the main menu (without saving!)",
 				])
 			"infop":
 				requested_province_info.emit()
@@ -43,6 +45,8 @@ func _on_input_text_submitted(new_text: String) -> void:
 			"load":
 				system_message("Loading the save file...")
 				load_requested.emit()
+			"mainmenu":
+				exit_to_main_menu_requested.emit()
 			_:
 				system_message(
 						'"[color=black]' + new_text + '[/color]"'

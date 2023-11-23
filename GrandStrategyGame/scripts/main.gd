@@ -3,11 +3,16 @@ extends Node
 
 const SAVE_FILE_PATH: String = "user://gamesave.json"
 
+@export var main_menu_scene: PackedScene
 @export var game_scene: PackedScene
 @export var world_scene: PackedScene
 
 
-func _ready():
+func _ready() -> void:
+	_on_main_menu_entered()
+
+
+func _on_game_started() -> void:
 	var world: Node = world_scene.instantiate()
 	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
 	var your_id: int = scenario.human_player
@@ -21,11 +26,22 @@ func _ready():
 	chat.connect(
 			"save_requested", Callable(self, "_on_save_requested")
 	)
+	chat.connect(
+			"exit_to_main_menu_requested",
+			Callable(self, "_on_main_menu_entered")
+	)
+
+
+func _on_main_menu_entered() -> void:
+	_remove_all_children()
+	
+	var main_menu: Node = main_menu_scene.instantiate()
+	main_menu.connect("game_started", Callable(self, "_on_game_started"))
+	add_child(main_menu)
 
 
 func new_game(game_state: GameState, your_id: int) -> void:
-	if has_node("Game"):
-		remove_child(get_node("Game"))
+	_remove_all_children()
 	
 	var game := game_scene.instantiate() as Game
 	game.load_game_state(game_state, your_id)
@@ -74,3 +90,8 @@ func _on_save_requested() -> void:
 		return
 	
 	chat.new_message("[b]Game state saved[/b]")
+
+
+func _remove_all_children() -> void:
+	for child in get_children():
+		remove_child(child)
