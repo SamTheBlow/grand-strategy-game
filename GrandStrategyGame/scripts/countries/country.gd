@@ -8,14 +8,6 @@ extends Node
 var id: int = -1
 
 
-func equals(country: Country) -> bool:
-	return (
-			id == country.id
-			and country_name == country.country_name
-			and color.is_equal_approx(country.color)
-	)
-
-
 static func from_json(json_data: Dictionary) -> Country:
 	var country := Country.new()
 	country.id = json_data["id"]

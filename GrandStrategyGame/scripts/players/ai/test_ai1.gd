@@ -1,7 +1,7 @@
 class_name TestAI1
 extends PlayerAI
-# Test AI. Always tries to move its armies to the nearest targets.
-# It also leaves some troops idle to defend.
+## Test AI. Always tries to move its armies to the nearest targets.
+## It also leaves some troops idle to defend.
 
 
 func play(game_state: GameState) -> void:
@@ -16,7 +16,7 @@ func play(game_state: GameState) -> void:
 		# Find the nearest target province for each of your armies
 		var armies: Array[Army] = province.armies.armies
 		for army in armies:
-			if army.owner_country().equals(playing_country):
+			if army.owner_country().id == playing_country.id:
 				var new_actions: Array[Action] = _find_target_province(
 						game_state,
 						link_tree,
@@ -51,7 +51,7 @@ func _find_target_province(
 	for link_branch in link_tree:
 		var furthest_link: int = link_branch.size() - 1
 		var link_owner: Country = link_branch[furthest_link].owner_country()
-		if not link_owner.equals(playing_country):
+		if link_owner.id != playing_country.id:
 			targets.append(link_branch)
 	
 	# If there's any, send troops evenly to each province
