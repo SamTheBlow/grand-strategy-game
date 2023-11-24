@@ -6,11 +6,13 @@ signal game_over(winner: Country)
 signal province_selected(province: Province)
 
 # Nodes
-var rules: Rules
 var countries: Countries
 var players: Players
 var world: GameWorld
 var turn: GameTurn
+
+# Other data
+var rules: GameRules
 
 
 func _on_new_turn() -> void:
@@ -33,13 +35,20 @@ func _on_game_over() -> void:
 	game_over.emit(winning_country)
 
 
+## The rules must be setup beforehand!
 func setup_turn(starting_turn: int = 1) -> void:
-	const turn_scene: PackedScene = (
-			preload("res://scenes/game_turn/no_turn_limit.tscn")
-	)
-	turn = turn_scene.instantiate() as GameTurn
+	turn = GameTurn.new()
+	turn.name = "Turn"
 	turn._turn = starting_turn
-	turn.connect("game_over", Callable(self, "_on_game_over"))
+	
+	if rules.turn_limit_enabled:
+		var turn_limit := TurnLimit.new()
+		turn_limit.name = "TurnLimit"
+		turn_limit._final_turn = rules.turn_limit
+		turn_limit.connect("game_over", Callable(self, "_on_game_over"))
+		
+		turn.add_child(turn_limit)
+	
 	add_child(turn)
 
 
@@ -55,11 +64,11 @@ func copy() -> GameState:
 
 func as_json() -> Dictionary:
 	return {
-		"rules": rules.as_json(),
 		"countries": countries.as_json(),
 		"players": players.as_json(),
 		"world": world.as_json(),
 		"turn": turn.as_json(),
+		"rules": rules.as_json(),
 	}
 
 

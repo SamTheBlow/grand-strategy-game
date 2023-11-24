@@ -82,6 +82,27 @@ func _on_chat_requested_province_info() -> void:
 	chat.system_message("Population size: " + str(population_size))
 
 
+func _on_chat_rules_requested() -> void:
+	var population_growth: String = "no"
+	if _game_state.rules.population_growth:
+		population_growth = "yes"
+	
+	var fortresses: String = "no"
+	if _game_state.rules.fortresses:
+		fortresses = "yes"
+	
+	var turn_limit: String = "none"
+	if _game_state.rules.turn_limit_enabled:
+		turn_limit = str(_game_state.rules.turn_limit) + " turns"
+	
+	chat.system_message_multiline([
+		"This game's rules:",
+		"-> Population growth: " + population_growth,
+		"-> Fortresses: " + fortresses,
+		"-> Turn limit: " + turn_limit,
+	])
+
+
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
 	($Camera as Camera2D).limit_right = _game_state.world.camera_limit_x

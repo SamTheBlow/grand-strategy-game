@@ -31,10 +31,14 @@ func setup_armies(position_army_host: Vector2) -> void:
 	add_child(armies)
 
 
-func setup_population(population_size: int) -> void:
+func setup_population(population_size: int, population_growth: bool) -> void:
 	population = Population.new()
 	population.name = "Population"
 	population.population_size = population_size
+	
+	if population_growth:
+		population.add_child(PopulationGrowth.new())
+	
 	add_child(population)
 
 
@@ -108,7 +112,10 @@ static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
 	province.set_owner_country(
 			game_state.countries.country_from_id(json_data["owner_country_id"])
 	)
-	province.setup_population(json_data["population"]["size"])
+	province.setup_population(
+			json_data["population"]["size"],
+			game_state.rules.population_growth
+	)
 	province.setup_armies(Vector2(
 			json_data["position_army_host_x"],
 			json_data["position_army_host_y"]

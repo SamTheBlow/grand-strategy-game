@@ -5,26 +5,29 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 
 @export var main_menu_scene: PackedScene
 @export var game_scene: PackedScene
-@export var world_scene: PackedScene
 
 
 func _ready() -> void:
 	_on_main_menu_entered()
 
 
-func _on_game_started() -> void:
-	var world: Node = world_scene.instantiate()
+func _on_game_started(scenario_scene: PackedScene, rules: GameRules) -> void:
+	var world: Node = scenario_scene.instantiate()
 	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
 	var your_id: int = scenario.human_player
-	var game_state: GameState = scenario.generate_game_state()
+	var game_state: GameState = (
+			scenario.generate_game_state(rules)
+	)
 	new_game(game_state, your_id)
 	
 	var chat: Chat = _chat()
 	chat.connect(
-			"load_requested", Callable(self, "_on_load_requested")
+			"load_requested",
+			Callable(self, "_on_load_requested")
 	)
 	chat.connect(
-			"save_requested", Callable(self, "_on_save_requested")
+			"save_requested",
+			Callable(self, "_on_save_requested")
 	)
 	chat.connect(
 			"exit_to_main_menu_requested",

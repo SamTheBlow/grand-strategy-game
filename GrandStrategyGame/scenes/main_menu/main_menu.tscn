@@ -1,10 +1,10 @@
 [gd_scene load_steps=3 format=3 uid="uid://dm18hv6wm8moi"]
 
-[ext_resource type="Script" path="res://scenes/main_menu/main_menu.gd" id="1_jcwha"]
 [ext_resource type="PackedScene" uid="uid://b735rxfcexqks" path="res://scenes/main_menu/lobby.tscn" id="1_koaky"]
+[ext_resource type="Script" path="res://scripts/main_menu/main_menu.gd" id="1_kwhjp"]
 
 [node name="MainMenu" type="Node"]
-script = ExtResource("1_jcwha")
+script = ExtResource("1_kwhjp")
 
 [node name="Background" type="Control" parent="."]
 layout_mode = 3

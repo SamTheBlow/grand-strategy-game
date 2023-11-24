@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=4 format=3 uid="uid://b735rxfcexqks"]
 
-[ext_resource type="Script" path="res://scenes/main_menu/lobby.gd" id="1_hty1g"]
+[ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
+[ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://test_data/world_maps/world_test1.tscn" id="2_aiiyc"]
+[ext_resource type="Script" path="res://scripts/main_menu/lockable_spin_box.gd" id="2_sb2tg"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -10,6 +12,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hty1g")
+scenario_scene = ExtResource("2_aiiyc")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -20,7 +23,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.188235)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -28,27 +31,125 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Spacing80" type="Control" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 80.0
-
-[node name="HBoxContainer" type="HBoxContainer" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 20.0
-
-[node name="Spacing75" type="Control" parent="VBoxContainer/HBoxContainer"]
+[node name="Spacing75" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 75.0
 
-[node name="Spacing25" type="Control" parent="VBoxContainer/HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Spacing75"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_top = 0.05
+anchor_right = 0.95
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
+layout_mode = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SpacingTop" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Population growth"
+
+[node name="PopGrowthCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="Spacing1" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.701961, 0.701961, 0.701961, 1)
+text = "Fortresses"
+
+[node name="FortressesCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+disabled = true
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Turn limit"
+
+[node name="TurnLimitCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3" node_paths=PackedStringArray("check_box")]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+value = 50.0
+rounded = true
+allow_greater = true
+alignment = 1
+script = ExtResource("2_sb2tg")
+check_box = NodePath("../TurnLimitCheckBox")
+
+[node name="SpacingBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 16)
+layout_mode = 2
+
+[node name="Spacing25" type="Control" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 25.0
 
-[node name="StartButton" type="Button" parent="VBoxContainer/HBoxContainer/Spacing25"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing25"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Spacing80" type="Control" parent="HBoxContainer/Spacing25/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 80.0
+
+[node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 20.0
+
+[node name="StartButton" type="Button" parent="HBoxContainer/Spacing25/VBoxContainer/Spacing20"]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -64,4 +165,4 @@ grow_vertical = 2
 theme_override_font_sizes/font_size = 32
 text = "Start Game"
 
-[connection signal="pressed" from="VBoxContainer/HBoxContainer/Spacing25/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Spacing25/VBoxContainer/Spacing20/StartButton" to="." method="_on_start_button_pressed"]

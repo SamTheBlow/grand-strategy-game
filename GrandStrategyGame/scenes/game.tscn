@@ -183,6 +183,7 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [connection signal="requested_province_info" from="UILayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
+[connection signal="rules_requested" from="UILayer/GameUI/Chat" to="." method="_on_chat_rules_requested"]
 [connection signal="text_submitted" from="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="UILayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
 [connection signal="dragged" from="UILayer/GameUI/GameOverPopup/ColorRect" to="UILayer/GameUI/GameOverPopup" method="_on_dragged"]

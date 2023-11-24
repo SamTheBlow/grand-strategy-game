@@ -6,6 +6,7 @@ signal requested_province_info()
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()
+signal rules_requested()
 
 @onready var chat_log := %ChatText as RichTextLabel
 @onready var chat_input := %ChatInput as LineEdit
@@ -24,6 +25,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 						"/save - Save the current game state",
 						"/load - Load the saved game state",
 						"/mainmenu - Go back to the main menu (without saving!)",
+						"/rules - Gives a list of the current game rules",
 				])
 			"infop":
 				requested_province_info.emit()
@@ -47,6 +49,8 @@ func _on_input_text_submitted(new_text: String) -> void:
 				load_requested.emit()
 			"mainmenu":
 				exit_to_main_menu_requested.emit()
+			"rules":
+				rules_requested.emit()
 			_:
 				system_message(
 						'"[color=black]' + new_text + '[/color]"'

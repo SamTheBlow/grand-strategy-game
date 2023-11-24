@@ -18,10 +18,9 @@ func build() -> int:
 	result.name = "GameState"
 	
 	# Rules
-	result.rules = Rules.build()
-	if _json_data.has("rules") and _json_data["rules"].has("fortress"):
-		result.rules.fortresses = _json_data["rules"]["fortress"]
-	result.add_child(result.rules)
+	if not _json_data.has("rules"):
+		return ERR_PARSE_ERROR
+	result.rules = GameRules.from_json(_json_data["rules"])
 	
 	# Countries
 	result.countries = Countries.new()

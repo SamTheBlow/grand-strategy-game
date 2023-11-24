@@ -37,13 +37,10 @@ var _number_of_countries: int = 11
 var human_player: int = randi() % _number_of_countries
 
 
-func generate_game_state() -> GameState:
+func generate_game_state(game_rules: GameRules) -> GameState:
 	var game_state := GameState.new()
 	game_state.name = "GameState"
-	
-	# Build the game rules
-	game_state.rules = Rules.build()
-	game_state.add_child(game_state.rules)
+	game_state.rules = game_rules
 	
 	# Build the countries and the players
 	var countries := Countries.new()
@@ -102,7 +99,8 @@ func generate_game_state() -> GameState:
 		
 		# Population
 		var population_size: int = 10 + randi() % 90
-		province.setup_population(population_size)
+		var population_growth: bool = game_rules.population_growth
+		province.setup_population(population_size, population_growth)
 		
 		# Armies
 		var army_host_node := shape.get_node("ArmyHost") as Node2D
