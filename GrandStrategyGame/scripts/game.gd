@@ -2,6 +2,8 @@ class_name Game
 extends Node
 
 
+signal game_ended()
+
 # The true, actual game state
 var _game_state: GameState
 
@@ -64,6 +66,48 @@ func _on_province_selected(province: Province) -> void:
 
 func _on_recruit_cancelled() -> void:
 	deselect_province()
+
+
+func _on_load_requested() -> void:
+	# TODO bad code (don't use get_parent like that), also DRY
+	var save_file_path: String = get_parent().SAVE_FILE_PATH
+	
+	var new_game_state: GameState = (
+			GameSaveJSON.new(save_file_path).load_state()
+	)
+	
+	if new_game_state == null:
+		var error_message: String = "Failed to load the game"
+		push_error(error_message)
+		chat.system_message(error_message)
+		return
+	
+	# TODO bad code
+	get_parent().new_game(
+			new_game_state, randi() % new_game_state.players.players.size()
+	)
+
+
+func _on_save_requested() -> void:
+	# TODO bad code (don't use get_parent like that)
+	# The player should be able to change the file path for save files
+	var save_file_path: String = get_parent().SAVE_FILE_PATH
+	
+	var error: int = (
+			GameSaveJSON.new(save_file_path).save_state(_game_state)
+	)
+	
+	if error != OK:
+		var error_message: String = "Failed to save the game"
+		push_error(error_message)
+		chat.system_message(error_message)
+		return
+	
+	chat.new_message("[b]Game state saved[/b]")
+
+
+func _on_exit_to_main_menu_requested() -> void:
+	game_ended.emit()
 
 
 func _on_chat_requested_province_info() -> void:
