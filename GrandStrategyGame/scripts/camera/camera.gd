@@ -25,21 +25,7 @@ func _physics_process(delta: float) -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		var event_typed := event as InputEventMouseMotion
-		if event_typed.button_mask == MOUSE_BUTTON_MASK_LEFT:
-			position -= event_typed.relative / zoom
-			# All of this assumes the camera's
-			# anchor mode is Fixed TopLeft.
-			var max_x: float = (
-					limit_right - get_viewport_rect().size.x / zoom.x
-			)
-			var max_y: float = (
-					limit_bottom - get_viewport_rect().size.y / zoom.y
-			)
-			position.x = clampf(position.x, 0.0, max_x)
-			position.y = clampf(position.y, 0.0, max_y)
-	elif event is InputEventMouseButton:
+	if event is InputEventMouseButton:
 		var event_typed := event as InputEventMouseButton
 		if event_typed.is_pressed():
 			if event_typed.button_index == MOUSE_BUTTON_WHEEL_UP:

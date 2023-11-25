@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=7 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_yoos1"]
-[ext_resource type="Script" path="res://scripts/camera.gd" id="2_xf1ng"]
+[ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
+[ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="Script" path="res://scripts/chat/chat.gd" id="4_0kwm4"]
 [ext_resource type="Script" path="res://scripts/ui/game_over_popup.gd" id="5_s4mjp"]
 [ext_resource type="Script" path="res://scripts/ui/drag_source.gd" id="6_pwyey"]
@@ -9,15 +10,18 @@
 [node name="Game" type="Node"]
 script = ExtResource("1_yoos1")
 
+[node name="WorldLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
 [node name="Camera" type="Camera2D" parent="."]
 anchor_mode = 0
 limit_left = 0
 limit_top = 0
 position_smoothing_enabled = true
-script = ExtResource("2_xf1ng")
+script = ExtResource("2_lblr6")
 
-[node name="WorldLayer" type="CanvasLayer" parent="."]
-follow_viewport_enabled = true
+[node name="CameraDrag" type="Node" parent="Camera"]
+script = ExtResource("3_3p7sw")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2
