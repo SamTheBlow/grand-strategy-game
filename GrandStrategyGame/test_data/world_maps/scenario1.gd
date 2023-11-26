@@ -76,8 +76,9 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 	
 	# Set the camera's limits
 	var world_size_node := %WorldSize as Marker2D
-	world.camera_limit_x = int(world_size_node.position.x)
-	world.camera_limit_y = int(world_size_node.position.y)
+	world.limits = WorldLimits.from_rect2i(
+			Rect2i(Vector2i.ZERO, world_size_node.position)
+	)
 	
 	# Provinces
 	var number_of_provinces: int = %Shapes.get_child_count()

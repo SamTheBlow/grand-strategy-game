@@ -149,8 +149,14 @@ func _on_chat_rules_requested() -> void:
 
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
-	($Camera as Camera2D).limit_right = _game_state.world.camera_limit_x
-	($Camera as Camera2D).limit_bottom = _game_state.world.camera_limit_y
+	
+	# TODO bad code, shouldn't be here
+	var camera := $Camera as Camera2D
+	camera.limit_left = _game_state.world.limits.limit_left()
+	camera.limit_top = _game_state.world.limits.limit_top()
+	camera.limit_right = _game_state.world.limits.limit_right()
+	camera.limit_bottom = _game_state.world.limits.limit_bottom()
+	
 	_game_state.connect_to_provinces(Callable(self, "_on_province_selected"))
 	_game_state.connect("game_over", Callable(self, "_on_game_over"))
 	_simulation = game_state.copy()

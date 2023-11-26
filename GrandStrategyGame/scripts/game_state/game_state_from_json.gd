@@ -47,15 +47,13 @@ func build() -> int:
 	game_world_2d.init()
 	if not (
 			_json_data.has("world")
+			and _json_data["world"].has("limits")
 			and _json_data["world"].has("provinces")
-			and _json_data["world"].has("camera_limit_x")
-			and _json_data["world"].has("camera_limit_y")
 	):
 		return ERR_PARSE_ERROR
 	
 	# Camera limits
-	game_world_2d.camera_limit_x = _json_data["world"]["camera_limit_x"]
-	game_world_2d.camera_limit_y = _json_data["world"]["camera_limit_y"]
+	game_world_2d.limits = WorldLimits.from_json(_json_data["world"]["limits"])
 	
 	# Provinces
 	for province_data in _json_data["world"]["provinces"]:

@@ -2,8 +2,7 @@ class_name GameWorld2D
 extends GameWorld
 
 
-var camera_limit_x: int = 10_000_000
-var camera_limit_y: int = 10_000_000
+var limits: WorldLimits
 var background: WorldBackground
 
 
@@ -18,7 +17,6 @@ func init() -> void:
 
 func as_json() -> Dictionary:
 	return {
-		"camera_limit_x": camera_limit_x,
-		"camera_limit_y": camera_limit_y,
+		"limits": limits.as_json(),
 		"provinces": provinces.as_json(),
 	}
