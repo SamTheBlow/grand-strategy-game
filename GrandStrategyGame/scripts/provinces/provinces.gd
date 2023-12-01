@@ -43,7 +43,7 @@ func province_from_id(id: int) -> Province:
 func connect_to_provinces(callable: Callable) -> void:
 	var provinces: Array[Province] = get_provinces()
 	for province in provinces:
-		province.connect("selected", callable)
+		province.selected.connect(callable)
 
 
 func as_json() -> Array:

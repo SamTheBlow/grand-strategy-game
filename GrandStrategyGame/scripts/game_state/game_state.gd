@@ -45,7 +45,7 @@ func setup_turn(starting_turn: int = 1) -> void:
 		var turn_limit := TurnLimit.new()
 		turn_limit.name = "TurnLimit"
 		turn_limit._final_turn = rules.turn_limit
-		turn_limit.connect("game_over", Callable(self, "_on_game_over"))
+		turn_limit.game_over.connect(_on_game_over)
 		
 		turn.add_child(turn_limit)
 	

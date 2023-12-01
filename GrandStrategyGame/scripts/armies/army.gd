@@ -43,12 +43,8 @@ func _on_army_size_changed() -> void:
 ## army_size must be greater or equal to 10
 func setup(army_size_: int) -> void:
 	army_size = ArmySize.new(army_size_, 10)
-	army_size.connect(
-			"size_changed", Callable(self, "_on_army_size_changed")
-	)
-	army_size.connect(
-			"became_too_small", Callable(self, "destroy")
-	)
+	army_size.size_changed.connect(_on_army_size_changed)
+	army_size.became_too_small.connect(destroy)
 	_update_troop_count_label()
 
 

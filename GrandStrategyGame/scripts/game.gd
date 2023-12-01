@@ -39,21 +39,7 @@ func _on_province_selected(province: Province) -> void:
 		if selected_armies.country_has_active_army(your_country):
 			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
 			if selected_armies.army_can_be_moved_to(army, province):
-				# Show interface for selecting a number of troops
-				var troop_ui: TroopUI = (TroopUI.new_popup(
-					army, selected_province, province,
-					preload("res://scenes/troop_ui.tscn")
-				))
-				troop_ui.name = "RecruitUI"
-				troop_ui.connect(
-						"cancelled",
-						Callable(self, "_on_recruit_cancelled")
-				)
-				troop_ui.connect(
-						"army_movement_requested",
-						Callable(self, "new_action_army_movement")
-				)
-				$UILayer.add_child(troop_ui)
+				_new_popup_number_of_troops(army, selected_province, province)
 				return
 	provinces_node.select_province(province)
 	
@@ -157,12 +143,12 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	camera.limit_right = _game_state.world.limits.limit_right()
 	camera.limit_bottom = _game_state.world.limits.limit_bottom()
 	
-	_game_state.connect_to_provinces(Callable(self, "_on_province_selected"))
-	_game_state.connect("game_over", Callable(self, "_on_game_over"))
+	_game_state.connect_to_provinces(_on_province_selected)
+	_game_state.game_over.connect(_on_game_over)
 	_simulation = game_state.copy()
 	
 	# TODO bad code DRY
-	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
+	_simulation.connect_to_provinces(_on_province_selected)
 	
 	$WorldLayer.add_child(_simulation)
 	
@@ -236,7 +222,7 @@ func end_turn() -> void:
 	_simulation = _game_state.copy()
 	
 	# TODO bad code DRY
-	_simulation.connect_to_provinces(Callable(self, "_on_province_selected"))
+	_simulation.connect_to_provinces(_on_province_selected)
 	
 	$WorldLayer.add_child(_simulation)
 
@@ -256,3 +242,19 @@ func _play_player_turn(player: Player) -> void:
 		province.armies.merge_armies()
 	
 	#print("--- End of player's turn")
+
+
+## Create and display an interface for selecting a number of troops
+func _new_popup_number_of_troops(
+	army: Army,
+	source_province: Province,
+	destination_province: Province
+) -> void:
+	var troop_ui: TroopUI = (TroopUI.new_popup(
+			army, source_province, destination_province,
+			preload("res://scenes/troop_ui.tscn")
+	))
+	troop_ui.name = "RecruitUI"
+	troop_ui.cancelled.connect(_on_recruit_cancelled)
+	troop_ui.army_movement_requested.connect(new_action_army_movement)
+	$UILayer.add_child(troop_ui)

@@ -10,7 +10,7 @@ func _ready() -> void:
 		return
 	
 	editable = check_box.button_pressed
-	check_box.connect("toggled", Callable(self, "_on_check_box_toggled"))
+	check_box.toggled.connect(_on_check_box_toggled)
 
 
 func _on_check_box_toggled(button_pressed: bool) -> void:

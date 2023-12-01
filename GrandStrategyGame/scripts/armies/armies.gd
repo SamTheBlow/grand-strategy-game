@@ -8,7 +8,7 @@ var armies: Array[Army]
 
 
 func remove_army(army: Army) -> void:
-	army.disconnect("destroyed", Callable(self, "remove_army"))
+	army.destroyed.disconnect(remove_army)
 	armies.erase(army)
 	remove_child(army)
 
@@ -20,7 +20,7 @@ func add_army(army: Army) -> void:
 		(army.get_parent() as Armies).remove_army(army)
 	army.name = str(army.id)
 	
-	army.connect("destroyed", Callable(self, "remove_army"))
+	army.destroyed.connect(remove_army)
 	armies.append(army)
 	add_child(army)
 	

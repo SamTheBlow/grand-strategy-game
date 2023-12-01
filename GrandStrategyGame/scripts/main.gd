@@ -23,8 +23,8 @@ func _on_game_started(scenario_scene: PackedScene, rules: GameRules) -> void:
 func _on_main_menu_entered() -> void:
 	_remove_all_children()
 	
-	var main_menu: Node = main_menu_scene.instantiate()
-	main_menu.connect("game_started", Callable(self, "_on_game_started"))
+	var main_menu := main_menu_scene.instantiate() as MainMenu
+	main_menu.game_started.connect(_on_game_started)
 	add_child(main_menu)
 
 
@@ -33,7 +33,7 @@ func new_game(game_state: GameState, your_id: int) -> void:
 	
 	var game := game_scene.instantiate() as Game
 	game.load_game_state(game_state, your_id)
-	game.connect("game_ended", Callable(self, "_on_main_menu_entered"))
+	game.game_ended.connect(_on_main_menu_entered)
 	add_child(game)
 
 

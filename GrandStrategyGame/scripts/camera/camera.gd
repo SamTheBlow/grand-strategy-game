@@ -14,9 +14,7 @@ var _zoom_rate: float = 8.0
 
 
 func _ready() -> void:
-	get_tree().get_root().connect(
-			"size_changed", Callable(self, "_on_screen_size_changed")
-	)
+	get_tree().get_root().size_changed.connect(_on_screen_size_changed)
 
 
 func _physics_process(delta: float) -> void:

@@ -12,7 +12,7 @@ func init() -> void:
 	background = $Node2D/Background as WorldBackground
 	provinces = $Node2D/Provinces as Provinces
 	
-	background.connect("clicked", Callable(provinces, "deselect_province"))
+	background.clicked.connect(provinces.deselect_province)
 
 
 func as_json() -> Dictionary:
