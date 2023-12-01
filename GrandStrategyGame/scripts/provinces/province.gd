@@ -101,7 +101,7 @@ static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
 	province.id = json_data["id"]
 	province.name = str(province.id)
 	var shape: PackedVector2Array = []
-	for i in json_data["shape"]["x"].size():
+	for i in (json_data["shape"]["x"] as Array).size():
 		shape.append(Vector2(
 				json_data["shape"]["x"][i], json_data["shape"]["y"][i]
 		))

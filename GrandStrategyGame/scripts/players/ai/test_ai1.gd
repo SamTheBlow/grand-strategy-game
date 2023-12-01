@@ -48,7 +48,7 @@ func _find_target_province(
 	
 	# Get a list of all the provinces you don't own
 	var targets: Array = []
-	for link_branch in link_tree:
+	for link_branch: Array in link_tree:
 		var furthest_link: int = link_branch.size() - 1
 		var link_owner: Country = link_branch[furthest_link].owner_country()
 		if link_owner.id != playing_country.id:
@@ -104,13 +104,13 @@ func _find_target_province(
 		
 		# Make a list of all the provinces we've already searched
 		var already_searched_provinces: Array[Province] = [province]
-		for link_branch in link_tree:
-			for link in link_branch:
+		for link_branch: Array in link_tree:
+			for link: Province in link_branch:
 				if already_searched_provinces.find(link) == -1:
 					already_searched_provinces.append(link)
 		
 		# Get the linked provinces that have not been searched yet
-		for link_branch in link_tree:
+		for link_branch: Array in link_tree:
 			var furthest_link: int = link_branch.size() - 1
 			var next_links: Array[Province] = link_branch[furthest_link].links
 			for next_link in next_links:

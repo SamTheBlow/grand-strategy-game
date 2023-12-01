@@ -7,7 +7,7 @@ If you want to contribute in any way, please do!
 ![Gameplay screenshot](/screenshot-gameplay.png)
 
 # How to play
-All you need to install is [Godot 4.1.x](https://godotengine.org/download/archive/4.1.3-stable/).
+All you need to install is [Godot 4.2.x](https://godotengine.org/download/archive/4.2-stable/).
 - Download [this game's code](https://github.com/SamTheBlow/grand-strategy-game/archive/refs/heads/main.zip);
 - Extract it on your computer;
 - Launch Godot;

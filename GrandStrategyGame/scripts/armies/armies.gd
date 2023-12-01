@@ -105,7 +105,7 @@ func army_can_be_moved_to(army: Army, destination: Province) -> bool:
 
 func setup_from_json(json_data: Array, game_state: GameState) -> void:
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
-	for army_data in json_data:
+	for army_data: Dictionary in json_data:
 		add_army(Army.from_json(army_data, game_state, army_scene))
 
 

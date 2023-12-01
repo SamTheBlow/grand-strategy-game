@@ -51,10 +51,10 @@ func _init(directory_global_path: String) -> void:
 			continue
 		
 		# It's a text file
-		var file_type: String = (
+		var text_file_type: String = (
 				file_string.get_slice("\n", 0).trim_prefix("Text: ")
 		)
-		match file_type:
+		match text_file_type:
 			CustomFileTypes.TITLE[CustomFileTypes.PROVINCES_BLUEPRINT]:
 				_provinces_blueprints.append(
 						ProvincesBlueprintFromText.new(file_string)

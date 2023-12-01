@@ -80,7 +80,7 @@ func _check_percentage_winner() -> void:
 	
 	# Declare a winner if there is one
 	var number_of_provinces: int = world.provinces.get_provinces().size()
-	for o in ownership:
+	for o: Array in ownership:
 		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
 			_on_game_over()
 			break

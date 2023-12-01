@@ -10,7 +10,7 @@ var relative_starting_position := Vector2.ZERO
 var relative_mouse_origin := Vector2.ZERO
 
 
-func _process(_delta) -> void:
+func _process(_delta: float) -> void:
 	if is_being_dragged:
 		var relative_position: Vector2 = get_relative_mouse_position()
 		var delta_x: float = relative_position.x - relative_mouse_origin.x
@@ -61,7 +61,7 @@ func get_relative_mouse_position() -> Vector2:
 
 ## Experimental; do not use.
 ## Only works for objects anchored to the top-left corner
-func clamp_to(control: Control):
+func clamp_to(control: Control) -> void:
 	var delta_x: float = anchor_left - control.anchor_right
 	var delta_y: float = anchor_top - control.anchor_bottom
 	if delta_x < 0 and delta_y < 0:

@@ -12,12 +12,16 @@ config_version=5
 
 config/name="Grand strategy game"
 run/main_scene="res://scenes/main.tscn"
-config/features=PackedStringArray("4.1")
+config/features=PackedStringArray("4.2")
 config/icon="res://assets/flag_icon.png"
 
 [autoload]
 
 CodeTests="*res://scripts/code_tests.gd"
+
+[debug]
+
+gdscript/warnings/untyped_declaration=1
 
 [filesystem]
 
