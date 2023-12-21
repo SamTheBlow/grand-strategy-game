@@ -1,6 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=8 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game.gd" id="1_yoos1"]
+[ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="Script" path="res://scripts/chat/chat.gd" id="4_0kwm4"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="4_331yk"]
@@ -14,10 +15,10 @@ script = ExtResource("1_yoos1")
 follow_viewport_enabled = true
 
 [node name="Camera" type="Camera2D" parent="."]
-anchor_mode = 0
 limit_left = 0
 limit_top = 0
 position_smoothing_enabled = true
+script = ExtResource("2_lblr6")
 
 [node name="CameraDrag" type="Node" parent="Camera"]
 script = ExtResource("3_3p7sw")

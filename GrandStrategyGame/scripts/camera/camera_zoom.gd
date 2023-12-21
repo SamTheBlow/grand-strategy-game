@@ -2,7 +2,7 @@ class_name CameraZoom
 extends Node
 ## Allows the player to zoom the camera in/out.
 ##
-## This node is meant to be added as a child of a Camera2D node.
+## This node is meant to be added as a child of a CustomCamera2D node.
 ##
 ## See this video for more information about some of the code:
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
@@ -10,6 +10,9 @@ extends Node
 
 # The camera will do its best to reach this amount of zoom
 var _target_zoom: float = 1.0
+# The previous target is used to correctly zoom at the cursor's location
+var _previous_target: float = 1.0
+
 # The limit on how close the camera can zoom in
 var _maximum_zoom: float = 1.0
 # How close/far the camera will zoom in/out each time
@@ -29,6 +32,7 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	var weight: float = _zoom_rate * delta
+	#camera.zoom = _target_zoom * Vector2.ONE
 	camera.zoom = camera.zoom.lerp(_target_zoom * Vector2.ONE, weight)
 	set_physics_process(not is_equal_approx(camera.zoom.x, _target_zoom))
 
@@ -38,23 +42,42 @@ func _unhandled_input(event: InputEvent) -> void:
 		var event_typed := event as InputEventMouseButton
 		if event_typed.is_pressed():
 			if event_typed.button_index == MOUSE_BUTTON_WHEEL_UP:
-				_zoom_in()
+				_zoom_in(event_typed.position)
 			if event_typed.button_index == MOUSE_BUTTON_WHEEL_DOWN:
-				_zoom_out()
+				_zoom_out(event_typed.position)
 
 
-func _zoom_in() -> void:
-	_target_zoom = minf(_target_zoom + _zoom_increment, _maximum_zoom)
-	set_physics_process(true)
-
-
-func _zoom_out() -> void:
-	var camera := get_parent() as Camera2D
+func _zoom_in(mouse_position: Vector2) -> void:
+	var camera := get_parent() as CustomCamera2D
 	if not camera:
 		return
 	
-	_target_zoom = maxf(_target_zoom - _zoom_increment, _minimum_zoom(camera))
+	_previous_target = _target_zoom
+	_target_zoom = minf(_target_zoom + _zoom_increment, _maximum_zoom)
+	_zoom_to_cursor(camera, mouse_position)
 	set_physics_process(true)
+
+
+func _zoom_out(mouse_position: Vector2) -> void:
+	var camera := get_parent() as CustomCamera2D
+	if not camera:
+		return
+	
+	_previous_target = _target_zoom
+	_target_zoom = maxf(_target_zoom - _zoom_increment, _minimum_zoom(camera))
+	_zoom_to_cursor(camera, mouse_position)
+	set_physics_process(true)
+
+
+# Make the camera zoom to the cursor's position
+func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
+	var viewport_size: Vector2 = camera.get_viewport_rect().size
+	var offset_pixels: Vector2 = mouse_position - viewport_size * 0.5
+	var current_zoom: Vector2 = Vector2.ONE / _previous_target
+	var new_zoom: Vector2 = Vector2.ONE / _target_zoom
+	var scaled_offset: Vector2 = offset_pixels * (current_zoom - new_zoom)
+	camera.position = camera.get_target_position() + scaled_offset
+	camera.keep_in_bounds()
 
 
 # Returns the minimum zoom amount such that the camera remains in bounds
