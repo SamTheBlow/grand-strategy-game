@@ -1,6 +1,7 @@
 class_name CameraZoom
 extends Node
 ## Allows the player to zoom the camera in/out.
+## Automatically zooms in the direction of the cursor.
 ##
 ## This node is meant to be added as a child of a CustomCamera2D node.
 ##
@@ -32,7 +33,6 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	var weight: float = _zoom_rate * delta
-	#camera.zoom = _target_zoom * Vector2.ONE
 	camera.zoom = camera.zoom.lerp(_target_zoom * Vector2.ONE, weight)
 	set_physics_process(not is_equal_approx(camera.zoom.x, _target_zoom))
 
@@ -76,7 +76,18 @@ func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 	var current_zoom: Vector2 = Vector2.ONE / _previous_target
 	var new_zoom: Vector2 = Vector2.ONE / _target_zoom
 	var scaled_offset: Vector2 = offset_pixels * (current_zoom - new_zoom)
+	
+	# The get_target_position() function from Camera2D doesn't
+	# give accurate results when the zoom level is changed smoothly.
+	# We have to temporarily set the camera's zoom level to what
+	# it's going to be in the end. After using the function,
+	# we immediately set the zoom level back to what it was.
+	# Now it correctly zooms in/out at the cursor's exact location.
+	var temp_zoom: Vector2 = camera.zoom
+	camera.zoom = _target_zoom * Vector2.ONE
 	camera.position = camera.get_target_position() + scaled_offset
+	camera.zoom = temp_zoom
+	
 	camera.keep_in_bounds()
 
 
