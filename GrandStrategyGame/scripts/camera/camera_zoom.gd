@@ -85,10 +85,10 @@ func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 	# Now it correctly zooms in/out at the cursor's exact location.
 	var temp_zoom: Vector2 = camera.zoom
 	camera.zoom = _target_zoom * Vector2.ONE
-	camera.position = camera.get_target_position() + scaled_offset
+	camera.position = camera.position_in_bounds(
+			camera.get_target_position() + scaled_offset
+	)
 	camera.zoom = temp_zoom
-	
-	camera.keep_in_bounds()
 
 
 # Returns the minimum zoom amount such that the camera remains in bounds

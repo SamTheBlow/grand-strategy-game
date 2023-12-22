@@ -61,5 +61,6 @@ func _drag_camera(event: InputEvent) -> void:
 		return
 	
 	# Move the camera
-	camera.position -= event_mouse_motion.relative / camera.zoom
-	camera.keep_in_bounds()
+	var camera_position: Vector2 = camera.position_in_bounds(camera.position)
+	var movement: Vector2 = -event_mouse_motion.relative / camera.zoom
+	camera.position = camera.position_in_bounds(camera_position + movement)
