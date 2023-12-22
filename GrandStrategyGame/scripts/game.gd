@@ -135,6 +135,7 @@ func _on_chat_rules_requested() -> void:
 
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
+	_your_id = your_id
 	
 	# TODO bad code, shouldn't be here
 	var camera := $Camera as Camera2D
@@ -142,6 +143,20 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	camera.limit_top = _game_state.world.limits.limit_top()
 	camera.limit_right = _game_state.world.limits.limit_right()
 	camera.limit_bottom = _game_state.world.limits.limit_bottom()
+	
+	# TODO this shouldn't be here either
+	# Find the province to move the camera to and move the camera there
+	var playing_country: Country = _game_state.players.player_from_id(your_id).playing_country
+	var target_province: Province
+	for province in _game_state.world.provinces.get_provinces():
+		if (
+				province.has_owner_country()
+				and province.owner_country() == playing_country
+		):
+			target_province = province
+			break
+	if target_province:
+		camera.position = target_province.armies.position_army_host
 	
 	_game_state.connect_to_provinces(_on_province_selected)
 	_game_state.game_over.connect(_on_game_over)
@@ -151,8 +166,6 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	_simulation.connect_to_provinces(_on_province_selected)
 	
 	$WorldLayer.add_child(_simulation)
-	
-	_your_id = your_id
 
 
 func deselect_province() -> void:
