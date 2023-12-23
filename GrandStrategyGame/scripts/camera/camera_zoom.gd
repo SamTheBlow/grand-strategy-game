@@ -22,6 +22,9 @@ var _maximum_zoom: float = 1.0
 var _zoom_increment: float = 0.075
 # How fast the camera zooms in/out
 var _zoom_rate: float = 8.0
+# If enabled, when zooming out, the camera will zoom away from the
+# center of the viewport instead of zooming away from the cursor's position
+var _zoom_away_from_center: bool = true
 
 
 func _ready() -> void:
@@ -77,11 +80,18 @@ func _zoom_out(mouse_position: Vector2) -> void:
 	
 	_previous_target = _target_zoom
 	_target_zoom = maxf(_target_zoom - _zoom_increment, _minimum_zoom(camera))
-	_zoom_to_cursor(camera, mouse_position)
+	
+	if _zoom_away_from_center:
+		# Assuming the camera's anchor mode is Drag Center,
+		# there is nothing we need to do
+		pass
+	else:
+		_zoom_to_cursor(camera, mouse_position)
+	
 	set_physics_process(true)
 
 
-# Make the camera zoom to the cursor's position
+# Makes the camera zoom to the cursor's position
 func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 	var viewport_size: Vector2 = camera.get_viewport_rect().size
 	var offset_pixels: Vector2 = mouse_position - viewport_size * 0.5
