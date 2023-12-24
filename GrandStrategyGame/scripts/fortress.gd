@@ -1,16 +1,12 @@
 class_name Fortress
 extends Node2D
-# In the future, methods could be added to build/destroy the fortress
 
 
-var is_built: bool = false : set = set_is_built
-
-
-func init(is_built_: bool, position_: Vector2) -> void:
-	is_built = is_built_
-	position = position_
-
-
-func set_is_built(value: bool) -> void:
-	visible = value
-	is_built = value
+static func new_fortress(
+		scene: PackedScene,
+		input_position: Vector2
+) -> Fortress:
+	var fortress := scene.instantiate() as Fortress
+	fortress.name = "Fortress"
+	fortress.position = input_position + Vector2(80.0, 56.0)
+	return fortress

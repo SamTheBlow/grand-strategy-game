@@ -91,12 +91,19 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 		province.set_shape(shape.polygon)
 		province.position = shape.position
 		
-		# Owner
-		var starting_provinces_size: int = starting_provinces.size()
-		for j in starting_provinces_size:
+		var is_starting_province: bool = false
+		var starting_province_country_id: int
+		for j in starting_provinces.size():
 			if starting_provinces[j] == i:
-				province.set_owner_country(countries.country_from_id(j))
+				is_starting_province = true
+				starting_province_country_id = j
 				break
+		
+		# Owner
+		if is_starting_province:
+			province.set_owner_country(
+					countries.country_from_id(starting_province_country_id)
+			)
 		
 		# Population
 		var population_size: int = 10 + randi() % 90
@@ -115,6 +122,15 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 			army.setup(1000)
 			
 			province.armies.add_army(army)
+		
+		# Buildings
+		province.setup_buildings()
+		if game_rules.fortresses and is_starting_province:
+			var fortress: Fortress = Fortress.new_fortress(
+					preload("res://scenes/fortress.tscn") as PackedScene,
+					province.armies.position_army_host - province.global_position
+			)
+			province.buildings.add_child(fortress)
 		
 		world.provinces.add_province(province)
 	
