@@ -12,12 +12,7 @@ func _ready() -> void:
 
 
 func _on_game_started(scenario_scene: PackedScene, rules: GameRules) -> void:
-	var world: Node = scenario_scene.instantiate()
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	
-	var game_state: GameState = scenario.generate_game_state(rules)
-	var your_id: int = scenario.human_player
-	new_game(game_state, your_id)
+	load_game_from_scenario(scenario_scene, rules)
 
 
 func _on_main_menu_entered() -> void:
@@ -28,13 +23,33 @@ func _on_main_menu_entered() -> void:
 	add_child(main_menu)
 
 
-func new_game(game_state: GameState, your_id: int) -> void:
-	_remove_all_children()
-	
+## Returns true if it succeeded, otherwise false.
+func load_game() -> bool:
 	var game := game_scene.instantiate() as Game
-	game.load_game_state(game_state, your_id)
+	game.init()
+	
+	if not game.load_from_path(SAVE_FILE_PATH):
+		return false
+	
+	_remove_all_children()
 	game.game_ended.connect(_on_main_menu_entered)
 	add_child(game)
+	return true
+
+
+## Temporary function. Returns true if it succeeded, otherwise false.
+func load_game_from_scenario(scenario_scene: PackedScene, rules: GameRules) -> bool:
+	var game := game_scene.instantiate() as Game
+	game.init()
+	
+	var world: Node = scenario_scene.instantiate()
+	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
+	game.load_from_scenario(scenario, rules)
+	
+	_remove_all_children()
+	game.game_ended.connect(_on_main_menu_entered)
+	add_child(game)
+	return true
 
 
 func _remove_all_children() -> void:

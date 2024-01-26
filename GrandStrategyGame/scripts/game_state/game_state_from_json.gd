@@ -13,7 +13,7 @@ func _init(json_data: Dictionary) -> void:
 
 
 ## Returns an Error (OK if it worked, otherwise ERR_PARSE_ERROR)
-func build() -> int:
+func build(game_mediator: GameMediator) -> int:
 	var result := GameState.new()
 	result.name = "GameState"
 	
@@ -58,7 +58,7 @@ func build() -> int:
 	# Provinces
 	for province_data: Dictionary in _json_data["world"]["provinces"]:
 		game_world_2d.provinces.add_province(
-				Province.from_json(province_data, result)
+				Province.from_json(province_data, game_mediator, result)
 		)
 	# 2nd loop for links
 	for province_data: Dictionary in _json_data["world"]["provinces"]:

@@ -4,6 +4,8 @@ extends Node2D
 
 signal selected(this_province: Province)
 
+var _game_mediator: GameMediator
+
 var id: int
 
 # Nodes
@@ -107,8 +109,13 @@ func _has_fortress() -> bool:
 	return buildings.get_node_or_null("Fortress") != null
 
 
-static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
+static func from_json(
+		json_data: Dictionary,
+		game_mediator: GameMediator,
+		game_state: GameState
+) -> Province:
 	var province := preload("res://scenes/province.tscn").instantiate() as Province
+	province._game_mediator = game_mediator
 	province.id = json_data["id"]
 	province.name = str(province.id)
 	var shape: PackedVector2Array = []
@@ -127,7 +134,9 @@ static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
 			json_data["position_army_host_x"],
 			json_data["position_army_host_y"]
 	))
-	province.armies.setup_from_json(json_data["armies"], game_state)
+	province.armies.setup_from_json(
+			json_data["armies"], game_mediator, game_state
+	)
 	province.setup_population(
 			json_data["population"]["size"],
 			game_state.rules.population_growth
@@ -137,8 +146,10 @@ static func from_json(json_data: Dictionary, game_state: GameState) -> Province:
 		if building == "fortress":
 			var fortress: Fortress = Fortress.new_fortress(
 					preload("res://scenes/fortress.tscn") as PackedScene,
+					game_mediator,
 					province.armies.position_army_host - province.global_position
 			)
+			fortress._province = province
 			province.buildings.add_child(fortress)
 	return province
 
@@ -189,6 +200,7 @@ func _auto_recruit() -> void:
 		return
 	
 	armies.add_army(Army.quick_setup(
+			_game_mediator,
 			armies.new_unique_army_id(),
 			population.population_size,
 			owner_country(),

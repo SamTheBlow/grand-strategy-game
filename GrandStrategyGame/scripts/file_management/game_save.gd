@@ -15,5 +15,5 @@ func save_state(_game_state: GameState) -> int:
 
 
 ## To be implemented by subclasses
-func load_state() -> GameState:
+func load_state(_game_mediator: GameMediator) -> GameState:
 	return null

@@ -37,7 +37,10 @@ var _number_of_countries: int = 11
 var human_player: int = randi() % _number_of_countries
 
 
-func generate_game_state(game_rules: GameRules) -> GameState:
+func generate_game_state(
+		game_mediator: GameMediator,
+		game_rules: GameRules
+) -> GameState:
 	var game_state := GameState.new()
 	game_state.name = "GameState"
 	game_state.rules = game_rules
@@ -86,6 +89,7 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 		var shape := %Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
 		
 		var province := province_scene.instantiate() as Province
+		province._game_mediator = game_mediator
 		province.name = str(i)
 		province.id = i
 		province.set_shape(shape.polygon)
@@ -117,6 +121,7 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 		
 		if province.has_owner_country():
 			var army := army_scene.instantiate() as Army
+			army._game_mediator = game_mediator
 			army.id = 0
 			army.set_owner_country(province.owner_country())
 			army.setup(1000)
@@ -128,8 +133,10 @@ func generate_game_state(game_rules: GameRules) -> GameState:
 		if game_rules.fortresses and is_starting_province:
 			var fortress: Fortress = Fortress.new_fortress(
 					preload("res://scenes/fortress.tscn") as PackedScene,
+					game_mediator,
 					province.armies.position_army_host - province.global_position
 			)
+			fortress._province = province
 			province.buildings.add_child(fortress)
 		
 		world.provinces.add_province(province)

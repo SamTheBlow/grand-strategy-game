@@ -20,7 +20,11 @@ func _init(
 	_new_army_id = new_army_id
 
 
-func apply_to(game_state: GameState, is_simulation: bool) -> void:
+func apply_to(
+		_game_mediator: GameMediator,
+		game_state: GameState,
+		is_simulation: bool
+) -> void:
 	var source_province: Province = (
 			game_state.world.provinces.province_from_id(_province_id)
 	)

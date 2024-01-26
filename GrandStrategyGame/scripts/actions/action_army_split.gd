@@ -25,7 +25,11 @@ func _init(
 	_new_army_ids = new_army_ids
 
 
-func apply_to(game_state: GameState, _is_simulation: bool) -> void:
+func apply_to(
+		game_mediator: GameMediator,
+		game_state: GameState,
+		_is_simulation: bool
+) -> void:
 	var province: Province = (
 			game_state.world.provinces.province_from_id(_province_id)
 	)
@@ -53,11 +57,13 @@ func apply_to(game_state: GameState, _is_simulation: bool) -> void:
 	for i in number_of_clones:
 		# Create the new army
 		var army_clone: Army = Army.quick_setup(
+				game_mediator,
 				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country(),
 				preload("res://scenes/army.tscn")
 		)
+		army_clone._province = province
 		province.armies.add_army(army_clone)
 		
 		# Reduce the original army's troop count

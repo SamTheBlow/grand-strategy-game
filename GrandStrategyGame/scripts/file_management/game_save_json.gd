@@ -10,7 +10,7 @@ func save_state(game_state: GameState) -> int:
 	return OK
 
 
-func load_state() -> GameState:
+func load_state(game_mediator: GameMediator) -> GameState:
 	var file: FileAccess = FileAccess.open(_file_path, FileAccess.READ)
 	var json := JSON.new()
 	var error: int = json.parse(file.get_as_text(true))
@@ -24,7 +24,7 @@ func load_state() -> GameState:
 		return null
 	
 	var builder := GameStateFromJSON.new(json.data as Dictionary)
-	error = builder.build()
+	error = builder.build(game_mediator)
 	
 	if error != OK:
 		return null

@@ -4,6 +4,8 @@ extends Node
 
 signal game_ended()
 
+var _game_mediator: GameMediator
+
 # The true, actual game state
 var _game_state: GameState
 
@@ -11,6 +13,10 @@ var _game_state: GameState
 var _simulation: GameState
 
 var _your_id: int
+
+# TODO Temporary
+var _global_attacker_efficiency: float = 1.0
+var _global_defender_efficiency: float = 1.0
 
 @onready var chat := %Chat as Chat
 
@@ -54,24 +60,11 @@ func _on_recruit_cancelled() -> void:
 	deselect_province()
 
 
+# Temporary feature
 func _on_load_requested() -> void:
-	# TODO bad code (don't use get_parent like that), also DRY
-	var save_file_path: String = get_parent().SAVE_FILE_PATH
+	get_parent().load_game()
 	
-	var new_game_state: GameState = (
-			GameSaveJSON.new(save_file_path).load_state()
-	)
-	
-	if new_game_state == null:
-		var error_message: String = "Failed to load the game"
-		push_error(error_message)
-		chat.system_message(error_message)
-		return
-	
-	# TODO bad code
-	get_parent().new_game(
-			new_game_state, randi() % new_game_state.players.players.size()
-	)
+	chat.system_message("Failed to load the game")
 
 
 func _on_save_requested() -> void:
@@ -133,8 +126,49 @@ func _on_chat_rules_requested() -> void:
 	])
 
 
+func _on_modifiers_requested(
+		modifiers: Array[Modifier],
+		context: ModifierContext
+) -> void:
+	match context.context():
+		"attacker_efficiency":
+			modifiers.append(ModifierMultiplier.new(
+					"Base Modifier",
+					"Attackers all have this modifier by default.",
+					_global_attacker_efficiency
+			))
+		"defender_efficiency":
+			modifiers.append(ModifierMultiplier.new(
+					"Base Modifier",
+					"Defenders all have this modifier by default.",
+					_global_defender_efficiency
+			))
+
+
+func init() -> void:
+	_game_mediator = GameMediator.new(self)
+	
+	_game_mediator.modifier_mediator().modifiers_requested.connect(
+			_on_modifiers_requested
+	)
+
+
+## Returns true if it succeeded, otherwise false.
+func load_from_path(local_path: String) -> bool:
+	var loaded_game_state: GameState = (
+			GameSaveJSON.new(local_path).load_state(_game_mediator)
+	)
+	if not loaded_game_state:
+		return false
+	
+	var random_player: int = randi() % loaded_game_state.players.players.size()
+	load_game_state(loaded_game_state, random_player)
+	return true
+
+
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
+	_game_state._game_mediator = _game_mediator
 	_your_id = your_id
 	
 	# TODO bad code, shouldn't be here
@@ -168,6 +202,19 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	$WorldLayer.add_child(_simulation)
 
 
+## Temporary function
+func load_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
+	var game_state: GameState = (
+			scenario.generate_game_state(_game_mediator, rules)
+	)
+	var your_id: int = scenario.human_player
+	
+	_global_attacker_efficiency = rules.global_attacker_efficiency
+	_global_defender_efficiency = rules.global_defender_efficiency
+	
+	load_game_state(game_state, your_id)
+
+
 func deselect_province() -> void:
 	_simulation.world.provinces.deselect_province()
 
@@ -197,7 +244,7 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(_simulation, true)
+		action_split.apply_to(_game_mediator, _simulation, true)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
@@ -213,7 +260,7 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	action_move.apply_to(_simulation, true)
+	action_move.apply_to(_game_mediator, _simulation, true)
 	you.add_action(action_move)
 
 
@@ -248,7 +295,7 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(_game_state, false)
+		action.apply_to(_game_mediator, _game_state, false)
 	
 	# Merge armies
 	for province in _game_state.world.provinces.get_provinces():

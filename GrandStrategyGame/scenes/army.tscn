@@ -1,11 +1,13 @@
-[gd_scene load_steps=3 format=3 uid="uid://eso260jnknd4"]
+[gd_scene load_steps=4 format=3 uid="uid://eso260jnknd4"]
 
 [ext_resource type="Script" path="res://scripts/armies/army.gd" id="1"]
+[ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="2_4xaki"]
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_cguas"]
 
 [node name="Army" type="Node2D"]
 z_index = 1
 script = ExtResource("1")
+battle = ExtResource("2_4xaki")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)

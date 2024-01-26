@@ -4,9 +4,14 @@ extends Node2D
 
 signal destroyed(army: Army)
 
+@export var battle: Battle
+
+var _game_mediator: GameMediator
+
 var id: int
 
 var army_size := ArmySize.new()
+var _province: Province
 var _owner_country := Country.new()
 
 
@@ -51,6 +56,10 @@ func setup(army_size_: int) -> void:
 func destroy() -> void:
 	destroyed.emit(self)
 	queue_free()
+
+
+func province() -> Province:
+	return _province
 
 
 func owner_country() -> Country:
@@ -98,9 +107,9 @@ func resolve_battles(armies: Array[Army]) -> void:
 
 
 func fight(army: Army) -> void:
-	var battle := Battle.new(self, army)
-	battle.attacker_efficiency *= 0.9
-	battle.apply()
+	battle.attacking_army = self
+	battle.defending_army = army
+	battle.apply(_game_mediator.modifier_mediator())
 
 
 func _update_troop_count_label() -> void:
@@ -109,12 +118,14 @@ func _update_troop_count_label() -> void:
 
 
 static func quick_setup(
-	id_: int,
-	army_size_: int,
-	owner_country_: Country,
-	army_scene: PackedScene
+		game_mediator: GameMediator,
+		id_: int,
+		army_size_: int,
+		owner_country_: Country,
+		army_scene: PackedScene
 ) -> Army:
 	var army := army_scene.instantiate() as Army
+	army._game_mediator = game_mediator
 	army.id = id_
 	army.setup(army_size_)
 	army.set_owner_country(owner_country_)
@@ -123,14 +134,16 @@ static func quick_setup(
 
 
 static func from_json(
-	json_data: Dictionary,
-	game_state: GameState,
-	army_scene: PackedScene
+		json_data: Dictionary,
+		game_mediator: GameMediator,
+		game_state: GameState,
+		army_scene: PackedScene
 ) -> Army:
 	var owner_country_: Country = (
 			game_state.countries.country_from_id(json_data["owner_country_id"])
 	)
 	return quick_setup(
+			game_mediator,
 			json_data["id"],
 			json_data["army_size"],
 			owner_country_,

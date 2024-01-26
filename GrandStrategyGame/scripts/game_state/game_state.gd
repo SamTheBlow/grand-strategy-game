@@ -5,6 +5,8 @@ extends Node
 signal game_over(winner: Country)
 signal province_selected(province: Province)
 
+var _game_mediator: GameMediator
+
 # Nodes
 var countries: Countries
 var players: Players
@@ -58,7 +60,7 @@ func connect_to_provinces(callable: Callable) -> void:
 
 func copy() -> GameState:
 	var builder := GameStateFromJSON.new(as_json())
-	builder.build()
+	builder.build(_game_mediator)
 	return builder.game_state
 
 

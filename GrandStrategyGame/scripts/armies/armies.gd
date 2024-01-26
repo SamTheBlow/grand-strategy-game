@@ -21,6 +21,7 @@ func add_army(army: Army) -> void:
 	army.name = str(army.id)
 	
 	army.destroyed.connect(remove_army)
+	army._province = get_parent() as Province
 	armies.append(army)
 	add_child(army)
 	
@@ -103,10 +104,18 @@ func army_can_be_moved_to(army: Army, destination: Province) -> bool:
 	return army_is_here and is_neighbour
 
 
-func setup_from_json(json_data: Array, game_state: GameState) -> void:
+func setup_from_json(
+	json_data: Array,
+	game_mediator: GameMediator,
+	game_state: GameState
+) -> void:
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data: Dictionary in json_data:
-		add_army(Army.from_json(army_data, game_state, army_scene))
+		var new_army: Army = Army.from_json(
+				army_data, game_mediator, game_state, army_scene
+		)
+		new_army._province = get_parent() as Province
+		add_army(new_army)
 
 
 func as_json() -> Array:
