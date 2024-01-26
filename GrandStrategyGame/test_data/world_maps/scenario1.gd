@@ -132,12 +132,12 @@ func generate_game_state(
 		province.setup_buildings()
 		if game_rules.fortresses and is_starting_province:
 			var fortress: Fortress = Fortress.new_fortress(
-					preload("res://scenes/fortress.tscn") as PackedScene,
-					game_mediator,
-					province.armies.position_army_host - province.global_position
+					game_mediator, province
 			)
-			fortress._province = province
-			province.buildings.add_child(fortress)
+			fortress.add_visuals(
+					preload("res://scenes/fortress.tscn") as PackedScene
+			)
+			province.buildings.add(fortress)
 		
 		world.provinces.add_province(province)
 	

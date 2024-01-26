@@ -11,7 +11,7 @@ var id: int
 # Nodes
 var armies: Armies
 var population: Population
-var buildings: Node2D
+var buildings: Buildings
 
 # Other data
 var links: Array[Province] = []
@@ -46,7 +46,7 @@ func setup_population(population_size: int, population_growth: bool) -> void:
 
 
 func setup_buildings() -> void:
-	buildings = Node2D.new()
+	buildings = Buildings.new()
 	buildings.name = "Buildings"
 	add_child(buildings)
 
@@ -105,10 +105,6 @@ func is_linked_to(province: Province) -> bool:
 	return links.has(province)
 
 
-func _has_fortress() -> bool:
-	return buildings.get_node_or_null("Fortress") != null
-
-
 static func from_json(
 		json_data: Dictionary,
 		game_mediator: GameMediator,
@@ -142,15 +138,15 @@ static func from_json(
 			game_state.rules.population_growth
 	)
 	province.setup_buildings()
-	for building: String in json_data["buildings"]:
-		if building == "fortress":
+	for building: Dictionary in json_data["buildings"]:
+		if building["type"] == "fortress":
 			var fortress: Fortress = Fortress.new_fortress(
-					preload("res://scenes/fortress.tscn") as PackedScene,
-					game_mediator,
-					province.armies.position_army_host - province.global_position
+					game_mediator, province
 			)
-			fortress._province = province
-			province.buildings.add_child(fortress)
+			fortress.add_visuals(
+					preload("res://scenes/fortress.tscn") as PackedScene
+			)
+			province.buildings.add(fortress)
 	return province
 
 
@@ -166,17 +162,13 @@ func as_json() -> Dictionary:
 		shape_vertices_x.append(shape_vertices[i].x)
 		shape_vertices_y.append(shape_vertices[i].y)
 	
-	var buildings_data: Array = []
-	if _has_fortress():
-		buildings_data.append("fortress")
-	
 	return {
 		"id": id,
 		"shape": {"x": shape_vertices_x, "y": shape_vertices_y},
 		"position": {"x": position.x, "y": position.y},
 		"armies": armies.as_json(),
 		"population": population.as_json(),
-		"buildings": buildings_data,
+		"buildings": buildings.as_json(),
 		"links": links_json,
 		"owner_country_id": _owner_country.id,
 		"position_army_host_x": armies.position_army_host.x,
