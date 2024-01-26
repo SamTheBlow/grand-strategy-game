@@ -15,7 +15,6 @@ func apply(modifier_mediator: ModifierMediator) -> void:
 	_context_attacker_efficiency._defending_army = defending_army
 	
 	var attacker_army_size: int = attacking_army.army_size.current_size()
-	# TODO base efficiency 0.9 in global modifiers
 	var attacker_efficiency: float = (
 			modifier_mediator.modifiers(_context_attacker_efficiency).resultf()
 	)
@@ -28,12 +27,12 @@ func apply(modifier_mediator: ModifierMediator) -> void:
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	
 	# The attacker attacks first
-	print("=====\nA battle occurs!")
-	print("Attacker %s (%s) has army size of %s" % [attacking_army.owner_country().country_name, attacking_army.id, attacker_army_size])
-	print("Defender %s (%s) has army size of %s" % [defending_army.owner_country().country_name, defending_army.id, defender_army_size])
-	print("Attacker deals %s damage! Attacker efficiency: %s" % [attacker_damage, attacker_efficiency])
+	#print("=====\nA battle occurs!")
+	#print("Attacker %s (%s) has army size of %s" % [attacking_army.owner_country().country_name, attacking_army.id, attacker_army_size])
+	#print("Defender %s (%s) has army size of %s" % [defending_army.owner_country().country_name, defending_army.id, defender_army_size])
+	#print("Attacker deals %s damage! Attacker efficiency: %s" % [attacker_damage, attacker_efficiency])
 	defending_army.army_size.remove(attacker_damage)
-	print("Defender army size is down to %s" % defending_army.army_size.current_size())
-	print("Defender deals %s damage! Defender efficiency: %s" % [defender_damage, defender_efficiency])
+	#print("Defender army size is down to %s" % defending_army.army_size.current_size())
+	#print("Defender deals %s damage! Defender efficiency: %s" % [defender_damage, defender_efficiency])
 	attacking_army.army_size.remove(defender_damage)
-	print("Attacker army size is down to %s" % attacking_army.army_size.current_size())
+	#print("Attacker army size is down to %s" % attacking_army.army_size.current_size())

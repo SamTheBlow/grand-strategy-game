@@ -18,7 +18,6 @@ func play(game_state: GameState) -> void:
 		for army in armies:
 			if army.owner_country().id == playing_country.id:
 				var new_actions: Array[Action] = _find_target_province(
-						game_state,
 						link_tree,
 						province,
 						army,
@@ -34,7 +33,6 @@ func play(game_state: GameState) -> void:
 # In this case, p2 is a link of p1 and p4 is a link of p3.
 # (This is a recursive function.)
 func _find_target_province(
-		game_state: GameState,
 		link_tree: Array,
 		province: Province,
 		army: Army,
@@ -122,7 +120,7 @@ func _find_target_province(
 		
 		# Find a province further away
 		new_actions = _find_target_province(
-				game_state, new_link_tree, province, army, depth + 1
+				new_link_tree, province, army, depth + 1
 		)
 	return new_actions
 
