@@ -112,6 +112,10 @@ func fight(army: Army) -> void:
 	battle.apply(_game_mediator.modifier_mediator())
 
 
+func can_move_to(destination: Province) -> bool:
+	return destination.is_linked_to(_province)
+
+
 func _update_troop_count_label() -> void:
 	var troop_count_label := $ColorRect/TroopCount as Label
 	troop_count_label.text = str(army_size.current_size())

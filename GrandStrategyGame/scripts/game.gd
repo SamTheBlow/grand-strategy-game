@@ -44,7 +44,7 @@ func _on_province_selected(province: Province) -> void:
 		var selected_armies: Armies = selected_province.armies
 		if selected_armies.country_has_active_army(your_country):
 			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
-			if selected_armies.army_can_be_moved_to(army, province):
+			if army.can_move_to(province):
 				_new_popup_number_of_troops(army, selected_province, province)
 				return
 	provinces_node.select_province(province)

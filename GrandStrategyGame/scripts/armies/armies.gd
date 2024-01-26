@@ -91,19 +91,6 @@ func country_has_active_army(country: Country) -> bool:
 	return false
 
 
-func army_can_be_moved_to(army: Army, destination: Province) -> bool:
-	# The army can be moved if...
-	
-	# - It is indeed in this province.
-	var army_is_here: bool = army.get_parent() == self
-	
-	# - This province is linked to the destination province.
-	var this_province := get_parent() as Province
-	var is_neighbour: bool = this_province.is_linked_to(destination)
-	
-	return army_is_here and is_neighbour
-
-
 func setup_from_json(
 	json_data: Array,
 	game_mediator: GameMediator,
