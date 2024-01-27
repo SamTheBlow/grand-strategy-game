@@ -57,9 +57,10 @@ func build(game_mediator: GameMediator) -> int:
 	
 	# Provinces
 	for province_data: Dictionary in _json_data["world"]["provinces"]:
-		game_world_2d.provinces.add_province(
-				Province.from_json(province_data, game_mediator, result)
-		)
+		var province_scene := preload("res://scenes/province.tscn") as PackedScene
+		game_world_2d.provinces.add_province(Province.from_json(
+				province_data, game_mediator, result, province_scene
+		))
 	# 2nd loop for links
 	for province_data: Dictionary in _json_data["world"]["provinces"]:
 		var province: Province = (

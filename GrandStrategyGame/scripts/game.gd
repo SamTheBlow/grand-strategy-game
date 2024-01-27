@@ -44,6 +44,12 @@ func _on_province_selected(province: Province) -> void:
 		var selected_armies: Armies = selected_province.armies
 		if selected_armies.country_has_active_army(your_country):
 			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
+			
+			# If this isn't here, the game crashes. I don't know why.
+			# (This line does nothing, it's just to prevent a crash)
+			# TODO figure it out
+			army.battle.attacking_army = army
+			
 			if army.can_move_to(province):
 				_new_popup_number_of_troops(army, selected_province, province)
 				return

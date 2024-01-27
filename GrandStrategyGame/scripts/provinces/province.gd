@@ -108,9 +108,10 @@ func is_linked_to(province: Province) -> bool:
 static func from_json(
 		json_data: Dictionary,
 		game_mediator: GameMediator,
-		game_state: GameState
+		game_state: GameState,
+		province_scene: PackedScene
 ) -> Province:
-	var province := preload("res://scenes/province.tscn").instantiate() as Province
+	var province := province_scene.instantiate() as Province
 	province._game_mediator = game_mediator
 	province.id = json_data["id"]
 	province.name = str(province.id)
