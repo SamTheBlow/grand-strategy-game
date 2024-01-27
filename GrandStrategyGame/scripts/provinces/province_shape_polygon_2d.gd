@@ -1,17 +1,18 @@
 class_name ProvinceShapePolygon2D
 extends Polygon2D
-# See:
-# https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
+## See: https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
 
 
 signal clicked()
 
-# Draw status:
-# 0 - unselected
-# 1 - selected
-# 2 - neighbouring the selected province (target)
-# 3 - neighbouring the selected province
-var draw_status: int = 0 : set = set_draw_status
+enum OutlineType {
+	NONE = 0,
+	SELECTED = 1,
+	NEIGHBOR_TARGET = 2,
+	NEIGHBOR = 3,
+}
+
+var outline_type: OutlineType = OutlineType.NONE : set = set_outline_type
 var outline_color := Color.WEB_GRAY : set = set_outline_color
 var outline_width: float = 10.0 : set = set_width
 
@@ -40,17 +41,18 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-	if draw_status == 0:
-		pass
-	elif draw_status == 1:
-		draw_outline(get_polygon(), outline_color, outline_width)
-	elif draw_status == 2:
-		draw_outline(get_polygon(), outline_color, outline_width * 0.8)
-	elif draw_status == 3:
-		draw_outline(get_polygon(), outline_color, outline_width * 0.5)
+	match outline_type:
+		OutlineType.NONE:
+			pass
+		OutlineType.SELECTED:
+			_draw_outline(get_polygon(), outline_color, outline_width)
+		OutlineType.NEIGHBOR_TARGET:
+			_draw_outline(get_polygon(), outline_color, outline_width * 0.8)
+		OutlineType.NEIGHBOR:
+			_draw_outline(get_polygon(), outline_color, outline_width * 0.5)
 
 
-func draw_outline(
+func _draw_outline(
 		poly: PackedVector2Array,
 		ocolor: Color,
 		width: float
@@ -63,8 +65,8 @@ func draw_outline(
 	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
 
 
-func set_draw_status(value: int) -> void:
-	draw_status = value
+func set_outline_type(value: OutlineType) -> void:
+	outline_type = value
 	queue_redraw()
 
 

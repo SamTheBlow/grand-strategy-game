@@ -51,9 +51,9 @@ func _on_province_selected(province: Province) -> void:
 	
 	var armies_node: Armies = province.armies
 	if armies_node.country_has_active_army(your_country):
-		province.show_neighbours(2)
+		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET)
 	else:
-		province.show_neighbours(3)
+		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
 
 
 func _on_recruit_cancelled() -> void:

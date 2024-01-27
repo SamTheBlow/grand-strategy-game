@@ -81,24 +81,24 @@ func set_shape(polygon: PackedVector2Array) -> void:
 
 
 func select() -> void:
-	province_shape().draw_status = 1
+	province_shape().outline_type = ProvinceShapePolygon2D.OutlineType.SELECTED
 
 
 func deselect() -> void:
 	var shape_node: ProvinceShapePolygon2D = province_shape()
-	if shape_node.draw_status == 1:
+	if shape_node.outline_type == ProvinceShapePolygon2D.OutlineType.SELECTED:
 		for link in links:
 			link.deselect()
-	shape_node.draw_status = 0
+	shape_node.outline_type = ProvinceShapePolygon2D.OutlineType.NONE
 
 
-func show_neighbours(display_type: int) -> void:
+func show_neighbors(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
 	for link in links:
-		link.show_as_neighbour(display_type)
+		link.show_as_neighbor(outline_type)
 
 
-func show_as_neighbour(display_type: int) -> void:
-	province_shape().draw_status = display_type
+func show_as_neighbor(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
+	province_shape().outline_type = outline_type
 
 
 func is_linked_to(province: Province) -> bool:
