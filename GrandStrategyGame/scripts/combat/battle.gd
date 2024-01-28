@@ -5,6 +5,8 @@ extends Resource
 @export var _context_attacker_efficiency: ModifierContext
 @export var _context_defender_efficiency: ModifierContext
 
+@export var fight_until_death: bool = true
+
 var attacking_army: Army
 var defending_army: Army
 
@@ -25,6 +27,26 @@ func apply(modifier_mediator: ModifierMediator) -> void:
 			modifier_mediator.modifiers(_context_defender_efficiency).resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
+	
+	if fight_until_death:
+		var attacker_kill_rate: float = (
+				attacker_damage / float(defender_army_size)
+		)
+		var defender_kill_rate: float = (
+				defender_damage / float(attacker_army_size)
+		)
+		if attacker_kill_rate > defender_kill_rate:
+			attacker_damage = defender_army_size
+			defender_damage = roundi(
+					attacker_army_size
+					* (defender_kill_rate / attacker_kill_rate)
+			)
+		else:
+			defender_damage = attacker_army_size
+			attacker_damage = roundi(
+					defender_army_size
+					* (attacker_kill_rate / defender_kill_rate)
+			)
 	
 	# The attacker attacks first
 	#print("=====\nA battle occurs!")
