@@ -25,23 +25,3 @@ static func from_rect2i(rect2i: Rect2i) -> WorldLimits:
 	var world_limits := WorldLimits.new()
 	world_limits._limits = rect2i
 	return world_limits
-
-
-static func from_json(json_data: Dictionary) -> WorldLimits:
-	var x1: int = json_data["left"]
-	var y1: int = json_data["top"]
-	var x2: int = json_data["right"]
-	var y2: int = json_data["bottom"]
-	
-	var world_limits := WorldLimits.new()
-	world_limits._limits = Rect2i(x1, y1, x2 - x1, y2 - y1)
-	return world_limits
-
-
-func as_json() -> Dictionary:
-	return {
-		"top": limit_top(),
-		"bottom": limit_bottom(),
-		"left": limit_left(),
-		"right": limit_right(),
-	}

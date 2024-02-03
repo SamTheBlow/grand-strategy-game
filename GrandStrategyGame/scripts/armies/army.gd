@@ -135,29 +135,3 @@ static func quick_setup(
 	army.set_owner_country(owner_country_)
 	army.name = str(army.id)
 	return army
-
-
-static func from_json(
-		json_data: Dictionary,
-		game_mediator: GameMediator,
-		game_state: GameState,
-		army_scene: PackedScene
-) -> Army:
-	var owner_country_: Country = (
-			game_state.countries.country_from_id(json_data["owner_country_id"])
-	)
-	return quick_setup(
-			game_mediator,
-			json_data["id"],
-			json_data["army_size"],
-			owner_country_,
-			army_scene
-	)
-
-
-func as_json() -> Dictionary:
-	return {
-		"id": id,
-		"army_size": army_size.as_json(),
-		"owner_country_id": _owner_country.id,
-	}

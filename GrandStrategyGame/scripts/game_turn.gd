@@ -9,7 +9,3 @@ func _on_new_turn() -> void:
 	_turn += 1
 	
 	propagate_call("_on_reached_turn", [_turn])
-
-
-func as_json() -> int:
-	return _turn

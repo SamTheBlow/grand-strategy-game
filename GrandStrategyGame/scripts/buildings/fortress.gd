@@ -49,7 +49,3 @@ func _on_modifiers_requested(
 						"The fortress makes it harder to deal damage.",
 						0.5
 				))
-
-
-func as_json() -> Dictionary:
-	return { "type": "fortress" }

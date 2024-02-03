@@ -16,10 +16,3 @@ func player_from_id(id: int) -> Player:
 		if player.id == id:
 			return player
 	return null
-
-
-func as_json() -> Array:
-	var array: Array = []
-	for player in players:
-		array.append(player.as_json())
-	return array

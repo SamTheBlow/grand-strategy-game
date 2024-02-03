@@ -89,24 +89,3 @@ func country_has_active_army(country: Country) -> bool:
 		if army.owner_country() == country and army.is_active:
 			return true
 	return false
-
-
-func setup_from_json(
-	json_data: Array,
-	game_mediator: GameMediator,
-	game_state: GameState
-) -> void:
-	const army_scene: PackedScene = preload("res://scenes/army.tscn")
-	for army_data: Dictionary in json_data:
-		var new_army: Army = Army.from_json(
-				army_data, game_mediator, game_state, army_scene
-		)
-		new_army._province = get_parent() as Province
-		add_army(new_army)
-
-
-func as_json() -> Array:
-	var array: Array = []
-	for army in armies:
-		array.append(army.as_json())
-	return array

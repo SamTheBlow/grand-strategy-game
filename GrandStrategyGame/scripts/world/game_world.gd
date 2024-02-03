@@ -9,9 +9,3 @@ var provinces: Provinces
 
 func connect_to_provinces(callable: Callable) -> void:
 	provinces.connect_to_provinces(callable)
-
-
-func as_json() -> Dictionary:
-	return {
-		"provinces": provinces.as_json(),
-	}

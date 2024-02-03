@@ -78,14 +78,12 @@ func _on_save_requested() -> void:
 	# The player should be able to change the file path for save files
 	var save_file_path: String = get_parent().SAVE_FILE_PATH
 	
-	var error: int = (
-			GameSaveJSON.new(save_file_path).save_state(_game_state)
-	)
+	var game_save := GameSave.new()
+	game_save.save_game(self, save_file_path)
 	
-	if error != OK:
-		var error_message: String = "Failed to save the game"
-		push_error(error_message)
-		chat.system_message(error_message)
+	if game_save.error:
+		push_error("Saving failed: " + game_save.error_message)
+		chat.system_message("Saving failed: " + game_save.error_message)
 		return
 	
 	chat.new_message("[b]Game state saved[/b]")
@@ -160,15 +158,15 @@ func init() -> void:
 
 
 ## Returns true if it succeeded, otherwise false.
-func load_from_path(local_path: String) -> bool:
-	var loaded_game_state: GameState = (
-			GameSaveJSON.new(local_path).load_state(_game_mediator)
-	)
-	if not loaded_game_state:
+func load_from_path(file_path: String) -> bool:
+	var game_load := GameLoad.new()
+	game_load.load_game(file_path, _game_mediator)
+	if game_load.error:
+		print_debug("Failed to load game: " + game_load.error_message)
 		return false
 	
-	var random_player: int = randi() % loaded_game_state.players.players.size()
-	load_game_state(loaded_game_state, random_player)
+	var random_player: int = randi() % game_load.result.players.players.size()
+	load_game_state(game_load.result, random_player)
 	return true
 
 

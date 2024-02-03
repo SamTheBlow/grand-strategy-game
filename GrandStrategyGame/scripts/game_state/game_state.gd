@@ -59,19 +59,21 @@ func connect_to_provinces(callable: Callable) -> void:
 
 
 func copy() -> GameState:
-	var builder := GameStateFromJSON.new(as_json())
-	builder.build(_game_mediator)
-	return builder.game_state
-
-
-func as_json() -> Dictionary:
-	return {
-		"countries": countries.as_json(),
-		"players": players.as_json(),
-		"world": world.as_json(),
-		"turn": turn.as_json(),
-		"rules": rules.as_json(),
-	}
+	var game_to_json := GameToJSON.new()
+	game_to_json.convert_game(_game_mediator.modifier_mediator()._game)
+	if game_to_json.error:
+		print_debug(
+				"Error converting game to JSON: "
+				+ game_to_json.error_message
+		)
+	var game_from_json := GameFromJSON.new()
+	game_from_json.load_game(game_to_json.result, _game_mediator)
+	if game_from_json.error:
+		print_debug(
+				"Error loading game from JSON: "
+				+ game_from_json.error_message
+		)
+	return game_from_json.result
 
 
 func _check_percentage_winner() -> void:

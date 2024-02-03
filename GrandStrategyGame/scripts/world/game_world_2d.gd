@@ -13,10 +13,3 @@ func init() -> void:
 	provinces = $Node2D/Provinces as Provinces
 	
 	background.clicked.connect(provinces.deselect_province)
-
-
-func as_json() -> Dictionary:
-	return {
-		"limits": limits.as_json(),
-		"provinces": provinces.as_json(),
-	}

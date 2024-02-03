@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://c74o2ubgawogb"]
 
-[ext_resource type="Script" path="res://scripts/game.gd" id="1_yoos1"]
+[ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="Script" path="res://scripts/chat/chat.gd" id="4_0kwm4"]
