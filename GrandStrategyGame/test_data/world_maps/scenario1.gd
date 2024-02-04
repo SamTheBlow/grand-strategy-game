@@ -120,12 +120,13 @@ func generate_game_state(
 		province.setup_armies(position_army_host)
 		
 		if province.has_owner_country():
-			var army := army_scene.instantiate() as Army
-			army._game_mediator = game_mediator
-			army.id = 0
-			army.set_owner_country(province.owner_country())
-			army.setup(1000)
-			
+			var army: Army = Army.quick_setup(
+					game_mediator,
+					0,
+					1000,
+					province.owner_country(),
+					army_scene
+			)
 			province.armies.add_army(army)
 		
 		# Buildings

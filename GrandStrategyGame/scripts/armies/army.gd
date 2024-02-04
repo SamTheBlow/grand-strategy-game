@@ -44,15 +44,6 @@ func _on_army_size_changed() -> void:
 	_update_troop_count_label()
 
 
-## Only call once during setup. Make sure the scene is fully loaded first.
-## army_size must be greater or equal to 10
-func setup(army_size_: int) -> void:
-	army_size = ArmySize.new(army_size_, 10)
-	army_size.size_changed.connect(_on_army_size_changed)
-	army_size.became_too_small.connect(destroy)
-	_update_troop_count_label()
-
-
 func destroy() -> void:
 	destroyed.emit(self)
 	queue_free()
@@ -131,7 +122,12 @@ static func quick_setup(
 	var army := army_scene.instantiate() as Army
 	army._game_mediator = game_mediator
 	army.id = id_
-	army.setup(army_size_)
+	
+	army.army_size = ArmySize.new(army_size_, 10)
+	army.army_size.size_changed.connect(army._on_army_size_changed)
+	army.army_size.became_too_small.connect(army.destroy)
+	army._update_troop_count_label()
+	
 	army.set_owner_country(owner_country_)
 	army.name = str(army.id)
 	return army
