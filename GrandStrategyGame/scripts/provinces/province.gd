@@ -9,7 +9,7 @@ var game_mediator: GameMediator
 var id: int
 
 # Nodes
-var armies: Armies
+var armies: ProvinceArmies
 var population: Population
 var buildings: Buildings
 
@@ -28,7 +28,7 @@ func _on_shape_clicked() -> void:
 
 
 func setup_armies(position_army_host: Vector2) -> void:
-	armies = Armies.new()
+	armies = ProvinceArmies.new()
 	armies.name = "Armies"
 	armies.position_army_host = position_army_host
 	add_child(armies)

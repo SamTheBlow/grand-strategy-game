@@ -1,4 +1,4 @@
-class_name Armies
+class_name ProvinceArmies
 extends Node2D
 
 
@@ -17,7 +17,7 @@ func add_army(army: Army) -> void:
 	army.stop_animations()
 	army.position = position_army_host - global_position
 	if army.get_parent():
-		(army.get_parent() as Armies).remove_army(army)
+		(army.get_parent() as ProvinceArmies).remove_army(army)
 	army.name = str(army.id)
 	
 	army.destroyed.connect(remove_army)

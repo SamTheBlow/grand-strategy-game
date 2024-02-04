@@ -40,7 +40,7 @@ func _on_province_selected(province: Province) -> void:
 	var provinces_node: Provinces = _simulation.world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
-		var selected_armies: Armies = selected_province.armies
+		var selected_armies: ProvinceArmies = selected_province.armies
 		if selected_armies.country_has_active_army(your_country):
 			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
 			
@@ -54,7 +54,7 @@ func _on_province_selected(province: Province) -> void:
 				return
 	provinces_node.select_province(province)
 	
-	var armies_node: Armies = province.armies
+	var armies_node: ProvinceArmies = province.armies
 	if armies_node.country_has_active_army(your_country):
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET)
 	else:
