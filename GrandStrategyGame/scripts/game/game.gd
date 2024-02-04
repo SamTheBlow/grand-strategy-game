@@ -14,9 +14,8 @@ var _simulation: GameState
 
 var _your_id: int
 
-# TODO Temporary
-var _global_attacker_efficiency: float = 1.0
-var _global_defender_efficiency: float = 1.0
+## Keys are a modifier context (String); values are a Modifier
+var global_modifiers: Dictionary = {}
 
 @onready var chat := %Chat as Chat
 
@@ -122,11 +121,20 @@ func _on_chat_rules_requested() -> void:
 	if _game_state.rules.turn_limit_enabled:
 		turn_limit = str(_game_state.rules.turn_limit) + " turns"
 	
+	var global_attacker_efficiency: String = (
+		str(_game_state.rules.global_attacker_efficiency)
+	)
+	var global_defender_efficiency: String = (
+		str(_game_state.rules.global_defender_efficiency)
+	)
+	
 	chat.system_message_multiline([
 		"This game's rules:",
 		"-> Population growth: " + population_growth,
 		"-> Fortresses: " + fortresses,
 		"-> Turn limit: " + turn_limit,
+		"-> Global attacker efficiency: " + global_attacker_efficiency,
+		"-> Global defender efficiency: " + global_defender_efficiency,
 	])
 
 
@@ -134,19 +142,8 @@ func _on_modifiers_requested(
 		modifiers: Array[Modifier],
 		context: ModifierContext
 ) -> void:
-	match context.context():
-		"attacker_efficiency":
-			modifiers.append(ModifierMultiplier.new(
-					"Base Modifier",
-					"Attackers all have this modifier by default.",
-					_global_attacker_efficiency
-			))
-		"defender_efficiency":
-			modifiers.append(ModifierMultiplier.new(
-					"Base Modifier",
-					"Defenders all have this modifier by default.",
-					_global_defender_efficiency
-			))
+	if global_modifiers.has(context.context()):
+		modifiers.append(global_modifiers[context.context()])
 
 
 func init() -> void:
@@ -174,6 +171,8 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
 	_game_state._game_mediator = _game_mediator
 	_your_id = your_id
+	
+	_load_global_modifiers(game_state.rules)
 	
 	# TODO bad code, shouldn't be here
 	var camera := $Camera as Camera2D
@@ -213,10 +212,27 @@ func load_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	)
 	var your_id: int = scenario.human_player
 	
-	_global_attacker_efficiency = rules.global_attacker_efficiency
-	_global_defender_efficiency = rules.global_defender_efficiency
+	_load_global_modifiers(rules)
 	
 	load_game_state(game_state, your_id)
+
+
+func _load_global_modifiers(rules: GameRules) -> void:
+	global_modifiers = {}
+	global_modifiers["attacker_efficiency"] = (
+			ModifierMultiplier.new(
+					"Base Modifier",
+					"Attackers all have this modifier by default.",
+					rules.global_attacker_efficiency
+			)
+	)
+	global_modifiers["defender_efficiency"] = (
+			ModifierMultiplier.new(
+					"Base Modifier",
+					"Defenders all have this modifier by default.",
+					rules.global_defender_efficiency
+			)
+	)
 
 
 func deselect_province() -> void:
