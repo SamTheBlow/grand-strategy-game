@@ -89,7 +89,7 @@ func generate_game_state(
 		var shape := %Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
 		
 		var province := province_scene.instantiate() as Province
-		province._game_mediator = game_mediator
+		province.game_mediator = game_mediator
 		province.name = str(i)
 		province.id = i
 		province.set_shape(shape.polygon)

@@ -250,7 +250,7 @@ func _load_province(
 		province_scene: PackedScene
 ) -> Province:
 	var province := province_scene.instantiate() as Province
-	province._game_mediator = game_mediator
+	province.game_mediator = game_mediator
 	province.id = json_data["id"]
 	
 	var shape: PackedVector2Array = []
