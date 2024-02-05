@@ -4,7 +4,7 @@ extends Node2D
 
 signal selected(this_province: Province)
 
-var game_mediator: GameMediator
+var modifier_mediator: ModifierMediator
 
 var id: int
 

@@ -2,21 +2,21 @@ class_name Fortress
 extends Building
 
 
-var _game_mediator: GameMediator
+var _modifier_mediator: ModifierMediator
 
 var _province: Province
 
 
 static func new_fortress(
-		game_mediator: GameMediator,
+		modifier_mediator: ModifierMediator,
 		province: Province
 ) -> Fortress:
 	var fortress := Fortress.new()
 	fortress.name = "Fortress"
-	fortress._game_mediator = game_mediator
+	fortress._modifier_mediator = modifier_mediator
 	fortress._province = province
 	
-	game_mediator.modifier_mediator().modifiers_requested.connect(
+	modifier_mediator.modifiers_requested.connect(
 			fortress._on_modifiers_requested
 	)
 	

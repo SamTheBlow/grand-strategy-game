@@ -5,7 +5,7 @@ extends Node
 
 
 func apply_to(
-		_game_mediator: GameMediator,
+		_modifier_mediator: ModifierMediator,
 		_game_state: GameState,
 		_is_simulation: bool
 ) -> void:

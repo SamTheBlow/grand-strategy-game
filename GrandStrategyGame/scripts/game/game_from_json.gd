@@ -7,7 +7,7 @@ var error_message: String = ""
 var result: GameState
 
 
-func load_game(json_data: Variant, game_mediator: GameMediator) -> void:
+func load_game(json_data: Variant, modifier_mediator: ModifierMediator) -> void:
 	if not json_data is Dictionary:
 		error = true
 		error_message = "JSON data's root is not a dictionary."
@@ -62,7 +62,7 @@ func load_game(json_data: Variant, game_mediator: GameMediator) -> void:
 	for province_data: Dictionary in json_dict["world"]["provinces"]:
 		var province_scene := preload("res://scenes/province.tscn") as PackedScene
 		var province: Province = _load_province(
-				province_data, game_mediator, game, province_scene
+				province_data, modifier_mediator, game, province_scene
 		)
 		if not province:
 			return
@@ -245,12 +245,12 @@ func _load_world_limits(json_data: Dictionary) -> WorldLimits:
 ## TODO verify & return errors.
 func _load_province(
 		json_data: Dictionary,
-		game_mediator: GameMediator,
+		modifier_mediator: ModifierMediator,
 		game_state: GameState,
 		province_scene: PackedScene
 ) -> Province:
 	var province := province_scene.instantiate() as Province
-	province.game_mediator = game_mediator
+	province.modifier_mediator = modifier_mediator
 	province.id = json_data["id"]
 	
 	var shape: PackedVector2Array = []
@@ -274,7 +274,7 @@ func _load_province(
 	))
 	
 	var setup_error: bool = _setup_armies(
-			json_data["armies"], game_mediator, game_state, province
+			json_data["armies"], modifier_mediator, game_state, province
 	)
 	if setup_error:
 		return null
@@ -288,7 +288,7 @@ func _load_province(
 	for building: Dictionary in json_data["buildings"]:
 		if building["type"] == "fortress":
 			var fortress: Fortress = Fortress.new_fortress(
-					game_mediator, province
+					modifier_mediator, province
 			)
 			fortress.add_visuals(
 					preload("res://scenes/fortress.tscn") as PackedScene
@@ -302,7 +302,7 @@ func _load_province(
 # Returns true if an error occured, false otherwise.
 func _setup_armies(
 	json_data: Array,
-	game_mediator: GameMediator,
+	modifier_mediator: ModifierMediator,
 	game_state: GameState,
 	province: Province
 ) -> bool:
@@ -315,7 +315,7 @@ func _setup_armies(
 		var army_dict: Dictionary = army_data
 		
 		var new_army: Army = _load_army(
-				army_dict, game_mediator, game_state, army_scene
+				army_dict, modifier_mediator, game_state, army_scene
 		)
 		new_army._province = province
 		province.armies.add_army(new_army)
@@ -325,7 +325,7 @@ func _setup_armies(
 ## TODO verify & return errors.
 func _load_army(
 		json_data: Dictionary,
-		game_mediator: GameMediator,
+		modifier_mediator: ModifierMediator,
 		game_state: GameState,
 		army_scene: PackedScene
 ) -> Army:
@@ -333,7 +333,7 @@ func _load_army(
 			game_state.countries.country_from_id(json_data["owner_country_id"])
 	)
 	return Army.quick_setup(
-			game_mediator,
+			modifier_mediator,
 			json_data["id"],
 			json_data["army_size"],
 			owner_country_,

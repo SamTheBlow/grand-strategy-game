@@ -21,7 +21,7 @@ func _init(
 
 
 func apply_to(
-		_game_mediator: GameMediator,
+		_modifier_mediator: ModifierMediator,
 		game_state: GameState,
 		is_simulation: bool
 ) -> void:

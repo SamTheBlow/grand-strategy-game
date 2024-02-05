@@ -7,7 +7,7 @@ func recruit_in_province(province: Province) -> void:
 		return
 	
 	province.armies.add_army(Army.quick_setup(
-			province.game_mediator,
+			province.modifier_mediator,
 			province.armies.new_unique_army_id(),
 			province.population.population_size,
 			province.owner_country(),

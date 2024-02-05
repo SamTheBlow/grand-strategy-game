@@ -4,7 +4,7 @@ extends Node
 
 signal game_ended()
 
-var _game_mediator: GameMediator
+var _modifier_mediator: ModifierMediator
 
 # The true, actual game state
 var _game_state: GameState
@@ -139,17 +139,17 @@ func _on_chat_rules_requested() -> void:
 
 
 func _on_modifiers_requested(
-		modifiers: Array[Modifier],
+		modifiers_: Array[Modifier],
 		context: ModifierContext
 ) -> void:
 	if global_modifiers.has(context.context()):
-		modifiers.append(global_modifiers[context.context()])
+		modifiers_.append(global_modifiers[context.context()])
 
 
 func init() -> void:
-	_game_mediator = GameMediator.new(self)
+	_modifier_mediator = ModifierMediator.new(self)
 	
-	_game_mediator.modifier_mediator().modifiers_requested.connect(
+	_modifier_mediator.modifiers_requested.connect(
 			_on_modifiers_requested
 	)
 
@@ -157,7 +157,7 @@ func init() -> void:
 ## Returns true if it succeeded, otherwise false.
 func load_from_path(file_path: String) -> bool:
 	var game_load := GameLoad.new()
-	game_load.load_game(file_path, _game_mediator)
+	game_load.load_game(file_path, _modifier_mediator)
 	if game_load.error:
 		print_debug("Failed to load game: " + game_load.error_message)
 		return false
@@ -169,7 +169,7 @@ func load_from_path(file_path: String) -> bool:
 
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
-	_game_state._game_mediator = _game_mediator
+	_game_state._modifier_mediator = _modifier_mediator
 	_your_id = your_id
 	
 	_load_global_modifiers(game_state.rules)
@@ -208,7 +208,7 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 ## Temporary function
 func load_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	var game_state: GameState = (
-			scenario.generate_game_state(_game_mediator, rules)
+			scenario.generate_game_state(_modifier_mediator, rules)
 	)
 	var your_id: int = scenario.human_player
 	
@@ -233,6 +233,10 @@ func _load_global_modifiers(rules: GameRules) -> void:
 					rules.global_defender_efficiency
 			)
 	)
+
+
+func modifiers(context: ModifierContext) -> ModifierList:
+	return _modifier_mediator.modifiers(context)
 
 
 func deselect_province() -> void:
@@ -264,7 +268,7 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(_game_mediator, _simulation, true)
+		action_split.apply_to(_modifier_mediator, _simulation, true)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
@@ -280,7 +284,7 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	action_move.apply_to(_game_mediator, _simulation, true)
+	action_move.apply_to(_modifier_mediator, _simulation, true)
 	you.add_action(action_move)
 
 
@@ -315,7 +319,7 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(_game_mediator, _game_state, false)
+		action.apply_to(_modifier_mediator, _game_state, false)
 	
 	# Merge armies
 	for province in _game_state.world.provinces.get_provinces():
