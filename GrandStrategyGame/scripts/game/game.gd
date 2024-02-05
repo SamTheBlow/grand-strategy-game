@@ -154,7 +154,7 @@ func init() -> void:
 ## Returns true if it succeeded, otherwise false.
 func load_from_path(file_path: String) -> bool:
 	var game_load := GameLoad.new()
-	game_load.load_game(file_path, _modifier_mediator)
+	game_load.load_game(file_path, self)
 	if game_load.error:
 		print_debug("Failed to load game: " + game_load.error_message)
 		return false
@@ -166,7 +166,7 @@ func load_from_path(file_path: String) -> bool:
 
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
-	_game_state._modifier_mediator = _modifier_mediator
+	_game_state.game = self
 	_your_id = your_id
 	
 	_load_global_modifiers(game_state.rules)
@@ -205,7 +205,7 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 ## Temporary function
 func load_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	var game_state: GameState = (
-			scenario.generate_game_state(_modifier_mediator, rules)
+			scenario.generate_game_state(self, rules)
 	)
 	var your_id: int = scenario.human_player
 	
@@ -237,15 +237,17 @@ func modifiers(context: ModifierContext) -> ModifierList:
 
 
 func add_modifier_provider(object: Object) -> void:
-	if not object.has_method("_on_modifiers_requested"):
+	const method_name: String = "_on_modifiers_requested"
+	
+	if not object.has_method(method_name):
 		print_debug(
 				"Tried to add a modifier provider that "
-				+ "didn't have a \"_on_modifiers_requested\" method."
+				+ "doesn't have a \"" + method_name + "\" method."
 		)
 		return
 	
 	_modifier_mediator.modifiers_requested.connect(
-			object._on_modifiers_requested
+			Callable(object, method_name)
 	)
 
 

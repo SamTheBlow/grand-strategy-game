@@ -53,7 +53,7 @@ func apply_to(game_state: GameState, _is_simulation: bool) -> void:
 	for i in number_of_clones:
 		# Create the new army
 		var army_clone: Army = Army.quick_setup(
-				game_state._modifier_mediator,
+				game_state.game,
 				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country(),

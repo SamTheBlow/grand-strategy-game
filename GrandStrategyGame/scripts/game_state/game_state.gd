@@ -5,7 +5,7 @@ extends Node
 signal game_over(winner: Country)
 signal province_selected(province: Province)
 
-var _modifier_mediator: ModifierMediator
+var game: Game
 
 # Nodes
 var countries: Countries
@@ -60,14 +60,14 @@ func connect_to_provinces(callable: Callable) -> void:
 
 func copy() -> GameState:
 	var game_to_json := GameToJSON.new()
-	game_to_json.convert_game(_modifier_mediator._game)
+	game_to_json.convert_game(game)
 	if game_to_json.error:
 		print_debug(
 				"Error converting game to JSON: "
 				+ game_to_json.error_message
 		)
 	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(game_to_json.result, _modifier_mediator)
+	game_from_json.load_game(game_to_json.result, game)
 	if game_from_json.error:
 		print_debug(
 				"Error loading game from JSON: "

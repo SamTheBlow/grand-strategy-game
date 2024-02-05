@@ -13,7 +13,7 @@ var error_message: String = ""
 var result: GameState = null
 
 
-func load_game(file_path: String, modifier_mediator: ModifierMediator) -> void:
+func load_game(file_path: String, game: Game) -> void:
 	# Load the file
 	var file_json := FileJSON.new()
 	file_json.load_json(file_path)
@@ -24,7 +24,7 @@ func load_game(file_path: String, modifier_mediator: ModifierMediator) -> void:
 	
 	# Load the game using the file data
 	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(file_json.result, modifier_mediator)
+	game_from_json.load_game(file_json.result, game)
 	if game_from_json.error:
 		error = true
 		error_message = game_from_json.error_message

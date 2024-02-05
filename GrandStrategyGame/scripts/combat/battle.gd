@@ -11,20 +11,20 @@ var attacking_army: Army
 var defending_army: Army
 
 
-func apply(modifier_mediator: ModifierMediator) -> void:
+func apply(game: Game) -> void:
 	#print("A battle is about to begin!")
 	
 	_context_attacker_efficiency._defending_army = defending_army
 	
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
-			modifier_mediator.modifiers(_context_attacker_efficiency).resultf()
+			game.modifiers(_context_attacker_efficiency).resultf()
 	)
 	var attacker_damage: int = floori(attacker_army_size * attacker_efficiency)
 	
 	var defender_army_size: int = defending_army.army_size.current_size()
 	var defender_efficiency: float = (
-			modifier_mediator.modifiers(_context_defender_efficiency).resultf()
+			game.modifiers(_context_defender_efficiency).resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	

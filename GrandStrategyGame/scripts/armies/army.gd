@@ -6,7 +6,7 @@ signal destroyed(army: Army)
 
 @export var battle: Battle
 
-var _modifier_mediator: ModifierMediator
+var game: Game
 
 var id: int
 
@@ -100,7 +100,7 @@ func resolve_battles(armies: Array[Army]) -> void:
 func fight(army: Army) -> void:
 	battle.attacking_army = self
 	battle.defending_army = army
-	battle.apply(_modifier_mediator)
+	battle.apply(game)
 
 
 func can_move_to(destination: Province) -> bool:
@@ -113,14 +113,14 @@ func _update_troop_count_label() -> void:
 
 
 static func quick_setup(
-		modifier_mediator: ModifierMediator,
+		game_: Game,
 		id_: int,
 		army_size_: int,
 		owner_country_: Country,
 		army_scene: PackedScene
 ) -> Army:
 	var army := army_scene.instantiate() as Army
-	army._modifier_mediator = modifier_mediator
+	army.game = game_
 	army.id = id_
 	
 	army.army_size = ArmySize.new(army_size_, 10)
