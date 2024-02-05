@@ -268,7 +268,7 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(_modifier_mediator, _simulation, true)
+		action_split.apply_to(_simulation, true)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
@@ -284,7 +284,7 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	action_move.apply_to(_modifier_mediator, _simulation, true)
+	action_move.apply_to(_simulation, true)
 	you.add_action(action_move)
 
 
@@ -319,7 +319,7 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(_modifier_mediator, _game_state, false)
+		action.apply_to(_game_state, false)
 	
 	# Merge armies
 	for province in _game_state.world.provinces.get_provinces():
