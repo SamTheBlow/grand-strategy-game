@@ -4,7 +4,7 @@ extends Node
 
 signal game_ended()
 
-var _modifier_mediator: ModifierMediator
+var _modifier_request: ModifierRequest
 
 # The true, actual game state
 var _game_state: GameState
@@ -147,7 +147,7 @@ func _on_modifiers_requested(
 
 
 func init() -> void:
-	_modifier_mediator = ModifierMediator.new(self)
+	_modifier_request = ModifierRequest.new(self)
 	add_modifier_provider(self)
 
 
@@ -233,22 +233,11 @@ func _load_global_modifiers(rules: GameRules) -> void:
 
 
 func modifiers(context: ModifierContext) -> ModifierList:
-	return _modifier_mediator.modifiers(context)
+	return _modifier_request.modifiers(context)
 
 
 func add_modifier_provider(object: Object) -> void:
-	const method_name: String = "_on_modifiers_requested"
-	
-	if not object.has_method(method_name):
-		print_debug(
-				"Tried to add a modifier provider that "
-				+ "doesn't have a \"" + method_name + "\" method."
-		)
-		return
-	
-	_modifier_mediator.modifiers_requested.connect(
-			Callable(object, method_name)
-	)
+	_modifier_request.add_provider(object)
 
 
 func deselect_province() -> void:
