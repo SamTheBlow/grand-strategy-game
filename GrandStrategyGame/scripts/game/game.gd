@@ -148,10 +148,7 @@ func _on_modifiers_requested(
 
 func init() -> void:
 	_modifier_mediator = ModifierMediator.new(self)
-	
-	_modifier_mediator.modifiers_requested.connect(
-			_on_modifiers_requested
-	)
+	add_modifier_provider(self)
 
 
 ## Returns true if it succeeded, otherwise false.
@@ -237,6 +234,19 @@ func _load_global_modifiers(rules: GameRules) -> void:
 
 func modifiers(context: ModifierContext) -> ModifierList:
 	return _modifier_mediator.modifiers(context)
+
+
+func add_modifier_provider(object: Object) -> void:
+	if not object.has_method("_on_modifiers_requested"):
+		print_debug(
+				"Tried to add a modifier provider that "
+				+ "didn't have a \"_on_modifiers_requested\" method."
+		)
+		return
+	
+	_modifier_mediator.modifiers_requested.connect(
+			object._on_modifiers_requested
+	)
 
 
 func deselect_province() -> void:
