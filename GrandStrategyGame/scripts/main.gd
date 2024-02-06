@@ -23,18 +23,20 @@ func _on_main_menu_entered() -> void:
 	add_child(main_menu)
 
 
-## Returns true if it succeeded, otherwise false.
-func load_game() -> bool:
-	var game := game_scene.instantiate() as Game
-	game.init()
+func load_game() -> void:
+	var game_from_path := GameFromPath.new()
+	game_from_path.load_game(SAVE_FILE_PATH)
 	
-	if not game.load_from_path(SAVE_FILE_PATH):
-		return false
+	if game_from_path.error:
+		print_debug(game_from_path.error_message)
+		return
+	
+	var game: Game = game_from_path.result
 	
 	_remove_all_children()
 	game.game_ended.connect(_on_main_menu_entered)
 	add_child(game)
-	return true
+	return
 
 
 ## Temporary function. Returns true if it succeeded, otherwise false.

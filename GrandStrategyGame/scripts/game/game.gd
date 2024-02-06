@@ -151,19 +151,6 @@ func init() -> void:
 	add_modifier_provider(self)
 
 
-## Returns true if it succeeded, otherwise false.
-func load_from_path(file_path: String) -> bool:
-	var game_load := GameLoad.new()
-	game_load.load_game(file_path, self)
-	if game_load.error:
-		print_debug("Failed to load game: " + game_load.error_message)
-		return false
-	
-	var random_player: int = randi() % game_load.result.players.players.size()
-	load_game_state(game_load.result, random_player)
-	return true
-
-
 func load_game_state(game_state: GameState, your_id: int) -> void:
 	_game_state = game_state
 	_game_state.game = self
