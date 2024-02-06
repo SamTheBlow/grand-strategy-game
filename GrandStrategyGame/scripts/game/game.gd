@@ -189,18 +189,6 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	$WorldLayer.add_child(_simulation)
 
 
-## Temporary function
-func load_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
-	var game_state: GameState = (
-			scenario.generate_game_state(self, rules)
-	)
-	var your_id: int = scenario.human_player
-	
-	_load_global_modifiers(rules)
-	
-	load_game_state(game_state, your_id)
-
-
 func _load_global_modifiers(rules: GameRules) -> void:
 	global_modifiers = {}
 	global_modifiers["attacker_efficiency"] = (

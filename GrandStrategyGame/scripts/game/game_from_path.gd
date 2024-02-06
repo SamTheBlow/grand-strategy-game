@@ -2,8 +2,8 @@ class_name GameFromPath
 ## Class responsible for loading a game using only a file path.
 
 
-var error: bool
-var error_message: String
+var error: bool = true
+var error_message: String = ""
 var result: Game
 
 
