@@ -37,124 +37,127 @@ var _number_of_countries: int = 11
 var human_player: int = randi() % _number_of_countries
 
 
-func generate_game_state(game: Game, game_rules: GameRules) -> GameState:
-	var game_state := GameState.new()
-	game_state.name = "GameState"
-	game_state.rules = game_rules
+func as_json(game_rules: GameRules) -> Dictionary:
+	var json_data: Dictionary = {}
 	
-	# Build the countries and the players
-	var countries := Countries.new()
-	countries.name = "Countries"
-	var players := Players.new()
-	players.name = "Players"
+	# Rules
+	var rules_data: Dictionary = {}
+	rules_data["population_growth"] = game_rules.population_growth
+	rules_data["fortresses"] = game_rules.fortresses
+	rules_data["turn_limit_enabled"] = game_rules.turn_limit_enabled
+	rules_data["turn_limit"] = game_rules.turn_limit
+	rules_data["global_attacker_efficiency"] = game_rules.global_attacker_efficiency
+	rules_data["global_defender_efficiency"] = game_rules.global_defender_efficiency
+	json_data["rules"] = rules_data
 	
+	# Players and countries
+	var players_data: Array = []
+	var countries_data: Array = []
 	for i in country_scenes.size():
+		var player_data: Dictionary = {}
+		player_data["id"] = i
+		player_data["playing_country_id"] = i
+		players_data.append(player_data)
+		
+		var country_data: Dictionary = {}
+		country_data["id"] = i
 		var country := country_scenes[i].instantiate() as Country
-		country.name = str(i)
-		country.id = i
-		
-		var player: Player
-		if i == human_player:
-			player = PlayerHuman.new()
-		else:
-			player = TestAI1.new()
-		player.name = str(i)
-		player.id = i
-		player.playing_country = country
-		
-		countries.add_country(country)
-		players.add_player(player)
+		country_data["country_name"] = country.country_name
+		country_data["color"] = country.color.to_html()
+		countries_data.append(country_data)
+	json_data["players"] = players_data
+	json_data["countries"] = countries_data
 	
-	game_state.countries = countries
-	game_state.add_child(countries)
-	game_state.players = players
-	game_state.add_child(players)
+	# World
+	var world_data: Dictionary = {}
 	
-	# Build the world
-	var world := world_scene.instantiate() as GameWorld2D
-	world.init()
-	
-	# Set the camera's limits
-	var world_size_node := %WorldSize as Marker2D
-	world.limits = WorldLimits.from_rect2i(
-			Rect2i(Vector2i.ZERO, world_size_node.position)
+	# World limits
+	var limits: WorldLimits = WorldLimits.from_rect2i(
+			Rect2i(Vector2i.ZERO, (%WorldSize as Marker2D).position)
 	)
+	world_data["limits"] = {
+		"top": limits.limit_top(),
+		"bottom": limits.limit_bottom(),
+		"left": limits.limit_left(),
+		"right": limits.limit_right(),
+	}
 	
 	# Provinces
+	var provinces_data: Array = []
 	var number_of_provinces: int = %Shapes.get_child_count()
 	for i in number_of_provinces:
 		var shape := %Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
 		
-		var province := province_scene.instantiate() as Province
-		province.game = game
-		province.name = str(i)
-		province.id = i
-		province.set_shape(shape.polygon)
-		province.position = shape.position
+		var province_data: Dictionary = {}
+		province_data["id"] = i
+		province_data["position"] = {
+			"x": shape.position.x,
+			"y": shape.position.y
+		}
 		
+		# Owner country
 		var is_starting_province: bool = false
-		var starting_province_country_id: int
+		var starting_province_country_id: int = -1
 		for j in starting_provinces.size():
 			if starting_provinces[j] == i:
 				is_starting_province = true
 				starting_province_country_id = j
 				break
+		province_data["owner_country_id"] = starting_province_country_id
 		
-		# Owner
+		# Position army host
+		var army_host_node := shape.get_node("ArmyHost") as Node2D
+		var position_army_host: Vector2 = army_host_node.global_position
+		province_data["position_army_host_x"] = position_army_host.x
+		province_data["position_army_host_y"] = position_army_host.y
+		
+		# Links
+		var links_json: Array = []
+		var province_links: PackedInt32Array = shape.links
+		for j in province_links.size():
+			links_json.append(province_links[j] - 1)
+		province_data["links"] = links_json
+		
+		# Shape
+		var shape_vertices := Array(shape.polygon)
+		var shape_vertices_x: Array = []
+		var shape_vertices_y: Array = []
+		for j in shape_vertices.size():
+			shape_vertices_x.append(shape_vertices[j].x)
+			shape_vertices_y.append(shape_vertices[j].y)
+		province_data["shape"] = {
+			"x": shape_vertices_x,
+			"y": shape_vertices_y,
+		}
+		
+		# Armies
+		var armies_data: Array = []
 		if is_starting_province:
-			province.set_owner_country(
-					countries.country_from_id(starting_province_country_id)
-			)
+			var army_data: Dictionary = {
+				"id": 0,
+				"army_size": 1000,
+				"owner_country_id": starting_province_country_id,
+			}
+			armies_data.append(army_data)
+		province_data["armies"] = armies_data
 		
 		# Population
 		var population_size: int = 10 + randi() % 90
-		var population_growth: bool = game_rules.population_growth
-		province.setup_population(population_size, population_growth)
-		
-		# Armies
-		var army_host_node := shape.get_node("ArmyHost") as Node2D
-		var position_army_host: Vector2 = army_host_node.global_position
-		province.setup_armies(position_army_host)
-		
-		if province.has_owner_country():
-			var army: Army = Army.quick_setup(
-					game,
-					0,
-					1000,
-					province.owner_country(),
-					army_scene
-			)
-			province.armies.add_army(army)
+		province_data["population"] = {
+			"size": population_size,
+		}
 		
 		# Buildings
-		province.setup_buildings()
+		var buildings_data: Array = []
 		if game_rules.fortresses and is_starting_province:
-			var fortress: Fortress = Fortress.new_fortress(
-					game, province
-			)
-			fortress.add_visuals(
-					preload("res://scenes/fortress.tscn") as PackedScene
-			)
-			province.buildings.add(fortress)
+			buildings_data.append({"type": "fortress"})
+		province_data["buildings"] = buildings_data
 		
-		world.provinces.add_province(province)
+		provinces_data.append(province_data)
+	world_data["provinces"] = provinces_data
+	json_data["world"] = world_data
 	
-	# Second loop (we need all the provinces to be created beforehand)
-	for i in number_of_provinces:
-		var province: Province = world.provinces.province_from_id(i)
-		var shape := %Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
-		
-		# Links
-		province.links = []
-		var province_links: PackedInt32Array = shape.links
-		var number_of_links: int = province_links.size()
-		for j in number_of_links:
-			var id: int = province_links[j] - 1
-			province.links.append(world.provinces.province_from_id(id))
+	# Turn
+	json_data["turn"] = 1
 	
-	game_state.world = world
-	game_state.add_child(world)
-	
-	game_state.setup_turn()
-	
-	return game_state
+	return json_data

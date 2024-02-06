@@ -83,7 +83,12 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 	# Turn
 	var turn_key: String = "turn"
 	if json_dict.has(turn_key):
-		if not json_dict[turn_key] is float:
+		# Workaround because JSON doesn't differentiate between int and float
+		var value_type: int = typeof(json_dict[turn_key])
+		if value_type == TYPE_INT:
+			value_type = TYPE_FLOAT
+		
+		if value_type != TYPE_FLOAT:
 			error = true
 			error_message = "Turn property is not a number."
 			return

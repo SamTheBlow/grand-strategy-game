@@ -4,7 +4,6 @@ extends Node
 const SAVE_FILE_PATH: String = "user://gamesave.json"
 
 @export var main_menu_scene: PackedScene
-@export var game_scene: PackedScene
 
 
 func _ready() -> void:
