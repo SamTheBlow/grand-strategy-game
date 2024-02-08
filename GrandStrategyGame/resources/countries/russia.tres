@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Countryy" load_steps=2 format=3 uid="uid://bkea18h5bhkgw"]
+
+[ext_resource type="Script" path="res://scripts/countries/country.gd" id="1_hcukq"]
+
+[resource]
+script = ExtResource("1_hcukq")
+country_name = "Russia"
+color = Color(0.376471, 0.501961, 0.74902, 1)

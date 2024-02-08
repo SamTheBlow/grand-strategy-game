@@ -177,15 +177,14 @@ func _load_countries(json_data: Dictionary) -> Countries:
 	return countries
 
 
+## TODO verify & return errors.
 func _load_country(json_data: Dictionary) -> Country:
 	var country := Country.new()
 	
-	## TODO verify & return errors. I'm just too lazy to do it right now
 	country.id = json_data["id"]
 	country.country_name = json_data["country_name"]
 	country.color = Color(json_data["color"])
 	
-	country.name = str(country.id)
 	return country
 
 
@@ -218,10 +217,10 @@ func _load_players(json_data: Dictionary, game: Game) -> Players:
 	return players
 
 
+## TODO verify & return errors.
 func _load_player(json_data: Dictionary, game: Game) -> Player:
 	var player := TestAI1.new()
 	
-	## TODO verify & return errors. I'm just too lazy to do it right now
 	player.id = json_data["id"]
 	player.playing_country = (
 			game.countries.country_from_id(json_data["playing_country_id"])

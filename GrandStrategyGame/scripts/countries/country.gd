@@ -1,8 +1,8 @@
 class_name Country
-extends Node
+extends Resource
 
 
-@export var country_name: String = "(Unnamed Country)"
+@export var country_name: String = ""
 @export var color: Color = Color.WHITE
 
 var id: int = -1

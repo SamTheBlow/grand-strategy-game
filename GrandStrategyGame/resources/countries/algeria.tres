@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="Country" load_steps=2 format=3 uid="uid://dug1edcvb2y1w"]
+
+[ext_resource type="Script" path="res://scripts/countries/country.gd" id="1_n1loy"]
+
+[resource]
+script = ExtResource("1_n1loy")
+country_name = "Algeria"
+color = Color(0.686275, 0.74902, 0.376471, 1)

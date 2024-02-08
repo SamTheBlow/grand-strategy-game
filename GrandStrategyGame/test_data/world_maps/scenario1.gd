@@ -2,7 +2,7 @@ class_name Scenario1
 extends Node2D
 
 
-@export var country_scenes: Array[PackedScene]
+@export var countries: Array[Country]
 @export var world_scene: PackedScene
 @export var province_scene: PackedScene
 @export var army_scene: PackedScene
@@ -53,7 +53,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	# Players and countries
 	var players_data: Array = []
 	var countries_data: Array = []
-	for i in country_scenes.size():
+	for i in countries.size():
 		var player_data: Dictionary = {}
 		player_data["id"] = i
 		player_data["playing_country_id"] = i
@@ -61,7 +61,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		
 		var country_data: Dictionary = {}
 		country_data["id"] = i
-		var country := country_scenes[i].instantiate() as Country
+		var country: Country = countries[i]
 		country_data["country_name"] = country.country_name
 		country_data["color"] = country.color.to_html()
 		countries_data.append(country_data)

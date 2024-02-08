@@ -2,17 +2,17 @@
 
 [ext_resource type="Script" path="res://test_data/world_maps/province_test_data.gd" id="1_klkwd"]
 [ext_resource type="Script" path="res://test_data/world_maps/scenario1.gd" id="2_ubikp"]
-[ext_resource type="PackedScene" uid="uid://ciulqa12hqugv" path="res://scenes/countries/uk.tscn" id="3_vacq7"]
-[ext_resource type="PackedScene" uid="uid://bkmf8dr023xe1" path="res://scenes/countries/france.tscn" id="4_p2x2c"]
-[ext_resource type="PackedScene" uid="uid://dbctt7evrxl7d" path="res://scenes/countries/germany.tscn" id="5_otql5"]
-[ext_resource type="PackedScene" uid="uid://bmwci6w6oibs7" path="res://scenes/countries/russia.tscn" id="6_sai0n"]
-[ext_resource type="PackedScene" uid="uid://d3eh1iokpkdkw" path="res://scenes/countries/italy.tscn" id="7_l1o2m"]
-[ext_resource type="PackedScene" uid="uid://55f1wncy4fkb" path="res://scenes/countries/poland.tscn" id="8_dnf0r"]
-[ext_resource type="PackedScene" uid="uid://cbwihxmhhes20" path="res://scenes/countries/switzerland.tscn" id="9_vlnq7"]
-[ext_resource type="PackedScene" uid="uid://dvp650lpeo0aa" path="res://scenes/countries/ireland.tscn" id="10_tarmn"]
-[ext_resource type="PackedScene" uid="uid://dt6nec6bgdbvk" path="res://scenes/countries/austria.tscn" id="11_guykm"]
-[ext_resource type="PackedScene" uid="uid://doufticn0whcs" path="res://scenes/countries/morocco.tscn" id="12_o0l80"]
-[ext_resource type="PackedScene" uid="uid://b4afxrqxaje7k" path="res://scenes/countries/algeria.tscn" id="13_kaabc"]
+[ext_resource type="Resource" uid="uid://budtwwnm7e2qh" path="res://resources/countries/uk.tres" id="3_y838x"]
+[ext_resource type="Resource" uid="uid://urfsfaoah1mj" path="res://resources/countries/france.tres" id="4_a32yr"]
+[ext_resource type="Resource" uid="uid://dcf0inkj1rd22" path="res://resources/countries/germany.tres" id="5_irogq"]
+[ext_resource type="Resource" uid="uid://bkea18h5bhkgw" path="res://resources/countries/russia.tres" id="6_xx06r"]
+[ext_resource type="Resource" uid="uid://cv1c3otxwnw0c" path="res://resources/countries/italy.tres" id="7_1cucb"]
+[ext_resource type="Resource" uid="uid://b1q61ly136ci5" path="res://resources/countries/poland.tres" id="8_0h53j"]
+[ext_resource type="Resource" uid="uid://chaconypnui2j" path="res://resources/countries/switzerland.tres" id="9_21uka"]
+[ext_resource type="Resource" uid="uid://dxri72no3mkcm" path="res://resources/countries/ireland.tres" id="10_7nmss"]
+[ext_resource type="Resource" uid="uid://dwme1ktslqmi5" path="res://resources/countries/austria.tres" id="11_rlrm2"]
+[ext_resource type="Resource" uid="uid://bo2m8meuph3kv" path="res://resources/countries/morocco.tres" id="12_40d2v"]
+[ext_resource type="Resource" uid="uid://dug1edcvb2y1w" path="res://resources/countries/algeria.tres" id="13_5il8d"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="14_ambny"]
 [ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://scenes/province.tscn" id="15_55msn"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="16_320pj"]
@@ -687,7 +687,7 @@ position = Vector2(1489, -410)
 
 [node name="Scenario1" type="Node2D" parent="Scenarios"]
 script = ExtResource("2_ubikp")
-country_scenes = Array[PackedScene]([ExtResource("3_vacq7"), ExtResource("4_p2x2c"), ExtResource("5_otql5"), ExtResource("6_sai0n"), ExtResource("7_l1o2m"), ExtResource("8_dnf0r"), ExtResource("9_vlnq7"), ExtResource("10_tarmn"), ExtResource("11_guykm"), ExtResource("12_o0l80"), ExtResource("13_kaabc")])
+countries = Array[Resource("res://scripts/countries/country.gd")]([ExtResource("3_y838x"), ExtResource("4_a32yr"), ExtResource("5_irogq"), ExtResource("6_xx06r"), ExtResource("7_1cucb"), ExtResource("8_0h53j"), ExtResource("9_21uka"), ExtResource("10_7nmss"), ExtResource("11_rlrm2"), ExtResource("12_40d2v"), ExtResource("13_5il8d")])
 world_scene = ExtResource("14_ambny")
 province_scene = ExtResource("15_55msn")
 army_scene = ExtResource("16_320pj")
