@@ -4,5 +4,5 @@ extends Node
 ## Actions are the things players do that affect the game state.
 
 
-func apply_to(_game_state: GameState, _is_simulation: bool) -> void:
+func apply_to(_game_state: GameState) -> void:
 	pass

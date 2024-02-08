@@ -20,7 +20,7 @@ func _init(
 	_new_army_id = new_army_id
 
 
-func apply_to(game_state: GameState, is_simulation: bool) -> void:
+func apply_to(game_state: GameState) -> void:
 	var source_province: Province = (
 			game_state.world.provinces.province_from_id(_province_id)
 	)
@@ -45,18 +45,7 @@ func apply_to(game_state: GameState, is_simulation: bool) -> void:
 		)
 		return
 	
-	if is_simulation:
-		# Play the movement animation
-		var source_position: Vector2 = (
-				source_province.armies.position_army_host
-				- source_province.global_position
-		)
-		var target_position: Vector2 = (
-				destination_province.armies.position_army_host
-				- source_province.global_position
-		)
-		army.play_movement_to(source_position, target_position)
-		return
+	army.play_movement_to(destination_province)
 	
 	# Move the army to the destination province
 	army.id = _new_army_id

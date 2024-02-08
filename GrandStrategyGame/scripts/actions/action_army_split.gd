@@ -25,7 +25,7 @@ func _init(
 	_new_army_ids = new_army_ids
 
 
-func apply_to(game_state: GameState, _is_simulation: bool) -> void:
+func apply_to(game_state: GameState) -> void:
 	var province: Province = (
 			game_state.world.provinces.province_from_id(_province_id)
 	)

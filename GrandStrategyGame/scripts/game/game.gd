@@ -6,11 +6,7 @@ signal game_ended()
 
 var _modifier_request: ModifierRequest
 
-# The true, actual game state
 var _game_state: GameState
-
-# A simulation of the game state (this is what the player sees)
-var _simulation: GameState
 
 var _your_id: int
 
@@ -35,9 +31,9 @@ func _on_game_over(country: Country) -> void:
 
 func _on_province_selected(province: Province) -> void:
 	var your_country: Country = (
-			_simulation.countries.country_from_id(_your_id)
+			_game_state.countries.country_from_id(_your_id)
 	)
-	var provinces_node: Provinces = _simulation.world.provinces
+	var provinces_node: Provinces = _game_state.world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
 		var selected_armies: ProvinceArmies = selected_province.armies
@@ -93,17 +89,13 @@ func _on_exit_to_main_menu_requested() -> void:
 
 
 func _on_chat_requested_province_info() -> void:
-	var selected_province_simulation: Province = (
-			_simulation.world.provinces.selected_province
+	var selected_province: Province = (
+			_game_state.world.provinces.selected_province
 	)
-	if not selected_province_simulation:
+	if not selected_province:
 		chat.system_message("No province selected.")
 		return
 	
-	var selected_province_id: int = selected_province_simulation.id
-	var selected_province: Province = (
-			_game_state.world.provinces.province_from_id(selected_province_id)
-	)
 	var population_size: int = selected_province.population.population_size
 	chat.system_message("Population size: " + str(population_size))
 
@@ -181,12 +173,7 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	
 	_game_state.connect_to_provinces(_on_province_selected)
 	_game_state.game_over.connect(_on_game_over)
-	_simulation = game_state.copy()
-	
-	# TODO bad code DRY
-	_simulation.connect_to_provinces(_on_province_selected)
-	
-	$WorldLayer.add_child(_simulation)
+	$WorldLayer.add_child(_game_state)
 
 
 func _load_global_modifiers(rules: GameRules) -> void:
@@ -216,7 +203,7 @@ func add_modifier_provider(object: Object) -> void:
 
 
 func deselect_province() -> void:
-	_simulation.world.provinces.deselect_province()
+	_game_state.world.provinces.deselect_province()
 
 
 func new_action_army_movement(
@@ -227,14 +214,14 @@ func new_action_army_movement(
 ) -> void:
 	deselect_province()
 	
-	var you: Player = _simulation.players.player_from_id(_your_id)
+	var you: Player = _game_state.players.player_from_id(_your_id)
 	var moving_army_id: int = army.id
 	
 	# Split the army into two if needed
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
 		var new_army_id: int = (
-				_simulation.world.provinces
+				_game_state.world.provinces
 				.province_from_id(source_province.id)
 				.armies.new_unique_army_id()
 		)
@@ -244,13 +231,13 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(_simulation, true)
+		action_split.apply_to(_game_state)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
 	
 	var moving_army_new_id: int = (
-			_simulation.world.provinces
+			_game_state.world.provinces
 			.province_from_id(destination_province.id)
 			.armies.new_unique_army_id()
 	)
@@ -260,31 +247,24 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	action_move.apply_to(_simulation, true)
+	action_move.apply_to(_game_state)
 	you.add_action(action_move)
 
 
 func end_turn() -> void:
 	#print("********** End of turn **********")
 	
-	# Always play the human's turn first
-	_play_player_turn(_simulation.players.player_from_id(_your_id))
-	# Then play the other players' turn
-	for player in _simulation.players.players:
+	# Merge your armies
+	for province in _game_state.world.provinces.get_provinces():
+		province.armies.merge_armies()
+	
+	# Play all other players' turn
+	for player in _game_state.players.players:
 		if player.id == _your_id:
 			continue
 		_play_player_turn(player)
 	
 	_game_state.propagate_call("_on_new_turn")
-	
-	# Update the visible game state
-	$WorldLayer.remove_child(_simulation)
-	_simulation = _game_state.copy()
-	
-	# TODO bad code DRY
-	_simulation.connect_to_provinces(_on_province_selected)
-	
-	$WorldLayer.add_child(_simulation)
 
 
 func _play_player_turn(player: Player) -> void:
@@ -295,7 +275,7 @@ func _play_player_turn(player: Player) -> void:
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(_game_state, false)
+		action.apply_to(_game_state)
 	
 	# Merge armies
 	for province in _game_state.world.provinces.get_provinces():

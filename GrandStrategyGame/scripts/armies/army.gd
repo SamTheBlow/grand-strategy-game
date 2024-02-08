@@ -71,12 +71,18 @@ func set_active(value: bool) -> void:
 		z_index = 5
 
 
-func play_movement_to(source: Vector2, destination: Vector2) -> void:
+func play_movement_to(destination_province: Province) -> void:
 	self.is_active = false
 	animation_is_playing = true
-	position = source
-	original_position = source
-	target_position = destination
+	original_position = (
+			_province.armies.position_army_host
+			- destination_province.global_position
+	)
+	target_position = (
+			destination_province.armies.position_army_host
+			- destination_province.global_position
+	)
+	position = original_position
 
 
 func gray_out() -> void:

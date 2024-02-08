@@ -14,8 +14,8 @@ func remove_army(army: Army) -> void:
 
 
 func add_army(army: Army) -> void:
-	army.stop_animations()
-	army.position = position_army_host - global_position
+	if not army.animation_is_playing:
+		army.position = position_army_host - global_position
 	if army.get_parent():
 		(army.get_parent() as ProvinceArmies).remove_army(army)
 	army.name = str(army.id)
