@@ -3,7 +3,6 @@ extends Node
 
 
 signal game_over(winner: Country)
-signal province_selected(province: Province)
 
 var game: Game
 
@@ -52,10 +51,6 @@ func setup_turn(starting_turn: int = 1) -> void:
 		turn.add_child(turn_limit)
 	
 	add_child(turn)
-
-
-func connect_to_provinces(callable: Callable) -> void:
-	world.connect_to_provinces(callable)
 
 
 func copy() -> GameState:

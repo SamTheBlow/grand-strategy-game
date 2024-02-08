@@ -38,9 +38,3 @@ func province_from_id(id: int) -> Province:
 		if province.id == id:
 			return province
 	return null
-
-
-func connect_to_provinces(callable: Callable) -> void:
-	var provinces: Array[Province] = get_provinces()
-	for province in provinces:
-		province.selected.connect(callable)

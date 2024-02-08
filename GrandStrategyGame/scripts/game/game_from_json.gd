@@ -304,6 +304,7 @@ func _load_province(
 			province.buildings.add(fortress)
 	
 	province.name = str(province.id)
+	province.selected.connect(base_game._on_province_selected)
 	return province
 
 

@@ -171,7 +171,6 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	if target_province:
 		camera.position = target_province.armies.position_army_host
 	
-	_game_state.connect_to_provinces(_on_province_selected)
 	_game_state.game_over.connect(_on_game_over)
 	$WorldLayer.add_child(_game_state)
 
