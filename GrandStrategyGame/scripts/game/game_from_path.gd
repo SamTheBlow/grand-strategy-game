@@ -20,7 +20,7 @@ func load_game(file_path: String) -> void:
 		return
 	
 	var random_player: int = randi() % game.players.players.size()
-	game.load_game_state(game_load.result, random_player)
+	game.load_game_state(random_player)
 	
 	# Success!
 	error = false

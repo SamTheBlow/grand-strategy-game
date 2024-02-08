@@ -20,9 +20,9 @@ func _init(
 	_new_army_id = new_army_id
 
 
-func apply_to(game_state: GameState) -> void:
+func apply_to(game: Game) -> void:
 	var source_province: Province = (
-			game_state.world.provinces.province_from_id(_province_id)
+			game.world.provinces.province_from_id(_province_id)
 	)
 	if not source_province:
 		push_warning(
@@ -36,8 +36,7 @@ func apply_to(game_state: GameState) -> void:
 		return
 	
 	var destination_province: Province = (
-			game_state.world.provinces
-			.province_from_id(_destination_province_id)
+			game.world.provinces.province_from_id(_destination_province_id)
 	)
 	if not destination_province:
 		push_warning(

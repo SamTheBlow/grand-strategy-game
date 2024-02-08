@@ -4,19 +4,15 @@ class_name GameFromJSON
 
 var error: bool = true
 var error_message: String = ""
-var result: GameState
+var result: Game
 
 
-func load_game(json_data: Variant, base_game: Game) -> void:
+func load_game(json_data: Variant, game: Game) -> void:
 	if not json_data is Dictionary:
 		error = true
 		error_message = "JSON data's root is not a dictionary."
 		return
 	var json_dict: Dictionary = json_data
-	
-	# Loading begins!
-	var game := GameState.new()
-	game.name = "GameState"
 	
 	# Rules
 	var rules: GameRules = _load_rules(json_dict)
@@ -28,13 +24,13 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 	var countries: Countries = _load_countries(json_dict)
 	if not countries:
 		return
-	base_game.countries = countries
+	game.countries = countries
 	
 	# Players
-	var players: Players = _load_players(json_dict, base_game)
+	var players: Players = _load_players(json_dict, game)
 	if not players:
 		return
-	base_game.players = players
+	game.players = players
 	
 	# World
 	var game_world_2d := preload("res://scenes/world_2d.tscn").instantiate() as GameWorld2D
@@ -60,7 +56,7 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 	for province_data: Dictionary in json_dict["world"]["provinces"]:
 		var province_scene := preload("res://scenes/province.tscn") as PackedScene
 		var province: Province = _load_province(
-				province_data, base_game, game, province_scene
+				province_data, game, province_scene
 		)
 		if not province:
 			return
@@ -76,7 +72,6 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 					game_world_2d.provinces.province_from_id(link)
 			)
 	game.world = game_world_2d
-	game.add_child(game.world)
 	
 	# Turn
 	var turn_key: String = "turn"
@@ -246,7 +241,6 @@ func _load_world_limits(json_data: Dictionary) -> WorldLimits:
 func _load_province(
 		json_data: Dictionary,
 		game: Game,
-		game_state: GameState,
 		province_scene: PackedScene
 ) -> Province:
 	var province := province_scene.instantiate() as Province
@@ -283,7 +277,7 @@ func _load_province(
 	
 	province.setup_population(
 			json_data["population"]["size"],
-			game_state.rules.population_growth
+			game.rules.population_growth
 	)
 	
 	province.setup_buildings()

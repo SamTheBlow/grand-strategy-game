@@ -25,9 +25,9 @@ func _init(
 	_new_army_ids = new_army_ids
 
 
-func apply_to(game_state: GameState) -> void:
+func apply_to(game: Game) -> void:
 	var province: Province = (
-			game_state.world.provinces.province_from_id(_province_id)
+			game.world.provinces.province_from_id(_province_id)
 	)
 	if not province:
 		push_warning(
@@ -53,7 +53,7 @@ func apply_to(game_state: GameState) -> void:
 	for i in number_of_clones:
 		# Create the new army
 		var army_clone: Army = Army.quick_setup(
-				game_state.game,
+				game,
 				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country(),

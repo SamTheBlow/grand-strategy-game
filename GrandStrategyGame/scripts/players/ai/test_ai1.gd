@@ -4,10 +4,10 @@ extends PlayerAI
 ## It also leaves some troops idle to defend.
 
 
-func play(game_state: GameState) -> void:
+func play(game: Game) -> void:
 	var result: Array[Action] = []
 	
-	var provinces: Array[Province] = game_state.world.provinces.get_provinces()
+	var provinces: Array[Province] = game.world.provinces.get_provinces()
 	var number_of_provinces: int = provinces.size()
 	for i in number_of_provinces:
 		var province: Province = provinces[i]

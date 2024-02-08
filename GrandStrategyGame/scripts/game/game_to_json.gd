@@ -12,12 +12,12 @@ func convert_game(game: Game) -> void:
 	
 	# Rules
 	var rules_data: Dictionary = {}
-	rules_data["population_growth"] = game._game_state.rules.population_growth
-	rules_data["fortresses"] = game._game_state.rules.fortresses
-	rules_data["turn_limit_enabled"] = game._game_state.rules.turn_limit_enabled
-	rules_data["turn_limit"] = game._game_state.rules.turn_limit
-	rules_data["global_attacker_efficiency"] = game._game_state.rules.global_attacker_efficiency
-	rules_data["global_defender_efficiency"] = game._game_state.rules.global_defender_efficiency
+	rules_data["population_growth"] = game.rules.population_growth
+	rules_data["fortresses"] = game.rules.fortresses
+	rules_data["turn_limit_enabled"] = game.rules.turn_limit_enabled
+	rules_data["turn_limit"] = game.rules.turn_limit
+	rules_data["global_attacker_efficiency"] = game.rules.global_attacker_efficiency
+	rules_data["global_defender_efficiency"] = game.rules.global_defender_efficiency
 	json_data["rules"] = rules_data
 	
 	# Players
@@ -42,8 +42,8 @@ func convert_game(game: Game) -> void:
 	# World
 	var world_data: Dictionary = {}
 	
-	if game._game_state.world is GameWorld2D:
-		var world: GameWorld2D = game._game_state.world as GameWorld2D
+	if game.world is GameWorld2D:
+		var world: GameWorld2D = game.world as GameWorld2D
 		world_data["limits"] = {
 			"top": world.limits.limit_top(),
 			"bottom": world.limits.limit_bottom(),
@@ -52,7 +52,7 @@ func convert_game(game: Game) -> void:
 		}
 	
 	var provinces_data: Array = []
-	for province in game._game_state.world.provinces.get_provinces():
+	for province in game.world.provinces.get_provinces():
 		var province_data: Dictionary = {
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},
@@ -107,7 +107,7 @@ func convert_game(game: Game) -> void:
 	json_data["world"] = world_data
 	
 	# Turn
-	json_data["turn"] = float(game._game_state.turn._turn)
+	json_data["turn"] = float(game.turn._turn)
 	
 	# Success!
 	error = false

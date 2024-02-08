@@ -6,9 +6,13 @@ signal game_ended()
 
 var _modifier_request: ModifierRequest
 
-var _game_state: GameState
+var rules: GameRules
 var countries: Countries
 var players: Players
+
+# References to children nodes
+var world: GameWorld
+var turn: GameTurn
 
 var _your_id: int
 
@@ -33,7 +37,7 @@ func _on_game_over(country: Country) -> void:
 
 func _on_province_selected(province: Province) -> void:
 	var your_country: Country = countries.country_from_id(_your_id)
-	var provinces_node: Provinces = _game_state.world.provinces
+	var provinces_node: Provinces = world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
 		var selected_armies: ProvinceArmies = selected_province.armies
@@ -89,9 +93,7 @@ func _on_exit_to_main_menu_requested() -> void:
 
 
 func _on_chat_requested_province_info() -> void:
-	var selected_province: Province = (
-			_game_state.world.provinces.selected_province
-	)
+	var selected_province: Province = world.provinces.selected_province
 	if not selected_province:
 		chat.system_message("No province selected.")
 		return
@@ -102,22 +104,22 @@ func _on_chat_requested_province_info() -> void:
 
 func _on_chat_rules_requested() -> void:
 	var population_growth: String = "no"
-	if _game_state.rules.population_growth:
+	if rules.population_growth:
 		population_growth = "yes"
 	
 	var fortresses: String = "no"
-	if _game_state.rules.fortresses:
+	if rules.fortresses:
 		fortresses = "yes"
 	
 	var turn_limit: String = "none"
-	if _game_state.rules.turn_limit_enabled:
-		turn_limit = str(_game_state.rules.turn_limit) + " turns"
+	if rules.turn_limit_enabled:
+		turn_limit = str(rules.turn_limit) + " turns"
 	
 	var global_attacker_efficiency: String = (
-		str(_game_state.rules.global_attacker_efficiency)
+		str(rules.global_attacker_efficiency)
 	)
 	var global_defender_efficiency: String = (
-		str(_game_state.rules.global_defender_efficiency)
+		str(rules.global_defender_efficiency)
 	)
 	
 	chat.system_message_multiline([
@@ -143,25 +145,23 @@ func init() -> void:
 	add_modifier_provider(self)
 
 
-func load_game_state(game_state: GameState, your_id: int) -> void:
-	_game_state = game_state
-	_game_state.game = self
+func load_game_state(your_id: int) -> void:
 	_your_id = your_id
 	
-	_load_global_modifiers(game_state.rules)
+	_load_global_modifiers()
 	
 	# TODO bad code, shouldn't be here
 	var camera := $Camera as Camera2D
-	camera.limit_left = _game_state.world.limits.limit_left()
-	camera.limit_top = _game_state.world.limits.limit_top()
-	camera.limit_right = _game_state.world.limits.limit_right()
-	camera.limit_bottom = _game_state.world.limits.limit_bottom()
+	camera.limit_left = world.limits.limit_left()
+	camera.limit_top = world.limits.limit_top()
+	camera.limit_right = world.limits.limit_right()
+	camera.limit_bottom = world.limits.limit_bottom()
 	
 	# TODO this shouldn't be here either
 	# Find the province to move the camera to and move the camera there
 	var playing_country: Country = players.player_from_id(your_id).playing_country
 	var target_province: Province
-	for province in _game_state.world.provinces.get_provinces():
+	for province in world.provinces.get_provinces():
 		if (
 				province.has_owner_country()
 				and province.owner_country() == playing_country
@@ -171,11 +171,11 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	if target_province:
 		camera.position = target_province.armies.position_army_host
 	
-	_game_state.game_over.connect(_on_game_over)
-	$WorldLayer.add_child(_game_state)
+	$WorldLayer.add_child(world)
 
 
-func _load_global_modifiers(rules: GameRules) -> void:
+## The rules must be setup beforehand.
+func _load_global_modifiers() -> void:
 	global_modifiers = {}
 	global_modifiers["attacker_efficiency"] = (
 			ModifierMultiplier.new(
@@ -202,7 +202,7 @@ func add_modifier_provider(object: Object) -> void:
 
 
 func deselect_province() -> void:
-	_game_state.world.provinces.deselect_province()
+	world.provinces.deselect_province()
 
 
 func new_action_army_movement(
@@ -220,8 +220,7 @@ func new_action_army_movement(
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
 		var new_army_id: int = (
-				_game_state.world.provinces
-				.province_from_id(source_province.id)
+				world.provinces.province_from_id(source_province.id)
 				.armies.new_unique_army_id()
 		)
 		var action_split := ActionArmySplit.new(
@@ -230,14 +229,13 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(_game_state)
+		action_split.apply_to(self)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
 	
 	var moving_army_new_id: int = (
-			_game_state.world.provinces
-			.province_from_id(destination_province.id)
+			world.provinces.province_from_id(destination_province.id)
 			.armies.new_unique_army_id()
 	)
 	var action_move := ActionArmyMovement.new(
@@ -246,7 +244,7 @@ func new_action_army_movement(
 			destination_province.id,
 			moving_army_new_id
 	)
-	action_move.apply_to(_game_state)
+	action_move.apply_to(self)
 	you.add_action(action_move)
 
 
@@ -254,7 +252,7 @@ func end_turn() -> void:
 	#print("********** End of turn **********")
 	
 	# Merge your armies
-	for province in _game_state.world.provinces.get_provinces():
+	for province in world.provinces.get_provinces():
 		province.armies.merge_armies()
 	
 	# Play all other players' turn
@@ -263,22 +261,22 @@ func end_turn() -> void:
 			continue
 		_play_player_turn(player)
 	
-	_game_state.propagate_call("_on_new_turn")
+	propagate_call("_on_new_turn")
 
 
 func _play_player_turn(player: Player) -> void:
 	# Have the AI play its moves
 	# TODO give a copy of the game, to prevent AI from cheating
 	if player.id != _your_id:
-		(player as PlayerAI).play(_game_state)
+		(player as PlayerAI).play(self)
 	
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(_game_state)
+		action.apply_to(self)
 	
 	# Merge armies
-	for province in _game_state.world.provinces.get_provinces():
+	for province in world.provinces.get_provinces():
 		province.armies.merge_armies()
 	
 	#print("--- End of player's turn")
@@ -298,3 +296,98 @@ func _new_popup_number_of_troops(
 	troop_ui.cancelled.connect(_on_recruit_cancelled)
 	troop_ui.army_movement_requested.connect(new_action_army_movement)
 	$UILayer.add_child(troop_ui)
+
+
+func _on_new_turn() -> void:
+	_check_percentage_winner()
+
+
+func end_game() -> void:
+	# Get how many provinces each country has
+	var ownership: Array = _province_count_per_country()
+	
+	# Find which player has the most provinces
+	var winning_player_index: int = 0
+	var number_of_players: int = ownership.size()
+	for i in number_of_players:
+		if ownership[i][1] > ownership[winning_player_index][1]:
+			winning_player_index = i
+	
+	var winning_country: Country = ownership[winning_player_index][0]
+	
+	_on_game_over(winning_country)
+
+
+func _check_percentage_winner() -> void:
+	var percentage_to_win: float = 70.0
+	
+	# Get how many provinces each country has
+	var ownership: Array = _province_count_per_country()
+	
+	# Declare a winner if there is one
+	var number_of_provinces: int = world.provinces.get_provinces().size()
+	for o: Array in ownership:
+		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
+			end_game()
+			break
+
+
+func _province_count_per_country() -> Array:
+	var output: Array = []
+	
+	for province in world.provinces.get_provinces():
+		if not province.has_owner_country():
+			continue
+		
+		# Find the country on our list
+		var index: int = -1
+		var output_size: int = output.size()
+		for i in output_size:
+			if output[i][0] == province.owner_country():
+				index = i
+				break
+		
+		# It isn't on our list. Add it
+		if index == -1:
+			output.append([province.owner_country(), 1])
+		# It is on our list. Increase its number of owned provinces
+		else:
+			output[index][1] += 1
+	
+	return output
+
+
+## The rules must be setup beforehand.
+func setup_turn(starting_turn: int = 1) -> void:
+	turn = GameTurn.new()
+	turn.name = "Turn"
+	turn._turn = starting_turn
+	
+	if rules.turn_limit_enabled:
+		var turn_limit := TurnLimit.new()
+		turn_limit.name = "TurnLimit"
+		turn_limit._final_turn = rules.turn_limit
+		turn_limit.game_over.connect(_on_game_over)
+		
+		turn.add_child(turn_limit)
+	
+	add_child(turn)
+
+
+# Temporarily broken, DO NOT USE!
+func copy() -> Game:
+	var game_to_json := GameToJSON.new()
+	game_to_json.convert_game(self)
+	if game_to_json.error:
+		print_debug(
+				"Error converting game to JSON: "
+				+ game_to_json.error_message
+		)
+	var game_from_json := GameFromJSON.new()
+	game_from_json.load_game(game_to_json.result, self)
+	if game_from_json.error:
+		print_debug(
+				"Error loading game from JSON: "
+				+ game_from_json.error_message
+		)
+	return game_from_json.result

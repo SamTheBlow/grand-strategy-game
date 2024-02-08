@@ -10,7 +10,7 @@ var error: bool = true
 var error_message: String = ""
 
 ## This is where the loaded game will be stored if loading succeeds.
-var result: GameState = null
+var result: Game
 
 
 func load_game(file_path: String, game: Game) -> void:

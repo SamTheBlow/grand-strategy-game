@@ -6,5 +6,5 @@ extends Player
 
 
 ## This is where the AI generates its actions based on a given game state
-func play(_game_state: GameState) -> void:
+func play(_game: Game) -> void:
 	pass

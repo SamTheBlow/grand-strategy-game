@@ -22,7 +22,7 @@ func load_game(scenario: Scenario1, game_rules: GameRules) -> void:
 		return
 	
 	var your_id: int = scenario.human_player
-	game.load_game_state(game_from_json.result, your_id)
+	game.load_game_state(your_id)
 	
 	# Success!
 	error = false
