@@ -7,7 +7,6 @@ signal game_over(winner: Country)
 var game: Game
 
 # Nodes
-var players: Players
 var world: GameWorld
 var turn: GameTurn
 

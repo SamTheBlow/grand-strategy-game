@@ -22,7 +22,7 @@ func convert_game(game: Game) -> void:
 	
 	# Players
 	var players_data: Array = []
-	for player in game._game_state.players.players:
+	for player in game.players.players:
 		var player_data: Dictionary = {}
 		player_data["id"] = player.id
 		player_data["playing_country_id"] = player.playing_country.id

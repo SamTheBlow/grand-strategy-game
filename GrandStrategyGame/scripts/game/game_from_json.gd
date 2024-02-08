@@ -34,8 +34,7 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 	var players: Players = _load_players(json_dict, base_game)
 	if not players:
 		return
-	game.players = players
-	game.add_child(game.players)
+	base_game.players = players
 	
 	# World
 	var game_world_2d := preload("res://scenes/world_2d.tscn").instantiate() as GameWorld2D
@@ -214,9 +213,8 @@ func _load_players(json_data: Dictionary, game: Game) -> Players:
 		var player: Player = _load_player(player_dict, game)
 		if not player:
 			return null
-		players.add_player(player)
+		players.players.append(player)
 	
-	players.name = "Players"
 	return players
 
 
@@ -229,7 +227,6 @@ func _load_player(json_data: Dictionary, game: Game) -> Player:
 			game.countries.country_from_id(json_data["playing_country_id"])
 	)
 	
-	player.name = str(player.id)
 	return player
 
 

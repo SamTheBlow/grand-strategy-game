@@ -1,5 +1,4 @@
 class_name Player
-extends Node
 
 
 var id: int

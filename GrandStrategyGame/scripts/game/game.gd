@@ -8,6 +8,7 @@ var _modifier_request: ModifierRequest
 
 var _game_state: GameState
 var countries: Countries
+var players: Players
 
 var _your_id: int
 
@@ -19,8 +20,8 @@ var global_modifiers: Dictionary = {}
 
 func _ready() -> void:
 	chat.system_message(
-			"You are playing as " + _game_state.players
-			.player_from_id(_your_id).playing_country.country_name
+			"You are playing as "
+			+ players.player_from_id(_your_id).playing_country.country_name
 	)
 
 
@@ -158,7 +159,7 @@ func load_game_state(game_state: GameState, your_id: int) -> void:
 	
 	# TODO this shouldn't be here either
 	# Find the province to move the camera to and move the camera there
-	var playing_country: Country = _game_state.players.player_from_id(your_id).playing_country
+	var playing_country: Country = players.player_from_id(your_id).playing_country
 	var target_province: Province
 	for province in _game_state.world.provinces.get_provinces():
 		if (
@@ -212,7 +213,7 @@ func new_action_army_movement(
 ) -> void:
 	deselect_province()
 	
-	var you: Player = _game_state.players.player_from_id(_your_id)
+	var you: Player = players.player_from_id(_your_id)
 	var moving_army_id: int = army.id
 	
 	# Split the army into two if needed
@@ -257,7 +258,7 @@ func end_turn() -> void:
 		province.armies.merge_armies()
 	
 	# Play all other players' turn
-	for player in _game_state.players.players:
+	for player in players.players:
 		if player.id == _your_id:
 			continue
 		_play_player_turn(player)

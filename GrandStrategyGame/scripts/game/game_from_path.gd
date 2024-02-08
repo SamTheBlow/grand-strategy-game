@@ -19,7 +19,7 @@ func load_game(file_path: String) -> void:
 		error_message = "Failed to load game: " + game_load.error_message
 		return
 	
-	var random_player: int = randi() % game_load.result.players.players.size()
+	var random_player: int = randi() % game.players.players.size()
 	game.load_game_state(game_load.result, random_player)
 	
 	# Success!
