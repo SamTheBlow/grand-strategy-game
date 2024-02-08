@@ -29,6 +29,10 @@ func _ready() -> void:
 	)
 
 
+func _on_new_turn() -> void:
+	_check_percentage_winner()
+
+
 func _on_game_over(country: Country) -> void:
 	var game_over_node := %GameOverPopup as GameOver
 	game_over_node.show()
@@ -140,15 +144,32 @@ func _on_modifiers_requested(
 		modifiers_.append(global_modifiers[context.context()])
 
 
-func init() -> void:
+## Initialization 1. To be done immediately after loading the game scene.
+func init1() -> void:
 	_modifier_request = ModifierRequest.new(self)
 	add_modifier_provider(self)
 
 
-func load_game_state(your_id: int) -> void:
+## Initialization 2. To be done after everything is loaded.
+func init2(your_id: int) -> void:
 	_your_id = your_id
 	
-	_load_global_modifiers()
+	# Setup global modifiers
+	global_modifiers = {}
+	global_modifiers["attacker_efficiency"] = (
+			ModifierMultiplier.new(
+					"Base Modifier",
+					"Attackers all have this modifier by default.",
+					rules.global_attacker_efficiency
+			)
+	)
+	global_modifiers["defender_efficiency"] = (
+			ModifierMultiplier.new(
+					"Base Modifier",
+					"Defenders all have this modifier by default.",
+					rules.global_defender_efficiency
+			)
+	)
 	
 	# TODO bad code, shouldn't be here
 	var camera := $Camera as Camera2D
@@ -174,23 +195,40 @@ func load_game_state(your_id: int) -> void:
 	$WorldLayer.add_child(world)
 
 
-## The rules must be setup beforehand.
-func _load_global_modifiers() -> void:
-	global_modifiers = {}
-	global_modifiers["attacker_efficiency"] = (
-			ModifierMultiplier.new(
-					"Base Modifier",
-					"Attackers all have this modifier by default.",
-					rules.global_attacker_efficiency
-			)
-	)
-	global_modifiers["defender_efficiency"] = (
-			ModifierMultiplier.new(
-					"Base Modifier",
-					"Defenders all have this modifier by default.",
-					rules.global_defender_efficiency
-			)
-	)
+## For loading. The rules must be setup beforehand.
+func setup_turn(starting_turn: int = 1) -> void:
+	turn = GameTurn.new()
+	turn.name = "Turn"
+	turn._turn = starting_turn
+	
+	if rules.turn_limit_enabled:
+		var turn_limit := TurnLimit.new()
+		turn_limit.name = "TurnLimit"
+		turn_limit._final_turn = rules.turn_limit
+		turn_limit.game_over.connect(_on_game_over)
+		
+		turn.add_child(turn_limit)
+	
+	add_child(turn)
+
+
+## Creates a new instance of Game with the exact same state as this game.
+func copy() -> Game:
+	var game_to_json := GameToJSON.new()
+	game_to_json.convert_game(self)
+	if game_to_json.error:
+		print_debug(
+				"Error converting game to JSON: "
+				+ game_to_json.error_message
+		)
+	var game_from_json := GameFromJSON.new()
+	game_from_json.load_game(game_to_json.result)
+	if game_from_json.error:
+		print_debug(
+				"Error loading game from JSON: "
+				+ game_from_json.error_message
+		)
+	return game_from_json.result
 
 
 func modifiers(context: ModifierContext) -> ModifierList:
@@ -264,11 +302,26 @@ func end_turn() -> void:
 	propagate_call("_on_new_turn")
 
 
+func end_game() -> void:
+	# Get how many provinces each country has
+	var ownership: Array = _province_count_per_country()
+	
+	# Find which player has the most provinces
+	var winning_player_index: int = 0
+	var number_of_players: int = ownership.size()
+	for i in number_of_players:
+		if ownership[i][1] > ownership[winning_player_index][1]:
+			winning_player_index = i
+	
+	var winning_country: Country = ownership[winning_player_index][0]
+	
+	_on_game_over(winning_country)
+
+
 func _play_player_turn(player: Player) -> void:
 	# Have the AI play its moves
-	# TODO give a copy of the game, to prevent AI from cheating
 	if player.id != _your_id:
-		(player as PlayerAI).play(self)
+		(player as PlayerAI).play(copy())
 	
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
@@ -296,26 +349,6 @@ func _new_popup_number_of_troops(
 	troop_ui.cancelled.connect(_on_recruit_cancelled)
 	troop_ui.army_movement_requested.connect(new_action_army_movement)
 	$UILayer.add_child(troop_ui)
-
-
-func _on_new_turn() -> void:
-	_check_percentage_winner()
-
-
-func end_game() -> void:
-	# Get how many provinces each country has
-	var ownership: Array = _province_count_per_country()
-	
-	# Find which player has the most provinces
-	var winning_player_index: int = 0
-	var number_of_players: int = ownership.size()
-	for i in number_of_players:
-		if ownership[i][1] > ownership[winning_player_index][1]:
-			winning_player_index = i
-	
-	var winning_country: Country = ownership[winning_player_index][0]
-	
-	_on_game_over(winning_country)
 
 
 func _check_percentage_winner() -> void:
@@ -355,39 +388,3 @@ func _province_count_per_country() -> Array:
 			output[index][1] += 1
 	
 	return output
-
-
-## The rules must be setup beforehand.
-func setup_turn(starting_turn: int = 1) -> void:
-	turn = GameTurn.new()
-	turn.name = "Turn"
-	turn._turn = starting_turn
-	
-	if rules.turn_limit_enabled:
-		var turn_limit := TurnLimit.new()
-		turn_limit.name = "TurnLimit"
-		turn_limit._final_turn = rules.turn_limit
-		turn_limit.game_over.connect(_on_game_over)
-		
-		turn.add_child(turn_limit)
-	
-	add_child(turn)
-
-
-# Temporarily broken, DO NOT USE!
-func copy() -> Game:
-	var game_to_json := GameToJSON.new()
-	game_to_json.convert_game(self)
-	if game_to_json.error:
-		print_debug(
-				"Error converting game to JSON: "
-				+ game_to_json.error_message
-		)
-	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(game_to_json.result, self)
-	if game_from_json.error:
-		print_debug(
-				"Error loading game from JSON: "
-				+ game_from_json.error_message
-		)
-	return game_from_json.result

@@ -8,19 +8,17 @@ var result: Game
 
 
 func load_game(file_path: String) -> void:
-	const game_scene := preload("res://scenes/game.tscn") as PackedScene
-	var game := game_scene.instantiate() as Game
-	game.init()
-	
 	var game_load := GameLoad.new()
-	game_load.load_game(file_path, game)
+	game_load.load_game(file_path)
+	
 	if game_load.error:
 		error = true
 		error_message = "Failed to load game: " + game_load.error_message
 		return
+	var game: Game = game_load.result
 	
 	var random_player: int = randi() % game.players.players.size()
-	game.load_game_state(random_player)
+	game.init2(random_player)
 	
 	# Success!
 	error = false

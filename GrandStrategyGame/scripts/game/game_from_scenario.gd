@@ -8,21 +8,18 @@ var result: Game
 
 
 func load_game(scenario: Scenario1, game_rules: GameRules) -> void:
-	const game_scene := preload("res://scenes/game.tscn") as PackedScene
-	var game := game_scene.instantiate() as Game
-	game.init()
-	
 	var json_data: Dictionary = scenario.as_json(game_rules)
 	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(json_data, game)
+	game_from_json.load_game(json_data)
 	
 	if game_from_json.error:
 		error = true
 		error_message = game_from_json.error_message
 		return
+	var game: Game = game_from_json.result
 	
 	var your_id: int = scenario.human_player
-	game.load_game_state(your_id)
+	game.init2(your_id)
 	
 	# Success!
 	error = false

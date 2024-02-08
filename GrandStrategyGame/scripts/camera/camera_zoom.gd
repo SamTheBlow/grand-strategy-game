@@ -111,11 +111,15 @@ func _minimum_zoom(camera: Camera2D) -> float:
 	return maxf(min_zoom_x, min_zoom_y)
 
 
+# Ensure the camera stays in bounds when the screen size changes
 func _on_screen_size_changed() -> void:
-	# Ensure the camera stays in bounds when the screen size changes
-	
 	var camera := get_parent() as Camera2D
 	if not camera:
+		return
+	
+	# Prevent error messages when the camera isn't in the scene tree
+	# TODO this is a workaround. find a better solution
+	if not camera.is_inside_tree():
 		return
 	
 	var minimum_zoom: float = _minimum_zoom(camera)

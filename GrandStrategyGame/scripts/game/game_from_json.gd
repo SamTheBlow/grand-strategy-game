@@ -7,12 +7,17 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(json_data: Variant, game: Game) -> void:
+func load_game(json_data: Variant) -> void:
 	if not json_data is Dictionary:
 		error = true
 		error_message = "JSON data's root is not a dictionary."
 		return
 	var json_dict: Dictionary = json_data
+	
+	# Loading begins!
+	const game_scene := preload("res://scenes/game.tscn") as PackedScene
+	var game := game_scene.instantiate() as Game
+	game.init1()
 	
 	# Rules
 	var rules: GameRules = _load_rules(json_dict)

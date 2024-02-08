@@ -107,7 +107,7 @@ func convert_game(game: Game) -> void:
 	json_data["world"] = world_data
 	
 	# Turn
-	json_data["turn"] = float(game.turn._turn)
+	json_data["turn"] = float(game.turn.current_turn())
 	
 	# Success!
 	error = false
