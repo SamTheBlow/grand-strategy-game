@@ -7,7 +7,6 @@ signal game_over(winner: Country)
 var game: Game
 
 # Nodes
-var countries: Countries
 var players: Players
 var world: GameWorld
 var turn: GameTurn
@@ -53,6 +52,7 @@ func setup_turn(starting_turn: int = 1) -> void:
 	add_child(turn)
 
 
+# Temporarily broken, DO NOT USE! (It overwrites stuff in the Game object)
 func copy() -> GameState:
 	var game_to_json := GameToJSON.new()
 	game_to_json.convert_game(game)

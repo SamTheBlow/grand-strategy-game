@@ -7,6 +7,7 @@ signal game_ended()
 var _modifier_request: ModifierRequest
 
 var _game_state: GameState
+var countries: Countries
 
 var _your_id: int
 
@@ -30,9 +31,7 @@ func _on_game_over(country: Country) -> void:
 
 
 func _on_province_selected(province: Province) -> void:
-	var your_country: Country = (
-			_game_state.countries.country_from_id(_your_id)
-	)
+	var your_country: Country = countries.country_from_id(_your_id)
 	var provinces_node: Provinces = _game_state.world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
@@ -268,8 +267,9 @@ func end_turn() -> void:
 
 func _play_player_turn(player: Player) -> void:
 	# Have the AI play its moves
+	# TODO give a copy of the game, to prevent AI from cheating
 	if player.id != _your_id:
-		(player as PlayerAI).play(_game_state.copy())
+		(player as PlayerAI).play(_game_state)
 	
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions

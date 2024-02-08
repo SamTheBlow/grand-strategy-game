@@ -28,11 +28,10 @@ func load_game(json_data: Variant, base_game: Game) -> void:
 	var countries: Countries = _load_countries(json_dict)
 	if not countries:
 		return
-	game.countries = countries
-	game.add_child(game.countries)
+	base_game.countries = countries
 	
 	# Players
-	var players: Players = _load_players(json_dict, game)
+	var players: Players = _load_players(json_dict, base_game)
 	if not players:
 		return
 	game.players = players
@@ -174,9 +173,8 @@ func _load_countries(json_data: Dictionary) -> Countries:
 		var country: Country = _load_country(country_dict)
 		if not country:
 			return null
-		countries.add_country(country)
+		countries.countries.append(country)
 	
-	countries.name = "Countries"
 	return countries
 
 
@@ -192,7 +190,7 @@ func _load_country(json_data: Dictionary) -> Country:
 	return country
 
 
-func _load_players(json_data: Dictionary, game: GameState) -> Players:
+func _load_players(json_data: Dictionary, game: Game) -> Players:
 	var players := Players.new()
 	
 	var players_key: String = "players"
@@ -222,7 +220,7 @@ func _load_players(json_data: Dictionary, game: GameState) -> Players:
 	return players
 
 
-func _load_player(json_data: Dictionary, game: GameState) -> Player:
+func _load_player(json_data: Dictionary, game: Game) -> Player:
 	var player := TestAI1.new()
 	
 	## TODO verify & return errors. I'm just too lazy to do it right now
@@ -250,12 +248,12 @@ func _load_world_limits(json_data: Dictionary) -> WorldLimits:
 ## TODO verify & return errors.
 func _load_province(
 		json_data: Dictionary,
-		base_game: Game,
+		game: Game,
 		game_state: GameState,
 		province_scene: PackedScene
 ) -> Province:
 	var province := province_scene.instantiate() as Province
-	province.game = base_game
+	province.game = game
 	province.id = json_data["id"]
 	
 	var shape: PackedVector2Array = []
@@ -270,7 +268,7 @@ func _load_province(
 	)
 	
 	province.set_owner_country(
-			game_state.countries.country_from_id(json_data["owner_country_id"])
+			game.countries.country_from_id(json_data["owner_country_id"])
 	)
 	
 	province.setup_armies(Vector2(
@@ -280,8 +278,7 @@ func _load_province(
 	
 	var setup_error: bool = _setup_armies(
 			json_data["armies"],
-			base_game,
-			game_state,
+			game,
 			province
 	)
 	if setup_error:
@@ -296,7 +293,7 @@ func _load_province(
 	for building: Dictionary in json_data["buildings"]:
 		if building["type"] == "fortress":
 			var fortress: Fortress = Fortress.new_fortress(
-					base_game, province
+					game, province
 			)
 			fortress.add_visuals(
 					preload("res://scenes/fortress.tscn") as PackedScene
@@ -304,17 +301,12 @@ func _load_province(
 			province.buildings.add(fortress)
 	
 	province.name = str(province.id)
-	province.selected.connect(base_game._on_province_selected)
+	province.selected.connect(game._on_province_selected)
 	return province
 
 
 # Returns true if an error occured, false otherwise.
-func _setup_armies(
-	json_data: Array,
-	base_game: Game,
-	game_state: GameState,
-	province: Province
-) -> bool:
+func _setup_armies(json_data: Array, game: Game, province: Province) -> bool:
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data: Variant in json_data:
 		if not army_data is Dictionary:
@@ -323,9 +315,7 @@ func _setup_armies(
 			return true
 		var army_dict: Dictionary = army_data
 		
-		var new_army: Army = _load_army(
-				army_dict, base_game, game_state, army_scene
-		)
+		var new_army: Army = _load_army(army_dict, game, army_scene)
 		new_army._province = province
 		province.armies.add_army(new_army)
 	return false
@@ -334,15 +324,14 @@ func _setup_armies(
 ## TODO verify & return errors.
 func _load_army(
 		json_data: Dictionary,
-		base_game: Game,
-		game_state: GameState,
+		game: Game,
 		army_scene: PackedScene
 ) -> Army:
 	var owner_country_: Country = (
-			game_state.countries.country_from_id(json_data["owner_country_id"])
+			game.countries.country_from_id(json_data["owner_country_id"])
 	)
 	return Army.quick_setup(
-			base_game,
+			game,
 			json_data["id"],
 			json_data["army_size"],
 			owner_country_,
