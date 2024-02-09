@@ -22,8 +22,8 @@ func _on_input_text_submitted(new_text: String) -> void:
 						"/help - Gives a list of every command",
 						"/infop - Gives info on selected province",
 						"/fs - Toggle fullscreen",
-						"/save - Save the current game state",
-						"/load - Load the saved game state",
+						"/save - Save the game",
+						"/load - Load the saved game",
 						"/mainmenu - Go back to the main menu (without saving!)",
 						"/rules - Gives a list of the current game rules",
 				])

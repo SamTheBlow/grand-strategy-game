@@ -58,15 +58,6 @@ func new_unique_army_id() -> int:
 	return new_id
 
 
-func get_armies_of(country: Country) -> Array[Army]:
-	var result: Array[Army] = []
-	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
-	for army in armies:
-		if army.owner_country() == country:
-			result.append(army)
-	return result
-
-
 func get_active_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
 	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
