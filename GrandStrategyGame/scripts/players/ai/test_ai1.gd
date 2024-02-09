@@ -14,7 +14,7 @@ func play(game: Game) -> void:
 		var link_tree: Array = _new_link_tree(province)
 		
 		# Find the nearest target province for each of your armies
-		var armies: Array[Army] = province.armies.armies
+		var armies: Array[Army] = game.world.armies.armies_in_province(province)
 		for army in armies:
 			if army.owner_country().id == playing_country.id:
 				var new_actions: Array[Action] = _find_target_province(

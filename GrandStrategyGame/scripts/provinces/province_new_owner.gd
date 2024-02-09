@@ -6,7 +6,8 @@ func update_province_owner(province: Province) -> void:
 	var current_owner: Country = province.owner_country()
 	var new_owner: Country = current_owner
 	
-	for army in province.armies.armies:
+	var armies: Array[Army] = province.game.world.armies.armies_in_province(province)
+	for army in armies:
 		# If this province's owner has an army here,
 		# then it can't be taken by someone else
 		if army.owner_country() == province.owner_country():

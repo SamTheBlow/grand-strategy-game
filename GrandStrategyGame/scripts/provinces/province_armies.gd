@@ -4,35 +4,32 @@ extends Node2D
 
 var position_army_host: Vector2
 
-var armies: Array[Army]
-
 
 func remove_army(army: Army) -> void:
 	army.destroyed.disconnect(remove_army)
-	armies.erase(army)
+	army.game.world.armies.armies.erase(army)
 	remove_child(army)
 
 
 func add_army(army: Army) -> void:
 	army.destroyed.connect(remove_army)
-	armies.append(army)
+	army.game.world.armies.armies.append(army)
 	add_child(army)
 
 
 func merge_armies() -> void:
-	# We make a copy because we will be removing
-	# elements from the original array
-	var copy := armies.duplicate() as Array[Army]
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	var number_of_armies: int = armies.size()
 	for i in number_of_armies:
 		for j in range(i + 1, number_of_armies):
-			if copy[i].owner_country().id == copy[j].owner_country().id:
-				copy[j].army_size.add(copy[i].army_size.current_size())
-				remove_army(copy[i])
+			if armies[i].owner_country().id == armies[j].owner_country().id:
+				armies[j].army_size.add(armies[i].army_size.current_size())
+				remove_army(armies[i])
 				break
 
 
 func army_from_id(id: int) -> Army:
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	for army in armies:
 		if army.id == id:
 			return army
@@ -47,6 +44,8 @@ func new_unique_army_ids(number_of_ids: int) -> Array[int]:
 
 
 func new_unique_army_id() -> int:
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
+	
 	var new_id: int
 	var id_is_unique: bool = false
 	while not id_is_unique:
@@ -61,6 +60,7 @@ func new_unique_army_id() -> int:
 
 func get_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	for army in armies:
 		if army.owner_country() == country:
 			result.append(army)
@@ -69,6 +69,7 @@ func get_armies_of(country: Country) -> Array[Army]:
 
 func get_active_armies_of(country: Country) -> Array[Army]:
 	var result: Array[Army] = []
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	for army in armies:
 		if army.owner_country() == country and army.is_active:
 			result.append(army)
@@ -76,6 +77,7 @@ func get_active_armies_of(country: Country) -> Array[Army]:
 
 
 func country_has_active_army(country: Country) -> bool:
+	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	for army in armies:
 		if army.owner_country() == country and army.is_active:
 			return true

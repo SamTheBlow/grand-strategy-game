@@ -299,6 +299,8 @@ func _load_province(
 
 # Returns true if an error occured, false otherwise.
 func _load_armies(json_data: Array, game: Game) -> bool:
+	game.world.armies = Armies.new()
+	
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data: Variant in json_data:
 		if not army_data is Dictionary:

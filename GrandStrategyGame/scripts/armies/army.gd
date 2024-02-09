@@ -65,7 +65,7 @@ func move_to_province(destination: Province) -> void:
 	
 	_province = destination
 	_province.armies.add_army(self)
-	resolve_battles(_province.armies.armies)
+	resolve_battles(game.world.armies.armies_in_province(_province))
 
 
 func owner_country() -> Country:
