@@ -53,6 +53,21 @@ func province() -> Province:
 	return _province
 
 
+func move_to_province(destination: Province) -> void:
+	if not animation_is_playing:
+		position = (
+				destination.armies.position_army_host
+				- destination.global_position
+		)
+	
+	if _province:
+		_province.armies.remove_army(self)
+	
+	_province = destination
+	_province.armies.add_army(self)
+	resolve_battles(_province.armies.armies)
+
+
 func owner_country() -> Country:
 	return _owner_country
 

@@ -307,8 +307,7 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 			return true
 		var army_dict: Dictionary = army_data
 		
-		var new_army: Army = _load_army(army_dict, game, army_scene)
-		new_army.province().armies.add_army(new_army)
+		_load_army(army_dict, game, army_scene)
 	return false
 
 
@@ -317,7 +316,7 @@ func _load_army(
 		json_data: Dictionary,
 		game: Game,
 		army_scene: PackedScene
-) -> Army:
+) -> void:
 	var owner_country_: Country = (
 			game.countries.country_from_id(json_data["owner_country_id"])
 	)
@@ -328,7 +327,6 @@ func _load_army(
 			owner_country_,
 			army_scene
 	)
-	army._province = (
+	army.move_to_province(
 			game.world.provinces.province_from_id(json_data["province_id"])
 	)
-	return army

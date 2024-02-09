@@ -59,8 +59,7 @@ func apply_to(game: Game) -> void:
 				army.owner_country(),
 				preload("res://scenes/army.tscn")
 		)
-		army_clone._province = province
-		province.armies.add_army(army_clone)
+		army_clone.move_to_province(province)
 		
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])

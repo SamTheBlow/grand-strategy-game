@@ -14,18 +14,9 @@ func remove_army(army: Army) -> void:
 
 
 func add_army(army: Army) -> void:
-	if not army.animation_is_playing:
-		army.position = position_army_host - global_position
-	if army.get_parent():
-		(army.get_parent() as ProvinceArmies).remove_army(army)
-	army.name = str(army.id)
-	
 	army.destroyed.connect(remove_army)
-	army._province = get_parent() as Province
 	armies.append(army)
 	add_child(army)
-	
-	army.resolve_battles(armies)
 
 
 func merge_armies() -> void:
