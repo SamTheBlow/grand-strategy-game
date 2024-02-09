@@ -52,6 +52,7 @@ func convert_game(game: Game) -> void:
 		}
 	
 	var provinces_data: Array = []
+	var armies_data: Array = []
 	for province in game.world.provinces.get_provinces():
 		var province_data: Dictionary = {
 			"id": province.id,
@@ -80,15 +81,14 @@ func convert_game(game: Game) -> void:
 		}
 		
 		# Armies
-		var armies_data: Array = []
 		for army in province.armies.armies:
 			var army_data: Dictionary = {
 				"id": army.id,
 				"army_size": army.army_size.current_size(),
 				"owner_country_id": army._owner_country.id,
+				"province_id": army.province().id
 			}
 			armies_data.append(army_data)
-		province_data["armies"] = armies_data
 		
 		# Population
 		province_data["population"] = {
@@ -104,6 +104,7 @@ func convert_game(game: Game) -> void:
 		
 		provinces_data.append(province_data)
 	world_data["provinces"] = provinces_data
+	world_data["armies"] = armies_data
 	json_data["world"] = world_data
 	
 	# Turn

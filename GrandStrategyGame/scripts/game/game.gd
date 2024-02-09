@@ -89,7 +89,7 @@ func _on_save_requested() -> void:
 		chat.system_message("Saving failed: " + game_save.error_message)
 		return
 	
-	chat.new_message("[b]Game state saved[/b]")
+	chat.new_message("[b]Game saved[/b]")
 
 
 func _on_exit_to_main_menu_requested() -> void:

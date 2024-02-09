@@ -40,6 +40,7 @@ func load_game(json_data: Variant) -> void:
 	# World
 	var game_world_2d := preload("res://scenes/world_2d.tscn").instantiate() as GameWorld2D
 	game_world_2d.init()
+	game.world = game_world_2d
 	# TODO verify & return more errors
 	if not (
 			json_dict.has("world")
@@ -76,7 +77,11 @@ func load_game(json_data: Variant) -> void:
 			province.links.append(
 					game_world_2d.provinces.province_from_id(link)
 			)
-	game.world = game_world_2d
+	
+	# Armies
+	var armies_error: bool = _load_armies(json_dict["world"]["armies"], game)
+	if armies_error:
+		return
 	
 	# Turn
 	var turn_key: String = "turn"
@@ -271,14 +276,6 @@ func _load_province(
 			json_data["position_army_host_y"]
 	))
 	
-	var setup_error: bool = _setup_armies(
-			json_data["armies"],
-			game,
-			province
-	)
-	if setup_error:
-		return null
-	
 	province.setup_population(
 			json_data["population"]["size"],
 			game.rules.population_growth
@@ -301,7 +298,7 @@ func _load_province(
 
 
 # Returns true if an error occured, false otherwise.
-func _setup_armies(json_data: Array, game: Game, province: Province) -> bool:
+func _load_armies(json_data: Array, game: Game) -> bool:
 	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data: Variant in json_data:
 		if not army_data is Dictionary:
@@ -311,8 +308,7 @@ func _setup_armies(json_data: Array, game: Game, province: Province) -> bool:
 		var army_dict: Dictionary = army_data
 		
 		var new_army: Army = _load_army(army_dict, game, army_scene)
-		new_army._province = province
-		province.armies.add_army(new_army)
+		new_army.province().armies.add_army(new_army)
 	return false
 
 
@@ -325,10 +321,14 @@ func _load_army(
 	var owner_country_: Country = (
 			game.countries.country_from_id(json_data["owner_country_id"])
 	)
-	return Army.quick_setup(
+	var army: Army = Army.quick_setup(
 			game,
 			json_data["id"],
 			json_data["army_size"],
 			owner_country_,
 			army_scene
 	)
+	army._province = (
+			game.world.provinces.province_from_id(json_data["province_id"])
+	)
+	return army

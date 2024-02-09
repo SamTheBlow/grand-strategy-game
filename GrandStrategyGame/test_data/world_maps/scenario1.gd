@@ -84,6 +84,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	
 	# Provinces
 	var provinces_data: Array = []
+	var armies_data: Array = []
 	var number_of_provinces: int = %Shapes.get_child_count()
 	for i in number_of_provinces:
 		var shape := %Shapes.get_node("Shape" + str(i + 1)) as ProvinceTestData
@@ -131,15 +132,14 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		}
 		
 		# Armies
-		var armies_data: Array = []
 		if is_starting_province:
 			var army_data: Dictionary = {
 				"id": 0,
 				"army_size": 1000,
 				"owner_country_id": starting_province_country_id,
+				"province_id": i,
 			}
 			armies_data.append(army_data)
-		province_data["armies"] = armies_data
 		
 		# Population
 		var population_size: int = 10 + randi() % 90
@@ -155,6 +155,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		
 		provinces_data.append(province_data)
 	world_data["provinces"] = provinces_data
+	world_data["armies"] = armies_data
 	json_data["world"] = world_data
 	
 	# Turn
