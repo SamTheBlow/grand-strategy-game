@@ -291,7 +291,7 @@ func end_turn() -> void:
 	
 	# Merge your armies
 	for province in world.provinces.get_provinces():
-		province.armies.merge_armies()
+		world.armies.merge_armies(province)
 	
 	# Play all other players' turn
 	for player in players.players:
@@ -330,7 +330,7 @@ func _play_player_turn(player: Player) -> void:
 	
 	# Merge armies
 	for province in world.provinces.get_provinces():
-		province.armies.merge_armies()
+		world.armies.merge_armies(province)
 	
 	#print("--- End of player's turn")
 
