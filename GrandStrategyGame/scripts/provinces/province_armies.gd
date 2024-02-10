@@ -5,14 +5,6 @@ extends Node2D
 var position_army_host: Vector2
 
 
-func army_from_id(id: int) -> Army:
-	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
-	for army in armies:
-		if army.id == id:
-			return army
-	return null
-
-
 func new_unique_army_ids(number_of_ids: int) -> Array[int]:
 	var result: Array[int] = []
 	for i in number_of_ids:

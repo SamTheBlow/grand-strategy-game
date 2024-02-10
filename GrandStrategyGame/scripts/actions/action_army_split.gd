@@ -35,7 +35,7 @@ func apply_to(game: Game) -> void:
 		)
 		return
 	
-	var army: Army = province.armies.army_from_id(_army_id)
+	var army: Army = game.world.armies.army_with_id(_army_id, province)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist")
 		return

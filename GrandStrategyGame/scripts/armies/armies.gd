@@ -52,3 +52,13 @@ func armies_in_province(province: Province) -> Array[Army]:
 		if army.province() == province:
 			output.append(army)
 	return output
+
+
+## Gives the army with given id in given province.
+## If there is no such army, returns null.
+func army_with_id(id: int, province: Province) -> Army:
+	var candidates: Array[Army] = armies_in_province(province)
+	for army in candidates:
+		if army.id == id:
+			return army
+	return null

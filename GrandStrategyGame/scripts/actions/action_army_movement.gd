@@ -30,7 +30,7 @@ func apply_to(game: Game) -> void:
 		)
 		return
 	
-	var army: Army = source_province.armies.army_from_id(_army_id)
+	var army: Army = game.world.armies.army_with_id(_army_id, source_province)
 	if not army:
 		push_warning("Tried to move an army that doesn't exist")
 		return
