@@ -9,9 +9,12 @@ var game: Game
 var id: int
 
 # Nodes
-var armies: ProvinceArmies
+var armies: Node
 var population: Population
 var buildings: Buildings
+
+# Positions
+var position_army_host: Vector2
 
 # Other data
 var links: Array[Province] = []
@@ -25,13 +28,6 @@ func _on_new_turn() -> void:
 
 func _on_shape_clicked() -> void:
 	selected.emit(self)
-
-
-func setup_armies(position_army_host: Vector2) -> void:
-	armies = ProvinceArmies.new()
-	armies.name = "Armies"
-	armies.position_army_host = position_army_host
-	add_child(armies)
 
 
 func setup_population(population_size: int, population_growth: bool) -> void:

@@ -194,7 +194,7 @@ func init2(your_id: int) -> void:
 			target_province = province
 			break
 	if target_province:
-		camera.position = target_province.armies.position_army_host
+		camera.position = target_province.position_army_host
 	
 	$WorldLayer.add_child(world)
 

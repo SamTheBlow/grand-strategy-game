@@ -256,6 +256,15 @@ func _load_province(
 	province.game = game
 	province.id = json_data["id"]
 	
+	province.position_army_host = Vector2(
+			json_data["position_army_host_x"],
+			json_data["position_army_host_y"]
+	)
+	
+	province.armies = Node.new()
+	province.armies.name = "Armies"
+	province.add_child(province.armies)
+	
 	var shape: PackedVector2Array = []
 	for i in (json_data["shape"]["x"] as Array).size():
 		shape.append(Vector2(
@@ -270,11 +279,6 @@ func _load_province(
 	province.set_owner_country(
 			game.countries.country_from_id(json_data["owner_country_id"])
 	)
-	
-	province.setup_armies(Vector2(
-			json_data["position_army_host_x"],
-			json_data["position_army_host_y"]
-	))
 	
 	province.setup_population(
 			json_data["population"]["size"],

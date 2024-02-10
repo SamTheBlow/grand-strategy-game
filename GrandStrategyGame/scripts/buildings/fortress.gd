@@ -24,7 +24,7 @@ func add_visuals(visuals_scene: PackedScene) -> void:
 	
 	if visuals.has_method("set_position"):
 		visuals.set_position(
-				_province.armies.position_army_host + Vector2(80.0, 56.0)
+				_province.position_army_host + Vector2(80.0, 56.0)
 		)
 	
 	add_child(visuals)

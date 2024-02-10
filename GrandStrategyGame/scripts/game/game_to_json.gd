@@ -58,8 +58,8 @@ func convert_game(game: Game) -> void:
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},
 			"owner_country_id": province._owner_country.id,
-			"position_army_host_x": province.armies.position_army_host.x,
-			"position_army_host_y": province.armies.position_army_host.y,
+			"position_army_host_x": province.position_army_host.x,
+			"position_army_host_y": province.position_army_host.y,
 		}
 		
 		# Links

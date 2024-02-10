@@ -27,7 +27,7 @@ var animation_speed: float = 1.0
 func _process(delta: float) -> void:
 	if animation_is_playing:
 		var new_position: Vector2 = (
-				position
+				global_position
 				+ (target_position - original_position)
 				* animation_speed * delta
 		)
@@ -37,7 +37,7 @@ func _process(delta: float) -> void:
 		):
 			stop_animations()
 		else:
-			position = new_position
+			global_position = new_position
 
 
 func _on_army_size_changed() -> void:
@@ -55,10 +55,7 @@ func province() -> Province:
 
 func move_to_province(destination: Province) -> void:
 	if not animation_is_playing:
-		position = (
-				destination.armies.position_army_host
-				- destination.global_position
-		)
+		global_position = destination.position_army_host
 	
 	if _province:
 		_province.armies.remove_child(self)
@@ -89,15 +86,9 @@ func set_active(value: bool) -> void:
 func play_movement_to(destination_province: Province) -> void:
 	self.is_active = false
 	animation_is_playing = true
-	original_position = (
-			_province.armies.position_army_host
-			- destination_province.global_position
-	)
-	target_position = (
-			destination_province.armies.position_army_host
-			- destination_province.global_position
-	)
-	position = original_position
+	original_position = _province.position_army_host
+	target_position = destination_province.position_army_host
+	global_position = original_position
 
 
 func gray_out() -> void:
