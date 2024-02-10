@@ -62,3 +62,37 @@ func army_with_id(id: int, province: Province) -> Army:
 		if army.id == id:
 			return army
 	return null
+
+
+## WARNING: In extremely rare cases, may return duplicate IDs!
+func new_unique_army_ids(number_of_ids: int, province: Province) -> Array[int]:
+	var result: Array[int] = []
+	for i in number_of_ids:
+		result.append(new_unique_army_id(province))
+	return result
+
+
+func new_unique_army_id(province: Province) -> int:
+	var province_armies: Array[Army] = armies_in_province(province)
+	
+	var new_id: int
+	var id_is_unique: bool = false
+	while not id_is_unique:
+		new_id = randi()
+		id_is_unique = true
+		for army in province_armies:
+			if army.id == new_id:
+				id_is_unique = false
+				break
+	return new_id
+
+
+## Returns a list of all active armies
+## with given owner country in given province.
+func active_armies(country: Country, province: Province) -> Array[Army]:
+	var result: Array[Army] = []
+	var province_armies: Array[Army] = armies_in_province(province)
+	for army in province_armies:
+		if army.owner_country() == country and army.is_active:
+			result.append(army)
+	return result

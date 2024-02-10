@@ -8,7 +8,7 @@ func recruit_in_province(province: Province) -> void:
 	
 	var _army: Army = Army.quick_setup(
 			province.game,
-			province.armies.new_unique_army_id(),
+			province.game.world.armies.new_unique_army_id(province),
 			province.population.population_size,
 			province.owner_country(),
 			province,

@@ -72,8 +72,8 @@ func _find_target_province(
 			troop_partition[0] += troop_count % number_of_armies
 			
 			# Get unique ids for the new armies
-			new_army_ids = (
-					province.armies.new_unique_army_ids(number_of_targets)
+			new_army_ids = army.game.world.armies.new_unique_army_ids(
+					number_of_targets, province
 			)
 			
 			var action := ActionArmySplit.new(
@@ -92,7 +92,7 @@ func _find_target_province(
 					province.id,
 					new_army_ids[i],
 					targets[i][0].id,
-					targets[i][0].armies.new_unique_army_id()
+					army.game.world.armies.new_unique_army_id(targets[i][0])
 			)
 			#print("New movement action created for army ", new_army_ids[i])
 			new_actions.append(action)

@@ -44,9 +44,11 @@ func _on_province_selected(province: Province) -> void:
 	var provinces_node: Provinces = world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
-		var selected_armies: ProvinceArmies = selected_province.armies
-		if selected_armies.country_has_active_army(your_country):
-			var army: Army = selected_armies.get_active_armies_of(your_country)[0]
+		var active_armies: Array[Army] = world.armies.active_armies(
+				your_country, selected_province
+		)
+		if active_armies.size() > 0:
+			var army: Army = active_armies[0]
 			
 			# If this isn't here, the game crashes. I don't know why.
 			# (This line does nothing, it's just to prevent a crash)
@@ -58,8 +60,10 @@ func _on_province_selected(province: Province) -> void:
 				return
 	provinces_node.select_province(province)
 	
-	var armies_node: ProvinceArmies = province.armies
-	if armies_node.country_has_active_army(your_country):
+	var active_armies_: Array[Army] = world.armies.active_armies(
+			your_country, province
+	)
+	if active_armies_.size() > 0:
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET)
 	else:
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
@@ -257,10 +261,7 @@ func new_action_army_movement(
 	# Split the army into two if needed
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
-		var new_army_id: int = (
-				world.provinces.province_from_id(source_province.id)
-				.armies.new_unique_army_id()
-		)
+		var new_army_id: int = world.armies.new_unique_army_id(source_province)
 		var action_split := ActionArmySplit.new(
 				source_province.id,
 				army.id,
@@ -272,15 +273,11 @@ func new_action_army_movement(
 		
 		moving_army_id = new_army_id
 	
-	var moving_army_new_id: int = (
-			world.provinces.province_from_id(destination_province.id)
-			.armies.new_unique_army_id()
-	)
 	var action_move := ActionArmyMovement.new(
 			source_province.id,
 			moving_army_id,
 			destination_province.id,
-			moving_army_new_id
+			world.armies.new_unique_army_id(destination_province)
 	)
 	action_move.apply_to(self)
 	you.add_action(action_move)
