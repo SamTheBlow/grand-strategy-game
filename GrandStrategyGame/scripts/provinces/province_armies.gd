@@ -5,18 +5,6 @@ extends Node2D
 var position_army_host: Vector2
 
 
-func remove_army(army: Army) -> void:
-	army.destroyed.disconnect(remove_army)
-	army.game.world.armies.armies.erase(army)
-	remove_child(army)
-
-
-func add_army(army: Army) -> void:
-	army.destroyed.connect(remove_army)
-	army.game.world.armies.armies.append(army)
-	add_child(army)
-
-
 func merge_armies() -> void:
 	var armies: Array[Army] = (get_parent() as Province).game.world.armies.armies_in_province(get_parent() as Province)
 	var number_of_armies: int = armies.size()
@@ -24,7 +12,7 @@ func merge_armies() -> void:
 		for j in range(i + 1, number_of_armies):
 			if armies[i].owner_country().id == armies[j].owner_country().id:
 				armies[j].army_size.add(armies[i].army_size.current_size())
-				remove_army(armies[i])
+				(get_parent() as Province).game.world.armies.remove_army(armies[i])
 				break
 
 

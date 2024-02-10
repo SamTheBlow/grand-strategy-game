@@ -319,16 +319,11 @@ func _load_army(
 		game: Game,
 		army_scene: PackedScene
 ) -> void:
-	var owner_country_: Country = (
-			game.countries.country_from_id(json_data["owner_country_id"])
-	)
-	var army: Army = Army.quick_setup(
+	var _army: Army = Army.quick_setup(
 			game,
 			json_data["id"],
 			json_data["army_size"],
-			owner_country_,
+			game.countries.country_from_id(json_data["owner_country_id"]),
+			game.world.provinces.province_from_id(json_data["province_id"]),
 			army_scene
-	)
-	army.move_to_province(
-			game.world.provinces.province_from_id(json_data["province_id"])
 	)

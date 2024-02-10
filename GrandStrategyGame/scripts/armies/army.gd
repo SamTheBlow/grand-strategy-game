@@ -61,10 +61,10 @@ func move_to_province(destination: Province) -> void:
 		)
 	
 	if _province:
-		_province.armies.remove_army(self)
-	
+		_province.armies.remove_child(self)
 	_province = destination
-	_province.armies.add_army(self)
+	_province.armies.add_child(self)
+	
 	resolve_battles(game.world.armies.armies_in_province(_province))
 
 
@@ -138,11 +138,13 @@ static func quick_setup(
 		id_: int,
 		army_size_: int,
 		owner_country_: Country,
+		province_: Province,
 		army_scene: PackedScene
 ) -> Army:
 	var army := army_scene.instantiate() as Army
 	army.game = game_
 	army.id = id_
+	army.name = str(army.id)
 	
 	army.army_size = ArmySize.new(army_size_, 10)
 	army.army_size.size_changed.connect(army._on_army_size_changed)
@@ -150,5 +152,7 @@ static func quick_setup(
 	army._update_troop_count_label()
 	
 	army.set_owner_country(owner_country_)
-	army.name = str(army.id)
+	
+	game_.world.armies.add_army(army)
+	army.move_to_province(province_)
 	return army

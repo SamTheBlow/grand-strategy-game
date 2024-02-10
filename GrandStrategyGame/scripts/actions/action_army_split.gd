@@ -52,14 +52,14 @@ func apply_to(game: Game) -> void:
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
 		# Create the new army
-		var army_clone: Army = Army.quick_setup(
+		var _army_clone: Army = Army.quick_setup(
 				game,
 				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country(),
+				province,
 				preload("res://scenes/army.tscn")
 		)
-		army_clone.move_to_province(province)
 		
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])
