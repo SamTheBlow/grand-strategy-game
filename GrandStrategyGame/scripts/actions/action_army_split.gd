@@ -2,7 +2,6 @@ class_name ActionArmySplit
 extends Action
 
 
-var _province_id: int
 var _army_id: int
 
 # This array contains the number of troops in each army.
@@ -14,28 +13,17 @@ var _new_army_ids: Array[int]
 
 
 func _init(
-		province_id: int,
 		army_id: int,
 		troop_partition: Array[int],
 		new_army_ids: Array[int]
 ) -> void:
-	_province_id = province_id
 	_army_id = army_id
 	_troop_partition = troop_partition
 	_new_army_ids = new_army_ids
 
 
 func apply_to(game: Game) -> void:
-	var province: Province = (
-			game.world.provinces.province_from_id(_province_id)
-	)
-	if not province:
-		push_warning(
-				"Tried to split an army in a province that doesn't exist"
-		)
-		return
-	
-	var army: Army = game.world.armies.army_with_id(_army_id, province)
+	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist")
 		return
@@ -57,7 +45,7 @@ func apply_to(game: Game) -> void:
 				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country(),
-				province,
+				army.province(),
 				preload("res://scenes/army.tscn")
 		)
 		
@@ -65,6 +53,6 @@ func apply_to(game: Game) -> void:
 		army.army_size.remove(_troop_partition[i + 1])
 	
 	#print(
-	#		"Army ", _army_key, " in province ", _province_key,
-	#		" was split into ", _new_army_keys
+	#		"Army ", army.id, " in province ", army.province().id,
+	#		" was split into ", _new_army_ids
 	#)

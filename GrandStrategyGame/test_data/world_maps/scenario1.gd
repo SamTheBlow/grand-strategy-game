@@ -134,7 +134,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		# Armies
 		if is_starting_province:
 			var army_data: Dictionary = {
-				"id": 0,
+				"id": starting_province_country_id,
 				"army_size": 1000,
 				"owner_country_id": starting_province_country_id,
 				"province_id": i,

@@ -56,7 +56,7 @@ func _on_province_selected(province: Province) -> void:
 			army.battle.attacking_army = army
 			
 			if army.can_move_to(province):
-				_new_popup_number_of_troops(army, selected_province, province)
+				_new_popup_number_of_troops(army, province)
 				return
 	provinces_node.select_province(province)
 	
@@ -250,7 +250,6 @@ func deselect_province() -> void:
 func new_action_army_movement(
 		army: Army,
 		number_of_troops: int,
-		source_province: Province,
 		destination_province: Province
 ) -> void:
 	deselect_province()
@@ -261,9 +260,8 @@ func new_action_army_movement(
 	# Split the army into two if needed
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
-		var new_army_id: int = world.armies.new_unique_army_id(source_province)
+		var new_army_id: int = world.armies.new_unique_army_id()
 		var action_split := ActionArmySplit.new(
-				source_province.id,
 				army.id,
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
@@ -274,10 +272,7 @@ func new_action_army_movement(
 		moving_army_id = new_army_id
 	
 	var action_move := ActionArmyMovement.new(
-			source_province.id,
-			moving_army_id,
-			destination_province.id,
-			world.armies.new_unique_army_id(destination_province)
+			moving_army_id, destination_province.id
 	)
 	action_move.apply_to(self)
 	you.add_action(action_move)
@@ -335,11 +330,11 @@ func _play_player_turn(player: Player) -> void:
 ## Create and display an interface for selecting a number of troops
 func _new_popup_number_of_troops(
 	army: Army,
-	source_province: Province,
 	destination_province: Province
 ) -> void:
 	var troop_ui: TroopUI = (TroopUI.new_popup(
-			army, source_province, destination_province,
+			army,
+			destination_province,
 			preload("res://scenes/troop_ui.tscn")
 	))
 	troop_ui.name = "RecruitUI"

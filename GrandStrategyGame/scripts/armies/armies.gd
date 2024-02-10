@@ -54,33 +54,29 @@ func armies_in_province(province: Province) -> Array[Army]:
 	return output
 
 
-## Gives the army with given id in given province.
-## If there is no such army, returns null.
-func army_with_id(id: int, province: Province) -> Army:
-	var candidates: Array[Army] = armies_in_province(province)
-	for army in candidates:
+## Gives the army with given id. If there is no such army, returns null.
+func army_with_id(id: int) -> Army:
+	for army in armies:
 		if army.id == id:
 			return army
 	return null
 
 
 ## WARNING: In extremely rare cases, may return duplicate IDs!
-func new_unique_army_ids(number_of_ids: int, province: Province) -> Array[int]:
+func new_unique_army_ids(number_of_ids: int) -> Array[int]:
 	var result: Array[int] = []
 	for i in number_of_ids:
-		result.append(new_unique_army_id(province))
+		result.append(new_unique_army_id())
 	return result
 
 
-func new_unique_army_id(province: Province) -> int:
-	var province_armies: Array[Army] = armies_in_province(province)
-	
+func new_unique_army_id() -> int:
 	var new_id: int
 	var id_is_unique: bool = false
 	while not id_is_unique:
 		new_id = randi()
 		id_is_unique = true
-		for army in province_armies:
+		for army in armies:
 			if army.id == new_id:
 				id_is_unique = false
 				break
