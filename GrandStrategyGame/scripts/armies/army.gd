@@ -129,10 +129,9 @@ static func quick_setup(
 		id_: int,
 		army_size_: int,
 		owner_country_: Country,
-		province_: Province,
-		army_scene: PackedScene
+		province_: Province
 ) -> Army:
-	var army := army_scene.instantiate() as Army
+	var army := game_.army_scene.instantiate() as Army
 	army.game = game_
 	army.id = id_
 	army.name = str(army.id)

@@ -7,7 +7,7 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(json_data: Variant) -> void:
+func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	if not json_data is Dictionary:
 		error = true
 		error_message = "JSON data's root is not a dictionary."
@@ -15,7 +15,6 @@ func load_game(json_data: Variant) -> void:
 	var json_dict: Dictionary = json_data
 	
 	# Loading begins!
-	const game_scene := preload("res://scenes/game.tscn") as PackedScene
 	var game := game_scene.instantiate() as Game
 	game.init1()
 	
@@ -38,7 +37,7 @@ func load_game(json_data: Variant) -> void:
 	game.players = players
 	
 	# World
-	var game_world_2d := preload("res://scenes/world_2d.tscn").instantiate() as GameWorld2D
+	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
 	game_world_2d.init()
 	game.world = game_world_2d
 	# TODO verify & return more errors
@@ -60,10 +59,7 @@ func load_game(json_data: Variant) -> void:
 	
 	# Provinces
 	for province_data: Dictionary in json_dict["world"]["provinces"]:
-		var province_scene := preload("res://scenes/province.tscn") as PackedScene
-		var province: Province = _load_province(
-				province_data, game, province_scene
-		)
+		var province: Province = _load_province(province_data, game)
 		if not province:
 			return
 		game_world_2d.provinces.add_province(province)
@@ -247,12 +243,8 @@ func _load_world_limits(json_data: Dictionary) -> WorldLimits:
 
 
 ## TODO verify & return errors.
-func _load_province(
-		json_data: Dictionary,
-		game: Game,
-		province_scene: PackedScene
-) -> Province:
-	var province := province_scene.instantiate() as Province
+func _load_province(json_data: Dictionary, game: Game) -> Province:
+	var province := game.province_scene.instantiate() as Province
 	province.game = game
 	province.id = json_data["id"]
 	
@@ -291,9 +283,7 @@ func _load_province(
 			var fortress: Fortress = Fortress.new_fortress(
 					game, province
 			)
-			fortress.add_visuals(
-					preload("res://scenes/fortress.tscn") as PackedScene
-			)
+			fortress.add_visuals()
 			province.buildings.add(fortress)
 	
 	province.name = str(province.id)
@@ -305,7 +295,6 @@ func _load_province(
 func _load_armies(json_data: Array, game: Game) -> bool:
 	game.world.armies = Armies.new()
 	
-	const army_scene: PackedScene = preload("res://scenes/army.tscn")
 	for army_data: Variant in json_data:
 		if not army_data is Dictionary:
 			error = true
@@ -313,21 +302,16 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 			return true
 		var army_dict: Dictionary = army_data
 		
-		_load_army(army_dict, game, army_scene)
+		_load_army(army_dict, game)
 	return false
 
 
 ## TODO verify & return errors.
-func _load_army(
-		json_data: Dictionary,
-		game: Game,
-		army_scene: PackedScene
-) -> void:
+func _load_army(json_data: Dictionary, game: Game) -> void:
 	var _army: Army = Army.quick_setup(
 			game,
 			json_data["id"],
 			json_data["army_size"],
 			game.countries.country_from_id(json_data["owner_country_id"]),
-			game.world.provinces.province_from_id(json_data["province_id"]),
-			army_scene
+			game.world.provinces.province_from_id(json_data["province_id"])
 	)

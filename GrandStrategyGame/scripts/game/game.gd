@@ -4,6 +4,12 @@ extends Node
 
 signal game_ended()
 
+@export var army_scene: PackedScene
+@export var fortress_scene: PackedScene
+@export var province_scene: PackedScene
+@export var troop_ui_scene: PackedScene
+@export var world_2d_scene: PackedScene
+
 var _modifier_request: ModifierRequest
 
 var rules: GameRules
@@ -226,7 +232,8 @@ func copy() -> Game:
 				+ game_to_json.error_message
 		)
 	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(game_to_json.result)
+	# TODO bad code, don't use get_parent. Find a better way to get the scene
+	game_from_json.load_game(game_to_json.result, get_parent().game_scene)
 	if game_from_json.error:
 		print_debug(
 				"Error loading game from JSON: "
@@ -329,14 +336,12 @@ func _play_player_turn(player: Player) -> void:
 
 ## Create and display an interface for selecting a number of troops
 func _new_popup_number_of_troops(
-	army: Army,
-	destination_province: Province
+		army: Army,
+		destination_province: Province
 ) -> void:
-	var troop_ui: TroopUI = (TroopUI.new_popup(
-			army,
-			destination_province,
-			preload("res://scenes/troop_ui.tscn")
-	))
+	var troop_ui: TroopUI = TroopUI.new_popup(
+			army, destination_province
+	)
 	troop_ui.name = "RecruitUI"
 	troop_ui.cancelled.connect(_on_recruit_cancelled)
 	troop_ui.army_movement_requested.connect(new_action_army_movement)

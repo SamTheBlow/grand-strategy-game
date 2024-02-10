@@ -7,9 +7,9 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(file_path: String) -> void:
+func load_game(file_path: String, game_scene: PackedScene) -> void:
 	var game_load := GameLoad.new()
-	game_load.load_game(file_path)
+	game_load.load_game(file_path, game_scene)
 	
 	if game_load.error:
 		error = true

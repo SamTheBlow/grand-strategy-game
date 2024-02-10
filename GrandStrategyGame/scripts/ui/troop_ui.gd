@@ -29,15 +29,8 @@ func _on_troop_slider_value_changed(_value: float) -> void:
 	_new_slider_value()
 
 
-static func new_popup(
-		army: Army,
-		destination: Province,
-		scene: PackedScene
-) -> TroopUI:
-	# WARNING
-	# You can't preload the scene here. If you do,
-	# you'll get weird error messages and the scene will become corrupt
-	var popup := scene.instantiate() as TroopUI
+static func new_popup(army: Army, destination: Province) -> TroopUI:
+	var popup := army.game.troop_ui_scene.instantiate() as TroopUI
 	
 	popup._army = army
 	popup._destination = destination

@@ -11,7 +11,6 @@ func recruit_in_province(province: Province) -> void:
 			province.game.world.armies.new_unique_army_id(),
 			province.population.population_size,
 			province.owner_country(),
-			province,
-			preload("res://scenes/army.tscn")
+			province
 	)
 	province.game.world.armies.merge_armies(province)

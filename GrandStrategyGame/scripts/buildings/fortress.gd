@@ -7,10 +7,7 @@ var game: Game
 var _province: Province
 
 
-static func new_fortress(
-		game_: Game,
-		province: Province
-) -> Fortress:
+static func new_fortress(game_: Game, province: Province) -> Fortress:
 	var fortress := Fortress.new()
 	fortress.name = "Fortress"
 	fortress.game = game_
@@ -19,8 +16,8 @@ static func new_fortress(
 	return fortress
 
 
-func add_visuals(visuals_scene: PackedScene) -> void:
-	var visuals: Node = visuals_scene.instantiate()
+func add_visuals() -> void:
+	var visuals: Node = game.fortress_scene.instantiate()
 	
 	if visuals.has_method("set_position"):
 		visuals.set_position(
