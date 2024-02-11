@@ -12,12 +12,8 @@ func convert_game(game: Game) -> void:
 	
 	# Rules
 	var rules_data: Dictionary = {}
-	rules_data["population_growth"] = game.rules.population_growth
-	rules_data["fortresses"] = game.rules.fortresses
-	rules_data["turn_limit_enabled"] = game.rules.turn_limit_enabled
-	rules_data["turn_limit"] = game.rules.turn_limit
-	rules_data["global_attacker_efficiency"] = game.rules.global_attacker_efficiency
-	rules_data["global_defender_efficiency"] = game.rules.global_defender_efficiency
+	for rule_name in GameRules.RULE_NAMES:
+		rules_data[rule_name] = game.rules.get(rule_name)
 	json_data["rules"] = rules_data
 	
 	# Players
@@ -59,6 +55,7 @@ func convert_game(game: Game) -> void:
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},
 			"owner_country_id": province._owner_country.id,
+			"income_money": province.income_money,
 			"position_army_host_x": province.position_army_host.x,
 			"position_army_host_y": province.position_army_host.y,
 		}

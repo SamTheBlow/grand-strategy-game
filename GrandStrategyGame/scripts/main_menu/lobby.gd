@@ -28,6 +28,22 @@ func _selected_game_rules() -> GameRules:
 	var starting_money_spin_box := %StartingMoneySpinBox as SpinBox
 	game_rules.starting_money = roundi(starting_money_spin_box.value)
 	
+	game_rules.province_income_option = (
+			(%ProvinceIncomeOptions as OptionButton).selected
+	)
+	game_rules.province_income_random_min = (
+			roundi((%ProvinceIncomeRandomMin as SpinBox).value)
+	)
+	game_rules.province_income_random_max = (
+			roundi((%ProvinceIncomeRandomMax as SpinBox).value)
+	)
+	game_rules.province_income_constant = (
+			roundi((%ProvinceIncomeConstant as SpinBox).value)
+	)
+	game_rules.province_income_per_person = (
+			(%ProvinceIncomePerPerson as SpinBox).value
+	)
+	
 	var att_eff := %AttackerEfficiencySpinBox as SpinBox
 	game_rules.global_attacker_efficiency = att_eff.value
 	

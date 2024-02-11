@@ -113,7 +113,10 @@ func _on_chat_requested_province_info() -> void:
 		return
 	
 	var population_size: int = selected_province.population.population_size
-	chat.system_message("Population size: " + str(population_size))
+	chat.system_message_multiline([
+		"Population size: " + str(population_size),
+		"Income: " + str(selected_province.income_money)
+	])
 
 
 func _on_chat_requested_money_info() -> void:
@@ -122,33 +125,11 @@ func _on_chat_requested_money_info() -> void:
 
 
 func _on_chat_rules_requested() -> void:
-	var population_growth: String = "no"
-	if rules.population_growth:
-		population_growth = "yes"
-	
-	var fortresses: String = "no"
-	if rules.fortresses:
-		fortresses = "yes"
-	
-	var turn_limit: String = "none"
-	if rules.turn_limit_enabled:
-		turn_limit = str(rules.turn_limit) + " turns"
-	
-	var global_attacker_efficiency: String = (
-		str(rules.global_attacker_efficiency)
-	)
-	var global_defender_efficiency: String = (
-		str(rules.global_defender_efficiency)
-	)
-	
-	chat.system_message_multiline([
-		"This game's rules:",
-		"-> Population growth: " + population_growth,
-		"-> Fortresses: " + fortresses,
-		"-> Turn limit: " + turn_limit,
-		"-> Global attacker efficiency: " + global_attacker_efficiency,
-		"-> Global defender efficiency: " + global_defender_efficiency,
-	])
+	var lines: Array[String] = []
+	lines.append("This game's rules:")
+	for rule_name in GameRules.RULE_NAMES:
+		lines.append("-> " + rule_name + ": " + str(rules.get(rule_name)))
+	chat.system_message_multiline(lines)
 
 
 func _on_modifiers_requested(

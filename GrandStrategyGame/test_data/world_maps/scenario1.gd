@@ -42,13 +42,8 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	
 	# Rules
 	var rules_data: Dictionary = {}
-	rules_data["population_growth"] = game_rules.population_growth
-	rules_data["fortresses"] = game_rules.fortresses
-	rules_data["turn_limit_enabled"] = game_rules.turn_limit_enabled
-	rules_data["turn_limit"] = game_rules.turn_limit
-	rules_data["starting_money"] = game_rules.starting_money
-	rules_data["global_attacker_efficiency"] = game_rules.global_attacker_efficiency
-	rules_data["global_defender_efficiency"] = game_rules.global_defender_efficiency
+	for rule_name in GameRules.RULE_NAMES:
+		rules_data[rule_name] = game_rules.get(rule_name)
 	json_data["rules"] = rules_data
 	
 	# Players and countries
@@ -142,6 +137,20 @@ func as_json(game_rules: GameRules) -> Dictionary:
 				"province_id": i,
 			}
 			armies_data.append(army_data)
+		
+		# Income
+		match game_rules.province_income_option:
+			GameRules.ProvinceIncome.RANDOM:
+				province_data["income_money"] = randi_range(
+						game_rules.province_income_random_min,
+						game_rules.province_income_random_max
+				)
+			GameRules.ProvinceIncome.CONSTANT:
+				province_data["income_money"] = (
+						game_rules.province_income_constant
+				)
+			GameRules.ProvinceIncome.POPULATION:
+				province_data["income_money"] = 0
 		
 		# Population
 		var population_size: int = 10 + randi() % 90

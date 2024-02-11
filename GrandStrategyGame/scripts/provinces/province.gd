@@ -19,11 +19,15 @@ var position_army_host: Vector2
 # Other data
 var links: Array[Province] = []
 var _owner_country := Country.new()
+var income_money: int = 0
 
 
 func _on_new_turn() -> void:
 	ProvinceNewOwner.new().update_province_owner(self)
 	ArmyRecruitment.new().recruit_in_province(self)
+	
+	ProvinceIncomePerPerson.new().update_province(self)
+	_owner_country.money += income_money
 
 
 func _on_shape_clicked() -> void:

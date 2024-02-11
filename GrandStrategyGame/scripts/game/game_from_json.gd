@@ -115,16 +115,7 @@ func _load_rules(json_data: Dictionary) -> GameRules:
 		return null
 	var rules_data: Dictionary = json_data[rules_key] as Dictionary
 	
-	var keys: Array[String] = [
-		"population_growth",
-		"fortresses",
-		"turn_limit_enabled",
-		"turn_limit",
-		"starting_money",
-		"global_attacker_efficiency",
-		"global_defender_efficiency",
-	]
-	for key in keys:
+	for key in GameRules.RULE_NAMES:
 		# That's ok, use the default
 		if not rules_data.has(key):
 			continue
@@ -289,6 +280,10 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			)
 			fortress.add_visuals()
 			province.buildings.add(fortress)
+	
+	if json_data.has("income_money"):
+		province.income_money = json_data["income_money"]
+	ProvinceIncomePerPerson.new().update_province(province)
 	
 	province.name = str(province.id)
 	province.selected.connect(game._on_province_selected)
