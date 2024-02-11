@@ -182,11 +182,8 @@ func init2(your_id: int) -> void:
 	)
 	
 	# TODO bad code, shouldn't be here
-	var camera := $Camera as Camera2D
-	camera.limit_left = world.limits.limit_left()
-	camera.limit_top = world.limits.limit_top()
-	camera.limit_right = world.limits.limit_right()
-	camera.limit_bottom = world.limits.limit_bottom()
+	var camera := $Camera as CustomCamera2D
+	camera.limits = world.limits
 	
 	# TODO this shouldn't be here either
 	# Find the province to move the camera to and move the camera there

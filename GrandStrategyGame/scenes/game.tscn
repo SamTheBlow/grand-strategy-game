@@ -25,9 +25,8 @@ world_2d_scene = ExtResource("6_5jo7e")
 follow_viewport_enabled = true
 
 [node name="Camera" type="Camera2D" parent="."]
-limit_left = 0
-limit_top = 0
 script = ExtResource("2_lblr6")
+world_margin = Vector2(0.25, 0.25)
 
 [node name="CameraDrag" type="Node" parent="Camera"]
 script = ExtResource("3_3p7sw")

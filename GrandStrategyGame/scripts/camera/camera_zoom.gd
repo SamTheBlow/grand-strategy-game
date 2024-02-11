@@ -104,8 +104,12 @@ func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 func _minimum_zoom(camera: Camera2D) -> float:
 	var viewport_size_x: float = camera.get_viewport_rect().size.x
 	var viewport_size_y: float = camera.get_viewport_rect().size.y
-	var camera_view_size_x: float = camera.limit_right - camera.limit_left
-	var camera_view_size_y: float = camera.limit_bottom - camera.limit_top
+	var camera_view_size_x: float = (
+			camera.limits.limit_right() - camera.limits.limit_left()
+	)
+	var camera_view_size_y: float = (
+			camera.limits.limit_bottom() - camera.limits.limit_top()
+	)
 	var min_zoom_x: float = viewport_size_x / camera_view_size_x
 	var min_zoom_y: float = viewport_size_y / camera_view_size_y
 	return maxf(min_zoom_x, min_zoom_y)
