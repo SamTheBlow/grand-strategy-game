@@ -120,6 +120,7 @@ func _load_rules(json_data: Dictionary) -> GameRules:
 		"fortresses",
 		"turn_limit_enabled",
 		"turn_limit",
+		"starting_money",
 		"global_attacker_efficiency",
 		"global_defender_efficiency",
 	]
@@ -185,6 +186,9 @@ func _load_country(json_data: Dictionary) -> Country:
 	country.id = json_data["id"]
 	country.country_name = json_data["country_name"]
 	country.color = Color(json_data["color"])
+	
+	if json_data.has("money"):
+		country.money = json_data["money"]
 	
 	return country
 

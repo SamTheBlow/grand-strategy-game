@@ -3,6 +3,7 @@ extends Control
 
 
 signal requested_province_info()
+signal requested_money_info()
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()
@@ -21,6 +22,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 				system_message_multiline([
 						"/help - Gives a list of every command",
 						"/infop - Gives info on selected province",
+						"/money - Tells you how much money your country has",
 						"/fs - Toggle fullscreen",
 						"/save - Save the game",
 						"/load - Load the saved game",
@@ -29,6 +31,8 @@ func _on_input_text_submitted(new_text: String) -> void:
 				])
 			"infop":
 				requested_province_info.emit()
+			"money":
+				requested_money_info.emit()
 			"fs":
 				var mode: int = DisplayServer.window_get_mode()
 				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:

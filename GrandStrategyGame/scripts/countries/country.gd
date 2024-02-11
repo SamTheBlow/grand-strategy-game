@@ -6,3 +6,5 @@ extends Resource
 @export var color: Color = Color.WHITE
 
 var id: int = -1
+
+var money: int

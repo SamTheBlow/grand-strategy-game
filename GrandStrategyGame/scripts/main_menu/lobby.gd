@@ -25,6 +25,9 @@ func _selected_game_rules() -> GameRules:
 	game_rules.turn_limit_enabled = turn_limit_check_box.button_pressed
 	game_rules.turn_limit = roundi((%TurnLimitSpinBox as SpinBox).value)
 	
+	var starting_money_spin_box := %StartingMoneySpinBox as SpinBox
+	game_rules.starting_money = roundi(starting_money_spin_box.value)
+	
 	var att_eff := %AttackerEfficiencySpinBox as SpinBox
 	game_rules.global_attacker_efficiency = att_eff.value
 	

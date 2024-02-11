@@ -46,6 +46,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	rules_data["fortresses"] = game_rules.fortresses
 	rules_data["turn_limit_enabled"] = game_rules.turn_limit_enabled
 	rules_data["turn_limit"] = game_rules.turn_limit
+	rules_data["starting_money"] = game_rules.starting_money
 	rules_data["global_attacker_efficiency"] = game_rules.global_attacker_efficiency
 	rules_data["global_defender_efficiency"] = game_rules.global_defender_efficiency
 	json_data["rules"] = rules_data
@@ -64,6 +65,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		var country: Country = countries[i]
 		country_data["country_name"] = country.country_name
 		country_data["color"] = country.color.to_html()
+		country_data["money"] = game_rules.starting_money
 		countries_data.append(country_data)
 	json_data["players"] = players_data
 	json_data["countries"] = countries_data

@@ -116,6 +116,11 @@ func _on_chat_requested_province_info() -> void:
 	chat.system_message("Population size: " + str(population_size))
 
 
+func _on_chat_requested_money_info() -> void:
+	var money: int = players.player_from_id(_your_id).playing_country.money
+	chat.system_message("Your country currently has " + str(money) + " money.")
+
+
 func _on_chat_rules_requested() -> void:
 	var population_growth: String = "no"
 	if rules.population_growth:
