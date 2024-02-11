@@ -91,10 +91,49 @@ layout_mode = 2
 layout_mode = 2
 text = "Fortresses"
 
-[node name="FortressesCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer2"]
+[node name="FortressStart" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
+layout_mode = 2
+text = "Start with a fortress"
+
+[node name="StartWithFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
+
+[node name="FortressPurchase2" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+layout_mode = 2
+text = "Can be bought"
+
+[node name="CanBuyFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="Label2" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+layout_mode = 2
+text = "Price:"
+
+[node name="FortressPrice" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2" node_paths=PackedStringArray("check_box")]
+unique_name_in_owner = true
+layout_mode = 2
+value = 100.0
+allow_greater = true
+script = ExtResource("2_sb2tg")
+check_box = NodePath("../../FortressStart/StartWithFortress")
 
 [node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)

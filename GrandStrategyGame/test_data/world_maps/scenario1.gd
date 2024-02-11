@@ -160,7 +160,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		
 		# Buildings
 		var buildings_data: Array = []
-		if game_rules.fortresses and is_starting_province:
+		if game_rules.start_with_fortress and is_starting_province:
 			buildings_data.append({"type": "fortress"})
 		province_data["buildings"] = buildings_data
 		

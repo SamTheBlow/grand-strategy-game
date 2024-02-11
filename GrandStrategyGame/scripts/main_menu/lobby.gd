@@ -18,8 +18,15 @@ func _selected_game_rules() -> GameRules:
 	var pop_growth_check_box := %PopGrowthCheckBox as CheckBox
 	game_rules.population_growth = pop_growth_check_box.button_pressed
 	
-	var fortresses_check_box := %FortressesCheckBox as CheckBox
-	game_rules.fortresses = fortresses_check_box.button_pressed
+	game_rules.start_with_fortress = (
+			(%StartWithFortress as CheckBox).button_pressed
+	)
+	game_rules.can_buy_fortress = (
+			(%CanBuyFortress as CheckBox).button_pressed
+	)
+	game_rules.fortress_price = (
+			roundi((%FortressPrice as SpinBox).value)
+	)
 	
 	var turn_limit_check_box := %TurnLimitCheckBox as CheckBox
 	game_rules.turn_limit_enabled = turn_limit_check_box.button_pressed

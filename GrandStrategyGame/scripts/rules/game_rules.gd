@@ -4,7 +4,9 @@ extends Resource
 
 const RULE_NAMES: Array[String] = [
 	"population_growth",
-	"fortresses",
+	"start_with_fortress",
+	"can_buy_fortress",
+	"fortress_price",
 	"turn_limit_enabled",
 	"turn_limit",
 	"starting_money",
@@ -24,7 +26,9 @@ enum ProvinceIncome {
 }
 
 @export var population_growth: bool = true
-@export var fortresses: bool = false
+@export var start_with_fortress: bool = true
+@export var can_buy_fortress: bool = true
+@export var fortress_price: int = 500
 @export var turn_limit_enabled: bool = false
 @export var turn_limit: int = 50
 @export var starting_money: int = 1000

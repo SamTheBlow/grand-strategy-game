@@ -124,6 +124,47 @@ func _on_chat_requested_money_info() -> void:
 	chat.system_message("Your country currently has " + str(money) + " money.")
 
 
+func _on_chat_requested_buy_fortress() -> void:
+	if not rules.can_buy_fortress:
+		chat.system_message("Cannot buy: this game's rules don't allow it!")
+		return
+	
+	# TODO bad code (copy/paste from province info command)
+	var selected_province: Province = world.provinces.selected_province
+	if not selected_province:
+		chat.system_message("No province selected.")
+		return
+	
+	var your_country: Country = (
+			players.player_from_id(_your_id).playing_country
+	)
+	if selected_province.owner_country() != your_country:
+		chat.system_message(
+				"Cannot buy: selected province is not under your control!"
+		)
+		return
+	
+	if your_country.money < rules.fortress_price:
+		chat.system_message(
+				"Not enough money! You need " + str(rules.fortress_price)
+				+ " but you only have " + str(your_country.money) + "."
+		)
+		return
+	
+	for building in selected_province.buildings._buildings:
+		if building is Fortress:
+			chat.system_message(
+					"Cannot buy: there is already a fortress in that province!"
+			)
+			return
+	
+	var fortress: Fortress = Fortress.new_fortress(self, selected_province)
+	fortress.add_visuals()
+	selected_province.buildings.add(fortress)
+	
+	your_country.money -= rules.fortress_price
+
+
 func _on_chat_rules_requested() -> void:
 	var lines: Array[String] = []
 	lines.append("This game's rules:")

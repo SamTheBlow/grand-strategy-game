@@ -197,6 +197,7 @@ vertical_alignment = 1
 
 [connection signal="exit_to_main_menu_requested" from="UILayer/GameUI/Chat" to="." method="_on_exit_to_main_menu_requested"]
 [connection signal="load_requested" from="UILayer/GameUI/Chat" to="." method="_on_load_requested"]
+[connection signal="requested_buy_fortress" from="UILayer/GameUI/Chat" to="." method="_on_chat_requested_buy_fortress"]
 [connection signal="requested_money_info" from="UILayer/GameUI/Chat" to="." method="_on_chat_requested_money_info"]
 [connection signal="requested_province_info" from="UILayer/GameUI/Chat" to="." method="_on_chat_requested_province_info"]
 [connection signal="rules_requested" from="UILayer/GameUI/Chat" to="." method="_on_chat_rules_requested"]
