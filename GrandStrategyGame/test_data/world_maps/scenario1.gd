@@ -154,6 +154,8 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		
 		# Population
 		var population_size: int = 10 + randi() % 90
+		if is_starting_province:
+			population_size += game_rules.extra_starting_population
 		province_data["population"] = {
 			"size": population_size,
 		}

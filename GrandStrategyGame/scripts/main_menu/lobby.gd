@@ -15,8 +15,12 @@ func _on_start_button_pressed() -> void:
 func _selected_game_rules() -> GameRules:
 	var game_rules := GameRules.new()
 	
-	var pop_growth_check_box := %PopGrowthCheckBox as CheckBox
-	game_rules.population_growth = pop_growth_check_box.button_pressed
+	game_rules.population_growth = (
+			(%PopulationGrowth as CheckBox).button_pressed
+	)
+	game_rules.extra_starting_population = (
+			roundi((%ExtraStartingPopulation as SpinBox).value)
+	)
 	
 	game_rules.start_with_fortress = (
 			(%StartWithFortress as CheckBox).button_pressed
