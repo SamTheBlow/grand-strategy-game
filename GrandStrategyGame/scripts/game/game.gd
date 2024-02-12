@@ -41,10 +41,12 @@ func _on_new_turn() -> void:
 	_check_percentage_winner()
 
 
-func _on_game_over(country: Country) -> void:
+func _on_game_over() -> void:
+	var winning_country: Country = end_game()
+	
 	var game_over_node := %GameOverPopup as GameOver
 	game_over_node.show()
-	game_over_node.set_text(country.country_name + " wins!")
+	game_over_node.set_text(winning_country.country_name + " wins!")
 
 
 func _on_province_selected(province: Province) -> void:
@@ -376,7 +378,8 @@ func end_turn() -> void:
 	propagate_call("_on_new_turn")
 
 
-func end_game() -> void:
+## Returns the winner.
+func end_game() -> Country:
 	# Get how many provinces each country has
 	var ownership: Array = _province_count_per_country()
 	
@@ -388,8 +391,7 @@ func end_game() -> void:
 			winning_player_index = i
 	
 	var winning_country: Country = ownership[winning_player_index][0]
-	
-	_on_game_over(winning_country)
+	return winning_country
 
 
 func _play_player_turn(player: Player) -> void:
@@ -441,7 +443,7 @@ func _check_percentage_winner() -> void:
 	var number_of_provinces: int = world.provinces.get_provinces().size()
 	for o: Array in ownership:
 		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
-			end_game()
+			_on_game_over()
 			break
 
 
