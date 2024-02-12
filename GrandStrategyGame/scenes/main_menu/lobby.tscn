@@ -134,6 +134,7 @@ text = "Reinforcements size"
 [node name="ReinforcementOptions" type="OptionButton" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer9" node_paths=PackedStringArray("options")]
 unique_name_in_owner = true
 layout_mode = 2
+alignment = 1
 item_count = 3
 selected = 2
 popup/item_0/text = "Random"
@@ -169,6 +170,7 @@ unique_name_in_owner = true
 layout_mode = 2
 value = 10.0
 allow_greater = true
+alignment = 1
 
 [node name="Label2" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
 layout_mode = 2
@@ -179,6 +181,7 @@ unique_name_in_owner = true
 layout_mode = 2
 value = 40.0
 allow_greater = true
+alignment = 1
 
 [node name="HBoxContainer421" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -204,6 +207,7 @@ unique_name_in_owner = true
 layout_mode = 2
 value = 20.0
 allow_greater = true
+alignment = 1
 
 [node name="HBoxContainer422" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -230,6 +234,71 @@ layout_mode = 2
 step = 0.01
 value = 0.4
 allow_greater = true
+alignment = 1
+
+[node name="HBoxContainer72" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer72"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer72"]
+layout_mode = 2
+text = "Can recruit new armies"
+
+[node name="CanRecruit" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer72"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="HBoxContainer73" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer73"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer73"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer73"]
+layout_mode = 2
+text = "Money cost per unit"
+
+[node name="RecruitMoneyPerUnit" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer73"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.01
+value = 0.1
+allow_greater = true
+allow_lesser = true
+alignment = 1
+
+[node name="HBoxContainer74" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer74"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer74"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer74"]
+layout_mode = 2
+text = "Population cost per unit"
+
+[node name="RecruitPopulationPerUnit" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer74"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.01
+value = 1.0
+allow_greater = true
+allow_lesser = true
+alignment = 1
 
 [node name="Spacing7" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
@@ -273,6 +342,7 @@ text = "Extra population in starting province"
 unique_name_in_owner = true
 layout_mode = 2
 allow_greater = true
+alignment = 1
 
 [node name="Spacing1" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
@@ -326,6 +396,7 @@ unique_name_in_owner = true
 layout_mode = 2
 value = 100.0
 allow_greater = true
+alignment = 1
 script = ExtResource("2_sb2tg")
 check_box = NodePath("../../FortressStart/StartWithFortress")
 
@@ -364,6 +435,7 @@ text = "Income from provinces"
 [node name="ProvinceIncomeOptions" type="OptionButton" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer7" node_paths=PackedStringArray("options")]
 unique_name_in_owner = true
 layout_mode = 2
+alignment = 1
 item_count = 3
 selected = 2
 popup/item_0/text = "Random"
@@ -392,6 +464,7 @@ layout_mode = 2
 value = 10.0
 allow_greater = true
 allow_lesser = true
+alignment = 1
 
 [node name="Label2" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/ProvinceIncomeOption0"]
 layout_mode = 2
@@ -403,6 +476,7 @@ layout_mode = 2
 value = 100.0
 allow_greater = true
 allow_lesser = true
+alignment = 1
 
 [node name="ProvinceIncomeOption1" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -421,6 +495,7 @@ layout_mode = 2
 value = 100.0
 allow_greater = true
 allow_lesser = true
+alignment = 1
 
 [node name="ProvinceIncomeOption2" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
@@ -440,6 +515,7 @@ step = 0.01
 value = 1.5
 allow_greater = true
 allow_lesser = true
+alignment = 1
 
 [node name="Spacing3" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)

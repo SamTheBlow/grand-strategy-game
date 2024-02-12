@@ -115,7 +115,7 @@ func _on_chat_requested_province_info() -> void:
 	var population_size: int = selected_province.population.population_size
 	chat.system_message_multiline([
 		"Population size: " + str(population_size),
-		"Income: " + str(selected_province.income_money)
+		"Income: " + str(selected_province.income_money())
 	])
 
 
@@ -163,6 +163,60 @@ func _on_chat_requested_buy_fortress() -> void:
 	selected_province.buildings.add(fortress)
 	
 	your_country.money -= rules.fortress_price
+
+
+func _on_chat_requested_recruitment(army_size: int) -> void:
+	# TODO bad code (mostly copy/paste from the buy fortress command)
+	if not rules.recruitment_enabled:
+		chat.system_message(
+				"Cannot recruit: this game's rules don't allow it!"
+		)
+		return
+	
+	var selected_province: Province = world.provinces.selected_province
+	if not selected_province:
+		chat.system_message("No province selected.")
+		return
+	
+	var your_country: Country = (
+			players.player_from_id(_your_id).playing_country
+	)
+	if selected_province.owner_country() != your_country:
+		chat.system_message(
+				"Cannot recruit: selected province is not under your control!"
+		)
+		return
+	
+	var money_cost: int = ceili(army_size * rules.recruitment_money_per_unit)
+	if your_country.money < money_cost:
+		chat.system_message(
+				"Not enough money! You need " + str(money_cost)
+				+ " but you only have " + str(your_country.money) + "."
+		)
+		return
+	
+	var population_cost: int = floori(
+			army_size * rules.recruitment_population_per_unit
+	)
+	if selected_province.population.population_size < population_cost:
+		chat.system_message(
+				"Not enough population! You need " + str(population_cost)
+				+ " but you only have "
+				+ str(selected_province.population.population_size) + "."
+		)
+		return
+	
+	your_country.money -= money_cost
+	selected_province.population.population_size -= population_cost
+	
+	var _army: Army = Army.quick_setup(
+			self,
+			world.armies.new_unique_army_id(),
+			army_size,
+			selected_province.owner_country(),
+			selected_province
+	)
+	world.armies.merge_armies(selected_province)
 
 
 func _on_chat_rules_requested() -> void:

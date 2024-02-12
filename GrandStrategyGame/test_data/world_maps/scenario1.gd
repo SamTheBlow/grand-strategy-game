@@ -150,7 +150,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 						game_rules.province_income_constant
 				)
 			GameRules.ProvinceIncome.POPULATION:
-				province_data["income_money"] = 0
+				pass
 		
 		# Population
 		var population_size: int = 10 + randi() % 90

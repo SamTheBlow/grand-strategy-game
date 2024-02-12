@@ -38,6 +38,16 @@ func _selected_game_rules() -> GameRules:
 			(%ReinforcementsPerPerson as SpinBox).value
 	)
 	
+	game_rules.recruitment_enabled = (
+			(%CanRecruit as CheckBox).button_pressed
+	)
+	game_rules.recruitment_money_per_unit = (
+			(%RecruitMoneyPerUnit as SpinBox).value
+	)
+	game_rules.recruitment_population_per_unit = (
+			(%RecruitPopulationPerUnit as SpinBox).value
+	)
+	
 	game_rules.population_growth = (
 			(%PopulationGrowth as CheckBox).button_pressed
 	)

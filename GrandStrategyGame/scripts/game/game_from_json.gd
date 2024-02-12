@@ -282,8 +282,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			province.buildings.add(fortress)
 	
 	if json_data.has("income_money"):
-		province.income_money = json_data["income_money"]
-	ProvinceIncomePerPerson.new().update_province(province)
+		province._income_money = json_data["income_money"]
 	
 	province.name = str(province.id)
 	province.selected.connect(game._on_province_selected)

@@ -5,6 +5,7 @@ extends Control
 signal requested_province_info()
 signal requested_money_info()
 signal requested_buy_fortress()
+signal requested_recruitment(army_size: int)
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()
@@ -18,13 +19,19 @@ func _on_input_text_submitted(new_text: String) -> void:
 	# Submit the message
 	if new_text.begins_with("/"):
 		# Commands
-		match new_text.trim_prefix("/"):
+		var command_args: PackedStringArray = (
+				new_text.trim_prefix("/").split(" ")
+		)
+		var command_name: String = command_args[0]
+		command_args.remove_at(0)
+		match command_name:
 			"help":
 				system_message_multiline([
 						"/help - Gives a list of every command",
 						"/infop - Gives info on selected province",
 						"/money - Tells you how much money your country has",
 						"/fort - Buys a fortress in selected province",
+						"/army - Recruits new units in selected province",
 						"/fs - Toggle fullscreen",
 						"/save - Save the game",
 						"/load - Load the saved game",
@@ -37,6 +44,14 @@ func _on_input_text_submitted(new_text: String) -> void:
 				requested_money_info.emit()
 			"fort":
 				requested_buy_fortress.emit()
+			"army":
+				if command_args.size() == 1 and command_args[0].is_valid_int():
+					var army_size: int = command_args[0].to_int()
+					requested_recruitment.emit(army_size)
+				else:
+					system_message(
+							"Command needs a number of units as an argument."
+					)
 			"fs":
 				var mode: int = DisplayServer.window_get_mode()
 				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
