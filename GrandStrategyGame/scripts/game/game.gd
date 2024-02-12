@@ -10,6 +10,8 @@ signal game_ended()
 @export var troop_ui_scene: PackedScene
 @export var world_2d_scene: PackedScene
 
+@export var top_bar: TopBar
+
 var _modifier_request: ModifierRequest
 
 var rules: GameRules
@@ -281,6 +283,7 @@ func init2(your_id: int) -> void:
 		camera.position = target_province.position_army_host
 	
 	$WorldLayer.add_child(world)
+	top_bar.init(self)
 
 
 ## For loading. The rules must be setup beforehand.
