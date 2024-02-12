@@ -312,9 +312,8 @@ func new_action_army_movement(
 func end_turn() -> void:
 	#print("********** End of turn **********")
 	
-	# Merge your armies
-	for province in world.provinces.get_provinces():
-		world.armies.merge_armies(province)
+	# End your turn
+	_end_player_turn()
 	
 	# Play all other players' turn
 	for player in players.players:
@@ -351,9 +350,17 @@ func _play_player_turn(player: Player) -> void:
 	for action in actions:
 		action.apply_to(self)
 	
+	_end_player_turn()
+
+
+func _end_player_turn() -> void:
 	# Merge armies
 	for province in world.provinces.get_provinces():
 		world.armies.merge_armies(province)
+	
+	# Refresh the army visuals
+	for army in world.armies.armies:
+		army.refresh_visuals()
 	
 	#print("--- End of player's turn")
 

@@ -96,6 +96,12 @@ func gray_out() -> void:
 	modulate = Color(v, v, v, 1.0)
 
 
+## Stops all animations and sets the army back to active.
+func refresh_visuals() -> void:
+	stop_animations()
+	self.is_active = true
+
+
 func stop_animations() -> void:
 	if animation_is_playing:
 		animation_is_playing = false

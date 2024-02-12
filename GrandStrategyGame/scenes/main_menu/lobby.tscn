@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://test_data/world_maps/world_test1.tscn" id="2_aiiyc"]
 [ext_resource type="Script" path="res://scripts/main_menu/lockable_spin_box.gd" id="2_sb2tg"]
-[ext_resource type="Script" path="res://scripts/main_menu/province_income_options.gd" id="4_cq0th"]
+[ext_resource type="Script" path="res://scripts/main_menu/show_menu_options.gd" id="4_cq0th"]
 
 [node name="Lobby" type="Control"]
 layout_mode = 3
@@ -50,7 +50,6 @@ grow_vertical = 2
 [node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
 layout_mode = 2
 follow_focus = true
-horizontal_scroll_mode = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer"]
 layout_mode = 2
@@ -68,10 +67,178 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Turn limit"
+
+[node name="TurnLimitCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3" node_paths=PackedStringArray("check_box")]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+value = 50.0
+rounded = true
+allow_greater = true
+alignment = 1
+script = ExtResource("2_sb2tg")
+check_box = NodePath("../TurnLimitCheckBox")
+
+[node name="Spacing5" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Recruitment"
+
+[node name="HBoxContainer71" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer71"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer71"]
+layout_mode = 2
+text = "Reinforcements at the start of each turn"
+
+[node name="Reinforcements" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer71"]
+unique_name_in_owner = true
+layout_mode = 2
+button_pressed = true
+
+[node name="HBoxContainer9" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer9"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer9"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer9"]
+layout_mode = 2
+text = "Reinforcements size"
+
+[node name="ReinforcementOptions" type="OptionButton" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer9" node_paths=PackedStringArray("options")]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 3
+selected = 2
+popup/item_0/text = "Random"
+popup/item_0/id = 0
+popup/item_1/text = "Constant"
+popup/item_1/id = 1
+popup/item_2/text = "Proportional to population size"
+popup/item_2/id = 2
+script = ExtResource("4_cq0th")
+options = [NodePath("../../HBoxContainer420"), NodePath("../../HBoxContainer421"), NodePath("../../HBoxContainer422")]
+
+[node name="HBoxContainer420" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing3" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+layout_mode = 2
+text = "Range:"
+
+[node name="ReinforcementsRandomMin" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+unique_name_in_owner = true
+layout_mode = 2
+value = 10.0
+allow_greater = true
+
+[node name="Label2" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+layout_mode = 2
+text = "to"
+
+[node name="ReinforcementsRandomMax" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer420"]
+unique_name_in_owner = true
+layout_mode = 2
+value = 40.0
+allow_greater = true
+
+[node name="HBoxContainer421" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer421"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer421"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing3" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer421"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer421"]
+layout_mode = 2
+text = "Amount:"
+
+[node name="ReinforcementsConstant" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer421"]
+unique_name_in_owner = true
+layout_mode = 2
+value = 20.0
+allow_greater = true
+
+[node name="HBoxContainer422" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer422"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer422"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing3" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer422"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer422"]
+layout_mode = 2
+text = "Amount per person:"
+
+[node name="ReinforcementsPerPerson" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer422"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.01
+value = 0.4
+allow_greater = true
+
+[node name="Spacing7" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="HBoxContainer8" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer8"]
 layout_mode = 2
 text = "Population"
 
@@ -163,32 +330,6 @@ script = ExtResource("2_sb2tg")
 check_box = NodePath("../../FortressStart/StartWithFortress")
 
 [node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
-layout_mode = 2
-text = "Turn limit"
-
-[node name="TurnLimitCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3" node_paths=PackedStringArray("check_box")]
-unique_name_in_owner = true
-layout_mode = 2
-min_value = 1.0
-value = 50.0
-rounded = true
-allow_greater = true
-alignment = 1
-script = ExtResource("2_sb2tg")
-check_box = NodePath("../TurnLimitCheckBox")
-
-[node name="Spacing5" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 

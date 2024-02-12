@@ -15,6 +15,29 @@ func _on_start_button_pressed() -> void:
 func _selected_game_rules() -> GameRules:
 	var game_rules := GameRules.new()
 	
+	var turn_limit_check_box := %TurnLimitCheckBox as CheckBox
+	game_rules.turn_limit_enabled = turn_limit_check_box.button_pressed
+	game_rules.turn_limit = roundi((%TurnLimitSpinBox as SpinBox).value)
+	
+	game_rules.reinforcements_enabled = (
+			(%Reinforcements as CheckBox).button_pressed
+	)
+	game_rules.reinforcements_option = (
+			(%ReinforcementOptions as OptionButton).selected
+	)
+	game_rules.reinforcements_random_min = (
+			roundi((%ReinforcementsRandomMin as SpinBox).value)
+	)
+	game_rules.reinforcements_random_max = (
+			roundi((%ReinforcementsRandomMax as SpinBox).value)
+	)
+	game_rules.reinforcements_constant = (
+			roundi((%ReinforcementsConstant as SpinBox).value)
+	)
+	game_rules.reinforcements_per_person = (
+			(%ReinforcementsPerPerson as SpinBox).value
+	)
+	
 	game_rules.population_growth = (
 			(%PopulationGrowth as CheckBox).button_pressed
 	)
@@ -31,10 +54,6 @@ func _selected_game_rules() -> GameRules:
 	game_rules.fortress_price = (
 			roundi((%FortressPrice as SpinBox).value)
 	)
-	
-	var turn_limit_check_box := %TurnLimitCheckBox as CheckBox
-	game_rules.turn_limit_enabled = turn_limit_check_box.button_pressed
-	game_rules.turn_limit = roundi((%TurnLimitSpinBox as SpinBox).value)
 	
 	var starting_money_spin_box := %StartingMoneySpinBox as SpinBox
 	game_rules.starting_money = roundi(starting_money_spin_box.value)
