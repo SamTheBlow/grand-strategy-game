@@ -3,7 +3,6 @@ extends Control
 
 
 signal requested_province_info()
-signal requested_money_info()
 signal requested_buy_fortress()
 signal requested_recruitment(army_size: int)
 signal save_requested()
@@ -29,7 +28,6 @@ func _on_input_text_submitted(new_text: String) -> void:
 				system_message_multiline([
 						"/help - Gives a list of every command",
 						"/infop - Gives info on selected province",
-						"/money - Tells you how much money your country has",
 						"/fort - Buys a fortress in selected province",
 						"/army - Recruits new units in selected province",
 						"/fs - Toggle fullscreen",
@@ -40,8 +38,6 @@ func _on_input_text_submitted(new_text: String) -> void:
 				])
 			"infop":
 				requested_province_info.emit()
-			"money":
-				requested_money_info.emit()
 			"fort":
 				requested_buy_fortress.emit()
 			"army":

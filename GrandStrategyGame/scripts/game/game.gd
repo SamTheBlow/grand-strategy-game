@@ -121,11 +121,6 @@ func _on_chat_requested_province_info() -> void:
 	])
 
 
-func _on_chat_requested_money_info() -> void:
-	var money: int = players.player_from_id(_your_id).playing_country.money
-	chat.system_message("Your country currently has " + str(money) + " money.")
-
-
 func _on_chat_requested_buy_fortress() -> void:
 	if not rules.can_buy_fortress:
 		chat.system_message("Cannot buy: this game's rules don't allow it!")
