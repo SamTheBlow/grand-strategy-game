@@ -97,14 +97,6 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 	match button_id:
 		0:
 			# Buy fortress
-			
-			if not rules.can_buy_fortress:
-				print_debug(
-						"Pressed the button to buy a fortress, "
-						+ "but the rules don't allow it!"
-				)
-				return
-			
 			var buy_fortress_popup := (
 					buy_fortress_scene.instantiate() as BuyFortressPopup
 			)
@@ -116,14 +108,6 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			_add_popup(buy_fortress_popup)
 		1:
 			# Recruitment
-			
-			if not rules.recruitment_enabled:
-				print_debug(
-						"Pressed the button to recruit troops, "
-						+ "but the rules don't allow it!"
-				)
-				return
-			
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
@@ -138,10 +122,12 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 
 
 func _on_buy_fortress_confirmed(province: Province) -> void:
+	deselect_province()
 	_buy_fortress(province)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
+	deselect_province()
 	_recruit_troops(province, troop_amount)
 
 
@@ -423,38 +409,16 @@ func _add_popup(contents: Node) -> void:
 
 
 func _buy_fortress(province: Province) -> void:
-	if not rules.can_buy_fortress:
-		print_debug(
-				"Tried to buy a fortress, "
-				+ "but the game's rules don't allow it."
-		)
-		return
-	
 	var your_country: Country = (
 			players.player_from_id(_your_id).playing_country
 	)
-	if province.owner_country() != your_country:
+	var buy_conditions := FortressBuyConditions.new(your_country, province)
+	if not buy_conditions.can_buy():
 		print_debug(
-				"Tried to buy a fortress, "
-				+ "but the given province is not under your control."
+				"Tried to buy a fortress, but not all conditions were met: "
+				+ buy_conditions.error_message
 		)
 		return
-	
-	if your_country.money < rules.fortress_price:
-		print_debug(
-				"Tried to buy a fortress, but didn't have enough money. "
-				+ "Needed " + str(rules.fortress_price)
-				+ " but only had " + str(your_country.money) + "."
-		)
-		return
-	
-	for building in province.buildings._buildings:
-		if building is Fortress:
-			print_debug(
-				"Tried to buy a fortress, "
-				+ "but there is already a fortress in given province."
-			)
-			return
 	
 	var fortress: Fortress = Fortress.new_fortress(self, province)
 	fortress.add_visuals()

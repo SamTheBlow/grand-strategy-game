@@ -23,6 +23,7 @@ signal button_pressed(button_id: int)
 @export var right_side_nodes: Array[Control]
 
 var _province: Province
+var _fortress_buy_conditions: FortressBuyConditions
 
 
 func _ready() -> void:
@@ -96,6 +97,10 @@ func _on_income_money_changed(new_value: int) -> void:
 	_update_income_money_label(new_value)
 
 
+func _on_fortress_can_buy_changed(can_buy: bool) -> void:
+	buy_fortress_button.disabled = not can_buy
+
+
 ## To be called when creating this node.
 func init(province: Province) -> void:
 	_province = province
@@ -103,6 +108,16 @@ func init(province: Province) -> void:
 	_update_income_money_label(province.income_money().total())
 	province.population.size_changed.connect(_on_population_size_changed)
 	province.income_money().changed.connect(_on_income_money_changed)
+	
+	var your_id: int = _province.game._your_id
+	var you: Player = _province.game.players.player_from_id(your_id)
+	_fortress_buy_conditions = FortressBuyConditions.new(
+			you.playing_country, _province
+	)
+	_fortress_buy_conditions.can_buy_changed.connect(
+			_on_fortress_can_buy_changed
+	)
+	buy_fortress_button.disabled = not _fortress_buy_conditions.can_buy()
 
 
 func set_line_top(value: float) -> void:

@@ -6,6 +6,8 @@ signal clicked(this_province: Province)
 signal selected()
 signal deselected()
 
+signal owner_country_changed(owner_country: Country)
+
 var game: Game
 
 var id: int

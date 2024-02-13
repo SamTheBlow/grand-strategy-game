@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/component_ui.gd" id="1_p8xv2"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="2_gn6af"]
 
-[node name="ComponentUi" type="Control" node_paths=PackedStringArray("population_size_label", "income_money_label", "left_side_nodes", "right_side_nodes")]
+[node name="ComponentUi" type="Control" node_paths=PackedStringArray("population_size_label", "income_money_label", "buy_fortress_button", "recruit_button", "left_side_nodes", "right_side_nodes")]
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
@@ -13,6 +13,8 @@ line_bottom = 96.0
 line_length_x = 192.0
 population_size_label = NodePath("Control3/MarginContainer/HBoxContainer/Text/Label")
 income_money_label = NodePath("Control4/MarginContainer/HBoxContainer/Text/Label")
+buy_fortress_button = NodePath("Control1/MarginContainer/BuyFortressButton")
+recruit_button = NodePath("Control2/MarginContainer/RecruitButton")
 left_side_nodes = [NodePath("Control1"), NodePath("Control2")]
 right_side_nodes = [NodePath("Control3"), NodePath("Control4")]
 

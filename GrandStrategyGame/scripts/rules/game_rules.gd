@@ -56,7 +56,7 @@ enum ProvinceIncome {
 @export var extra_starting_population: int = 0
 @export var start_with_fortress: bool = true
 @export var can_buy_fortress: bool = true
-@export var fortress_price: int = 500
+@export var fortress_price: int = 1000
 @export var starting_money: int = 1000
 @export var province_income_option: int = ProvinceIncome.POPULATION
 @export var province_income_random_min: int = 10

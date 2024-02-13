@@ -394,7 +394,8 @@ text = "Price:"
 [node name="FortressPrice" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2" node_paths=PackedStringArray("check_box")]
 unique_name_in_owner = true
 layout_mode = 2
-value = 100.0
+max_value = 1e+07
+value = 1000.0
 allow_greater = true
 alignment = 1
 script = ExtResource("2_sb2tg")
