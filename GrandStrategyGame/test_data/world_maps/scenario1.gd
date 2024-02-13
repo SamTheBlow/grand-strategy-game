@@ -153,7 +153,8 @@ func as_json(game_rules: GameRules) -> Dictionary:
 				pass
 		
 		# Population
-		var population_size: int = 10 + randi() % 90
+		var exponential_rng: float = randf() ** 2.0
+		var population_size: int = floori(exponential_rng * 1000.0)
 		if is_starting_province:
 			population_size += game_rules.extra_starting_population
 		province_data["population"] = {
