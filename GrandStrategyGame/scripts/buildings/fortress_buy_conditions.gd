@@ -85,7 +85,8 @@ func _check_condition(condition: bool) -> void:
 	if _can_buy:
 		if condition:
 			return
-		_can_buy = false
+		# It will always be false, but we also need to update the error message
+		_can_buy = _all_conditions_are_met()
 	else:
 		if not condition:
 			return

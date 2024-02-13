@@ -24,6 +24,7 @@ signal button_pressed(button_id: int)
 
 var _province: Province
 var _fortress_buy_conditions: FortressBuyConditions
+var _army_recruitment_limit: ArmyRecruitmentLimit
 
 
 func _ready() -> void:
@@ -101,6 +102,10 @@ func _on_fortress_can_buy_changed(can_buy: bool) -> void:
 	buy_fortress_button.disabled = not can_buy
 
 
+func _on_army_maximum_changed(maximum: int) -> void:
+	recruit_button.disabled = maximum == 0
+
+
 ## To be called when creating this node.
 func init(province: Province) -> void:
 	_province = province
@@ -118,6 +123,12 @@ func init(province: Province) -> void:
 			_on_fortress_can_buy_changed
 	)
 	buy_fortress_button.disabled = not _fortress_buy_conditions.can_buy()
+	
+	_army_recruitment_limit = ArmyRecruitmentLimit.new(
+			you.playing_country, _province
+	)
+	_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
+	recruit_button.disabled = _army_recruitment_limit.maximum() == 0
 
 
 func set_line_top(value: float) -> void:

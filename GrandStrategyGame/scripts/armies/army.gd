@@ -125,6 +125,14 @@ func can_move_to(destination: Province) -> bool:
 	return destination.is_linked_to(_province)
 
 
+static func money_cost(troop_count: int, rules: GameRules) -> int:
+	return ceili(troop_count * rules.recruitment_money_per_unit)
+
+
+static func population_cost(troop_count: int, rules: GameRules) -> int:
+	return ceili(troop_count * rules.recruitment_population_per_unit)
+
+
 func _update_troop_count_label() -> void:
 	var troop_count_label := $ColorRect/TroopCount as Label
 	troop_count_label.text = str(army_size.current_size())

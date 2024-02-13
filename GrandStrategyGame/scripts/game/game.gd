@@ -108,14 +108,18 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			_add_popup(buy_fortress_popup)
 		1:
 			# Recruitment
+			var army_recruitment_limit := ArmyRecruitmentLimit.new(
+					players.player_from_id(_your_id).playing_country,
+					world.provinces.selected_province
+			)
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
 			# TODO don't hard code the minimum army size
 			recruitment_popup.init(
 					world.provinces.selected_province,
-					10,
-					1000
+					0,
+					army_recruitment_limit.maximum()
 			)
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 			_add_popup(recruitment_popup)
@@ -428,48 +432,28 @@ func _buy_fortress(province: Province) -> void:
 
 
 func _recruit_troops(province: Province, troop_amount: int) -> void:
-	# TODO bad code (mostly copy/paste from the buy fortress command)
-	if not rules.recruitment_enabled:
-		print_debug(
-				"Tried to recruit troops, "
-				+ "but the game's rules don't allow it."
-		)
-		return
-	
 	var your_country: Country = (
 			players.player_from_id(_your_id).playing_country
 	)
-	if province.owner_country() != your_country:
+	var troop_maximum := ArmyRecruitmentLimit.new(your_country, province)
+	if troop_maximum.maximum() < troop_amount:
 		print_debug(
-				"Tried to recruit troops, "
-				+ "but the given province is not under your control."
+				"Tried to recruit troops, but not all conditions were met: "
+				+ troop_maximum.error_message
 		)
 		return
 	
-	var money_cost: int = (
-			ceili(troop_amount * rules.recruitment_money_per_unit)
+	# TODO don't hard code minimum army size
+	# TODO also, it should be OK to recruit less than 10 if there's 
+	# already enough troops in that province
+	if troop_amount < 10:
+		print_debug("Tried recruiting less than the minimum army size")
+		return
+	
+	your_country.money -= Army.money_cost(troop_amount, rules)
+	province.population.population_size -= (
+			Army.population_cost(troop_amount, rules)
 	)
-	if your_country.money < money_cost:
-		print_debug(
-				"Tried to recruit troops, but didn't have enough money. "
-				+ "Needed " + str(money_cost)
-				+ " but only had " + str(your_country.money) + "."
-		)
-		return
-	
-	var population_cost: int = floori(
-			troop_amount * rules.recruitment_population_per_unit
-	)
-	if province.population.population_size < population_cost:
-		print_debug(
-				"Tried to recruit troops, but didn't have enough population. "
-				+ "Needed " + str(population_cost) + " but only had "
-				+ str(province.population.population_size) + "."
-		)
-		return
-	
-	your_country.money -= money_cost
-	province.population.population_size -= population_cost
 	
 	var _army: Army = Army.quick_setup(
 			self,
