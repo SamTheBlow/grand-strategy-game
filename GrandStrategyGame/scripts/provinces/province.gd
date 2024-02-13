@@ -2,7 +2,9 @@ class_name Province
 extends Node2D
 
 
-signal selected(this_province: Province)
+signal clicked(this_province: Province)
+signal selected()
+signal deselected()
 
 var game: Game
 
@@ -19,17 +21,17 @@ var position_army_host: Vector2
 # Other data
 var links: Array[Province] = []
 var _owner_country := Country.new()
-var _income_money: int = 0
+var _income_money: IncomeMoney
 
 
 func _on_new_turn() -> void:
 	ProvinceNewOwner.new().update_province_owner(self)
 	ArmyReinforcements.new().reinforce_province(self)
-	_owner_country.money += income_money()
+	_owner_country.money += _income_money.total()
 
 
 func _on_shape_clicked() -> void:
-	selected.emit(self)
+	clicked.emit(self)
 
 
 func setup_population(population_size: int, population_growth: bool) -> void:
@@ -70,15 +72,7 @@ func set_owner_country(country: Country) -> void:
 	shape_node.color = country.color
 
 
-func income_money() -> int:
-	if (
-		game.rules.province_income_option
-		== GameRules.ProvinceIncome.POPULATION
-	):
-		return floori(
-				game.rules.province_income_per_person
-				* population.population_size
-		)
+func income_money() -> IncomeMoney:
 	return _income_money
 
 
@@ -92,6 +86,7 @@ func set_shape(polygon: PackedVector2Array) -> void:
 
 func select() -> void:
 	province_shape().outline_type = ProvinceShapePolygon2D.OutlineType.SELECTED
+	selected.emit()
 
 
 func deselect() -> void:
@@ -99,6 +94,7 @@ func deselect() -> void:
 	if shape_node.outline_type == ProvinceShapePolygon2D.OutlineType.SELECTED:
 		for link in links:
 			link.deselect()
+		deselected.emit()
 	shape_node.outline_type = ProvinceShapePolygon2D.OutlineType.NONE
 
 

@@ -1,8 +1,8 @@
-[gd_scene load_steps=15 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=16 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
-[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://scenes/troop_ui.tscn" id="2_dx3sp"]
+[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://scenes/ui/troop_ui.tscn" id="2_dx3sp"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="PackedScene" uid="uid://cwi4tinm2f73x" path="res://scenes/fortress.tscn" id="3_u3whv"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" path="res://scripts/ui/game_over_popup.gd" id="5_s4mjp"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="6_5jo7e"]
 [ext_resource type="Script" path="res://scripts/ui/drag_source.gd" id="6_pwyey"]
+[ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://scenes/ui/component_ui.tscn" id="7_dxau2"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="10_2dak6"]
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
 
@@ -20,8 +21,9 @@ script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
 province_scene = ExtResource("4_52jos")
-troop_ui_scene = ExtResource("2_dx3sp")
 world_2d_scene = ExtResource("6_5jo7e")
+troop_ui_scene = ExtResource("2_dx3sp")
+component_ui_scene = ExtResource("7_dxau2")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
@@ -48,6 +50,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="ComponentUI" type="Control" parent="UILayer/GameUI"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
 
 [node name="TopBar" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("country_color_rect", "country_name_label", "country_money_label", "game_turn_label")]
 layout_mode = 1
@@ -104,9 +113,8 @@ size_flags_stretch_ratio = 0.3
 [node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.0314592
 anchor_right = 1.0
-anchor_bottom = 0.968541
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("10_2dak6")
@@ -179,9 +187,8 @@ layout_mode = 2
 [node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.0657895
 anchor_right = 1.0
-anchor_bottom = 0.934211
+anchor_bottom = 1.0
 script = ExtResource("10_2dak6")
 
 [node name="Label" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]

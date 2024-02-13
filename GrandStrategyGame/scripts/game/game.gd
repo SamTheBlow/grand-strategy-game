@@ -7,8 +7,10 @@ signal game_ended()
 @export var army_scene: PackedScene
 @export var fortress_scene: PackedScene
 @export var province_scene: PackedScene
-@export var troop_ui_scene: PackedScene
 @export var world_2d_scene: PackedScene
+
+@export var troop_ui_scene: PackedScene
+@export var component_ui_scene: PackedScene
 
 @export var top_bar: TopBar
 
@@ -21,6 +23,7 @@ var players: Players
 # References to children nodes
 var world: GameWorld
 var turn: GameTurn
+var component_ui: ComponentUI
 
 var _your_id: int
 
@@ -28,13 +31,6 @@ var _your_id: int
 var global_modifiers: Dictionary = {}
 
 @onready var chat := %Chat as Chat
-
-
-func _ready() -> void:
-	chat.system_message(
-			"You are playing as "
-			+ players.player_from_id(_your_id).playing_country.country_name
-	)
 
 
 func _on_new_turn() -> void:
@@ -49,7 +45,7 @@ func _on_game_over() -> void:
 	game_over_node.set_text(winning_country.country_name + " wins!")
 
 
-func _on_province_selected(province: Province) -> void:
+func _on_province_clicked(province: Province) -> void:
 	var your_country: Country = countries.country_from_id(_your_id)
 	var provinces_node: Provinces = world.provinces
 	if provinces_node.selected_province:
@@ -77,6 +73,17 @@ func _on_province_selected(province: Province) -> void:
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET)
 	else:
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
+
+
+func _on_province_selected() -> void:
+	component_ui = component_ui_scene.instantiate() as ComponentUI
+	component_ui.init(world.provinces.selected_province)
+	%ComponentUI.add_child(component_ui)
+
+
+func _on_province_deselected() -> void:
+	%ComponentUI.remove_child(component_ui)
+	component_ui.queue_free()
 
 
 func _on_recruit_cancelled() -> void:

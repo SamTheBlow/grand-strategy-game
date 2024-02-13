@@ -83,6 +83,11 @@ func _on_input_text_submitted(new_text: String) -> void:
 	chat_input.text = ""
 
 
+func _ready() -> void:
+	system_message("The game begins!")
+	system_message("Type /help to get a list of commands")
+
+
 func system_message(new_text: String) -> void:
 	chat_log.text += (
 			"[i][color=#404040]" + "System: " + new_text + "[/color][/i]\n"

@@ -1,0 +1,162 @@
+[gd_scene load_steps=3 format=3 uid="uid://btp4jcvpp4jg2"]
+
+[ext_resource type="Script" path="res://scripts/ui/component_ui.gd" id="1_p8xv2"]
+[ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="2_gn6af"]
+
+[node name="ComponentUi" type="Control" node_paths=PackedStringArray("population_size_label", "income_money_label", "right_side_nodes")]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_p8xv2")
+line_top = -128.0
+line_bottom = 64.0
+line_length_x = 192.0
+population_size_label = NodePath("Control/MarginContainer/HBoxContainer/Label")
+income_money_label = NodePath("Control2/MarginContainer/HBoxContainer/Label")
+right_side_nodes = [NodePath("Control"), NodePath("Control2")]
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 192.0
+offset_top = -64.0
+offset_right = 320.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.25098, 0.25098, 0.25098, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.239583
+anchor_right = 1.0
+anchor_bottom = 0.760417
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_gn6af")
+
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "P"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="Control/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+text = "420691337"
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 192.0
+offset_right = 320.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.25098, 0.25098, 0.25098, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control2/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Control2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.21875
+anchor_right = 1.0
+anchor_bottom = 0.78125
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_gn6af")
+
+[node name="Label" type="Label" parent="Control2/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label" type="Label" parent="Control2/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+text = "69420"
+vertical_alignment = 1
