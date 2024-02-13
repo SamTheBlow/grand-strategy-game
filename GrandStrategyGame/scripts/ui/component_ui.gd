@@ -6,6 +6,8 @@ extends Control
 ## (Currently only works on a Province object)
 
 
+signal button_pressed(button_id: int)
+
 @export_category("Line")
 @export var line_top: float = -64.0 : set = set_line_top
 @export var line_bottom: float = 0.0 : set = set_line_bottom
@@ -17,13 +19,14 @@ extends Control
 @export var buy_fortress_button: Button
 @export var recruit_button: Button
 
+@export var left_side_nodes: Array[Control]
 @export var right_side_nodes: Array[Control]
 
 var _province: Province
 
 
 func _ready() -> void:
-	_update_right_side_nodes()
+	_update_side_nodes()
 
 
 func _process(_delta: float) -> void:
@@ -77,6 +80,14 @@ func _draw() -> void:
 	)
 
 
+func _on_buy_fortress_button_pressed() -> void:
+	button_pressed.emit(0)
+
+
+func _on_recruit_button_pressed() -> void:
+	button_pressed.emit(1)
+
+
 func _on_population_size_changed(new_value: int) -> void:
 	_update_population_size_label(new_value)
 
@@ -96,19 +107,19 @@ func init(province: Province) -> void:
 
 func set_line_top(value: float) -> void:
 	line_top = value
-	_update_right_side_nodes()
+	_update_side_nodes()
 	queue_redraw()
 
 
 func set_line_bottom(value: float) -> void:
 	line_bottom = value
-	_update_right_side_nodes()
+	_update_side_nodes()
 	queue_redraw()
 
 
 func set_line_length_x(value: float) -> void:
 	line_length_x = value
-	_update_right_side_nodes()
+	_update_side_nodes()
 	queue_redraw()
 
 
@@ -120,9 +131,26 @@ func _update_income_money_label(value: int) -> void:
 	income_money_label.text = str(value)
 
 
+func _update_side_nodes() -> void:
+	_update_left_side_nodes()
+	_update_right_side_nodes()
+
+
+func _update_left_side_nodes() -> void:
+	var offset_y: float = 64.0
+	for i in left_side_nodes.size():
+		left_side_nodes[i].position.x = (
+				-line_length_x - left_side_nodes[i].size.x * 0.5
+		)
+		left_side_nodes[i].position.y = line_top + offset_y
+		offset_y += left_side_nodes[i].size.y
+
+
 func _update_right_side_nodes() -> void:
 	var offset_y: float = 64.0
 	for i in right_side_nodes.size():
-		right_side_nodes[i].position.x = line_length_x
+		right_side_nodes[i].position.x = (
+				line_length_x - right_side_nodes[i].size.x * 0.5
+		)
 		right_side_nodes[i].position.y = line_top + offset_y
 		offset_y += right_side_nodes[i].size.y

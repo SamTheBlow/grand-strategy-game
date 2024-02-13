@@ -14,6 +14,8 @@ signal game_ended()
 @export var popup_scene: PackedScene
 @export var army_movement_scene: PackedScene
 @export var game_over_scene: PackedScene
+@export var buy_fortress_scene: PackedScene
+@export var recruitment_scene: PackedScene
 
 @export var component_ui_root: Control
 @export var top_bar: TopBar
@@ -82,12 +84,65 @@ func _on_province_clicked(province: Province) -> void:
 func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
 	component_ui.init(world.provinces.selected_province)
+	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)
 
 
 func _on_province_deselected() -> void:
 	component_ui_root.remove_child(component_ui)
 	component_ui.queue_free()
+
+
+func _on_component_ui_button_pressed(button_id: int) -> void:
+	match button_id:
+		0:
+			# Buy fortress
+			
+			if not rules.can_buy_fortress:
+				print_debug(
+						"Pressed the button to buy a fortress, "
+						+ "but the rules don't allow it!"
+				)
+				return
+			
+			var buy_fortress_popup := (
+					buy_fortress_scene.instantiate() as BuyFortressPopup
+			)
+			buy_fortress_popup.init(
+					world.provinces.selected_province,
+					rules.fortress_price
+			)
+			buy_fortress_popup.confirmed.connect(_on_buy_fortress_confirmed)
+			_add_popup(buy_fortress_popup)
+		1:
+			# Recruitment
+			
+			if not rules.recruitment_enabled:
+				print_debug(
+						"Pressed the button to recruit troops, "
+						+ "but the rules don't allow it!"
+				)
+				return
+			
+			var recruitment_popup := (
+					recruitment_scene.instantiate() as RecruitmentPopup
+			)
+			# TODO don't hard code the minimum army size
+			recruitment_popup.init(
+					world.provinces.selected_province,
+					10,
+					1000
+			)
+			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
+			_add_popup(recruitment_popup)
+
+
+func _on_buy_fortress_confirmed(province: Province) -> void:
+	_buy_fortress(province)
+
+
+func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
+	_recruit_troops(province, troop_amount)
 
 
 func _on_army_movement_closed() -> void:
@@ -135,98 +190,21 @@ func _on_chat_requested_province_info() -> void:
 
 
 func _on_chat_requested_buy_fortress() -> void:
-	if not rules.can_buy_fortress:
-		chat.system_message("Cannot buy: this game's rules don't allow it!")
-		return
-	
-	# TODO bad code (copy/paste from province info command)
 	var selected_province: Province = world.provinces.selected_province
 	if not selected_province:
 		chat.system_message("No province selected.")
 		return
 	
-	var your_country: Country = (
-			players.player_from_id(_your_id).playing_country
-	)
-	if selected_province.owner_country() != your_country:
-		chat.system_message(
-				"Cannot buy: selected province is not under your control!"
-		)
-		return
-	
-	if your_country.money < rules.fortress_price:
-		chat.system_message(
-				"Not enough money! You need " + str(rules.fortress_price)
-				+ " but you only have " + str(your_country.money) + "."
-		)
-		return
-	
-	for building in selected_province.buildings._buildings:
-		if building is Fortress:
-			chat.system_message(
-					"Cannot buy: there is already a fortress in that province!"
-			)
-			return
-	
-	var fortress: Fortress = Fortress.new_fortress(self, selected_province)
-	fortress.add_visuals()
-	selected_province.buildings.add(fortress)
-	
-	your_country.money -= rules.fortress_price
+	_buy_fortress(selected_province)
 
 
-func _on_chat_requested_recruitment(army_size: int) -> void:
-	# TODO bad code (mostly copy/paste from the buy fortress command)
-	if not rules.recruitment_enabled:
-		chat.system_message(
-				"Cannot recruit: this game's rules don't allow it!"
-		)
-		return
-	
+func _on_chat_requested_recruitment(troop_amount: int) -> void:
 	var selected_province: Province = world.provinces.selected_province
 	if not selected_province:
 		chat.system_message("No province selected.")
 		return
 	
-	var your_country: Country = (
-			players.player_from_id(_your_id).playing_country
-	)
-	if selected_province.owner_country() != your_country:
-		chat.system_message(
-				"Cannot recruit: selected province is not under your control!"
-		)
-		return
-	
-	var money_cost: int = ceili(army_size * rules.recruitment_money_per_unit)
-	if your_country.money < money_cost:
-		chat.system_message(
-				"Not enough money! You need " + str(money_cost)
-				+ " but you only have " + str(your_country.money) + "."
-		)
-		return
-	
-	var population_cost: int = floori(
-			army_size * rules.recruitment_population_per_unit
-	)
-	if selected_province.population.population_size < population_cost:
-		chat.system_message(
-				"Not enough population! You need " + str(population_cost)
-				+ " but you only have "
-				+ str(selected_province.population.population_size) + "."
-		)
-		return
-	
-	your_country.money -= money_cost
-	selected_province.population.population_size -= population_cost
-	
-	var _army: Army = Army.quick_setup(
-			self,
-			world.armies.new_unique_army_id(),
-			army_size,
-			selected_province.owner_country(),
-			selected_province
-	)
-	world.armies.merge_armies(selected_province)
+	_recruit_troops(selected_province, troop_amount)
 
 
 func _on_chat_rules_requested() -> void:
@@ -442,6 +420,101 @@ func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.setup_contents(contents)
 	popups.add_child(popup)
+
+
+func _buy_fortress(province: Province) -> void:
+	if not rules.can_buy_fortress:
+		print_debug(
+				"Tried to buy a fortress, "
+				+ "but the game's rules don't allow it."
+		)
+		return
+	
+	var your_country: Country = (
+			players.player_from_id(_your_id).playing_country
+	)
+	if province.owner_country() != your_country:
+		print_debug(
+				"Tried to buy a fortress, "
+				+ "but the given province is not under your control."
+		)
+		return
+	
+	if your_country.money < rules.fortress_price:
+		print_debug(
+				"Tried to buy a fortress, but didn't have enough money. "
+				+ "Needed " + str(rules.fortress_price)
+				+ " but only had " + str(your_country.money) + "."
+		)
+		return
+	
+	for building in province.buildings._buildings:
+		if building is Fortress:
+			print_debug(
+				"Tried to buy a fortress, "
+				+ "but there is already a fortress in given province."
+			)
+			return
+	
+	var fortress: Fortress = Fortress.new_fortress(self, province)
+	fortress.add_visuals()
+	province.buildings.add(fortress)
+	
+	your_country.money -= rules.fortress_price
+
+
+func _recruit_troops(province: Province, troop_amount: int) -> void:
+	# TODO bad code (mostly copy/paste from the buy fortress command)
+	if not rules.recruitment_enabled:
+		print_debug(
+				"Tried to recruit troops, "
+				+ "but the game's rules don't allow it."
+		)
+		return
+	
+	var your_country: Country = (
+			players.player_from_id(_your_id).playing_country
+	)
+	if province.owner_country() != your_country:
+		print_debug(
+				"Tried to recruit troops, "
+				+ "but the given province is not under your control."
+		)
+		return
+	
+	var money_cost: int = (
+			ceili(troop_amount * rules.recruitment_money_per_unit)
+	)
+	if your_country.money < money_cost:
+		print_debug(
+				"Tried to recruit troops, but didn't have enough money. "
+				+ "Needed " + str(money_cost)
+				+ " but only had " + str(your_country.money) + "."
+		)
+		return
+	
+	var population_cost: int = floori(
+			troop_amount * rules.recruitment_population_per_unit
+	)
+	if province.population.population_size < population_cost:
+		print_debug(
+				"Tried to recruit troops, but didn't have enough population. "
+				+ "Needed " + str(population_cost) + " but only had "
+				+ str(province.population.population_size) + "."
+		)
+		return
+	
+	your_country.money -= money_cost
+	province.population.population_size -= population_cost
+	
+	var _army: Army = Army.quick_setup(
+			self,
+			world.armies.new_unique_army_id(),
+			troop_amount,
+			province.owner_country(),
+			province
+	)
+	world.armies.merge_armies(province)
 
 
 func _check_percentage_winner() -> void:

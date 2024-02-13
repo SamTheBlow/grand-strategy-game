@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=18 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -14,6 +14,8 @@
 [ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://scenes/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="10_2dak6"]
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
+[ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/buy_fortress_popup.tscn" id="10_x38iu"]
+[ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("component_ui_root", "top_bar", "chat", "popups")]
@@ -27,6 +29,8 @@ component_ui_scene = ExtResource("7_dxau2")
 popup_scene = ExtResource("2_dx3sp")
 army_movement_scene = ExtResource("8_nnt8b")
 game_over_scene = ExtResource("16_mxtlx")
+buy_fortress_scene = ExtResource("10_x38iu")
+recruitment_scene = ExtResource("11_rjf2g")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 chat = NodePath("UILayer/GameUI/Chat")

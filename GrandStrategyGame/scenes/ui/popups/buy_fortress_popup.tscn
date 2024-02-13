@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://8rs6mtufs60s"]
+
+[ext_resource type="Script" path="res://scripts/ui/popups/buy_fortress_popup.gd" id="1_hwjbu"]
+
+[node name="BuyFortressPopup" type="VBoxContainer" node_paths=PackedStringArray("cost_label")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hwjbu")
+cost_label = NodePath("Label")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+size_flags_vertical = 6
+text = "Qwertyuiopasdfghjklzxcvbnm. I'm sorry, I don't speak watermelon."
+horizontal_alignment = 1
+vertical_alignment = 1
