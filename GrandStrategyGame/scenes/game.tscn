@@ -2,21 +2,21 @@
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
-[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://scenes/ui/troop_ui.tscn" id="2_dx3sp"]
+[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://scenes/ui/popups/game_popup.tscn" id="2_dx3sp"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="PackedScene" uid="uid://cwi4tinm2f73x" path="res://scenes/fortress.tscn" id="3_u3whv"]
 [ext_resource type="Script" path="res://scripts/chat/chat.gd" id="4_0kwm4"]
 [ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://scenes/province.tscn" id="4_52jos"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="4_331yk"]
-[ext_resource type="Script" path="res://scripts/ui/game_over_popup.gd" id="5_s4mjp"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="6_5jo7e"]
-[ext_resource type="Script" path="res://scripts/ui/drag_source.gd" id="6_pwyey"]
 [ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://scenes/ui/component_ui.tscn" id="7_dxau2"]
+[ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://scenes/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="10_2dak6"]
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
+[ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("top_bar")]
+[node name="Game" type="Node" node_paths=PackedStringArray("component_ui_root", "top_bar", "chat", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -24,7 +24,13 @@ province_scene = ExtResource("4_52jos")
 world_2d_scene = ExtResource("6_5jo7e")
 troop_ui_scene = ExtResource("2_dx3sp")
 component_ui_scene = ExtResource("7_dxau2")
+popup_scene = ExtResource("2_dx3sp")
+army_movement_scene = ExtResource("8_nnt8b")
+game_over_scene = ExtResource("16_mxtlx")
+component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
+chat = NodePath("UILayer/GameUI/Chat")
+popups = NodePath("UILayer/GameUI/Popups")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
@@ -52,7 +58,6 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="ComponentUI" type="Control" parent="UILayer/GameUI"]
-unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
@@ -113,8 +118,9 @@ size_flags_stretch_ratio = 0.3
 [node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor"]
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.0314592
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.968541
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("10_2dak6")
@@ -187,8 +193,9 @@ layout_mode = 2
 [node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.0657895
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.934211
 script = ExtResource("10_2dak6")
 
 [node name="Label" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
@@ -258,7 +265,6 @@ horizontal_alignment = 1
 vertical_alignment = 1
 
 [node name="Chat" type="Control" parent="UILayer/GameUI"]
-unique_name_in_owner = true
 layout_mode = 1
 anchor_top = 0.7
 anchor_right = 0.3
@@ -355,56 +361,14 @@ anchor_bottom = 0.8
 layout_mode = 2
 text = "End Turn"
 
-[node name="GameOverPopup" type="Control" parent="UILayer/GameUI"]
-unique_name_in_owner = true
-visible = false
-layout_mode = 1
-anchor_left = 0.25
-anchor_top = 0.25
-anchor_right = 0.75
-anchor_bottom = 0.75
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-script = ExtResource("5_s4mjp")
-
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/GameOverPopup"]
+[node name="Popups" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
-color = Color(0.5, 0.5, 0.5, 1)
-script = ExtResource("6_pwyey")
-
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/GameOverPopup/ColorRect"]
-layout_mode = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 32.0
-offset_top = 32.0
-offset_right = -32.0
-offset_bottom = -32.0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer"]
-layout_mode = 2
-
-[node name="GameOver" type="Label" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Game Over"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Winner" type="Label" parent="UILayer/GameUI/GameOverPopup/ColorRect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 6
-theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "(Sample text)"
-horizontal_alignment = 1
-vertical_alignment = 1
+mouse_filter = 2
 
 [connection signal="exit_to_main_menu_requested" from="UILayer/GameUI/Chat" to="." method="_on_exit_to_main_menu_requested"]
 [connection signal="load_requested" from="UILayer/GameUI/Chat" to="." method="_on_load_requested"]
@@ -415,4 +379,3 @@ vertical_alignment = 1
 [connection signal="save_requested" from="UILayer/GameUI/Chat" to="." method="_on_save_requested"]
 [connection signal="text_submitted" from="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="UILayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
-[connection signal="dragged" from="UILayer/GameUI/GameOverPopup/ColorRect" to="UILayer/GameUI/GameOverPopup" method="_on_dragged"]

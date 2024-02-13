@@ -1,0 +1,28 @@
+[gd_scene load_steps=2 format=3 uid="uid://cfhpg688geojo"]
+
+[ext_resource type="Script" path="res://scripts/ui/popups/game_over_popup.gd" id="1_1w4ix"]
+
+[node name="GameOverPopup" type="VBoxContainer" node_paths=PackedStringArray("winner_label")]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_1w4ix")
+winner_label = NodePath("Winner")
+
+[node name="GameOver" type="Label" parent="."]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "Game Over"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Winner" type="Label" parent="."]
+layout_mode = 2
+size_flags_vertical = 6
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+text = "(Sample text)"
+horizontal_alignment = 1
+vertical_alignment = 1

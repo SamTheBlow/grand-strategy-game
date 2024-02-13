@@ -11,8 +11,14 @@ signal game_ended()
 
 @export var troop_ui_scene: PackedScene
 @export var component_ui_scene: PackedScene
+@export var popup_scene: PackedScene
+@export var army_movement_scene: PackedScene
+@export var game_over_scene: PackedScene
 
+@export var component_ui_root: Control
 @export var top_bar: TopBar
+@export var chat: Chat
+@export var popups: Control
 
 var _modifier_request: ModifierRequest
 
@@ -30,8 +36,6 @@ var _your_id: int
 ## Keys are a modifier context (String); values are a Modifier
 var global_modifiers: Dictionary = {}
 
-@onready var chat := %Chat as Chat
-
 
 func _on_new_turn() -> void:
 	_check_percentage_winner()
@@ -40,9 +44,9 @@ func _on_new_turn() -> void:
 func _on_game_over() -> void:
 	var winning_country: Country = end_game()
 	
-	var game_over_node := %GameOverPopup as GameOver
-	game_over_node.show()
-	game_over_node.set_text(winning_country.country_name + " wins!")
+	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
+	game_over_popup.init(winning_country)
+	_add_popup(game_over_popup)
 
 
 func _on_province_clicked(province: Province) -> void:
@@ -62,7 +66,7 @@ func _on_province_clicked(province: Province) -> void:
 			army.battle.attacking_army = army
 			
 			if army.can_move_to(province):
-				_new_popup_number_of_troops(army, province)
+				_add_army_movement_popup(army, province)
 				return
 	provinces_node.select_province(province)
 	
@@ -78,15 +82,15 @@ func _on_province_clicked(province: Province) -> void:
 func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
 	component_ui.init(world.provinces.selected_province)
-	%ComponentUI.add_child(component_ui)
+	component_ui_root.add_child(component_ui)
 
 
 func _on_province_deselected() -> void:
-	%ComponentUI.remove_child(component_ui)
+	component_ui_root.remove_child(component_ui)
 	component_ui.queue_free()
 
 
-func _on_recruit_cancelled() -> void:
+func _on_army_movement_closed() -> void:
 	deselect_province()
 
 
@@ -344,8 +348,6 @@ func new_action_army_movement(
 		number_of_troops: int,
 		destination_province: Province
 ) -> void:
-	deselect_province()
-	
 	var you: Player = players.player_from_id(_your_id)
 	var moving_army_id: int = army.id
 	
@@ -426,18 +428,20 @@ func _end_player_turn() -> void:
 	#print("--- End of player's turn")
 
 
-## Create and display an interface for selecting a number of troops
-func _new_popup_number_of_troops(
-		army: Army,
-		destination_province: Province
-) -> void:
-	var troop_ui: TroopUI = TroopUI.new_popup(
-			army, destination_province
+func _add_army_movement_popup(army: Army, destination: Province) -> void:
+	var army_movement_popup := (
+			army_movement_scene.instantiate() as ArmyMovementPopup
 	)
-	troop_ui.name = "RecruitUI"
-	troop_ui.cancelled.connect(_on_recruit_cancelled)
-	troop_ui.army_movement_requested.connect(new_action_army_movement)
-	$UILayer.add_child(troop_ui)
+	army_movement_popup.init(army, destination)
+	army_movement_popup.confirmed.connect(new_action_army_movement)
+	army_movement_popup.tree_exited.connect(_on_army_movement_closed)
+	_add_popup(army_movement_popup)
+
+
+func _add_popup(contents: Node) -> void:
+	var popup := popup_scene.instantiate() as GamePopup
+	popup.setup_contents(contents)
+	popups.add_child(popup)
 
 
 func _check_percentage_winner() -> void:

@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://test_data/world_maps/world_test1.tscn" id="2_aiiyc"]
-[ext_resource type="Script" path="res://scripts/main_menu/lockable_spin_box.gd" id="2_sb2tg"]
+[ext_resource type="Script" path="res://scripts/ui/lockable_spin_box.gd" id="2_sb2tg"]
 [ext_resource type="Script" path="res://scripts/main_menu/show_menu_options.gd" id="4_cq0th"]
 
 [node name="Lobby" type="Control"]
