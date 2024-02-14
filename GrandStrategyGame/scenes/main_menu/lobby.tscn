@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://test_data/world_maps/world_test1.tscn" id="2_aiiyc"]
-[ext_resource type="Script" path="res://scripts/ui/lockable_spin_box.gd" id="2_sb2tg"]
+[ext_resource type="Script" path="res://scripts/ui/root_container.gd" id="4_4itq4"]
 [ext_resource type="Script" path="res://scripts/main_menu/show_menu_options.gd" id="4_cq0th"]
 
 [node name="Lobby" type="Control"]
@@ -67,8 +67,11 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 
-[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
+script = ExtResource("4_4itq4")
+nodes_to_hide = [NodePath("TurnLimitSpinBox")]
+trigger_check_box = NodePath("TurnLimitCheckBox")
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
@@ -78,7 +81,7 @@ text = "Turn limit"
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3" node_paths=PackedStringArray("check_box")]
+[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -86,8 +89,6 @@ value = 50.0
 rounded = true
 allow_greater = true
 alignment = 1
-script = ExtResource("2_sb2tg")
-check_box = NodePath("../TurnLimitCheckBox")
 
 [node name="Spacing5" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
@@ -100,8 +101,11 @@ layout_mode = 2
 layout_mode = 2
 text = "Recruitment"
 
-[node name="HBoxContainer71" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer71" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
+script = ExtResource("4_4itq4")
+nodes_to_hide = [NodePath("../HBoxContainer9")]
+trigger_check_box = NodePath("Reinforcements")
 
 [node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer71"]
 custom_minimum_size = Vector2(64, 0)
@@ -236,8 +240,11 @@ value = 0.4
 allow_greater = true
 alignment = 1
 
-[node name="HBoxContainer72" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer72" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
+script = ExtResource("4_4itq4")
+nodes_to_hide = [NodePath("../HBoxContainer73"), NodePath("../HBoxContainer74")]
+trigger_check_box = NodePath("CanRecruit")
 
 [node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer72"]
 custom_minimum_size = Vector2(64, 0)
@@ -311,8 +318,11 @@ layout_mode = 2
 layout_mode = 2
 text = "Population"
 
-[node name="HBoxContainer69" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer69" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
+script = ExtResource("4_4itq4")
+nodes_to_hide = [NodePath("../HBoxContainer70")]
+trigger_check_box = NodePath("PopulationGrowth")
 
 [node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer69"]
 custom_minimum_size = Vector2(64, 0)
@@ -331,6 +341,10 @@ button_pressed = true
 layout_mode = 2
 
 [node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer70"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer70"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
@@ -390,35 +404,47 @@ unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 
-[node name="FortressPurchase2" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="FortressPurchase" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
+script = ExtResource("4_4itq4")
+nodes_to_hide = [NodePath("../HBoxContainer76")]
+trigger_check_box = NodePath("CanBuyFortress")
 
-[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
 layout_mode = 2
 text = "Can be bought"
 
-[node name="CanBuyFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+[node name="CanBuyFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 
-[node name="Label2" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2"]
+[node name="HBoxContainer76" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
-text = "Price:"
 
-[node name="FortressPrice" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase2" node_paths=PackedStringArray("check_box")]
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
+layout_mode = 2
+text = "Price"
+
+[node name="FortressPrice" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1e+07
 value = 1000.0
 allow_greater = true
 alignment = 1
-script = ExtResource("2_sb2tg")
-check_box = NodePath("../../FortressStart/StartWithFortress")
 
 [node name="Spacing2" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 8)
