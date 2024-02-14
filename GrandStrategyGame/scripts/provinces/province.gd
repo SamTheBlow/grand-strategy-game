@@ -14,7 +14,6 @@ var id: int
 
 # Nodes
 var armies: Node
-var population: Population
 var buildings: Buildings
 
 # Positions
@@ -24,6 +23,7 @@ var position_army_host: Vector2
 var links: Array[Province] = []
 var _owner_country := Country.new()
 var _income_money: IncomeMoney
+var population: Population
 
 
 func _on_new_turn() -> void:
@@ -33,17 +33,6 @@ func _on_new_turn() -> void:
 
 func _on_shape_clicked() -> void:
 	clicked.emit(self)
-
-
-func setup_population(population_size: int, population_growth: bool) -> void:
-	population = Population.new()
-	population.name = "Population"
-	population.population_size = population_size
-	
-	if population_growth:
-		population.add_child(PopulationGrowth.new())
-	
-	add_child(population)
 
 
 func setup_buildings() -> void:

@@ -336,9 +336,28 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer70"]
 layout_mode = 2
+text = "Growth rate"
+
+[node name="PopulationGrowthRate" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer70"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1.0
+step = 0.0
+value = 0.48
+alignment = 1
+
+[node name="HBoxContainer75" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer75"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer75"]
+layout_mode = 2
 text = "Extra population in starting province"
 
-[node name="ExtraStartingPopulation" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer70"]
+[node name="ExtraStartingPopulation" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer75"]
 unique_name_in_owner = true
 layout_mode = 2
 allow_greater = true

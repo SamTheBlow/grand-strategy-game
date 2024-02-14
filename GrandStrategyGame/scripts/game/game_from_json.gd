@@ -24,6 +24,22 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	game.rules = rules
 	
+	# Turn
+	var turn_key: String = "turn"
+	if json_dict.has(turn_key):
+		# Workaround because JSON doesn't differentiate between int and float
+		var value_type: int = typeof(json_dict[turn_key])
+		if value_type == TYPE_INT:
+			value_type = TYPE_FLOAT
+		
+		if value_type != TYPE_FLOAT:
+			error = true
+			error_message = "Turn property is not a number."
+			return
+		game.setup_turn(int(json_dict[turn_key]))
+	else:
+		game.setup_turn()
+	
 	# Countries
 	var countries: Countries = _load_countries(json_dict)
 	if not countries:
@@ -78,22 +94,6 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	var armies_error: bool = _load_armies(json_dict["world"]["armies"], game)
 	if armies_error:
 		return
-	
-	# Turn
-	var turn_key: String = "turn"
-	if json_dict.has(turn_key):
-		# Workaround because JSON doesn't differentiate between int and float
-		var value_type: int = typeof(json_dict[turn_key])
-		if value_type == TYPE_INT:
-			value_type = TYPE_FLOAT
-		
-		if value_type != TYPE_FLOAT:
-			error = true
-			error_message = "Turn property is not a number."
-			return
-		game.setup_turn(int(json_dict[turn_key]))
-	else:
-		game.setup_turn()
 	
 	# Success!
 	error = false
@@ -269,10 +269,8 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			game.countries.country_from_id(json_data["owner_country_id"])
 	)
 	
-	province.setup_population(
-			json_data["population"]["size"],
-			game.rules.population_growth
-	)
+	province.population = Population.new(game)
+	province.population.population_size = json_data["population"]["size"]
 	
 	province.setup_buildings()
 	for building: Dictionary in json_data["buildings"]:

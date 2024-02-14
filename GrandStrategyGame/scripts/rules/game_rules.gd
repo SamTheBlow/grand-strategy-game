@@ -14,7 +14,8 @@ const RULE_NAMES: Array[String] = [
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
-	"population_growth",
+	"population_growth_enabled",
+	"population_growth_rate",
 	"extra_starting_population",
 	"start_with_fortress",
 	"can_buy_fortress",
@@ -52,7 +53,8 @@ enum ProvinceIncome {
 @export var recruitment_enabled: bool = true
 @export var recruitment_money_per_unit: float = 0.1
 @export var recruitment_population_per_unit: float = 1.0
-@export var population_growth: bool = true
+@export var population_growth_enabled: bool = true
+@export var population_growth_rate: float = 0.48
 @export var extra_starting_population: int = 0
 @export var start_with_fortress: bool = true
 @export var can_buy_fortress: bool = true

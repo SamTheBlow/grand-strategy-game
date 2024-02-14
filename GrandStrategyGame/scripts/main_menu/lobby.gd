@@ -48,8 +48,11 @@ func _selected_game_rules() -> GameRules:
 			(%RecruitPopulationPerUnit as SpinBox).value
 	)
 	
-	game_rules.population_growth = (
+	game_rules.population_growth_enabled = (
 			(%PopulationGrowth as CheckBox).button_pressed
+	)
+	game_rules.population_growth_rate = (
+			(%PopulationGrowthRate as SpinBox).value
 	)
 	game_rules.extra_starting_population = (
 			roundi((%ExtraStartingPopulation as SpinBox).value)

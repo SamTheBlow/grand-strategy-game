@@ -1,14 +1,20 @@
 class_name PopulationGrowth
-extends Node
-## Add this as a child of a Population node.
-## At the start of each turn, increases the population size exponentially.
+## Applies population growth to a population.
 
 
-func _on_new_turn() -> void:
-	var parent: Node = get_parent()
-	
-	if not parent or not (parent is Population):
+func apply(game_rules: GameRules, population: Population) -> void:
+	if not game_rules.population_growth_enabled:
 		return
 	
-	var population := parent as Population
-	population.population_size += int(population.population_size * 0.1)
+	if (
+			population.population_size == 0
+			or is_equal_approx(game_rules.population_growth_rate, 0.0)
+	):
+		return
+	
+	var exponent: float = -(1.0 - game_rules.population_growth_rate)
+	var growth_rate: float = population.population_size ** exponent
+	
+	population.population_size += int(
+			population.population_size * growth_rate
+	)
