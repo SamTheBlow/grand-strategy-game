@@ -11,10 +11,17 @@ func _init(army_id: int, destination_province_id: int) -> void:
 	_destination_province_id = destination_province_id
 
 
-func apply_to(game: Game) -> void:
+func apply_to(game: Game, player: Player) -> void:
 	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
-		push_warning("Tried to move an army that doesn't exist")
+		push_warning("Tried to move an army that doesn't exist!")
+		return
+	
+	if army.owner_country() != player.playing_country:
+		push_warning(
+				"Tried to move an army, "
+				+ "but the army is not under the player's control!"
+		)
 		return
 	
 	var destination_province: Province = (
@@ -22,7 +29,13 @@ func apply_to(game: Game) -> void:
 	)
 	if not destination_province:
 		push_warning(
-				"Tried to move an army to a province that doesn't exist"
+				"Tried to move an army to a province that doesn't exist!"
+		)
+		return
+	
+	if not army.province().links.has(destination_province):
+		push_warning(
+				"Tried to move an army to an invalid destination!"
 		)
 		return
 	

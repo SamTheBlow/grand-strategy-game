@@ -328,7 +328,7 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(self)
+		action_split.apply_to(self, you)
 		you.add_action(action_split)
 		
 		moving_army_id = new_army_id
@@ -336,7 +336,7 @@ func new_action_army_movement(
 	var action_move := ActionArmyMovement.new(
 			moving_army_id, destination_province.id
 	)
-	action_move.apply_to(self)
+	action_move.apply_to(self, you)
 	you.add_action(action_move)
 
 
@@ -374,12 +374,12 @@ func end_game() -> Country:
 func _play_player_turn(player: Player) -> void:
 	# Have the AI play its moves
 	if player.id != _your_id:
-		(player as PlayerAI).play(copy())
+		(player as PlayerAI).play(self)
 	
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
 	for action in actions:
-		action.apply_to(self)
+		action.apply_to(self, player)
 	
 	_end_player_turn()
 

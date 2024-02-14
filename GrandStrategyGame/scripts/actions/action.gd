@@ -4,5 +4,6 @@ extends Node
 ## Actions are the things players do that affect the game state.
 
 
-func apply_to(_game: Game) -> void:
+## Takes in the current game as well as the player trying to apply the action.
+func apply_to(_game: Game, _player: Player) -> void:
 	pass
