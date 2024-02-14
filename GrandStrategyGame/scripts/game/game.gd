@@ -393,6 +393,18 @@ func _end_player_turn() -> void:
 	for army in world.armies.armies:
 		army.refresh_visuals()
 	
+	for province in world.provinces.get_provinces():
+		# Update province ownership
+		ProvinceNewOwner.new().update_province_owner(province)
+		
+		# For debugging, check if there's more than one army on any province
+		if world.armies.armies_in_province(province).size() > 1:
+			print_debug(
+					"At the end of a player's turn, found more than "
+					+ "one army in province (ID: " + str(province.id) + ")."
+			)
+	
+	
 	#print("--- End of player's turn")
 
 

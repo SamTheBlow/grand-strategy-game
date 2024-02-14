@@ -27,7 +27,6 @@ var _income_money: IncomeMoney
 
 
 func _on_new_turn() -> void:
-	ProvinceNewOwner.new().update_province_owner(self)
 	ArmyReinforcements.new().reinforce_province(self)
 	_owner_country.money += _income_money.total()
 
