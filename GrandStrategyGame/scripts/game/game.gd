@@ -34,6 +34,7 @@ var turn: GameTurn
 var component_ui: ComponentUI
 
 var _your_id: int
+var _game_over: bool = false
 
 ## Keys are a modifier context (String); values are a Modifier
 var global_modifiers: Dictionary = {}
@@ -44,11 +45,21 @@ func _on_new_turn() -> void:
 
 
 func _on_game_over() -> void:
+	if _game_over:
+		return
+	
 	var winning_country: Country = end_game()
 	
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
 	game_over_popup.init(winning_country)
 	_add_popup(game_over_popup)
+	
+	chat.system_message(
+			"The game is over! The winner is "
+			+ str(winning_country.country_name) + ".\n"
+			+ "You can continue playing if you want."
+	)
+	_game_over = true
 
 
 func _on_province_clicked(province: Province) -> void:
