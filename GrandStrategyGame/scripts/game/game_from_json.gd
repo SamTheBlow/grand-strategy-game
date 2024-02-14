@@ -216,6 +216,8 @@ func _load_players(json_data: Dictionary, game: Game) -> Players:
 ## TODO verify & return errors.
 func _load_player(json_data: Dictionary, game: Game) -> Player:
 	var player: Player = TestAI1.new()
+	if randf() < 0.5:
+		player = TestAI2.new()
 	
 	player.id = json_data["id"]
 	player.playing_country = (

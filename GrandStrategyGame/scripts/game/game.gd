@@ -404,7 +404,6 @@ func _end_player_turn() -> void:
 					+ "one army in province (ID: " + str(province.id) + ")."
 			)
 	
-	
 	#print("--- End of player's turn")
 
 
