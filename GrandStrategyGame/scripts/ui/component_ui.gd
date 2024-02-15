@@ -109,26 +109,42 @@ func _on_army_maximum_changed(maximum: int) -> void:
 ## To be called when creating this node.
 func init(province: Province) -> void:
 	_province = province
+	
 	_update_population_size_label(province.population.population_size)
-	_update_income_money_label(province.income_money().total())
 	province.population.size_changed.connect(_on_population_size_changed)
+	
+	_update_income_money_label(province.income_money().total())
 	province.income_money().changed.connect(_on_income_money_changed)
+	
+	var node0: Control = left_side_nodes[0]
+	var node1: Control = left_side_nodes[1]
+	left_side_nodes = []
 	
 	var your_id: int = _province.game._your_id
 	var you: Player = _province.game.players.player_from_id(your_id)
-	_fortress_buy_conditions = FortressBuyConditions.new(
-			you.playing_country, _province
-	)
-	_fortress_buy_conditions.can_buy_changed.connect(
-			_on_fortress_can_buy_changed
-	)
-	buy_fortress_button.disabled = not _fortress_buy_conditions.can_buy()
+	if province.game.rules.can_buy_fortress:
+		_fortress_buy_conditions = FortressBuyConditions.new(
+				you.playing_country, _province
+		)
+		_fortress_buy_conditions.can_buy_changed.connect(
+				_on_fortress_can_buy_changed
+		)
+		buy_fortress_button.disabled = not _fortress_buy_conditions.can_buy()
+		left_side_nodes.append(node0)
+	else:
+		node0.hide()
 	
-	_army_recruitment_limit = ArmyRecruitmentLimit.new(
-			you.playing_country, _province
-	)
-	_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
-	recruit_button.disabled = _army_recruitment_limit.maximum() == 0
+	if province.game.rules.recruitment_enabled:
+		_army_recruitment_limit = ArmyRecruitmentLimit.new(
+				you.playing_country, _province
+		)
+		_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
+		recruit_button.disabled = _army_recruitment_limit.maximum() == 0
+		left_side_nodes.append(node1)
+	else:
+		node1.hide()
+	
+	_update_left_side_nodes()
 
 
 func set_line_top(value: float) -> void:
