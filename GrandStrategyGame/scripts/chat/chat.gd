@@ -2,9 +2,6 @@ class_name Chat
 extends Control
 
 
-signal requested_province_info()
-signal requested_buy_fortress()
-signal requested_recruitment(army_size: int)
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()
@@ -12,6 +9,11 @@ signal rules_requested()
 
 @onready var chat_log := %ChatText as RichTextLabel
 @onready var chat_input := %ChatInput as LineEdit
+
+
+func _ready() -> void:
+	send_global_message("The game begins!")
+	send_global_message("Type /help to get a list of commands.")
 
 
 func _on_input_text_submitted(new_text: String) -> void:
@@ -26,28 +28,13 @@ func _on_input_text_submitted(new_text: String) -> void:
 		match command_name:
 			"help":
 				system_message_multiline([
-						"/help - Gives a list of every command",
-						"/infop - Gives info on selected province",
-						"/fort - Buys a fortress in selected province",
-						"/army - Recruits new units in selected province",
+						"/help - Get a list of every command",
 						"/fs - Toggle fullscreen",
 						"/save - Save the game",
 						"/load - Load the saved game",
 						"/mainmenu - Go back to the main menu (without saving!)",
-						"/rules - Gives a list of the current game rules",
+						"/rules - Get a list of this game's rules",
 				])
-			"infop":
-				requested_province_info.emit()
-			"fort":
-				requested_buy_fortress.emit()
-			"army":
-				if command_args.size() == 1 and command_args[0].is_valid_int():
-					var army_size: int = command_args[0].to_int()
-					requested_recruitment.emit(army_size)
-				else:
-					system_message(
-							"Command needs a number of units as an argument."
-					)
 			"fs":
 				var mode: int = DisplayServer.window_get_mode()
 				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
@@ -73,7 +60,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 			_:
 				system_message(
 						'"[color=black]' + new_text + '[/color]"'
-						+ "is not a valid command"
+						+ " is not a valid command"
 				)
 	else:
 		# Not a command
@@ -83,14 +70,17 @@ func _on_input_text_submitted(new_text: String) -> void:
 	chat_input.text = ""
 
 
-func _ready() -> void:
-	system_message("The game begins!")
-	system_message("Type /help to get a list of commands")
+## Sends a message to all players.
+func send_global_message(text: String) -> void:
+	chat_log.text += "[i][color=#404040]" + text + "[/color][/i]\n"
 
 
+# TODO don't send to all players (when multiplayer is implemented)
+## Sends a private message to the player.
 func system_message(new_text: String) -> void:
 	chat_log.text += (
-			"[i][color=#404040]" + "System: " + new_text + "[/color][/i]\n"
+			"[color=#202020]System: [/color][color=#404040]"
+			+ new_text + "[/color]\n"
 	)
 
 
@@ -102,4 +92,12 @@ func system_message_multiline(text_lines: Array[String]) -> void:
 
 
 func new_message(new_text: String) -> void:
-	chat_log.text += new_text + "\n"
+	var stripped_text: String = new_text.strip_edges()
+	
+	if stripped_text == "":
+		return
+	
+	chat_log.text += (
+			"[color=#202020]You: [/color][color=#404040]"
+			+ stripped_text + "[/color]\n"
+	)

@@ -54,11 +54,11 @@ func _on_game_over() -> void:
 	game_over_popup.init(winning_country)
 	_add_popup(game_over_popup)
 	
-	chat.system_message(
+	chat.send_global_message(
 			"The game is over! The winner is "
-			+ str(winning_country.country_name) + ".\n"
-			+ "You can continue playing if you want."
+			+ str(winning_country.country_name) + "."
 	)
+	chat.send_global_message("You can continue playing if you want.")
 	_game_over = true
 
 
@@ -175,37 +175,6 @@ func _on_save_requested() -> void:
 
 func _on_exit_to_main_menu_requested() -> void:
 	game_ended.emit()
-
-
-func _on_chat_requested_province_info() -> void:
-	var selected_province: Province = world.provinces.selected_province
-	if not selected_province:
-		chat.system_message("No province selected.")
-		return
-	
-	var population_size: int = selected_province.population.population_size
-	chat.system_message_multiline([
-		"Population size: " + str(population_size),
-		"Income: " + str(selected_province.income_money())
-	])
-
-
-func _on_chat_requested_buy_fortress() -> void:
-	var selected_province: Province = world.provinces.selected_province
-	if not selected_province:
-		chat.system_message("No province selected.")
-		return
-	
-	_buy_fortress(selected_province)
-
-
-func _on_chat_requested_recruitment(troop_amount: int) -> void:
-	var selected_province: Province = world.provinces.selected_province
-	if not selected_province:
-		chat.system_message("No province selected.")
-		return
-	
-	_recruit_troops(selected_province, troop_amount)
 
 
 func _on_chat_rules_requested() -> void:
