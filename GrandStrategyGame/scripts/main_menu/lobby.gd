@@ -87,10 +87,15 @@ func _selected_game_rules() -> GameRules:
 			(%ProvinceIncomePerPerson as SpinBox).value
 	)
 	
-	var att_eff := %AttackerEfficiencySpinBox as SpinBox
-	game_rules.global_attacker_efficiency = att_eff.value
+	game_rules.minimum_army_size = (
+			roundi((%MinimumArmySize as SpinBox).value)
+	)
 	
-	var def_eff := %DefenderEfficiencySpinBox as SpinBox
-	game_rules.global_defender_efficiency = def_eff.value
+	game_rules.global_attacker_efficiency = (
+			(%AttackerEfficiencySpinBox as SpinBox).value
+	)
+	game_rules.global_defender_efficiency = (
+			(%DefenderEfficiencySpinBox as SpinBox).value
+	)
 	
 	return game_rules

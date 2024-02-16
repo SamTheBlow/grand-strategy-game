@@ -126,10 +126,9 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
-			# TODO don't hard code the minimum army size
 			recruitment_popup.init(
 					world.provinces.selected_province,
-					0,
+					rules.minimum_army_size,
 					army_recruitment_limit.maximum()
 			)
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
@@ -434,11 +433,10 @@ func _recruit_troops(province: Province, troop_amount: int) -> void:
 		)
 		return
 	
-	# TODO don't hard code minimum army size
-	# TODO also, it should be OK to recruit less than 10 if there's 
+	# TODO it should be OK to recruit less than minimum if there's 
 	# already enough troops in that province
-	if troop_amount < 10:
-		print_debug("Tried recruiting less than the minimum army size")
+	if troop_amount < rules.minimum_army_size:
+		print_debug("Tried recruiting less than the minimum army size.")
 		return
 	
 	your_country.money -= Army.money_cost(troop_amount, rules)

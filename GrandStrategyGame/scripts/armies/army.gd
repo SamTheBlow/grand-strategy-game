@@ -10,7 +10,7 @@ var game: Game
 
 var id: int
 
-var army_size := ArmySize.new()
+var army_size: ArmySize
 var _province: Province
 var _owner_country := Country.new()
 
@@ -145,12 +145,16 @@ static func quick_setup(
 		owner_country_: Country,
 		province_: Province
 ) -> Army:
+	var minimum_army_size: int = game_.rules.minimum_army_size
+	if army_size_ < minimum_army_size:
+		return null
+	
 	var army := game_.army_scene.instantiate() as Army
 	army.game = game_
 	army.id = id_
 	army.name = str(army.id)
 	
-	army.army_size = ArmySize.new(army_size_, 10)
+	army.army_size = ArmySize.new(army_size_, minimum_army_size)
 	army.army_size.size_changed.connect(army._on_army_size_changed)
 	army.army_size.became_too_small.connect(army.destroy)
 	army._update_troop_count_label()

@@ -23,9 +23,6 @@ func reinforce_province(province: Province) -> void:
 					province.population.population_size
 					* province.game.rules.reinforcements_per_person
 			)
-	# TODO this code should not be here!
-	if reinforcements_size < 10:
-		return
 	
 	var _army: Army = Army.quick_setup(
 			province.game,

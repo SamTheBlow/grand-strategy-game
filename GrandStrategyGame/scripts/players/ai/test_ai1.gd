@@ -64,7 +64,7 @@ func _find_target_province(
 		
 		var new_army_ids: Array[int] = []
 		
-		if troops_per_army >= 10:
+		if troops_per_army >= army.game.rules.minimum_army_size:
 			# Create the partition
 			var troop_partition: Array[int] = []
 			for i in number_of_armies:

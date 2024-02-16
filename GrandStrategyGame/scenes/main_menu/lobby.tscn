@@ -567,6 +567,25 @@ alignment = 1
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
+[node name="HBoxContainer10" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer10"]
+layout_mode = 2
+text = "Minimum army size"
+
+[node name="MinimumArmySize" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer10"]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 1.0
+value = 1.0
+allow_greater = true
+alignment = 1
+
+[node name="Spacing8" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
 [node name="HBoxContainer4" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 

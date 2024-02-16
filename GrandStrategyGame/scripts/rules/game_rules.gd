@@ -26,6 +26,7 @@ const RULE_NAMES: Array[String] = [
 	"province_income_random_max",
 	"province_income_constant",
 	"province_income_per_person",
+	"minimum_army_size",
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
 ]
@@ -65,5 +66,6 @@ enum ProvinceIncome {
 @export var province_income_random_max: int = 100
 @export var province_income_constant: int = 100
 @export var province_income_per_person: float = 1.5
+@export var minimum_army_size: int = 1
 @export var global_attacker_efficiency: float = 1.0
 @export var global_defender_efficiency: float = 1.0

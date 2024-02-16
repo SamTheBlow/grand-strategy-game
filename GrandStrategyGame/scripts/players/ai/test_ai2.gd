@@ -149,10 +149,9 @@ func play(game: Game) -> void:
 					partition2[0] += army_size - part_sum
 					
 					# If any of the parts is too small, then you can't split
-					# TODO don't hard code minimum army size
 					var is_large_enough: bool = true
 					for part in partition2:
-						if part < 10:
+						if part < game.rules.minimum_army_size:
 							is_large_enough = false
 							break
 					

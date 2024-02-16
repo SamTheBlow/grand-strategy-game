@@ -103,7 +103,7 @@ func _on_fortress_can_buy_changed(can_buy: bool) -> void:
 
 
 func _on_army_maximum_changed(maximum: int) -> void:
-	recruit_button.disabled = maximum == 0
+	recruit_button.disabled = maximum < _province.game.rules.minimum_army_size
 
 
 ## To be called when creating this node.
@@ -139,7 +139,7 @@ func init(province: Province) -> void:
 				you.playing_country, _province
 		)
 		_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
-		recruit_button.disabled = _army_recruitment_limit.maximum() == 0
+		_on_army_maximum_changed(_army_recruitment_limit.maximum())
 		left_side_nodes.append(node1)
 	else:
 		node1.hide()

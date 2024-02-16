@@ -38,10 +38,9 @@ func apply_to(game: Game, player: Player) -> void:
 		)
 		return
 	
-	# TODO don't hard code minimum army size
 	var partition_sum: int = 0
 	for army_size in _troop_partition:
-		if army_size < 10:
+		if army_size < army.army_size.minimum():
 			push_warning(
 					"Tried to split an army, but at least one "
 					+ "of the resulting armies was too small!"

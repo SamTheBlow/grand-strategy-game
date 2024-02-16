@@ -38,6 +38,10 @@ func current_size() -> int:
 	return _size
 
 
+func minimum() -> int:
+	return _minimum_size
+
+
 ## Adds some amount of troops. The input must be positive or zero.
 func add(number: int) -> void:
 	if _has_maximum_size and _size + number > _maximum_size:
