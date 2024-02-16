@@ -99,3 +99,10 @@ func show_as_neighbor(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
 
 func is_linked_to(province: Province) -> bool:
 	return links.has(province)
+
+
+func is_frontline() -> bool:
+	for link in links:
+		if link.has_owner_country() and link.owner_country() != _owner_country:
+			return true
+	return false

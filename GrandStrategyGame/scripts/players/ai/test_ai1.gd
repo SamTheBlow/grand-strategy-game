@@ -1,11 +1,15 @@
 class_name TestAI1
 extends PlayerAI
-## Test AI. Always tries to move its armies to the nearest targets.
-## It also leaves some troops idle to defend.
+## Test AI.
+## Always tries to move its armies to the nearest non-controlled province.
+## Also leaves some troops idle to defend.
+## Builds fortresses in the most populated provinces on the frontline.
 
 
 func play(game: Game) -> void:
 	var result: Array[Action] = []
+	
+	result.append_array(_try_build_fortresses(game))
 	
 	var provinces: Array[Province] = game.world.provinces.get_provinces()
 	var number_of_provinces: int = provinces.size()
@@ -26,6 +30,44 @@ func play(game: Game) -> void:
 				result.append_array(new_actions)
 	
 	actions = result
+
+
+func _try_build_fortresses(game: Game) -> Array[Action]:
+	if not game.rules.can_buy_fortress:
+		return []
+	
+	var output: Array[Action] = []
+	
+	# Try building in each province, starting from the most populated
+	var candidates: Array[Province] = (
+			game.world.provinces.provinces_on_frontline(playing_country)
+	)
+	var expected_money: int = playing_country.money
+	while (
+			candidates.size() > 0
+			and expected_money >= game.rules.fortress_price
+	):
+		# Find the most populated province
+		var most_populated: Province
+		for province in candidates:
+			if not most_populated:
+				most_populated = province
+				continue
+			if (
+					province.population.population_size
+					> most_populated.population.population_size
+			):
+				most_populated = province
+		
+		# Build in that province, if possible
+		var build_conditions := FortressBuyConditions.new(playing_country, most_populated)
+		if build_conditions.can_buy():
+			output.append(ActionBuild.new(most_populated.id))
+			expected_money -= game.rules.fortress_price
+		
+		candidates.erase(most_populated)
+	
+	return output
 
 
 # A link tree takes the form of [[p1, p2], [p3, p4], ...]

@@ -24,11 +24,39 @@ func deselect_province() -> void:
 	selected_province = null
 
 
+## Creates a brand new array every time.
 func get_provinces() -> Array[Province]:
 	var output: Array[Province] = []
 	var children: Array[Node] = get_children()
 	for child in children:
 		output.append(child as Province)
+	return output
+
+
+func provinces_of_country(country: Country) -> Array[Province]:
+	var output: Array[Province] = []
+	var children: Array[Node] = get_children()
+	for child in children:
+		var province := child as Province
+		if (
+				province.has_owner_country()
+				and province.owner_country() == country
+		):
+			output.append(province)
+	return output
+
+
+func provinces_on_frontline(country: Country) -> Array[Province]:
+	var output: Array[Province] = []
+	var children: Array[Node] = get_children()
+	for child in children:
+		var province := child as Province
+		if (
+				province.has_owner_country()
+				and province.owner_country() == country
+				and province.is_frontline()
+		):
+			output.append(province)
 	return output
 
 

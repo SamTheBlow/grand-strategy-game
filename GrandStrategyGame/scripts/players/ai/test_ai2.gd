@@ -3,6 +3,7 @@ extends PlayerAI
 ## Test AI.
 ## Tries to maintain a well-defended frontline.
 ## Only attacks when it's safe.
+## Tries to build fortresses on the frontline where they are needed the most.
 
 
 func play(game: Game) -> void:
@@ -47,6 +48,8 @@ func play(game: Game) -> void:
 			danger_level += minf(danger, 5.0)
 		
 		danger_levels.append(danger_level)
+	
+	result.append_array(_try_build_fortresses(game, borders, danger_levels))
 	
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
@@ -206,6 +209,47 @@ func _army_size(game: Game, province: Province, is_yours: bool) -> int:
 		else:
 			if army.owner_country() != playing_country:
 				output += army.army_size.current_size()
+	return output
+
+
+# TODO DRY. This is mostly a copy/paste from the other AI...
+func _try_build_fortresses(
+		game: Game, borders: Array[Province], danger_levels: Array[float]
+) -> Array[Action]:
+	if not game.rules.can_buy_fortress:
+		return []
+	
+	var output: Array[Action] = []
+	
+	# Try building in each province, starting from the most populated
+	var candidates: Array[Province] = borders.duplicate()
+	var expected_money: int = playing_country.money
+	while (
+			candidates.size() > 0
+			and expected_money >= game.rules.fortress_price
+	):
+		# Find the most endangered province
+		var most_endangered_index: int = -1
+		for i in candidates.size():
+			if (
+					most_endangered_index == -1
+					or danger_levels[i] > danger_levels[most_endangered_index]
+			):
+				most_endangered_index = i
+		var most_endangered_province: Province = (
+				candidates[most_endangered_index]
+		)
+		
+		# Build in that province, if possible
+		var build_conditions := FortressBuyConditions.new(
+				playing_country, most_endangered_province
+		)
+		if build_conditions.can_buy():
+			output.append(ActionBuild.new(most_endangered_province.id))
+			expected_money -= game.rules.fortress_price
+		
+		candidates.remove_at(most_endangered_index)
+	
 	return output
 
 
