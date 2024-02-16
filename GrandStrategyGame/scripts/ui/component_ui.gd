@@ -107,7 +107,7 @@ func _on_army_maximum_changed(maximum: int) -> void:
 
 
 ## To be called when creating this node.
-func init(province: Province) -> void:
+func init(province: Province, your_country: Country) -> void:
 	_province = province
 	
 	_update_population_size_label(province.population.population_size)
@@ -120,11 +120,9 @@ func init(province: Province) -> void:
 	var node1: Control = left_side_nodes[1]
 	left_side_nodes = []
 	
-	var your_id: int = _province.game._your_id
-	var you: Player = _province.game.players.player_from_id(your_id)
 	if province.game.rules.can_buy_fortress:
 		_fortress_buy_conditions = FortressBuyConditions.new(
-				you.playing_country, _province
+				your_country, _province
 		)
 		_fortress_buy_conditions.can_buy_changed.connect(
 				_on_fortress_can_buy_changed
@@ -136,7 +134,7 @@ func init(province: Province) -> void:
 	
 	if province.game.rules.recruitment_enabled:
 		_army_recruitment_limit = ArmyRecruitmentLimit.new(
-				you.playing_country, _province
+				your_country, _province
 		)
 		_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
 		_on_army_maximum_changed(_army_recruitment_limit.maximum())

@@ -33,7 +33,7 @@ var world: GameWorld
 var turn: GameTurn
 var component_ui: ComponentUI
 
-var _your_id: int
+var _you: Player
 var _game_over: bool = false
 
 ## Keys are a modifier context (String); values are a Modifier
@@ -63,7 +63,7 @@ func _on_game_over() -> void:
 
 
 func _on_province_clicked(province: Province) -> void:
-	var your_country: Country = countries.country_from_id(_your_id)
+	var your_country: Country = _you.playing_country
 	var provinces_node: Provinces = world.provinces
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
@@ -87,14 +87,16 @@ func _on_province_clicked(province: Province) -> void:
 			your_country, province
 	)
 	if active_armies_.size() > 0:
-		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET)
+		province.show_neighbors(
+				ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
+		)
 	else:
 		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
 
 
 func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.init(world.provinces.selected_province)
+	component_ui.init(world.provinces.selected_province, _you.playing_country)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)
 
@@ -120,7 +122,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 		1:
 			# Recruitment
 			var army_recruitment_limit := ArmyRecruitmentLimit.new(
-					players.player_from_id(_your_id).playing_country,
+					_you.playing_country,
 					world.provinces.selected_province
 			)
 			var recruitment_popup := (
@@ -137,12 +139,16 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 
 func _on_buy_fortress_confirmed(province: Province) -> void:
 	deselect_province()
-	_buy_fortress(province)
+	var action_build := ActionBuild.new(province.id)
+	action_build.apply_to(self, _you)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 	deselect_province()
-	_recruit_troops(province, troop_amount)
+	var action_recruitment := ActionRecruitment.new(
+			province.id, troop_amount, world.armies.new_unique_army_id()
+	)
+	action_recruitment.apply_to(self, _you)
 
 
 func _on_army_movement_closed() -> void:
@@ -200,7 +206,7 @@ func init1() -> void:
 
 ## Initialization 2. To be done after everything is loaded.
 func init2(your_id: int) -> void:
-	_your_id = your_id
+	_you = players.player_from_id(your_id)
 	
 	# Setup global modifiers
 	global_modifiers = {}
@@ -225,12 +231,11 @@ func init2(your_id: int) -> void:
 	
 	# TODO this shouldn't be here either
 	# Find the province to move the camera to and move the camera there
-	var playing_country: Country = players.player_from_id(your_id).playing_country
 	var target_province: Province
 	for province in world.provinces.get_provinces():
 		if (
 				province.has_owner_country()
-				and province.owner_country() == playing_country
+				and province.owner_country() == _you.playing_country
 		):
 			target_province = province
 			break
@@ -238,7 +243,7 @@ func init2(your_id: int) -> void:
 		camera.position = target_province.position_army_host
 	
 	$WorldLayer.add_child(world)
-	top_bar.init(self)
+	top_bar.init(self, _you.playing_country)
 
 
 ## For loading. The rules must be setup beforehand.
@@ -295,7 +300,6 @@ func new_action_army_movement(
 		number_of_troops: int,
 		destination_province: Province
 ) -> void:
-	var you: Player = players.player_from_id(_your_id)
 	var moving_army_id: int = army.id
 	
 	# Split the army into two if needed
@@ -307,16 +311,14 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(self, you)
-		you.add_action(action_split)
+		action_split.apply_to(self, _you)
 		
 		moving_army_id = new_army_id
 	
 	var action_move := ActionArmyMovement.new(
 			moving_army_id, destination_province.id
 	)
-	action_move.apply_to(self, you)
-	you.add_action(action_move)
+	action_move.apply_to(self, _you)
 
 
 func end_turn() -> void:
@@ -327,7 +329,7 @@ func end_turn() -> void:
 	
 	# Play all other players' turn
 	for player in players.players:
-		if player.id == _your_id:
+		if player == _you:
 			continue
 		_play_player_turn(player)
 	
@@ -352,8 +354,7 @@ func end_game() -> Country:
 
 func _play_player_turn(player: Player) -> void:
 	# Have the AI play its moves
-	if player.id != _your_id:
-		(player as PlayerAI).play(self)
+	(player as PlayerAI).play(self)
 	
 	# Process the player's actions
 	var actions: Array[Action] = (player as Player).actions
@@ -400,58 +401,6 @@ func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.setup_contents(contents)
 	popups.add_child(popup)
-
-
-func _buy_fortress(province: Province) -> void:
-	var your_country: Country = (
-			players.player_from_id(_your_id).playing_country
-	)
-	var buy_conditions := FortressBuyConditions.new(your_country, province)
-	if not buy_conditions.can_buy():
-		print_debug(
-				"Tried to buy a fortress, but not all conditions were met: "
-				+ buy_conditions.error_message
-		)
-		return
-	
-	var fortress: Fortress = Fortress.new_fortress(self, province)
-	fortress.add_visuals()
-	province.buildings.add(fortress)
-	
-	your_country.money -= rules.fortress_price
-
-
-func _recruit_troops(province: Province, troop_amount: int) -> void:
-	var your_country: Country = (
-			players.player_from_id(_your_id).playing_country
-	)
-	var troop_maximum := ArmyRecruitmentLimit.new(your_country, province)
-	if troop_maximum.maximum() < troop_amount:
-		print_debug(
-				"Tried to recruit troops, but not all conditions were met: "
-				+ troop_maximum.error_message
-		)
-		return
-	
-	# TODO it should be OK to recruit less than minimum if there's 
-	# already enough troops in that province
-	if troop_amount < rules.minimum_army_size:
-		print_debug("Tried recruiting less than the minimum army size.")
-		return
-	
-	your_country.money -= Army.money_cost(troop_amount, rules)
-	province.population.population_size -= (
-			Army.population_cost(troop_amount, rules)
-	)
-	
-	var _army: Army = Army.quick_setup(
-			self,
-			world.armies.new_unique_army_id(),
-			troop_amount,
-			province.owner_country(),
-			province
-	)
-	world.armies.merge_armies(province)
 
 
 func _check_percentage_winner() -> void:

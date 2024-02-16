@@ -20,10 +20,7 @@ func _on_turn_changed(new_turn: int) -> void:
 
 
 ## To be called when a game is loaded.
-func init(game: Game) -> void:
-	var your_country: Country = (
-			game.players.player_from_id(game._your_id).playing_country
-	)
+func init(game: Game, your_country: Country) -> void:
 	country_color_rect.color = your_country.color
 	country_name_label.text = your_country.country_name
 	
