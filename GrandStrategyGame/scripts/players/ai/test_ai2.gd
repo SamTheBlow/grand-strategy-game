@@ -216,7 +216,7 @@ func _army_size(game: Game, province: Province, is_yours: bool) -> int:
 func _try_build_fortresses(
 		game: Game, borders: Array[Province], danger_levels: Array[float]
 ) -> Array[Action]:
-	if not game.rules.can_buy_fortress:
+	if not game.rules.build_fortress_enabled:
 		return []
 	
 	var output: Array[Action] = []
@@ -241,10 +241,10 @@ func _try_build_fortresses(
 		)
 		
 		# Build in that province, if possible
-		var build_conditions := FortressBuyConditions.new(
+		var build_conditions := FortressBuildConditions.new(
 				playing_country, most_endangered_province
 		)
-		if build_conditions.can_buy():
+		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_endangered_province.id))
 			expected_money -= game.rules.fortress_price
 		

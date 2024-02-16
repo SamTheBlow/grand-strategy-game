@@ -20,15 +20,15 @@ func apply_to(game: Game, player: Player) -> void:
 	
 	if not province:
 		print_debug(
-				"Tried to buy a fortress in a province that doesn't exist!"
+				"Tried to build a fortress in a province that doesn't exist!"
 		)
 		return
 	
-	var buy_conditions := FortressBuyConditions.new(your_country, province)
-	if not buy_conditions.can_buy():
+	var build_conditions := FortressBuildConditions.new(your_country, province)
+	if not build_conditions.can_build():
 		print_debug(
-				"Tried to buy a fortress, but not all conditions were met: "
-				+ buy_conditions.error_message
+				"Tried to build a fortress, but not all conditions were met: "
+				+ build_conditions.error_message
 		)
 		return
 	

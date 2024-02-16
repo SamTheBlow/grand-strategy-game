@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/component_ui.gd" id="1_p8xv2"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="2_gn6af"]
 
-[node name="ComponentUi" type="Control" node_paths=PackedStringArray("population_size_label", "income_money_label", "buy_fortress_button", "recruit_button", "left_side_nodes", "right_side_nodes")]
+[node name="ComponentUi" type="Control" node_paths=PackedStringArray("population_size_label", "income_money_label", "build_fortress_button", "recruit_button", "left_side_nodes", "right_side_nodes")]
 layout_mode = 3
 anchors_preset = 0
 mouse_filter = 2
@@ -13,7 +13,7 @@ line_bottom = 96.0
 line_length_x = 192.0
 population_size_label = NodePath("Control3/MarginContainer/HBoxContainer/Text/Label")
 income_money_label = NodePath("Control4/MarginContainer/HBoxContainer/Text/Label")
-buy_fortress_button = NodePath("Control1/MarginContainer/BuyFortressButton")
+build_fortress_button = NodePath("Control1/MarginContainer/BuildFortressButton")
 recruit_button = NodePath("Control2/MarginContainer/RecruitButton")
 left_side_nodes = [NodePath("Control1"), NodePath("Control2")]
 right_side_nodes = [NodePath("Control3"), NodePath("Control4")]
@@ -57,9 +57,9 @@ grow_vertical = 2
 layout_mode = 2
 color = Color(0.501961, 0.501961, 0.501961, 1)
 
-[node name="BuyFortressButton" type="Button" parent="Control1/MarginContainer"]
+[node name="BuildFortressButton" type="Button" parent="Control1/MarginContainer"]
 layout_mode = 2
-text = "Buy Fortress"
+text = "Build Fortress"
 
 [node name="Control2" type="Control" parent="."]
 anchors_preset = 0
@@ -280,5 +280,5 @@ text = "69420"
 vertical_alignment = 1
 clip_text = true
 
-[connection signal="pressed" from="Control1/MarginContainer/BuyFortressButton" to="." method="_on_buy_fortress_button_pressed"]
+[connection signal="pressed" from="Control1/MarginContainer/BuildFortressButton" to="." method="_on_build_fortress_button_pressed"]
 [connection signal="pressed" from="Control2/MarginContainer/RecruitButton" to="." method="_on_recruit_button_pressed"]

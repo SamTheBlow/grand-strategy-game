@@ -16,14 +16,14 @@ signal button_pressed(button_id: int)
 @export_category("Inner nodes")
 @export var population_size_label: Label
 @export var income_money_label: Label
-@export var buy_fortress_button: Button
+@export var build_fortress_button: Button
 @export var recruit_button: Button
 
 @export var left_side_nodes: Array[Control]
 @export var right_side_nodes: Array[Control]
 
 var _province: Province
-var _fortress_buy_conditions: FortressBuyConditions
+var _fortress_build_conditions: FortressBuildConditions
 var _army_recruitment_limit: ArmyRecruitmentLimit
 
 
@@ -82,7 +82,7 @@ func _draw() -> void:
 	)
 
 
-func _on_buy_fortress_button_pressed() -> void:
+func _on_build_fortress_button_pressed() -> void:
 	button_pressed.emit(0)
 
 
@@ -98,8 +98,8 @@ func _on_income_money_changed(new_value: int) -> void:
 	_update_income_money_label(new_value)
 
 
-func _on_fortress_can_buy_changed(can_buy: bool) -> void:
-	buy_fortress_button.disabled = not can_buy
+func _on_fortress_can_build_changed(can_build: bool) -> void:
+	build_fortress_button.disabled = not can_build
 
 
 func _on_army_maximum_changed(maximum: int) -> void:
@@ -120,14 +120,14 @@ func init(province: Province, your_country: Country) -> void:
 	var node1: Control = left_side_nodes[1]
 	left_side_nodes = []
 	
-	if province.game.rules.can_buy_fortress:
-		_fortress_buy_conditions = FortressBuyConditions.new(
+	if province.game.rules.build_fortress_enabled:
+		_fortress_build_conditions = FortressBuildConditions.new(
 				your_country, _province
 		)
-		_fortress_buy_conditions.can_buy_changed.connect(
-				_on_fortress_can_buy_changed
+		_fortress_build_conditions.can_build_changed.connect(
+				_on_fortress_can_build_changed
 		)
-		buy_fortress_button.disabled = not _fortress_buy_conditions.can_buy()
+		_on_fortress_can_build_changed(_fortress_build_conditions.can_build())
 		left_side_nodes.append(node0)
 	else:
 		node0.hide()

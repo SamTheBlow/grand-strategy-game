@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://8rs6mtufs60s"]
 
-[ext_resource type="Script" path="res://scripts/ui/popups/buy_fortress_popup.gd" id="1_hwjbu"]
+[ext_resource type="Script" path="res://scripts/ui/popups/build_fortress_popup.gd" id="1_hwjbu"]
 
 [node name="BuyFortressPopup" type="VBoxContainer" node_paths=PackedStringArray("cost_label")]
 anchors_preset = 15

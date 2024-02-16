@@ -388,37 +388,37 @@ layout_mode = 2
 layout_mode = 2
 text = "Fortresses"
 
-[node name="FortressStart" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="HBoxContainer68" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer68"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer68"]
 layout_mode = 2
 text = "Start with a fortress"
 
-[node name="StartWithFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressStart"]
+[node name="StartWithFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer68"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
 
-[node name="FortressPurchase" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
+[node name="HBoxContainer67" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
 script = ExtResource("4_4itq4")
 nodes_to_hide = [NodePath("../HBoxContainer76")]
-trigger_check_box = NodePath("CanBuyFortress")
+trigger_check_box = NodePath("BuildFortressEnabled")
 
-[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer67"]
 custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer67"]
 layout_mode = 2
-text = "Can be bought"
+text = "Can be built"
 
-[node name="CanBuyFortress" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/FortressPurchase"]
+[node name="BuildFortressEnabled" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer67"]
 unique_name_in_owner = true
 layout_mode = 2
 button_pressed = true
@@ -436,7 +436,7 @@ layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
 layout_mode = 2
-text = "Price"
+text = "Money cost"
 
 [node name="FortressPrice" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer76"]
 unique_name_in_owner = true

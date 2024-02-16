@@ -1,23 +1,23 @@
-class_name FortressBuyConditions
+class_name FortressBuildConditions
 ## Class responsible for whether or not
-## a player can buy a fortress in a given province.
+## a player can build a fortress in a given province.
 ##
-## On the very moment that the player is (or isn't) now able to buy one,
-## the signal "can_buy_changed" is emitted.
+## On the very moment that the player is (or isn't) now able to build one,
+## the signal "can_build_changed" is emitted.
 ##
-## If you need to check manually, you can use the "can_buy" method.
-## If you can't buy one, the property "error_message" will contain
+## If you need to check manually, you can use the "can_build" method.
+## If you can't build one, the property "error_message" will contain
 ## a human-readable explanation as to why.
 
 
-signal can_buy_changed(can_buy: bool)
+signal can_build_changed(can_build: bool)
 
 
 var error_message: String = ""
 
 var _country: Country
 var _province: Province
-var _can_buy: bool
+var _can_build: bool
 
 
 func _init(country: Country, province: Province) -> void:
@@ -28,7 +28,7 @@ func _init(country: Country, province: Province) -> void:
 	_country.money_changed.connect(_on_money_changed)
 	_province.buildings.changed.connect(_on_buildings_changed)
 	
-	_can_buy = _all_conditions_are_met()
+	_can_build = _all_conditions_are_met()
 
 
 func _on_province_owner_changed(owner_country: Country) -> void:
@@ -49,14 +49,14 @@ func _on_buildings_changed() -> void:
 	_check_condition(there_is_no_fortress)
 
 
-func can_buy() -> bool:
-	return _can_buy
+func can_build() -> bool:
+	return _can_build
 
 
 func _all_conditions_are_met() -> bool:
 	var game: Game = _province.game
 	
-	if not game.rules.can_buy_fortress:
+	if not game.rules.build_fortress_enabled:
 		error_message = "The game's rules don't allow it!"
 		return false
 	
@@ -82,16 +82,16 @@ func _all_conditions_are_met() -> bool:
 
 
 func _check_condition(condition: bool) -> void:
-	if _can_buy:
+	if _can_build:
 		if condition:
 			return
 		# It will always be false, but we also need to update the error message
-		_can_buy = _all_conditions_are_met()
+		_can_build = _all_conditions_are_met()
 	else:
 		if not condition:
 			return
-		_can_buy = _all_conditions_are_met()
-		if not _can_buy:
+		_can_build = _all_conditions_are_met()
+		if not _can_build:
 			return
 	
-	can_buy_changed.emit(_can_buy)
+	can_build_changed.emit(_can_build)

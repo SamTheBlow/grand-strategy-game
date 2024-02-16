@@ -33,7 +33,7 @@ func play(game: Game) -> void:
 
 
 func _try_build_fortresses(game: Game) -> Array[Action]:
-	if not game.rules.can_buy_fortress:
+	if not game.rules.build_fortress_enabled:
 		return []
 	
 	var output: Array[Action] = []
@@ -60,8 +60,10 @@ func _try_build_fortresses(game: Game) -> Array[Action]:
 				most_populated = province
 		
 		# Build in that province, if possible
-		var build_conditions := FortressBuyConditions.new(playing_country, most_populated)
-		if build_conditions.can_buy():
+		var build_conditions := FortressBuildConditions.new(
+				playing_country, most_populated
+		)
+		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_populated.id))
 			expected_money -= game.rules.fortress_price
 		

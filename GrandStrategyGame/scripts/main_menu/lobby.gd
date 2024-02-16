@@ -61,8 +61,8 @@ func _selected_game_rules() -> GameRules:
 	game_rules.start_with_fortress = (
 			(%StartWithFortress as CheckBox).button_pressed
 	)
-	game_rules.can_buy_fortress = (
-			(%CanBuyFortress as CheckBox).button_pressed
+	game_rules.build_fortress_enabled = (
+			(%BuildFortressEnabled as CheckBox).button_pressed
 	)
 	game_rules.fortress_price = (
 			roundi((%FortressPrice as SpinBox).value)

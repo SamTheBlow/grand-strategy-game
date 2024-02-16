@@ -1,4 +1,4 @@
-class_name BuyFortressPopup
+class_name BuildFortressPopup
 extends VBoxContainer
 
 
@@ -17,7 +17,7 @@ func _on_button_pressed(button_index: int) -> void:
 ## To be called when this node is created.
 func init(province: Province, cost: int) -> void:
 	_province = province
-	cost_label.text = "Buy a fortress for " + str(cost) + " money?"
+	cost_label.text = "Build a fortress for " + str(cost) + " money?"
 
 
 func buttons() -> Array[String]:

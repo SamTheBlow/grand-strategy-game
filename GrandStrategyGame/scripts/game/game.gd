@@ -14,7 +14,7 @@ signal game_ended()
 @export var popup_scene: PackedScene
 @export var army_movement_scene: PackedScene
 @export var game_over_scene: PackedScene
-@export var buy_fortress_scene: PackedScene
+@export var build_fortress_scene: PackedScene
 @export var recruitment_scene: PackedScene
 
 @export var component_ui_root: Control
@@ -109,16 +109,16 @@ func _on_province_deselected() -> void:
 func _on_component_ui_button_pressed(button_id: int) -> void:
 	match button_id:
 		0:
-			# Buy fortress
-			var buy_fortress_popup := (
-					buy_fortress_scene.instantiate() as BuyFortressPopup
+			# Build fortress
+			var build_popup := (
+					build_fortress_scene.instantiate() as BuildFortressPopup
 			)
-			buy_fortress_popup.init(
+			build_popup.init(
 					world.provinces.selected_province,
 					rules.fortress_price
 			)
-			buy_fortress_popup.confirmed.connect(_on_buy_fortress_confirmed)
-			_add_popup(buy_fortress_popup)
+			build_popup.confirmed.connect(_on_build_fortress_confirmed)
+			_add_popup(build_popup)
 		1:
 			# Recruitment
 			var army_recruitment_limit := ArmyRecruitmentLimit.new(
@@ -137,7 +137,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			_add_popup(recruitment_popup)
 
 
-func _on_buy_fortress_confirmed(province: Province) -> void:
+func _on_build_fortress_confirmed(province: Province) -> void:
 	deselect_province()
 	var action_build := ActionBuild.new(province.id)
 	action_build.apply_to(self, _you)

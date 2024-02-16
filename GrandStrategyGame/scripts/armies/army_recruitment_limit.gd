@@ -70,7 +70,7 @@ func _calculate_maximum() -> int:
 	var money_for_one_troop: int = ceili(money_per_unit)
 	if _country.money < money_for_one_troop:
 		error_message = (
-				"Your country doesn't have enough money to buy any. "
+				"Your country doesn't have enough money to recruit any. "
 				+ "One troop costs " + str(money_for_one_troop) + " money, "
 				+ "but you only have " + str(_country.money) + "."
 		)
