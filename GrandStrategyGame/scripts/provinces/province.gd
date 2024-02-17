@@ -13,7 +13,7 @@ var game: Game
 var id: int
 
 # Nodes
-var armies: Node
+var army_stack: ArmyStack
 var buildings: Buildings
 
 # Positions
@@ -35,10 +35,14 @@ func _on_shape_clicked() -> void:
 	clicked.emit(self)
 
 
-func setup_buildings() -> void:
-	buildings = Buildings.new()
-	buildings.name = "Buildings"
-	add_child(buildings)
+func init() -> void:
+	_setup_army_stack()
+	_setup_buildings()
+	
+	name = str(id)
+	clicked.connect(game._on_province_clicked)
+	selected.connect(game._on_province_selected)
+	deselected.connect(game._on_province_deselected)
 
 
 func province_shape() -> ProvinceShapePolygon2D:
@@ -106,3 +110,17 @@ func is_frontline() -> bool:
 		if link.has_owner_country() and link.owner_country() != _owner_country:
 			return true
 	return false
+
+
+func _setup_army_stack() -> void:
+	army_stack = ArmyStack.new()
+	army_stack.name = "ArmyStack"
+	army_stack.position = position_army_host
+	army_stack.child_order_changed.connect(army_stack._on_child_order_changed)
+	add_child(army_stack)
+
+
+func _setup_buildings() -> void:
+	buildings = Buildings.new()
+	buildings.name = "Buildings"
+	add_child(buildings)

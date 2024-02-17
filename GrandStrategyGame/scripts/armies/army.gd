@@ -54,13 +54,10 @@ func province() -> Province:
 
 
 func move_to_province(destination: Province) -> void:
-	if not animation_is_playing:
-		global_position = destination.position_army_host
-	
 	if _province:
-		_province.armies.remove_child(self)
+		_province.army_stack.remove_child(self)
 	_province = destination
-	_province.armies.add_child(self)
+	_province.army_stack.add_child(self)
 	
 	resolve_battles(game.world.armies.armies_in_province(_province))
 

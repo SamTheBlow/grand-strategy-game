@@ -27,7 +27,7 @@ func remove_army(army: Army) -> void:
 	
 	army.destroyed.disconnect(remove_army)
 	if army.province():
-		army.province().armies.remove_child(army)
+		army.province().army_stack.remove_child(army)
 	armies.erase(army)
 
 

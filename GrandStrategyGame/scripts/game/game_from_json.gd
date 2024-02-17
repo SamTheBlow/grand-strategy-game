@@ -250,9 +250,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			json_data["position_army_host_y"]
 	)
 	
-	province.armies = Node.new()
-	province.armies.name = "Armies"
-	province.add_child(province.armies)
+	province.init()
 	
 	var shape: PackedVector2Array = []
 	for i in (json_data["shape"]["x"] as Array).size():
@@ -272,7 +270,6 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 	province.population = Population.new(game)
 	province.population.population_size = json_data["population"]["size"]
 	
-	province.setup_buildings()
 	for building: Dictionary in json_data["buildings"]:
 		if building["type"] == "fortress":
 			var fortress: Fortress = Fortress.new_fortress(
@@ -286,10 +283,6 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 		base_income = json_data["income_money"]
 	province._income_money = IncomeMoney.new(base_income, province)
 	
-	province.name = str(province.id)
-	province.clicked.connect(game._on_province_clicked)
-	province.selected.connect(game._on_province_selected)
-	province.deselected.connect(game._on_province_deselected)
 	return province
 
 
