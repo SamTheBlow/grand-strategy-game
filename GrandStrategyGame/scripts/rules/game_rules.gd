@@ -29,6 +29,7 @@ const RULE_NAMES: Array[String] = [
 	"minimum_army_size",
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
+	"battle_algorithm",
 ]
 
 enum ReinforcementsOption {
@@ -69,3 +70,4 @@ enum ProvinceIncome {
 @export var minimum_army_size: int = 1
 @export var global_attacker_efficiency: float = 1.0
 @export var global_defender_efficiency: float = 1.0
+@export var battle_algorithm: int = 0

@@ -70,18 +70,18 @@ layout_mode = 2
 [node name="HBoxContainer3" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer" node_paths=PackedStringArray("nodes_to_hide", "trigger_check_box")]
 layout_mode = 2
 script = ExtResource("4_4itq4")
-nodes_to_hide = [NodePath("TurnLimitSpinBox")]
-trigger_check_box = NodePath("TurnLimitCheckBox")
+nodes_to_hide = [NodePath("TurnLimit")]
+trigger_check_box = NodePath("TurnLimitEnabled")
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 layout_mode = 2
 text = "Turn limit"
 
-[node name="TurnLimitCheckBox" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+[node name="TurnLimitEnabled" type="CheckBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TurnLimitSpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
+[node name="TurnLimit" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer3"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 1.0
@@ -457,7 +457,7 @@ layout_mode = 2
 layout_mode = 2
 text = "Starting money"
 
-[node name="StartingMoneySpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer6"]
+[node name="StartingMoney" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer6"]
 unique_name_in_owner = true
 layout_mode = 2
 max_value = 1e+06
@@ -586,14 +586,25 @@ alignment = 1
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
+[node name="HBoxContainer12" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer12"]
+layout_mode = 2
+text = "Battle"
+
 [node name="HBoxContainer4" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer4"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer4"]
 layout_mode = 2
 text = "Global attacker efficiency"
 
-[node name="AttackerEfficiencySpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer4"]
+[node name="AttackerEfficiency" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer4"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.01
@@ -602,18 +613,18 @@ value = 0.9
 allow_greater = true
 alignment = 1
 
-[node name="Spacing4" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 8)
+[node name="HBoxContainer5" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 layout_mode = 2
 
-[node name="HBoxContainer5" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer5"]
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 
 [node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer5"]
 layout_mode = 2
 text = "Global defender efficiency"
 
-[node name="DefenderEfficiencySpinBox" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer5"]
+[node name="DefenderEfficiency" type="SpinBox" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer5"]
 unique_name_in_owner = true
 layout_mode = 2
 min_value = 0.01
@@ -621,6 +632,27 @@ step = 0.01
 value = 1.0
 allow_greater = true
 alignment = 1
+
+[node name="HBoxContainer11" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer11"]
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer11"]
+layout_mode = 2
+text = "Algorithm"
+
+[node name="BattleAlgorithm" type="OptionButton" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer/HBoxContainer11"]
+unique_name_in_owner = true
+layout_mode = 2
+item_count = 2
+selected = 0
+popup/item_0/text = "Standard"
+popup/item_0/id = 0
+popup/item_1/text = "Algorithm 2"
+popup/item_1/id = 1
 
 [node name="SpacingBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 16)

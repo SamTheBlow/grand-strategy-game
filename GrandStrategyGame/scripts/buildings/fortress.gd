@@ -42,3 +42,13 @@ func _on_modifiers_requested(
 						"The fortress makes it harder to deal damage.",
 						0.5
 				))
+		"defender_efficiency":
+			# Check if defender is on same province as this fortress
+			var defender: Army = context.info("defending_army")
+			if _province == defender.province():
+				# New modifier
+				modifiers.append(ModifierMultiplier.new(
+						"Fortress",
+						"The fortress makes it easier to defend.",
+						2.0
+				))
