@@ -14,6 +14,17 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	var json_dict: Dictionary = json_data
 	
+	# Check version
+	if not json_dict.has("version"):
+		error = true
+		error_message = "JSON data doesn't have a \"version\" property."
+		return
+	var version: String = json_dict["version"]
+	if version != "1":
+		error = true
+		error_message = "Save data is from an unrecognized version."
+		return
+	
 	# Loading begins!
 	var game := game_scene.instantiate() as Game
 	game.init1()
@@ -51,6 +62,14 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	if not players:
 		return
 	game.players = players
+	
+	# Human player
+	var your_id: int = randi() % game.players.players.size()
+	if json_dict.has("human_player_ids"):
+		var human_player_ids: Array = json_dict["human_player_ids"]
+		if human_player_ids.size() > 0:
+			your_id = int(human_player_ids[0])
+	game._you = game.players.player_from_id(your_id)
 	
 	# World
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D

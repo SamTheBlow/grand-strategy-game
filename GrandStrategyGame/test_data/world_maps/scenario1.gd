@@ -32,13 +32,12 @@ var starting_provinces: Array[int] = [
 	48 - 1,
 ]
 
-var _number_of_countries: int = 11
-
-var human_player: int = randi() % _number_of_countries
-
 
 func as_json(game_rules: GameRules) -> Dictionary:
 	var json_data: Dictionary = {}
+	
+	# Misc.
+	json_data["version"] = "1"
 	
 	# Rules
 	var rules_data: Dictionary = {}

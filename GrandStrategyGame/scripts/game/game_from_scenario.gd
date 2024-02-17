@@ -20,10 +20,9 @@ func load_game(
 		error = true
 		error_message = game_from_json.error_message
 		return
-	var game: Game = game_from_json.result
 	
-	var your_id: int = scenario.human_player
-	game.init2(your_id)
+	var game: Game = game_from_json.result
+	game.init2()
 	
 	# Success!
 	error = false

@@ -27,7 +27,7 @@ func _on_input_text_submitted(new_text: String) -> void:
 		command_args.remove_at(0)
 		match command_name:
 			"help":
-				system_message_multiline([
+				send_system_message_multiline([
 						"/help - Get a list of every command",
 						"/fs - Toggle fullscreen",
 						"/save - Save the game",
@@ -41,30 +41,30 @@ func _on_input_text_submitted(new_text: String) -> void:
 					DisplayServer.window_set_mode(
 							DisplayServer.WINDOW_MODE_WINDOWED
 					)
-					system_message("Switched to windowed")
+					send_system_message("Switched to windowed")
 				else:
 					DisplayServer.window_set_mode(
 							DisplayServer.WINDOW_MODE_FULLSCREEN
 					)
-					system_message("Switched to fullscreen")
+					send_system_message("Switched to fullscreen")
 			"save":
-				system_message("Saving the game...")
+				send_system_message("Saving the game...")
 				save_requested.emit()
 			"load":
-				system_message("Loading the save file...")
+				send_system_message("Loading the save file...")
 				load_requested.emit()
 			"mainmenu":
 				exit_to_main_menu_requested.emit()
 			"rules":
 				rules_requested.emit()
 			_:
-				system_message(
+				send_system_message(
 						'"[color=black]' + new_text + '[/color]"'
 						+ " is not a valid command"
 				)
 	else:
 		# Not a command
-		new_message(new_text)
+		send_human_message(new_text)
 	
 	# Clear the input field
 	chat_input.text = ""
@@ -77,21 +77,22 @@ func send_global_message(text: String) -> void:
 
 # TODO don't send to all players (when multiplayer is implemented)
 ## Sends a private message to the player.
-func system_message(new_text: String) -> void:
+func send_system_message(new_text: String) -> void:
 	chat_log.text += (
 			"[color=#202020]System: [/color][color=#404040]"
 			+ new_text + "[/color]\n"
 	)
 
 
-func system_message_multiline(text_lines: Array[String]) -> void:
+func send_system_message_multiline(text_lines: Array[String]) -> void:
 	var message: String = ""
 	for text_line in text_lines:
 		message += "\n" + text_line
-	system_message(message)
+	send_system_message(message)
 
 
-func new_message(new_text: String) -> void:
+## Sends to all players a message written by the player.
+func send_human_message(new_text: String) -> void:
 	var stripped_text: String = new_text.strip_edges()
 	
 	if stripped_text == "":

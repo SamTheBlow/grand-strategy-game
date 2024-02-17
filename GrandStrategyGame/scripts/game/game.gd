@@ -159,7 +159,7 @@ func _on_army_movement_closed() -> void:
 func _on_load_requested() -> void:
 	get_parent().load_game()
 	
-	chat.system_message("Failed to load the game")
+	chat.send_system_message("Failed to load the game")
 
 
 func _on_save_requested() -> void:
@@ -172,10 +172,10 @@ func _on_save_requested() -> void:
 	
 	if game_save.error:
 		push_error("Saving failed: " + game_save.error_message)
-		chat.system_message("Saving failed: " + game_save.error_message)
+		chat.send_system_message("Saving failed: " + game_save.error_message)
 		return
 	
-	chat.new_message("[b]Game saved[/b]")
+	chat.send_system_message("[b]Game saved[/b]")
 
 
 func _on_exit_to_main_menu_requested() -> void:
@@ -187,7 +187,7 @@ func _on_chat_rules_requested() -> void:
 	lines.append("This game's rules:")
 	for rule_name in GameRules.RULE_NAMES:
 		lines.append("-> " + rule_name + ": " + str(rules.get(rule_name)))
-	chat.system_message_multiline(lines)
+	chat.send_system_message_multiline(lines)
 
 
 func _on_modifiers_requested(
@@ -205,9 +205,7 @@ func init1() -> void:
 
 
 ## Initialization 2. To be done after everything is loaded.
-func init2(your_id: int) -> void:
-	_you = players.player_from_id(your_id)
-	
+func init2() -> void:
 	# Setup global modifiers
 	global_modifiers = {}
 	global_modifiers["attacker_efficiency"] = (

@@ -6,9 +6,15 @@ var error: bool = true
 var error_message: String = ""
 var result: Variant
 
+var _version: String = "1"
+
 
 func convert_game(game: Game) -> void:
 	var json_data: Dictionary = {}
+	
+	# Misc.
+	json_data["version"] = _version
+	json_data["human_player_ids"] = [game._you.id]
 	
 	# Rules
 	var rules_data: Dictionary = {}
@@ -54,7 +60,7 @@ func convert_game(game: Game) -> void:
 		var province_data: Dictionary = {
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},
-			"owner_country_id": province._owner_country.id,
+			"owner_country_id": province.owner_country().id,
 			"income_money": province.income_money().base_income,
 			"position_army_host_x": province.position_army_host.x,
 			"position_army_host_y": province.position_army_host.y,
@@ -99,7 +105,7 @@ func convert_game(game: Game) -> void:
 		var army_data: Dictionary = {
 			"id": army.id,
 			"army_size": army.army_size.current_size(),
-			"owner_country_id": army._owner_country.id,
+			"owner_country_id": army.owner_country().id,
 			"province_id": army.province().id
 		}
 		armies_data.append(army_data)

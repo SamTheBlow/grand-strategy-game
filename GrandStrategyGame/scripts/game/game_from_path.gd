@@ -15,10 +15,9 @@ func load_game(file_path: String, game_scene: PackedScene) -> void:
 		error = true
 		error_message = "Failed to load game: " + game_load.error_message
 		return
-	var game: Game = game_load.result
 	
-	var random_player: int = randi() % game.players.players.size()
-	game.init2(random_player)
+	var game: Game = game_load.result
+	game.init2()
 	
 	# Success!
 	error = false
