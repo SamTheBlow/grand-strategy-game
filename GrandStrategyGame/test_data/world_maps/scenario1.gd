@@ -171,7 +171,4 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	world_data["armies"] = armies_data
 	json_data["world"] = world_data
 	
-	# Turn
-	json_data["turn"] = 1
-	
 	return json_data

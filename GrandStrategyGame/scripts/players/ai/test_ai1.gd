@@ -6,10 +6,10 @@ extends PlayerAI
 ## Builds fortresses in the most populated provinces on the frontline.
 
 
-func play(game: Game) -> void:
+func actions(game: Game, player: Player) -> Array[Action]:
 	var result: Array[Action] = []
 	
-	result.append_array(_try_build_fortresses(game))
+	result.append_array(_try_build_fortresses(game, player.playing_country))
 	
 	var provinces: Array[Province] = game.world.provinces.get_provinces()
 	var number_of_provinces: int = provinces.size()
@@ -20,7 +20,7 @@ func play(game: Game) -> void:
 		# Find the nearest target province for each of your armies
 		var armies: Array[Army] = game.world.armies.armies_in_province(province)
 		for army in armies:
-			if army.owner_country().id == playing_country.id:
+			if army.owner_country().id == player.playing_country.id:
 				var new_actions: Array[Action] = _find_target_province(
 						link_tree,
 						province,
@@ -29,10 +29,13 @@ func play(game: Game) -> void:
 				)
 				result.append_array(new_actions)
 	
-	actions = result
+	return result
 
 
-func _try_build_fortresses(game: Game) -> Array[Action]:
+func _try_build_fortresses(
+		game: Game,
+		playing_country: Country
+) -> Array[Action]:
 	if not game.rules.build_fortress_enabled:
 		return []
 	
@@ -93,7 +96,7 @@ func _find_target_province(
 	for link_branch: Array in link_tree:
 		var furthest_link: int = link_branch.size() - 1
 		var link_owner: Country = link_branch[furthest_link].owner_country()
-		if link_owner.id != playing_country.id:
+		if link_owner.id != army.owner_country().id:
 			targets.append(link_branch)
 	
 	# If there's any, send troops evenly to each province

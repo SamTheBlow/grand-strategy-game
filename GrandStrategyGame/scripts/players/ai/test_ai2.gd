@@ -6,7 +6,7 @@ extends PlayerAI
 ## Tries to build fortresses on the frontline where they are needed the most.
 
 
-func play(game: Game) -> void:
+func actions(game: Game, player: Player) -> Array[Action]:
 	var result: Array[Action] = []
 	
 	var provinces: Array[Province] = game.world.provinces.get_provinces()
@@ -18,11 +18,11 @@ func play(game: Game) -> void:
 	var borders: Array[Province] = []
 	for i in number_of_provinces:
 		var province: Province = provinces[i]
-		if province.owner_country() != playing_country:
+		if province.owner_country() != player.playing_country:
 			continue
 		my_provinces.append(province)
 		for link in province.links:
-			if link.owner_country() != playing_country:
+			if link.owner_country() != player.playing_country:
 				borders.append(province)
 				break
 	
@@ -32,11 +32,15 @@ func play(game: Game) -> void:
 	for province in borders:
 		var danger_level: float = 0.0
 		
-		var army_size: int = _army_size(game, province, true)
+		var army_size: int = _army_size(
+				game, province, true, player.playing_country
+		)
 		for link in province.links:
-			if link.owner_country() == playing_country:
+			if link.owner_country() == player.playing_country:
 				continue
-			var enemy_army_size: int = _army_size(game, link, false)
+			var enemy_army_size: int = _army_size(
+					game, link, false, player.playing_country
+			)
 			
 			var danger: float = enemy_army_size / (army_size + 0.01)
 			# Reduce penalty when there's a fortress
@@ -49,7 +53,9 @@ func play(game: Game) -> void:
 		
 		danger_levels.append(danger_level)
 	
-	result.append_array(_try_build_fortresses(game, borders, danger_levels))
+	result.append_array(_try_build_fortresses(
+			game, player.playing_country, borders, danger_levels
+	))
 	
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
@@ -196,10 +202,15 @@ func play(game: Game) -> void:
 					army.id, target_province.id
 			))
 	
-	actions = result
+	return result
 
 
-func _army_size(game: Game, province: Province, is_yours: bool) -> int:
+func _army_size(
+		game: Game,
+		province: Province,
+		is_yours: bool,
+		playing_country: Country
+) -> int:
 	var output: int = 0
 	var armies: Array[Army] = game.world.armies.armies_in_province(province)
 	for army in armies:
@@ -214,7 +225,10 @@ func _army_size(game: Game, province: Province, is_yours: bool) -> int:
 
 # TODO DRY. This is mostly a copy/paste from the other AI...
 func _try_build_fortresses(
-		game: Game, borders: Array[Province], danger_levels: Array[float]
+		game: Game,
+		playing_country: Country,
+		borders: Array[Province],
+		danger_levels: Array[float]
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled:
 		return []
@@ -271,7 +285,7 @@ func _nearest_frontlines(
 	for link_branch: Array in link_tree:
 		var furthest_province: Province = link_branch[link_branch.size() - 1]
 		for link in furthest_province.links:
-			if link.owner_country() != playing_country:
+			if link.owner_country() != source_province.owner_country():
 				frontline_branches.append(link_branch)
 				break
 	# If we found any, then we're done

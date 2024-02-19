@@ -44,7 +44,6 @@ func apply(game: Game) -> void:
 		attacking_army.is_queued_for_deletion()
 		or defending_army.is_queued_for_deletion()
 	):
-		print("DIE!!!")
 		attacking_army.destroy()
 
 

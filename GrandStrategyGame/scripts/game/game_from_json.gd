@@ -38,16 +38,32 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	# Turn
 	var turn_key: String = "turn"
 	if json_dict.has(turn_key):
+		if not json_dict[turn_key] is Dictionary:
+			error = true
+			error_message = "Turn property (in root) is not a dictionary."
+			return
+		
 		# Workaround because JSON doesn't differentiate between int and float
-		var value_type: int = typeof(json_dict[turn_key])
+		var value_type: int = typeof(json_dict[turn_key]["turn"])
 		if value_type == TYPE_INT:
 			value_type = TYPE_FLOAT
-		
 		if value_type != TYPE_FLOAT:
 			error = true
 			error_message = "Turn property is not a number."
 			return
-		game.setup_turn(int(json_dict[turn_key]))
+		
+		value_type = typeof(json_dict[turn_key]["playing_player_index"])
+		if value_type == TYPE_INT:
+			value_type = TYPE_FLOAT
+		if value_type != TYPE_FLOAT:
+			error = true
+			error_message = "Playing player index is not a number."
+			return
+		
+		game.setup_turn(
+				roundi(json_dict[turn_key]["turn"]),
+				roundi(json_dict[turn_key]["playing_player_index"])
+		)
 	else:
 		game.setup_turn()
 	
@@ -63,13 +79,28 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	game.players = players
 	
-	# Human player
-	var your_id: int = randi() % game.players.players.size()
+	# Human players
+	var human_player_count: int = 1
+	if human_player_count > game.players.players.size():
+		error = true
+		error_message = "More human players than total number of players."
+		return
+	var human_players: Array[Player] = []
 	if json_dict.has("human_player_ids"):
+		# Assign human players to the players as defined in the save file
 		var human_player_ids: Array = json_dict["human_player_ids"]
-		if human_player_ids.size() > 0:
-			your_id = int(human_player_ids[0])
-	game._you = game.players.player_from_id(your_id)
+		for human_id: Variant in human_player_ids:
+			var player: Player = game.players.player_from_id(int(human_id))
+			if not player.is_human:
+				player.is_human = true
+				human_players.append(player)
+	# Assign the rest of the human players to random players
+	while human_players.size() < human_player_count:
+		var random_id: int = randi() % game.players.players.size()
+		var player: Player = game.players.player_from_id(random_id)
+		if not player.is_human:
+			player.is_human = true
+			human_players.append(player)
 	
 	# World
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
@@ -234,10 +265,23 @@ func _load_players(json_data: Dictionary, game: Game) -> Players:
 
 ## TODO verify & return errors.
 func _load_player(json_data: Dictionary, game: Game) -> Player:
-	var player: Player = TestAI1.new()
-	if randf() < 0.5:
-		player = TestAI2.new()
+	# AI type
+	const number_of_ai_types: int = 2
+	var ai_type: int = randi() % number_of_ai_types
+	if json_data.has("ai_type"):
+		var value_type: int = typeof(json_data["ai_type"])
+		# Workaround because JSON doesn't differentiate floats and ints
+		if value_type == TYPE_FLOAT:
+			value_type = TYPE_INT
+		
+		if value_type == TYPE_INT:
+			ai_type = roundi(json_data["ai_type"])
+		else:
+			error = true
+			error_message = "Player's AI type is not a number."
+			return null
 	
+	var player: Player = Player.new(ai_type)
 	player.id = json_data["id"]
 	player.playing_country = (
 			game.countries.country_from_id(json_data["playing_country_id"])

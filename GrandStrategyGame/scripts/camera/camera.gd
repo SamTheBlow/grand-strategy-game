@@ -16,7 +16,17 @@ func _ready() -> void:
 	position = position_in_bounds(position)
 
 
+func move_to(input_position: Vector2) -> void:
+	# The position will be put back in bounds in _ready()
+	if not is_inside_tree():
+		position = input_position
+		return
+	
+	position = position_in_bounds(input_position)
+
+
 ## Takes a position and contains it within the camera's limits.
+## WARNING this function only works when the camera is in the scene tree
 func position_in_bounds(input_position: Vector2) -> Vector2:
 	# NOTE: all of this assumes the camera's anchor mode is Drag Center
 	var margin_x: float = (

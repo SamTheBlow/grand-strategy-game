@@ -18,7 +18,7 @@
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("component_ui_root", "top_bar", "chat", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("camera", "component_ui_root", "top_bar", "chat", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -31,6 +31,7 @@ army_movement_scene = ExtResource("8_nnt8b")
 game_over_scene = ExtResource("16_mxtlx")
 build_fortress_scene = ExtResource("10_x38iu")
 recruitment_scene = ExtResource("11_rjf2g")
+camera = NodePath("Camera")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 chat = NodePath("UILayer/GameUI/Chat")
@@ -379,4 +380,4 @@ mouse_filter = 2
 [connection signal="rules_requested" from="UILayer/GameUI/Chat" to="." method="_on_chat_rules_requested"]
 [connection signal="save_requested" from="UILayer/GameUI/Chat" to="." method="_on_save_requested"]
 [connection signal="text_submitted" from="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="UILayer/GameUI/Chat" method="_on_input_text_submitted"]
-[connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="end_turn"]
+[connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

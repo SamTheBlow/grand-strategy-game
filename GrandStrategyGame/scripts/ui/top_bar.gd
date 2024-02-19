@@ -10,6 +10,9 @@ extends Control
 
 @export var game_turn_label: Label
 
+# We need to save this so that we can disconnect it later
+var _money_changed_signal: Signal
+
 
 func _on_money_changed(new_amount: int) -> void:
 	_update_money_label(new_amount)
@@ -20,15 +23,20 @@ func _on_turn_changed(new_turn: int) -> void:
 
 
 ## To be called when a game is loaded.
-func init(game: Game, your_country: Country) -> void:
-	country_color_rect.color = your_country.color
-	country_name_label.text = your_country.country_name
-	
-	_update_money_label(your_country.money)
-	your_country.money_changed.connect(_on_money_changed)
-	
+func init(game: Game) -> void:
 	_update_turn_label(game.turn.current_turn())
 	game.turn.turn_changed.connect(_on_turn_changed)
+
+
+func set_playing_country(country: Country) -> void:
+	country_color_rect.color = country.color
+	country_name_label.text = country.country_name
+	
+	_update_money_label(country.money)
+	if _money_changed_signal:
+		_money_changed_signal.disconnect(_on_money_changed)
+	_money_changed_signal = country.money_changed
+	_money_changed_signal.connect(_on_money_changed)
 
 
 func _update_money_label(money: int) -> void:

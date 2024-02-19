@@ -4,11 +4,13 @@ extends Node
 
 signal game_ended()
 
+@export_category("Scenes")
 @export var army_scene: PackedScene
 @export var fortress_scene: PackedScene
 @export var province_scene: PackedScene
 @export var world_2d_scene: PackedScene
 
+@export_category("UI scenes")
 @export var troop_ui_scene: PackedScene
 @export var component_ui_scene: PackedScene
 @export var popup_scene: PackedScene
@@ -17,6 +19,8 @@ signal game_ended()
 @export var build_fortress_scene: PackedScene
 @export var recruitment_scene: PackedScene
 
+@export_category("Children")
+@export var camera: CustomCamera2D
 @export var component_ui_root: Control
 @export var top_bar: TopBar
 @export var chat: Chat
@@ -48,7 +52,7 @@ func _on_game_over() -> void:
 	if _game_over:
 		return
 	
-	var winning_country: Country = end_game()
+	var winning_country: Country = _winning_country()
 	
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
 	game_over_popup.init(winning_country)
@@ -135,6 +139,10 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			)
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 			_add_popup(recruitment_popup)
+
+
+func _on_end_turn_pressed() -> void:
+	turn.end_turn(self)
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
@@ -224,31 +232,19 @@ func init2() -> void:
 	)
 	
 	# TODO bad code, shouldn't be here
-	var camera := $Camera as CustomCamera2D
 	camera.limits = world.limits
 	
-	# TODO this shouldn't be here either
-	# Find the province to move the camera to and move the camera there
-	var target_province: Province
-	for province in world.provinces.get_provinces():
-		if (
-				province.has_owner_country()
-				and province.owner_country() == _you.playing_country
-		):
-			target_province = province
-			break
-	if target_province:
-		camera.position = target_province.position_army_host
-	
 	$WorldLayer.add_child(world)
-	top_bar.init(self, _you.playing_country)
+	top_bar.init(self)
+	turn.loop(self)
 
 
 ## For loading. The rules must be setup beforehand.
-func setup_turn(starting_turn: int = 1) -> void:
+func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn = GameTurn.new()
 	turn.name = "Turn"
 	turn._turn = starting_turn
+	turn._playing_player_index = playing_player_index
 	
 	if rules.turn_limit_enabled:
 		var turn_limit := TurnLimit.new()
@@ -319,23 +315,32 @@ func new_action_army_movement(
 	action_move.apply_to(self, _you)
 
 
-func end_turn() -> void:
-	#print("********** End of turn **********")
+func set_human_player(player: Player) -> void:
+	if _you and _you == player:
+		return
 	
-	# End your turn
-	_end_player_turn()
-	
-	# Play all other players' turn
-	for player in players.players:
-		if player == _you:
-			continue
-		_play_player_turn(player)
-	
-	propagate_call("_on_new_turn")
+	_you = player
+	top_bar.set_playing_country(_you.playing_country)
+	_move_camera_to_country(_you.playing_country)
 
 
-## Returns the winner.
-func end_game() -> Country:
+
+# Moves the camera to one of the country's controlled provinces
+# If that country doesn't control any province, this method does nothing
+func _move_camera_to_country(country: Country) -> void:
+	var target_province: Province
+	for province in world.provinces.get_provinces():
+		if (
+				province.has_owner_country()
+				and province.owner_country() == country
+		):
+			target_province = province
+			break
+	if target_province:
+		camera.move_to(target_province.position_army_host)
+
+
+func _winning_country() -> Country:
 	# Get how many provinces each country has
 	var ownership: Array = _province_count_per_country()
 	
@@ -346,43 +351,7 @@ func end_game() -> Country:
 		if ownership[i][1] > ownership[winning_player_index][1]:
 			winning_player_index = i
 	
-	var winning_country: Country = ownership[winning_player_index][0]
-	return winning_country
-
-
-func _play_player_turn(player: Player) -> void:
-	# Have the AI play its moves
-	(player as PlayerAI).play(self)
-	
-	# Process the player's actions
-	var actions: Array[Action] = (player as Player).actions
-	for action in actions:
-		action.apply_to(self, player)
-	
-	_end_player_turn()
-
-
-func _end_player_turn() -> void:
-	# Merge armies
-	for province in world.provinces.get_provinces():
-		world.armies.merge_armies(province)
-	
-	# Refresh the army visuals
-	for army in world.armies.armies:
-		army.refresh_visuals()
-	
-	for province in world.provinces.get_provinces():
-		# Update province ownership
-		ProvinceNewOwner.new().update_province_owner(province)
-		
-		# For debugging, check if there's more than one army on any province
-		if world.armies.armies_in_province(province).size() > 1:
-			print_debug(
-					"At the end of a player's turn, found more than "
-					+ "one army in province (ID: " + str(province.id) + ")."
-			)
-	
-	#print("--- End of player's turn")
+	return ownership[winning_player_index][0]
 
 
 func _add_army_movement_popup(army: Army, destination: Province) -> void:
