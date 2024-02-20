@@ -34,6 +34,8 @@ func convert_game(game: Game) -> void:
 		var player_data: Dictionary = {}
 		player_data["id"] = player.id
 		player_data["playing_country_id"] = player.playing_country.id
+		if player.custom_username != "":
+			player_data["username"] = player.custom_username
 		player_data["ai_type"] = player._ai_type
 		players_data.append(player_data)
 	json_data["players"] = players_data

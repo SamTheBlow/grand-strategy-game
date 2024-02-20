@@ -93,6 +93,9 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 			var player: Player = game.players.player_from_id(int(human_id))
 			if not player.is_human:
 				player.is_human = true
+				player.custom_username = (
+						"Player " + str(human_players.size() + 1)
+				)
 				human_players.append(player)
 	# Assign the rest of the human players to random players
 	while human_players.size() < human_player_count:
@@ -100,6 +103,9 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		var player: Player = game.players.player_from_id(random_id)
 		if not player.is_human:
 			player.is_human = true
+			player.custom_username = (
+					"Player " + str(human_players.size() + 1)
+			)
 			human_players.append(player)
 	
 	# World
@@ -286,6 +292,13 @@ func _load_player(json_data: Dictionary, game: Game) -> Player:
 	player.playing_country = (
 			game.countries.country_from_id(json_data["playing_country_id"])
 	)
+	player.default_username = player.playing_country.country_name
+	if json_data.has("username"):
+		if not json_data["username"] is String:
+			error = true
+			error_message = "Player's username property is not a string."
+			return null
+		player.custom_username = json_data["username"]
 	
 	return player
 

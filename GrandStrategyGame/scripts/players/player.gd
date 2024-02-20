@@ -8,6 +8,17 @@ var id: int
 var playing_country: Country
 
 var is_human: bool = false
+
+## The username that will be used if there is no custom username.
+## The user may not change it manually,
+## and it will not be saved in save files.
+var default_username: String = "Player"
+
+## This username will take precedence over the default username.
+## The user may change it to whatever they like,
+## and it will be saved in save files.
+var custom_username: String = ""
+
 var _ai_type: int
 
 var _actions: Array[Action] = []
@@ -15,6 +26,15 @@ var _actions: Array[Action] = []
 
 func _init(ai_type: int) -> void:
 	_ai_type = ai_type
+
+
+## Returns the player's custom username if it has one,
+## otherwise returns the player's default username
+func username() -> String:
+	if custom_username != "":
+		return custom_username
+	
+	return default_username
 
 
 ## Only works for human players.
