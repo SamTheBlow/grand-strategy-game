@@ -13,6 +13,7 @@ signal game_ended()
 @export_category("UI scenes")
 @export var troop_ui_scene: PackedScene
 @export var component_ui_scene: PackedScene
+@export var player_turn_scene: PackedScene
 @export var popup_scene: PackedScene
 @export var army_movement_scene: PackedScene
 @export var game_over_scene: PackedScene
@@ -21,6 +22,7 @@ signal game_ended()
 
 @export_category("Children")
 @export var camera: CustomCamera2D
+@export var game_ui: Control
 @export var component_ui_root: Control
 @export var top_bar: TopBar
 @export var chat: Chat
@@ -322,7 +324,16 @@ func set_human_player(player: Player) -> void:
 	_you = player
 	top_bar.set_playing_country(_you.playing_country)
 	_move_camera_to_country(_you.playing_country)
-
+	
+	# Only announce a new player's turn when there is more than 1 human player
+	if players.number_of_humans() < 2:
+		return
+	
+	var player_turn := (
+			player_turn_scene.instantiate() as PlayerTurnAnnouncement
+	)
+	player_turn.set_player_username(player.username())
+	game_ui.add_child(player_turn)
 
 
 # Moves the camera to one of the country's controlled provinces
