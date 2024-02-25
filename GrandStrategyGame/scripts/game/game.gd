@@ -14,6 +14,7 @@ signal game_ended()
 @export var troop_ui_scene: PackedScene
 @export var component_ui_scene: PackedScene
 @export var player_turn_scene: PackedScene
+@export var player_list_scene: PackedScene
 @export var popup_scene: PackedScene
 @export var army_movement_scene: PackedScene
 @export var game_over_scene: PackedScene
@@ -25,6 +26,7 @@ signal game_ended()
 @export var game_ui: Control
 @export var component_ui_root: Control
 @export var top_bar: TopBar
+@export var right_side: Node
 @export var chat: Chat
 @export var popups: Control
 
@@ -144,7 +146,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 
 
 func _on_end_turn_pressed() -> void:
-	turn.end_turn(self)
+	turn.end_turn()
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
@@ -238,7 +240,13 @@ func init2() -> void:
 	
 	$WorldLayer.add_child(world)
 	top_bar.init(self)
-	turn.loop(self)
+	
+	if players.number_of_humans() > 1:
+		var player_list := player_list_scene.instantiate() as PlayerList
+		player_list.init(self)
+		right_side.add_child(player_list)
+	
+	turn.loop()
 
 
 ## For loading. The rules must be setup beforehand.
@@ -246,6 +254,7 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn = GameTurn.new()
 	turn.name = "Turn"
 	turn._turn = starting_turn
+	turn.game = self
 	turn._playing_player_index = playing_player_index
 	
 	if rules.turn_limit_enabled:

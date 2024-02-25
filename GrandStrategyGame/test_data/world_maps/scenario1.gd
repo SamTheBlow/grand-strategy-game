@@ -48,7 +48,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	# Players and countries
 	var players_data: Array = []
 	var countries_data: Array = []
-	for i in countries.size():
+	for i in starting_provinces.size():
 		var player_data: Dictionary = {}
 		player_data["id"] = i
 		player_data["playing_country_id"] = i

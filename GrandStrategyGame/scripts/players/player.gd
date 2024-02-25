@@ -3,6 +3,8 @@ class_name Player
 ## This can be a human player or an AI.
 
 
+signal username_changed(new_username: String)
+
 var id: int
 
 var playing_country: Country
@@ -12,12 +14,12 @@ var is_human: bool = false
 ## The username that will be used if there is no custom username.
 ## The user may not change it manually,
 ## and it will not be saved in save files.
-var default_username: String = "Player"
+var default_username: String = "Player" : set = _set_default_username
 
 ## This username will take precedence over the default username.
 ## The user may change it to whatever they like,
 ## and it will be saved in save files.
-var custom_username: String = ""
+var custom_username: String = "" : set = _set_custom_username
 
 var _ai_type: int
 
@@ -54,6 +56,28 @@ func play_actions(game: Game) -> void:
 		action.apply_to(game, self)
 	
 	_actions.clear()
+
+
+func _set_default_username(value: String) -> void:
+	if value == default_username:
+		return
+	
+	var previous_username: String = username()
+	default_username = value
+	var new_username: String = username()
+	if new_username != previous_username:
+		username_changed.emit(new_username)
+
+
+func _set_custom_username(value: String) -> void:
+	if value == custom_username:
+		return
+	
+	var previous_username: String = username()
+	custom_username = value
+	var new_username: String = username()
+	if new_username != previous_username:
+		username_changed.emit(new_username)
 
 
 func _ai() -> PlayerAI:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=20 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -13,13 +13,14 @@
 [ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://scenes/ui/component_ui.tscn" id="7_dxau2"]
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://scenes/ui/player_turn_announcement.tscn" id="8_e0v4f"]
 [ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://scenes/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
+[ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://scenes/ui/player_list/player_list.tscn" id="9_pkxqv"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="10_2dak6"]
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "chat", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "chat", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -28,6 +29,7 @@ world_2d_scene = ExtResource("6_5jo7e")
 troop_ui_scene = ExtResource("2_dx3sp")
 component_ui_scene = ExtResource("7_dxau2")
 player_turn_scene = ExtResource("8_e0v4f")
+player_list_scene = ExtResource("9_pkxqv")
 popup_scene = ExtResource("2_dx3sp")
 army_movement_scene = ExtResource("8_nnt8b")
 game_over_scene = ExtResource("16_mxtlx")
@@ -37,6 +39,7 @@ camera = NodePath("Camera")
 game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
+right_side = NodePath("UILayer/GameUI/RightSide")
 chat = NodePath("UILayer/GameUI/Chat")
 popups = NodePath("UILayer/GameUI/Popups")
 
@@ -271,6 +274,17 @@ grow_vertical = 2
 text = "Turn 69420"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="RightSide" type="Control" parent="UILayer/GameUI"]
+layout_mode = 1
+anchor_left = 0.75
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.8
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
 
 [node name="Chat" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
