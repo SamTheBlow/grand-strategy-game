@@ -2,15 +2,29 @@
 
 [ext_resource type="Script" path="res://scripts/ui/player_list/player_list_element.gd" id="1_q6tiq"]
 
-[node name="PlayerListElement" type="Control" node_paths=PackedStringArray("container", "arrow_label", "username_label")]
+[node name="PlayerListElement" type="Control" node_paths=PackedStringArray("color_rect", "container", "arrow_label", "username_label")]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 script = ExtResource("1_q6tiq")
+color_rect = NodePath("ColorRect")
 container = NodePath("HBoxContainer")
-arrow_label = NodePath("HBoxContainer/Arrow")
+arrow_label = NodePath("HBoxContainer/MarginContainer/Arrow")
 username_label = NodePath("HBoxContainer/Username")
+username_color_human = Color(1, 1, 1, 1)
+username_color_ai = Color(0.752941, 0.752941, 0.752941, 1)
+bg_color_human = Color(0, 0, 0, 0.12549)
+bg_color_ai = Color(0, 0, 0, 0.0627451)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.4, 0.4, 0.4, 0.878431)
 
 [node name="HBoxContainer" type="HBoxContainer" parent="."]
 layout_mode = 1
@@ -19,22 +33,20 @@ anchor_right = 1.0
 offset_bottom = 23.0
 grow_horizontal = 2
 
-[node name="Arrow" type="Label" parent="HBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.07
-text = "-->"
+size_flags_stretch_ratio = 0.15
+
+[node name="Arrow" type="Label" parent="HBoxContainer/MarginContainer"]
+layout_mode = 2
+text = "->"
 horizontal_alignment = 1
 vertical_alignment = 1
-
-[node name="Spacing" type="Control" parent="HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.03
 
 [node name="Username" type="Label" parent="HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.9
+size_flags_stretch_ratio = 0.85
 text = "Player 99999"
 vertical_alignment = 1
