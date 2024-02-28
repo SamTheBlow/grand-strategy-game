@@ -17,6 +17,11 @@ extends Control
 
 func _ready() -> void:
 	_set_margin_pixels(margin_pixels)
+	get_viewport().size_changed.connect(_on_viewport_size_changed)
+
+
+func _on_viewport_size_changed() -> void:
+	_update_size()
 
 
 ## To be called when this node is created.
@@ -49,4 +54,7 @@ func _update_size() -> void:
 		
 		# I really don't know why we need to add 4, but it just works
 		new_size += 4
+	
 	offset_bottom = new_size + margin_pixels * 2
+	if get_parent_control():
+		offset_bottom = minf(offset_bottom, get_parent_control().size.y)
