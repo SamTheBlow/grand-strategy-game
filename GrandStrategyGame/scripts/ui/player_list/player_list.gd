@@ -2,8 +2,8 @@
 class_name PlayerList
 extends Control
 ## Class responsible for displaying a list of players.
-## It shows all players by their username, and shows with
-## an arrow whose player it is to play.
+## It shows all players by their username.
+## During a game, it also shows with an arrow who's turn it is to play.
 
 
 @export_category("References")
@@ -25,12 +25,13 @@ func _on_viewport_size_changed() -> void:
 
 
 ## To be called when this node is created.
-func init(game: Game) -> void:
-	var players: Array[Player] = game.players.players
+func init(players: Array[Player], game_turn: GameTurn = null) -> void:
 	var element: PlayerListElement
 	for i in players.size():
 		element = player_list_element.instantiate() as PlayerListElement
-		element.init(players[i], game.turn)
+		element.init(players[i])
+		if game_turn:
+			element.init_turn(game_turn)
 		container.add_child(element)
 	_update_size()
 

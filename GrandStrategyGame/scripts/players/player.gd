@@ -26,8 +26,13 @@ var _ai_type: int
 var _actions: Array[Action] = []
 
 
-func _init(ai_type: int) -> void:
+## Setting the AI type to a negative value gives the player a random AI type.
+## The player starts with a random AI type by default.
+func _init(ai_type: int = -1) -> void:
 	_ai_type = ai_type
+	if _ai_type < 0:
+		# TODO don't hard code the number of AI types
+		_ai_type = randi() % 2
 
 
 ## Returns the player's custom username if it has one,

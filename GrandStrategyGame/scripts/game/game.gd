@@ -243,7 +243,7 @@ func init2() -> void:
 	
 	if players.number_of_humans() > 1:
 		var player_list := player_list_scene.instantiate() as PlayerList
-		player_list.init(self)
+		player_list.init(players.players, turn)
 		right_side.add_child(player_list)
 	
 	turn.loop()

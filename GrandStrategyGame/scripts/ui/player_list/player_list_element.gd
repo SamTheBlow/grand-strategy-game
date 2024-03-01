@@ -1,3 +1,4 @@
+@tool
 class_name PlayerListElement
 extends Control
 ## Class for a player as displayed in the player list interface.
@@ -6,6 +7,7 @@ extends Control
 @export_category("Child nodes")
 @export var color_rect: ColorRect
 @export var container: Control
+@export var arrow_container: Control
 @export var arrow_label: Label
 @export var username_label: Label
 
@@ -28,18 +30,21 @@ func _on_player_turn_changed(playing_player: Player) -> void:
 
 
 ## To be called when this node is created.
-func init(player: Player, turn: GameTurn) -> void:
+func init(player: Player) -> void:
 	_player = player
 	
 	player.username_changed.connect(_on_username_changed)
 	_update_shown_username()
 	
+	arrow_label.text = ""
+	_update_appearance()
+	custom_minimum_size.y = container.size.y
+
+
+## To be called when this node is created, if the game is turn-based
+func init_turn(turn: GameTurn) -> void:
 	turn.player_changed.connect(_on_player_turn_changed)
 	_update_turn_indicator(turn.playing_player())
-	
-	_update_appearance()
-	
-	custom_minimum_size.y = container.size.y
 
 
 func _update_shown_username() -> void:

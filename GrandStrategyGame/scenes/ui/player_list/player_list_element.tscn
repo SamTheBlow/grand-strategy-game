@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scripts/ui/player_list/player_list_element.gd" id="1_q6tiq"]
 
-[node name="PlayerListElement" type="Control" node_paths=PackedStringArray("color_rect", "container", "arrow_label", "username_label")]
+[node name="PlayerListElement" type="Control" node_paths=PackedStringArray("color_rect", "container", "arrow_container", "arrow_label", "username_label")]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
@@ -10,6 +10,7 @@ grow_horizontal = 2
 script = ExtResource("1_q6tiq")
 color_rect = NodePath("ColorRect")
 container = NodePath("HBoxContainer")
+arrow_container = NodePath("HBoxContainer/MarginContainer")
 arrow_label = NodePath("HBoxContainer/MarginContainer/Arrow")
 username_label = NodePath("HBoxContainer/Username")
 username_color_human = Color(1, 1, 1, 1)

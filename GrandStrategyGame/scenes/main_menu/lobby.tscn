@@ -1,11 +1,12 @@
-[gd_scene load_steps=5 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=6 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://test_data/world_maps/world_test1.tscn" id="2_aiiyc"]
 [ext_resource type="Script" path="res://scripts/ui/root_container.gd" id="4_4itq4"]
 [ext_resource type="Script" path="res://scripts/main_menu/show_menu_options.gd" id="4_cq0th"]
+[ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://scenes/ui/player_list/player_list.tscn" id="5_6wm1c"]
 
-[node name="Lobby" type="Control"]
+[node name="Lobby" type="Control" node_paths=PackedStringArray("player_list")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,6 +15,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hty1g")
 scenario_scene = ExtResource("2_aiiyc")
+player_list = NodePath("HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80/PlayerList")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -40,12 +42,12 @@ size_flags_stretch_ratio = 75.0
 [node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Spacing75"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.05
-anchor_top = 0.05
-anchor_right = 0.95
-anchor_bottom = 0.95
-grow_horizontal = 2
-grow_vertical = 2
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = -16.0
+offset_bottom = -32.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
 layout_mode = 2
@@ -663,38 +665,49 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 25.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing25"]
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Spacing25"]
 layout_mode = 1
-anchors_preset = 15
+anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+offset_left = 16.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = -32.0
 
-[node name="Spacing80" type="Control" parent="HBoxContainer/Spacing25/VBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing25/MarginContainer"]
+layout_mode = 2
+
+[node name="Spacing80" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 80.0
 
-[node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/VBoxContainer"]
+[node name="PlayerList" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80" instance=ExtResource("5_6wm1c")]
+layout_mode = 1
+anchors_preset = 15
+anchor_bottom = 1.0
+offset_bottom = 0.0
+grow_vertical = 2
+
+[node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
+clip_contents = true
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 20.0
 
-[node name="StartButton" type="Button" parent="HBoxContainer/Spacing25/VBoxContainer/Spacing20"]
+[node name="StartButton" type="Button" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing20"]
 layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
+anchors_preset = 14
 anchor_top = 0.5
-anchor_right = 0.5
+anchor_right = 1.0
 anchor_bottom = 0.5
-offset_left = -48.0
-offset_top = -15.5
-offset_right = 48.0
-offset_bottom = 15.5
+offset_top = -26.5
+offset_bottom = 26.5
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_font_sizes/font_size = 32
 text = "Start Game"
 
-[connection signal="pressed" from="HBoxContainer/Spacing25/VBoxContainer/Spacing20/StartButton" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing20/StartButton" to="." method="_on_start_button_pressed"]
