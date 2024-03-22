@@ -4,7 +4,7 @@ class_name Player
 
 
 signal username_changed(new_username: String)
-signal human_status_changed(is_human: bool)
+signal human_status_changed(player: Player)
 
 var id: int
 
@@ -14,7 +14,7 @@ var is_human: bool = false :
 	set(value):
 		if is_human != value:
 			is_human = value
-			human_status_changed.emit(value)
+			human_status_changed.emit(self)
 
 ## The username that will be used if there is no custom username.
 ## The user may not change it manually,

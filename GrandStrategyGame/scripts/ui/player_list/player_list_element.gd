@@ -11,6 +11,8 @@ extends Control
 @export var arrow_label: Label
 @export var username_label: Label
 @export var add_button: Control
+@export var remove_button: Control
+@export var rename_button: Control
 
 @export_category("Variables")
 @export var username_color_human: Color
@@ -18,6 +20,10 @@ extends Control
 @export var bg_color_human: Color
 @export var bg_color_ai: Color
 
+var is_the_only_human: bool = false :
+	set(value):
+		is_the_only_human = value
+		_update_remove_button_visibility()
 
 var _player: Player
 
@@ -26,7 +32,7 @@ func _on_username_changed(_new_username: String) -> void:
 	_update_shown_username()
 
 
-func _on_human_status_changed(_is_human: bool) -> void:
+func _on_human_status_changed(_changed_player: Player) -> void:
 	_update_appearance()
 
 
@@ -43,7 +49,11 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_remove_button_pressed() -> void:
-	print("TEST")
+	if not _player.is_human:
+		print_debug("Player is already not human!")
+		return
+	
+	_player.is_human = false
 
 
 ## To be called when this node is created.
@@ -93,3 +103,8 @@ func _update_appearance() -> void:
 	
 	# Button visibility
 	add_button.visible = not _player.is_human
+	_update_remove_button_visibility()
+
+
+func _update_remove_button_visibility() -> void:
+	remove_button.visible = _player.is_human and not is_the_only_human
