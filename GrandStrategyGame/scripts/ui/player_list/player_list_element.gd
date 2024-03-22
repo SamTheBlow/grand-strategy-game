@@ -69,3 +69,7 @@ func _update_appearance() -> void:
 				"font_color", username_color_ai
 		)
 		color_rect.color = bg_color_ai
+
+
+func _on_remove_button_pressed() -> void:
+	print("TEST")
