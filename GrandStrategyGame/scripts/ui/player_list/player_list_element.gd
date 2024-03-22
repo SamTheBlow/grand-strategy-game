@@ -10,6 +10,7 @@ extends Control
 @export var arrow_container: Control
 @export var arrow_label: Label
 @export var username_label: Label
+@export var add_button: Control
 
 @export_category("Variables")
 @export var username_color_human: Color
@@ -25,8 +26,24 @@ func _on_username_changed(_new_username: String) -> void:
 	_update_shown_username()
 
 
+func _on_human_status_changed(_is_human: bool) -> void:
+	_update_appearance()
+
+
 func _on_player_turn_changed(playing_player: Player) -> void:
 	_update_turn_indicator(playing_player)
+
+
+func _on_add_button_pressed() -> void:
+	if _player.is_human:
+		print_debug("Player is already human!")
+		return
+	
+	_player.is_human = true
+
+
+func _on_remove_button_pressed() -> void:
+	print("TEST")
 
 
 ## To be called when this node is created.
@@ -34,7 +51,7 @@ func init(player: Player) -> void:
 	_player = player
 	
 	player.username_changed.connect(_on_username_changed)
-	_update_shown_username()
+	player.human_status_changed.connect(_on_human_status_changed)
 	
 	arrow_label.text = ""
 	_update_appearance()
@@ -49,6 +66,8 @@ func init_turn(turn: GameTurn) -> void:
 
 func _update_shown_username() -> void:
 	username_label.text = _player.username()
+	if not _player.is_human:
+		username_label.text += " (AI)"
 
 
 func _update_turn_indicator(playing_player: Player) -> void:
@@ -59,6 +78,8 @@ func _update_turn_indicator(playing_player: Player) -> void:
 
 
 func _update_appearance() -> void:
+	_update_shown_username()
+	
 	if _player.is_human:
 		username_label.add_theme_color_override(
 				"font_color", username_color_human
@@ -69,7 +90,6 @@ func _update_appearance() -> void:
 				"font_color", username_color_ai
 		)
 		color_rect.color = bg_color_ai
-
-
-func _on_remove_button_pressed() -> void:
-	print("TEST")
+	
+	# Button visibility
+	add_button.visible = not _player.is_human
