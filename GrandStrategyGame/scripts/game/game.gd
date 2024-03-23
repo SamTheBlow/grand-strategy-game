@@ -210,6 +210,13 @@ func _on_modifiers_requested(
 		modifiers_.append(global_modifiers[context.context()])
 
 
+func _on_your_human_status_changed(_player: Player) -> void:
+	# If you're no longer playing as a human,
+	# skip this player's turn and continue playing
+	if not _you.is_human:
+		turn.end_turn()
+
+
 ## Initialization 1. To be done immediately after loading the game scene.
 func init1() -> void:
 	_modifier_request = ModifierRequest.new(self)
@@ -241,10 +248,10 @@ func init2() -> void:
 	$WorldLayer.add_child(world)
 	top_bar.init(self)
 	
-	if players.number_of_humans() > 1:
-		var player_list := player_list_scene.instantiate() as PlayerList
-		player_list.init(players.players, turn)
-		right_side.add_child(player_list)
+	# Create the player list
+	var player_list := player_list_scene.instantiate() as PlayerList
+	player_list.init(players.players, turn)
+	right_side.add_child(player_list)
 	
 	turn.loop()
 
@@ -330,7 +337,11 @@ func set_human_player(player: Player) -> void:
 	if _you and _you == player:
 		return
 	
+	if _you:
+		_you.human_status_changed.disconnect(_on_your_human_status_changed)
+	
 	_you = player
+	_you.human_status_changed.connect(_on_your_human_status_changed)
 	top_bar.set_playing_country(_you.playing_country)
 	_move_camera_to_country(_you.playing_country)
 	
