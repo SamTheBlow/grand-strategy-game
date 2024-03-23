@@ -77,35 +77,6 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	if not _load_players(json_dict, game):
 		return
 	
-	# Human players
-	#var human_player_count: int = 1
-	#if human_player_count > game.players.players.size():
-	#	error = true
-	#	error_message = "More human players than total number of players."
-	#	return
-	#var human_players: Array[Player] = []
-	#if json_dict.has("human_player_ids"):
-		# Assign human players to the players as defined in the save file
-	#	var human_player_ids: Array = json_dict["human_player_ids"]
-	#	for human_id: Variant in human_player_ids:
-	#		var player: Player = game.players.player_from_id(int(human_id))
-	#		if not player.is_human:
-	#			player.is_human = true
-	#			player.custom_username = (
-	#					"Player " + str(human_players.size() + 1)
-	#			)
-	#			human_players.append(player)
-	# Assign the rest of the human players to random players
-	#while human_players.size() < human_player_count:
-	#	var random_id: int = randi() % game.players.players.size()
-	#	var player: Player = game.players.player_from_id(random_id)
-	#	if not player.is_human:
-	#		player.is_human = true
-	#		player.custom_username = (
-	#				"Player " + str(human_players.size() + 1)
-	#		)
-	#		human_players.append(player)
-	
 	# World
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
 	game_world_2d.init()
