@@ -1,7 +1,12 @@
 @tool
 class_name PlayerListElement
 extends Control
-## Class for a player as displayed in the player list interface.
+## Class for a player as displayed in the player list interface.[br]
+## [br]
+## The circular buttons only appear when the mouse hovers over the box
+## (except when renaming a player).[br]
+## For this to work, you need to make sure that the mouse filter
+## of Control nodes in the player list is set to "Pass".
 
 
 @export_category("Child nodes")
@@ -10,9 +15,13 @@ extends Control
 @export var arrow_container: Control
 @export var arrow_label: Label
 @export var username_label: Label
+@export var username_edit: Control
+@export var username_line_edit: LineEdit
+@export var circle_buttons: Control
 @export var add_button: Control
 @export var remove_button: Control
 @export var rename_button: Control
+@export var confirm_button: Control
 
 @export_category("Variables")
 @export var username_color_human: Color
@@ -25,7 +34,55 @@ var is_the_only_human: bool = false :
 		is_the_only_human = value
 		_update_remove_button_visibility()
 
+var _is_renaming: bool = false :
+	set(value):
+		_is_renaming = value
+		username_label.visible = not _is_renaming
+		username_edit.visible = _is_renaming
+		if _is_renaming:
+			username_line_edit.text = ""
+			username_line_edit.grab_focus()
+		else:
+			_submit_username_change()
+		circle_buttons.visible = _is_renaming or _is_mouse_inside()
+		_update_button_visibility()
+
 var _player: Player
+
+
+func _ready() -> void:
+	username_label.visible = true
+	username_edit.visible = false
+
+
+func _process(_delta: float) -> void:
+	if _is_renaming and Input.is_action_just_pressed("submit"):
+		_is_renaming = false
+
+
+func _input(event: InputEvent) -> void:
+	if (not _is_renaming) or (not event is InputEventMouseButton):
+		return
+	
+	if (
+			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
+			and (event as InputEventMouseButton).pressed
+			and not _is_mouse_inside()
+	):
+		_is_renaming = false
+
+
+func _on_mouse_entered() -> void:
+	circle_buttons.visible = true
+
+
+func _on_mouse_exited() -> void:
+	circle_buttons.visible = _is_renaming
+
+
+func _on_username_line_edit_focus_exited() -> void:
+	if _is_renaming:
+		_is_renaming = false
 
 
 func _on_username_changed(_new_username: String) -> void:
@@ -54,6 +111,24 @@ func _on_remove_button_pressed() -> void:
 		return
 	
 	_player.is_human = false
+
+
+func _on_rename_button_pressed() -> void:
+	if _is_renaming:
+		print_debug("Pressed the rename button, but already renaming!")
+		return
+	
+	_is_renaming = true
+
+
+func _on_confirm_button_pressed() -> void:
+	if not _is_renaming:
+		print_debug(
+				"Pressed the confirm button, but there is nothing to confirm!"
+		)
+		return
+	
+	_is_renaming = false
 
 
 ## To be called when this node is created.
@@ -101,10 +176,30 @@ func _update_appearance() -> void:
 		)
 		color_rect.color = bg_color_ai
 	
-	# Button visibility
-	add_button.visible = not _player.is_human
+	_update_button_visibility()
+
+
+func _update_button_visibility() -> void:
+	add_button.visible = (not _player.is_human) and (not _is_renaming)
 	_update_remove_button_visibility()
+	rename_button.visible = not _is_renaming
+	confirm_button.visible = _is_renaming
 
 
 func _update_remove_button_visibility() -> void:
-	remove_button.visible = _player.is_human and not is_the_only_human
+	remove_button.visible = (
+			_player.is_human
+			and not is_the_only_human
+			and not _is_renaming
+	)
+
+
+func _submit_username_change() -> void:
+	var new_username: String = username_line_edit.text.strip_edges()
+	if new_username == "" or new_username == _player.username():
+		return
+	_player.custom_username = new_username
+
+
+func _is_mouse_inside() -> bool:
+	return get_global_rect().has_point(get_global_mouse_position())

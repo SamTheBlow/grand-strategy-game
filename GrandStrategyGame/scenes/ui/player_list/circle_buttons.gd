@@ -4,10 +4,6 @@ extends Control
 ## The buttons are positioned on the right side of the box.
 ## The positions are correctly adjusted even when some buttons are hidden.[br]
 ## [br]
-## The buttons only appear when the mouse hovers over the box.[br]
-## For this to work, you need to make sure that the mouse filter
-## of Control nodes in the player list is set to "Pass".[br]
-## [br]
 ## All of this node's children must be of type Control (or a subclass).
 
 
@@ -47,11 +43,3 @@ func _update_layout() -> void:
 		control.position.x = position.x + size.x - offset_x
 		
 		offset_x += size.y + spacing
-
-
-func _on_player_list_element_mouse_entered() -> void:
-	show()
-
-
-func _on_player_list_element_mouse_exited() -> void:
-	hide()
