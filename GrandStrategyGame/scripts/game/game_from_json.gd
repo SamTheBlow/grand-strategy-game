@@ -355,10 +355,15 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 
 ## TODO verify & return errors.
 func _load_army(json_data: Dictionary, game: Game) -> void:
+	var movements_made: int = 0
+	if json_data.has("number_of_movements_made"):
+		movements_made = int(json_data["number_of_movements_made"])
+	
 	var _army: Army = Army.quick_setup(
 			game,
 			json_data["id"],
 			json_data["army_size"],
 			game.countries.country_from_id(json_data["owner_country_id"]),
-			game.world.provinces.province_from_id(json_data["province_id"])
+			game.world.provinces.province_from_id(json_data["province_id"]),
+			movements_made
 	)

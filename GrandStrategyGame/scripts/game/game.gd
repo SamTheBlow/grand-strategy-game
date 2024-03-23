@@ -35,10 +35,11 @@ var _modifier_request: ModifierRequest
 var rules: GameRules
 var countries: Countries
 var players: Players
+var turn: GameTurn
+var turn_limit: TurnLimit
 
 # References to children nodes
 var world: GameWorld
-var turn: GameTurn
 var component_ui: ComponentUI
 
 var _you: Player
@@ -48,7 +49,7 @@ var _game_over: bool = false
 var global_modifiers: Dictionary = {}
 
 
-func _on_new_turn() -> void:
+func _on_new_turn(_turn: int) -> void:
 	_check_percentage_winner()
 
 
@@ -253,26 +254,21 @@ func init2() -> void:
 	player_list.init(players.players, turn)
 	right_side.add_child(player_list)
 	
+	turn.turn_changed.connect(_on_new_turn)
 	turn.loop()
 
 
 ## For loading. The rules must be setup beforehand.
 func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn = GameTurn.new()
-	turn.name = "Turn"
-	turn._turn = starting_turn
 	turn.game = self
+	turn._turn = starting_turn
 	turn._playing_player_index = playing_player_index
 	
 	if rules.turn_limit_enabled:
-		var turn_limit := TurnLimit.new()
-		turn_limit.name = "TurnLimit"
-		turn_limit._final_turn = rules.turn_limit
+		turn_limit = TurnLimit.new()
+		turn_limit.final_turn = rules.turn_limit
 		turn_limit.game_over.connect(_on_game_over)
-		
-		turn.add_child(turn_limit)
-	
-	add_child(turn)
 
 
 ## Creates a new instance of Game with the exact same state as this game.

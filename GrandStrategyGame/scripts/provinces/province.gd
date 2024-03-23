@@ -26,7 +26,7 @@ var _income_money: IncomeMoney
 var population: Population
 
 
-func _on_new_turn() -> void:
+func _on_new_turn(_turn: int) -> void:
 	ArmyReinforcements.new().reinforce_province(self)
 	_owner_country.money += _income_money.total()
 
@@ -43,6 +43,7 @@ func init() -> void:
 	clicked.connect(game._on_province_clicked)
 	selected.connect(game._on_province_selected)
 	deselected.connect(game._on_province_deselected)
+	game.turn.turn_changed.connect(_on_new_turn)
 
 
 func province_shape() -> ProvinceShapePolygon2D:

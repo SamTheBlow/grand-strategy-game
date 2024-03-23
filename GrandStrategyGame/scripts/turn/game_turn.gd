@@ -1,22 +1,17 @@
 class_name GameTurn
-extends Node
+## Class responsible for a turn-based system.
+## Each player plays their turn one at a time in order.
 
 
+## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
+## This signal is called whenever it's a new player's turn to play.
 signal player_changed(new_player: Player)
-
-@export_range(1, 2, 1, "or_greater") var _turn: int = 1
 
 var game: Game
 
+var _turn: int = 1
 var _playing_player_index: int = 0
-
-
-func _on_new_turn() -> void:
-	_turn += 1
-	turn_changed.emit(_turn)
-	
-	propagate_call("_on_reached_turn", [_turn])
 
 
 func current_turn() -> int:
@@ -54,7 +49,7 @@ func _end_player_turn() -> void:
 	
 	# Refresh the army visuals
 	for army in game.world.armies.armies:
-		army.refresh_visuals()
+		army.stop_animations()
 	
 	for province in game.world.provinces.get_provinces():
 		# Update province ownership
@@ -73,6 +68,5 @@ func _end_player_turn() -> void:
 	
 	player_changed.emit(playing_player())
 	if _playing_player_index == 0:
-		# TODO get rid of the propagate_call
-		# Connect methods to the turn_changed signal instead
-		game.propagate_call("_on_new_turn")
+		_turn += 1
+		turn_changed.emit(_turn)

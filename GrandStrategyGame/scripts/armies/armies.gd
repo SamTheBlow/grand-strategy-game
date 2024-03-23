@@ -89,6 +89,6 @@ func active_armies(country: Country, province: Province) -> Array[Army]:
 	var result: Array[Army] = []
 	var province_armies: Array[Army] = armies_in_province(province)
 	for army in province_armies:
-		if army.owner_country() == country and army.is_active:
+		if army.owner_country() == country and army.is_able_to_move():
 			result.append(army)
 	return result

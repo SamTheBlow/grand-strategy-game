@@ -6,22 +6,33 @@ signal destroyed(army: Army)
 
 @export var battle: Battle
 
-var game: Game
+var game: Game :
+	set(value):
+		if game:
+			game.turn.turn_changed.disconnect(_on_new_turn)
+			game.turn.player_changed.disconnect(_on_player_turn)
+		game = value
+		game.turn.turn_changed.connect(_on_new_turn)
+		game.turn.player_changed.connect(_on_player_turn)
 
 var id: int
+
+# Variables for the movement animation
+var original_position: Vector2 = position
+var target_position: Vector2 = position
+var animation_is_playing: bool = false
+var animation_speed: float = 1.0
 
 var army_size: ArmySize
 var _province: Province
 var _owner_country := Country.new()
 
-
-# Lets the game know this army can still perform actions
-var is_active: bool = true : set = set_active
-
-var original_position: Vector2 = position
-var target_position: Vector2 = position
-var animation_is_playing: bool = false
-var animation_speed: float = 1.0
+# For now, there's a hard limit of 1 movement per turn,
+# but in the future we should make it possible to change the limit
+var _movements_made: int = 0 :
+	set(value):
+		_movements_made = value
+		_refresh_visuals()
 
 
 func _process(delta: float) -> void:
@@ -40,6 +51,14 @@ func _process(delta: float) -> void:
 			global_position = new_position
 
 
+func _on_new_turn(_turn_number: int) -> void:
+	_movements_made = 0
+
+
+func _on_player_turn(_player: Player) -> void:
+	_refresh_visuals()
+
+
 func _on_army_size_changed() -> void:
 	_update_troop_count_label()
 
@@ -53,7 +72,26 @@ func province() -> Province:
 	return _province
 
 
+## Moves this army to the given destination province. No animation will play.
+## To play an animation, consider using play_movement_animation().[br]
+## [br]
+## Calling this function will increase this army's number of movements made.
+## The army may have a hard limit on how many movements it can make.
+## Once that limit is reached, this function has no effect.[br]
+## If you want to move an army without affecting its movement count,
+## consider using teleport_to_province() instead.
 func move_to_province(destination: Province) -> void:
+	if not is_able_to_move():
+		return
+	
+	_movements_made += 1
+	teleport_to_province(destination)
+
+
+## Moves this army to the given destination province. No animation will play,
+## and the army's movement count will be unaffected.
+## The movement will be performed even if the army is unable to move.
+func teleport_to_province(destination: Province) -> void:
 	if _province:
 		_province.army_stack.remove_child(self)
 	_province = destination
@@ -71,39 +109,18 @@ func set_owner_country(value: Country) -> void:
 	($ColorRect as ColorRect).color = _owner_country.color
 
 
-func set_active(value: bool) -> void:
-	is_active = value
-	if is_active:
-		modulate = Color(1.0, 1.0, 1.0, 1.0)
-		z_index = 1
-	else:
-		z_index = 5
-
-
 func play_movement_to(destination_province: Province) -> void:
-	self.is_active = false
 	animation_is_playing = true
 	original_position = _province.position_army_host
 	target_position = destination_province.position_army_host
 	global_position = original_position
 
 
-func gray_out() -> void:
-	var v: float = 0.5
-	modulate = Color(v, v, v, 1.0)
-
-
-## Stops all animations and sets the army back to active.
-func refresh_visuals() -> void:
-	stop_animations()
-	self.is_active = true
-
-
 func stop_animations() -> void:
 	if animation_is_playing:
 		animation_is_playing = false
 		position = target_position
-		gray_out()
+		_refresh_visuals()
 
 
 func resolve_battles(armies: Array[Army]) -> void:
@@ -118,6 +135,18 @@ func fight(army: Army) -> void:
 	battle.apply(game)
 
 
+## Returns the number of times this army has moved.
+## This number may reset, for example, when a new turn begins.
+func movements_made() -> int:
+	return _movements_made
+
+
+## Returns true if the army can move, otherwise returns false.
+## Once an army moves, it can't move again on the same turn.
+func is_able_to_move() -> bool:
+	return _movements_made == 0
+
+
 func can_move_to(destination: Province) -> bool:
 	return destination.is_linked_to(_province)
 
@@ -130,6 +159,19 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_population_per_unit)
 
 
+# Darkens the army sprite under specific conditions
+func _refresh_visuals() -> void:
+	if (
+			is_able_to_move()
+			or (game.turn.playing_player().playing_country != _owner_country)
+			or animation_is_playing
+	):
+		modulate = Color(1.0, 1.0, 1.0, 1.0)
+	else:
+		var v: float = 0.5
+		modulate = Color(v, v, v, 1.0)
+
+
 func _update_troop_count_label() -> void:
 	var troop_count_label := $ColorRect/TroopCount as Label
 	troop_count_label.text = str(army_size.current_size())
@@ -140,7 +182,8 @@ static func quick_setup(
 		id_: int,
 		army_size_: int,
 		owner_country_: Country,
-		province_: Province
+		province_: Province,
+		movements_made_: int = 0,
 ) -> Army:
 	var minimum_army_size: int = game_.rules.minimum_army_size
 	if army_size_ < minimum_army_size:
@@ -157,7 +200,8 @@ static func quick_setup(
 	army._update_troop_count_label()
 	
 	army.set_owner_country(owner_country_)
+	army._movements_made = movements_made_
 	
 	game_.world.armies.add_army(army)
-	army.move_to_province(province_)
+	army.teleport_to_province(province_)
 	return army
