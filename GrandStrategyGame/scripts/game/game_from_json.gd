@@ -74,39 +74,37 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	game.countries = countries
 	
 	# Players
-	var players: Players = _load_players(json_dict, game)
-	if not players:
+	if not _load_players(json_dict, game):
 		return
-	game.players = players
 	
 	# Human players
-	var human_player_count: int = 1
-	if human_player_count > game.players.players.size():
-		error = true
-		error_message = "More human players than total number of players."
-		return
-	var human_players: Array[Player] = []
-	if json_dict.has("human_player_ids"):
+	#var human_player_count: int = 1
+	#if human_player_count > game.players.players.size():
+	#	error = true
+	#	error_message = "More human players than total number of players."
+	#	return
+	#var human_players: Array[Player] = []
+	#if json_dict.has("human_player_ids"):
 		# Assign human players to the players as defined in the save file
-		var human_player_ids: Array = json_dict["human_player_ids"]
-		for human_id: Variant in human_player_ids:
-			var player: Player = game.players.player_from_id(int(human_id))
-			if not player.is_human:
-				player.is_human = true
-				player.custom_username = (
-						"Player " + str(human_players.size() + 1)
-				)
-				human_players.append(player)
+	#	var human_player_ids: Array = json_dict["human_player_ids"]
+	#	for human_id: Variant in human_player_ids:
+	#		var player: Player = game.players.player_from_id(int(human_id))
+	#		if not player.is_human:
+	#			player.is_human = true
+	#			player.custom_username = (
+	#					"Player " + str(human_players.size() + 1)
+	#			)
+	#			human_players.append(player)
 	# Assign the rest of the human players to random players
-	while human_players.size() < human_player_count:
-		var random_id: int = randi() % game.players.players.size()
-		var player: Player = game.players.player_from_id(random_id)
-		if not player.is_human:
-			player.is_human = true
-			player.custom_username = (
-					"Player " + str(human_players.size() + 1)
-			)
-			human_players.append(player)
+	#while human_players.size() < human_player_count:
+	#	var random_id: int = randi() % game.players.players.size()
+	#	var player: Player = game.players.player_from_id(random_id)
+	#	if not player.is_human:
+	#		player.is_human = true
+	#		player.custom_username = (
+	#				"Player " + str(human_players.size() + 1)
+	#		)
+	#		human_players.append(player)
 	
 	# World
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
@@ -240,35 +238,37 @@ func _load_country(json_data: Dictionary) -> Country:
 	return country
 
 
-func _load_players(json_data: Dictionary, game: Game) -> Players:
+func _load_players(json_data: Dictionary, game: Game) -> bool:
 	var players := Players.new()
+	game.players = players
 	
 	var players_key: String = "players"
 	if not json_data.has(players_key):
 		error = true
 		error_message = "No players found in file."
-		return null
+		return false
 	if not json_data[players_key] is Array:
 		error = true
 		error_message = "Players property is not an array."
-		return null
+		return false
 	var players_data: Array = json_data[players_key]
 	
 	for player_data: Variant in players_data:
 		if not player_data is Dictionary:
 			error = true
 			error_message = "Player data is not a dictionary."
-			return null
+			return false
 		var player_dict: Dictionary = player_data
 		
 		var player: Player = _load_player(player_dict, game)
 		if not player:
-			return null
+			return false
 		players.players.append(player)
 	
-	return players
+	return true
 
 
+# This function requires that game.players is already set
 ## TODO verify & return errors.
 func _load_player(json_data: Dictionary, game: Game) -> Player:
 	# AI type
@@ -292,7 +292,12 @@ func _load_player(json_data: Dictionary, game: Game) -> Player:
 	player.playing_country = (
 			game.countries.country_from_id(json_data["playing_country_id"])
 	)
-	player.default_username = player.playing_country.country_name
+	if json_data.has("is_human"):
+		player.is_human = json_data["is_human"]
+	if player.is_human:
+		player.default_username = game.players.new_default_username()
+	else:
+		player.default_username = player.playing_country.country_name
 	if json_data.has("username"):
 		if not json_data["username"] is String:
 			error = true

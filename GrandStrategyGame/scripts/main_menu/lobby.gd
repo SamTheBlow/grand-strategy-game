@@ -13,14 +13,16 @@ signal start_game_requested(scenario: PackedScene, rules: GameRules)
 func _ready() -> void:
 	var player: Player = Player.new()
 	player.is_human = true
-	player.default_username = "Player 1"
+	player.custom_username = "Player 1"
 	player.id = 0
 	
 	player_list.init([player])
 
 
 func _on_start_button_pressed() -> void:
-	start_game_requested.emit(scenario_scene, _selected_game_rules())
+	start_game_requested.emit(
+			scenario_scene, _selected_game_rules(), player_list.players()
+	)
 
 
 func _selected_game_rules() -> GameRules:

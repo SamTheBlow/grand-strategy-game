@@ -14,14 +14,6 @@ func convert_game(game: Game) -> void:
 	
 	json_data["version"] = _version
 	
-	# Human players
-	var human_player_ids: Array[int] = []
-	for player in game.players.players:
-		if player.is_human:
-			human_player_ids.append(player.id)
-	if human_player_ids.size() > 0:
-		json_data["human_player_ids"] = human_player_ids
-	
 	# Rules
 	var rules_data: Dictionary = {}
 	for rule_name in GameRules.RULE_NAMES:
@@ -29,16 +21,7 @@ func convert_game(game: Game) -> void:
 	json_data["rules"] = rules_data
 	
 	# Players
-	var players_data: Array = []
-	for player in game.players.players:
-		var player_data: Dictionary = {}
-		player_data["id"] = player.id
-		player_data["playing_country_id"] = player.playing_country.id
-		if player.custom_username != "":
-			player_data["username"] = player.custom_username
-		player_data["ai_type"] = player._ai_type
-		players_data.append(player_data)
-	json_data["players"] = players_data
+	json_data["players"] = PlayersToJSON.new().convert_players(game.players)
 	
 	# Countries
 	var countries_data: Array = []

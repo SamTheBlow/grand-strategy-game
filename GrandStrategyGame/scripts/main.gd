@@ -11,10 +11,12 @@ func _ready() -> void:
 	_on_main_menu_entered()
 
 
-func _on_game_started(scenario_scene: PackedScene, rules: GameRules) -> void:
+func _on_game_started(
+		scenario_scene: PackedScene, rules: GameRules, players: Players
+) -> void:
 	var world: Node = scenario_scene.instantiate()
 	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	load_game_from_scenario(scenario, rules)
+	load_game_from_scenario(scenario, rules, players)
 
 
 func _on_main_menu_entered() -> void:
@@ -36,9 +38,11 @@ func load_game() -> void:
 	play_game(game_from_path.result)
 
 
-func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
+func load_game_from_scenario(
+		scenario: Scenario1, rules: GameRules, players: Players
+) -> void:
 	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, rules, game_scene)
+	game_from_scenario.load_game(scenario, rules, players, game_scene)
 	
 	if game_from_scenario.error:
 		print_debug(game_from_scenario.error_message)

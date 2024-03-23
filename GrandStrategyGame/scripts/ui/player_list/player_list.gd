@@ -59,9 +59,9 @@ func _on_human_status_changed(player: Player) -> void:
 func _on_add_player_button_pressed() -> void:
 	var player := Player.new()
 	player.is_human = true
-	player.default_username = _players.new_default_username()
+	player.custom_username = _players.new_default_username()
 	
-	_players.players.append(player)
+	_players.add_player(player)
 	## TODO don't hard code the maximum number of players
 	if _players.players.size() >= 11:
 		add_player_button.hide()
@@ -71,9 +71,9 @@ func _on_add_player_button_pressed() -> void:
 
 
 ## To be called when this node is created.
-func init(players: Array[Player], game_turn: GameTurn = null) -> void:
+func init(player_list: Array[Player], game_turn: GameTurn = null) -> void:
 	_players = Players.new()
-	_players.players = players.duplicate()
+	_players.players = player_list.duplicate()
 	
 	## TODO make a better way to know if we're in lobby or in game
 	_is_discarding_ai_players = true
@@ -81,11 +81,18 @@ func init(players: Array[Player], game_turn: GameTurn = null) -> void:
 		add_player_button.hide()
 		_is_discarding_ai_players = false
 	
-	for i in players.size():
-		_add_element(players[i], game_turn)
+	for i in _players.players.size():
+		_add_element(_players.players[i], game_turn)
 	
 	_update_elements()
 	_update_size()
+
+
+## Returns a copy of this list's players
+func players() -> Players:
+	var copy := Players.new()
+	copy.players = _players.players.duplicate()
+	return copy
 
 
 func _set_margin_pixels(value: int) -> void:
