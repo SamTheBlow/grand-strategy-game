@@ -11,8 +11,19 @@ extends Control
 @export var margin: Control
 @export var container: Control
 @export var add_player_button: Control
+@export var server_setup: Control
 
 @export_category("Variables")
+
+## If true, the player list shrinks down to the size of the contents.
+## If false, it uses the given position/anchors as usual.
+## Do not change this while the game is running.
+@export var is_shrunk: bool = true:
+	set(value):
+		is_shrunk = value
+		_update_size()
+
+## The number of pixels that separate the list's contents from the edges.
 @export var margin_pixels: int = 16:
 	set(value):
 		margin_pixels = value
@@ -76,10 +87,13 @@ func _update_margin_offsets() -> void:
 
 
 ## Manually sets this node's size.
-## Call this whenever a child element's [code]size.y[/code] changes,
-## whenever the parent control's [code]size.y[/code] changes,
-## or whenever the [code]margin_pixels[/code] property changes.
+## Edits the value of [code]offset_bottom[/code] as well as the anchors.
+## Call this whenever any child node's vertical size changes.
+## This function has no effect when [code]is_shrunk[/code] is set to false.
 func _update_size() -> void:
+	if not is_shrunk:
+		return
+	
 	var new_size: int = 0
 	for child in container.get_children():
 		if not child is PlayerListElement:
@@ -89,6 +103,15 @@ func _update_size() -> void:
 		# I really don't know why we need to add 4, but it just works
 		new_size += 4
 	
+	# Add the size of the add button, when it's there
+	if add_player_button.visible:
+		new_size += roundi(add_player_button.size.y) + 4
+	
+	# Add the size of the server setup, when it's there
+	if server_setup.visible:
+		new_size += roundi(server_setup.custom_minimum_size.y)
+	
+	anchors_preset = PRESET_TOP_WIDE
 	offset_bottom = new_size + margin_pixels * 2
 	if get_parent_control():
 		offset_bottom = minf(offset_bottom, get_parent_control().size.y)

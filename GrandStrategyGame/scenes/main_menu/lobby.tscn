@@ -690,6 +690,7 @@ anchors_preset = 15
 anchor_bottom = 1.0
 offset_bottom = 0.0
 grow_vertical = 2
+is_shrunk = false
 
 [node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
 clip_contents = true
