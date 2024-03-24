@@ -8,9 +8,25 @@ signal deselected()
 
 signal owner_country_changed(owner_country: Country)
 
-var game: Game
+var game: Game:
+	set(value):
+		if game:
+			clicked.disconnect(game._on_province_clicked)
+			selected.disconnect(game._on_province_selected)
+			deselected.disconnect(game._on_province_deselected)
+			game.turn.turn_changed.disconnect(_on_new_turn)
+		
+		game = value
+		
+		clicked.connect(game._on_province_clicked)
+		selected.connect(game._on_province_selected)
+		deselected.connect(game._on_province_deselected)
+		game.turn.turn_changed.connect(_on_new_turn)
 
-var id: int
+var id: int:
+	set(value):
+		id = value
+		name = str(id)
 
 # Nodes
 var army_stack: ArmyStack
@@ -26,24 +42,10 @@ var _income_money: IncomeMoney
 var population: Population
 
 
-func _on_new_turn(_turn: int) -> void:
-	ArmyReinforcements.new().reinforce_province(self)
-	_owner_country.money += _income_money.total()
-
-
-func _on_shape_clicked() -> void:
-	clicked.emit(self)
-
-
+## To be called when this node is created.
 func init() -> void:
 	_setup_army_stack()
 	_setup_buildings()
-	
-	name = str(id)
-	clicked.connect(game._on_province_clicked)
-	selected.connect(game._on_province_selected)
-	deselected.connect(game._on_province_deselected)
-	game.turn.turn_changed.connect(_on_new_turn)
 
 
 func province_shape() -> ProvinceShapePolygon2D:
@@ -125,3 +127,12 @@ func _setup_buildings() -> void:
 	buildings = Buildings.new()
 	buildings.name = "Buildings"
 	add_child(buildings)
+
+
+func _on_new_turn(_turn: int) -> void:
+	ArmyReinforcements.new().reinforce_province(self)
+	_owner_country.money += _income_money.total()
+
+
+func _on_shape_clicked() -> void:
+	clicked.emit(self)

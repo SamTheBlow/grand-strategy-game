@@ -14,14 +14,6 @@ extends Control
 var _money_changed_signal: Signal
 
 
-func _on_money_changed(new_amount: int) -> void:
-	_update_money_label(new_amount)
-
-
-func _on_turn_changed(new_turn: int) -> void:
-	_update_turn_label(new_turn)
-
-
 ## To be called when a game is loaded.
 func init(game: Game) -> void:
 	_update_turn_label(game.turn.current_turn())
@@ -45,3 +37,11 @@ func _update_money_label(money: int) -> void:
 
 func _update_turn_label(turn: int) -> void:
 	game_turn_label.text = "Turn " + str(turn)
+
+
+func _on_money_changed(new_amount: int) -> void:
+	_update_money_label(new_amount)
+
+
+func _on_turn_changed(new_turn: int) -> void:
+	_update_turn_label(new_turn)

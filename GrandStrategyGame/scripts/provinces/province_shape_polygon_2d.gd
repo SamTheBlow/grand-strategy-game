@@ -12,9 +12,20 @@ enum OutlineType {
 	NEIGHBOR = 3,
 }
 
-var outline_type: OutlineType = OutlineType.NONE : set = set_outline_type
-var outline_color := Color.WEB_GRAY : set = set_outline_color
-var outline_width: float = 10.0 : set = set_width
+var outline_type: OutlineType = OutlineType.NONE:
+	set(value):
+		outline_type = value
+		queue_redraw()
+
+var outline_color := Color.WEB_GRAY:
+	set(value):
+		outline_color = value
+		queue_redraw()
+
+var outline_width: float = 10.0:
+	set(value):
+		outline_width = value
+		queue_redraw()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -63,18 +74,3 @@ func _draw_outline(
 		draw_line(poly[i - 1], poly[i], ocolor, width)
 		draw_circle(poly[i], radius, ocolor)
 	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
-
-
-func set_outline_type(value: OutlineType) -> void:
-	outline_type = value
-	queue_redraw()
-
-
-func set_outline_color(value: Color) -> void:
-	outline_color = value
-	queue_redraw()
-
-
-func set_width(value: float) -> void:
-	outline_width = value
-	queue_redraw()

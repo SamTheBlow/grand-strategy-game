@@ -4,12 +4,42 @@ class_name ArmySize
 ## which this class takes care of.
 
 
+## Emits whenever the army's size changes.
 signal size_changed()
+## Emits whenever some piece of code tries to set the army size to a value
+## smaller than 1.
 signal reached_zero()
+## Emits whenever some piece of code tries to set the army size to a value
+## smaller than the minimum army size.
 signal became_too_small()
+## Emits whenever some piece of code tries to set the army size to a value
+## larger than the maximum army size, if there is a maximum.
 signal became_too_large()
 
-var _size: int
+var _size: int:
+	set(value):
+		if value == _size:
+			return
+		
+		# Respect maximum size
+		if _has_maximum_size and value > _maximum_size:
+			_size = _maximum_size
+			became_too_large.emit()
+			size_changed.emit()
+			return
+		
+		# Respect minimum size
+		elif value < _minimum_size:
+			_size = _minimum_size
+			if value < 1:
+				reached_zero.emit()
+			became_too_small.emit()
+			size_changed.emit()
+			return
+		
+		_size = value
+		size_changed.emit()
+
 var _minimum_size: int
 var _has_maximum_size: bool = false
 var _maximum_size: int
@@ -28,10 +58,10 @@ func _init(
 		minimum_size: int = 1,
 		maximum_size: int = 0
 ) -> void:
-	_size = starting_size
 	_minimum_size = minimum_size
 	_has_maximum_size = maximum_size > 0
 	_maximum_size = maximum_size
+	_size = starting_size
 
 
 func current_size() -> int:
@@ -44,35 +74,12 @@ func minimum() -> int:
 
 ## Adds some amount of troops. The input must be positive or zero.
 func add(number: int) -> void:
-	if _has_maximum_size and _size + number > _maximum_size:
-		_set_size(_maximum_size)
-		became_too_large.emit()
-		return
-	
-	_set_size(_size + number)
+	_size += number
 
 
 ## Removes some amount of troops. The input must be positive or zero.
 func remove(number: int) -> void:
-	var new_size: int = _size - number
-	
-	if new_size >= _minimum_size:
-		_set_size(new_size)
-		return
-	
-	_set_size(_minimum_size)
-	if new_size < 1:
-		reached_zero.emit()
-	became_too_small.emit()
-	return
-
-
-func _set_size(new_size: int) -> void:
-	if new_size == _size:
-		return
-	
-	_size = new_size
-	size_changed.emit()
+	_size -= number
 
 
 static func _unit_test() -> void:

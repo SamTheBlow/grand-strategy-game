@@ -4,7 +4,7 @@ extends Node
 ##
 ## This node is meant to be added as a child of a CustomCamera2D node.
 ## 
-## IMPORTANT: for this node to work as intended, the camera node
+## NOTICE: for this node to work as intended, the camera node
 ## must be setup such that it is inbetween the UI layer and the world layer.
 
 

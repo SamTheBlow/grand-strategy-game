@@ -9,11 +9,6 @@ signal confirmed(province: Province)
 var _province: Province
 
 
-func _on_button_pressed(button_index: int) -> void:
-	if button_index == 1:
-		confirmed.emit(_province)
-
-
 ## To be called when this node is created.
 func init(province: Province, cost: int) -> void:
 	_province = province
@@ -22,3 +17,8 @@ func init(province: Province, cost: int) -> void:
 
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
+
+
+func _on_button_pressed(button_index: int) -> void:
+	if button_index == 1:
+		confirmed.emit(_province)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://75dgexs1e3no"]
 
 [ext_resource type="Script" path="res://scripts/ui/player_list/player_list_element.gd" id="1_q6tiq"]
-[ext_resource type="Script" path="res://scenes/ui/player_list/circle_buttons.gd" id="2_w6q2s"]
+[ext_resource type="Script" path="res://scripts/ui/player_list/circle_buttons.gd" id="2_w6q2s"]
 [ext_resource type="BitMap" uid="uid://bd0cj6rcgsdqb" path="res://assets/circle_click_mask_256.png" id="3_58ie7"]
 [ext_resource type="Texture2D" uid="uid://cr08hxawkeaql" path="res://assets/add_button_256.png" id="3_vf52v"]
 [ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="5_lr6yf"]

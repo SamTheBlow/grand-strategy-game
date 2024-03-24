@@ -9,9 +9,7 @@ signal money_changed(new_amount: int)
 
 var id: int = -1
 
-var money: int = 0 : set = set_money
-
-
-func set_money(value: int) -> void:
-	money = value
-	money_changed.emit(money)
+var money: int = 0:
+	set(value):
+		money = value
+		money_changed.emit(money)

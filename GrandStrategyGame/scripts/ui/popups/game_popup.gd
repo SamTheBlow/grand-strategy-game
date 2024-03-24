@@ -32,10 +32,6 @@ func setup_contents(contents_node: Node) -> void:
 	_add_content_buttons(contents_node)
 
 
-func _on_button_pressed(_button_id: int) -> void:
-	queue_free()
-
-
 func _add_content_buttons(contents_node: Node) -> void:
 	var button_names: Array[String] = ["OK"]
 	
@@ -55,3 +51,7 @@ func _connect_content_to_buttons(contents_node: Node) -> void:
 	popup_buttons.pressed.connect(
 			Callable(contents_node, "_on_button_pressed")
 	)
+
+
+func _on_button_pressed(_button_id: int) -> void:
+	queue_free()

@@ -3,19 +3,13 @@ extends ColorRect
 ## Always ensures that this ColorRect's size has the given aspect ratio.
 
 
-@export var aspect_ratio: float = 1.0 : set = set_aspect_ratio
+@export var aspect_ratio: float = 1.0:
+	set(value):
+		aspect_ratio = value
+		_update_anchors()
 
 
 func _ready() -> void:
-	_update_anchors()
-
-
-func _on_resized() -> void:
-	_update_anchors()
-
-
-func set_aspect_ratio(value: float) -> void:
-	aspect_ratio = value
 	_update_anchors()
 
 
@@ -43,3 +37,7 @@ func _update_anchors() -> void:
 		anchor_right = 1.0 - new_anchor_value
 	
 	resized.connect(_on_resized)
+
+
+func _on_resized() -> void:
+	_update_anchors()

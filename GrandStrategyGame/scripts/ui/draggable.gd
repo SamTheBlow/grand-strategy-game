@@ -43,13 +43,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			is_being_dragged = false
 
 
-## Connect signals to this
-func _on_dragged() -> void:
-	is_being_dragged = true
-	relative_starting_position = Vector2(anchor_left, anchor_top)
-	relative_mouse_origin = get_relative_mouse_position()
-
-
 func get_relative_mouse_position() -> Vector2:
 	var mouse_position: Vector2 = get_viewport().get_mouse_position()
 	var window_size: Vector2 = get_viewport().get_visible_rect().size
@@ -73,3 +66,10 @@ func clamp_to(control: Control) -> void:
 			var relative_width: float = anchor_right - anchor_left
 			anchor_left = control.anchor_right
 			anchor_right = anchor_left + relative_width
+
+
+## Connect signals to this
+func _on_dragged() -> void:
+	is_being_dragged = true
+	relative_starting_position = Vector2(anchor_left, anchor_top)
+	relative_mouse_origin = get_relative_mouse_position()

@@ -49,175 +49,6 @@ var _game_over: bool = false
 var global_modifiers: Dictionary = {}
 
 
-func _on_new_turn(_turn: int) -> void:
-	_check_percentage_winner()
-
-
-func _on_game_over() -> void:
-	if _game_over:
-		return
-	
-	var winning_country: Country = _winning_country()
-	
-	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
-	game_over_popup.init(winning_country)
-	_add_popup(game_over_popup)
-	
-	chat.send_global_message(
-			"The game is over! The winner is "
-			+ str(winning_country.country_name) + "."
-	)
-	chat.send_global_message("You can continue playing if you want.")
-	_game_over = true
-
-
-func _on_province_clicked(province: Province) -> void:
-	var your_country: Country = _you.playing_country
-	var provinces_node: Provinces = world.provinces
-	if provinces_node.selected_province:
-		var selected_province: Province = provinces_node.selected_province
-		var active_armies: Array[Army] = world.armies.active_armies(
-				your_country, selected_province
-		)
-		if active_armies.size() > 0:
-			var army: Army = active_armies[0]
-			
-			# If this isn't here, the game crashes. I don't know why.
-			# (This line does nothing, it's just to prevent a crash)
-			# TODO figure it out
-			army.battle.attacking_army = army
-			
-			if army.can_move_to(province):
-				_add_army_movement_popup(army, province)
-				return
-	provinces_node.select_province(province)
-	
-	var active_armies_: Array[Army] = world.armies.active_armies(
-			your_country, province
-	)
-	if active_armies_.size() > 0:
-		province.show_neighbors(
-				ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
-		)
-	else:
-		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
-
-
-func _on_province_selected() -> void:
-	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.init(world.provinces.selected_province, _you.playing_country)
-	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
-	component_ui_root.add_child(component_ui)
-
-
-func _on_province_deselected() -> void:
-	component_ui_root.remove_child(component_ui)
-	component_ui.queue_free()
-
-
-func _on_component_ui_button_pressed(button_id: int) -> void:
-	match button_id:
-		0:
-			# Build fortress
-			var build_popup := (
-					build_fortress_scene.instantiate() as BuildFortressPopup
-			)
-			build_popup.init(
-					world.provinces.selected_province,
-					rules.fortress_price
-			)
-			build_popup.confirmed.connect(_on_build_fortress_confirmed)
-			_add_popup(build_popup)
-		1:
-			# Recruitment
-			var army_recruitment_limit := ArmyRecruitmentLimit.new(
-					_you.playing_country,
-					world.provinces.selected_province
-			)
-			var recruitment_popup := (
-					recruitment_scene.instantiate() as RecruitmentPopup
-			)
-			recruitment_popup.init(
-					world.provinces.selected_province,
-					rules.minimum_army_size,
-					army_recruitment_limit.maximum()
-			)
-			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
-			_add_popup(recruitment_popup)
-
-
-func _on_end_turn_pressed() -> void:
-	turn.end_turn()
-
-
-func _on_build_fortress_confirmed(province: Province) -> void:
-	deselect_province()
-	var action_build := ActionBuild.new(province.id)
-	action_build.apply_to(self, _you)
-
-
-func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	deselect_province()
-	var action_recruitment := ActionRecruitment.new(
-			province.id, troop_amount, world.armies.new_unique_army_id()
-	)
-	action_recruitment.apply_to(self, _you)
-
-
-func _on_army_movement_closed() -> void:
-	deselect_province()
-
-
-# Temporary feature
-func _on_load_requested() -> void:
-	get_parent().load_game()
-	
-	chat.send_system_message("Failed to load the game")
-
-
-func _on_save_requested() -> void:
-	# TODO bad code (don't use get_parent like that)
-	# The player should be able to change the file path for save files
-	var save_file_path: String = get_parent().SAVE_FILE_PATH
-	
-	var game_save := GameSave.new()
-	game_save.save_game(self, save_file_path)
-	
-	if game_save.error:
-		push_error("Saving failed: " + game_save.error_message)
-		chat.send_system_message("Saving failed: " + game_save.error_message)
-		return
-	
-	chat.send_system_message("[b]Game saved[/b]")
-
-
-func _on_exit_to_main_menu_requested() -> void:
-	game_ended.emit()
-
-
-func _on_chat_rules_requested() -> void:
-	var lines: Array[String] = []
-	lines.append("This game's rules:")
-	for rule_name in GameRules.RULE_NAMES:
-		lines.append("-> " + rule_name + ": " + str(rules.get(rule_name)))
-	chat.send_system_message_multiline(lines)
-
-
-func _on_modifiers_requested(
-		modifiers_: Array[Modifier],
-		context: ModifierContext
-) -> void:
-	if global_modifiers.has(context.context()):
-		modifiers_.append(global_modifiers[context.context()])
-
-
-func _on_your_human_status_changed(_player: Player) -> void:
-	# If you're no longer playing as a human,
-	# skip this player's turn and continue playing
-	if not _you.is_human:
-		turn.end_turn()
-
-
 ## Initialization 1. To be done immediately after loading the game scene.
 func init1() -> void:
 	_modifier_request = ModifierRequest.new(self)
@@ -434,3 +265,172 @@ func _province_count_per_country() -> Array:
 			output[index][1] += 1
 	
 	return output
+
+
+func _on_new_turn(_turn: int) -> void:
+	_check_percentage_winner()
+
+
+func _on_game_over() -> void:
+	if _game_over:
+		return
+	
+	var winning_country: Country = _winning_country()
+	
+	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
+	game_over_popup.init(winning_country)
+	_add_popup(game_over_popup)
+	
+	chat.send_global_message(
+			"The game is over! The winner is "
+			+ str(winning_country.country_name) + "."
+	)
+	chat.send_global_message("You can continue playing if you want.")
+	_game_over = true
+
+
+func _on_province_clicked(province: Province) -> void:
+	var your_country: Country = _you.playing_country
+	var provinces_node: Provinces = world.provinces
+	if provinces_node.selected_province:
+		var selected_province: Province = provinces_node.selected_province
+		var active_armies: Array[Army] = world.armies.active_armies(
+				your_country, selected_province
+		)
+		if active_armies.size() > 0:
+			var army: Army = active_armies[0]
+			
+			# If this isn't here, the game crashes. I don't know why.
+			# (This line does nothing, it's just to prevent a crash)
+			# TODO figure it out
+			army.battle.attacking_army = army
+			
+			if army.can_move_to(province):
+				_add_army_movement_popup(army, province)
+				return
+	provinces_node.select_province(province)
+	
+	var active_armies_: Array[Army] = world.armies.active_armies(
+			your_country, province
+	)
+	if active_armies_.size() > 0:
+		province.show_neighbors(
+				ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
+		)
+	else:
+		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
+
+
+func _on_province_selected() -> void:
+	component_ui = component_ui_scene.instantiate() as ComponentUI
+	component_ui.init(world.provinces.selected_province, _you.playing_country)
+	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
+	component_ui_root.add_child(component_ui)
+
+
+func _on_province_deselected() -> void:
+	component_ui_root.remove_child(component_ui)
+	component_ui.queue_free()
+
+
+func _on_component_ui_button_pressed(button_id: int) -> void:
+	match button_id:
+		0:
+			# Build fortress
+			var build_popup := (
+					build_fortress_scene.instantiate() as BuildFortressPopup
+			)
+			build_popup.init(
+					world.provinces.selected_province,
+					rules.fortress_price
+			)
+			build_popup.confirmed.connect(_on_build_fortress_confirmed)
+			_add_popup(build_popup)
+		1:
+			# Recruitment
+			var army_recruitment_limit := ArmyRecruitmentLimit.new(
+					_you.playing_country,
+					world.provinces.selected_province
+			)
+			var recruitment_popup := (
+					recruitment_scene.instantiate() as RecruitmentPopup
+			)
+			recruitment_popup.init(
+					world.provinces.selected_province,
+					rules.minimum_army_size,
+					army_recruitment_limit.maximum()
+			)
+			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
+			_add_popup(recruitment_popup)
+
+
+func _on_end_turn_pressed() -> void:
+	turn.end_turn()
+
+
+func _on_build_fortress_confirmed(province: Province) -> void:
+	deselect_province()
+	var action_build := ActionBuild.new(province.id)
+	action_build.apply_to(self, _you)
+
+
+func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
+	deselect_province()
+	var action_recruitment := ActionRecruitment.new(
+			province.id, troop_amount, world.armies.new_unique_army_id()
+	)
+	action_recruitment.apply_to(self, _you)
+
+
+func _on_army_movement_closed() -> void:
+	deselect_province()
+
+
+# Temporary feature
+func _on_load_requested() -> void:
+	get_parent().load_game()
+	
+	chat.send_system_message("Failed to load the game")
+
+
+func _on_save_requested() -> void:
+	# TODO bad code (don't use get_parent like that)
+	# The player should be able to change the file path for save files
+	var save_file_path: String = get_parent().SAVE_FILE_PATH
+	
+	var game_save := GameSave.new()
+	game_save.save_game(self, save_file_path)
+	
+	if game_save.error:
+		push_error("Saving failed: " + game_save.error_message)
+		chat.send_system_message("Saving failed: " + game_save.error_message)
+		return
+	
+	chat.send_system_message("[b]Game saved[/b]")
+
+
+func _on_exit_to_main_menu_requested() -> void:
+	game_ended.emit()
+
+
+func _on_chat_rules_requested() -> void:
+	var lines: Array[String] = []
+	lines.append("This game's rules:")
+	for rule_name in GameRules.RULE_NAMES:
+		lines.append("-> " + rule_name + ": " + str(rules.get(rule_name)))
+	chat.send_system_message_multiline(lines)
+
+
+func _on_modifiers_requested(
+		modifiers_: Array[Modifier],
+		context: ModifierContext
+) -> void:
+	if global_modifiers.has(context.context()):
+		modifiers_.append(global_modifiers[context.context()])
+
+
+func _on_your_human_status_changed(_player: Player) -> void:
+	# If you're no longer playing as a human,
+	# skip this player's turn and continue playing
+	if not _you.is_human:
+		turn.end_turn()

@@ -1,4 +1,5 @@
 extends Node
+## Class responsible for scene transitions.
 
 
 const SAVE_FILE_PATH: String = "user://gamesave.json"
@@ -9,22 +10,6 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 
 func _ready() -> void:
 	_on_main_menu_entered()
-
-
-func _on_game_started(
-		scenario_scene: PackedScene, rules: GameRules, players: Players
-) -> void:
-	var world: Node = scenario_scene.instantiate()
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	load_game_from_scenario(scenario, rules, players)
-
-
-func _on_main_menu_entered() -> void:
-	_remove_all_children()
-	
-	var main_menu := main_menu_scene.instantiate() as MainMenu
-	main_menu.game_started.connect(_on_game_started)
-	add_child(main_menu)
 
 
 func load_game() -> void:
@@ -60,3 +45,21 @@ func play_game(game: Game) -> void:
 func _remove_all_children() -> void:
 	for child in get_children():
 		remove_child(child)
+
+
+func _on_game_started(
+		scenario_scene: PackedScene,
+		rules: GameRules,
+		players: Players
+) -> void:
+	var world: Node = scenario_scene.instantiate()
+	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
+	load_game_from_scenario(scenario, rules, players)
+
+
+func _on_main_menu_entered() -> void:
+	_remove_all_children()
+	
+	var main_menu := main_menu_scene.instantiate() as MainMenu
+	main_menu.game_started.connect(_on_game_started)
+	add_child(main_menu)

@@ -11,15 +11,6 @@ signal confirmed(province: Province, troop_count: int)
 var _province: Province
 
 
-func _on_troop_slider_value_changed(_value: float) -> void:
-	_new_slider_value()
-
-
-func _on_button_pressed(button_index: int) -> void:
-	if button_index == 1:
-		confirmed.emit(_province, roundi(troop_slider.value))
-
-
 ## To be called when this node is created.
 func init(province: Province, min_amount: int, max_amount: int) -> void:
 	_province = province
@@ -46,3 +37,12 @@ func _new_slider_value() -> void:
 		percentage = floori(100.0 * value / float(max_value))
 	
 	troop_label.text = str(value) + " (" + str(percentage) + "%)"
+
+
+func _on_troop_slider_value_changed(_value: float) -> void:
+	_new_slider_value()
+
+
+func _on_button_pressed(button_index: int) -> void:
+	if button_index == 1:
+		confirmed.emit(_province, roundi(troop_slider.value))

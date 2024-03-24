@@ -8,7 +8,7 @@ extends Control
 
 
 ## The space to add between each button, in pixels.
-@export var spacing: float = 2.0 :
+@export var spacing: float = 2.0:
 	set(value):
 		spacing = value
 		_update_layout()
@@ -24,14 +24,6 @@ func _ready() -> void:
 	_update_layout()
 
 
-func _on_child_order_changed() -> void:
-	_update_layout()
-
-
-func _on_resized() -> void:
-	_update_layout()
-
-
 func _update_layout() -> void:
 	var offset_x: float = size.y
 	for i in get_children().size():
@@ -43,3 +35,11 @@ func _update_layout() -> void:
 		control.position.x = position.x + size.x - offset_x
 		
 		offset_x += size.y + spacing
+
+
+func _on_child_order_changed() -> void:
+	_update_layout()
+
+
+func _on_resized() -> void:
+	_update_layout()

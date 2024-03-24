@@ -29,12 +29,12 @@ extends Control
 @export var bg_color_human: Color
 @export var bg_color_ai: Color
 
-var is_the_only_human: bool = false :
+var is_the_only_human: bool = false:
 	set(value):
 		is_the_only_human = value
 		_update_remove_button_visibility()
 
-var _is_renaming: bool = false :
+var _is_renaming: bool = false:
 	set(value):
 		_is_renaming = value
 		username_label.visible = not _is_renaming
@@ -70,65 +70,6 @@ func _input(event: InputEvent) -> void:
 			and not _is_mouse_inside()
 	):
 		_is_renaming = false
-
-
-func _on_mouse_entered() -> void:
-	circle_buttons.visible = true
-
-
-func _on_mouse_exited() -> void:
-	circle_buttons.visible = _is_renaming
-
-
-func _on_username_line_edit_focus_exited() -> void:
-	if _is_renaming:
-		_is_renaming = false
-
-
-func _on_username_changed(_new_username: String) -> void:
-	_update_shown_username()
-
-
-func _on_human_status_changed(_changed_player: Player) -> void:
-	_update_appearance()
-
-
-func _on_player_turn_changed(playing_player: Player) -> void:
-	_update_turn_indicator(playing_player)
-
-
-func _on_add_button_pressed() -> void:
-	if _player.is_human:
-		print_debug("Player is already human!")
-		return
-	
-	_player.is_human = true
-
-
-func _on_remove_button_pressed() -> void:
-	if not _player.is_human:
-		print_debug("Player is already not human!")
-		return
-	
-	_player.is_human = false
-
-
-func _on_rename_button_pressed() -> void:
-	if _is_renaming:
-		print_debug("Pressed the rename button, but already renaming!")
-		return
-	
-	_is_renaming = true
-
-
-func _on_confirm_button_pressed() -> void:
-	if not _is_renaming:
-		print_debug(
-				"Pressed the confirm button, but there is nothing to confirm!"
-		)
-		return
-	
-	_is_renaming = false
 
 
 ## To be called when this node is created.
@@ -203,3 +144,62 @@ func _submit_username_change() -> void:
 
 func _is_mouse_inside() -> bool:
 	return get_global_rect().has_point(get_global_mouse_position())
+
+
+func _on_mouse_entered() -> void:
+	circle_buttons.visible = true
+
+
+func _on_mouse_exited() -> void:
+	circle_buttons.visible = _is_renaming
+
+
+func _on_username_line_edit_focus_exited() -> void:
+	if _is_renaming:
+		_is_renaming = false
+
+
+func _on_username_changed(_new_username: String) -> void:
+	_update_shown_username()
+
+
+func _on_human_status_changed(_changed_player: Player) -> void:
+	_update_appearance()
+
+
+func _on_player_turn_changed(playing_player: Player) -> void:
+	_update_turn_indicator(playing_player)
+
+
+func _on_add_button_pressed() -> void:
+	if _player.is_human:
+		print_debug("Player is already human!")
+		return
+	
+	_player.is_human = true
+
+
+func _on_remove_button_pressed() -> void:
+	if not _player.is_human:
+		print_debug("Player is already not human!")
+		return
+	
+	_player.is_human = false
+
+
+func _on_rename_button_pressed() -> void:
+	if _is_renaming:
+		print_debug("Pressed the rename button, but already renaming!")
+		return
+	
+	_is_renaming = true
+
+
+func _on_confirm_button_pressed() -> void:
+	if not _is_renaming:
+		print_debug(
+				"Pressed the confirm button, but there is nothing to confirm!"
+		)
+		return
+	
+	_is_renaming = false

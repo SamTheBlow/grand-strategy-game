@@ -16,6 +16,40 @@ func _ready() -> void:
 	send_global_message("Type /help to get a list of commands.")
 
 
+## Sends a message to all players.
+func send_global_message(text: String) -> void:
+	chat_log.text += "[i][color=#404040]" + text + "[/color][/i]\n"
+
+
+# TODO don't send to all players (when multiplayer is implemented)
+## Sends a private message to the player.
+func send_system_message(new_text: String) -> void:
+	chat_log.text += (
+			"[color=#202020]System: [/color][color=#404040]"
+			+ new_text + "[/color]\n"
+	)
+
+
+func send_system_message_multiline(text_lines: Array[String]) -> void:
+	var message: String = ""
+	for text_line in text_lines:
+		message += "\n" + text_line
+	send_system_message(message)
+
+
+## Sends to all players a message written by the player.
+func send_human_message(new_text: String) -> void:
+	var stripped_text: String = new_text.strip_edges()
+	
+	if stripped_text == "":
+		return
+	
+	chat_log.text += (
+			"[color=#202020]You: [/color][color=#404040]"
+			+ stripped_text + "[/color]\n"
+	)
+
+
 func _on_input_text_submitted(new_text: String) -> void:
 	# Submit the message
 	if new_text.begins_with("/"):
@@ -68,37 +102,3 @@ func _on_input_text_submitted(new_text: String) -> void:
 	
 	# Clear the input field
 	chat_input.text = ""
-
-
-## Sends a message to all players.
-func send_global_message(text: String) -> void:
-	chat_log.text += "[i][color=#404040]" + text + "[/color][/i]\n"
-
-
-# TODO don't send to all players (when multiplayer is implemented)
-## Sends a private message to the player.
-func send_system_message(new_text: String) -> void:
-	chat_log.text += (
-			"[color=#202020]System: [/color][color=#404040]"
-			+ new_text + "[/color]\n"
-	)
-
-
-func send_system_message_multiline(text_lines: Array[String]) -> void:
-	var message: String = ""
-	for text_line in text_lines:
-		message += "\n" + text_line
-	send_system_message(message)
-
-
-## Sends to all players a message written by the player.
-func send_human_message(new_text: String) -> void:
-	var stripped_text: String = new_text.strip_edges()
-	
-	if stripped_text == "":
-		return
-	
-	chat_log.text += (
-			"[color=#202020]You: [/color][color=#404040]"
-			+ stripped_text + "[/color]\n"
-	)

@@ -4,7 +4,6 @@ extends Control
 
 signal start_game_requested(scenario: PackedScene, rules: GameRules)
 
-
 @export var scenario_scene: PackedScene
 
 @export var player_list: PlayerList
@@ -17,12 +16,6 @@ func _ready() -> void:
 	player.id = 0
 	
 	player_list.init([player])
-
-
-func _on_start_button_pressed() -> void:
-	start_game_requested.emit(
-			scenario_scene, _selected_game_rules(), player_list.players()
-	)
 
 
 func _selected_game_rules() -> GameRules:
@@ -111,3 +104,9 @@ func _selected_game_rules() -> GameRules:
 	)
 	
 	return game_rules
+
+
+func _on_start_button_pressed() -> void:
+	start_game_requested.emit(
+			scenario_scene, _selected_game_rules(), player_list.players()
+	)

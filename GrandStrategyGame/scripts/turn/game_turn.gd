@@ -1,6 +1,7 @@
 class_name GameTurn
 ## Class responsible for a turn-based system.
-## Each player plays their turn one at a time in order.
+## Each player plays one at a time in order.
+## After everyone is done playing, a new turn begins.
 
 
 ## This signal is only called once all players have played their turn.
@@ -18,6 +19,7 @@ func current_turn() -> int:
 	return _turn
 
 
+## Returns a player: it's currently that player's turn to play.
 func playing_player() -> Player:
 	return game.players.players[_playing_player_index]
 

@@ -31,24 +31,6 @@ func _init(country: Country, province: Province) -> void:
 	_can_build = _all_conditions_are_met()
 
 
-func _on_province_owner_changed(owner_country: Country) -> void:
-	_check_condition(owner_country == _country)
-
-
-func _on_money_changed(money: int) -> void:
-	_check_condition(money >= _province.game.rules.fortress_price)
-
-
-func _on_buildings_changed() -> void:
-	var there_is_no_fortress: bool = true
-	for building in _province.buildings._buildings:
-		if building is Fortress:
-			there_is_no_fortress = false
-			break
-	
-	_check_condition(there_is_no_fortress)
-
-
 func can_build() -> bool:
 	return _can_build
 
@@ -95,3 +77,21 @@ func _check_condition(condition: bool) -> void:
 			return
 	
 	can_build_changed.emit(_can_build)
+
+
+func _on_province_owner_changed(owner_country: Country) -> void:
+	_check_condition(owner_country == _country)
+
+
+func _on_money_changed(money: int) -> void:
+	_check_condition(money >= _province.game.rules.fortress_price)
+
+
+func _on_buildings_changed() -> void:
+	var there_is_no_fortress: bool = true
+	for building in _province.buildings._buildings:
+		if building is Fortress:
+			there_is_no_fortress = false
+			break
+	
+	_check_condition(there_is_no_fortress)

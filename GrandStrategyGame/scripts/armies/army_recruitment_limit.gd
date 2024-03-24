@@ -31,18 +31,6 @@ func _init(country: Country, province: Province) -> void:
 	_maximum = _calculate_maximum()
 
 
-func _on_province_owner_changed(owner_country: Country) -> void:
-	_check_condition(owner_country == _country)
-
-
-func _on_money_changed(_money: int) -> void:
-	_recalculate()
-
-
-func _on_population_size_changed(_population_size: int) -> void:
-	_recalculate()
-
-
 func maximum() -> int:
 	return _maximum
 
@@ -108,3 +96,15 @@ func _check_condition(condition: bool) -> void:
 			return
 	
 	changed.emit(_maximum)
+
+
+func _on_province_owner_changed(owner_country: Country) -> void:
+	_check_condition(owner_country == _country)
+
+
+func _on_money_changed(_money: int) -> void:
+	_recalculate()
+
+
+func _on_population_size_changed(_population_size: int) -> void:
+	_recalculate()

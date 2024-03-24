@@ -1,5 +1,7 @@
 class_name WorldLimits
 ## Pretty much just a Rect2i.
+## Currently, this class does not do anything that Rect2i can't do.
+## But maybe it will in the future.
 
 
 var _limits: Rect2i = Rect2i(0, 0, 10_000_000, 10_000_000)

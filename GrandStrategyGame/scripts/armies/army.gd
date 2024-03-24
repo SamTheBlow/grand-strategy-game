@@ -6,7 +6,7 @@ signal destroyed(army: Army)
 
 @export var battle: Battle
 
-var game: Game :
+var game: Game:
 	set(value):
 		if game:
 			game.turn.turn_changed.disconnect(_on_new_turn)
@@ -29,7 +29,7 @@ var _owner_country := Country.new()
 
 # For now, there's a hard limit of 1 movement per turn,
 # but in the future we should make it possible to change the limit
-var _movements_made: int = 0 :
+var _movements_made: int = 0:
 	set(value):
 		_movements_made = value
 		_refresh_visuals()
@@ -51,16 +51,34 @@ func _process(delta: float) -> void:
 			global_position = new_position
 
 
-func _on_new_turn(_turn_number: int) -> void:
-	_movements_made = 0
-
-
-func _on_player_turn(_player: Player) -> void:
-	_refresh_visuals()
-
-
-func _on_army_size_changed() -> void:
-	_update_troop_count_label()
+static func quick_setup(
+		game_: Game,
+		id_: int,
+		army_size_: int,
+		owner_country_: Country,
+		province_: Province,
+		movements_made_: int = 0,
+) -> Army:
+	var minimum_army_size: int = game_.rules.minimum_army_size
+	if army_size_ < minimum_army_size:
+		return null
+	
+	var army := game_.army_scene.instantiate() as Army
+	army.game = game_
+	army.id = id_
+	army.name = str(army.id)
+	
+	army.army_size = ArmySize.new(army_size_, minimum_army_size)
+	army.army_size.size_changed.connect(army._on_army_size_changed)
+	army.army_size.became_too_small.connect(army.destroy)
+	army._update_troop_count_label()
+	
+	army.set_owner_country(owner_country_)
+	army._movements_made = movements_made_
+	
+	game_.world.armies.add_army(army)
+	army.teleport_to_province(province_)
+	return army
 
 
 func destroy() -> void:
@@ -70,6 +88,19 @@ func destroy() -> void:
 
 func province() -> Province:
 	return _province
+
+
+## If true, the army can still make a movement.
+## Once an army moves, it can't move again on the same turn.
+func is_able_to_move() -> bool:
+	return _movements_made == 0
+
+
+## If true, the army is allowed to move to the given province.
+## An army can only move to an adjacent province.
+## This returns true regardless of if the army is able to move at all.
+func can_move_to(destination: Province) -> bool:
+	return destination.is_linked_to(_province)
 
 
 ## Moves this army to the given destination province. No animation will play.
@@ -109,6 +140,8 @@ func set_owner_country(value: Country) -> void:
 	($ColorRect as ColorRect).color = _owner_country.color
 
 
+## Plays an animation where the army visually moves to given province.
+## Note that this does not actually move the army to that province!
 func play_movement_to(destination_province: Province) -> void:
 	animation_is_playing = true
 	original_position = _province.position_army_host
@@ -141,16 +174,6 @@ func movements_made() -> int:
 	return _movements_made
 
 
-## Returns true if the army can move, otherwise returns false.
-## Once an army moves, it can't move again on the same turn.
-func is_able_to_move() -> bool:
-	return _movements_made == 0
-
-
-func can_move_to(destination: Province) -> bool:
-	return destination.is_linked_to(_province)
-
-
 static func money_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_money_per_unit)
 
@@ -159,7 +182,7 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_population_per_unit)
 
 
-# Darkens the army sprite under specific conditions
+# Darkens the army sprite if the army cannot perform any action
 func _refresh_visuals() -> void:
 	if (
 			is_able_to_move()
@@ -177,31 +200,13 @@ func _update_troop_count_label() -> void:
 	troop_count_label.text = str(army_size.current_size())
 
 
-static func quick_setup(
-		game_: Game,
-		id_: int,
-		army_size_: int,
-		owner_country_: Country,
-		province_: Province,
-		movements_made_: int = 0,
-) -> Army:
-	var minimum_army_size: int = game_.rules.minimum_army_size
-	if army_size_ < minimum_army_size:
-		return null
-	
-	var army := game_.army_scene.instantiate() as Army
-	army.game = game_
-	army.id = id_
-	army.name = str(army.id)
-	
-	army.army_size = ArmySize.new(army_size_, minimum_army_size)
-	army.army_size.size_changed.connect(army._on_army_size_changed)
-	army.army_size.became_too_small.connect(army.destroy)
-	army._update_troop_count_label()
-	
-	army.set_owner_country(owner_country_)
-	army._movements_made = movements_made_
-	
-	game_.world.armies.add_army(army)
-	army.teleport_to_province(province_)
-	return army
+func _on_new_turn(_turn_number: int) -> void:
+	_movements_made = 0
+
+
+func _on_player_turn(_player: Player) -> void:
+	_refresh_visuals()
+
+
+func _on_army_size_changed() -> void:
+	_update_troop_count_label()

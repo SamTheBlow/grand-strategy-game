@@ -11,23 +11,6 @@ var _army: Army
 var _destination: Province
 
 
-func _on_troop_slider_value_changed(value: float) -> void:
-	if (
-			value > troop_slider.max_value
-			- (_army.game.rules.minimum_army_size - 1)
-			and value < troop_slider.max_value
-	):
-		troop_slider.value = troop_slider.max_value
-		return
-	_new_slider_value()
-
-
-func _on_button_pressed(button_id: int) -> void:
-	if button_id == 1:
-		var troop_count := int(troop_slider.value)
-		confirmed.emit(_army, troop_count, _destination)
-
-
 ## To be called when this node is created.
 func init(army: Army, destination: Province) -> void:
 	_army = army
@@ -46,3 +29,20 @@ func _new_slider_value() -> void:
 	var value := int(troop_slider.value)
 	var max_value := int(troop_slider.max_value)
 	troop_label.text = str(value) + " | " + str(max_value - value)
+
+
+func _on_troop_slider_value_changed(value: float) -> void:
+	if (
+			value > troop_slider.max_value
+			- (_army.game.rules.minimum_army_size - 1)
+			and value < troop_slider.max_value
+	):
+		troop_slider.value = troop_slider.max_value
+		return
+	_new_slider_value()
+
+
+func _on_button_pressed(button_id: int) -> void:
+	if button_id == 1:
+		var troop_count := int(troop_slider.value)
+		confirmed.emit(_army, troop_count, _destination)

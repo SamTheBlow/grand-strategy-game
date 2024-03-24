@@ -9,9 +9,24 @@ extends Control
 signal button_pressed(button_id: int)
 
 @export_category("Line")
-@export var line_top: float = -64.0 : set = set_line_top
-@export var line_bottom: float = 0.0 : set = set_line_bottom
-@export var line_length_x: float = 64.0 : set = set_line_length_x
+
+@export var line_top: float = -64.0:
+	set(value):
+		line_top = value
+		_update_side_nodes()
+		queue_redraw()
+
+@export var line_bottom: float = 0.0:
+	set(value):
+		line_bottom = value
+		_update_side_nodes()
+		queue_redraw()
+
+@export var line_length_x: float = 64.0:
+	set(value):
+		line_length_x = value
+		_update_side_nodes()
+		queue_redraw()
 
 @export_category("Inner nodes")
 @export var population_size_label: Label
@@ -82,30 +97,6 @@ func _draw() -> void:
 	)
 
 
-func _on_build_fortress_button_pressed() -> void:
-	button_pressed.emit(0)
-
-
-func _on_recruit_button_pressed() -> void:
-	button_pressed.emit(1)
-
-
-func _on_population_size_changed(new_value: int) -> void:
-	_update_population_size_label(new_value)
-
-
-func _on_income_money_changed(new_value: int) -> void:
-	_update_income_money_label(new_value)
-
-
-func _on_fortress_can_build_changed(can_build: bool) -> void:
-	build_fortress_button.disabled = not can_build
-
-
-func _on_army_maximum_changed(maximum: int) -> void:
-	recruit_button.disabled = maximum < _province.game.rules.minimum_army_size
-
-
 ## To be called when creating this node.
 func init(province: Province, your_country: Country) -> void:
 	_province = province
@@ -145,24 +136,6 @@ func init(province: Province, your_country: Country) -> void:
 	_update_left_side_nodes()
 
 
-func set_line_top(value: float) -> void:
-	line_top = value
-	_update_side_nodes()
-	queue_redraw()
-
-
-func set_line_bottom(value: float) -> void:
-	line_bottom = value
-	_update_side_nodes()
-	queue_redraw()
-
-
-func set_line_length_x(value: float) -> void:
-	line_length_x = value
-	_update_side_nodes()
-	queue_redraw()
-
-
 func _update_population_size_label(value: int) -> void:
 	population_size_label.text = str(value)
 
@@ -194,3 +167,27 @@ func _update_right_side_nodes() -> void:
 		)
 		right_side_nodes[i].position.y = line_top + offset_y
 		offset_y += right_side_nodes[i].size.y
+
+
+func _on_build_fortress_button_pressed() -> void:
+	button_pressed.emit(0)
+
+
+func _on_recruit_button_pressed() -> void:
+	button_pressed.emit(1)
+
+
+func _on_population_size_changed(new_value: int) -> void:
+	_update_population_size_label(new_value)
+
+
+func _on_income_money_changed(new_value: int) -> void:
+	_update_income_money_label(new_value)
+
+
+func _on_fortress_can_build_changed(can_build: bool) -> void:
+	build_fortress_button.disabled = not can_build
+
+
+func _on_army_maximum_changed(maximum: int) -> void:
+	recruit_button.disabled = maximum < _province.game.rules.minimum_army_size

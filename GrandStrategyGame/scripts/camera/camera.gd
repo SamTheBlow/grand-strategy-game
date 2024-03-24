@@ -1,7 +1,10 @@
 class_name CustomCamera2D
 extends Camera2D
-## Please do not use Godot's built-in camera limits!
-## This script uses custom code to implement it.
+## Class responsible for custom camera behavior.
+## The camera always stays within given world limits.[br]
+## [br]
+## NOTICE: Please do not use Godot's built-in camera limits!
+## This script uses custom code for camera limits.
 
 
 ## How far away from the world the camera can go,
