@@ -1,0 +1,109 @@
+[gd_scene load_steps=4 format=3 uid="uid://djw1srwh1osf6"]
+
+[ext_resource type="Script" path="res://scripts/networking/server_setup.gd" id="1_iuyet"]
+
+[sub_resource type="Animation" id="1"]
+resource_name = "animate_feedback"
+length = 0.5
+tracks/0/type = "bezier"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Control/VBoxContainer/ServerFeedback:modulate:a")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"handle_modes": PackedInt32Array(0, 0),
+"points": PackedFloat32Array(0, -0.25, 0, 0.25, 0, 1, -0.25, 0, 0.25, 0),
+"times": PackedFloat32Array(0, 0.5)
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_hemk2"]
+_data = {
+"animate_feedback": SubResource("1")
+}
+
+[node name="ServerSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_iuyet")
+autohide = false
+
+[node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HostButton" type="Button" parent="Control/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "Host Server"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IPAddress" type="LineEdit" parent="Control/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "localhost"
+
+[node name="Join" type="Button" parent="Control/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join"
+
+[node name="ServerFeedback" type="Label" parent="Control/VBoxContainer"]
+unique_name_in_owner = true
+modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+text = "Sample text"
+clip_text = true
+
+[node name="FeedbackAnimation" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_hemk2")
+}
+
+[node name="Control2" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DisconnectButton" type="Button" parent="Control2"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+text = "Disconnect"
+
+[connection signal="pressed" from="Control/VBoxContainer/HostButton" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Control/VBoxContainer/HBoxContainer/Join" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="Control2/DisconnectButton" to="." method="_on_disconnect_button_pressed"]

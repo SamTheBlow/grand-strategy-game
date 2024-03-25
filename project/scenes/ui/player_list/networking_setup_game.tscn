@@ -1,0 +1,86 @@
+[gd_scene load_steps=4 format=3 uid="uid://cm37jqeqg77g7"]
+
+[ext_resource type="Script" path="res://scripts/networking/server_setup.gd" id="1_4vo7k"]
+
+[sub_resource type="Animation" id="Animation_8rwx1"]
+resource_name = "animate_feedback"
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_53shm"]
+_data = {
+"animate_feedback": SubResource("Animation_8rwx1")
+}
+
+[node name="ServerSetup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_4vo7k")
+autohide = false
+
+[node name="IPAddress" type="LineEdit" parent="."]
+unique_name_in_owner = true
+visible = false
+offset_right = 67.0625
+offset_bottom = 31.0
+size_flags_horizontal = 3
+placeholder_text = "localhost"
+
+[node name="ServerFeedback" type="Label" parent="."]
+unique_name_in_owner = true
+visible = false
+modulate = Color(1, 1, 1, 0)
+text = "Sample text"
+
+[node name="FeedbackAnimation" type="AnimationPlayer" parent="."]
+unique_name_in_owner = true
+libraries = {
+"": SubResource("AnimationLibrary_53shm")
+}
+
+[node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HostButton" type="Button" parent="Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+text = "Host Server"
+
+[node name="Control2" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DisconnectButton" type="Button" parent="Control2"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+text = "Disconnect"
+
+[connection signal="pressed" from="Control/HostButton" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="Control2/DisconnectButton" to="." method="_on_disconnect_button_pressed"]

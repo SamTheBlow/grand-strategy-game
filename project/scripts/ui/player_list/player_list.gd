@@ -4,6 +4,9 @@ extends Control
 ## Class responsible for displaying a list of players.
 ## It shows all players by their username.
 ## During a game, it also shows with an arrow who's turn it is to play.
+##
+## This list can also include an interface for networking setup at the bottom.
+## To include one, use the [code]use_networking_interface()[/code] function.
 
 
 @export_category("References")
@@ -11,7 +14,8 @@ extends Control
 @export var margin: Control
 @export var container: Control
 @export var add_player_button: Control
-@export var server_setup: Control
+@export var spacing: Control
+@export var networking_setup: Control
 
 @export_category("Variables")
 
@@ -57,6 +61,25 @@ func init(player_list: Array[Player], game_turn: GameTurn = null) -> void:
 	
 	_update_elements()
 	_update_size()
+
+
+## To not use any networking interface, use [code]null[/code] as the input.
+func use_networking_interface(networking_interface: Control) -> void:
+	# Remove all children
+	for child in networking_setup.get_children():
+		networking_setup.remove_child(child)
+	
+	if not networking_interface:
+		spacing.hide()
+		networking_setup.hide()
+		return
+	
+	networking_interface.interface_changed.connect(
+			_on_networking_interface_changed
+	)
+	spacing.show()
+	networking_setup.show()
+	networking_setup.add_child(networking_interface)
 
 
 ## Returns a copy of this list's players
@@ -108,8 +131,12 @@ func _update_size() -> void:
 		new_size += roundi(add_player_button.size.y) + 4
 	
 	# Add the size of the server setup, when it's there
-	if server_setup.visible:
-		new_size += roundi(server_setup.custom_minimum_size.y)
+	if networking_setup.visible:
+		new_size += 8 + 4
+		new_size += roundi(networking_setup.custom_minimum_size.y) + 4
+	
+	if new_size > 0:
+		new_size -= 4
 	
 	anchors_preset = PRESET_TOP_WIDE
 	offset_bottom = new_size + margin_pixels * 2
@@ -166,3 +193,9 @@ func _on_add_player_button_pressed() -> void:
 	
 	_add_element(player)
 	_update_elements()
+
+
+func _on_networking_interface_changed() -> void:
+	networking_setup.custom_minimum_size = (
+			networking_setup.get_child(0).custom_minimum_size
+	)

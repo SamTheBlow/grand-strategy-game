@@ -9,6 +9,7 @@ signal game_ended()
 @export var fortress_scene: PackedScene
 @export var province_scene: PackedScene
 @export var world_2d_scene: PackedScene
+@export var networking_setup_scene: PackedScene
 
 @export_category("UI scenes")
 @export var troop_ui_scene: PackedScene
@@ -83,6 +84,13 @@ func init2() -> void:
 	# Create the player list
 	var player_list := player_list_scene.instantiate() as PlayerList
 	player_list.init(players.players, turn)
+	var networking_interface := (
+			networking_setup_scene.instantiate() as NetworkingInterface
+	)
+	networking_interface.message_sent.connect(
+			chat._on_networking_interface_message_sent
+	)
+	player_list.use_networking_interface(networking_interface)
 	right_side.add_child(player_list)
 	
 	turn.turn_changed.connect(_on_new_turn)

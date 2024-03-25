@@ -5,6 +5,7 @@ extends Control
 signal start_game_requested(scenario: PackedScene, rules: GameRules)
 
 @export var scenario_scene: PackedScene
+@export var networking_setup_scene: PackedScene
 
 @export var player_list: PlayerList
 
@@ -16,6 +17,9 @@ func _ready() -> void:
 	player.id = 0
 	
 	player_list.init([player])
+	
+	var networking_interface := networking_setup_scene.instantiate() as Control
+	player_list.use_networking_interface(networking_interface)
 
 
 func _selected_game_rules() -> GameRules:

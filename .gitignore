@@ -1,7 +1,7 @@
-GrandStrategyGame/.godot/
+project/.godot/
 
-GrandStrategyGame/.import/
-GrandStrategyGame/export.cfg
-GrandStrategyGame/export_presets.cfg
+project/.import/
+project/export.cfg
+project/export_presets.cfg
 
-GrandStrategyGame/*.translation
+project/*.translation

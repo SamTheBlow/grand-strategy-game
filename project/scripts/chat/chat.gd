@@ -102,3 +102,9 @@ func _on_input_text_submitted(new_text: String) -> void:
 	
 	# Clear the input field
 	chat_input.text = ""
+
+
+func _on_networking_interface_message_sent(text: String, color: Color) -> void:
+	send_system_message(
+		"[color=#" + color.to_html() + "]" + text + "[/color]"
+	)
