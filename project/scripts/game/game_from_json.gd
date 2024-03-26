@@ -234,7 +234,7 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 		var player: Player = _load_player(player_dict, game)
 		if not player:
 			return false
-		players.players.append(player)
+		players.add_player(player)
 	
 	return true
 

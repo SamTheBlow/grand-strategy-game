@@ -4,7 +4,7 @@ class_name PlayersToJSON
 
 func convert_players(players: Players) -> Array:
 	var players_data: Array = []
-	for player in players.players:
+	for player in players.list():
 		var player_data: Dictionary = {}
 		player_data["id"] = player.id
 		if player.playing_country:

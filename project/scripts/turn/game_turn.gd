@@ -21,7 +21,7 @@ func current_turn() -> int:
 
 ## Returns a player: it's currently that player's turn to play.
 func playing_player() -> Player:
-	return game.players.players[_playing_player_index]
+	return game.players.player_from_index(_playing_player_index)
 
 
 ## Call this when a human player ends their turn.
@@ -65,7 +65,7 @@ func _end_player_turn() -> void:
 			)
 	
 	_playing_player_index += 1
-	if _playing_player_index >= game.players.players.size():
+	if _playing_player_index >= game.players.size():
 		_playing_player_index = 0
 	
 	player_changed.emit(playing_player())

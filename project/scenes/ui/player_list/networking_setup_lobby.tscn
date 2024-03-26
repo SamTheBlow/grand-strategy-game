@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://djw1srwh1osf6"]
 
-[ext_resource type="Script" path="res://scripts/networking/server_setup.gd" id="1_iuyet"]
+[ext_resource type="Script" path="res://scripts/networking/networking_interface.gd" id="1_iuyet"]
 
 [sub_resource type="Animation" id="1"]
 resource_name = "animate_feedback"

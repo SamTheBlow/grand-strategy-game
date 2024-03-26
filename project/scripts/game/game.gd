@@ -83,7 +83,8 @@ func init2() -> void:
 	
 	# Create the player list
 	var player_list := player_list_scene.instantiate() as PlayerList
-	player_list.init(players.players, turn)
+	player_list.players = players
+	player_list.game_turn = turn
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)

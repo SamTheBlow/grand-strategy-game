@@ -34,37 +34,60 @@ extends Control
 		_update_margin_offsets()
 		_update_size()
 
-var _players: Players
-var _is_discarding_ai_players: bool = false
+## If the given players object contains no human player,
+## a new human player is added automatically.
+## This cannot be prevented: there must always be at least one human player.
+var players: Players:
+	set(value):
+		if players:
+			players.player_added.disconnect(_on_player_added)
+			players.player_removed.disconnect(_on_player_removed)
+			_clear_elements()
+		
+		players = value
+		
+		if players.number_of_humans() == 0:
+			_add_human_player()
+		
+		_create_elements()
+		players.player_added.connect(_on_player_added)
+		players.player_removed.connect(_on_player_removed)
+
+## This value is designed to be only set once.
+## To not use the game turn feature, leave this value to [code]null[/code].
+var game_turn: GameTurn = null:
+	set(value):
+		game_turn = value
+		
+		## TODO make a better way to know if we're in lobby or in game
+		if not game_turn:
+			_is_discarding_ai_players = true
+			return
+		add_player_button.hide()
+		_is_discarding_ai_players = false
+		
+		if not players:
+			return
+		for element in container.get_children():
+			if element is PlayerListElement:
+				(element as PlayerListElement).init_turn(game_turn)
+
+var _is_discarding_ai_players: bool = true
 var _visual_players: Array[PlayerListElement] = []
 
 
 func _ready() -> void:
+	if not players:
+		players = Players.new()
 	_update_margin_offsets()
 	_update_size()
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
-## To be called when this node is created.
-func init(player_list: Array[Player], game_turn: GameTurn = null) -> void:
-	_players = Players.new()
-	_players.players = player_list.duplicate()
-	
-	## TODO make a better way to know if we're in lobby or in game
-	_is_discarding_ai_players = true
-	if game_turn:
-		add_player_button.hide()
-		_is_discarding_ai_players = false
-	
-	for i in _players.players.size():
-		_add_element(_players.players[i], game_turn)
-	
-	_update_elements()
-	_update_size()
-
-
 ## To not use any networking interface, use [code]null[/code] as the input.
-func use_networking_interface(networking_interface: Control) -> void:
+func use_networking_interface(
+		networking_interface: NetworkingInterface
+) -> void:
 	# Remove all children
 	for child in networking_setup.get_children():
 		networking_setup.remove_child(child)
@@ -82,23 +105,41 @@ func use_networking_interface(networking_interface: Control) -> void:
 	networking_setup.add_child(networking_interface)
 
 
-## Returns a copy of this list's players
-func players() -> Players:
-	var copy := Players.new()
-	copy.players = _players.players.duplicate()
-	return copy
-
-
-func _add_element(player: Player, game_turn: GameTurn = null) -> void:
+func _add_element(player: Player) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
 	
 	var element := player_list_element.instantiate() as PlayerListElement
-	element.init(player)
+	element.player = player
+	element.init()
 	if game_turn:
 		element.init_turn(game_turn)
 	_visual_players.append(element)
 	container.add_child(element)
 	container.move_child(element, -2)
+
+
+func _create_elements() -> void:
+	for player in players.list():
+		_add_element(player)
+	_update_elements()
+
+
+func _remove_element(player: Player) -> void:
+	player.human_status_changed.disconnect(_on_human_status_changed)
+	
+	for visual in _visual_players:
+		if visual.player == player:
+			visual.get_parent().remove_child(visual)
+			visual.queue_free()
+			_visual_players.erase(visual)
+			break
+
+
+func _clear_elements() -> void:
+	for element in container.get_children():
+		if element is PlayerListElement:
+			container.remove_child(element)
+			element.queue_free()
 
 
 ## To be called when the margin_pixels property changes.
@@ -147,7 +188,17 @@ func _update_size() -> void:
 ## To be called whenever the number of human players changes
 func _update_elements() -> void:
 	for element in _visual_players:
-		element.is_the_only_human = _players.number_of_humans() == 1
+		element.is_the_only_human = players.number_of_humans() == 1
+
+
+## Call this when you find out that
+## the players list doesn't have any human player
+func _add_human_player() -> void:
+	var player: Player = Player.new()
+	player.id = players.new_unique_id()
+	player.is_human = true
+	player.custom_username = players.new_default_username()
+	players.add_player(player)
 
 
 func _on_viewport_size_changed() -> void:
@@ -158,44 +209,53 @@ func _on_human_status_changed(player: Player) -> void:
 	if (not _is_discarding_ai_players) or player.is_human:
 		_update_elements()
 		return
-	if _players.players.size() == 1:
+	if players.number_of_humans() == 0:
 		print_debug(
-				"Tried to remove a human player, but"
-				+ " there is already only one human player!"
+				"The last human player was turned into an AI!"
+				+ " (That's not normal!)"
 		)
+		player.is_human = true
 		_update_elements()
 		return
 	
 	# The player became an AI. Discard this player
-	player.human_status_changed.disconnect(_on_human_status_changed)
-	var index: int = _players.players.find(player)
-	_visual_players[index].get_parent().remove_child(_visual_players[index])
-	_visual_players[index].queue_free()
-	_visual_players.remove_at(index)
-	_players.players.remove_at(index)
-	
-	## TODO don't hard code the maximum number of players
-	if _players.players.size() < 11:
-		add_player_button.show()
-	
-	_update_elements()
+	players.remove_player(player)
 
 
 func _on_add_player_button_pressed() -> void:
 	var player := Player.new()
 	player.is_human = true
-	player.custom_username = _players.new_default_username()
-	
-	_players.add_player(player)
+	player.id = players.new_unique_id()
+	player.custom_username = players.new_default_username()
+	players.add_player(player)
+
+
+func _on_networking_interface_changed() -> void:
+	networking_setup.custom_minimum_size = (
+			(networking_setup.get_child(0) as Control).custom_minimum_size
+	)
+
+
+func _on_player_added(player: Player) -> void:
 	## TODO don't hard code the maximum number of players
-	if _players.players.size() >= 11:
+	if players.size() >= 11:
 		add_player_button.hide()
 	
 	_add_element(player)
 	_update_elements()
 
 
-func _on_networking_interface_changed() -> void:
-	networking_setup.custom_minimum_size = (
-			networking_setup.get_child(0).custom_minimum_size
-	)
+func _on_player_removed(player: Player) -> void:
+	## TODO don't hard code the maximum number of players
+	if players.size() < 11:
+		add_player_button.show()
+	
+	_remove_element(player)
+	_update_elements()
+	
+	if players.number_of_humans() == 0:
+		print_debug(
+				"The last human player was removed from the list!"
+				+ " (That's not normal!)"
+		)
+		_add_human_player()

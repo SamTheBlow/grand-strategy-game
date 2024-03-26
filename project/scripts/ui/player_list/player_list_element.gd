@@ -29,6 +29,16 @@ extends Control
 @export var bg_color_human: Color
 @export var bg_color_ai: Color
 
+var player: Player:
+	set(value):
+		if player:
+			player.username_changed.disconnect(_on_username_changed)
+			player.human_status_changed.disconnect(_on_human_status_changed)
+		player = value
+		player.username_changed.connect(_on_username_changed)
+		player.human_status_changed.connect(_on_human_status_changed)
+		_update_appearance()
+
 var is_the_only_human: bool = false:
 	set(value):
 		is_the_only_human = value
@@ -46,8 +56,6 @@ var _is_renaming: bool = false:
 			_submit_username_change()
 		circle_buttons.visible = _is_renaming or _is_mouse_inside()
 		_update_button_visibility()
-
-var _player: Player
 
 
 func _ready() -> void:
@@ -73,12 +81,7 @@ func _input(event: InputEvent) -> void:
 
 
 ## To be called when this node is created.
-func init(player: Player) -> void:
-	_player = player
-	
-	player.username_changed.connect(_on_username_changed)
-	player.human_status_changed.connect(_on_human_status_changed)
-	
+func init() -> void:
 	arrow_label.text = ""
 	_update_appearance()
 	custom_minimum_size.y = container.size.y
@@ -91,13 +94,13 @@ func init_turn(turn: GameTurn) -> void:
 
 
 func _update_shown_username() -> void:
-	username_label.text = _player.username()
-	if not _player.is_human:
+	username_label.text = player.username()
+	if not player.is_human:
 		username_label.text += " (AI)"
 
 
 func _update_turn_indicator(playing_player: Player) -> void:
-	if playing_player == _player:
+	if playing_player == player:
 		arrow_label.text = "->"
 	else:
 		arrow_label.text = ""
@@ -106,7 +109,7 @@ func _update_turn_indicator(playing_player: Player) -> void:
 func _update_appearance() -> void:
 	_update_shown_username()
 	
-	if _player.is_human:
+	if player.is_human:
 		username_label.add_theme_color_override(
 				"font_color", username_color_human
 		)
@@ -121,7 +124,7 @@ func _update_appearance() -> void:
 
 
 func _update_button_visibility() -> void:
-	add_button.visible = (not _player.is_human) and (not _is_renaming)
+	add_button.visible = (not player.is_human) and (not _is_renaming)
 	_update_remove_button_visibility()
 	rename_button.visible = not _is_renaming
 	confirm_button.visible = _is_renaming
@@ -129,7 +132,7 @@ func _update_button_visibility() -> void:
 
 func _update_remove_button_visibility() -> void:
 	remove_button.visible = (
-			_player.is_human
+			player.is_human
 			and not is_the_only_human
 			and not _is_renaming
 	)
@@ -137,9 +140,9 @@ func _update_remove_button_visibility() -> void:
 
 func _submit_username_change() -> void:
 	var new_username: String = username_line_edit.text.strip_edges()
-	if new_username == "" or new_username == _player.username():
+	if new_username == "" or new_username == player.username():
 		return
-	_player.custom_username = new_username
+	player.custom_username = new_username
 
 
 func _is_mouse_inside() -> bool:
@@ -172,19 +175,19 @@ func _on_player_turn_changed(playing_player: Player) -> void:
 
 
 func _on_add_button_pressed() -> void:
-	if _player.is_human:
+	if player.is_human:
 		print_debug("Player is already human!")
 		return
 	
-	_player.is_human = true
+	player.is_human = true
 
 
 func _on_remove_button_pressed() -> void:
-	if not _player.is_human:
+	if not player.is_human:
 		print_debug("Player is already not human!")
 		return
 	
-	_player.is_human = false
+	player.is_human = false
 
 
 func _on_rename_button_pressed() -> void:
