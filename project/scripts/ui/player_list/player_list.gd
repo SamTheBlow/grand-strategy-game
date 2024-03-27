@@ -34,8 +34,8 @@ extends Control
 		_update_margin_offsets()
 		_update_size()
 
-## If the given players object contains no human player,
-## a new human player is added automatically.
+## If the given [Players] object does not contain any human player,
+## a new human player will be added automatically.
 ## This cannot be prevented: there must always be at least one human player.
 var players: Players:
 	set(value):
@@ -73,12 +73,20 @@ var game_turn: GameTurn = null:
 				(element as PlayerListElement).init_turn(game_turn)
 
 var _is_discarding_ai_players: bool = true
+
+var _is_using_network_interface: bool = false:
+	set(value):
+		_is_using_network_interface = value
+		_update_networking_interface_visibility()
+		_update_size()
+
 var _visual_players: Array[PlayerListElement] = []
 
 
 func _ready() -> void:
 	if not players:
 		players = Players.new()
+	_update_networking_interface_visibility()
 	_update_margin_offsets()
 	_update_size()
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
@@ -93,16 +101,19 @@ func use_networking_interface(
 		networking_setup.remove_child(child)
 	
 	if not networking_interface:
-		spacing.hide()
-		networking_setup.hide()
+		_is_using_network_interface = false
 		return
 	
 	networking_interface.interface_changed.connect(
 			_on_networking_interface_changed
 	)
-	spacing.show()
-	networking_setup.show()
 	networking_setup.add_child(networking_interface)
+	_is_using_network_interface = true
+
+
+func _update_networking_interface_visibility() -> void:
+	spacing.visible = _is_using_network_interface
+	networking_setup.visible = _is_using_network_interface
 
 
 func _add_element(player: Player) -> void:
@@ -164,7 +175,7 @@ func _update_size() -> void:
 			continue
 		new_size += roundi((child as PlayerListElement).size.y)
 		
-		# I really don't know why we need to add 4, but it just works
+		# It seems like Godot adds 4 pixels of spacing between each node
 		new_size += 4
 	
 	# Add the size of the add button, when it's there

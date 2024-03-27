@@ -7,7 +7,7 @@
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 96.0
+offset_bottom = 107.0
 grow_horizontal = 2
 size_flags_vertical = 0
 script = ExtResource("1_fclwf")
@@ -83,11 +83,15 @@ size_flags_vertical = 3
 text = "Add local player"
 
 [node name="Spacing" type="Control" parent="MarginContainer/Control/VBoxContainer"]
+visible = false
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="NetworkingSetup" type="Control" parent="MarginContainer/Control/VBoxContainer"]
+visible = false
 layout_mode = 2
 size_flags_vertical = 8
 
+[connection signal="mouse_entered" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" to="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" to="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" method="_on_mouse_exited"]
 [connection signal="pressed" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/Control/Margin/AddPlayerButton" to="." method="_on_add_player_button_pressed"]
