@@ -31,6 +31,7 @@ anchor_right = 0.95
 anchor_bottom = 0.95
 
 [node name="Lobby" parent="MarginContainer" instance=ExtResource("1_koaky")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [connection signal="start_game_requested" from="MarginContainer/Lobby" to="." method="_on_start_game_requested"]

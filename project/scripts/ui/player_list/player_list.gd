@@ -45,13 +45,12 @@ var players: Players:
 			_clear_elements()
 		
 		players = value
-		
-		if players.number_of_humans() == 0:
-			_add_human_player()
-		
 		_create_elements()
 		players.player_added.connect(_on_player_added)
 		players.player_removed.connect(_on_player_removed)
+		
+		if players.number_of_humans() == 0:
+			_add_human_player()
 
 ## This value is designed to be only set once.
 ## To not use the game turn feature, leave this value to [code]null[/code].
@@ -147,10 +146,10 @@ func _remove_element(player: Player) -> void:
 
 
 func _clear_elements() -> void:
-	for element in container.get_children():
-		if element is PlayerListElement:
-			container.remove_child(element)
-			element.queue_free()
+	for element in _visual_players:
+		element.get_parent().remove_child(element)
+		element.queue_free()
+	_visual_players.clear()
 
 
 ## To be called when the margin_pixels property changes.
@@ -196,14 +195,13 @@ func _update_size() -> void:
 		offset_bottom = minf(offset_bottom, get_parent_control().size.y)
 
 
-## To be called whenever the number of human players changes
+## To be called whenever the number of local human players changes
 func _update_elements() -> void:
+	var is_the_only_local_human: bool = players.number_of_local_humans() == 1
 	for element in _visual_players:
-		element.is_the_only_human = players.number_of_humans() == 1
+		element.is_the_only_local_human = is_the_only_local_human
 
 
-## Call this when you find out that
-## the players list doesn't have any human player
 func _add_human_player() -> void:
 	var player: Player = Player.new()
 	player.id = players.new_unique_id()
@@ -234,11 +232,7 @@ func _on_human_status_changed(player: Player) -> void:
 
 
 func _on_add_player_button_pressed() -> void:
-	var player := Player.new()
-	player.is_human = true
-	player.id = players.new_unique_id()
-	player.custom_username = players.new_default_username()
-	players.add_player(player)
+	_add_human_player()
 
 
 func _on_networking_interface_changed() -> void:
@@ -263,10 +257,3 @@ func _on_player_removed(player: Player) -> void:
 	
 	_remove_element(player)
 	_update_elements()
-	
-	if players.number_of_humans() == 0:
-		print_debug(
-				"The last human player was removed from the list!"
-				+ " (That's not normal!)"
-		)
-		_add_human_player()

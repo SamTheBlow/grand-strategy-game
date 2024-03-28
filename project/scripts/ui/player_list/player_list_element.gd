@@ -39,9 +39,9 @@ var player: Player:
 		player.human_status_changed.connect(_on_human_status_changed)
 		_update_appearance()
 
-var is_the_only_human: bool = false:
+var is_the_only_local_human: bool = false:
 	set(value):
-		is_the_only_human = value
+		is_the_only_local_human = value
 		_update_remove_button_visibility()
 
 var _is_renaming: bool = false:
@@ -61,6 +61,7 @@ var _is_renaming: bool = false:
 func _ready() -> void:
 	username_label.visible = true
 	username_edit.visible = false
+	_update_button_visibility()
 
 
 func _process(_delta: float) -> void:
@@ -126,16 +127,26 @@ func _update_appearance() -> void:
 func _update_button_visibility() -> void:
 	add_button.visible = (not player.is_human) and (not _is_renaming)
 	_update_remove_button_visibility()
-	rename_button.visible = not _is_renaming
+	rename_button.visible = (not _is_renaming) and _can_edit()
 	confirm_button.visible = _is_renaming
 
 
 func _update_remove_button_visibility() -> void:
 	remove_button.visible = (
 			player.is_human
-			and not is_the_only_human
+			and _can_edit()
+			and not is_the_only_local_human
 			and not _is_renaming
 	)
+
+
+## Returns true if you're able to edit this player.
+## When connected to a server, you only have control over local players.
+## If you're the server, you have full control over everything.
+func _can_edit() -> bool:
+	if not multiplayer:
+		return true
+	return (not player.is_remote()) or multiplayer.is_server()
 
 
 func _submit_username_change() -> void:
@@ -185,6 +196,10 @@ func _on_add_button_pressed() -> void:
 func _on_remove_button_pressed() -> void:
 	if not player.is_human:
 		print_debug("Player is already not human!")
+		return
+	
+	if is_the_only_local_human:
+		print_debug("Tried to remove the only local player.")
 		return
 	
 	player.is_human = false
