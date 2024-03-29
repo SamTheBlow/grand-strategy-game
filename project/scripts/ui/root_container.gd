@@ -8,10 +8,10 @@ extends HBoxContainer
 
 
 func _ready() -> void:
-	trigger_check_box.pressed.connect(_on_check_box_pressed)
-	_on_check_box_pressed()
+	trigger_check_box.toggled.connect(_on_check_box_toggled)
+	_on_check_box_toggled()
 
 
-func _on_check_box_pressed() -> void:
+func _on_check_box_toggled(_toggled_on: bool = false) -> void:
 	for node in nodes_to_hide:
 		node.visible = trigger_check_box.button_pressed
