@@ -147,6 +147,7 @@ func raw_data() -> Dictionary:
 
 
 ## Loads all of this player's properties based on given raw data.
+## Passing an empty Dictionary has no effect.
 func load_data(data: Dictionary) -> void:
 	if data.has("id"):
 		id = data["id"]
@@ -230,7 +231,7 @@ func _consider_set_is_human(value: bool) -> void:
 	# Unless you were given privileges (which is currently never the case),
 	# you should never be able to turn other people into an AI.
 	if multiplayer.get_remote_sender_id() != multiplayer_id:
-		#print("D-D-D-D-D-DENIED!!")
+		print_debug("Someone tried to turn someone else's player into an AI.")
 		return
 	
 	# Request accepted

@@ -34,9 +34,13 @@ var player: Player:
 		if player:
 			player.username_changed.disconnect(_on_username_changed)
 			player.human_status_changed.disconnect(_on_human_status_changed)
+			player.synchronization_finished.disconnect(
+					_on_player_sync_finished
+			)
 		player = value
 		player.username_changed.connect(_on_username_changed)
 		player.human_status_changed.connect(_on_human_status_changed)
+		player.synchronization_finished.connect(_on_player_sync_finished)
 		_update_appearance()
 
 var is_the_only_local_human: bool = false:
@@ -221,3 +225,7 @@ func _on_confirm_button_pressed() -> void:
 		return
 	
 	_is_renaming = false
+
+
+func _on_player_sync_finished(_player: Player) -> void:
+	_update_appearance()

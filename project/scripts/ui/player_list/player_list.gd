@@ -117,6 +117,7 @@ func _update_networking_interface_visibility() -> void:
 
 func _add_element(player: Player) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
+	player.synchronization_finished.connect(_on_player_sync_finished)
 	
 	var element := player_list_element.instantiate() as PlayerListElement
 	element.player = player
@@ -199,15 +200,14 @@ func _update_size() -> void:
 func _update_elements() -> void:
 	var is_the_only_local_human: bool = players.number_of_local_humans() == 1
 	for element in _visual_players:
-		element.is_the_only_local_human = is_the_only_local_human
+		if element.player.is_human and not element.player.is_remote():
+			element.is_the_only_local_human = is_the_only_local_human
+		else:
+			element.is_the_only_local_human = false
 
 
 func _add_human_player() -> void:
-	var player: Player = Player.new()
-	player.id = players.new_unique_id()
-	player.is_human = true
-	player.custom_username = players.new_default_username()
-	players.add_player(player)
+	players.add_local_human_player()
 
 
 func _on_viewport_size_changed() -> void:
@@ -228,7 +228,8 @@ func _on_human_status_changed(player: Player) -> void:
 		return
 	
 	# The player became an AI. Discard this player
-	players.remove_player(player)
+	if players._is_server():
+		players.remove_player(player)
 
 
 func _on_add_player_button_pressed() -> void:
@@ -256,4 +257,8 @@ func _on_player_removed(player: Player) -> void:
 		add_player_button.show()
 	
 	_remove_element(player)
+	_update_elements()
+
+
+func _on_player_sync_finished(_player: Player) -> void:
 	_update_elements()
