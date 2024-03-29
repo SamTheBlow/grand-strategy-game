@@ -63,6 +63,8 @@ var _is_renaming: bool = false:
 
 
 func _ready() -> void:
+	if not player:
+		player = Player.new()
 	username_label.visible = true
 	username_edit.visible = false
 	_update_button_visibility()
@@ -124,6 +126,8 @@ func _update_appearance() -> void:
 				"font_color", username_color_ai
 		)
 		color_rect.color = bg_color_ai
+	
+	(%OnlineStatus as Control).visible = player.is_remote()
 	
 	_update_button_visibility()
 
