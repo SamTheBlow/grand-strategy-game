@@ -14,7 +14,9 @@ var _list: Array[Player]
 
 func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
 ## Appends a player at the bottom of the list.
@@ -335,5 +337,22 @@ func _on_connected_to_server() -> void:
 	_send_all_data.rpc_id(1)
 
 
+func _on_server_disconnected() -> void:
+	for player in list():
+		if player.is_remote():
+			remove_player(player)
+		else:
+			player.multiplayer_id = 1
+
+
 func _on_peer_connected(multiplayer_id: int) -> void:
 	_get_client_data(multiplayer_id)
+
+
+func _on_peer_disconnected(multiplayer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
+	
+	for player in list():
+		if player.multiplayer_id == multiplayer_id:
+			remove_player(player)

@@ -148,7 +148,12 @@ func _update_remove_button_visibility() -> void:
 ## When connected to a server, you only have control over local players.
 ## If you're the server, you have full control over everything.
 func _can_edit() -> bool:
-	if not multiplayer:
+	if not (
+		multiplayer
+		and multiplayer.multiplayer_peer
+		and multiplayer.multiplayer_peer.get_connection_status()
+		== MultiplayerPeer.CONNECTION_CONNECTED
+	):
 		return true
 	return (not player.is_remote()) or multiplayer.is_server()
 

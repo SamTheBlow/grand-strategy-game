@@ -31,8 +31,11 @@ var is_human: bool = false:
 			human_status_changed.emit(self)
 
 ## In a multiplayer context, tells you which client this player represents.
-## If you are not connected to online multiplayer, leave this value to 1.
-var multiplayer_id: int = 1
+## This property is only used for online multiplayer.
+var multiplayer_id: int = 1:
+	set(value):
+		multiplayer_id = value
+		_update_is_remote()
 
 ## The username that will be used if there is no custom username.
 ## The user may not change it manually,
@@ -71,6 +74,10 @@ var _ai_type: int:
 		
 		_ai_type = value
 
+# If true, this player represents someone else.
+# This is only relevant in online multiplayer.
+var _is_remote: bool = false
+
 # If true, the client is allowed to make local changes.
 # This is only set to true briefly when receiving data from the server.
 var _is_synchronizing: bool = false
@@ -88,19 +95,14 @@ func _init(ai_type: int = -1) -> void:
 
 
 func _ready() -> void:
+	_update_is_remote()
 	_request_all_data()
 
 
-## Returns true if (and only if) you are connected and
+## Returns true if this player does not represent you. In other words,
 ## this player's multiplayer id does not match your multiplayer id.
 func is_remote() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-			and multiplayer.get_unique_id() != multiplayer_id
-	)
+	return _is_remote
 
 
 ## Returns the player's custom username if it has one,
@@ -181,6 +183,18 @@ func _is_not_allowed_to_make_changes() -> bool:
 			and (not multiplayer.is_server())
 			and (not _is_synchronizing)
 	)
+
+
+func _update_is_remote() -> void:
+	if (
+			multiplayer
+			and multiplayer.has_multiplayer_peer()
+			and multiplayer.multiplayer_peer.get_connection_status()
+			== MultiplayerPeer.CONNECTION_CONNECTED
+	):
+		_is_remote = multiplayer_id != multiplayer.get_unique_id()
+	else:
+		_is_remote = multiplayer_id != 1
 
 
 #region Synchronize everything
