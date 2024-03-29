@@ -297,9 +297,7 @@ func _update_rules_disabled() -> void:
 
 
 func _on_start_button_pressed() -> void:
-	start_game_requested.emit(
-			scenario_scene, _selected_game_rules(), player_list.players
-	)
+	start_game_requested.emit(scenario_scene, _selected_game_rules())
 
 
 func _on_connected_to_server() -> void:
