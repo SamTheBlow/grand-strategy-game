@@ -94,6 +94,8 @@ func init2() -> void:
 	player_list.use_networking_interface(networking_interface)
 	right_side.add_child(player_list)
 	
+	chat.send_global_message("The game begins!")
+	
 	turn.turn_changed.connect(_on_new_turn)
 	turn.loop()
 
@@ -397,12 +399,16 @@ func _on_army_movement_closed() -> void:
 
 # Temporary feature
 func _on_load_requested() -> void:
+	chat.send_system_message("Loading the save file...")
+	
 	get_parent().load_game()
 	
 	chat.send_system_message("Failed to load the game")
 
 
 func _on_save_requested() -> void:
+	chat.send_system_message("Saving the game...")
+	
 	# TODO bad code (don't use get_parent like that)
 	# The player should be able to change the file path for save files
 	var save_file_path: String = get_parent().SAVE_FILE_PATH

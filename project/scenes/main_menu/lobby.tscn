@@ -1,8 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=7 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" path="res://scripts/main_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://scenarios/scenario1/world_test1.tscn" id="2_aiiyc"]
-[ext_resource type="PackedScene" uid="uid://djw1srwh1osf6" path="res://scenes/ui/player_list/networking_setup_lobby.tscn" id="3_8fwb2"]
 [ext_resource type="Script" path="res://scripts/ui/root_container.gd" id="4_4itq4"]
 [ext_resource type="Script" path="res://scripts/main_menu/custom_option_button.gd" id="4_cq0th"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://scenes/ui/player_list/player_list.tscn" id="5_6wm1c"]
@@ -18,7 +17,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hty1g")
 scenario_scene = ExtResource("2_aiiyc")
-networking_setup_scene = ExtResource("3_8fwb2")
 player_list = NodePath("HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80/PlayerList")
 
 [node name="Background" type="ColorRect" parent="."]

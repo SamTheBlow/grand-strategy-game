@@ -13,13 +13,17 @@ var current_scene: Node:
 	set(value):
 		if current_scene:
 			remove_child(current_scene)
+			current_scene.queue_free()
 		current_scene = value
 		add_child(current_scene)
 
 @onready var players := $Players as Players
+@onready var chat_data := $ChatData as ChatData
 
 
 func _ready() -> void:
+	chat_data.add_content("Type /help to get a list of commands.")
+	
 	_on_main_menu_entered()
 
 
@@ -47,6 +51,7 @@ func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 
 func play_game(game: Game) -> void:
 	game.game_ended.connect(_on_main_menu_entered)
+	game.chat.chat_data = chat_data
 	current_scene = game
 
 
@@ -59,5 +64,6 @@ func _on_game_started(scenario_scene: PackedScene, rules: GameRules) -> void:
 func _on_main_menu_entered() -> void:
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.setup_players(players)
+	main_menu.setup_chat_data(chat_data)
 	main_menu.game_started.connect(_on_game_started)
 	current_scene = main_menu

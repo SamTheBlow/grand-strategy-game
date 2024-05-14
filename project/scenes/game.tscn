@@ -6,7 +6,6 @@
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="PackedScene" uid="uid://cwi4tinm2f73x" path="res://scenes/fortress.tscn" id="3_u3whv"]
-[ext_resource type="Script" path="res://scripts/chat/chat.gd" id="4_0kwm4"]
 [ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://scenes/province.tscn" id="4_52jos"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="4_331yk"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="6_5jo7e"]
@@ -20,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
+[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat.tscn" id="20_446nu"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "chat", "popups")]
 script = ExtResource("1_yoos1")
@@ -288,74 +288,8 @@ offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
 
-[node name="Chat" type="Control" parent="UILayer/GameUI"]
+[node name="Chat" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
 layout_mode = 1
-anchor_top = 0.7
-anchor_right = 0.3
-anchor_bottom = 1.0
-script = ExtResource("4_0kwm4")
-
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/Chat"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0, 0, 0, 0.25098)
-
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/Chat/ColorRect"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 16.0
-offset_top = 16.0
-offset_right = -16.0
-offset_bottom = -16.0
-grow_horizontal = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer"]
-layout_mode = 2
-
-[node name="Log" type="Control" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.85098, 0.85098, 0.85098, 0.501961)
-
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-
-[node name="ChatText" type="RichTextLabel" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_colors/default_color = Color(0, 0, 0, 1)
-bbcode_enabled = true
-scroll_following = true
-
-[node name="Spacing" type="Control" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
-custom_minimum_size = Vector2(0, 8)
-layout_mode = 2
-
-[node name="ChatInput" type="LineEdit" parent="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-placeholder_text = "Type here"
 
 [node name="BottomRight" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
@@ -398,5 +332,4 @@ mouse_filter = 2
 [connection signal="load_requested" from="UILayer/GameUI/Chat" to="." method="_on_load_requested"]
 [connection signal="rules_requested" from="UILayer/GameUI/Chat" to="." method="_on_chat_rules_requested"]
 [connection signal="save_requested" from="UILayer/GameUI/Chat" to="." method="_on_save_requested"]
-[connection signal="text_submitted" from="UILayer/GameUI/Chat/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="UILayer/GameUI/Chat" method="_on_input_text_submitted"]
 [connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

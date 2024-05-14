@@ -23,6 +23,7 @@ autohide = false
 [node name="IPAddress" type="LineEdit" parent="."]
 unique_name_in_owner = true
 visible = false
+layout_mode = 0
 offset_right = 67.0625
 offset_bottom = 31.0
 size_flags_horizontal = 3
@@ -32,6 +33,7 @@ placeholder_text = "localhost"
 unique_name_in_owner = true
 visible = false
 modulate = Color(1, 1, 1, 0)
+layout_mode = 0
 text = "Sample text"
 
 [node name="FeedbackAnimation" type="AnimationPlayer" parent="."]
