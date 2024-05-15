@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c74o2ubgawogb" path="res://scenes/game.tscn" id="3_hbhxv"]
 [ext_resource type="PackedScene" uid="uid://dm18hv6wm8moi" path="res://scenes/main_menu/main_menu.tscn" id="4_sn8ov"]
 [ext_resource type="Script" path="res://scripts/players/players.gd" id="4_w8utn"]
-[ext_resource type="Script" path="res://scripts/chat/chat_data.gd" id="5_t4rs0"]
+[ext_resource type="Script" path="res://scripts/chat/chat.gd" id="5_66lrq"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_32ieg")
@@ -14,5 +14,5 @@ game_scene = ExtResource("3_hbhxv")
 [node name="Players" type="Node" parent="."]
 script = ExtResource("4_w8utn")
 
-[node name="ChatData" type="Node" parent="."]
-script = ExtResource("5_t4rs0")
+[node name="Chat" type="Node" parent="."]
+script = ExtResource("5_66lrq")

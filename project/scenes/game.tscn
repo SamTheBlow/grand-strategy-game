@@ -19,9 +19,9 @@
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
-[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat.tscn" id="20_446nu"]
+[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "chat", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -42,7 +42,6 @@ game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 right_side = NodePath("UILayer/GameUI/RightSide")
-chat = NodePath("UILayer/GameUI/Chat")
 popups = NodePath("UILayer/GameUI/Popups")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
@@ -288,7 +287,8 @@ offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
 
-[node name="Chat" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
+[node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
+unique_name_in_owner = true
 layout_mode = 1
 
 [node name="BottomRight" type="Control" parent="UILayer/GameUI"]
@@ -328,8 +328,4 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[connection signal="exit_to_main_menu_requested" from="UILayer/GameUI/Chat" to="." method="_on_exit_to_main_menu_requested"]
-[connection signal="load_requested" from="UILayer/GameUI/Chat" to="." method="_on_load_requested"]
-[connection signal="rules_requested" from="UILayer/GameUI/Chat" to="." method="_on_chat_rules_requested"]
-[connection signal="save_requested" from="UILayer/GameUI/Chat" to="." method="_on_save_requested"]
 [connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

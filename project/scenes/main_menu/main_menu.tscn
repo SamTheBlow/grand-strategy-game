@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://b735rxfcexqks" path="res://scenes/main_menu/lobby.tscn" id="1_koaky"]
 [ext_resource type="Script" path="res://scripts/main_menu/main_menu.gd" id="1_kwhjp"]
 [ext_resource type="PackedScene" uid="uid://djw1srwh1osf6" path="res://scenes/ui/player_list/networking_setup_lobby.tscn" id="2_j4u0p"]
-[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat.tscn" id="3_uohmy"]
+[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="3_uohmy"]
 
 [node name="MainMenu" type="Node"]
 script = ExtResource("1_kwhjp")
@@ -37,7 +37,7 @@ anchor_bottom = 0.95
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Chat" parent="." instance=ExtResource("3_uohmy")]
+[node name="ChatInterface" parent="." instance=ExtResource("3_uohmy")]
 unique_name_in_owner = true
 
 [connection signal="start_game_requested" from="MarginContainer/Lobby" to="." method="_on_start_game_requested"]

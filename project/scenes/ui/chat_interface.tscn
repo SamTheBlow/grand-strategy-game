@@ -1,13 +1,13 @@
 [gd_scene load_steps=2 format=3 uid="uid://bmtb3thxlc0ms"]
 
-[ext_resource type="Script" path="res://scripts/chat/chat.gd" id="1_0thd6"]
+[ext_resource type="Script" path="res://scripts/chat/chat_interface.gd" id="1_1pqug"]
 
-[node name="Chat" type="Control"]
+[node name="ChatInterface" type="Control"]
 layout_mode = 3
 anchor_top = 0.7
 anchor_right = 0.3
 anchor_bottom = 1.0
-script = ExtResource("1_0thd6")
+script = ExtResource("1_1pqug")
 
 [node name="ColorRect" type="ColorRect" parent="."]
 layout_mode = 1

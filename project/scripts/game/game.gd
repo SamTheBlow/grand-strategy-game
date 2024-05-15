@@ -28,7 +28,6 @@ signal game_ended()
 @export var component_ui_root: Control
 @export var top_bar: TopBar
 @export var right_side: Node
-@export var chat: Chat
 @export var popups: Control
 
 var _modifier_request: ModifierRequest
@@ -39,9 +38,41 @@ var players: Players
 var turn: GameTurn
 var turn_limit: TurnLimit
 
+## Reference to external node
+var chat: Chat:
+	get:
+		if not chat:
+			print_debug("Game's chat property is not initialized!")
+			chat = Chat.new()
+		return chat
+	set(value):
+		chat = value
+		
+		_chat_interface.chat_data = chat.chat_data
+		chat.connect_chat_interface(_chat_interface)
+		
+		_networking_interface.message_sent.connect(
+			chat._on_networking_interface_message_sent
+		)
+		chat.save_requested.connect(_on_save_requested)
+		chat.load_requested.connect(_on_load_requested)
+		chat.exit_to_main_menu_requested.connect(
+				_on_exit_to_main_menu_requested
+		)
+		chat.rules_requested.connect(_on_chat_rules_requested)
+
 # References to children nodes
 var world: GameWorld
 var component_ui: ComponentUI
+
+var _chat_interface: ChatInterface:
+	get:
+		if not _chat_interface:
+			_chat_interface = %ChatInterface as ChatInterface
+		return _chat_interface
+
+# It is only stored in memory because we need it to connect to chats
+var _networking_interface: NetworkingInterface
 
 var _you: Player
 var _game_over: bool = false
@@ -52,6 +83,9 @@ var global_modifiers: Dictionary = {}
 
 ## Initialization 1. To be done immediately after loading the game scene.
 func init1() -> void:
+	_networking_interface = (
+			networking_setup_scene.instantiate() as NetworkingInterface
+	)
 	_modifier_request = ModifierRequest.new(self)
 	add_modifier_provider(self)
 
@@ -85,18 +119,15 @@ func init2() -> void:
 	var player_list := player_list_scene.instantiate() as PlayerList
 	player_list.players = players
 	player_list.game_turn = turn
-	var networking_interface := (
-			networking_setup_scene.instantiate() as NetworkingInterface
-	)
-	networking_interface.message_sent.connect(
-			chat._on_networking_interface_message_sent
-	)
-	player_list.use_networking_interface(networking_interface)
+	player_list.use_networking_interface(_networking_interface)
 	right_side.add_child(player_list)
 	
-	chat.send_global_message("The game begins!")
-	
 	turn.turn_changed.connect(_on_new_turn)
+
+
+## Call this when you're ready to start the game loop.
+func start() -> void:
+	chat.send_global_message("The game begins!")
 	turn.loop()
 
 

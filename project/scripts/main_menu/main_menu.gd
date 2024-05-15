@@ -6,8 +6,9 @@ signal game_started(scenario: PackedScene, rules: GameRules)
 
 @export var networking_setup_scene: PackedScene
 
+var _chat: Chat
+
 @onready var _lobby := %Lobby as Lobby
-@onready var _chat := %Chat as Chat
 
 
 func _ready() -> void:
@@ -25,9 +26,12 @@ func setup_players(players: Players) -> void:
 	(%Lobby as Lobby).player_list.players = players
 
 
-## Dependency injection: passes the chat data to the chat interface.
-func setup_chat_data(chat_data: ChatData) -> void:
-	(%Chat as Chat).chat_data = chat_data
+## Dependency injection.
+func setup_chat(chat: Chat) -> void:
+	_chat = chat
+	var chat_interface := %ChatInterface as ChatInterface
+	chat_interface.chat_data = chat.chat_data
+	chat.connect_chat_interface(chat_interface)
 
 
 func _on_start_game_requested(scenario: PackedScene, rules: GameRules) -> void:
