@@ -27,8 +27,10 @@ var chat_data := ChatData.new()
 
 func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
-	multiplayer.peer_connected.connect(_on_peer_connected)
-	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
+	
+	if players:
+		players.player_group_added.connect(_on_players_player_group_added)
+		players.player_group_removed.connect(_on_players_player_group_removed)
 
 
 ## Call this to listen to a chat interface's inputs.
@@ -87,7 +89,7 @@ func _receive_global_message(text: String) -> void:
 		)
 		return
 	
-	chat_data.add_raw_message(text)
+	chat_data.add_raw_message("[i][color=#404040]" + text + "[/color][/i]")
 #endregion
 
 
@@ -149,12 +151,12 @@ func _on_connected_to_server() -> void:
 	_send_all_data.rpc_id(1)
 
 
-func _on_peer_connected(_multiplayer_id: int) -> void:
-	pass
+func _on_players_player_group_added(leader: Player) -> void:
+	send_global_message(leader.username() + " joined the server.")
 
 
-func _on_peer_disconnected(_multiplayer_id: int) -> void:
-	pass
+func _on_players_player_group_removed(leader: Player) -> void:
+	send_global_message(leader.username() + " left the server.")
 
 
 func _on_chat_interface_input_submitted(new_text: String) -> void:

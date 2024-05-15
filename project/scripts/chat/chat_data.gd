@@ -1,9 +1,6 @@
 class_name ChatData
 ## Class responsible for the data found inside a chat box.
 ## Useful for passing around between different chat interfaces.
-##
-## When storing info about users, each user is assigned a unique id.
-## System messages use the id -1, and raw messages use -2.
 # TODO mark all messages with the time they were sent
 # TODO sort messages chronologically
 # TODO when connecting to server, don't overwrite previous chat contents
@@ -31,10 +28,7 @@ func all_content() -> String:
 		
 		match chat_message.user_id:
 			-2:
-				text += (
-						"[i][color=#404040]"
-						+ chat_message.text + "[/color][/i]"
-				)
+				text += chat_message.text
 			-1:
 				text += (
 						"[color=#202020]System: [/color][color=#404040]"

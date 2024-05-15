@@ -5,6 +5,8 @@ extends Node
 
 signal player_added(player: Player)
 signal player_removed(player: Player)
+signal player_group_added(leader: Player)
+signal player_group_removed(leader: Player)
 
 # TODO bad code DRY: copy/paste from Player class
 var _is_synchronizing: bool = false
@@ -269,6 +271,11 @@ func _receive_client_data(data: Array) -> void:
 	var multiplayer_id: int = multiplayer.get_remote_sender_id()
 	for player_data: Dictionary in data:
 		_add_remote_player(multiplayer_id, player_data)
+	
+	for player in _list:
+		if player.multiplayer_id == multiplayer_id:
+			player_group_added.emit(player)
+			break
 #endregion
 
 
@@ -364,6 +371,13 @@ func _on_peer_disconnected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	
+	var group_leader: Player
+	
 	for player in list():
 		if player.multiplayer_id == multiplayer_id:
+			if not group_leader:
+				group_leader = player
 			remove_player(player)
+	
+	if group_leader:
+		player_group_removed.emit(group_leader)
