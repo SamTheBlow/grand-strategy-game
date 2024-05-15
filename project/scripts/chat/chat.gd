@@ -20,6 +20,8 @@ signal load_requested()
 signal exit_to_main_menu_requested()
 signal rules_requested()
 
+@export var players: Players
+
 var chat_data := ChatData.new()
 
 
@@ -46,15 +48,14 @@ func _send_all_data() -> void:
 		return
 	
 	_receive_all_data.rpc_id(
-			multiplayer.get_remote_sender_id(), chat_data.all_content()
+			multiplayer.get_remote_sender_id(), chat_data.all_data()
 	)
 
 
 ## The user who requested all chat data receives it.
 @rpc("authority", "call_remote", "reliable")
-func _receive_all_data(chat_content: String) -> void:
-	chat_data.clear()
-	chat_data.add_content(chat_content)
+func _receive_all_data(chat_data_dict: Dictionary) -> void:
+	chat_data.load_data(chat_data_dict)
 #endregion
 
 
@@ -86,46 +87,34 @@ func _receive_global_message(text: String) -> void:
 		)
 		return
 	
-	chat_data.add_content("[i][color=#404040]" + text + "[/color][/i]")
+	chat_data.add_raw_message(text)
 #endregion
 
 
 #region Send human message
 ## Sends to all players a message written by the player.
 func send_human_message(text: String) -> void:
+	var username: String = players.you().username()
+	
 	if _is_connected():
-		_receive_human_message.rpc(text)
+		_receive_human_message.rpc(username, text)
 	else:
-		_receive_human_message(text)
+		_receive_human_message(username, text)
 
 
 @rpc("any_peer", "call_local", "reliable")
-func _receive_human_message(text: String) -> void:
+func _receive_human_message(username: String, text: String) -> void:
 	var stripped_text: String = text.strip_edges()
-	
 	if stripped_text == "":
 		return
 	
-	var sender_name: String = "You"
-	if (
-			_is_connected() and
-			multiplayer.get_remote_sender_id() != multiplayer.get_unique_id()
-	):
-		sender_name = str(multiplayer.get_remote_sender_id())
-	
-	chat_data.add_content(
-			"[color=#202020]" + sender_name + ": [/color][color=#404040]"
-			+ stripped_text + "[/color]"
-	)
+	chat_data.add_human_message(username, stripped_text)
 #endregion
 
 
 ## Sends a private message to the player.
-func send_system_message(new_text: String) -> void:
-	chat_data.add_content(
-			"[color=#202020]System: [/color][color=#404040]"
-			+ new_text + "[/color]"
-	)
+func send_system_message(text: String) -> void:
+	chat_data.add_system_message(text)
 
 
 ## Sends a private message to the player. For convenience.

@@ -14,5 +14,6 @@ game_scene = ExtResource("3_hbhxv")
 [node name="Players" type="Node" parent="."]
 script = ExtResource("4_w8utn")
 
-[node name="Chat" type="Node" parent="."]
+[node name="Chat" type="Node" parent="." node_paths=PackedStringArray("players")]
 script = ExtResource("5_66lrq")
+players = NodePath("../Players")

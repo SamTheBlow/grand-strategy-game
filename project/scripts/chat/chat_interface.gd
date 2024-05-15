@@ -21,6 +21,7 @@ var chat_data: ChatData:
 					_on_chat_data_new_content_added
 			)
 			chat_data.content_cleared.disconnect(_on_chat_data_content_cleared)
+			chat_data.loaded.disconnect(_on_chat_data_loaded)
 		
 		chat_data = value
 		
@@ -28,6 +29,7 @@ var chat_data: ChatData:
 				_on_chat_data_new_content_added
 		)
 		chat_data.content_cleared.connect(_on_chat_data_content_cleared)
+		chat_data.loaded.connect(_on_chat_data_loaded)
 		
 		_update_chat_log()
 
@@ -65,4 +67,8 @@ func _on_chat_data_new_content_added(_new_content: String) -> void:
 
 
 func _on_chat_data_content_cleared() -> void:
+	_update_chat_log()
+
+
+func _on_chat_data_loaded() -> void:
 	_update_chat_log()

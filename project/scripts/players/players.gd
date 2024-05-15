@@ -146,6 +146,17 @@ func new_unique_id() -> int:
 	return new_id
 
 
+## Returns the first player associated with this multiplayer peer.
+## If not connected, simply returns the first player on the list.
+## If there are no players on the list, returns null.
+func you() -> Player:
+	for player in _list:
+		if not player.is_remote():
+			return player
+	print_debug("You don't exist (is this Players list empty?)")
+	return null
+
+
 #region Synchronize everything
 ## The server sends the entire list of players to whoever requested it.
 @rpc("any_peer", "call_remote", "reliable")
