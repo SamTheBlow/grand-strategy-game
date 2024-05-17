@@ -29,6 +29,7 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	
 	if players:
+		players.player_kicked.connect(_on_players_player_kicked)
 		players.player_group_added.connect(_on_players_player_group_added)
 		players.player_group_removed.connect(_on_players_player_group_removed)
 
@@ -149,6 +150,10 @@ func _on_connected_to_server() -> void:
 	if multiplayer.is_server():
 		return
 	_send_all_data.rpc_id(1)
+
+
+func _on_players_player_kicked(player: Player) -> void:
+	send_global_message(player.username() + " was kicked from the server.")
 
 
 func _on_players_player_group_added(leader: Player) -> void:

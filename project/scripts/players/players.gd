@@ -5,6 +5,7 @@ extends Node
 
 signal player_added(player: Player)
 signal player_removed(player: Player)
+signal player_kicked(player: Player)
 signal player_group_added(leader: Player)
 signal player_group_removed(leader: Player)
 
@@ -69,6 +70,18 @@ func remove_player(player: Player) -> void:
 		print_debug("Tried to remove a player, but it isn't on the list!")
 
 
+func kick_player(player: Player) -> void:
+	if _is_not_allowed_to_make_changes():
+		print_debug("Tried kicking a player without permission!")
+		return
+	
+	if _list.has(player):
+		multiplayer.multiplayer_peer.disconnect_peer(player.multiplayer_id)
+		player_kicked.emit(player)
+	else:
+		print_debug("Tried to kick a player, but it isn't on the list!")
+
+
 ## If there is no player with given id, returns [code]null[/code].
 func player_from_id(id: int) -> Player:
 	for player in _list:
@@ -113,6 +126,14 @@ func number_of_local_humans() -> int:
 	var output: int = 0
 	for player in _list:
 		if player.is_human and not player.is_remote():
+			output += 1
+	return output
+
+
+func number_of_humans_with_multiplayer_id(multiplayer_id: int) -> int:
+	var output: int = 0
+	for player in _list:
+		if player.is_human and player.multiplayer_id == multiplayer_id:
 			output += 1
 	return output
 
@@ -320,15 +341,19 @@ func _is_not_allowed_to_make_changes() -> bool:
 	)
 
 
-## Returns true if (and only if) you are connected and you are the server.
-func _is_server() -> bool:
+## Returns true if (and only if) you are connected.
+func _is_connected() -> bool:
 	return (
 			multiplayer
 			and multiplayer.has_multiplayer_peer()
 			and multiplayer.multiplayer_peer.get_connection_status()
 			== MultiplayerPeer.CONNECTION_CONNECTED
-			and multiplayer.is_server()
 	)
+
+
+## Returns true if (and only if) you are connected and you are the server.
+func _is_server() -> bool:
+	return _is_connected() and multiplayer.is_server()
 
 
 ## Creates and adds a new remote player to the list.

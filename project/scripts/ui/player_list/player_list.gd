@@ -227,8 +227,15 @@ func _on_human_status_changed(player: Player) -> void:
 		_update_elements()
 		return
 	
+	# Kick the player from the server
+	if players.number_of_humans_with_multiplayer_id(player.multiplayer_id) < 1:
+		player.is_human = true
+		players.kick_player(player)
+		return
+	
+	## TODO bad code: use of private functions
 	# The player became an AI. Discard this player
-	if players._is_server():
+	if (not players._is_connected()) or players._is_server():
 		players.remove_player(player)
 
 
