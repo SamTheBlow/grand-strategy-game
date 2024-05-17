@@ -713,6 +713,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 20.0
 
 [node name="StartButton" type="Button" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing20"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 14
 anchor_top = 0.5

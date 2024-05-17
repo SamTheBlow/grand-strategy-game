@@ -13,6 +13,7 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	_update_rules_disabled()
+	_update_start_button_disabled()
 
 
 func _selected_game_rules() -> GameRules:
@@ -224,6 +225,17 @@ func _set_rule(rule_name: String, value: Variant) -> void:
 			(%BattleAlgorithm as CustomOptionButton).select_item(value)
 
 
+# TODO DRY: copy/pasted from players.gd
+## Returns true if (and only if) you are connected.
+func _is_connected() -> bool:
+	return (
+			multiplayer
+			and multiplayer.has_multiplayer_peer()
+			and multiplayer.multiplayer_peer.get_connection_status()
+			== MultiplayerPeer.CONNECTION_CONNECTED
+	)
+
+
 #region Synchronize all the rules
 ## Clients call this to ask the server for a full synchronization.
 ## Has no effect if you're the server.
@@ -257,13 +269,7 @@ func _receive_all_data(data: Dictionary) -> void:
 ## The server calls this to inform clients of a rule change.
 ## This function has no effect if you're not connected as a server.
 func _send_rule_change_to_clients(rule_name: String) -> void:
-	if not (
-		multiplayer
-		and multiplayer.has_multiplayer_peer()
-		and multiplayer.multiplayer_peer.get_connection_status()
-		== MultiplayerPeer.CONNECTION_CONNECTED
-		and multiplayer.is_server()
-	):
+	if not (_is_connected() and multiplayer.is_server()):
 		return
 	
 	_receive_rule_change.rpc(rule_name, _get_rule(rule_name))
@@ -280,15 +286,21 @@ func _receive_rule_change(rule_name: String, value: Variant) -> void:
 func _update_rules_disabled() -> void:
 	var rules_disabled_node := %RulesDisabled as Control
 	
-	if (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	):
+	if _is_connected():
 		rules_disabled_node.visible = not multiplayer.is_server()
 	else:
 		rules_disabled_node.visible = false
+
+
+## When connected to an online game,
+## only the server is allowed to start the game.
+func _update_start_button_disabled() -> void:
+	var start_button := %StartButton as Button
+	
+	if _is_connected():
+		start_button.disabled = not multiplayer.is_server()
+	else:
+		start_button.disabled = false
 
 
 func _on_start_button_pressed() -> void:
@@ -298,10 +310,12 @@ func _on_start_button_pressed() -> void:
 func _on_connected_to_server() -> void:
 	_request_all_data()
 	_update_rules_disabled()
+	_update_start_button_disabled()
 
 
 func _on_server_disconnected() -> void:
 	_update_rules_disabled()
+	_update_start_button_disabled()
 
 
 #region Signal functions for all the rules

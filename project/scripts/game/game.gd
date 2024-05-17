@@ -2,6 +2,7 @@ class_name Game
 extends Node
 
 
+signal game_started()
 signal game_ended()
 
 @export_category("Scenes")
@@ -127,7 +128,7 @@ func init2() -> void:
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
-	chat.send_global_message("The game begins!")
+	game_started.emit()
 	turn.loop()
 
 
