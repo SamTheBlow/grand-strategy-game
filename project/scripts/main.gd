@@ -32,9 +32,11 @@ func load_game() -> void:
 	game_from_path.load_game(SAVE_FILE_PATH, game_scene)
 	
 	if game_from_path.error:
+		chat.send_system_message("Failed to load the game")
 		print_debug(game_from_path.error_message)
 		return
 	
+	chat.send_global_message("[color=#60ff60]Game loaded[/color]")
 	play_game(game_from_path.result)
 
 
@@ -102,6 +104,22 @@ func _receive_new_game(game_json: Dictionary) -> void:
 #endregion
 
 
+#region Inform clients that we enter the main menu
+## The server calls this to inform clients that the main menu is entered.
+## This function has no effect if you're not connected as a server.
+func _send_enter_main_menu_to_clients() -> void:
+	if not (_is_connected() and multiplayer.is_server()):
+		return
+	
+	_receive_enter_main_menu.rpc()
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_enter_main_menu() -> void:
+	_on_main_menu_entered()
+#endregion
+
+
 func _on_game_start_requested(
 		scenario_scene: PackedScene, rules: GameRules
 ) -> void:
@@ -115,9 +133,10 @@ func _on_main_menu_entered() -> void:
 	main_menu.setup_players(players)
 	main_menu.setup_chat(chat)
 	main_menu.game_started.connect(_on_game_start_requested)
+	_send_enter_main_menu_to_clients()
 	current_scene = main_menu
 
 
 func _on_game_started() -> void:
 	if (not _is_connected()) or multiplayer.is_server():
-		chat.send_global_message("The game begins!")
+		chat.send_global_message("The game has started!")
