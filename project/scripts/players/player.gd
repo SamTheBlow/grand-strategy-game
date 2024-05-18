@@ -64,7 +64,7 @@ var custom_username: String = "":
 		_check_for_username_change(previous_username)
 		
 		# Send custom username to clients
-		if _is_connected() and multiplayer.is_server():
+		if MultiplayerUtils.is_server(multiplayer):
 			_receive_set_custom_username.rpc(value)
 
 var _ai_type: int:
@@ -168,18 +168,6 @@ func load_data(data: Dictionary) -> void:
 		_ai_type = data["ai_type"]
 
 
-# TODO DRY. copy/paste from Players class
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
-
-
 ## Returns true if, when connected online,
 ## the player is a client trying to make a change locally.
 ## When connected, only the server is allowed to make changes.
@@ -188,14 +176,14 @@ func _is_connected() -> bool:
 ## would just be desynced. This way, it's not possible to cheat.
 func _is_not_allowed_to_make_changes() -> bool:
 	return (
-			_is_connected()
+			MultiplayerUtils.is_online(multiplayer)
 			and (not multiplayer.is_server())
 			and (not _is_synchronizing)
 	)
 
 
 func _update_is_remote() -> void:
-	if _is_connected():
+	if MultiplayerUtils.is_online(multiplayer):
 		_is_remote = multiplayer_id != multiplayer.get_unique_id()
 	else:
 		_is_remote = multiplayer_id != 1
@@ -204,7 +192,7 @@ func _update_is_remote() -> void:
 #region Synchronize everything
 ## Clients call this to ask the server for a full synchronization.
 func _request_all_data() -> void:
-	if (not _is_connected()) or multiplayer.is_server():
+	if MultiplayerUtils.has_authority(multiplayer):
 		return
 	
 	_send_all_data.rpc_id(1)
@@ -236,7 +224,7 @@ func _receive_all_data(data: Dictionary) -> void:
 
 #region Synchronize is_human
 func _request_set_is_human(value: bool) -> void:
-	if not _is_connected():
+	if not MultiplayerUtils.is_online(multiplayer):
 		return
 	
 	_consider_set_is_human.rpc_id(1, value)
@@ -269,7 +257,7 @@ func _receive_set_is_human(value: bool) -> void:
 
 #region Synchronize custom_username
 func _request_set_custom_username(value: String) -> void:
-	if not _is_connected():
+	if not MultiplayerUtils.is_online(multiplayer):
 		return
 	
 	_consider_set_custom_username.rpc_id(1, value)

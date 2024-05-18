@@ -62,24 +62,12 @@ func play_game(game: Game) -> void:
 	game.start()
 
 
-# TODO DRY: copy/pasted from players.gd
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
-
-
 #region Inform clients that a game started
 ## The server calls this to inform clients that a game started.
 ## This function has no effect if you're not connected as a server.
 ## You may provide a multiplayer id to send the data to one specific client.
 func _send_new_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
-	if not (_is_connected() and multiplayer.is_server()):
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	
 	var game_to_json := GameToJSON.new()
@@ -116,7 +104,7 @@ func _receive_new_game(game_json: Dictionary) -> void:
 ## This function has no effect if you're not connected as a server.
 ## You may provide a multiplayer id to send the info to one specific client.
 func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
-	if not (_is_connected() and multiplayer.is_server()):
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	
 	if multiplayer_id == -1:
@@ -161,5 +149,5 @@ func _on_main_menu_entered() -> void:
 
 
 func _on_game_started() -> void:
-	if (not _is_connected()) or multiplayer.is_server():
+	if MultiplayerUtils.has_authority(multiplayer):
 		chat.send_global_message("The game has started!")

@@ -25,7 +25,7 @@ signal message_sent(text: String, color: Color)
 
 
 func _ready() -> void:
-	_switch_interface(_is_connected())
+	_switch_interface(MultiplayerUtils.is_online(multiplayer))
 	_feedback.text = ""
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
@@ -70,18 +70,6 @@ func _switch_interface(is_online: bool) -> void:
 	else:
 		custom_minimum_size = _interface_disconnected.custom_minimum_size
 	interface_changed.emit()
-
-
-# TODO DRY: copy/pasted from players.gd
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
 
 
 func _on_host_pressed() -> void:

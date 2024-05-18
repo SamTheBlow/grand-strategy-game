@@ -43,7 +43,7 @@ func connect_chat_interface(chat_interface: ChatInterface) -> void:
 ## Sends all chat data to whoever requests it.
 @rpc("any_peer", "call_remote", "reliable")
 func _send_all_data() -> void:
-	if not _is_server():
+	if not MultiplayerUtils.is_server(multiplayer):
 		print_debug(
 				"Received a request to send all data, "
 				+ "but you are not the server!"
@@ -65,11 +65,11 @@ func _receive_all_data(chat_data_dict: Dictionary) -> void:
 #region Send global message
 ## Sends a message to all players. Clients are not allowed to call this.
 func send_global_message(text: String) -> void:
-	if not _is_connected():
+	if not MultiplayerUtils.is_online(multiplayer):
 		_receive_global_message(text)
 		return
 	
-	if not _is_server():
+	if not MultiplayerUtils.is_server(multiplayer):
 		print_debug(
 				"Tried to send a global message, "
 				+ "but you do not have authority!"
@@ -81,7 +81,10 @@ func send_global_message(text: String) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func _receive_global_message(text: String) -> void:
-	if _is_connected() and multiplayer.get_remote_sender_id() != 1:
+	if (
+			MultiplayerUtils.is_online(multiplayer)
+			and multiplayer.get_remote_sender_id() != 1
+	):
 		# The player who sent this did not have authority.
 		# Probably a hacker? Anyways, deny them permission.
 		print_debug(
@@ -99,7 +102,7 @@ func _receive_global_message(text: String) -> void:
 func send_human_message(text: String) -> void:
 	var username: String = players.you().username()
 	
-	if _is_connected():
+	if MultiplayerUtils.is_online(multiplayer):
 		_receive_human_message.rpc(username, text)
 	else:
 		_receive_human_message(username, text)
@@ -126,23 +129,6 @@ func send_system_message_multiline(text_lines: Array[String]) -> void:
 	for text_line in text_lines:
 		message += "\n" + text_line
 	send_system_message(message)
-
-
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
-
-
-# TODO DRY: copy/pasted from players.gd
-## Returns true if (and only if) you are connected and you are the server.
-func _is_server() -> bool:
-	return _is_connected() and multiplayer.is_server()
 
 
 ## Upon connecting to a server, clients immediately request the

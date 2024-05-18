@@ -215,7 +215,7 @@ func _receive_all_data(node_names: PackedStringArray) -> void:
 ## The server calls this to send the info to the clients.
 ## If you're not connected as a server, this function has no effect.
 func _send_new_player_to_clients(player: Player) -> void:
-	if not _is_server():
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	_receive_new_player.rpc(player.name)
 
@@ -241,7 +241,7 @@ func _add_received_player(node_name: String) -> void:
 ## The server calls this to send the info to all clients.
 ## If you're not connected as a server, this function has no effect.
 func _send_player_removal_to_clients(player: Player) -> void:
-	if not _is_server():
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	_receive_player_removal.rpc(player.name)
 
@@ -339,22 +339,6 @@ func _is_not_allowed_to_make_changes() -> bool:
 			and (not multiplayer.is_server())
 			and (not _is_synchronizing)
 	)
-
-
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
-
-
-## Returns true if (and only if) you are connected and you are the server.
-func _is_server() -> bool:
-	return _is_connected() and multiplayer.is_server()
 
 
 ## Creates and adds a new remote player to the list.

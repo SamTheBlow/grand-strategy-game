@@ -310,18 +310,6 @@ func _province_count_per_country() -> Array:
 	return output
 
 
-# TODO DRY: copy/pasted from players.gd
-## Returns true if (and only if) you are connected.
-func _is_connected() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-	)
-
-
 func _on_new_turn(_turn: int) -> void:
 	_check_percentage_winner()
 
@@ -443,7 +431,7 @@ func _on_army_movement_closed() -> void:
 
 # Temporary feature
 func _on_load_requested() -> void:
-	if _is_connected() and not multiplayer.is_server():
+	if not MultiplayerUtils.has_authority(multiplayer):
 		chat.send_system_message("Only the server can load a game!")
 		return
 	
@@ -471,7 +459,7 @@ func _on_save_requested() -> void:
 
 
 func _on_exit_to_main_menu_requested() -> void:
-	if _is_connected() and not multiplayer.is_server():
+	if not MultiplayerUtils.has_authority(multiplayer):
 		chat.send_system_message("Only the server can exit to main menu!")
 		return
 	
