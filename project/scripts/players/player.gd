@@ -174,6 +174,7 @@ func _is_connected() -> bool:
 	return (
 			multiplayer
 			and multiplayer.has_multiplayer_peer()
+			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
 			and multiplayer.multiplayer_peer.get_connection_status()
 			== MultiplayerPeer.CONNECTION_CONNECTED
 	)

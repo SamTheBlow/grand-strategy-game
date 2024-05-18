@@ -22,6 +22,8 @@ var current_scene: Node:
 
 
 func _ready() -> void:
+	multiplayer.peer_connected.connect(_on_multiplayer_peer_connected)
+	
 	chat.send_global_message("Type /help to get a list of commands.")
 	
 	_on_main_menu_entered()
@@ -66,6 +68,7 @@ func _is_connected() -> bool:
 	return (
 			multiplayer
 			and multiplayer.has_multiplayer_peer()
+			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
 			and multiplayer.multiplayer_peer.get_connection_status()
 			== MultiplayerPeer.CONNECTION_CONNECTED
 	)
@@ -74,7 +77,8 @@ func _is_connected() -> bool:
 #region Inform clients that a game started
 ## The server calls this to inform clients that a game started.
 ## This function has no effect if you're not connected as a server.
-func _send_new_game_to_clients(game: Game) -> void:
+## You may provide a multiplayer id to send the data to one specific client.
+func _send_new_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 	if not (_is_connected() and multiplayer.is_server()):
 		return
 	
@@ -87,7 +91,10 @@ func _send_new_game_to_clients(game: Game) -> void:
 		)
 		return
 	
-	_receive_new_game.rpc(game_to_json.result)
+	if multiplayer_id == -1:
+		_receive_new_game.rpc(game_to_json.result)
+	else:
+		_receive_new_game.rpc_id(multiplayer_id, game_to_json.result)
 
 
 @rpc("authority", "call_remote", "reliable")
@@ -107,17 +114,33 @@ func _receive_new_game(game_json: Dictionary) -> void:
 #region Inform clients that we enter the main menu
 ## The server calls this to inform clients that the main menu is entered.
 ## This function has no effect if you're not connected as a server.
-func _send_enter_main_menu_to_clients() -> void:
+## You may provide a multiplayer id to send the info to one specific client.
+func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
 	if not (_is_connected() and multiplayer.is_server()):
 		return
 	
-	_receive_enter_main_menu.rpc()
+	if multiplayer_id == -1:
+		_receive_enter_main_menu.rpc()
+	else:
+		_receive_enter_main_menu.rpc_id(multiplayer_id)
 
 
 @rpc("authority", "call_remote", "reliable")
 func _receive_enter_main_menu() -> void:
 	_on_main_menu_entered()
 #endregion
+
+
+func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
+	if not multiplayer.is_server():
+		return
+	
+	if current_scene is Game:
+		_send_new_game_to_clients(current_scene, multiplayer_id)
+	elif current_scene is MainMenu:
+		_send_enter_main_menu_to_clients(multiplayer_id)
+	else:
+		print_debug("Unrecognized scene. Cannot sync scene with new client.")
 
 
 func _on_game_start_requested(

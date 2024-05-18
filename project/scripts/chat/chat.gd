@@ -81,7 +81,7 @@ func send_global_message(text: String) -> void:
 
 @rpc("any_peer", "call_local", "reliable")
 func _receive_global_message(text: String) -> void:
-	if multiplayer.get_remote_sender_id() != 1:
+	if _is_connected() and multiplayer.get_remote_sender_id() != 1:
 		# The player who sent this did not have authority.
 		# Probably a hacker? Anyways, deny them permission.
 		print_debug(
@@ -133,6 +133,7 @@ func _is_connected() -> bool:
 	return (
 			multiplayer
 			and multiplayer.has_multiplayer_peer()
+			and (not multiplayer.multiplayer_peer is OfflineMultiplayerPeer)
 			and multiplayer.multiplayer_peer.get_connection_status()
 			== MultiplayerPeer.CONNECTION_CONNECTED
 	)
