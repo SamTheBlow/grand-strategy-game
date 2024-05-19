@@ -25,7 +25,7 @@ func _init(
 	_new_army_ids = new_army_ids
 
 
-func apply_to(game: Game, player: Player) -> void:
+func apply_to(game: Game, player: GamePlayer) -> void:
 	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist!")

@@ -5,5 +5,5 @@ extends Node
 
 
 ## Takes in the current game as well as the player trying to apply the action.
-func apply_to(_game: Game, _player: Player) -> void:
+func apply_to(_game: Game, _player: GamePlayer) -> void:
 	pass

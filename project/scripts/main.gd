@@ -44,7 +44,7 @@ func load_game() -> void:
 
 func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, rules, players, game_scene)
+	game_from_scenario.load_game(scenario, rules, game_scene)
 	
 	if game_from_scenario.error:
 		print_debug(game_from_scenario.error_message)
@@ -57,6 +57,7 @@ func play_game(game: Game) -> void:
 	game.game_started.connect(_on_game_started)
 	game.game_ended.connect(_on_main_menu_entered)
 	game.chat = chat
+	game.setup_players(players)
 	_send_new_game_to_clients(game)
 	current_scene = game
 	game.start()

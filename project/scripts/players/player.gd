@@ -120,19 +120,6 @@ func add_action(action: Action) -> void:
 	_actions.append(action)
 
 
-func play_actions(game: Game) -> void:
-	if is_human:
-		_actions = []
-		return
-	else:
-		_actions = _ai().actions(game, self)
-	
-	for action in _actions:
-		action.apply_to(game, self)
-	
-	_actions.clear()
-
-
 ## Returns all of the player's properties as raw data.
 func raw_data() -> Dictionary:
 	var data := {
@@ -292,14 +279,3 @@ func _check_for_username_change(previous_username: String) -> void:
 	var new_username: String = username()
 	if new_username != previous_username:
 		username_changed.emit(new_username)
-
-
-func _ai() -> PlayerAI:
-	match _ai_type:
-		0:
-			return TestAI1.new()
-		1:
-			return TestAI2.new()
-		_:
-			print_debug("Player does not have a valid AI type.")
-			return null

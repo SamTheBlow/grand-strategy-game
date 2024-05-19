@@ -14,7 +14,7 @@ func _init(province_id: int, number_of_troops: int, new_army_id: int) -> void:
 	_new_army_id = new_army_id
 
 
-func apply_to(game: Game, player: Player) -> void:
+func apply_to(game: Game, player: GamePlayer) -> void:
 	var your_country: Country = player.playing_country
 	var province: Province = (
 			game.world.provinces.province_from_id(_province_id)

@@ -106,11 +106,12 @@ func _update_shown_username() -> void:
 		username_label.text += " (AI)"
 
 
-func _update_turn_indicator(playing_player: Player) -> void:
-	if playing_player == player:
-		arrow_label.text = "->"
-	else:
-		arrow_label.text = ""
+func _update_turn_indicator(_playing_player: GamePlayer) -> void:
+	#if playing_player == player:
+	#	arrow_label.text = "->"
+	#else:
+	#	arrow_label.text = ""
+	pass
 
 
 func _update_appearance() -> void:
@@ -194,7 +195,7 @@ func _on_human_status_changed(_changed_player: Player) -> void:
 	_update_appearance()
 
 
-func _on_player_turn_changed(playing_player: Player) -> void:
+func _on_player_turn_changed(playing_player: GamePlayer) -> void:
 	_update_turn_indicator(playing_player)
 
 

@@ -8,5 +8,5 @@ class_name PlayerAI
 
 
 ## This is where the AI generates its actions based on a given game state
-func actions(_game: Game, _player: Player) -> Array[Action]:
+func actions(_game: Game, _player: GamePlayer) -> Array[Action]:
 	return []

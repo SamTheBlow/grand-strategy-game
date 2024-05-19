@@ -12,7 +12,7 @@ func _init(province_id: int, building_type: String = "fortress") -> void:
 	_building_type = building_type
 
 
-func apply_to(game: Game, player: Player) -> void:
+func apply_to(game: Game, player: GamePlayer) -> void:
 	var your_country: Country = player.playing_country
 	var province: Province = (
 			game.world.provinces.province_from_id(_province_id)

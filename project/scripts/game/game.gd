@@ -35,9 +35,10 @@ var _modifier_request: ModifierRequest
 
 var rules: GameRules
 var countries: Countries
-var players: Players
+var game_players: GamePlayers
 var turn: GameTurn
 var turn_limit: TurnLimit
+
 
 ## Reference to external node
 var chat: Chat:
@@ -75,7 +76,10 @@ var _chat_interface: ChatInterface:
 # It is only stored in memory because we need it to connect to chats
 var _networking_interface: NetworkingInterface
 
-var _you: Player
+# It is only stored in memory because we need it to connect to players
+var _player_list: PlayerList
+
+var _you: GamePlayer
 var _game_over: bool = false
 
 ## Keys are a modifier context (String); values are a Modifier
@@ -115,21 +119,24 @@ func init2() -> void:
 	
 	$WorldLayer.add_child(world)
 	top_bar.init(self)
-	
-	# Create the player list
-	var player_list := player_list_scene.instantiate() as PlayerList
-	player_list.players = players
-	player_list.game_turn = turn
-	player_list.use_networking_interface(_networking_interface)
-	right_side.add_child(player_list)
-	
-	turn.turn_changed.connect(_on_new_turn)
 
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
 	game_started.emit()
 	turn.loop()
+
+
+## Dependency injection.
+func setup_players(players: Players) -> void:
+	game_players.assign_lobby(players)
+	
+	# Create the player list
+	_player_list = player_list_scene.instantiate() as PlayerList
+	_player_list.players = players
+	_player_list.game_turn = turn
+	_player_list.use_networking_interface(_networking_interface)
+	right_side.add_child(_player_list)
 
 
 ## For loading. The rules must be setup beforehand.
@@ -143,6 +150,8 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 		turn_limit = TurnLimit.new()
 		turn_limit.final_turn = rules.turn_limit
 		turn_limit.game_over.connect(_on_game_over)
+	
+	turn.turn_changed.connect(_on_new_turn)
 
 
 ## Creates a new instance of Game with the exact same state as this game.
@@ -203,7 +212,7 @@ func new_action_army_movement(
 	action_move.apply_to(self, _you)
 
 
-func set_human_player(player: Player) -> void:
+func set_human_player(player: GamePlayer) -> void:
 	if _you and _you == player:
 		return
 	
@@ -215,19 +224,32 @@ func set_human_player(player: Player) -> void:
 	top_bar.set_playing_country(_you.playing_country)
 	_move_camera_to_country(_you.playing_country)
 	
+	print("It's now the turn of ", player.username)
+	print("Player turn order:")
+	for game_player in game_players.list():
+		print(game_player.username, "" if game_player.is_human else " (AI)", " (spectator)" if game_player.is_spectating() else "")
+	
 	# Only announce a new player's turn when there is more than 1 human player
-	if players.number_of_humans() < 2:
+	if game_players.number_of_playing_humans() < 2:
 		return
 	
 	var player_turn := (
 			player_turn_scene.instantiate() as PlayerTurnAnnouncement
 	)
-	player_turn.set_player_username(player.username())
+	player_turn.set_player_username(player.username)
 	game_ui.add_child(player_turn)
 
 
-# Moves the camera to one of the country's controlled provinces
-# If that country doesn't control any province, this method does nothing
+## Returns true if you represent the currently playing player.
+func _has_gameplay_authority() -> bool:
+	return not (
+			MultiplayerUtils.is_online(multiplayer)
+			and _you.player_human and _you.player_human.is_remote()
+	)
+
+
+## Moves the camera to one of the country's controlled provinces
+## If that country doesn't control any province, this method does nothing
 func _move_camera_to_country(country: Country) -> void:
 	var target_province: Province
 	for province in world.provinces.get_provinces():
@@ -310,6 +332,15 @@ func _province_count_per_country() -> Array:
 	return output
 
 
+func _outline_province_links(
+		province: Province, target_outline: bool = false
+) -> void:
+	var outline_type := ProvinceShapePolygon2D.OutlineType.NEIGHBOR
+	if target_outline:
+		outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
+	province.show_neighbors(outline_type)
+
+
 func _on_new_turn(_turn: int) -> void:
 	_check_percentage_winner()
 
@@ -333,8 +364,14 @@ func _on_game_over() -> void:
 
 
 func _on_province_clicked(province: Province) -> void:
-	var your_country: Country = _you.playing_country
 	var provinces_node: Provinces = world.provinces
+	
+	if not _has_gameplay_authority():
+		provinces_node.select_province(province)
+		_outline_province_links(province)
+		return
+	
+	var your_country: Country = _you.playing_country
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
 		var active_armies: Array[Army] = world.armies.active_armies(
@@ -356,12 +393,7 @@ func _on_province_clicked(province: Province) -> void:
 	var active_armies_: Array[Army] = world.armies.active_armies(
 			your_country, province
 	)
-	if active_armies_.size() > 0:
-		province.show_neighbors(
-				ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
-		)
-	else:
-		province.show_neighbors(ProvinceShapePolygon2D.OutlineType.NEIGHBOR)
+	_outline_province_links(province, active_armies_.size() > 0)
 
 
 func _on_province_selected() -> void:

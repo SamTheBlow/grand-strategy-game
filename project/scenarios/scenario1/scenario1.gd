@@ -33,7 +33,7 @@ var starting_provinces: Array[int] = [
 ]
 
 
-func as_json(game_rules: GameRules, players: Players) -> Dictionary:
+func as_json(game_rules: GameRules) -> Dictionary:
 	var json_data: Dictionary = {}
 	
 	# Misc.
@@ -46,32 +46,17 @@ func as_json(game_rules: GameRules, players: Players) -> Dictionary:
 	json_data["rules"] = rules_data
 	
 	# Players and countries
-	# The player ID pool is to ensure that all player IDs are unique
-	# This code is probably a bit slow when there's tons of players...
 	var random_country_assignment: Array = range(starting_provinces.size())
 	random_country_assignment.shuffle()
-	var players_data: Array = PlayersToJSON.new().convert_players(players)
-	var player_id_pool: Array[int] = []
-	for player_data: Variant in players_data:
-		player_id_pool.append(player_data["id"])
-	players_data.resize(starting_provinces.size())
-	
-	var ordered_players_data: Array = []
+	var players_data: Array = []
 	var countries_data: Array = []
 	for i in starting_provinces.size():
-		var player_index := int(random_country_assignment[i])
-		if not players_data[player_index]:
-			var player_data: Dictionary = {}
-			
-			var unique_player_id: int = 0
-			while player_id_pool.has(unique_player_id):
-				unique_player_id += 1
-			player_id_pool.append(unique_player_id)
-			
-			player_data["id"] = unique_player_id
-			players_data[player_index] = player_data
-		players_data[player_index]["playing_country_id"] = i
-		ordered_players_data.append(players_data[player_index])
+		var player_data: Dictionary = {}
+		player_data["id"] = i
+		player_data["is_human"] = false
+		player_data["playing_country_id"] = random_country_assignment[i]
+		player_data["ai_type"] = randi() % 2
+		players_data.append(player_data)
 		
 		var country_data: Dictionary = {}
 		country_data["id"] = i
@@ -80,7 +65,7 @@ func as_json(game_rules: GameRules, players: Players) -> Dictionary:
 		country_data["color"] = country.color.to_html()
 		country_data["money"] = game_rules.starting_money
 		countries_data.append(country_data)
-	json_data["players"] = ordered_players_data
+	json_data["players"] = players_data
 	json_data["countries"] = countries_data
 	
 	# World

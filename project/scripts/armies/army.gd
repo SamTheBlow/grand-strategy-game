@@ -204,7 +204,7 @@ func _on_new_turn(_turn_number: int) -> void:
 	_movements_made = 0
 
 
-func _on_player_turn(_player: Player) -> void:
+func _on_player_turn(_player: GamePlayer) -> void:
 	_refresh_visuals()
 
 

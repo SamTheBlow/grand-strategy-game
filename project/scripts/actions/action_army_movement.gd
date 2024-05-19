@@ -11,7 +11,7 @@ func _init(army_id: int, destination_province_id: int) -> void:
 	_destination_province_id = destination_province_id
 
 
-func apply_to(game: Game, player: Player) -> void:
+func apply_to(game: Game, player: GamePlayer) -> void:
 	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
 		push_warning("Tried to move an army that doesn't exist!")

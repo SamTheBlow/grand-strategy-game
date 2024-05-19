@@ -10,10 +10,9 @@ var result: Game
 func load_game(
 		scenario: Scenario1,
 		game_rules: GameRules,
-		players: Players,
 		game_scene: PackedScene
 ) -> void:
-	var json_data: Dictionary = scenario.as_json(game_rules, players)
+	var json_data: Dictionary = scenario.as_json(game_rules)
 	var game_from_json := GameFromJSON.new()
 	game_from_json.load_game(json_data, game_scene)
 	

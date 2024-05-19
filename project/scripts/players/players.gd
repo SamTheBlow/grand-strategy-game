@@ -356,6 +356,7 @@ func _add_remote_player(
 	player.load_data(player_data)
 	player.id = new_unique_id()
 	player.multiplayer_id = multiplayer_id
+	print("Just added a new player! Their name is ", player.username(), " and their id is ", multiplayer_id)
 	add_player(player)
 
 

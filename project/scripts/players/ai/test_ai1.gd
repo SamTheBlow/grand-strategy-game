@@ -6,7 +6,7 @@ extends PlayerAI
 ## Builds fortresses in the most populated provinces on the frontline.
 
 
-func actions(game: Game, player: Player) -> Array[Action]:
+func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))

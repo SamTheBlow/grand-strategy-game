@@ -6,7 +6,7 @@ extends PlayerAI
 ## Tries to build fortresses on the frontline where they are needed the most.
 
 
-func actions(game: Game, player: Player) -> Array[Action]:
+func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
 	
 	var provinces: Array[Province] = game.world.provinces.get_provinces()

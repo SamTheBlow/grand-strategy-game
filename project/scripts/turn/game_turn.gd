@@ -7,7 +7,7 @@ class_name GameTurn
 ## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
 ## This signal is called whenever it's a new player's turn to play.
-signal player_changed(new_player: Player)
+signal player_changed(new_player: GamePlayer)
 
 var game: Game
 
@@ -20,8 +20,8 @@ func current_turn() -> int:
 
 
 ## Returns a player: it's currently that player's turn to play.
-func playing_player() -> Player:
-	return game.players.player_from_index(_playing_player_index)
+func playing_player() -> GamePlayer:
+	return game.game_players.player_from_index(_playing_player_index)
 
 
 ## Call this when a human player ends their turn.
@@ -33,14 +33,31 @@ func end_turn() -> void:
 ## Plays out each player's turn, one at a time.
 ## ALERT if there are no human players, this causes an infinite loop!
 func loop() -> void:
+	if game.game_players.number_of_playing_humans() == 0:
+		print_debug(
+				"Started the game loop with no playing humans. "
+				+ "There will probably be an infinite loop."
+		)
+	
 	while true:
-		var player: Player = playing_player()
+		# Uncomment this to watch how an AI-only game ends :D
+		#if game._game_over:
+		#	break
+		
+		var player: GamePlayer = playing_player()
+		
+		if player.is_spectating():
+			_go_to_next_player()
+			continue
+		
 		if player.is_human:
 			game.set_human_player(player)
 			return
 		
 		# The player is an AI. Play their actions and end their turn
-		player.play_actions(game)
+		var actions: Array[Action] = player.player_ai.actions(game, player)
+		for action in actions:
+			action.apply_to(game, player)
 		_end_player_turn()
 
 
@@ -64,8 +81,12 @@ func _end_player_turn() -> void:
 					+ "one army in province (ID: " + str(province.id) + ")."
 			)
 	
+	_go_to_next_player()
+
+
+func _go_to_next_player() -> void:
 	_playing_player_index += 1
-	if _playing_player_index >= game.players.size():
+	if _playing_player_index >= game.game_players.size():
 		_playing_player_index = 0
 	
 	player_changed.emit(playing_player())

@@ -210,8 +210,8 @@ func _load_country(json_data: Dictionary) -> Country:
 
 
 func _load_players(json_data: Dictionary, game: Game) -> bool:
-	var players := Players.new()
-	game.players = players
+	var game_players := GamePlayers.new()
+	game.game_players = game_players
 	
 	var players_key: String = "players"
 	if not json_data.has(players_key):
@@ -231,20 +231,19 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 			return false
 		var player_dict: Dictionary = player_data
 		
-		var player: Player = _load_player(player_dict, game)
+		var player: GamePlayer = _load_player(player_dict, game)
 		if not player:
 			return false
-		players.add_player(player)
+		game_players.add_player(player)
 	
 	return true
 
 
-# This function requires that game.players is already set
+# This function requires that game.game_players is already set
 ## TODO verify & return errors.
-func _load_player(json_data: Dictionary, game: Game) -> Player:
+func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	# AI type
-	const number_of_ai_types: int = 2
-	var ai_type: int = randi() % number_of_ai_types
+	var ai_type: int = 0
 	if json_data.has("ai_type"):
 		var value_type: int = typeof(json_data["ai_type"])
 		# Workaround because JSON doesn't differentiate floats and ints
@@ -252,29 +251,34 @@ func _load_player(json_data: Dictionary, game: Game) -> Player:
 			value_type = TYPE_INT
 		
 		if value_type == TYPE_INT:
-			ai_type = roundi(json_data["ai_type"])
+			var loaded_ai_type: int = roundi(json_data["ai_type"])
+			# If the AI type is invalid, default to the dummy AI
+			if GamePlayer.is_valid_ai_type(loaded_ai_type):
+				ai_type = loaded_ai_type
 		else:
 			error = true
 			error_message = "Player's AI type is not a number."
 			return null
 	
-	var player: Player = Player.new(ai_type)
+	var player: GamePlayer = GamePlayer.new()
 	player.id = json_data["id"]
-	player.playing_country = (
-			game.countries.country_from_id(json_data["playing_country_id"])
-	)
+	# The player is a spectator if there is no country id,
+	# of if the country id is a negative number
+	if json_data.has("playing_country_id"):
+		var country_id: int = json_data["playing_country_id"]
+		if country_id >= 0:
+			player.playing_country = (
+					game.countries.country_from_id(country_id)
+			)
 	if json_data.has("is_human"):
 		player.is_human = json_data["is_human"]
-	if player.is_human:
-		player.default_username = game.players.new_default_username()
-	else:
-		player.default_username = player.playing_country.country_name
 	if json_data.has("username"):
 		if not json_data["username"] is String:
 			error = true
 			error_message = "Player's username property is not a string."
 			return null
-		player.custom_username = json_data["username"]
+		player.username = json_data["username"]
+	player.player_ai = player.ai_from_type(ai_type)
 	
 	return player
 
