@@ -197,12 +197,10 @@ func _update_recruit_button_disabled() -> void:
 
 
 ## Note that if this node's [code]multiplayer[/code] property is null,
-## then this will always return true. It's to prevent a crash.
+## then this will always return true.
 func _is_actions_disabled() -> bool:
-	return (not multiplayer) or (not _playing_player.is_human) or (
-			_playing_player.player_human and
-			_playing_player.player_human.multiplayer_id
-			!= multiplayer.get_unique_id()
+	return not MultiplayerUtils.has_gameplay_authority(
+			multiplayer, _playing_player
 	)
 
 

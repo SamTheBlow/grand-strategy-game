@@ -25,3 +25,13 @@ static func is_server(multiplayer: MultiplayerAPI) -> bool:
 ## you are connected online and you are not the server.
 static func has_authority(multiplayer: MultiplayerAPI) -> bool:
 	return (not is_online(multiplayer)) or multiplayer.is_server()
+
+
+## Returns true if you represent the given player.
+static func has_gameplay_authority(
+		multiplayer: MultiplayerAPI, player: GamePlayer
+) -> bool:
+	return not (
+			is_online(multiplayer)
+			and player.player_human and player.player_human.is_remote()
+	)

@@ -21,9 +21,6 @@ func load_game(
 		error_message = game_from_json.error_message
 		return
 	
-	var game: Game = game_from_json.result
-	game.init2()
-	
 	# Success!
 	error = false
-	result = game
+	result = game_from_json.result

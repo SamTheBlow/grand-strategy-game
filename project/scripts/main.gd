@@ -95,7 +95,6 @@ func _receive_new_game(game_json: Dictionary) -> void:
 		print_debug(game_from_json.error_message)
 		return
 	
-	game_from_json.result.init2()
 	play_game(game_from_json.result)
 #endregion
 

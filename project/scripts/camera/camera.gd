@@ -12,23 +12,30 @@ extends Camera2D
 ## Negative numbers work, but are not recommended.
 @export var world_margin: Vector2 = Vector2(0.5, 0.5)
 
-var limits := WorldLimits.new()
+var world_limits := WorldLimits.new():
+	set(value):
+		world_limits = value
+		reposition_in_bounds()
 
 
 func _ready() -> void:
+	reposition_in_bounds()
+
+
+func move_to(new_position: Vector2) -> void:
+	position = new_position
+	reposition_in_bounds()
+
+
+## Puts the camera back in bounds.
+## Has no effect if the camera is not in the scene tree.
+func reposition_in_bounds() -> void:
+	if not is_inside_tree():
+		return
 	position = position_in_bounds(position)
 
 
-func move_to(input_position: Vector2) -> void:
-	# The position will be put back in bounds in _ready()
-	if not is_inside_tree():
-		position = input_position
-		return
-	
-	position = position_in_bounds(input_position)
-
-
-## Takes a position and contains it within the camera's limits.
+## Returns a given position contained within the given limits.
 ## WARNING this function only works when the camera is in the scene tree
 func position_in_bounds(input_position: Vector2) -> Vector2:
 	# NOTE: all of this assumes the camera's anchor mode is Drag Center
@@ -38,10 +45,10 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 	var margin_y: float = (
 			(0.5 - world_margin.y) * get_viewport_rect().size.y / zoom.y
 	)
-	var min_x: float = limits.limit_left() + margin_x
-	var min_y: float = limits.limit_top() + margin_y
-	var max_x: float = limits.limit_right() - margin_x
-	var max_y: float = limits.limit_bottom() - margin_y
+	var min_x: float = world_limits.limit_left() + margin_x
+	var min_y: float = world_limits.limit_top() + margin_y
+	var max_x: float = world_limits.limit_right() - margin_x
+	var max_y: float = world_limits.limit_bottom() - margin_y
 	var output_x: float = clampf(input_position.x, min_x, max_x)
 	var output_y: float = clampf(input_position.y, min_y, max_y)
 	return Vector2(output_x, output_y)

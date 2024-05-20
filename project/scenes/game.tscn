@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=22 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -20,6 +20,7 @@
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
+[ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
 
 [node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "popups")]
 script = ExtResource("1_yoos1")
@@ -75,13 +76,14 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="TopBar" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("country_color_rect", "country_name_label", "country_money_label", "game_turn_label")]
+[node name="TopBar" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game", "country_color_rect", "country_name_label", "country_money_label", "game_turn_label")]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.1
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("10_87bnf")
+_game = NodePath("../../..")
 country_color_rect = NodePath("HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor/ColorRect")
 country_name_label = NodePath("HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryName/Label")
 country_money_label = NodePath("HBoxContainer/Money/HBoxContainer/Text")
@@ -291,14 +293,16 @@ offset_bottom = -16.0
 unique_name_in_owner = true
 layout_mode = 1
 
-[node name="BottomRight" type="Control" parent="UILayer/GameUI"]
+[node name="EndTurnInterface" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game")]
 layout_mode = 1
 anchor_left = 0.8
 anchor_top = 0.8
 anchor_right = 1.0
 anchor_bottom = 1.0
+script = ExtResource("21_fxgwm")
+_game = NodePath("../../..")
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/BottomRight"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/EndTurnInterface"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -307,7 +311,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.25098)
 
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/BottomRight"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/EndTurnInterface"]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.2
@@ -315,7 +319,7 @@ anchor_top = 0.2
 anchor_right = 0.8
 anchor_bottom = 0.8
 
-[node name="EndTurn" type="Button" parent="UILayer/GameUI/BottomRight/MarginContainer"]
+[node name="EndTurn" type="Button" parent="UILayer/GameUI/EndTurnInterface/MarginContainer"]
 layout_mode = 2
 text = "End Turn"
 
@@ -328,4 +332,4 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[connection signal="pressed" from="UILayer/GameUI/BottomRight/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]
+[connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

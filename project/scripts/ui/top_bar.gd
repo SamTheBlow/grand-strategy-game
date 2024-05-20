@@ -3,21 +3,22 @@ extends Control
 ## The top bar that appears during a game.
 
 
+@export_group("External nodes")
+@export var _game: Game
+
+@export_group("Child nodes")
 @export var country_color_rect: ColorRect
 @export var country_name_label: Label
-
 @export var country_money_label: Label
-
 @export var game_turn_label: Label
 
 # We need to save this so that we can disconnect it later
 var _money_changed_signal: Signal
 
 
-## To be called when a game is loaded.
-func init(game: Game) -> void:
-	_update_turn_label(game.turn.current_turn())
-	game.turn.turn_changed.connect(_on_turn_changed)
+func _ready() -> void:
+	_update_turn_label(_game.turn.current_turn())
+	_game.turn.turn_changed.connect(_on_turn_changed)
 
 
 func set_playing_country(country: Country) -> void:

@@ -2,7 +2,8 @@ class_name GameWorld2D
 extends GameWorld
 
 
-var limits: WorldLimits
+
+var limits := WorldLimits.new()
 var background: WorldBackground
 
 

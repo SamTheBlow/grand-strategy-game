@@ -27,7 +27,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	
 	# Loading begins!
 	var game := game_scene.instantiate() as Game
-	game.init1()
+	game.init()
 	
 	# Rules
 	var rules: GameRules = _load_rules(json_dict)
@@ -93,10 +93,8 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	
 	# Camera limits
 	var limits_data: Dictionary = json_dict["world"]["limits"]
-	var world_limits: WorldLimits = _load_world_limits(limits_data)
-	if not world_limits:
+	if not _load_world_limits(limits_data, game_world_2d.limits):
 		return
-	game_world_2d.limits = world_limits
 	
 	# Provinces
 	for province_data: Dictionary in json_dict["world"]["provinces"]:
@@ -284,15 +282,14 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 
 
 ## TODO verify & return errors.
-func _load_world_limits(json_data: Dictionary) -> WorldLimits:
+func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 	var x1: int = json_data["left"]
 	var y1: int = json_data["top"]
 	var x2: int = json_data["right"]
 	var y2: int = json_data["bottom"]
 	
-	var world_limits := WorldLimits.new()
-	world_limits._limits = Rect2i(x1, y1, x2 - x1, y2 - y1)
-	return world_limits
+	limits._limits = Rect2i(x1, y1, x2 - x1, y2 - y1)
+	return true
 
 
 ## TODO verify & return errors.

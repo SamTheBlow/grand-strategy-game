@@ -23,6 +23,14 @@ func limit_right() -> int:
 	return _limits.end.x
 
 
+func width() -> int:
+	return _limits.end.x - _limits.position.x
+
+
+func height() -> int:
+	return _limits.end.y - _limits.position.y
+
+
 static func from_rect2i(rect2i: Rect2i) -> WorldLimits:
 	var world_limits := WorldLimits.new()
 	world_limits._limits = rect2i

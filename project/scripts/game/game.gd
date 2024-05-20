@@ -31,14 +31,19 @@ signal game_ended()
 @export var right_side: Node
 @export var popups: Control
 
-var _modifier_request: ModifierRequest
+var rules: GameRules:
+	set(value):
+		rules = value
+		_setup_global_modifiers()
 
-var rules: GameRules
 var countries: Countries
 var game_players: GamePlayers
 var turn: GameTurn
 var turn_limit: TurnLimit
 
+## Keys are a modifier context (String); values are a Modifier.
+## This property is setup automatically when loading in the game rules.
+var global_modifiers: Dictionary = {}
 
 ## Reference to external node
 var chat: Chat:
@@ -63,9 +68,22 @@ var chat: Chat:
 		)
 		chat.rules_requested.connect(_on_chat_rules_requested)
 
-# References to children nodes
-var world: GameWorld
+## Child node
+var world: GameWorld:
+	set(value):
+		if world and world.get_parent():
+			world.get_parent().remove_child(world)
+		
+		world = value
+		
+		if world is GameWorld2D:
+			camera.world_limits = (world as GameWorld2D).limits
+		$WorldLayer.add_child(world)
+
+## Child node
 var component_ui: ComponentUI
+
+var _modifier_request: ModifierRequest
 
 var _chat_interface: ChatInterface:
 	get:
@@ -82,43 +100,14 @@ var _player_list: PlayerList
 var _you: GamePlayer
 var _game_over: bool = false
 
-## Keys are a modifier context (String); values are a Modifier
-var global_modifiers: Dictionary = {}
 
-
-## Initialization 1. To be done immediately after loading the game scene.
-func init1() -> void:
+## Initialization to be done immediately after loading the game scene.
+func init() -> void:
 	_networking_interface = (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
 	_modifier_request = ModifierRequest.new(self)
 	add_modifier_provider(self)
-
-
-## Initialization 2. To be done after everything is loaded.
-func init2() -> void:
-	# Setup global modifiers
-	global_modifiers = {}
-	global_modifiers["attacker_efficiency"] = (
-			ModifierMultiplier.new(
-					"Base Modifier",
-					"Attackers all have this modifier by default.",
-					rules.global_attacker_efficiency
-			)
-	)
-	global_modifiers["defender_efficiency"] = (
-			ModifierMultiplier.new(
-					"Base Modifier",
-					"Defenders all have this modifier by default.",
-					rules.global_defender_efficiency
-			)
-	)
-	
-	# TODO bad code, shouldn't be here
-	camera.limits = world.limits
-	
-	$WorldLayer.add_child(world)
-	top_bar.init(self)
 
 
 ## Call this when you're ready to start the game loop.
@@ -240,12 +229,24 @@ func set_human_player(player: GamePlayer) -> void:
 	game_ui.add_child(player_turn)
 
 
-## Returns true if you represent the currently playing player.
-func _has_gameplay_authority() -> bool:
-	return not (
-			MultiplayerUtils.is_online(multiplayer)
-			and _you.player_human and _you.player_human.is_remote()
-	)
+func _setup_global_modifiers() -> void:
+	global_modifiers = {}
+	if rules.global_attacker_efficiency != 1.0:
+		global_modifiers["attacker_efficiency"] = (
+				ModifierMultiplier.new(
+						"Base Modifier",
+						"Attackers all have this modifier by default.",
+						rules.global_attacker_efficiency
+				)
+		)
+	if rules.global_defender_efficiency != 1.0:
+		global_modifiers["defender_efficiency"] = (
+				ModifierMultiplier.new(
+						"Base Modifier",
+						"Defenders all have this modifier by default.",
+						rules.global_defender_efficiency
+				)
+		)
 
 
 ## Moves the camera to one of the country's controlled provinces
@@ -366,7 +367,7 @@ func _on_game_over() -> void:
 func _on_province_clicked(province: Province) -> void:
 	var provinces_node: Provinces = world.provinces
 	
-	if not _has_gameplay_authority():
+	if not MultiplayerUtils.has_gameplay_authority(multiplayer, _you):
 		provinces_node.select_province(province)
 		_outline_province_links(province)
 		return
