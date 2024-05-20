@@ -28,7 +28,7 @@ signal game_ended()
 @export var game_ui: Control
 @export var component_ui_root: Control
 @export var top_bar: TopBar
-@export var right_side: Node
+@export var lobby_list_root: Node
 @export var popups: Control
 
 var rules: GameRules:
@@ -125,7 +125,7 @@ func setup_players(players: Players) -> void:
 	_player_list.players = players
 	_player_list.game_turn = turn
 	_player_list.use_networking_interface(_networking_interface)
-	right_side.add_child(_player_list)
+	lobby_list_root.add_child(_player_list)
 
 
 ## For loading. The rules must be setup beforehand.

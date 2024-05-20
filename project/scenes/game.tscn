@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=26 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -20,9 +20,17 @@
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
+[ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
+[ext_resource type="Script" path="res://scripts/ui/popups/popup_button.gd" id="21_l7714"]
 
-[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "right_side", "popups")]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
+bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ioeab"]
+bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "lobby_list_root", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -42,7 +50,7 @@ camera = NodePath("Camera")
 game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
-right_side = NodePath("UILayer/GameUI/RightSide")
+lobby_list_root = NodePath("UILayer/GameUI/RightSide/Content/LobbyList")
 popups = NodePath("UILayer/GameUI/Popups")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
@@ -288,6 +296,101 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
+
+[node name="Tabs" type="Control" parent="UILayer/GameUI/RightSide" node_paths=PackedStringArray("buttons", "corresponding_ui")]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.1
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+script = ExtResource("20_no4y5")
+buttons = [NodePath("HBoxContainer/LobbyTab/Tab1Button"), NodePath("HBoxContainer/TurnOrderTab/Tab2Button")]
+corresponding_ui = [NodePath("../Content/LobbyList"), NodePath("../Content/TurnOrderList")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/RightSide/Tabs"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LobbyTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="Tab1Button" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_bh543")
+text = "Lobby"
+script = ExtResource("21_l7714")
+
+[node name="TurnOrderTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="Tab2Button" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ioeab")
+text = "Turn Order"
+script = ExtResource("21_l7714")
+
+[node name="Content" type="Control" parent="UILayer/GameUI/RightSide"]
+layout_mode = 1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
+
+[node name="LobbyList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TurnOrderList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
 unique_name_in_owner = true
