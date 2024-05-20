@@ -37,6 +37,11 @@ signal button_pressed(button_id: int)
 @export var left_side_nodes: Array[Control]
 @export var right_side_nodes: Array[Control]
 
+var _playing_player: GamePlayer:
+	set(value):
+		_playing_player = value
+		_update_buttons_disabled()
+
 var _province: Province
 var _fortress_build_conditions: FortressBuildConditions
 var _army_recruitment_limit: ArmyRecruitmentLimit
@@ -44,6 +49,7 @@ var _army_recruitment_limit: ArmyRecruitmentLimit
 
 func _ready() -> void:
 	_update_side_nodes()
+	_update_buttons_disabled()
 
 
 func _process(_delta: float) -> void:
@@ -98,7 +104,7 @@ func _draw() -> void:
 
 
 ## To be called when creating this node.
-func init(province: Province, your_country: Country) -> void:
+func init(province: Province, playing_player: GamePlayer) -> void:
 	_province = province
 	
 	_update_population_size_label(province.population.population_size)
@@ -113,7 +119,7 @@ func init(province: Province, your_country: Country) -> void:
 	
 	if province.game.rules.build_fortress_enabled:
 		_fortress_build_conditions = FortressBuildConditions.new(
-				your_country, _province
+				playing_player.playing_country, _province
 		)
 		_fortress_build_conditions.can_build_changed.connect(
 				_on_fortress_can_build_changed
@@ -125,7 +131,7 @@ func init(province: Province, your_country: Country) -> void:
 	
 	if province.game.rules.recruitment_enabled:
 		_army_recruitment_limit = ArmyRecruitmentLimit.new(
-				your_country, _province
+				playing_player.playing_country, _province
 		)
 		_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
 		_on_army_maximum_changed(_army_recruitment_limit.maximum())
@@ -134,6 +140,7 @@ func init(province: Province, your_country: Country) -> void:
 		node1.hide()
 	
 	_update_left_side_nodes()
+	_playing_player = playing_player
 
 
 func _update_population_size_label(value: int) -> void:
@@ -169,6 +176,36 @@ func _update_right_side_nodes() -> void:
 		offset_y += right_side_nodes[i].size.y
 
 
+func _update_buttons_disabled() -> void:
+	_update_build_fortress_button_disabled()
+	_update_recruit_button_disabled()
+
+
+func _update_build_fortress_button_disabled() -> void:
+	build_fortress_button.disabled = (
+			_is_actions_disabled()
+			or not _fortress_build_conditions.can_build()
+	)
+
+
+func _update_recruit_button_disabled() -> void:
+	recruit_button.disabled = (
+			_is_actions_disabled() or
+			_army_recruitment_limit.maximum()
+			< _province.game.rules.minimum_army_size
+	)
+
+
+## Note that if this node's [code]multiplayer[/code] property is null,
+## then this will always return true. It's to prevent a crash.
+func _is_actions_disabled() -> bool:
+	return (not multiplayer) or (not _playing_player.is_human) or (
+			_playing_player.player_human and
+			_playing_player.player_human.multiplayer_id
+			!= multiplayer.get_unique_id()
+	)
+
+
 func _on_build_fortress_button_pressed() -> void:
 	button_pressed.emit(0)
 
@@ -185,9 +222,13 @@ func _on_income_money_changed(new_value: int) -> void:
 	_update_income_money_label(new_value)
 
 
-func _on_fortress_can_build_changed(can_build: bool) -> void:
-	build_fortress_button.disabled = not can_build
+func _on_fortress_can_build_changed(_can_build: bool) -> void:
+	_update_build_fortress_button_disabled()
 
 
-func _on_army_maximum_changed(maximum: int) -> void:
-	recruit_button.disabled = maximum < _province.game.rules.minimum_army_size
+func _on_army_maximum_changed(_maximum: int) -> void:
+	_update_recruit_button_disabled()
+
+
+func _on_turn_player_changed(player: GamePlayer) -> void:
+	_playing_player = player

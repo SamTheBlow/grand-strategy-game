@@ -398,7 +398,8 @@ func _on_province_clicked(province: Province) -> void:
 
 func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.init(world.provinces.selected_province, _you.playing_country)
+	component_ui.init(world.provinces.selected_province, _you)
+	turn.player_changed.connect(component_ui._on_turn_player_changed)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)
 
