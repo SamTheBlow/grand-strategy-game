@@ -1,6 +1,6 @@
 class_name NetworkingInterface
 extends Control
-## A simple interface for hosting and joining servers.
+## The interface for hosting and joining servers.
 
 
 signal interface_changed()
@@ -17,49 +17,46 @@ signal message_sent(text: String, color: Color)
 ## It will be visible again if the user disconnects from the server.
 @export var autohide: bool = true
 
-@onready var _interface_disconnected := $Control as Control
-@onready var _interface_connected := $Control2 as Control
+@onready var _interface_disconnected := $InterfaceDisconnected as Control
+@onready var _interface_connected := $InterfaceConnected as Control
 @onready var _ip_address_node := %IPAddress as LineEdit
-@onready var _feedback := %ServerFeedback as Label
-@onready var _feedback_animation := %FeedbackAnimation as AnimationPlayer
 
 
 func _ready() -> void:
 	_switch_interface(MultiplayerUtils.is_online(multiplayer))
-	_feedback.text = ""
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 
-func _handle_error(error: int, joining: bool) -> void:
-	# Red text
-	_feedback.modulate = Color(1, 0.5, 0.5, 1)
+func _handle_error(error: Error, is_joining: bool) -> void:
+	var feedback_text := ""
+	# Red
+	var feedback_color := Color(1, 0.5, 0.5, 1)
 	
 	match error:
 		ERR_ALREADY_IN_USE:
-			_feedback.text = "Error: already connected to a server"
+			feedback_text = "Error: already connected to a server"
 		ERR_CANT_CREATE:
-			if joining:
-				_feedback.text = "Error: failed to join server"
+			if is_joining:
+				feedback_text = "Error: failed to join server"
 			else:
-				_feedback.text = "Error: failed to create server"
+				feedback_text = "Error: failed to create server"
 		ERR_CANT_RESOLVE:
-			_feedback.text = "Error: can't resolve (wrong IP address?)"
+			feedback_text = "Error: can't resolve (wrong IP address?)"
 		OK:
-			# Green text
-			_feedback.modulate = Color(0.5, 1, 0.5, 1)
+			# Green
+			feedback_color = Color(0.5, 1, 0.5, 1)
 			
-			if joining:
-				_feedback.text = "Joined server"
+			if is_joining:
+				feedback_text = "Joined server"
 			else:
-				_feedback.text = (
+				feedback_text = (
 						"You are now hosting a server! "
 						+ "Other players can join using your IP address."
 				)
 		_:
-			_feedback.text = "An unexpected error occured"
+			feedback_text = "An unexpected error occured"
 	
-	message_sent.emit(_feedback.text, _feedback.modulate)
-	_feedback_animation.play("animate_feedback")
+	message_sent.emit(feedback_text, feedback_color)
 
 
 func _switch_interface(is_online: bool) -> void:
@@ -108,11 +105,11 @@ func _on_join_pressed() -> void:
 
 
 func _on_server_disconnected() -> void:
-	# Yellow text
-	_feedback.modulate = Color(1, 0.9, 0.6, 1)
-	_feedback.text = "Disconnected from server."
-	message_sent.emit(_feedback.text, _feedback.modulate)
-	_feedback_animation.play("animate_feedback")
+	var message_text := "Disconnected from server."
+	# Yellow
+	var message_color := Color(1, 0.9, 0.6, 1)
+	message_sent.emit(message_text, message_color)
+	
 	if autohide:
 		show()
 	_switch_interface(false)
