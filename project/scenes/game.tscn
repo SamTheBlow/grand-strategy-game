@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
-[ext_resource type="Script" path="res://scripts/ui/popups/popup_button.gd" id="21_l7714"]
+[ext_resource type="Script" path="res://scripts/ui/id_button.gd" id="21_l7714"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)

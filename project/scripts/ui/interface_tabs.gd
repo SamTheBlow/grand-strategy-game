@@ -3,7 +3,9 @@ extends Control
 ## Listens to button presses, and shows their corresponding UI when pressed.
 
 
-@export var buttons: Array[PopupButton]
+## The buttons to listen to. The buttons will be automatically
+## assigned an id and their signals will be automatically connected.
+@export var buttons: Array[IdButton]
 
 ## Make sure they are in the same order as the buttons in the buttons array!
 @export var corresponding_ui: Array[Control]

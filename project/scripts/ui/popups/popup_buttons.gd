@@ -17,7 +17,7 @@ func setup_buttons(button_names: Array[String]) -> void:
 			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			add_child(control)
 		
-		var button := PopupButton.new()
+		var button := IdButton.new()
 		button.name = "Button" + str(i + 1)
 		button.id = i
 		button.text = button_names[i]
