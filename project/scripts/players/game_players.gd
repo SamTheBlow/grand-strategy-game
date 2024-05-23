@@ -100,27 +100,29 @@ func assign_lobby(players: Players) -> void:
 ## Set the game_player_id to a positive value
 ## to assign a Player to a specific GamePlayer.
 func assign_player(player: Player, game_player_id: int = -1) -> int:
-	#print("--- assign_player()")
+	#print("--- assign_player() called from ", multiplayer.get_unique_id())
+	#print("---List of all the game players---")
+	#for game_player in list():
+	#	print(
+	#			game_player.username, "; ",
+	#			game_player.is_human, "; ", game_player.player_human_id
+	#	)
+	#print("------")
 	#print("We're adding this player: ", player.username(), "; ", player.id)
-	if game_player_id >= _list.size():
-		# Create new spectator
-		var new_spectator: GamePlayer = _new_spectator(player)
-		add_player(new_spectator)
-		return new_spectator.id
-	elif game_player_id >= 0:
-		# Assign to specific GamePlayer
-		var game_player: GamePlayer = player_from_index(game_player_id)
+	if game_player_id >= 0:
+		var game_player: GamePlayer = player_from_id(game_player_id)
 		if game_player:
+			# Assign to specific GamePlayer
+			#print("Assigning to specific GamePlayer: ", game_player_id)
 			game_player.player_human = player
 			game_player.is_human = true
 			return game_player.id
 		else:
-			print_debug("Trying to assign player to invalid game player id.")
-	
-	#print("---List of all the game players---")
-	#for game_player in list():
-	#	print(game_player.username, "; ", game_player.is_human, "; ", game_player.player_human_id)
-	#print("------")
+			# Create new spectator
+			#print("Creating new spectator: ", game_player_id)
+			var new_spectator: GamePlayer = _new_spectator(player)
+			add_player(new_spectator)
+			return new_spectator.id
 	
 	var unassigned_players: Array[GamePlayer] = []
 	
@@ -175,6 +177,15 @@ func player_from_index(index: int) -> GamePlayer:
 	if index < 0 or index >= _list.size():
 		return null
 	return _list[index]
+
+
+## Returns the player with given id.
+## If there is no player with this id, returns null.
+func player_from_id(id: int) -> GamePlayer:
+	for game_player in _list:
+		if game_player.id == id:
+			return game_player
+	return null
 
 
 func number_of_humans() -> int:
@@ -245,5 +256,8 @@ func _on_player_removed(player: Player) -> void:
 			continue
 		
 		if game_player.player_human == player:
-			game_player.is_human = false
+			if game_player.is_spectating():
+				remove_player(game_player)
+			else:
+				game_player.is_human = false
 			return

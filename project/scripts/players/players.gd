@@ -306,12 +306,6 @@ func _consider_add_local_player() -> void:
 		print_debug("Received server request, but you're not the server.")
 		return
 	
-	# Only accept if there's enough room
-	if size() >= 11:
-		print_debug("Requested a new local player, but the room is full!")
-		return
-	
-	# Request accepted
 	var data := {
 		"is_human": true,
 		"custom_username": new_default_username(),
