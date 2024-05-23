@@ -24,6 +24,7 @@ signal game_ended()
 @export var recruitment_scene: PackedScene
 
 @export_category("Children")
+@export var action_sync: ActionSynchronizer
 @export var camera: CustomCamera2D
 @export var game_ui: Control
 @export var component_ui_root: Control
@@ -172,36 +173,12 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn.turn_changed.connect(_on_new_turn)
 
 
-## Creates a new instance of Game with the exact same state as this game.
-func copy() -> Game:
-	var game_to_json := GameToJSON.new()
-	game_to_json.convert_game(self)
-	if game_to_json.error:
-		print_debug(
-				"Error converting game to JSON: "
-				+ game_to_json.error_message
-		)
-	var game_from_json := GameFromJSON.new()
-	# TODO bad code, don't use get_parent. Find a better way to get the scene
-	game_from_json.load_game(game_to_json.result, get_parent().game_scene)
-	if game_from_json.error:
-		print_debug(
-				"Error loading game from JSON: "
-				+ game_from_json.error_message
-		)
-	return game_from_json.result
-
-
 func modifiers(context: ModifierContext) -> ModifierList:
 	return _modifier_request.modifiers(context)
 
 
 func add_modifier_provider(object: Object) -> void:
 	_modifier_request.add_provider(object)
-
-
-func deselect_province() -> void:
-	world.provinces.deselect_province()
 
 
 func new_action_army_movement(
@@ -220,14 +197,14 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_split.apply_to(self, _you)
+		action_sync.apply_action(action_split)
 		
 		moving_army_id = new_army_id
 	
 	var action_move := ActionArmyMovement.new(
 			moving_army_id, destination_province.id
 	)
-	action_move.apply_to(self, _you)
+	action_sync.apply_action(action_move)
 
 
 func set_human_player(player: GamePlayer) -> void:
@@ -466,25 +443,25 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 
 
 func _on_end_turn_pressed() -> void:
-	turn.end_turn()
+	action_sync.apply_action(ActionEndTurn.new())
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
-	deselect_province()
+	world.provinces.deselect_province()
 	var action_build := ActionBuild.new(province.id)
-	action_build.apply_to(self, _you)
+	action_sync.apply_action(action_build)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	deselect_province()
+	world.provinces.deselect_province()
 	var action_recruitment := ActionRecruitment.new(
 			province.id, troop_amount, world.armies.new_unique_army_id()
 	)
-	action_recruitment.apply_to(self, _you)
+	action_sync.apply_action(action_recruitment)
 
 
 func _on_army_movement_closed() -> void:
-	deselect_province()
+	world.provinces.deselect_province()
 
 
 # Temporary feature

@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=28 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
+[ext_resource type="Script" path="res://scripts/networking/action_synchronizer.gd" id="15_o3imi"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
@@ -31,7 +32,7 @@ bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="Game" type="Node" node_paths=PackedStringArray("camera", "game_ui", "component_ui_root", "top_bar", "lobby_list_root", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "game_ui", "component_ui_root", "top_bar", "lobby_list_root", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -47,12 +48,17 @@ army_movement_scene = ExtResource("8_nnt8b")
 game_over_scene = ExtResource("16_mxtlx")
 build_fortress_scene = ExtResource("10_x38iu")
 recruitment_scene = ExtResource("11_rjf2g")
+action_sync = NodePath("ActionSynchronizer")
 camera = NodePath("Camera")
 game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 lobby_list_root = NodePath("UILayer/GameUI/RightSide/Content/LobbyList")
 popups = NodePath("UILayer/GameUI/Popups")
+
+[node name="ActionSynchronizer" type="Node" parent="." node_paths=PackedStringArray("_game")]
+script = ExtResource("15_o3imi")
+_game = NodePath("..")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true

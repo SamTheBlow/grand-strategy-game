@@ -53,3 +53,23 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			province
 	)
 	game.world.armies.merge_armies(province)
+
+
+## Returns this action's raw data, for the purpose of
+## transfering between network clients.
+func raw_data() -> Dictionary:
+	return {
+		"id": RECRUITMENT,
+		"province_id": _province_id,
+		"number_of_troops": _number_of_troops,
+		"new_army_id": _new_army_id,
+	}
+
+
+## Returns an action built with given raw data.
+static func from_raw_data(data: Dictionary) -> ActionRecruitment:
+	return ActionRecruitment.new(
+			data["province_id"] as int,
+			data["number_of_troops"] as int,
+			data["new_army_id"] as int,
+	)

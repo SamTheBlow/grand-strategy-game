@@ -37,3 +37,21 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	province.buildings.add(fortress)
 	
 	your_country.money -= game.rules.fortress_price
+
+
+## Returns this action's raw data, for the purpose of
+## transfering between network clients.
+func raw_data() -> Dictionary:
+	return {
+		"id": BUILD,
+		"province_id": _province_id,
+		"building_type": _building_type,
+	}
+
+
+## Returns an action built with given raw data.
+static func from_raw_data(data: Dictionary) -> ActionBuild:
+	return ActionBuild.new(
+			data["province_id"] as int,
+			data["building_type"] as String
+	)

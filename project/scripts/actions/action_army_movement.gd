@@ -43,3 +43,21 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	army.move_to_province(destination_province)
 	
 	#print("Army ", _army_id, " moved to province ", _destination_province_id)
+
+
+## Returns this action's raw data, for the purpose of
+## transfering between network clients.
+func raw_data() -> Dictionary:
+	return {
+		"id": ARMY_MOVEMENT,
+		"army_id": _army_id,
+		"destination_province_id": _destination_province_id,
+	}
+
+
+## Returns an action built with given raw data.
+static func from_raw_data(data: Dictionary) -> ActionArmyMovement:
+	return ActionArmyMovement.new(
+			data["army_id"] as int,
+			data["destination_province_id"] as int
+	)

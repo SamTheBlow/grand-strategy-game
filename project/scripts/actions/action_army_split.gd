@@ -75,3 +75,31 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	#		"Army ", army.id, " in province ", army.province().id,
 	#		" was split into ", _new_army_ids
 	#)
+
+
+## Returns this action's raw data, for the purpose of
+## transfering between network clients.
+func raw_data() -> Dictionary:
+	return {
+		"id": ARMY_SPLIT,
+		"army_id": _army_id,
+		"troop_partition": _troop_partition,
+		"new_army_ids": _new_army_ids,
+	}
+
+
+## Returns an action built with given raw data.
+static func from_raw_data(data: Dictionary) -> ActionArmySplit:
+	var troop_partition: Array[int] = []
+	for part in data["troop_partition"] as Array[int]:
+		troop_partition.append(part)
+	
+	var new_army_ids: Array[int] = []
+	for id in data["new_army_ids"] as Array[int]:
+		new_army_ids.append(id)
+	
+	return ActionArmySplit.new(
+			data["army_id"] as int,
+			troop_partition,
+			new_army_ids
+	)
