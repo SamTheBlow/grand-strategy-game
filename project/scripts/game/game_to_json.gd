@@ -21,9 +21,7 @@ func convert_game(game: Game) -> void:
 	json_data["rules"] = rules_data
 	
 	# Players
-	json_data["players"] = (
-			PlayersToJSON.new().convert_players(game.game_players)
-	)
+	json_data["players"] = game.game_players.raw_data()
 	
 	# Countries
 	var countries_data: Array = []

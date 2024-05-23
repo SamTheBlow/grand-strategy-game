@@ -2,11 +2,17 @@ class_name GamePlayers
 extends Node
 
 
+signal player_added(player: GamePlayer, position_index: int)
+signal player_removed(player: GamePlayer)
+
 var _list: Array[GamePlayer] = []
 
 
 func add_player(player: GamePlayer) -> void:
 	_list.append(player)
+	player.name = str(player.id)
+	add_child(player)
+	player_added.emit(player, _list.size() - 1)
 
 
 func remove_player(player: GamePlayer) -> void:
@@ -14,15 +20,30 @@ func remove_player(player: GamePlayer) -> void:
 		return
 	
 	_list.erase(player)
+	remove_child(player)
+	player_removed.emit(player)
 
 
 ## Assigns lobby players from given group to this list.
-## If a [Player]'s username matches a [GamePlayer]'s,
+## It first assigns players according to their id.
+## Then, if a [Player]'s username matches a [GamePlayer]'s,
 ## it will be assigned that [GamePlayer].
-## Otherwise, it will be assigned a random [GamePlayer] (not a spectator),
+## Finally, it will be assigned a random [GamePlayer] (not a spectator),
 ## or, if all [GamePlayer]s were alrady assigned, it will be assigned
 ## a newly created spectator [GamePlayer].
 func assign_lobby(players: Players) -> void:
+	#print("GAME PLAYERS")
+	#for game_player in list():
+	#	print(
+	#			game_player.username, "; ",
+	#			game_player.is_human, "; ", game_player.player_human_id
+	#	)
+	#print("PLAYERS")
+	#for player in players.list():
+	#	print(player.username(), "; ", player.id)
+	
+	players.player_removed.connect(_on_player_removed)
+	
 	var unassigned_game_players: Array[GamePlayer] = list()
 	var unassigned_players: Array[Player] = players.list()
 	
@@ -34,15 +55,28 @@ func assign_lobby(players: Players) -> void:
 		game_player.is_human = false
 		game_player.player_human = null
 	
-	# Assign players whose username match
+	# Assign players by their id
 	for player in players.list():
 		for game_player in _list:
 			if game_player.player_human:
 				continue
 			
-			if game_player.username == player.username():
-				game_player.is_human = true
+			if game_player.player_human_id == player.id:
 				game_player.player_human = player
+				game_player.is_human = true
+				unassigned_game_players.erase(game_player)
+				unassigned_players.erase(player)
+				break
+	
+	# Assign players whose username match
+	for player in unassigned_players.duplicate() as Array[Player]:
+		for game_player in _list:
+			if game_player.player_human:
+				continue
+			
+			if game_player.username == player.username():
+				game_player.player_human = player
+				game_player.is_human = true
 				unassigned_game_players.erase(game_player)
 				unassigned_players.erase(player)
 				break
@@ -51,16 +85,78 @@ func assign_lobby(players: Players) -> void:
 	unassigned_game_players.shuffle()
 	for player in unassigned_players:
 		if unassigned_game_players.size() > 0:
-			unassigned_game_players[0].is_human = true
 			unassigned_game_players[0].player_human = player
+			unassigned_game_players[0].is_human = true
 			unassigned_game_players.remove_at(0)
 		else:
 			# Ran out of GamePlayers. Create a new spectator GamePlayer.
 			var new_spectator := GamePlayer.new()
 			new_spectator.id = new_unique_id()
-			new_spectator.is_human = true
 			new_spectator.player_human = player
+			new_spectator.is_human = true
 			add_player(new_spectator)
+
+
+## Set the game_player_id to a positive value
+## to assign a Player to a specific GamePlayer.
+func assign_player(player: Player, game_player_id: int = -1) -> int:
+	#print("--- assign_player()")
+	#print("We're adding this player: ", player.username(), "; ", player.id)
+	if game_player_id >= _list.size():
+		# Create new spectator
+		var new_spectator: GamePlayer = _new_spectator(player)
+		add_player(new_spectator)
+		return new_spectator.id
+	elif game_player_id >= 0:
+		# Assign to specific GamePlayer
+		var game_player: GamePlayer = player_from_index(game_player_id)
+		if game_player:
+			game_player.player_human = player
+			game_player.is_human = true
+			return game_player.id
+		else:
+			print_debug("Trying to assign player to invalid game player id.")
+	
+	#print("---List of all the game players---")
+	#for game_player in list():
+	#	print(game_player.username, "; ", game_player.is_human, "; ", game_player.player_human_id)
+	#print("------")
+	
+	var unassigned_players: Array[GamePlayer] = []
+	
+	# Assign them a game player whose id matches
+	for game_player in _list:
+		if game_player.is_human:
+			continue
+		
+		if game_player.player_human_id == player.id:
+			game_player.player_human = player
+			game_player.is_human = true
+			return game_player.id
+	
+	# Assign them a game player whose name matches
+	for game_player in _list:
+		if game_player.is_human:
+			continue
+		
+		if game_player.username == player.username():
+			game_player.player_human = player
+			game_player.is_human = true
+			return game_player.id
+		
+		unassigned_players.append(game_player)
+	
+	# There isn't one? Assign them a random AI player.
+	if unassigned_players.size() > 0:
+		var random_index: int = randi_range(0, unassigned_players.size() - 1)
+		unassigned_players[random_index].player_human = player
+		unassigned_players[random_index].is_human = true
+		return unassigned_players[random_index].id
+	
+	# There aren't any AI players to assign? Create a new spectator.
+	var spectator: GamePlayer = _new_spectator(player)
+	add_player(spectator)
+	return spectator.id
 
 
 ## Returns a copy of this list.
@@ -98,6 +194,19 @@ func number_of_playing_humans() -> int:
 	return output
 
 
+## The number of humans on this list who are not remote players
+func number_of_local_humans() -> int:
+	var output: int = 0
+	for player in _list:
+		if (
+				player.is_human
+				and player.player_human
+				and not player.player_human.is_remote()
+		):
+			output += 1
+	return output
+
+
 # TODO DRY. copy/paste from players.gd
 ## Provides a new unique id that is not used by any player in the list.
 ## The id will be as small as possible (0 or higher).
@@ -112,3 +221,29 @@ func new_unique_id() -> int:
 				new_id += 1
 				break
 	return new_id
+
+
+## Converts this node into raw data for the purpose of saving/loading.
+func raw_data() -> Array:
+	var players_data: Array = []
+	for player in _list:
+		players_data.append(player.raw_data())
+	return players_data
+
+
+func _new_spectator(player: Player) -> GamePlayer:
+	var new_spectator := GamePlayer.new()
+	new_spectator.id = new_unique_id()
+	new_spectator.player_human = player
+	new_spectator.is_human = true
+	return new_spectator
+
+
+func _on_player_removed(player: Player) -> void:
+	for game_player in _list:
+		if (not game_player.is_human) or (not game_player.player_human):
+			continue
+		
+		if game_player.player_human == player:
+			game_player.is_human = false
+			return

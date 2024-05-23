@@ -49,29 +49,8 @@ var players: Players:
 		players.player_added.connect(_on_player_added)
 		players.player_removed.connect(_on_player_removed)
 		
-		if players.number_of_humans() == 0:
+		if players.size() == 0:
 			_add_human_player()
-
-## This value is designed to be only set once.
-## To not use the game turn feature, leave this value to [code]null[/code].
-var game_turn: GameTurn = null:
-	set(value):
-		game_turn = value
-		
-		## TODO make a better way to know if we're in lobby or in game
-		if not game_turn:
-			_is_discarding_ai_players = true
-			return
-		add_player_button.hide()
-		_is_discarding_ai_players = false
-		
-		if not players:
-			return
-		for element in container.get_children():
-			if element is PlayerListElement:
-				(element as PlayerListElement).init_turn(game_turn)
-
-var _is_discarding_ai_players: bool = true
 
 var _is_using_network_interface: bool = false:
 	set(value):
@@ -80,6 +59,8 @@ var _is_using_network_interface: bool = false:
 		_update_size()
 
 var _visual_players: Array[PlayerListElement] = []
+
+@onready var _add_player_root := %AddPlayerRoot as Control
 
 
 func _ready() -> void:
@@ -116,14 +97,12 @@ func _update_networking_interface_visibility() -> void:
 
 
 func _add_element(player: Player) -> void:
-	player.human_status_changed.connect(_on_human_status_changed)
-	player.synchronization_finished.connect(_on_player_sync_finished)
+	player.deletion_requested.connect(_on_player_deletion_requested)
+	player.sync_finished.connect(_on_player_sync_finished)
 	
 	var element := player_list_element.instantiate() as PlayerListElement
 	element.player = player
 	element.init()
-	if game_turn:
-		element.init_turn(game_turn)
 	_visual_players.append(element)
 	container.add_child(element)
 	container.move_child(element, -2)
@@ -136,7 +115,7 @@ func _create_elements() -> void:
 
 
 func _remove_element(player: Player) -> void:
-	player.human_status_changed.disconnect(_on_human_status_changed)
+	player.deletion_requested.disconnect(_on_player_deletion_requested)
 	
 	for visual in _visual_players:
 		if visual.player == player:
@@ -155,6 +134,9 @@ func _clear_elements() -> void:
 
 ## To be called when the margin_pixels property changes.
 func _update_margin_offsets() -> void:
+	if not margin:
+		return
+	
 	margin.offset_left = margin_pixels
 	margin.offset_right = -margin_pixels
 	margin.offset_top = margin_pixels
@@ -166,21 +148,19 @@ func _update_margin_offsets() -> void:
 ## Call this whenever any child node's vertical size changes.
 ## This function has no effect when [code]is_shrunk[/code] is set to false.
 func _update_size() -> void:
-	if not is_shrunk:
+	if not is_inside_tree() or not is_shrunk:
 		return
 	
 	var new_size: int = 0
-	for child in container.get_children():
-		if not child is PlayerListElement:
-			continue
-		new_size += roundi((child as PlayerListElement).size.y)
+	for element in _visual_players:
+		new_size += roundi(element.size.y)
 		
-		# It seems like Godot adds 4 pixels of spacing between each node
+		# Godot adds 4 pixels of spacing between each node
 		new_size += 4
 	
 	# Add the size of the add button, when it's there
-	if add_player_button.visible:
-		new_size += roundi(add_player_button.size.y) + 4
+	if _add_player_root.visible:
+		new_size += roundi(_add_player_root.size.y) + 4
 	
 	# Add the size of the server setup, when it's there
 	if networking_setup.visible:
@@ -200,7 +180,7 @@ func _update_size() -> void:
 func _update_elements() -> void:
 	var is_the_only_local_human: bool = players.number_of_local_humans() == 1
 	for element in _visual_players:
-		if element.player.is_human and not element.player.is_remote():
+		if not element.player.is_remote():
 			element.is_the_only_local_human = is_the_only_local_human
 		else:
 			element.is_the_only_local_human = false
@@ -214,28 +194,21 @@ func _on_viewport_size_changed() -> void:
 	_update_size()
 
 
-func _on_human_status_changed(player: Player) -> void:
-	if (not _is_discarding_ai_players) or player.is_human:
-		_update_elements()
-		return
-	if players.number_of_humans() == 0:
-		print_debug(
-				"The last human player was turned into an AI!"
-				+ " (That's not normal!)"
-		)
-		player.is_human = true
-		_update_elements()
+func _on_player_deletion_requested(player: Player) -> void:
+	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
-	# Kick the player from the server
-	if players.number_of_humans_with_multiplayer_id(player.multiplayer_id) < 1:
-		player.is_human = true
+	if players.size() == 1:
+		print_debug("Tried to remove the last player. Ignoring request.")
+		return
+	
+	# Removing their last player? Kick them from the server
+	if players.number_of_humans_with_multiplayer_id(player.multiplayer_id) < 2:
 		players.kick_player(player)
 		return
 	
-	# The player became an AI. Discard this player
-	if MultiplayerUtils.has_authority(multiplayer):
-		players.remove_player(player)
+	# Remove the player
+	players.remove_player(player)
 
 
 func _on_add_player_button_pressed() -> void:
@@ -249,20 +222,14 @@ func _on_networking_interface_changed() -> void:
 
 
 func _on_player_added(player: Player) -> void:
-	## TODO don't hard code the maximum number of players
-	if players.size() >= 11:
-		add_player_button.hide()
-	
 	_add_element(player)
+	_update_size()
 	_update_elements()
 
 
 func _on_player_removed(player: Player) -> void:
-	## TODO don't hard code the maximum number of players
-	if players.size() < 11:
-		add_player_button.show()
-	
 	_remove_element(player)
+	_update_size()
 	_update_elements()
 
 

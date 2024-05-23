@@ -55,7 +55,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		player_data["id"] = i
 		player_data["is_human"] = false
 		player_data["playing_country_id"] = random_country_assignment[i]
-		player_data["ai_type"] = randi() % 2
+		player_data["ai_type"] = 1 + randi() % 2
 		players_data.append(player_data)
 		
 		var country_data: Dictionary = {}

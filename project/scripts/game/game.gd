@@ -37,8 +37,20 @@ var rules: GameRules:
 		_setup_global_modifiers()
 
 var countries: Countries
-var game_players: GamePlayers
-var turn: GameTurn
+
+var game_players: GamePlayers:
+	set(value):
+		if game_players:
+			remove_child(game_players)
+		game_players = value
+		game_players.name = "GamePlayers"
+		add_child(game_players)
+
+var turn: GameTurn:
+	set(value):
+		turn = value
+		_turn_order_list.game_turn = turn
+
 var turn_limit: TurnLimit
 
 ## Keys are a modifier context (String); values are a Modifier.
@@ -94,11 +106,20 @@ var _chat_interface: ChatInterface:
 # It is only stored in memory because we need it to connect to chats
 var _networking_interface: NetworkingInterface
 
-# It is only stored in memory because we need it to connect to players
-var _player_list: PlayerList
-
 var _you: GamePlayer
 var _game_over: bool = false
+
+var _lobby_list: PlayerList:
+	get:
+		if not _lobby_list:
+			_lobby_list = %PlayerList as PlayerList
+		return _lobby_list
+
+var _turn_order_list: TurnOrderList:
+	get:
+		if not _turn_order_list:
+			_turn_order_list = %TurnOrderList as TurnOrderList
+		return _turn_order_list
 
 
 ## Initialization to be done immediately after loading the game scene.
@@ -106,6 +127,7 @@ func init() -> void:
 	_networking_interface = (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
+	_lobby_list.use_networking_interface(_networking_interface)
 	_modifier_request = ModifierRequest.new(self)
 	add_modifier_provider(self)
 
@@ -120,12 +142,19 @@ func start() -> void:
 func setup_players(players: Players) -> void:
 	game_players.assign_lobby(players)
 	
-	# Create the player list
-	_player_list = player_list_scene.instantiate() as PlayerList
-	_player_list.players = players
-	_player_list.game_turn = turn
-	_player_list.use_networking_interface(_networking_interface)
-	lobby_list_root.add_child(_player_list)
+	#print("After. ", Engine.get_main_loop().get_multiplayer().get_unique_id())
+	#print("GAME PLAYERS")
+	#for game_player in game_players.list():
+	#	print(
+	#			game_player.username, "; ",
+	#			game_player.is_human, "; ", game_player.player_human_id
+	#	)
+	#print("PLAYERS")
+	#for player in players.list():
+	#	print(player.username(), "; ", player.id)
+	
+	_lobby_list.players = players
+	_turn_order_list.players = game_players
 
 
 ## For loading. The rules must be setup beforehand.
@@ -212,11 +241,6 @@ func set_human_player(player: GamePlayer) -> void:
 	_you.human_status_changed.connect(_on_your_human_status_changed)
 	top_bar.set_playing_country(_you.playing_country)
 	_move_camera_to_country(_you.playing_country)
-	
-	print("It's now the turn of ", player.username)
-	print("Player turn order:")
-	for game_player in game_players.list():
-		print(game_player.username, "" if game_player.is_human else " (AI)", " (spectator)" if game_player.is_spectating() else "")
 	
 	# Only announce a new player's turn when there is more than 1 human player
 	if game_players.number_of_playing_humans() < 2:
@@ -516,7 +540,7 @@ func _on_modifiers_requested(
 		modifiers_.append(global_modifiers[context.context()])
 
 
-func _on_your_human_status_changed(_player: Player) -> void:
+func _on_your_human_status_changed(_player: GamePlayer) -> void:
 	# If you're no longer playing as a human,
 	# skip this player's turn and continue playing
 	if not _you.is_human:

@@ -5,9 +5,9 @@ extends Node
 
 
 signal username_changed(new_username: String)
-signal human_status_changed(player: Player)
+signal deletion_requested(player: Player)
 ## Emits on clients when the player is done synchronizing with the server.
-signal synchronization_finished(player: Player)
+signal sync_finished(player: Player)
 
 var id: int:
 	set(value):
@@ -16,19 +16,6 @@ var id: int:
 		
 		id = value
 		name = str(id)
-
-var playing_country: Country
-
-var is_human: bool = false:
-	set(value):
-		if _is_not_allowed_to_make_changes():
-			if not is_remote():
-				_request_set_is_human(value)
-			return
-		
-		if is_human != value:
-			is_human = value
-			human_status_changed.emit(self)
 
 ## In a multiplayer context, tells you which client this player represents.
 ## This property is only used for online multiplayer.
@@ -67,13 +54,6 @@ var custom_username: String = "":
 		if MultiplayerUtils.is_server(multiplayer):
 			_receive_set_custom_username.rpc(value)
 
-var _ai_type: int:
-	set(value):
-		if _is_not_allowed_to_make_changes():
-			return
-		
-		_ai_type = value
-
 # If true, this player represents someone else.
 # This is only relevant in online multiplayer.
 var _is_remote: bool = false
@@ -83,15 +63,6 @@ var _is_remote: bool = false
 var _is_synchronizing: bool = false
 
 var _actions: Array[Action] = []
-
-
-## Setting the AI type to a negative value gives the player a random AI type.
-## The player starts with a random AI type by default.
-func _init(ai_type: int = -1) -> void:
-	_ai_type = ai_type
-	if _ai_type < 0:
-		# TODO don't hard code the number of AI types
-		_ai_type = randi() % 2
 
 
 func _ready() -> void:
@@ -124,14 +95,10 @@ func add_action(action: Action) -> void:
 func raw_data() -> Dictionary:
 	var data := {
 		"id": id,
-		"is_human": is_human,
 		"multiplayer_id": multiplayer_id,
 		"default_username": default_username,
 		"custom_username": custom_username,
-		"ai_type": _ai_type,
 	}
-	if playing_country:
-		data["playing_country_id"] = playing_country.id
 	return data
 
 
@@ -140,19 +107,12 @@ func raw_data() -> Dictionary:
 func load_data(data: Dictionary) -> void:
 	if data.has("id"):
 		id = data["id"]
-	if data.has("playing_country_id"):
-		# Uhh I'll figure it out later
-		pass
-	if data.has("is_human"):
-		is_human = data["is_human"]
 	if data.has("multiplayer_id"):
 		multiplayer_id = data["multiplayer_id"]
 	if data.has("default_username"):
 		default_username = data["default_username"]
 	if data.has("custom_username"):
 		custom_username = data["custom_username"]
-	if data.has("ai_type"):
-		_ai_type = data["ai_type"]
 
 
 ## Returns true if, when connected online,
@@ -205,40 +165,39 @@ func _receive_all_data(data: Dictionary) -> void:
 	_is_synchronizing = true
 	load_data(data)
 	_is_synchronizing = false
-	synchronization_finished.emit(self)
+	sync_finished.emit(self)
 #endregion
 
 
-#region Synchronize is_human
-func _request_set_is_human(value: bool) -> void:
-	if not MultiplayerUtils.is_online(multiplayer):
+#region Request deletion
+func request_deletion() -> void:
+	if MultiplayerUtils.has_authority(multiplayer):
+		deletion_requested.emit(self)
 		return
 	
-	_consider_set_is_human.rpc_id(1, value)
+	_consider_deletion.rpc_id(1)
 
 
 @rpc("any_peer", "call_remote", "reliable")
-func _consider_set_is_human(value: bool) -> void:
+func _consider_deletion() -> void:
 	if not multiplayer.is_server():
 		print_debug("Received server request, but you're not the server.")
 		return
 	
 	# Only accept if this node represents the person who made the request.
 	# Unless you were given privileges (which is currently never the case),
-	# you should never be able to turn other people into an AI.
+	# you should never be able to delete other people's players.
 	if multiplayer.get_remote_sender_id() != multiplayer_id:
-		print_debug("Someone tried to turn someone else's player into an AI.")
+		print_debug("Someone tried to delete someone else's player.")
 		return
 	
 	# Request accepted
-	_receive_set_is_human.rpc(value)
+	_receive_deletion_approval.rpc()
 
 
 @rpc("authority", "call_local", "reliable")
-func _receive_set_is_human(value: bool) -> void:
-	_is_synchronizing = true
-	is_human = value
-	_is_synchronizing = false
+func _receive_deletion_approval() -> void:
+	deletion_requested.emit(self)
 #endregion
 
 

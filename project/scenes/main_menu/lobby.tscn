@@ -8,7 +8,7 @@
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gme8j"]
 
-[node name="Lobby" type="Control" node_paths=PackedStringArray("player_list")]
+[node name="Lobby" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -17,7 +17,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hty1g")
 scenario_scene = ExtResource("2_aiiyc")
-player_list = NodePath("HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80/PlayerList")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -699,12 +698,12 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 80.0
 
 [node name="PlayerList" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80" instance=ExtResource("5_6wm1c")]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_bottom = 1.0
 offset_bottom = 0.0
 grow_vertical = 2
-is_shrunk = false
 
 [node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
 clip_contents = true

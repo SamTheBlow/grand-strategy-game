@@ -6,40 +6,70 @@ extends Node
 
 
 signal human_status_changed(player: GamePlayer)
+signal username_changed(new_username: String)
 
 ## All players have a unique id to tell them apart.
 ## (You must ensure this yourself)
 var id: int
 
-## If the player is spectating, returns [code]null[/code].
+## Null means the player is spectating.
 var playing_country: Country
 
+## Note that if you are turning this player into a human, then
+## you might want to set the player_human property before setting this one
 var is_human: bool = false:
 	set(value):
 		is_human = value
+		if not is_human:
+			player_human = null
 		human_status_changed.emit(self)
 
 ## This player's username. Allows you to give AI players a username.
-## If this player is human, then it instead returns
-## the player's username taken from the [Player] object.
+## This property is automatically sync'd to a human player's username.
 ## If this property is set to an empty String, then it returns
 ## the playing country's name, or, if spectating, returns "Spectator".
 var username: String = "":
 	get:
-		if is_human and player_human:
-			return player_human.username()
-		elif username != "":
+		if username != "":
 			return username
+		elif is_spectating():
+			return "Spectator"
 		else:
-			if is_spectating():
-				return "Spectator"
-			else:
-				return playing_country.country_name
+			return playing_country.country_name
+	set(value):
+		if username == value:
+			return
+		
+		username = value
+		if is_human and player_human:
+			player_human.custom_username = value
+		else:
+			_inform_clients_of_username_change()
+		
+		username_changed.emit(value)
 
 ## A reference to this human player's [Player] object.
 ## It is only relevant when [code]is_human[/code] is set to true.
-## WARNING This can be [code]null[/code], even after everything is set up.
-var player_human: Player
+## This can intentionally be null, even after everything is set up.
+var player_human: Player:
+	set(value):
+		if player_human:
+			player_human.username_changed.disconnect(_on_username_changed)
+		
+		if value:
+			player_human = null
+			username = value.username()
+			value.username_changed.connect(_on_username_changed)
+		
+		player_human = value
+
+# Admittedly this is a bit ugly.
+## For loading purposes. -1 means it doesn't represent any human player.
+var player_human_id: int = -1:
+	get:
+		if player_human:
+			return player_human.id
+		return player_human_id
 
 ## This player's AI.
 ## It may only be used when [code]is_human[/code] is set to false.
@@ -68,12 +98,12 @@ func ai_type() -> int:
 	if not player_ai:
 		print_debug("Player AI is null.")
 		return -1
-	elif player_ai is PlayerAI:
-		return 0
 	elif player_ai is TestAI1:
 		return 1
 	elif player_ai is TestAI2:
 		return 2
+	elif player_ai is PlayerAI:
+		return 0
 	else:
 		print_debug("Unrecognized AI type.")
 		return -1
@@ -81,3 +111,35 @@ func ai_type() -> int:
 
 static func is_valid_ai_type(type: int) -> bool:
 	return type >= 0 and type <= 2
+
+
+## For saving/loading purposes
+func raw_data() -> Dictionary:
+	var player_data: Dictionary = {}
+	player_data["id"] = id
+	if playing_country:
+		player_data["playing_country_id"] = playing_country.id
+	player_data["is_human"] = is_human
+	player_data["username"] = username
+	if is_human and player_human:
+		player_data["human_id"] = player_human.id
+	player_data["ai_type"] = ai_type()
+	return player_data
+
+
+#region Synchronize username
+func _inform_clients_of_username_change() -> void:
+	if not MultiplayerUtils.has_authority(multiplayer) or not is_inside_tree():
+		return
+	
+	_receive_new_username.rpc(username)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_new_username(value: String) -> void:
+	username = value
+#endregion
+
+
+func _on_username_changed(new_username: String) -> void:
+	username = new_username

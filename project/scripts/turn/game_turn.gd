@@ -38,6 +38,8 @@ func loop() -> void:
 				"Started the game loop with no playing humans. "
 				+ "There will probably be an infinite loop."
 		)
+		#for player in game.game_players.list():
+		#	print(player.username, " (HUMAN)" if player.is_human else " (AI)")
 	
 	while true:
 		# Uncomment this to watch how an AI-only game ends :D

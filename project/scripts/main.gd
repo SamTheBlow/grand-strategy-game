@@ -20,9 +20,15 @@ var current_scene: Node:
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
 
+## This is to make sure that in online games,
+## everything is properly synchronized before starting the game
+@onready var sync_check: SyncCheck
+
 
 func _ready() -> void:
+	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.peer_connected.connect(_on_multiplayer_peer_connected)
+	players.player_added.connect(_on_player_added)
 	
 	chat.send_global_message("Type /help to get a list of commands.")
 	
@@ -58,7 +64,7 @@ func play_game(game: Game) -> void:
 	game.game_ended.connect(_on_main_menu_entered)
 	game.chat = chat
 	game.setup_players(players)
-	_send_new_game_to_clients(game)
+	_send_game_to_clients(game)
 	current_scene = game
 	game.start()
 
@@ -67,7 +73,7 @@ func play_game(game: Game) -> void:
 ## The server calls this to inform clients that a game started.
 ## This function has no effect if you're not connected as a server.
 ## You may provide a multiplayer id to send the data to one specific client.
-func _send_new_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
+func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	
@@ -95,6 +101,8 @@ func _receive_new_game(game_json: Dictionary) -> void:
 		print_debug(game_from_json.error_message)
 		return
 	
+	if not sync_check.is_sync_finished():
+		await sync_check.sync_finished
 	play_game(game_from_json.result)
 #endregion
 
@@ -119,16 +127,54 @@ func _receive_enter_main_menu() -> void:
 #endregion
 
 
+func _send_new_player_to_clients(player_id: int, game_player_id: int) -> void:
+	_receive_new_player.rpc(player_id, game_player_id)
+
+
+@rpc("authority", "call_remote", "reliable")
+func _receive_new_player(player_id: int, game_player_id: int) -> void:
+	var player: Player = players.add_received_player(str(player_id))
+	await player.sync_finished
+	
+	if not current_scene is Game:
+		return
+	(current_scene as Game).game_players.assign_player(
+			player, game_player_id
+	)
+
+
+func _on_connected_to_server() -> void:
+	sync_check = SyncCheck.new([players])
+
+
 func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	
+	# Make sure that the client receives the
+	# updated list that contains the client's players
+	players.get_client_data(multiplayer_id)
+	await players.player_group_added
+	players.send_all_data(multiplayer_id)
+	
 	if current_scene is Game:
-		_send_new_game_to_clients(current_scene, multiplayer_id)
+		_send_game_to_clients(current_scene as Game, multiplayer_id)
 	elif current_scene is MainMenu:
 		_send_enter_main_menu_to_clients(multiplayer_id)
 	else:
 		print_debug("Unrecognized scene. Cannot sync scene with new client.")
+
+
+func _on_player_added(player: Player) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	
+	var game := current_scene as Game
+	if not game:
+		return
+	
+	var game_player_id: int = game.game_players.assign_player(player)
+	_send_new_player_to_clients(player.id, game_player_id)
 
 
 func _on_game_start_requested(

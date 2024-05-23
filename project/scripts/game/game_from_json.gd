@@ -208,8 +208,7 @@ func _load_country(json_data: Dictionary) -> Country:
 
 
 func _load_players(json_data: Dictionary, game: Game) -> bool:
-	var game_players := GamePlayers.new()
-	game.game_players = game_players
+	game.game_players = GamePlayers.new()
 	
 	var players_key: String = "players"
 	if not json_data.has(players_key):
@@ -232,7 +231,7 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 		var player: GamePlayer = _load_player(player_dict, game)
 		if not player:
 			return false
-		game_players.add_player(player)
+		game.game_players.add_player(player)
 	
 	return true
 
@@ -276,6 +275,8 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 			error_message = "Player's username property is not a string."
 			return null
 		player.username = json_data["username"]
+	if json_data.has("human_id"):
+		player.player_human_id = json_data["human_id"]
 	player.player_ai = player.ai_from_type(ai_type)
 	
 	return player

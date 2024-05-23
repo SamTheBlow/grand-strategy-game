@@ -6,7 +6,12 @@ signal start_game_requested(scenario: PackedScene, rules: GameRules)
 
 @export var scenario_scene: PackedScene
 
-@export var player_list: PlayerList
+var player_list: PlayerList:
+	# Hacky workaround to be able to access it before entering the scene tree
+	get:
+		if not player_list:
+			player_list = %PlayerList as PlayerList
+		return player_list
 
 
 func _ready() -> void:

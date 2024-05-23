@@ -7,8 +7,7 @@ extends Control
 
 
 func _ready() -> void:
-	# TODO bad code, don't use another class' private properties
-	_update_visibility(_game._you)
+	_update_visibility(_game.turn.playing_player())
 	_game.turn.player_changed.connect(_on_turn_player_changed)
 
 

@@ -8,17 +8,20 @@ signal player_removed(player: Player)
 signal player_kicked(player: Player)
 signal player_group_added(leader: Player)
 signal player_group_removed(leader: Player)
+## This signal only emits once all of the individual players are synced.
+signal sync_finished(players: Players)
 
 # TODO bad code DRY: copy/paste from Player class
 var _is_synchronizing: bool = false
+
+# Ugly code to make sure everything is synced
+var _sync_check: PlayersSyncCheck
 
 var _list: Array[Player]
 
 
 func _ready() -> void:
-	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	multiplayer.peer_connected.connect(_on_peer_connected)
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
@@ -28,17 +31,9 @@ func add_player(player: Player) -> void:
 		print_debug("Tried adding a player without permission!")
 		return
 	
-	for existing_player in _list:
-		if existing_player.name == player.name:
-			print_debug(
-					"Tried to add player with already existing name."
-					+ "(Name: " + player.name + ")"
-			)
-			return
-	
 	_list.append(player)
 	add_child(player)
-	_send_new_player_to_clients(player)
+	#_send_new_player_to_clients(player)
 	player_added.emit(player)
 
 
@@ -51,7 +46,6 @@ func add_local_human_player() -> void:
 	
 	var player: Player = Player.new()
 	player.id = new_unique_id()
-	player.is_human = true
 	player.custom_username = new_default_username()
 	add_player(player)
 
@@ -114,18 +108,10 @@ func player_from_index(index: int) -> Player:
 	return _list[index]
 
 
-func number_of_humans() -> int:
-	var output: int = 0
-	for player in _list:
-		if player.is_human:
-			output += 1
-	return output
-
-
 func number_of_local_humans() -> int:
 	var output: int = 0
 	for player in _list:
-		if player.is_human and not player.is_remote():
+		if not player.is_remote():
 			output += 1
 	return output
 
@@ -133,7 +119,7 @@ func number_of_local_humans() -> int:
 func number_of_humans_with_multiplayer_id(multiplayer_id: int) -> int:
 	var output: int = 0
 	for player in _list:
-		if player.is_human and player.multiplayer_id == multiplayer_id:
+		if player.multiplayer_id == multiplayer_id:
 			output += 1
 	return output
 
@@ -181,59 +167,64 @@ func you() -> Player:
 
 
 #region Synchronize everything
-## The server sends the entire list of players to whoever requested it.
-@rpc("any_peer", "call_remote", "reliable")
-func _send_all_data() -> void:
+## The server sends the entire list of players to given client.
+func send_all_data(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
 		return
 	
 	var node_names: PackedStringArray = []
 	for player in _list:
 		node_names.append(player.name)
-	_receive_all_data.rpc_id(multiplayer.get_remote_sender_id(), node_names)
+	_receive_all_data.rpc_id(multiplayer_id, node_names)
 
 
 ## The client receives the entire list of players from the server.
 @rpc("authority", "call_remote", "reliable")
 func _receive_all_data(node_names: PackedStringArray) -> void:
-	_is_synchronizing = true
+	_sync_check = PlayersSyncCheck.new()
+	_sync_check.number_of_players = node_names.size()
 	
 	# Remove all the old nodes
+	_is_synchronizing = true
 	for player in list():
 		remove_player(player)
+	_is_synchronizing = false
 	
 	# Add the new nodes
 	for node_name in node_names:
-		_add_received_player(node_name)
+		add_received_player(node_name)
 	
-	_is_synchronizing = false
+	await _sync_check.sync_finished
+	sync_finished.emit(self)
 #endregion
 
 
 #region Synchronize newly added player
 ## The server calls this to send the info to the clients.
 ## If you're not connected as a server, this function has no effect.
-func _send_new_player_to_clients(player: Player) -> void:
-	if not MultiplayerUtils.is_server(multiplayer):
-		return
-	_receive_new_player.rpc(player.name)
+#func _send_new_player_to_clients(player: Player) -> void:
+#	if not MultiplayerUtils.is_server(multiplayer):
+#		return
+#	_receive_new_player.rpc(player.name)
 
 
 ## The client receives one new player from the server.
-@rpc("authority", "call_remote", "reliable")
-func _receive_new_player(node_name: String) -> void:
-	_is_synchronizing = true
-	_add_received_player(node_name)
-	_is_synchronizing = false
+#@rpc("authority", "call_remote", "reliable")
+#func _receive_new_player(node_name: String) -> void:
+#	_add_received_player(node_name)
 
 
 ## Add the newly received player to the bottom of the list.
 ## The player automatically synchronizes itself with the server.
-func _add_received_player(node_name: String) -> void:
+func add_received_player(node_name: String) -> Player:
 	var player := Player.new()
 	player.name = node_name
+	if _sync_check:
+		player.sync_finished.connect(_sync_check._on_player_sync_finished)
+	_is_synchronizing = true
 	add_player(player)
+	_is_synchronizing = false
+	return player
 #endregion
 
 
@@ -266,7 +257,7 @@ func _receive_player_removal(node_name: String) -> void:
 #region Synchronize client data
 ## Asks the client for its data. Meant to be called when the client connects.
 ## Only works when called by the server.
-func _get_client_data(multiplayer_id: int) -> void:
+func get_client_data(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	_send_client_data.rpc_id(multiplayer_id)
@@ -359,22 +350,12 @@ func _add_remote_player(
 	add_player(player)
 
 
-func _on_connected_to_server() -> void:
-	if multiplayer.is_server():
-		return
-	_send_all_data.rpc_id(1)
-
-
 func _on_server_disconnected() -> void:
 	for player in list():
 		if player.is_remote():
 			remove_player(player)
 		else:
 			player.multiplayer_id = 1
-
-
-func _on_peer_connected(multiplayer_id: int) -> void:
-	_get_client_data(multiplayer_id)
 
 
 func _on_peer_disconnected(multiplayer_id: int) -> void:
