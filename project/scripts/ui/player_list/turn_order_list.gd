@@ -7,6 +7,8 @@ extends Control
 ## Spectators are listed at the end of the list.
 
 
+signal new_human_player_requested(game_player: GamePlayer)
+
 @export var turn_order_element: PackedScene
 
 ## If true, the player list shrinks down to the size of the contents.
@@ -74,6 +76,7 @@ func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 		player.player_human.sync_finished.connect(_on_player_sync_finished)
 	
 	var element := turn_order_element.instantiate() as TurnOrderElement
+	element.new_player_requested.connect(_on_new_player_requested)
 	element.player = player
 	element.init()
 	element.turn = game_turn
@@ -171,3 +174,7 @@ func _on_player_sync_finished(_player: Player) -> void:
 # we want the remove button to start appearing again on humans
 func _on_human_status_changed(_player: GamePlayer) -> void:
 	_update_elements()
+
+
+func _on_new_player_requested(game_player: GamePlayer) -> void:
+	new_human_player_requested.emit(game_player)

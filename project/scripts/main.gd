@@ -60,6 +60,11 @@ func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 
 
 func play_game(game: Game) -> void:
+	# bad code
+	game._turn_order_list.new_human_player_requested.connect(
+			_on_game_new_player_requested
+	)
+	
 	game.game_started.connect(_on_game_started)
 	game.game_ended.connect(_on_main_menu_entered)
 	game.chat = chat
@@ -143,6 +148,31 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	)
 
 
+# This is very ugly code
+## Adds a new player with given game player id.
+## This is for creating a new player that
+## will be assigned to a specific game player.
+@rpc("any_peer", "call_remote", "reliable")
+func _add_new_player(game_player_id: int) -> void:
+	var multiplayer_id: int = multiplayer.get_remote_sender_id()
+	if multiplayer_id == 0:
+		multiplayer_id = 1
+	
+	# horrible
+	var game_player: GamePlayer = (
+			(current_scene as Game).game_players.player_from_id(game_player_id)
+	)
+	
+	# DANGER this relies on the fact that new_unique_id will
+	# return the same thing when Players adds the new player
+	game_player.player_human_id = players.new_unique_id()
+	var data := {
+		"is_human": true,
+		"custom_username": game_player.username,
+	}
+	players._add_remote_player(multiplayer_id, data)
+
+
 func _on_connected_to_server() -> void:
 	sync_check = SyncCheck.new([players])
 
@@ -197,3 +227,10 @@ func _on_main_menu_entered() -> void:
 func _on_game_started() -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
 		chat.send_global_message("The game has started!")
+
+
+func _on_game_new_player_requested(game_player: GamePlayer) -> void:
+	if MultiplayerUtils.has_authority(multiplayer):
+		_add_new_player(game_player.id)
+	else:
+		_add_new_player.rpc_id(1, game_player.id)

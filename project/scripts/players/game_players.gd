@@ -4,6 +4,7 @@ extends Node
 
 signal player_added(player: GamePlayer, position_index: int)
 signal player_removed(player: GamePlayer)
+signal new_human_player_requested(player: GamePlayer)
 
 var _list: Array[GamePlayer] = []
 

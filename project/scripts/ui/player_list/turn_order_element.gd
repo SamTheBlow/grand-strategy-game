@@ -9,6 +9,8 @@ extends Control
 ## of Control nodes in the player list is set to "Pass".
 
 
+signal new_player_requested(game_player: GamePlayer)
+
 @export var username_color_human: Color
 @export var username_color_ai: Color
 @export var bg_color_human: Color
@@ -165,12 +167,11 @@ func _update_button_visibility() -> void:
 	if not is_inside_tree():
 		return
 	
-	add_button.visible = false
-	#add_button.visible = (
-	#		player
-	#		and not player.is_human
-	#		and not _is_renaming
-	#)
+	add_button.visible = (
+			player
+			and not player.is_human
+			and not _is_renaming
+	)
 	_update_remove_button_visibility()
 	rename_button.visible = (not _is_renaming) and _can_edit()
 	confirm_button.visible = _is_renaming
@@ -253,7 +254,7 @@ func _on_add_button_pressed() -> void:
 		print_debug("Player is already human!")
 		return
 	
-	pass
+	new_player_requested.emit(player)
 
 
 func _on_remove_button_pressed() -> void:
