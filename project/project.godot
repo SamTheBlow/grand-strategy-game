@@ -26,6 +26,7 @@ gdscript/warnings/untyped_declaration=1
 
 [display]
 
+window/size/mode=2
 window/vsync/vsync_mode=0
 
 [file_customization]

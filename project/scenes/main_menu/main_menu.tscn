@@ -39,5 +39,8 @@ layout_mode = 2
 
 [node name="ChatInterface" parent="." instance=ExtResource("3_uohmy")]
 unique_name_in_owner = true
+anchors_preset = -1
+anchor_top = 0.7
+anchor_right = 0.3
 
 [connection signal="start_game_requested" from="MarginContainer/Lobby" to="." method="_on_start_game_requested"]

@@ -412,6 +412,9 @@ is_shrunk = true
 [node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
 unique_name_in_owner = true
 layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.7
+anchor_right = 0.3
 
 [node name="EndTurnInterface" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game")]
 layout_mode = 1
