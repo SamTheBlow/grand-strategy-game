@@ -303,6 +303,7 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
+mouse_filter = 2
 
 [node name="Tabs" type="Control" parent="UILayer/GameUI/RightSide" node_paths=PackedStringArray("buttons", "corresponding_ui")]
 layout_mode = 1
@@ -382,6 +383,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.9
+mouse_filter = 2
 
 [node name="TurnOrderList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
 layout_mode = 1
@@ -390,6 +392,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="TurnOrderList" parent="UILayer/GameUI/RightSide/Content/TurnOrderList" instance=ExtResource("22_ufuwj")]
 unique_name_in_owner = true
@@ -402,6 +405,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 
 [node name="PlayerList" parent="UILayer/GameUI/RightSide/Content/LobbyList" instance=ExtResource("9_pkxqv")]
 unique_name_in_owner = true
