@@ -184,8 +184,8 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 
 # This is very ugly code
 ## Adds a new player with given game player id.
-## This is for creating a new player that
-## will be assigned to a specific GamePlayer.
+## This is for creating a new [Player] that
+## will be assigned to a specific [GamePlayer].
 @rpc("any_peer", "call_remote", "reliable")
 func _add_new_player(game_player_id: int) -> void:
 	var multiplayer_id: int = multiplayer.get_remote_sender_id()
@@ -230,7 +230,7 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 
 
 func _on_player_added(player: Player) -> void:
-	if not MultiplayerUtils.is_server(multiplayer):
+	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
 	var game := current_scene as Game
@@ -238,7 +238,9 @@ func _on_player_added(player: Player) -> void:
 		return
 	
 	var game_player_id: int = game.game_players.assign_player(player)
-	_send_new_player_to_clients(player.id, game_player_id)
+	
+	if MultiplayerUtils.is_server(multiplayer):
+		_send_new_player_to_clients(player.id, game_player_id)
 
 
 ## Called when the "Start Game" button is pressed in the main menu.
@@ -268,10 +270,10 @@ func _on_game_started() -> void:
 		chat.send_global_message("The game has started!")
 
 
-# Ugly code, shouldn't be here
+# TODO Ugly code, shouldn't be here
 ## This is called when the user asks to create a new local player
-## by clicking on an "add" button on the turn order list interface.
-## The newly created player must be assigned to the given GamePlayer.
+## by clicking on the "add" button on the [TurnOrderList] interface.
+## The newly created [Player] must be assigned to the given [GamePlayer].
 func _on_game_new_player_requested(game_player: GamePlayer) -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
 		_add_new_player(game_player.id)

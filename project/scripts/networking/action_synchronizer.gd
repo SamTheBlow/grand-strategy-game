@@ -8,8 +8,11 @@ extends Node
 
 
 func apply_action(action: Action) -> void:
-	if MultiplayerUtils.has_authority(multiplayer):
-		_server_apply_action(action)
+	if not MultiplayerUtils.is_online(multiplayer):
+		_apply_action(action)
+	elif multiplayer.is_server():
+		_apply_action(action)
+		_receive_action.rpc(action.raw_data())
 	else:
 		_consider_action.rpc_id(1, action.raw_data())
 
@@ -19,15 +22,15 @@ func _consider_action(action_data: Dictionary) -> void:
 	if not multiplayer.is_server():
 		print_debug("Received request for server, but you're not the server")
 		return
-	_server_apply_action(Action.from_raw_data(action_data))
-
-
-func _server_apply_action(action: Action) -> void:
-	action.apply_to(_game, _game.turn.playing_player())
-	_receive_action.rpc(action.raw_data())
+	
+	_apply_action(Action.from_raw_data(action_data))
+	_receive_action.rpc(action_data)
 
 
 @rpc("authority", "call_remote", "reliable")
-func _receive_action(data: Dictionary) -> void:
-	var action := Action.from_raw_data(data)
+func _receive_action(action_data: Dictionary) -> void:
+	_apply_action(Action.from_raw_data(action_data))
+
+
+func _apply_action(action: Action) -> void:
 	action.apply_to(_game, _game.turn.playing_player())

@@ -321,7 +321,7 @@ func _is_not_allowed_to_make_changes() -> bool:
 func _add_remote_player(
 		multiplayer_id: int, player_data: Dictionary = {}
 ) -> void:
-	if not multiplayer.is_server():
+	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
 	var player := Player.new()
