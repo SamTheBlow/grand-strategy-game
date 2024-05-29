@@ -1,10 +1,14 @@
 @tool
 extends Control
-## Class responsible for circle buttons found in the player list.[br]
+## The circle buttons found in the [PlayerList] and the [TurnOrderList].[br]
 ## The buttons are positioned on the right side of the box.
 ## The positions are correctly adjusted even when some buttons are hidden.[br]
 ## [br]
-## All of this node's children must be of type Control (or a subclass).
+## To use, add your buttons as children of this node.
+## All of this node's children must be of type Control (or a subclass).[br]
+## [br]
+## NOTE: this node hides itself when it enters the scene tree.
+## It's your job to manually make it visible when it's supposed to.
 
 
 ## The space to add between each button, in pixels.

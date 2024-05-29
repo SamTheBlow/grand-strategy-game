@@ -1,5 +1,5 @@
 class_name PlayerAI
-## Class responsible for a player's behavior when the
+## Class responsible for a [GamePlayer]'s behavior when the
 ## player is not controlled by a human.
 ##
 ## This is the base AI class.

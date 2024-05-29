@@ -1,6 +1,10 @@
 class_name RecruitmentPopup
 extends VBoxContainer
-## TODO this code is VERY similar to that of ArmyMovementPopup
+## Contents for the popup that appears
+## when the user wants to recruit a new [Army].
+##
+## See [GamePopup] to learn more on how popups work.
+# TODO this code is VERY similar to that of [ArmyMovementPopup]
 
 
 signal confirmed(province: Province, troop_count: int)
@@ -20,6 +24,7 @@ func init(province: Province, min_amount: int, max_amount: int) -> void:
 	_new_slider_value()
 
 
+## See [GamePopup]
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
@@ -43,6 +48,7 @@ func _on_troop_slider_value_changed(_value: float) -> void:
 	_new_slider_value()
 
 
+## See [GamePopup]
 func _on_button_pressed(button_index: int) -> void:
 	if button_index == 1:
 		confirmed.emit(_province, roundi(troop_slider.value))

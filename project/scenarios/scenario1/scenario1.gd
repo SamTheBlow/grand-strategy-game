@@ -1,5 +1,12 @@
 class_name Scenario1
 extends Node2D
+## This is used for the test map.
+## It gathers information from the scene it's in
+## to build a new game save file in JSON format.
+##
+## It's deprecated, but not yet obsolete: this class is useful
+## for starting a new game with some randomized elements.
+## @deprecated
 
 
 @export var countries: Array[Country]

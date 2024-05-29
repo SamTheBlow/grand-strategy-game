@@ -1,14 +1,25 @@
 extends Node
-## Class responsible for scene transitions.
+## The main class that starts when the game runs.
+## It's responsible for scene transitions.
+## It's also responsible for making data persist across scenes.
+## [br][br]
+## This is one of those classes that are a bit ugly.
+## Many things found in this class are probably not supposed to be here.
 
 
+## The default file path for the game's save file.
+## In the future, this should be in some
+## user settings class, but such class does not exist yet.
 const SAVE_FILE_PATH: String = "user://gamesave.json"
 
+## The scene to jump to when entering the main menu.
 @export var main_menu_scene: PackedScene
+## The scene to jump to when entering a game.
+## We also need this scene whenever we want to create or load a game.
 @export var game_scene: PackedScene
 
-## Automatically removes the previous scene from the scene tree
-## and adds the given scene to the scene tree.
+## Setting this automatically removes the previous scene
+## from the scene tree and adds the new scene to the scene tree.
 var current_scene: Node:
 	set(value):
 		if current_scene:
@@ -17,11 +28,12 @@ var current_scene: Node:
 		current_scene = value
 		add_child(current_scene)
 
+# Things that need to persist between scenes
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
 
 ## This is to make sure that in online games,
-## everything is properly synchronized before starting the game
+## everything is properly synchronized before starting the game.
 @onready var sync_check: SyncCheck
 
 
@@ -32,9 +44,14 @@ func _ready() -> void:
 	
 	chat.send_global_message("Type /help to get a list of commands.")
 	
+	# Enter the main menu when the game starts running
 	_on_main_menu_entered()
 
 
+## Tries to load a game at the default save file path.
+## If it fails, sends a system message in the chat.
+## If it succeeds, sends a global message in the chat
+## and loads the new game scene.
 func load_game() -> void:
 	var game_from_path := GameFromPath.new()
 	game_from_path.load_game(SAVE_FILE_PATH, game_scene)
@@ -48,6 +65,8 @@ func load_game() -> void:
 	play_game(game_from_path.result)
 
 
+## Loads the test map and loads the new resulting game scene.
+## @deprecated
 func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	var game_from_scenario := GameFromScenario.new()
 	game_from_scenario.load_game(scenario, rules, game_scene)
@@ -59,6 +78,9 @@ func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
 	play_game(game_from_scenario.result)
 
 
+## Takes a Game instance, connects its signals, injects some dependencies
+## into it, sets it as the current scene and starts the game loop.
+## If playing online multiplayer, this is where the game is sent to clients.
 func play_game(game: Game) -> void:
 	# bad code
 	game._turn_order_list.new_human_player_requested.connect(
@@ -97,6 +119,9 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 		_receive_new_game.rpc_id(multiplayer_id, game_to_json.result)
 
 
+## The client receives a new game from the server.
+## The game is built from the given JSON data, then we wait
+## until we've received everything else before we start the game.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_game(game_json: Dictionary) -> void:
 	var game_from_json := GameFromJSON.new()
@@ -126,16 +151,24 @@ func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
 		_receive_enter_main_menu.rpc_id(multiplayer_id)
 
 
+## The client receives the info that we've entered the main menu.
 @rpc("authority", "call_remote", "reliable")
 func _receive_enter_main_menu() -> void:
 	_on_main_menu_entered()
 #endregion
 
 
+#region Send new player to clients
+# TODO This code shouldn't be in the main class, really.
+## The server sends information about a new player to clients,
+## namely the Player's id and its associated GamePlayer's id.
 func _send_new_player_to_clients(player_id: int, game_player_id: int) -> void:
 	_receive_new_player.rpc(player_id, game_player_id)
 
 
+## The client receives the server's info about a new player.
+## Once the player's data is done synchronizing, the player
+## is assigned to the correct GamePlayer.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	var player: Player = players.add_received_player(str(player_id))
@@ -146,12 +179,13 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	(current_scene as Game).game_players.assign_player(
 			player, game_player_id
 	)
+#endregion
 
 
 # This is very ugly code
 ## Adds a new player with given game player id.
 ## This is for creating a new player that
-## will be assigned to a specific game player.
+## will be assigned to a specific GamePlayer.
 @rpc("any_peer", "call_remote", "reliable")
 func _add_new_player(game_player_id: int) -> void:
 	var multiplayer_id: int = multiplayer.get_remote_sender_id()
@@ -207,6 +241,8 @@ func _on_player_added(player: Player) -> void:
 	_send_new_player_to_clients(player.id, game_player_id)
 
 
+## Called when the "Start Game" button is pressed in the main menu.
+## Loads the test map and starts the game.
 func _on_game_start_requested(
 		scenario_scene: PackedScene, rules: GameRules
 ) -> void:
@@ -215,6 +251,8 @@ func _on_game_start_requested(
 	load_game_from_scenario(scenario, rules)
 
 
+## This function's name is a bit misleading, because it's precisely
+## the function that makes you enter the main menu.
 func _on_main_menu_entered() -> void:
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.setup_players(players)
@@ -224,11 +262,16 @@ func _on_main_menu_entered() -> void:
 	current_scene = main_menu
 
 
+## Send a global chat message when the game loop begins.
 func _on_game_started() -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
 		chat.send_global_message("The game has started!")
 
 
+# Ugly code, shouldn't be here
+## This is called when the user asks to create a new local player
+## by clicking on an "add" button on the turn order list interface.
+## The newly created player must be assigned to the given GamePlayer.
 func _on_game_new_player_requested(game_player: GamePlayer) -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
 		_add_new_player(game_player.id)

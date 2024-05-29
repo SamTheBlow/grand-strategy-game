@@ -2,10 +2,11 @@ class_name CameraDrag
 extends Node
 ## Allows the player to freely drag the camera around using the mouse.
 ##
-## This node is meant to be added as a child of a CustomCamera2D node.
+## This node is meant to be added as a child of a CustomCamera2D node,
+## otherwise it will not do anything.
 ## 
-## NOTICE: for this node to work as intended, the camera node
-## must be setup such that it is inbetween the UI layer and the world layer.
+## NOTICE: for this to work as intended, the camera node must be setup in the
+## scene tree such that it is in-between the world layer and the UI layer.
 
 
 var _is_being_dragged: bool = false

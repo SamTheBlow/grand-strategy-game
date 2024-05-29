@@ -1,5 +1,10 @@
 class_name GameRules
 extends Resource
+## Defines all the details on how a [Game] is to be played.
+## This is just a data structure; it cannot enforce rules on its own.
+## The different objects in the game must carefully read this object's
+## properties in order to behave correctly.
+## Once a game's rules are set, they must not change.
 
 
 const RULE_NAMES: Array[String] = [

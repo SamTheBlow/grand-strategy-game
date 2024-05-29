@@ -1,5 +1,10 @@
 class_name ArmyReinforcements
-## Class responsible for spawning new armies in given province.
+## Class responsible for spawning new armies in given [Province].
+## Creates a new [Army] under the control of the province's owner [Country].
+## The army's size depends on the [GameRules].
+## Then, armies in given province are merged together.
+##
+## This class is meant to be used when a new turn begins (see [GameTurn]).
 
 
 func reinforce_province(province: Province) -> void:

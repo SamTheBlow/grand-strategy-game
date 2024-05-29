@@ -1,8 +1,9 @@
 class_name ProvinceShapeFromVertices
 extends ProvinceShape
-## [Immutable]
-## Defines a province shape using a system of vertices.
+## Defines a [Province]'s shape using a system of vertices.
 ## Each vertex has a position on the world map.
+##
+## (Currently unused)
 
 
 var _vertices_x: PackedInt32Array

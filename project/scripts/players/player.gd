@@ -1,7 +1,10 @@
 class_name Player
 extends Node
-## Class responsible for an individual player.
-## This can be a human player or an AI.
+## Class responsible for an individual human player.
+## This object is independent of [Game] data:
+## it can go from one game to another without problems.
+## A player can either be local or remote. In the latter case,
+## you have no control over the player unless you are the server.
 
 
 signal username_changed(new_username: String)
@@ -9,6 +12,7 @@ signal deletion_requested(player: Player)
 ## Emits on clients when the player is done synchronizing with the server.
 signal sync_finished(player: Player)
 
+# TODO seems like this is no longer used. remove it maybe?
 var id: int:
 	set(value):
 		if _is_not_allowed_to_make_changes():
@@ -24,7 +28,7 @@ var multiplayer_id: int = 1:
 		multiplayer_id = value
 		_update_is_remote()
 
-## The username that will be used if there is no custom username.
+## This username will be used if there is no custom username.
 ## The user may not change it manually,
 ## and it will not be saved in save files.
 var default_username: String = "Player":
@@ -36,7 +40,7 @@ var default_username: String = "Player":
 		default_username = value
 		_check_for_username_change(previous_username)
 
-## This username will take precedence over the default username.
+## This username takes precedence over the default username.
 ## The user may change it to whatever they like,
 ## and it will be saved in save files.
 var custom_username: String = "":
@@ -54,15 +58,13 @@ var custom_username: String = "":
 		if MultiplayerUtils.is_server(multiplayer):
 			_receive_set_custom_username.rpc(value)
 
-# If true, this player represents someone else.
-# This is only relevant in online multiplayer.
+## If true, this player represents someone else.
+## This is only relevant in online multiplayer.
 var _is_remote: bool = false
 
-# If true, the client is allowed to make local changes.
-# This is only set to true briefly when receiving data from the server.
+## If true, the client is allowed to make local changes.
+## This is only set to true briefly when receiving data from the server.
 var _is_synchronizing: bool = false
-
-var _actions: Array[Action] = []
 
 
 func _ready() -> void:
@@ -85,13 +87,7 @@ func username() -> String:
 	return default_username
 
 
-## Only works for human players.
-## The AI will overwrite any action added with this command.
-func add_action(action: Action) -> void:
-	_actions.append(action)
-
-
-## Returns all of the player's properties as raw data.
+## Returns all of the player's properties as raw data, for synchronizing.
 func raw_data() -> Dictionary:
 	var data := {
 		"id": id,
@@ -102,6 +98,7 @@ func raw_data() -> Dictionary:
 	return data
 
 
+# TODO verify data validity
 ## Loads all of this player's properties based on given raw data.
 ## Passing an empty Dictionary has no effect.
 func load_data(data: Dictionary) -> void:

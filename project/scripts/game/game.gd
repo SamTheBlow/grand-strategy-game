@@ -1,5 +1,11 @@
 class_name Game
 extends Node
+## The game.
+## There are so many things to setup, there are entire classes
+## dedicated to loading the game (see [LoadGame], [GameFromJSON]...).
+## Setting up this node manually yourself is not recommended.
+##
+## This is definitely the most messy script in the entire project.
 
 
 signal game_started()
@@ -32,13 +38,19 @@ signal game_ended()
 @export var lobby_list_root: Node
 @export var popups: Control
 
+## Must setup before the game starts.
+## You are not meant to edit the rules once they are set.
 var rules: GameRules:
 	set(value):
 		rules = value
 		_setup_global_modifiers()
 
+## Must setup before the game starts.
+## All of the [Country] objects used in this game should be listed in here.
 var countries: Countries
 
+## Must setup before the game starts.
+## This list must not be empty.
 var game_players: GamePlayers:
 	set(value):
 		if game_players:
@@ -47,11 +59,15 @@ var game_players: GamePlayers:
 		game_players.name = "GamePlayers"
 		add_child(game_players)
 
+## Must setup before the game starts.
 var turn: GameTurn:
 	set(value):
 		turn = value
 		_turn_order_list.game_turn = turn
 
+## You don't need to initialize this, especially if you don't want
+## the game to have a turn limit. However, if you do want to use it,
+## some setup needs to be done: see [method Game.setup_turn].
 var turn_limit: TurnLimit
 
 ## Keys are a modifier context (String); values are a Modifier.
@@ -93,29 +109,37 @@ var world: GameWorld:
 			camera.world_limits = (world as GameWorld2D).limits
 		$WorldLayer.add_child(world)
 
-## Child node
+## Child node: the interface that appears when you select a [Province]
 var component_ui: ComponentUI
 
+## Automatically setup when calling [method Game.init].
+## See also: [method Game.modifiers]
 var _modifier_request: ModifierRequest
 
+## It is stored in memory only because we need it to connect to the [Chat].
+var _networking_interface: NetworkingInterface
+
+## The player currently playing.
+var _you: GamePlayer
+
+## The user is allowed to continue playing after the game "ends".
+var _game_over: bool = false
+
+## Child node
 var _chat_interface: ChatInterface:
 	get:
 		if not _chat_interface:
 			_chat_interface = %ChatInterface as ChatInterface
 		return _chat_interface
 
-# It is only stored in memory because we need it to connect to chats
-var _networking_interface: NetworkingInterface
-
-var _you: GamePlayer
-var _game_over: bool = false
-
+## Child node
 var _lobby_list: PlayerList:
 	get:
 		if not _lobby_list:
 			_lobby_list = %PlayerList as PlayerList
 		return _lobby_list
 
+## Child node
 var _turn_order_list: TurnOrderList:
 	get:
 		if not _turn_order_list:
@@ -140,6 +164,8 @@ func start() -> void:
 
 
 ## Dependency injection.
+## Using this is not mandatory, but it is necessary to inject [Players]
+## if you want to use online multiplayer features.
 func setup_players(players: Players) -> void:
 	game_players.assign_lobby(players)
 	
@@ -158,7 +184,8 @@ func setup_players(players: Players) -> void:
 	_turn_order_list.players = game_players
 
 
-## For loading. The rules must be setup beforehand.
+## Initializes the [member Game.turn] and the [member Game.turn_limit].
+## The [member Game.rules] must be setup beforehand.
 func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn = GameTurn.new()
 	turn.game = self
@@ -173,14 +200,21 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn.turn_changed.connect(_on_new_turn)
 
 
+## Returns a [ModifierList] relevant to the given [ModifierContext].
 func modifiers(context: ModifierContext) -> ModifierList:
 	return _modifier_request.modifiers(context)
 
 
+## Call this to register any object to the [ModifierRequest] system.
+## For example, a [Fortress] provides a [Modifier]
+## that boosts an [Army]'s defense during a [Battle].
+## So any new instance of [Fortress] must be registered using this function.
 func add_modifier_provider(object: Object) -> void:
 	_modifier_request.add_provider(object)
 
 
+# TODO this shouldn't be here..?
+## Creates and applies army movement as a result of the user's actions.
 func new_action_army_movement(
 		army: Army,
 		number_of_troops: int,
@@ -207,6 +241,11 @@ func new_action_army_movement(
 	action_sync.apply_action(action_move)
 
 
+## Updates visuals to show the player's country information.
+## Moves the camera to the player's country.
+## Plays an announcement animation of the new player's turn.
+##
+## Call this when it's a new player's turn.
 func set_human_player(player: GamePlayer) -> void:
 	if _you and _you == player:
 		return
@@ -230,6 +269,8 @@ func set_human_player(player: GamePlayer) -> void:
 	game_ui.add_child(player_turn)
 
 
+## Builds this game's global [Modifier]s according to the [GameRules].
+## Call this when the [GameRules] are set.
 func _setup_global_modifiers() -> void:
 	global_modifiers = {}
 	if rules.global_attacker_efficiency != 1.0:
@@ -265,6 +306,7 @@ func _move_camera_to_country(country: Country) -> void:
 		camera.move_to(target_province.position_army_host)
 
 
+## Used to determine the winner when the game ends.
 func _winning_country() -> Country:
 	# Get how many provinces each country has
 	var ownership: Array = _province_count_per_country()
@@ -279,6 +321,7 @@ func _winning_country() -> Country:
 	return ownership[winning_player_index][0]
 
 
+## Creates the popup that appears when you want to move an [Army].
 func _add_army_movement_popup(army: Army, destination: Province) -> void:
 	var army_movement_popup := (
 			army_movement_scene.instantiate() as ArmyMovementPopup
@@ -289,12 +332,15 @@ func _add_army_movement_popup(army: Army, destination: Province) -> void:
 	_add_popup(army_movement_popup)
 
 
+## Adds a new [GamePopup] to the scene tree, containing given contents.
 func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.setup_contents(contents)
 	popups.add_child(popup)
 
 
+## Checks if someone won from controlling a certain percentage
+## of [Province]s and, if so, declares the game over.
 func _check_percentage_winner() -> void:
 	var percentage_to_win: float = 70.0
 	
@@ -309,6 +355,10 @@ func _check_percentage_winner() -> void:
 			break
 
 
+## Returns an Array telling how many [Province]s each [Country] controls.
+## Each element in the Array is an Array with two elements:
+## - Element 0 is a [Country].
+## - Element 1 is the number of [Province]s controlled by that [Country].
 func _province_count_per_country() -> Array:
 	var output: Array = []
 	
@@ -334,6 +384,9 @@ func _province_count_per_country() -> Array:
 	return output
 
 
+## Adds an outline to a given [Province]'s links.
+## Set target_outline to true to outline them
+## as a target for an action (i.e. army movement).
 func _outline_province_links(
 		province: Province, target_outline: bool = false
 ) -> void:
@@ -509,6 +562,8 @@ func _on_chat_rules_requested() -> void:
 	chat.send_system_message_multiline(lines)
 
 
+## This object is itself a provider for the [ModifierRequest] system.
+## It provides the game's global [Modifier]s.
 func _on_modifiers_requested(
 		modifiers_: Array[Modifier],
 		context: ModifierContext

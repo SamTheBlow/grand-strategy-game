@@ -1,9 +1,11 @@
 class_name CustomOptionButton
 extends OptionButton
-## Class responsible for opening the different menus for each option.
+## When you select an item from this button's options, it shows the
+## Control node associated with that item, and hides all the other ones.
+## Also, when this node is hidden, all of the option nodes are also hidden.
 
 
-## Make sure to put them in the same order as the OptionButton options!
+## Make sure to put the nodes in the same order as the OptionButton options!
 @export var options: Array[Control]
 
 

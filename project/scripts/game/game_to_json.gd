@@ -1,11 +1,14 @@
 class_name GameToJSON
-## Class responsible for converting a game into JSON data.
+## Class responsible for converting a [Game] into JSON data.
 
 
 var error: bool = true
 var error_message: String = ""
 var result: Variant
 
+## The format version. If changes need to be made in the future
+## to how the game is saved and loaded, this will allow us to tell
+## if a file was made in an older or a newer version.
 var _version: String = "1"
 
 

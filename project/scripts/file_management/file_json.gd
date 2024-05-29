@@ -1,5 +1,6 @@
 class_name FileJSON
 ## Class responsible for loading JSON data from a file.
+## Provides human-friendly error messages when it fails.
 
 
 var error: bool = true

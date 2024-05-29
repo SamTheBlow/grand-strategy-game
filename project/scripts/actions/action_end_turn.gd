@@ -1,5 +1,6 @@
 class_name ActionEndTurn
 extends Action
+## Ends the player's turn.
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:

@@ -1,6 +1,8 @@
 class_name SyncCheck
 ## Class responsible for checking if everything is synchronized.
 ## Emits a signal once everything is synchronized.
+## You can also check manually if the sync is finished
+## with [method SyncCheck.is_sync_finished].
 ##
 ## To use, create a new instance of this object and pass it an array
 ## of all the things you want to check for. The given objects must all

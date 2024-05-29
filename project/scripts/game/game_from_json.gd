@@ -123,7 +123,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	result = game
 
 
-# Returns null if an error occured
+## Returns null if an error occured
 func _load_rules(json_data: Dictionary) -> GameRules:
 	var game_rules := GameRules.new()
 	
@@ -236,7 +236,7 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 	return true
 
 
-# This function requires that game.game_players is already set
+## This function requires that game.game_players is already set
 ## TODO verify & return errors.
 func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	# AI type
@@ -340,7 +340,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 	return province
 
 
-# Returns true if an error occured, false otherwise.
+## Returns true if an error occured, false otherwise.
 func _load_armies(json_data: Array, game: Game) -> bool:
 	game.world.armies = Armies.new()
 	

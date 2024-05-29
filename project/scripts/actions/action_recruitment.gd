@@ -1,6 +1,7 @@
 class_name ActionRecruitment
 extends Action
-## Action for recruiting troops in a province.
+## Recruits a new [Army] of given size in given [Province].
+## You must provide a new unique id for the new army.
 
 
 var _province_id: int
@@ -66,6 +67,7 @@ func raw_data() -> Dictionary:
 	}
 
 
+# TODO verify that the data is valid
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionRecruitment:
 	return ActionRecruitment.new(

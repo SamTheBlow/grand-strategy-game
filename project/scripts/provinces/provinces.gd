@@ -1,7 +1,16 @@
 class_name Provinces
 extends Node2D
+## An encapsulated list of [Province] objects.
+## Provides useful functions.
+## Also responsible for the user's selected province.
+##
+## Note that you are currently not meant to remove provinces from this list.
+# TODO have a convenient _list member just like in all the other list classes
 
 
+## What province is currently being selected.
+## Selecting a province allows the user to obtain information
+## and or perform [Action]s on that province.
 var selected_province: Province
 
 

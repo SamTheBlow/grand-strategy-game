@@ -1,6 +1,6 @@
 class_name ActionBuild
 extends Action
-## Action for building a building in a province.
+## Builds a [Building] of given type in given [Province].
 
 
 var _province_id: int
@@ -49,6 +49,7 @@ func raw_data() -> Dictionary:
 	}
 
 
+# TODO verify that the data is valid
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionBuild:
 	return ActionBuild.new(

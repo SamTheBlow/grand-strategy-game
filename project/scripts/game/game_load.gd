@@ -1,6 +1,13 @@
 class_name GameLoad
 ## Class responsible for loading a game using any supported file format.
 ## (JSON is currently the only supported format)
+##
+## The difference between this and [GameFromPath] is that in the future,
+## this class will require you to specify what file format the data uses.
+## In contrast, [GameFromPath] will only take a file path as input and will
+## automatically determine what the file format is.
+## This class is useful in the case where you want to
+## load a game and you already know what the data type is.
 
 
 ## False if loading was successful, otherwise true.

@@ -1,6 +1,10 @@
 class_name PlayersSyncCheck
-## This will tell you if the Players node is done synchronizing.
-## It's done synchronizing when all of its players are done.
+## This will tell you if and when a [Players] node is done synchronizing.
+## It's done synchronizing when all of its [Player]s are done.
+##
+## To use, set [member PlayersSyncCheck.number_of_players] to the correct
+## value, and then connect the [Player]s' [signal Player.sync_finished]
+## to [method PlayersSyncCheck._on_player_sync_finished].
 
 
 signal sync_finished()

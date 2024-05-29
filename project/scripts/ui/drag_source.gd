@@ -1,7 +1,9 @@
 extends ColorRect
-# Emits a signal if there is a mouse click inside of this node's rectangle.
-# In the future, it would be nice to be able to check for a mouse click
-# on things other than a rectangle.
+## The node responsible for detecting your mouse click
+## for the purpose of [Draggable] objects.
+##
+## Emits a signal if there is a mouse click inside of this node's rectangle.
+# TODO be able to check for a mouse click on things other than a rectangle
 
 
 signal dragged()

@@ -1,5 +1,13 @@
 class_name Lobby
 extends Control
+## The menu from which you choose the game's rules,
+## add/join players, and start the game.
+##
+## Emits a signal when the user requests to start the game.
+##
+## Don't forget to inject the [Players] into the [PlayerList]
+## when instantiating this node's scene.
+# TODO move rules-related code to its own class
 
 
 signal start_game_requested(scenario: PackedScene, rules: GameRules)
@@ -21,6 +29,8 @@ func _ready() -> void:
 	_update_start_button_disabled()
 
 
+## Creates a new instance of [GameRules] using
+## the rules chosen by the user in the interface.
 func _selected_game_rules() -> GameRules:
 	var game_rules := GameRules.new()
 	
@@ -109,7 +119,7 @@ func _selected_game_rules() -> GameRules:
 	return game_rules
 
 
-# TODO this is cursed... *skull emoji*
+# TODO this is cursed 💀💀💀
 func _get_rule(rule_name: String) -> Variant:
 	var output: Variant
 	
@@ -275,8 +285,8 @@ func _receive_rule_change(rule_name: String, value: Variant) -> void:
 #endregion
 
 
-## When connected to an online game, only the server is allowed to
-## make changes to the rules.
+## When connected to an online game,
+## only the server is allowed to make changes to the rules.
 func _update_rules_disabled() -> void:
 	var rules_disabled_node := %RulesDisabled as Control
 	

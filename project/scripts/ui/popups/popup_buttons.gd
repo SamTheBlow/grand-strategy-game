@@ -1,12 +1,17 @@
 class_name PopupButtons
 extends HBoxContainer
-## Class responsible for all of a popup's buttons.
+## Class responsible for all of a [GamePopup]'s buttons.
+## Creates buttons and adds them as children of this node.
+## Emits a signal when one of the buttons is pressed,
+## with the button's id as an argument.
+##
+## To use, call "setup_buttons" with a list of button names as the argument.
 
 
 signal pressed(button_id: int)
 
 
-## NOTE this is designed to only be called once.
+## This is meant to be called only once.
 func setup_buttons(button_names: Array[String]) -> void:
 	for i in button_names.size():
 		# Add space between each button

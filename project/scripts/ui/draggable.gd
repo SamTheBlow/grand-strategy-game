@@ -1,5 +1,13 @@
 class_name Draggable
 extends Control
+## Attach this script to any Control node you would like
+## the user to be able to drag around with their mouse.
+##
+## To use, you need to have a node that emits a signal when clicked on,
+## and you need to connect that signal to [method Draggable._on_dragged].
+## You only need to check for when the mouse button is first pressed:
+## this node will take care of checking if the button is held or released.
+# TODO this class needs rework: remove the unused signal; privatize stuff
 
 
 ## This signal will trigger on every frame when this object is being dragged.
@@ -52,8 +60,8 @@ func get_relative_mouse_position() -> Vector2:
 	)
 
 
-## Experimental; do not use.
-## Only works for objects anchored to the top-left corner
+## Only works for objects anchored to the top-left corner.
+## Currently unused and WIP.
 func clamp_to(control: Control) -> void:
 	var delta_x: float = anchor_left - control.anchor_right
 	var delta_y: float = anchor_top - control.anchor_bottom

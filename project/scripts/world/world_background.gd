@@ -1,5 +1,8 @@
 class_name WorldBackground
 extends Node2D
+## The background for a [GameWorld2D].
+## Currently has no effect, but in the future, you will be able to 
+## add a background image to a 2D world map, and maybe other effects too.
 
 
 signal clicked()

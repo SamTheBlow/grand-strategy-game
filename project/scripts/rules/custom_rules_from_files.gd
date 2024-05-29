@@ -1,5 +1,6 @@
 class_name CustomRulesFromFiles
 ## All custom rules loaded from a given file path.
+## Currently unused and WIP; meant for saving/loading data in binary format.
 
 
 var _provinces_blueprints: Array[ProvincesBlueprintFromData] = []

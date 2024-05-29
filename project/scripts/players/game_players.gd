@@ -1,5 +1,7 @@
 class_name GamePlayers
 extends Node
+## An encapsulated list of [GamePlayer] nodes.
+## Provides useful functions and signals.
 
 
 signal player_added(player: GamePlayer, position_index: int)
@@ -98,8 +100,10 @@ func assign_lobby(players: Players) -> void:
 			add_player(new_spectator)
 
 
+## Similar to [method GamePlayers.assign_lobby],
+## but only assigns one [Player] instead of a whole list.
 ## Set the game_player_id to a positive value
-## to assign a Player to a specific GamePlayer.
+## to assign the [Player] to a specific [GamePlayer].
 func assign_player(player: Player, game_player_id: int = -1) -> int:
 	#print("--- assign_player() called from ", multiplayer.get_unique_id())
 	#print("---List of all the game players---")
@@ -162,7 +166,7 @@ func assign_player(player: Player, game_player_id: int = -1) -> int:
 	return spectator.id
 
 
-## Returns a copy of this list.
+## Returns a new copy of this list.
 func list() -> Array[GamePlayer]:
 	return _list.duplicate()
 
@@ -219,7 +223,7 @@ func number_of_local_humans() -> int:
 	return output
 
 
-# TODO DRY. copy/paste from players.gd
+# TODO DRY. copy/paste from [Players]
 ## Provides a new unique id that is not used by any player in the list.
 ## The id will be as small as possible (0 or higher).
 func new_unique_id() -> int:

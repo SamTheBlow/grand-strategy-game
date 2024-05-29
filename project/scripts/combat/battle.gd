@@ -1,5 +1,10 @@
 class_name Battle
 extends Resource
+## This class defines the outcome of a battle between two opposing [Army].
+## The algorithm used to determine the outcome depends on the [GameRules].
+##
+## To use, set the attacking_army and defending_army, then call apply().
+# TODO this class is ugly, needs refactoring!
 
 
 @export var _context_attacker_efficiency: ModifierContext

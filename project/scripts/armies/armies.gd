@@ -1,11 +1,23 @@
 class_name Armies
-## Class responsible for managing a world's armies.
+## Class responsible for a list of [Army] objects.
+## Provides utility functions for manipulating the list and
+## for accessing a specific [Army] or a specific subset of the list.
+##
+## This class also provides functions that give you new unique ids
+## for newly created armies that you wish to add to this list.
+## However, keep in mind that this class is (currently) not responsible
+## for ensuring that the armies all have a unique id.
+## (See also: [member Army.id])
 
 
+# TODO don't let the user manipulate the array directly
+## Please do not add or remove items directly from this array:
+## use [method Armies.add_army] and [method Armies.remove_army] instead.
 var armies: Array[Army] = []
 
 
-## Adds a new army to the game.
+# TODO verify that the army's id is unique
+## Adds an army to the list.
 func add_army(army: Army) -> void:
 	if armies.has(army):
 		print_debug(
@@ -17,7 +29,7 @@ func add_army(army: Army) -> void:
 	armies.append(army)
 
 
-## Removes an army from the game.
+## Removes an army from the list.
 func remove_army(army: Army) -> void:
 	if not armies.has(army):
 		print_debug(
@@ -31,7 +43,10 @@ func remove_army(army: Army) -> void:
 	armies.erase(army)
 
 
-## Merges all armies with the same owner country in given province.
+## Merges all armies in given province when applicable.
+##
+## When more than one [Army] is controlled by the same [Country]
+## in the same [Province], it's possible to merge them into one single [Army].
 func merge_armies(province: Province) -> void:
 	var armies_to_merge: Array[Army] = armies_in_province(province)
 	var number_of_armies: int = armies_to_merge.size()
@@ -45,7 +60,7 @@ func merge_armies(province: Province) -> void:
 				break
 
 
-## Gives a list of every army located in given province.
+## Returns a new list of all armies located in given [Province].
 func armies_in_province(province: Province) -> Array[Army]:
 	var output: Array[Army] = []
 	for army in armies:
@@ -54,7 +69,8 @@ func armies_in_province(province: Province) -> Array[Army]:
 	return output
 
 
-## Gives the army with given id. If there is no such army, returns null.
+## Returns the [Army] that has given id.
+## If there is no such [Army], returns [code]null[/code].
 func army_with_id(id: int) -> Army:
 	for army in armies:
 		if army.id == id:
@@ -62,7 +78,9 @@ func army_with_id(id: int) -> Army:
 	return null
 
 
-## WARNING: In extremely rare cases, may return duplicate IDs!
+# TODO: There is an extremely rare chance that this returns duplicate IDs!
+## Returns unique ids that aren't used by any [Army] in this list.
+## Use [param number_of_ids] to choose how many new ids you want to receive.
 func new_unique_army_ids(number_of_ids: int) -> Array[int]:
 	var result: Array[int] = []
 	for i in number_of_ids:
@@ -70,6 +88,7 @@ func new_unique_army_ids(number_of_ids: int) -> Array[int]:
 	return result
 
 
+## Returns a unique id that isn't used by any [Army] in this list.
 func new_unique_army_id() -> int:
 	var new_id: int
 	var id_is_unique: bool = false
@@ -83,8 +102,9 @@ func new_unique_army_id() -> int:
 	return new_id
 
 
-## Returns a list of all active armies
-## with given owner country in given province.
+## Returns a list of all active armies that are
+## owned by given [Country] in given [Province].
+## An [Army] is said to be "active" when it is able to perform actions.
 func active_armies(country: Country, province: Province) -> Array[Army]:
 	var result: Array[Army] = []
 	var province_armies: Array[Army] = armies_in_province(province)

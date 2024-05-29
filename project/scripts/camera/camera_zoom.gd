@@ -3,27 +3,28 @@ extends Node
 ## Allows the player to zoom the camera in/out.
 ## Automatically zooms in the direction of the cursor.
 ##
-## This node is meant to be added as a child of a CustomCamera2D node.
+## This node is meant to be added as a child of a CustomCamera2D node,
+## otherwise it will not do anything.
 ##
 ## See this video for more information about some of the code:
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
 
 
-# The camera will do its best to reach this amount of zoom
+## The camera will do its best to reach this amount of zoom
 var _target_zoom: float = 1.0
-# The previous zoom target is used to correctly zoom at the cursor's location
+## The previous zoom target is used to correctly zoom at the cursor's location
 var _previous_target: float = 1.0
-# The direction and magnitude of the camera's movement
+## The direction and magnitude of the camera's movement
 var _camera_movement: Vector2 = Vector2.ZERO
 
-# The limit on how close the camera can zoom in
+## The limit on how close the camera can zoom in
 var _maximum_zoom: float = 1.0
-# How close/far the camera will zoom in/out each time
+## How close/far the camera will zoom in/out each time
 var _zoom_increment: float = 0.075
-# How fast the camera zooms in/out
+## How fast the camera zooms in/out
 var _zoom_rate: float = 8.0
-# If enabled, when zooming out, the camera will zoom away from the
-# center of the viewport instead of zooming away from the cursor's position
+## If enabled, when zooming out, the camera will zoom away from the
+## center of the viewport instead of zooming away from the cursor's position
 var _zoom_away_from_center: bool = true
 
 
@@ -91,7 +92,7 @@ func _zoom_out(mouse_position: Vector2) -> void:
 	set_physics_process(true)
 
 
-# Makes the camera zoom to the cursor's position
+## Makes the camera zoom to the cursor's position
 func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 	var viewport_size: Vector2 = camera.get_viewport_rect().size
 	var offset_pixels: Vector2 = mouse_position - viewport_size * 0.5
@@ -100,7 +101,8 @@ func _zoom_to_cursor(camera: CustomCamera2D, mouse_position: Vector2) -> void:
 	_camera_movement += offset_pixels * (current_zoom - new_zoom)
 
 
-# Returns the minimum zoom amount such that the camera remains in bounds
+## Returns the minimum zoom amount such that the camera remains in bounds
+## WARNING: this only works when the camera is in the scene tree
 func _minimum_zoom(camera: Camera2D) -> float:
 	var viewport_size_x: float = camera.get_viewport_rect().size.x
 	var viewport_size_y: float = camera.get_viewport_rect().size.y
@@ -109,7 +111,7 @@ func _minimum_zoom(camera: Camera2D) -> float:
 	return maxf(min_zoom_x, min_zoom_y)
 
 
-# Ensure the camera stays in bounds when the screen size changes
+## Ensures the camera stays in bounds when the screen size changes
 func _on_screen_size_changed() -> void:
 	var camera := get_parent() as Camera2D
 	if not camera:

@@ -1,7 +1,6 @@
 class_name ArmySize
-## Represents the size of an army.
-## The size of an army may have a minimum and/or a maximum,
-## which this class takes care of.
+## Represents the size of an [Army].
+## It may have a minimum and/or a maximum, which this class takes care of.
 
 
 ## Emits whenever the army's size changes.

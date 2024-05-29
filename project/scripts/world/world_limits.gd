@@ -1,4 +1,5 @@
 class_name WorldLimits
+## Represents the limits of a [GameWorld2D]'s world map.
 ## Pretty much just a Rect2i.
 ## Currently, this class does not do anything that Rect2i can't do.
 ## But maybe it will in the future.

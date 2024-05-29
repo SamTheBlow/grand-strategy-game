@@ -1,6 +1,7 @@
 class_name Buildings
 extends Node
-## Container class for buildings.
+## Represents a list of [Building] objects.
+## Buildings added to this list become children of this node.
 
 
 signal changed()

@@ -1,12 +1,12 @@
 @tool
 class_name PlayerList
 extends Control
-## Class responsible for displaying a list of players.
+## Class responsible for displaying a list of [Player]s.
 ## It shows all players by their username.
-## During a game, it also shows with an arrow who's turn it is to play.
-##
-## This list can also include an interface for networking setup at the bottom.
-## To include one, use the [code]use_networking_interface()[/code] function.
+## The user, when allowed, can add, remove and rename players.
+## [br][br]
+## This list can also include a [NetworkingInterface] at the bottom.
+## To include one, use [method PlayerList.use_networking_interface].
 
 
 @export_category("References")
@@ -72,7 +72,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
-## To not use any networking interface, use [code]null[/code] as the input.
+## If you don't want to use one, use [code]null[/code] as the input.
 func use_networking_interface(
 		networking_interface: NetworkingInterface
 ) -> void:

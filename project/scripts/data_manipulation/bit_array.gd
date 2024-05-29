@@ -22,9 +22,10 @@ func size() -> int:
 
 
 ## Returns a given amount of bits at any given index as an int.[br]
-## The input bit index must be a number from 0 to [method size]-1 inclusively.[br]
-## The input number of bits must be a number from 1 to 63 inclusively.[br][br]
-## 
+## The input bit index must be a number from 0 to [method size]-1 inclusively.
+## [br]
+## The input number of bits must be a number from 1 to 63 inclusively.
+## [br][br]
 ## Trying to get bits past the end of the array will cause a crash.[br]
 ## Please ensure that [code]bit_index + number_of_bits <= size()[/code].
 func bits_at(bit_index: int, number_of_bits: int) -> int:

@@ -1,5 +1,7 @@
 class_name ActionArmySplit
 extends Action
+## Splits a given [Army] into two or more armies with given troop size
+## proportions. You must provide a new unique id for each of the new armies.
 
 
 var _army_id: int
@@ -88,6 +90,7 @@ func raw_data() -> Dictionary:
 	}
 
 
+# TODO verify that the data is valid
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionArmySplit:
 	var troop_partition: Array[int] = []

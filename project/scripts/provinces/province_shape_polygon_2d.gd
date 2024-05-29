@@ -1,6 +1,11 @@
 class_name ProvinceShapePolygon2D
 extends Polygon2D
-## See: https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
+## A [Province]'s shape.
+## It can draw an outline of your choice around the drawn polygon.
+## Emits a signal when the shape is clicked by the user.
+##
+## See this page for more info:
+## https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
 
 
 signal clicked()

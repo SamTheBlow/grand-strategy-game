@@ -26,7 +26,7 @@ extends Control
 @export var popup_buttons: PopupButtons
 
 
-## NOTE this is designed to only be called once.
+## This is meant to be called only once.
 func setup_contents(contents_node: Node) -> void:
 	contents_root.add_child(contents_node)
 	_add_content_buttons(contents_node)

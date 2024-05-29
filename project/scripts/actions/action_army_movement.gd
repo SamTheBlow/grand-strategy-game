@@ -1,5 +1,6 @@
 class_name ActionArmyMovement
 extends Action
+## Moves a given [Army] to a given [Province].
 
 
 var _army_id: int
@@ -55,6 +56,7 @@ func raw_data() -> Dictionary:
 	}
 
 
+# TODO verify that the data is valid
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionArmyMovement:
 	return ActionArmyMovement.new(

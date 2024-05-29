@@ -54,6 +54,7 @@ func _all_conditions_are_met() -> bool:
 		)
 		return false
 	
+	# TODO bad code, accesses a private property
 	for building in _province.buildings._buildings:
 		if building is Fortress:
 			error_message = "There is already a fortress in the province."
@@ -88,6 +89,8 @@ func _on_money_changed(money: int) -> void:
 
 
 func _on_buildings_changed() -> void:
+	# TODO bad code, accesses private property
+	# Should make some "Buildings.has_building_of_type()" function instead
 	var there_is_no_fortress: bool = true
 	for building in _province.buildings._buildings:
 		if building is Fortress:

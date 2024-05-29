@@ -1,6 +1,6 @@
 class_name GameTurn
 ## Class responsible for a turn-based system.
-## Each player plays one at a time in order.
+## Each [GamePlayer] plays one at a time in order.
 ## After everyone is done playing, a new turn begins.
 
 
@@ -9,9 +9,12 @@ signal turn_changed(new_turn: int)
 ## This signal is called whenever it's a new player's turn to play.
 signal player_changed(new_player: GamePlayer)
 
+## External reference
 var game: Game
 
 var _turn: int = 1
+## DANGER this implementation depends on the fact that
+## the [GamePlayers] player order never changes
 var _playing_player_index: int = 0
 
 
@@ -24,7 +27,7 @@ func playing_player() -> GamePlayer:
 	return game.game_players.player_from_index(_playing_player_index)
 
 
-## Call this when a human player ends their turn.
+## Call this when a user ends their turn.
 func end_turn() -> void:
 	_end_player_turn()
 	loop()

@@ -1,5 +1,7 @@
 class_name IncomeMoney
-## Class responsible for money income in given province.
+## Class responsible for the money income in given [Province].
+## Provides information on how much money the province generates per turn
+## (see also: [GameTurn]).
 
 
 signal changed(new_value: int)

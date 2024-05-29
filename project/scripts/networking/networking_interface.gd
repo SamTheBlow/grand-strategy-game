@@ -1,6 +1,9 @@
 class_name NetworkingInterface
 extends Control
 ## The interface for hosting and joining servers.
+## Allows the user to host a new server,
+## or to join an existing one by providing an IP address.
+## Leaving the IP address field empty defaults to localhost.
 
 
 signal interface_changed()

@@ -1,10 +1,11 @@
 @tool
 class_name TurnOrderList
 extends Control
-## Class responsible for displaying a list of players in the
+## Class responsible for displaying a list of [GamePlayers] in the
 ## turn order that they play. It shows all players by their username.
 ## It also shows with an arrow whose turn it is to play.
-## Spectators are listed at the end of the list.
+## The user, when allowed, can add, remove and rename players.
+## Spectators are also shown, at the end of the list.
 
 
 signal new_human_player_requested(game_player: GamePlayer)
@@ -38,8 +39,8 @@ var players: GamePlayers:
 		players.player_added.connect(_on_player_added)
 		players.player_removed.connect(_on_player_removed)
 
-## This value is designed to be only set once.
-## To not use the game turn feature, leave this value to [code]null[/code].
+## Set this if you want the list to show with an arrow whose turn it is.
+## If you don't want it to, leave this value to [code]null[/code].
 var game_turn: GameTurn = null:
 	set(value):
 		game_turn = value
@@ -47,7 +48,7 @@ var game_turn: GameTurn = null:
 		for element in _visual_players:
 			element.turn = game_turn
 
-# A list of the PlayerContainer node's children, for convenience
+## A list of all the element nodes, for easy access
 var _visual_players: Array[TurnOrderElement] = []
 
 var _margin_container: Control:
@@ -69,7 +70,7 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
-# Leave position_index to -1 to add it to the end of the list
+## Leave position_index to -1 to add it to the end of the list
 func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
 	if player and player.is_human and player.player_human:
@@ -170,8 +171,8 @@ func _on_player_sync_finished(_player: Player) -> void:
 	_update_elements()
 
 
-# When a player is turned into a human,
-# we want the remove button to start appearing again on humans
+## When a player is turned into a human,
+## we want the remove button to start appearing again on humans
 func _on_human_status_changed(_player: GamePlayer) -> void:
 	_update_elements()
 

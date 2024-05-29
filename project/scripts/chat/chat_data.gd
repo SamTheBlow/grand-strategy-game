@@ -1,6 +1,6 @@
 class_name ChatData
 ## Class responsible for the data found inside a chat box.
-## Useful for passing around between different chat interfaces.
+## It is separate from [ChatInterface] so that it can persist between scenes.
 # TODO mark all messages with the time they were sent
 # TODO sort messages chronologically
 # TODO when connecting to server, don't overwrite previous chat contents
@@ -58,7 +58,7 @@ func all_data() -> Dictionary:
 	}
 
 
-# TODO this is prone to crashing due to corrupted data
+# TODO this is prone to crashing. need to validate the received data
 ## Loads chat data from given Dictionary.
 ## Useful for saving/loading and for synchronizing.
 func load_data(data: Dictionary) -> void:
@@ -128,7 +128,7 @@ class ChatMessage:
 		}
 	
 	
-	# TODO prone to crashing due to corrupted data
+	# TODO prone to crashing due to invalid data
 	static func from_dictionary(dictionary: Dictionary) -> ChatMessage:
 		var chat_message := ChatMessage.new()
 		if dictionary.has("user_id"):

@@ -3,7 +3,7 @@ class_name ComponentUI
 extends Control
 ## Interface that appears around a given object.
 ## It can give information about the object and have widgets like buttons.
-## (Currently only works on a Province object)
+## (Currently only works on a [Province] object)
 
 
 signal button_pressed(button_id: int)

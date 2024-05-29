@@ -1,6 +1,13 @@
 class_name TopBar
 extends Control
 ## The top bar that appears during a game.
+## Shows useful information to the user.
+##
+## Note that currently, you must manually call set_playing_country
+## when you want to update the interface's [Country] information.
+# TODO set_playing_country should be private and called automoatically
+# from here by listening to [GameTurn]'s player_changed signal
+# TODO the child node refs should probably be onready instead of export
 
 
 @export_group("External nodes")
@@ -12,7 +19,7 @@ extends Control
 @export var country_money_label: Label
 @export var game_turn_label: Label
 
-# We need to save this so that we can disconnect it later
+# We need to store this so that we can disconnect it later
 var _money_changed_signal: Signal
 
 

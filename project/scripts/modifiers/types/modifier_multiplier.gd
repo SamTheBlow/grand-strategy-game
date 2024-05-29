@@ -1,5 +1,6 @@
 class_name ModifierMultiplier
 extends Modifier
+## This [Modifier] multiplies some base value by some multiplier.
 
 
 var _multiplier: float = 1.0

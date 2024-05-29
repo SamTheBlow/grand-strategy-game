@@ -1,7 +1,7 @@
 class_name Chat
 extends Node
 ## Class responsible for communication between the different components
-## of the chat, namely the chat data and the chat interface.
+## of the chat, namely the [ChatData] and the [ChatInterface].
 ## - Listens to and handles chat inputs.
 ## - Emits certain signals when certain chat commands are called by the user.
 ## - Provides utility functions for manipulating the chat data.
@@ -12,7 +12,7 @@ extends Node
 ##
 ## Note that in order for your changes to the chat data to be synchronized
 ## in online multiplayer, you have to use the functions provided in this
-## class, not the functions from ChatData.
+## class, not the functions from [ChatData].
 
 
 signal save_requested()
@@ -63,7 +63,7 @@ func _receive_all_data(chat_data_dict: Dictionary) -> void:
 
 
 #region Send global message
-## Sends a message to all players. Clients are not allowed to call this.
+## Sends a message to all users. Clients are not allowed to call this.
 func send_global_message(text: String) -> void:
 	if not MultiplayerUtils.is_online(multiplayer):
 		_receive_global_message(text)
@@ -85,7 +85,7 @@ func _receive_global_message(text: String) -> void:
 			MultiplayerUtils.is_online(multiplayer)
 			and multiplayer.get_remote_sender_id() != 1
 	):
-		# The player who sent this did not have authority.
+		# The user who sent this did not have authority.
 		# Probably a hacker? Anyways, deny them permission.
 		print_debug(
 				"Received a global message from someone "
@@ -98,7 +98,7 @@ func _receive_global_message(text: String) -> void:
 
 
 #region Send human message
-## Sends to all players a message written by the player.
+## Sends to all users a message written by the local user.
 func send_human_message(text: String) -> void:
 	var username: String = players.you().username()
 	
@@ -118,12 +118,12 @@ func _receive_human_message(username: String, text: String) -> void:
 #endregion
 
 
-## Sends a private message to the player.
+## Sends a private message to the user.
 func send_system_message(text: String) -> void:
 	chat_data.add_system_message(text)
 
 
-## Sends a private message to the player. For convenience.
+## Utility function to send a system message with multiple lines.
 func send_system_message_multiline(text_lines: Array[String]) -> void:
 	var message: String = ""
 	for text_line in text_lines:

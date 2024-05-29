@@ -4,38 +4,40 @@ extends Camera2D
 ## The camera always stays within given world limits.[br]
 ## [br]
 ## NOTICE: Please do not use Godot's built-in camera limits!
-## This script uses custom code for camera limits.
+## This script uses custom code for camera limits.[br]
+## WARNING: Never change the camera's "position" property directly,
+## otherwise it will not automatically stay in bounds.
+## Please use [method CustomCamera2D.move_to] instead.
 
 
 ## How far away from the world the camera can go,
 ## measured in window size (e.g. 0.5 is half a window size).
-## Negative numbers work, but are not recommended.
 @export var world_margin: Vector2 = Vector2(0.5, 0.5)
 
 var world_limits := WorldLimits.new():
 	set(value):
 		world_limits = value
-		reposition_in_bounds()
+		_reposition_in_bounds()
 
 
 func _ready() -> void:
-	reposition_in_bounds()
+	_reposition_in_bounds()
 
 
 func move_to(new_position: Vector2) -> void:
 	position = new_position
-	reposition_in_bounds()
+	_reposition_in_bounds()
 
 
 ## Puts the camera back in bounds.
 ## Has no effect if the camera is not in the scene tree.
-func reposition_in_bounds() -> void:
+func _reposition_in_bounds() -> void:
 	if not is_inside_tree():
 		return
 	position = position_in_bounds(position)
 
 
-## Returns a given position contained within the given limits.
+## Returns the given position contained within the camera limits.
 ## WARNING this function only works when the camera is in the scene tree
 func position_in_bounds(input_position: Vector2) -> Vector2:
 	# NOTE: all of this assumes the camera's anchor mode is Drag Center

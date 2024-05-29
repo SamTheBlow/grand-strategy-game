@@ -1,10 +1,16 @@
 @tool
 class_name TurnOrderElement
 extends Control
-## Class for a player as displayed in the turn order interface.[br]
-## [br]
+## Class for a [Player] as displayed in the [TurnOrderList] interface.
+## This interface allows the user to rename the player,
+## and to turn it into either a local human or an AI.
+## It also shows with an arrow if it's this player's turn to play.
 ## The circular buttons only appear when the mouse hovers over the box
-## (except when renaming a player).[br]
+## (except when renaming a player).[br][br]
+##
+## To use, you'll need to call "init()" and set the "player" property.
+## You also have to set the "turn" property if you want the arrow to appear.
+##
 ## For this to work, you need to make sure that the mouse filter
 ## of Control nodes in the player list is set to "Pass".
 
@@ -49,6 +55,8 @@ var turn: GameTurn:
 		if turn:
 			turn.player_changed.connect(_on_player_turn_changed)
 
+## This is for when you want to prevent the user from removing
+## a [Player] when it's their last local player.
 var is_the_only_local_human: bool = false:
 	set(value):
 		is_the_only_local_human = value
@@ -245,7 +253,6 @@ func _on_player_turn_changed(_playing_player: GamePlayer) -> void:
 	_update_turn_indicator()
 
 
-# TODO Unused. Figure out how to properly request a new human player
 func _on_add_button_pressed() -> void:
 	if not player:
 		print_debug("Tried to make a player human, but player is null!")
@@ -297,6 +304,6 @@ func _on_player_sync_finished(_player: Player) -> void:
 	_update_appearance()
 
 
-# After disconnecting as a client, you become able to rename AI players again
+## After disconnecting as a client, you're able to rename AI players again
 func _on_server_disconnected() -> void:
 	_update_button_visibility()

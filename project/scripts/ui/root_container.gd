@@ -1,6 +1,6 @@
 class_name RootContainer
 extends HBoxContainer
-## Shows or hides given nodes when a given checkbox is checked or unchecked.
+## Shows or hides given nodes when a given [CheckBox] is checked or unchecked.
 
 
 @export var nodes_to_hide: Array[Control]

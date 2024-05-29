@@ -1,5 +1,6 @@
 class_name ProvinceNewOwner
-## Class responsible for determining which country controls a given province.
+## Determines which [Country] controls a given [Province].
+## Once it is determined, it is applied immediately.
 
 
 func update_province_owner(province: Province) -> void:

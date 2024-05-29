@@ -1,12 +1,16 @@
 @tool
 class_name PlayerListElement
 extends Control
-## Class for a player as displayed in the player list interface.[br]
-## [br]
+## Class for a [Player] as displayed in the [PlayerList] interface.
+## This interface allows the user to remove or rename the player.
 ## The circular buttons only appear when the mouse hovers over the box
-## (except when renaming a player).[br]
+## (except when renaming a player).[br][br]
+##
+## To use, you'll need to call "init()" and set the "player" property.
+##
 ## For this to work, you need to make sure that the mouse filter
 ## of Control nodes in the player list is set to "Pass".
+# TODO turn the export vars into onready vars just like in [TurnOrderList]
 
 
 @export_category("Child nodes")
@@ -34,6 +38,8 @@ var player: Player:
 		player.sync_finished.connect(_on_player_sync_finished)
 		_update_appearance()
 
+## This is for when you want to prevent the user from removing
+## a [Player] when it's their last local player.
 var is_the_only_local_human: bool = false:
 	set(value):
 		is_the_only_local_human = value

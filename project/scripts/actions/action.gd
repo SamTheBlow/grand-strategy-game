@@ -1,8 +1,12 @@
 class_name Action
-## An abstract class for actions.
+## The base class for actions.
+## This base class does nothing: use subclasses to create and use actions.
+##
 ## Actions are the things players do that affect the game state.
 
 
+## Each action has its own identifier.
+## This is necessary for sending info between clients in online multiplayer.
 enum {
 	END_TURN = 0,
 	ARMY_SPLIT = 1,

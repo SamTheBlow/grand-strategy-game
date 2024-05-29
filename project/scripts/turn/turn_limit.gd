@@ -1,6 +1,6 @@
 class_name TurnLimit
 ## Class responsible for a game's turn limit.
-## When the final turn is over, the game over signal is emitted.
+## Emits a signal when the final turn is over.
 ##
 ## To use, call _on_new_turn() at the start of the new turn
 ## with the new turn number as the input.

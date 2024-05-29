@@ -1,7 +1,7 @@
 class_name ChatInterface
 extends Control
-## Class responsible for a chat's interface.
-## Displays a given chat data's contents.
+## Class responsible for the chat's visuals and interactions with the user.
+## Displays a given [ChatData]'s contents.
 ## Emits a signal when the user submits input text.
 ##
 ## This script must be used in a scene that has the following nodes:
@@ -11,9 +11,7 @@ extends Control
 
 signal input_submitted(input_text: String)
 
-
-## The chat data associated with this chat box.
-## Feel free to access, modify or overwrite it.
+## The data to be displayed in the chat box.
 var chat_data: ChatData:
 	set(value):
 		if chat_data:

@@ -1,6 +1,9 @@
 class_name GameSave
 ## Class responsible for saving a game using any given file format.
 ## (JSON is currently the only supported format)
+##
+## In the future, when more file formats are supported,
+## you will be able to provide a specific file format.
 
 
 ## False if saving was successful, otherwise true.
@@ -10,7 +13,6 @@ var error: bool = true
 var error_message: String = ""
 
 
-# TODO make it possible to give a file format as input
 func save_game(game: Game, file_path: String) -> void:
 	var file_access := FileAccess.open(file_path, FileAccess.WRITE)
 	

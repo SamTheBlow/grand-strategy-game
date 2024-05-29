@@ -1,5 +1,6 @@
 class_name PopulationGrowth
-## Applies population growth to a population.
+## Applies population growth to a [Population],
+## depending on provided [GameRules].
 
 
 func apply(game_rules: GameRules, population: Population) -> void:

@@ -1,8 +1,13 @@
 class_name Population
+## A population, usually of a [Province] (but it doesn't have to be).
+## Its size may change at the start of each [GameTurn]
+## depending on the [GameRules].
+## Emits a signal when its size changes.
 
 
 signal size_changed(new_value: int)
 
+## External reference
 var _game: Game
 
 ## Must be positive or zero

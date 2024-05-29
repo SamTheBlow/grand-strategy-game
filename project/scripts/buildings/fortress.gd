@@ -1,5 +1,10 @@
 class_name Fortress
 extends Building
+## Currently, a fortress is a building that provides extra defense
+## to any [Army] located in the [Province] the fortress is in.
+## The fortress may be (and currently is) visible on the world map.
+## There may only be one fortress per province,
+## although, this currently isn't enforced.
 
 
 var game: Game
@@ -7,6 +12,8 @@ var game: Game
 var _province: Province
 
 
+## Utility function that does all the setup work.
+## It's recommended to use this when creating a new fortress.
 static func new_fortress(game_: Game, province: Province) -> Fortress:
 	var fortress := Fortress.new()
 	fortress.name = "Fortress"
@@ -16,6 +23,7 @@ static func new_fortress(game_: Game, province: Province) -> Fortress:
 	return fortress
 
 
+## Use this to add visuals. This must only be called once.
 func add_visuals() -> void:
 	var visuals: Node = game.fortress_scene.instantiate()
 	
@@ -27,6 +35,7 @@ func add_visuals() -> void:
 	add_child(visuals)
 
 
+## Provides the defense bonus to the defender when a battle occurs
 func _on_modifiers_requested(
 		modifiers: Array[Modifier],
 		context: ModifierContext

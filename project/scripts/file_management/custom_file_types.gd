@@ -1,4 +1,5 @@
 class_name CustomFileTypes
+## This is currently unused. It will used to save data as binary files.
 
 
 enum {

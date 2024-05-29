@@ -1,5 +1,15 @@
 class_name Province
 extends Node2D
+## In a game, a province represents a certain area on the world map.
+## It may be of any size or shape, and
+## it may or may not be under the control of a [Country].
+##
+## This class has many responsibilities, as many game mechanics
+## involve their presence on a province:
+## [Army], [Population], [Building], [IncomeMoney].
+##
+## See [method GameFromJSON._load_province]
+## to see how to initialize a new province.
 
 
 signal clicked(this_province: Province)
@@ -8,6 +18,7 @@ signal deselected()
 
 signal owner_country_changed(owner_country: Country)
 
+## External reference
 var game: Game:
 	set(value):
 		if game:
@@ -23,6 +34,8 @@ var game: Game:
 		deselected.connect(game._on_province_deselected)
 		game.turn.turn_changed.connect(_on_new_turn)
 
+## All provinces must have a unique id for the purposes of saving/loading.
+## The node's name always matches its id.
 var id: int:
 	set(value):
 		id = value
@@ -33,11 +46,18 @@ var army_stack: ArmyStack
 var buildings: Buildings
 
 # Positions
+## Where this province's [ArmyStack] will be positioned,
+## relative to this province's position.
 var position_army_host: Vector2
 
 # Other data
+## A list of all the provinces that are
+## neighboring this province, e.g. when moving armies.
 var links: Array[Province] = []
+## The [Country] in control of this province.
 var _owner_country := Country.new()
+## How much money (the in-game resource)
+## this province generates per [GameTurn].
 var _income_money: IncomeMoney
 var population: Population
 
@@ -60,6 +80,7 @@ func owner_country() -> Country:
 	return _owner_country
 
 
+# TODO use setters
 func set_owner_country(country: Country) -> void:
 	if country == _owner_country:
 		return
@@ -77,6 +98,7 @@ func get_shape() -> PackedVector2Array:
 	return province_shape().polygon
 
 
+# TODO use setters?
 func set_shape(polygon: PackedVector2Array) -> void:
 	province_shape().polygon = polygon
 
@@ -95,11 +117,13 @@ func deselect() -> void:
 	shape_node.outline_type = ProvinceShapePolygon2D.OutlineType.NONE
 
 
+## Outlines all of this province's links with given outline type.
 func show_neighbors(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
 	for link in links:
 		link.show_as_neighbor(outline_type)
 
 
+## Outlines this province's shape with given outline type.
 func show_as_neighbor(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
 	province_shape().outline_type = outline_type
 
@@ -108,6 +132,8 @@ func is_linked_to(province: Province) -> bool:
 	return links.has(province)
 
 
+## Returns true if any of this province's links
+## are controlled by a different [Country].
 func is_frontline() -> bool:
 	for link in links:
 		if link.has_owner_country() and link.owner_country() != _owner_country:

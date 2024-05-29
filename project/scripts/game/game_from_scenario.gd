@@ -1,5 +1,5 @@
 class_name GameFromScenario
-## Class responsible for loading a game using just a scenario and game rules.
+## Class responsible for loading a game using the test map and game rules.
 
 
 var error: bool = true

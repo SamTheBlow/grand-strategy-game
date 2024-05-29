@@ -1,20 +1,25 @@
 class_name Players
 extends Node
-## Class responsible for some group of players.
+## An encapsulated list of [Player] objects.
+## Provides useful functions and signals.
+## Synchronizes the list when playing online.
 
 
 signal player_added(player: Player)
 signal player_removed(player: Player)
 signal player_kicked(player: Player)
+## Emitted by the server when a new client's players are all added.
 signal player_group_added(leader: Player)
+## Emitted by the server when a client's players are all removed,
+## usually because that client disconnected.
 signal player_group_removed(leader: Player)
-## This signal only emits once all of the individual players are synced.
+## This signal only emits once all of the individual players are sync'd.
 signal sync_finished(players: Players)
 
-# TODO bad code DRY: copy/paste from Player class
+# TODO bad code DRY: copy/paste from [Player]
 var _is_synchronizing: bool = false
 
-# Ugly code to make sure everything is synced
+## Ugly code to make sure everything is synced
 var _sync_check: PlayersSyncCheck
 
 var _list: Array[Player]
@@ -25,7 +30,7 @@ func _ready() -> void:
 	multiplayer.peer_disconnected.connect(_on_peer_disconnected)
 
 
-## Appends a player at the bottom of the list.
+## Appends given [Player] to the bottom of the list.
 func add_player(player: Player) -> void:
 	if _is_not_allowed_to_make_changes():
 		print_debug("Tried adding a player without permission!")
@@ -76,38 +81,16 @@ func kick_player(player: Player) -> void:
 		print_debug("Tried to kick a player, but it isn't on the list!")
 
 
-## If there is no player with given id, returns [code]null[/code].
-func player_from_id(id: int) -> Player:
-	for player in _list:
-		if player.id == id:
-			return player
-	return null
-
-
-## Returns a copy of this list.
+## Returns a new copy of this list.
 func list() -> Array[Player]:
 	return _list.duplicate()
 
 
-## Returns the number of players on the list.
 func size() -> int:
 	return _list.size()
 
 
-## Returns the given player's position on the list.
-## If the player is not on the list, returns -1.
-func index_of(player: Player) -> int:
-	return _list.find(player)
-
-
-## Returns the player at given index position.
-## If the index is not in range, returns null.
-func player_from_index(index: int) -> Player:
-	if index < 0 or index >= _list.size():
-		return null
-	return _list[index]
-
-
+## The number of humans on this list who are not remote players
 func number_of_local_humans() -> int:
 	var output: int = 0
 	for player in _list:
@@ -157,7 +140,7 @@ func new_unique_id() -> int:
 
 ## Returns the first player associated with this multiplayer peer.
 ## If not connected, simply returns the first player on the list.
-## If there are no players on the list, returns null.
+## If there are no players in the list, returns null.
 func you() -> Player:
 	for player in _list:
 		if not player.is_remote():
@@ -199,16 +182,20 @@ func _receive_all_data(node_names: PackedStringArray) -> void:
 #endregion
 
 
+# This was commented out because of a workaround I had to use
+# to allow for a [TurnOrderList] to request adding a new [Player]
+# as a specific [GamePlayer].
+# TODO delete this or no?
 #region Synchronize newly added player
-## The server calls this to send the info to the clients.
-## If you're not connected as a server, this function has no effect.
+# The server calls this to send the info to the clients.
+# If you're not connected as a server, this function has no effect.
 #func _send_new_player_to_clients(player: Player) -> void:
 #	if not MultiplayerUtils.is_server(multiplayer):
 #		return
 #	_receive_new_player.rpc(player.name)
 
 
-## The client receives one new player from the server.
+# The client receives one new player from the server.
 #@rpc("authority", "call_remote", "reliable")
 #func _receive_new_player(node_name: String) -> void:
 #	_add_received_player(node_name)
@@ -314,7 +301,7 @@ func _consider_add_local_player() -> void:
 #endregion
 
 
-# TODO bad code DRY: copy/paste from Player class
+# TODO bad code DRY: copy/paste from [Player]
 func _is_not_allowed_to_make_changes() -> bool:
 	return (
 			multiplayer

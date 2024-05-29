@@ -8,8 +8,8 @@ extends Node
 signal human_status_changed(player: GamePlayer)
 signal username_changed(new_username: String)
 
-## All players have a unique id to tell them apart.
-## (You must ensure this yourself)
+## All players have a unique id, for the purposes of
+## saving/loading and networking. (You must ensure their unicity yourself)
 var id: int
 
 ## Null means the player is spectating.
@@ -25,7 +25,7 @@ var is_human: bool = false:
 		human_status_changed.emit(self)
 
 ## This player's username. Allows you to give AI players a username.
-## This property is automatically sync'd to a human player's username.
+## This property is automatically sync'd to a human [Player]'s username.
 ## If this property is set to an empty String, then it returns
 ## the playing country's name, or, if spectating, returns "Spectator".
 var username: String = "":
@@ -63,7 +63,7 @@ var player_human: Player:
 		
 		player_human = value
 
-# Admittedly this is a bit ugly.
+# TODO this is ugly
 ## For loading purposes. -1 means it doesn't represent any human player.
 var player_human_id: int = -1:
 	get:
@@ -80,6 +80,7 @@ func is_spectating() -> bool:
 	return playing_country == null
 
 
+# TODO doesn't really belong here... at least make the function static
 func ai_from_type(type: int) -> PlayerAI:
 	match type:
 		0:
@@ -93,7 +94,7 @@ func ai_from_type(type: int) -> PlayerAI:
 			return null
 
 
-## Returns the AI type. Relevant for saving/loading.
+## Returns the AI type as a number, for saving/loading.
 func ai_type() -> int:
 	if not player_ai:
 		print_debug("Player AI is null.")
