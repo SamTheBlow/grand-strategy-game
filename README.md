@@ -1,16 +1,12 @@
-# grand-strategy-game (temporary name)
+# grand-strategy-game (placeholder name)
 A grand strategy game made in Godot.\
-The latest release is currently a barely working game with somewhat customizable features. The plan is to slowly expand the game over time.
-
-If you want to contribute in any way, please do!
+What makes it stand out is that you can adjust the game's rules to your liking.\
+Other noteworthy features: local & online multiplayer; saving/loading; custom map support; chat & chat commands; a working AI.
 
 ![Gameplay screenshot](/screenshot-gameplay.png)
 
-# How to play
-All you need to install is [Godot 4.2.x](https://godotengine.org/download/archive/4.2-stable/).
-- Download [this game's code](https://github.com/SamTheBlow/grand-strategy-game/archive/refs/heads/main.zip);
-- Extract it on your computer;
-- Launch Godot;
-- Have Godot scan the folder where you just extracted the code;
-- You should now be able to select the game and edit/play it.
+It's still a work in progress, though. It's missing important quality of life stuff, it doesn't have a built-in map/scenario editor, and it's missing a lot of game mechanics.
+
+If you want to contribute in any way, please do!\
+This project is specifically designed to be easy to work on. Check out the [wiki](https://github.com/SamTheBlow/grand-strategy-game/wiki) to get started!
 
