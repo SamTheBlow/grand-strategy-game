@@ -13,7 +13,8 @@ signal loaded()
 
 var _content: Array[ChatMessage] = []
 
-## Their position in the array determines their id (zero indexed)
+## Each [ChatMessage] is associated with one player from this list.
+## Their position in the array determines their id (zero indexed).
 var _players: Array[String] = []
 
 
@@ -45,32 +46,16 @@ func all_content() -> String:
 	return text
 
 
-## Returns all of this object's data as a Dictionary.
-## Useful for saving/loading and for synchronizing.
-func all_data() -> Dictionary:
-	var content: Array[Dictionary] = []
-	for chat_message in _content:
-		content.append(chat_message.to_dictionary())
-	
-	return {
-		"content": content,
-		"players": _players,
-	}
-
-
-# TODO this is prone to crashing. need to validate the received data
 ## Loads chat data from given Dictionary.
 ## Useful for saving/loading and for synchronizing.
 func load_data(data: Dictionary) -> void:
-	if data.has("content"):
-		_content = []
-		for chat_message_dict: Dictionary in data["content"]:
-			_content.append(ChatMessage.from_dictionary(chat_message_dict))
-	if data.has("players"):
-		_players = []
-		for player: String in data["players"]:
-			_players.append(player)
-	
+	var parser := ChatDataFromDict.new()
+	parser.parse(data)
+	if parser.error:
+		print_debug("Error while loading chat data: " + parser.error_message)
+		return
+	_content = parser.result_content
+	_players = parser.result_players
 	loaded.emit()
 
 
@@ -113,26 +98,3 @@ func _player_from_id(id: int) -> String:
 		return _players[id]
 	print_debug("Invalid player id for chat data")
 	return "???"
-
-
-class ChatMessage:
-	## -2 is raw message, -1 is system message, 0+ is user message
-	var user_id: int = -2
-	var text: String = ""
-	
-	
-	func to_dictionary() -> Dictionary:
-		return {
-			"user_id": user_id,
-			"text": text,
-		}
-	
-	
-	# TODO prone to crashing due to invalid data
-	static func from_dictionary(dictionary: Dictionary) -> ChatMessage:
-		var chat_message := ChatMessage.new()
-		if dictionary.has("user_id"):
-			chat_message.user_id = dictionary["user_id"]
-		if dictionary.has("text"):
-			chat_message.text = dictionary["text"]
-		return chat_message

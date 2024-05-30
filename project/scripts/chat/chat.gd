@@ -51,7 +51,8 @@ func _send_all_data() -> void:
 		return
 	
 	_receive_all_data.rpc_id(
-			multiplayer.get_remote_sender_id(), chat_data.all_data()
+			multiplayer.get_remote_sender_id(),
+			ChatDataToDict.new().parse(chat_data)
 	)
 
 
