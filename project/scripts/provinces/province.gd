@@ -145,7 +145,6 @@ func _setup_army_stack() -> void:
 	army_stack = ArmyStack.new()
 	army_stack.name = "ArmyStack"
 	army_stack.position = position_army_host
-	army_stack.child_order_changed.connect(army_stack._on_child_order_changed)
 	add_child(army_stack)
 
 
