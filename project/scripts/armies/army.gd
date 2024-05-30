@@ -92,7 +92,7 @@ func _process(delta: float) -> void:
 				new_position.distance_squared_to(original_position)
 				>= target_position.distance_squared_to(original_position)
 		):
-			stop_animations()
+			_stop_animations()
 		else:
 			global_position = new_position
 
@@ -182,15 +182,6 @@ func play_movement_to(destination_province: Province) -> void:
 	global_position = original_position
 
 
-## Forcefully, prematurely ends the movement animation.
-## The army's visuals will immediately move to the animation's end position.
-func stop_animations() -> void:
-	if animation_is_playing:
-		animation_is_playing = false
-		position = target_position
-		_refresh_visuals()
-
-
 ## Returns the number of times this army has moved.
 ## This number may reset, for example, when a new turn begins.
 func movements_made() -> int:
@@ -224,6 +215,17 @@ func _fight(army: Army) -> void:
 	game.battle.apply(game)
 
 
+## Ends the movement animation. Use this when the animation is done playing,
+## or when you want to prematurely end the animation.
+## The army's visuals will immediately move to the animation's end position.
+func _stop_animations() -> void:
+	if not animation_is_playing:
+		return
+	animation_is_playing = false
+	position = target_position
+	_refresh_visuals()
+
+
 ## Darkens the army sprite if the army cannot perform any action.
 func _refresh_visuals() -> void:
 	if (
@@ -246,7 +248,10 @@ func _on_new_turn(_turn_number: int) -> void:
 	_movements_made = 0
 
 
+## When it's a new player's turn, prematurely end all animations
+## and remove the darkening effect on the visuals.
 func _on_player_turn(_player: GamePlayer) -> void:
+	_stop_animations()
 	_refresh_visuals()
 
 

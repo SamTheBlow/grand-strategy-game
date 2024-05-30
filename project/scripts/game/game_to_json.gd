@@ -96,7 +96,7 @@ func convert_game(game: Game) -> void:
 	
 	# Armies
 	var armies_data: Array = []
-	for army in game.world.armies.armies:
+	for army in game.world.armies.list():
 		var army_data: Dictionary = {
 			"id": army.id,
 			"army_size": army.army_size.current_size(),

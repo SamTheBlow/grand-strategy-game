@@ -28,7 +28,10 @@ func _init(
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
+	print("Splitting army ", _army_id, " into...")
+	print(_new_army_ids)
 	var army: Army = game.world.armies.army_with_id(_army_id)
+	print("In province: ", army.province().id)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist!")
 		return

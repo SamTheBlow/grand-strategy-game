@@ -34,7 +34,7 @@ func reinforce_province(province: Province) -> void:
 	
 	var _army: Army = Army.quick_setup(
 			province.game,
-			province.game.world.armies.new_unique_army_id(),
+			province.game.world.armies.new_unique_id(),
 			reinforcements_size,
 			province.owner_country(),
 			province

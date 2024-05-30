@@ -6,8 +6,18 @@ extends PlayerAI
 ## Builds fortresses in the most populated provinces on the frontline.
 
 
+# Workaround to ensure that it always uses unique army ids.
+# TODO find better solution
+var _new_id_index: int
+
+
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
+	
+	# Unique army id workaround
+	for army in game.world.armies.list():
+		_new_id_index = maxi(_new_id_index, army.id)
+	_new_id_index += 1
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 	
@@ -83,7 +93,7 @@ func _find_target_province(
 		link_tree: Array,
 		province: Province,
 		army: Army,
-		depth: int
+		depth: int,
 ) -> Array[Action]:
 	var new_actions: Array[Action] = []
 	
@@ -118,10 +128,11 @@ func _find_target_province(
 				troop_partition.append(troops_per_army)
 			troop_partition[0] += troop_count % number_of_armies
 			
-			# Get unique ids for the new armies
-			new_army_ids = army.game.world.armies.new_unique_army_ids(
-					number_of_targets
-			)
+			# Unique army id workaround
+			new_army_ids = []
+			for i in number_of_targets:
+				new_army_ids.append(_new_id_index)
+				_new_id_index += 1
 			
 			var action := ActionArmySplit.new(
 					army.id,

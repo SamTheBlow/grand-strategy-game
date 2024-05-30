@@ -13,7 +13,10 @@ func _init(army_id: int, destination_province_id: int) -> void:
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
+	print("Applying army movement to army ", _army_id)
 	var army: Army = game.world.armies.army_with_id(_army_id)
+	print("This army is in province ", army.province().id)
+	print("It is moving to province ", _destination_province_id)
 	if not army:
 		push_warning("Tried to move an army that doesn't exist!")
 		return

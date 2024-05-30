@@ -1,46 +1,46 @@
 class_name Armies
-## Class responsible for a list of [Army] objects.
+## An encapsulated list of [Army] objects.
 ## Provides utility functions for manipulating the list and
 ## for accessing a specific [Army] or a specific subset of the list.
 ##
-## This class also provides functions that give you new unique ids
+## This class also provides functions to give you new unique ids
 ## for newly created armies that you wish to add to this list.
-## However, keep in mind that this class is (currently) not responsible
-## for ensuring that the armies all have a unique id.
-## (See also: [member Army.id])
+## See also: [member Army.id]
 
 
-# TODO don't let the user manipulate the array directly
-## Please do not add or remove items directly from this array:
-## use [method Armies.add_army] and [method Armies.remove_army] instead.
-var armies: Array[Army] = []
+var _list: Array[Army] = []
 
 
-# TODO verify that the army's id is unique
-## Adds an army to the list.
 func add_army(army: Army) -> void:
-	if armies.has(army):
-		print_debug(
-				"Tried adding an army when it already was in the game."
+	if _list.has(army):
+		print_debug("Tried adding an army, but it was already on the list.")
+		return
+	
+	if army_with_id(army.id):
+		push_error(
+				"Tried adding an army, but there is already an army "
+				+ "with the same id! Operation cancelled."
 		)
 		return
 	
 	army.destroyed.connect(remove_army)
-	armies.append(army)
+	_list.append(army)
 
 
-## Removes an army from the list.
 func remove_army(army: Army) -> void:
-	if not armies.has(army):
-		print_debug(
-				"Tried removing an army when it already wasn't in the game."
-		)
+	if not _list.has(army):
+		print_debug("Tried removing an army, but it wasn't on the list.")
 		return
 	
 	army.destroyed.disconnect(remove_army)
 	if army.province():
 		army.province().army_stack.remove_child(army)
-	armies.erase(army)
+	_list.erase(army)
+
+
+## Returns a new copy of the list.
+func list() -> Array[Army]:
+	return _list.duplicate()
 
 
 ## Merges all armies in given province when applicable.
@@ -63,41 +63,60 @@ func merge_armies(province: Province) -> void:
 ## Returns a new list of all armies located in given [Province].
 func armies_in_province(province: Province) -> Array[Army]:
 	var output: Array[Army] = []
-	for army in armies:
+	for army in _list:
 		if army.province() == province:
 			output.append(army)
 	return output
 
 
 ## Returns the [Army] that has given id.
-## If there is no such [Army], returns [code]null[/code].
+## If there is no such army, returns [code]null[/code].
 func army_with_id(id: int) -> Army:
-	for army in armies:
+	for army in _list:
 		if army.id == id:
 			return army
 	return null
 
 
-# TODO: There is an extremely rare chance that this returns duplicate IDs!
-## Returns unique ids that aren't used by any [Army] in this list.
+## Provides unique ids that are not used by any [Army] in the list.
 ## Use [param number_of_ids] to choose how many new ids you want to receive.
-func new_unique_army_ids(number_of_ids: int) -> Array[int]:
-	var result: Array[int] = []
+## ([param number_of_ids] must be 1 or more.)
+## They will all be unique and different from each other, guaranteed!
+func new_unique_ids(number_of_ids: int) -> Array[int]:
+	if number_of_ids < 1:
+		push_error(
+				"Asked for an invalid amount ("
+				+ str(number_of_ids) + ") of new unique ids."
+		)
+		return []
+	
+	var new_ids: Array[int] = [0]
 	for i in number_of_ids:
-		result.append(new_unique_army_id())
-	return result
+		var id_is_not_unique: bool = true
+		while id_is_not_unique:
+			id_is_not_unique = false
+			for army in _list:
+				if army.id == new_ids[i]:
+					id_is_not_unique = true
+					new_ids[i] += 1
+					break
+		if i != number_of_ids - 1:
+			new_ids.append(new_ids[i] + 1)
+	return new_ids
 
 
-## Returns a unique id that isn't used by any [Army] in this list.
-func new_unique_army_id() -> int:
-	var new_id: int
-	var id_is_unique: bool = false
-	while not id_is_unique:
-		new_id = randi()
-		id_is_unique = true
-		for army in armies:
+# TODO DRY. copy/paste from [Players]
+## Provides a new unique id that is not used by any [Army] in the list.
+## The id will be as small as possible (0 or higher).
+func new_unique_id() -> int:
+	var new_id: int = 0
+	var id_is_not_unique: bool = true
+	while id_is_not_unique:
+		id_is_not_unique = false
+		for army in _list:
 			if army.id == new_id:
-				id_is_unique = false
+				id_is_not_unique = true
+				new_id += 1
 				break
 	return new_id
 

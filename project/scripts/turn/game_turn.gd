@@ -71,10 +71,6 @@ func _end_player_turn() -> void:
 	for province in game.world.provinces.get_provinces():
 		game.world.armies.merge_armies(province)
 	
-	# Refresh the army visuals
-	for army in game.world.armies.armies:
-		army.stop_animations()
-	
 	for province in game.world.provinces.get_provinces():
 		# Update province ownership
 		ProvinceNewOwner.new().update_province_owner(province)

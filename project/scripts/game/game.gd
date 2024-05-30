@@ -229,7 +229,7 @@ func new_action_army_movement(
 	# Split the army into two if needed
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
-		var new_army_id: int = world.armies.new_unique_army_id()
+		var new_army_id: int = world.armies.new_unique_id()
 		var action_split := ActionArmySplit.new(
 				army.id,
 				[army_size - number_of_troops, number_of_troops],
@@ -506,7 +506,7 @@ func _on_build_fortress_confirmed(province: Province) -> void:
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 	world.provinces.deselect_province()
 	var action_recruitment := ActionRecruitment.new(
-			province.id, troop_amount, world.armies.new_unique_army_id()
+			province.id, troop_amount, world.armies.new_unique_id()
 	)
 	action_sync.apply_action(action_recruitment)
 
