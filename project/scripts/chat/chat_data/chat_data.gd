@@ -1,10 +1,6 @@
 class_name ChatData
 ## Class responsible for the data found inside a chat box.
 ## It is separate from [ChatInterface] so that it can persist between scenes.
-# TODO mark all messages with the time they were sent
-# TODO sort messages chronologically
-# TODO when connecting to server, don't overwrite previous chat contents
-# TODO when connecting to server, don't receive the host's private messages
 
 
 signal new_content_added(new_content: String)

@@ -33,7 +33,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		push_warning("Tried to split an army that doesn't exist!")
 		return
 	
-	if army.owner_country() != player.playing_country:
+	if army.owner_country != player.playing_country:
 		push_warning(
 				"Tried to split an army, "
 				+ "but the army is not under the player's control!"
@@ -66,7 +66,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 				game,
 				_new_army_ids[i],
 				_troop_partition[i + 1],
-				army.owner_country(),
+				army.owner_country,
 				army.province()
 		)
 		

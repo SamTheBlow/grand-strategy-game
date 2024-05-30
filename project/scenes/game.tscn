@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -19,6 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="Script" path="res://scripts/networking/action_synchronizer.gd" id="15_o3imi"]
+[ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="15_vh3er"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
@@ -55,6 +56,7 @@ component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 top_bar = NodePath("UILayer/GameUI/TopBar")
 lobby_list_root = NodePath("UILayer/GameUI/RightSide/Content/LobbyList")
 popups = NodePath("UILayer/GameUI/Popups")
+battle = ExtResource("15_vh3er")
 
 [node name="ActionSynchronizer" type="Node" parent="." node_paths=PackedStringArray("_game")]
 script = ExtResource("15_o3imi")

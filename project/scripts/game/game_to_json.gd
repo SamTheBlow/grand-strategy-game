@@ -100,7 +100,7 @@ func convert_game(game: Game) -> void:
 		var army_data: Dictionary = {
 			"id": army.id,
 			"army_size": army.army_size.current_size(),
-			"owner_country_id": army.owner_country().id,
+			"owner_country_id": army.owner_country.id,
 			"province_id": army.province().id,
 			"number_of_movements_made": army.movements_made(),
 		}

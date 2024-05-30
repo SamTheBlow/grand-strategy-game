@@ -215,10 +215,10 @@ func _army_size(
 	var armies: Array[Army] = game.world.armies.armies_in_province(province)
 	for army in armies:
 		if is_yours:
-			if army.owner_country() == playing_country:
+			if army.owner_country == playing_country:
 				output += army.army_size.current_size()
 		else:
-			if army.owner_country() != playing_country:
+			if army.owner_country != playing_country:
 				output += army.army_size.current_size()
 	return output
 

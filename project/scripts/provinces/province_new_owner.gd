@@ -11,9 +11,9 @@ func update_province_owner(province: Province) -> void:
 	for army in armies:
 		# If this province's owner has an army here,
 		# then it can't be taken by someone else
-		if army.owner_country() == province.owner_country():
+		if army.owner_country == province.owner_country():
 			return
-		new_owner = army.owner_country()
+		new_owner = army.owner_country
 	
 	if new_owner == current_owner:
 		return

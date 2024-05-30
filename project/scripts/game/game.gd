@@ -38,6 +38,10 @@ signal game_ended()
 @export var lobby_list_root: Node
 @export var popups: Control
 
+@export_category("Resources")
+## Defines the outcome of a [Battle].
+@export var battle: Battle
+
 ## Must setup before the game starts.
 ## You are not meant to edit the rules once they are set.
 var rules: GameRules:
@@ -434,12 +438,6 @@ func _on_province_clicked(province: Province) -> void:
 		)
 		if active_armies.size() > 0:
 			var army: Army = active_armies[0]
-			
-			# If this isn't here, the game crashes. I don't know why.
-			# (This line does nothing, it's just to prevent a crash)
-			# TODO figure it out
-			army.battle.attacking_army = army
-			
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return

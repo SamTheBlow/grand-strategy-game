@@ -1,23 +1,20 @@
 class_name Army
 extends Node2D
-## Class reponsible for an army's data, behavior, and visuals.
-## An army represents any entity on the world map.
+## Represents any entity on the world map.
+## This class is responsible for its data, behavior, and visuals.
 ## It is usually under the control of a [Country], and
 ## it is usually located on a [Province].
 ## Note that it is currently called "army", but in truth,
 ## this class actually represents any entity, not just military ones.
+# TODO separate the visuals from this class, just like with [Fortress]
 
 
 ## Emitted when this army believes it has been destroyed.
 ## At the time it's emitted, this node already queued itself for deletion.
 signal destroyed(army: Army)
 
-# TODO bad code. all armies should have the same battle object
-## The [Battle] resource that will define the outcome of a battle.
-@export var battle: Battle
-
 ## A reference to the [Game] this army is part of.
-## It must be set immediately when this army is created.
+## Must initialize when the army is created.
 var game: Game:
 	set(value):
 		if game:
@@ -30,7 +27,10 @@ var game: Game:
 ## In each game, all armies must have their own unique id.
 ## This is for the purposes of saving and loading, and also for
 ## the purposes of sending data about this army to network clients.
-var id: int
+var id: int:
+	set(value):
+		id = value
+		name = str(id)
 
 # Variables for the movement animation
 var original_position: Vector2 = position
@@ -38,14 +38,39 @@ var target_position: Vector2 = position
 var animation_is_playing: bool = false
 var animation_speed: float = 1.0
 
-## Provides information on this army's size.
-## This must be set immediately when this army is created.
-var army_size: ArmySize
+## Provides information on this army's size. Currently cannot be null.
+## Must initialize when the army is created.
+var army_size: ArmySize:
+	set(value):
+		if army_size:
+			army_size.size_changed.disconnect(_on_army_size_changed)
+			army_size.became_too_small.disconnect(destroy)
+		
+		army_size = value
+		
+		army_size.size_changed.connect(_on_army_size_changed)
+		army_size.became_too_small.connect(destroy)
+		_update_troop_count_label()
 
-# More things that need to be set immediately when this army is created.
-# Feel free to change these at any time during the game.
-var _province: Province
-var _owner_country := Country.new()
+## The [Country] in control of this army.
+## This must not be null! If you want an army to be unaligned,
+## create a new [Country] to represent unaligned armies.
+## Must initialize when the army is created.
+var owner_country: Country:
+	set(value):
+		owner_country = value
+		($ColorRect as ColorRect).color = owner_country.color
+
+## The [Province] in which this army is located. Currently cannot be null.
+## Must initialize when the army is created.
+var _province: Province:
+	set(value):
+		if _province:
+			_province.army_stack.remove_child(self)
+		_province = value
+		_province.army_stack.add_child(self)
+		
+		_resolve_battles(game.world.armies.armies_in_province(_province))
 
 # For now, there's a hard limit of 1 movement per turn,
 # but in the future we should make it possible to change the limit
@@ -73,6 +98,7 @@ func _process(delta: float) -> void:
 
 
 ## Utility function that does all the setup work.
+## Automatically adds the army to the game and moves it to given [Province].
 ## It is recommended to use this when creating a new army.
 static func quick_setup(
 		game_: Game,
@@ -84,19 +110,17 @@ static func quick_setup(
 ) -> Army:
 	var minimum_army_size: int = game_.rules.minimum_army_size
 	if army_size_ < minimum_army_size:
+		print_debug(
+				"Tried to create an army, "
+				+ "but its size is smaller than the minimum allowed."
+		)
 		return null
 	
 	var army := game_.army_scene.instantiate() as Army
 	army.game = game_
 	army.id = id_
-	army.name = str(army.id)
-	
 	army.army_size = ArmySize.new(army_size_, minimum_army_size)
-	army.army_size.size_changed.connect(army._on_army_size_changed)
-	army.army_size.became_too_small.connect(army.destroy)
-	army._update_troop_count_label()
-	
-	army.set_owner_country(owner_country_)
+	army.owner_country = owner_country_
 	army._movements_made = movements_made_
 	
 	game_.world.armies.add_army(army)
@@ -127,7 +151,7 @@ func can_move_to(destination: Province) -> bool:
 
 
 ## Moves this army to the given destination province. No animation will play.
-## To play an animation, consider using play_movement_animation().[br]
+## To play an animation, consider using play_movement_to().[br]
 ## [br]
 ## Calling this function will increase this army's number of movements made.
 ## The army may have a hard limit on how many movements it can make.
@@ -139,30 +163,14 @@ func move_to_province(destination: Province) -> void:
 		return
 	
 	_movements_made += 1
-	teleport_to_province(destination)
+	_province = destination
 
 
-## Moves this army to the given destination province. No animation will play,
-## and the army's movement count will be unaffected.
+## Moves this army to the given destination province.
+## No animation will play, and the army's movement count will be unaffected.
 ## The movement will be performed even if the army is unable to move.
 func teleport_to_province(destination: Province) -> void:
-	if _province:
-		_province.army_stack.remove_child(self)
 	_province = destination
-	_province.army_stack.add_child(self)
-	
-	resolve_battles(game.world.armies.armies_in_province(_province))
-
-
-func owner_country() -> Country:
-	return _owner_country
-
-
-# TODO make the owner_country variable public and put this in its setter
-## Use this to change what [Country] has control over this army.
-func set_owner_country(value: Country) -> void:
-	_owner_country = value
-	($ColorRect as ColorRect).color = _owner_country.color
 
 
 ## Plays an animation where the army visually moves to given province.
@@ -183,22 +191,6 @@ func stop_animations() -> void:
 		_refresh_visuals()
 
 
-## Engages this army into a battle with all armies in given list
-## that are not under control of the same [Country] as this one.
-func resolve_battles(armies: Array[Army]) -> void:
-	for other_army in armies:
-		if other_army.owner_country() != owner_country():
-			fight(other_army)
-
-
-## Starts a battle against given [Army],
-## where this army is the attacker and the input army is the defender.
-func fight(army: Army) -> void:
-	battle.attacking_army = self
-	battle.defending_army = army
-	battle.apply(game)
-
-
 ## Returns the number of times this army has moved.
 ## This number may reset, for example, when a new turn begins.
 func movements_made() -> int:
@@ -215,11 +207,28 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_population_per_unit)
 
 
+## Engages this army into a battle with all armies in given list
+## that are not under control of the same [Country] as this one.
+func _resolve_battles(armies: Array[Army]) -> void:
+	for other_army in armies:
+		if other_army.owner_country != owner_country:
+			_fight(other_army)
+
+
+## Starts a battle against given [Army],
+## where this army is the attacker and the input army is the defender.
+func _fight(army: Army) -> void:
+	# TODO the battle code is still too ugly
+	game.battle.attacking_army = self
+	game.battle.defending_army = army
+	game.battle.apply(game)
+
+
 ## Darkens the army sprite if the army cannot perform any action.
 func _refresh_visuals() -> void:
 	if (
 			is_able_to_move()
-			or (game.turn.playing_player().playing_country != _owner_country)
+			or (game.turn.playing_player().playing_country != owner_country)
 			or animation_is_playing
 	):
 		modulate = Color(1.0, 1.0, 1.0, 1.0)

@@ -18,7 +18,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		push_warning("Tried to move an army that doesn't exist!")
 		return
 	
-	if army.owner_country() != player.playing_country:
+	if army.owner_country != player.playing_country:
 		push_warning(
 				"Tried to move an army, "
 				+ "but the army is not under the player's control!"

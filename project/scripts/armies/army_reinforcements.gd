@@ -29,6 +29,9 @@ func reinforce_province(province: Province) -> void:
 					* province.game.rules.reinforcements_per_person
 			)
 	
+	if reinforcements_size < province.game.rules.minimum_army_size:
+		return
+	
 	var _army: Army = Army.quick_setup(
 			province.game,
 			province.game.world.armies.new_unique_army_id(),

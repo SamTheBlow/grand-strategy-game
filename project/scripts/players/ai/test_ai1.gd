@@ -20,7 +20,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		# Find the nearest target province for each of your armies
 		var armies: Array[Army] = game.world.armies.armies_in_province(province)
 		for army in armies:
-			if army.owner_country().id == player.playing_country.id:
+			if army.owner_country.id == player.playing_country.id:
 				var new_actions: Array[Action] = _find_target_province(
 						link_tree,
 						province,
@@ -96,7 +96,7 @@ func _find_target_province(
 	for link_branch: Array in link_tree:
 		var furthest_link: int = link_branch.size() - 1
 		var link_owner: Country = link_branch[furthest_link].owner_country()
-		if link_owner.id != army.owner_country().id:
+		if link_owner.id != army.owner_country.id:
 			targets.append(link_branch)
 	
 	# If there's any, send troops evenly to each province
