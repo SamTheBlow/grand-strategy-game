@@ -12,7 +12,7 @@ class_name Army
 signal size_changed(size: int)
 signal allegiance_changed(country: Country)
 ## Always emitted when the province changes.
-signal province_changed(province: Province)
+signal province_changed(this_army: Army, province: Province)
 ## Emitted only when using [method Army.move_to_province].
 ## Teleportation does not trigger this signal.
 signal moved_to_province(province: Province)
@@ -20,7 +20,7 @@ signal movements_made_changed(movements_made: int)
 
 ## Emitted when this army believes it has been destroyed.
 ## At the time it's emitted, this node already queued itself for deletion.
-signal destroyed(army: Army)
+signal destroyed(this_army: Army)
 ## Emitted right after this army is actually removed from the game.
 signal removed()
 
@@ -63,8 +63,7 @@ var owner_country: Country:
 var _province: Province:
 	set(value):
 		_province = value
-		_resolve_battles(game.world.armies.armies_in_province(_province))
-		province_changed.emit(_province)
+		province_changed.emit(self, _province)
 
 # For now, there's a hard limit of 1 movement per turn,
 # but in the future we should make it possible to change the limit
@@ -169,23 +168,6 @@ static func money_cost(troop_count: int, rules: GameRules) -> int:
 ## How much [Population] it would cost to recruit given troop count.
 static func population_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_population_per_unit)
-
-
-## Engages this army into a battle with all armies in given list
-## that are not under control of the same [Country] as this one.
-func _resolve_battles(armies: Array[Army]) -> void:
-	for other_army in armies:
-		if other_army.owner_country != owner_country:
-			_fight(other_army)
-
-
-## Starts a battle against given [Army],
-## where this army is the attacker and the input army is the defender.
-func _fight(army: Army) -> void:
-	# TODO the battle code is still too ugly
-	game.battle.attacking_army = self
-	game.battle.defending_army = army
-	game.battle.apply(game)
 
 
 func _on_new_turn(_turn_number: int) -> void:

@@ -2,30 +2,26 @@ class_name Battle
 extends Resource
 ## This class defines the outcome of a battle between two opposing [Army].
 ## The algorithm used to determine the outcome depends on the [GameRules].
-##
-## To use, set the attacking_army and defending_army, then call apply().
 # TODO this class is ugly, needs refactoring!
 
 
 @export var _context_attacker_efficiency: ModifierContext
 @export var _context_defender_efficiency: ModifierContext
 
-var attacking_army: Army
-var defending_army: Army
 
-
-func apply(game: Game) -> void:
+func apply(attacking_army: Army, defending_army: Army) -> void:
 	#print("A battle is about to begin!")
 	
 	_context_attacker_efficiency._defending_army = defending_army
 	_context_defender_efficiency._defending_army = defending_army
 	
+	var game: Game = attacking_army.game
 	var damage_dealt: Array[int] = []
 	match game.rules.battle_algorithm:
 		0:
-			damage_dealt = _algorithm_0(game)
+			damage_dealt = _algorithm_0(attacking_army, defending_army)
 		1:
-			damage_dealt = _algorithm_1(game)
+			damage_dealt = _algorithm_1(attacking_army, defending_army)
 		_:
 			print_debug("Unrecognized battle algorithm id.")
 			return
@@ -50,7 +46,8 @@ func apply(game: Game) -> void:
 		attacking_army.destroy()
 
 
-func _algorithm_0(game: Game) -> Array[int]:
+func _algorithm_0(attacking_army: Army, defending_army: Army) -> Array[int]:
+	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
 			game.modifiers(_context_attacker_efficiency).resultf()
@@ -66,7 +63,8 @@ func _algorithm_0(game: Game) -> Array[int]:
 	return [attacker_damage, defender_damage]
 
 
-func _algorithm_1(game: Game) -> Array[int]:
+func _algorithm_1(attacking_army: Army, defending_army: Army) -> Array[int]:
+	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
 			game.modifiers(_context_attacker_efficiency).resultf()

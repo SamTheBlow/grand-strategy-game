@@ -8,6 +8,8 @@ class_name Armies
 ## See also: [member Army.id]
 
 
+signal army_added(army: Army)
+
 var _list: Array[Army] = []
 
 
@@ -25,6 +27,7 @@ func add_army(army: Army) -> void:
 	
 	army.destroyed.connect(remove_army)
 	_list.append(army)
+	army_added.emit(army)
 
 
 func remove_army(army: Army) -> void:

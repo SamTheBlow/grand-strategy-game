@@ -84,7 +84,7 @@ func _on_army_size_changed(army_size: int) -> void:
 	_army_size_label.text = str(army_size)
 
 
-func _on_army_province_changed(province: Province) -> void:
+func _on_army_province_changed(_army: Army, province: Province) -> void:
 	_add_to_province(province)
 
 
