@@ -54,7 +54,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			
 			var danger: float = enemy_army_size / (army_size + 0.01)
 			# Reduce penalty when there's a fortress
-			if link.buildings._buildings.size() > 0:
+			if link.buildings.list().size() > 0:
 				danger *= 0.5
 			# Amplify penalty in extreme cases
 			danger **= 2.0

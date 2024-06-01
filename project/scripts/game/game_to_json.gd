@@ -91,8 +91,10 @@ func convert_game(game: Game) -> void:
 		
 		# Buildings
 		var buildings_data: Array = []
-		for building in province.buildings._buildings:
-			# Ugly, but I'll bother when we have more buildings
+		for building in province.buildings.list():
+			# We save the building type as a string
+			# for backwards compatibility with 4.0 version.
+			# TODO allow saving other types of buildings
 			buildings_data.append({"type": "fortress"})
 		province_data["buildings"] = buildings_data
 		
