@@ -43,12 +43,10 @@ func apply(game: Game) -> void:
 	attacking_army.army_size.remove(defender_damage)
 	#print("Attacker army size is down to %s" % attacking_army.army_size.current_size())
 	
-	# If both armies survive the battle, destroy the attacker
+	# If both armies survived the battle, destroy the attacker
 	# (ensures that at least one side is destroyed)
-	if not (
-		attacking_army.is_queued_for_deletion()
-		or defending_army.is_queued_for_deletion()
-	):
+	var army_list: Array[Army] = game.world.armies.list()
+	if army_list.has(attacking_army) and army_list.has(defending_army):
 		attacking_army.destroy()
 
 

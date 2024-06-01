@@ -40,7 +40,6 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	army.play_movement_to(destination_province)
 	army.move_to_province(destination_province)
 	
 	#print("Army ", _army_id, " moved to province ", _destination_province_id)

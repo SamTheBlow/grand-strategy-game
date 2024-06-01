@@ -22,10 +22,7 @@ func _ready() -> void:
 func _on_child_order_changed() -> void:
 	var children: Array[Node] = get_children()
 	for i in children.size():
-		if not children[i] is Army:
+		if not children[i] is ArmyVisuals2D:
 			continue
-		var army := children[i] as Army
-		if army.animation_is_playing:
-			army.target_position = position + i * _distance_between_armies
-		else:
-			army.global_position = position + i * _distance_between_armies
+		var army_visuals := children[i] as ArmyVisuals2D
+		army_visuals.set_location(position + i * _distance_between_armies)

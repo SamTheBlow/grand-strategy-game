@@ -1,17 +1,28 @@
 class_name Army
-extends Node2D
 ## Represents any entity on the world map.
-## This class is responsible for its data, behavior, and visuals.
+## This class is responsible for its data and behavior.
 ## It is usually under the control of a [Country], and
 ## it is usually located on a [Province].
 ## Note that it is currently called "army", but in truth,
 ## this class actually represents any entity, not just military ones.
-# TODO separate the visuals from this class, just like with [Fortress]
+##
+## See also: [ArmyVisuals2D]
 
+
+signal size_changed(size: int)
+signal allegiance_changed(country: Country)
+## Always emitted when the province changes.
+signal province_changed(province: Province)
+## Emitted only when using [method Army.move_to_province].
+## Teleportation does not trigger this signal.
+signal moved_to_province(province: Province)
+signal movements_made_changed(movements_made: int)
 
 ## Emitted when this army believes it has been destroyed.
 ## At the time it's emitted, this node already queued itself for deletion.
 signal destroyed(army: Army)
+## Emitted right after this army is actually removed from the game.
+signal removed()
 
 ## A reference to the [Game] this army is part of.
 ## Must initialize when the army is created.
@@ -19,38 +30,24 @@ var game: Game:
 	set(value):
 		if game:
 			game.turn.turn_changed.disconnect(_on_new_turn)
-			game.turn.player_changed.disconnect(_on_player_turn)
 		game = value
 		game.turn.turn_changed.connect(_on_new_turn)
-		game.turn.player_changed.connect(_on_player_turn)
 
 ## In each game, all armies must have their own unique id.
 ## This is for the purposes of saving and loading, and also for
 ## the purposes of sending data about this army to network clients.
-var id: int:
-	set(value):
-		id = value
-		name = str(id)
-
-# Variables for the movement animation
-var original_position: Vector2 = position
-var target_position: Vector2 = position
-var animation_is_playing: bool = false
-var animation_speed: float = 1.0
+var id: int
 
 ## Provides information on this army's size. Currently cannot be null.
 ## Must initialize when the army is created.
 var army_size: ArmySize:
 	set(value):
 		if army_size:
-			army_size.size_changed.disconnect(_on_army_size_changed)
+			army_size.size_changed.disconnect(_on_size_changed)
 			army_size.became_too_small.disconnect(destroy)
-		
 		army_size = value
-		
-		army_size.size_changed.connect(_on_army_size_changed)
+		army_size.size_changed.connect(_on_size_changed)
 		army_size.became_too_small.connect(destroy)
-		_update_troop_count_label()
 
 ## The [Country] in control of this army.
 ## This must not be null! If you want an army to be unaligned,
@@ -59,42 +56,22 @@ var army_size: ArmySize:
 var owner_country: Country:
 	set(value):
 		owner_country = value
-		($ColorRect as ColorRect).color = owner_country.color
+		allegiance_changed.emit(owner_country)
 
 ## The [Province] in which this army is located. Currently cannot be null.
 ## Must initialize when the army is created.
 var _province: Province:
 	set(value):
-		if _province:
-			_province.army_stack.remove_child(self)
 		_province = value
-		_province.army_stack.add_child(self)
-		
 		_resolve_battles(game.world.armies.armies_in_province(_province))
+		province_changed.emit(_province)
 
 # For now, there's a hard limit of 1 movement per turn,
 # but in the future we should make it possible to change the limit
 var _movements_made: int = 0:
 	set(value):
 		_movements_made = value
-		_refresh_visuals()
-
-
-func _process(delta: float) -> void:
-	# Play the movement animation, if applicable
-	if animation_is_playing:
-		var new_position: Vector2 = (
-				global_position
-				+ (target_position - original_position)
-				* animation_speed * delta
-		)
-		if (
-				new_position.distance_squared_to(original_position)
-				>= target_position.distance_squared_to(original_position)
-		):
-			_stop_animations()
-		else:
-			global_position = new_position
+		movements_made_changed.emit(_movements_made)
 
 
 ## Utility function that does all the setup work.
@@ -116,7 +93,7 @@ static func quick_setup(
 		)
 		return null
 	
-	var army := game_.army_scene.instantiate() as Army
+	var army := Army.new()
 	army.game = game_
 	army.id = id_
 	army.army_size = ArmySize.new(army_size_, minimum_army_size)
@@ -125,12 +102,17 @@ static func quick_setup(
 	
 	game_.world.armies.add_army(army)
 	army.teleport_to_province(province_)
+	army.add_visuals()
 	return army
+
+
+func add_visuals() -> void:
+	var visuals := game.army_scene.instantiate() as ArmyVisuals2D
+	visuals.army = self
 
 
 func destroy() -> void:
 	destroyed.emit(self)
-	queue_free()
 
 
 func province() -> Province:
@@ -150,8 +132,7 @@ func can_move_to(destination: Province) -> bool:
 	return destination.is_linked_to(_province)
 
 
-## Moves this army to the given destination province. No animation will play.
-## To play an animation, consider using play_movement_to().[br]
+## Moves this army to the given destination province.[br]
 ## [br]
 ## Calling this function will increase this army's number of movements made.
 ## The army may have a hard limit on how many movements it can make.
@@ -164,6 +145,7 @@ func move_to_province(destination: Province) -> void:
 	
 	_movements_made += 1
 	_province = destination
+	moved_to_province.emit(destination)
 
 
 ## Moves this army to the given destination province.
@@ -171,15 +153,6 @@ func move_to_province(destination: Province) -> void:
 ## The movement will be performed even if the army is unable to move.
 func teleport_to_province(destination: Province) -> void:
 	_province = destination
-
-
-## Plays an animation where the army visually moves to given province.
-## Note that this does not actually move the army to that province!
-func play_movement_to(destination_province: Province) -> void:
-	animation_is_playing = true
-	original_position = _province.position_army_host
-	target_position = destination_province.position_army_host
-	global_position = original_position
 
 
 ## Returns the number of times this army has moved.
@@ -215,45 +188,9 @@ func _fight(army: Army) -> void:
 	game.battle.apply(game)
 
 
-## Ends the movement animation. Use this when the animation is done playing,
-## or when you want to prematurely end the animation.
-## The army's visuals will immediately move to the animation's end position.
-func _stop_animations() -> void:
-	if not animation_is_playing:
-		return
-	animation_is_playing = false
-	position = target_position
-	_refresh_visuals()
-
-
-## Darkens the army sprite if the army cannot perform any action.
-func _refresh_visuals() -> void:
-	if (
-			is_able_to_move()
-			or (game.turn.playing_player().playing_country != owner_country)
-			or animation_is_playing
-	):
-		modulate = Color(1.0, 1.0, 1.0, 1.0)
-	else:
-		var v: float = 0.5
-		modulate = Color(v, v, v, 1.0)
-
-
-func _update_troop_count_label() -> void:
-	var troop_count_label := $ColorRect/TroopCount as Label
-	troop_count_label.text = str(army_size.current_size())
-
-
 func _on_new_turn(_turn_number: int) -> void:
 	_movements_made = 0
 
 
-## When it's a new player's turn, prematurely end all animations
-## and remove the darkening effect on the visuals.
-func _on_player_turn(_player: GamePlayer) -> void:
-	_stop_animations()
-	_refresh_visuals()
-
-
-func _on_army_size_changed() -> void:
-	_update_troop_count_label()
+func _on_size_changed(new_size: int) -> void:
+	size_changed.emit(new_size)

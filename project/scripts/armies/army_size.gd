@@ -4,7 +4,7 @@ class_name ArmySize
 
 
 ## Emits whenever the army's size changes.
-signal size_changed()
+signal size_changed(new_size: int)
 ## Emits whenever some piece of code tries to set the army size to a value
 ## smaller than 1.
 signal reached_zero()
@@ -24,7 +24,7 @@ var _size: int:
 		if _has_maximum_size and value > _maximum_size:
 			_size = _maximum_size
 			became_too_large.emit()
-			size_changed.emit()
+			size_changed.emit(_size)
 			return
 		
 		# Respect minimum size
@@ -33,11 +33,11 @@ var _size: int:
 			if value < 1:
 				reached_zero.emit()
 			became_too_small.emit()
-			size_changed.emit()
+			size_changed.emit(_size)
 			return
 		
 		_size = value
-		size_changed.emit()
+		size_changed.emit(_size)
 
 var _minimum_size: int
 var _has_maximum_size: bool = false

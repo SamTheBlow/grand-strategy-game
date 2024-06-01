@@ -33,9 +33,8 @@ func remove_army(army: Army) -> void:
 		return
 	
 	army.destroyed.disconnect(remove_army)
-	if army.province():
-		army.province().army_stack.remove_child(army)
 	_list.erase(army)
+	army.removed.emit()
 
 
 ## Returns a new copy of the list.
