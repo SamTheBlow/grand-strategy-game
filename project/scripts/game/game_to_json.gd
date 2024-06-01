@@ -51,7 +51,7 @@ func convert_game(game: Game) -> void:
 	
 	# Provinces
 	var provinces_data: Array = []
-	for province in game.world.provinces.get_provinces():
+	for province in game.world.provinces.list():
 		var province_data: Dictionary = {
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},

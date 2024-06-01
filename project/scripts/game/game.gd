@@ -299,7 +299,7 @@ func _setup_global_modifiers() -> void:
 ## If that country doesn't control any province, this method does nothing
 func _move_camera_to_country(country: Country) -> void:
 	var target_province: Province
-	for province in world.provinces.get_provinces():
+	for province in world.provinces.list():
 		if province.owner_country and province.owner_country == country:
 			target_province = province
 			break
@@ -349,7 +349,7 @@ func _check_percentage_winner() -> void:
 	var ownership: Array = _province_count_per_country()
 	
 	# Declare a winner if there is one
-	var number_of_provinces: int = world.provinces.get_provinces().size()
+	var number_of_provinces: int = world.provinces.list().size()
 	for o: Array in ownership:
 		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
 			_on_game_over()
@@ -363,7 +363,7 @@ func _check_percentage_winner() -> void:
 func _province_count_per_country() -> Array:
 	var output: Array = []
 	
-	for province in world.provinces.get_provinces():
+	for province in world.provinces.list():
 		if not province.owner_country:
 			continue
 		

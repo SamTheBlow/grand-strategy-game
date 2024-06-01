@@ -68,10 +68,10 @@ func loop() -> void:
 
 func _end_player_turn() -> void:
 	# Merge armies
-	for province in game.world.provinces.get_provinces():
+	for province in game.world.provinces.list():
 		game.world.armies.merge_armies(province)
 	
-	for province in game.world.provinces.get_provinces():
+	for province in game.world.provinces.list():
 		# Update province ownership
 		ProvinceNewOwner.new().update_province_owner(province)
 		

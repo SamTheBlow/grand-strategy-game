@@ -21,7 +21,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 	
-	var provinces: Array[Province] = game.world.provinces.get_provinces()
+	var provinces: Array[Province] = game.world.provinces.list()
 	var number_of_provinces: int = provinces.size()
 	for i in number_of_provinces:
 		var province: Province = provinces[i]

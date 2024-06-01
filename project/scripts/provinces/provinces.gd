@@ -5,7 +5,6 @@ extends Node2D
 ## Also responsible for the user's selected province.
 ##
 ## Note that you are currently not meant to remove provinces from this list.
-# TODO have a convenient _list member just like in all the other list classes
 
 
 ## What province is currently being selected.
@@ -13,9 +12,12 @@ extends Node2D
 ## and or perform [Action]s on that province.
 var selected_province: Province
 
+var _list: Array[Province] = []
+
 
 func add_province(province: Province) -> void:
 	add_child(province)
+	_list.append(province)
 
 
 func select_province(province: Province, can_target_links: bool) -> void:
@@ -33,20 +35,14 @@ func deselect_province() -> void:
 	selected_province = null
 
 
-## Creates a brand new array every time.
-func get_provinces() -> Array[Province]:
-	var output: Array[Province] = []
-	var children: Array[Node] = get_children()
-	for child in children:
-		output.append(child as Province)
-	return output
+## Returns a new copy of the list.
+func list() -> Array[Province]:
+	return _list.duplicate()
 
 
 func provinces_of_country(country: Country) -> Array[Province]:
 	var output: Array[Province] = []
-	var children: Array[Node] = get_children()
-	for child in children:
-		var province := child as Province
+	for province in _list:
 		if province.owner_country and province.owner_country == country:
 			output.append(province)
 	return output
@@ -54,9 +50,7 @@ func provinces_of_country(country: Country) -> Array[Province]:
 
 func provinces_on_frontline(country: Country) -> Array[Province]:
 	var output: Array[Province] = []
-	var children: Array[Node] = get_children()
-	for child in children:
-		var province := child as Province
+	for province in _list:
 		if (
 				province.owner_country
 				and province.owner_country == country
@@ -66,9 +60,9 @@ func provinces_on_frontline(country: Country) -> Array[Province]:
 	return output
 
 
+## Returns null if no province has the given id.
 func province_from_id(id: int) -> Province:
-	var provinces: Array[Province] = get_provinces()
-	for province in provinces:
+	for province in _list:
 		if province.id == id:
 			return province
 	return null

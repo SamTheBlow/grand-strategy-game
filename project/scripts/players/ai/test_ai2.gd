@@ -19,7 +19,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		_new_id_index = maxi(_new_id_index, army.id)
 	_new_id_index += 1
 	
-	var provinces: Array[Province] = game.world.provinces.get_provinces()
+	var provinces: Array[Province] = game.world.provinces.list()
 	var number_of_provinces: int = provinces.size()
 	
 	# Get a list of all my provinces
