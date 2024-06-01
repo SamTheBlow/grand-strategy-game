@@ -28,11 +28,11 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var borders: Array[Province] = []
 	for i in number_of_provinces:
 		var province: Province = provinces[i]
-		if province.owner_country() != player.playing_country:
+		if province.owner_country != player.playing_country:
 			continue
 		my_provinces.append(province)
 		for link in province.links:
-			if link.owner_country() != player.playing_country:
+			if link.owner_country != player.playing_country:
 				borders.append(province)
 				break
 	
@@ -46,7 +46,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				game, province, true, player.playing_country
 		)
 		for link in province.links:
-			if link.owner_country() == player.playing_country:
+			if link.owner_country == player.playing_country:
 				continue
 			var enemy_army_size: int = _army_size(
 					game, link, false, player.playing_country
@@ -85,7 +85,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			# Get a list of all the hostile neighbors
 			var hostile_neighbors: Array[Province] = []
 			for link in province.links:
-				if link.owner_country() != province.owner_country():
+				if link.owner_country != province.owner_country:
 					hostile_neighbors.append(link)
 			
 			# If there is only one, then it's safe to full send.
@@ -298,7 +298,7 @@ func _nearest_frontlines(
 	for link_branch: Array in link_tree:
 		var furthest_province: Province = link_branch[link_branch.size() - 1]
 		for link in furthest_province.links:
-			if link.owner_country() != source_province.owner_country():
+			if link.owner_country != source_province.owner_country:
 				frontline_branches.append(link_branch)
 				break
 	# If we found any, then we're done

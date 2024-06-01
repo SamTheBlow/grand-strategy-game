@@ -24,7 +24,7 @@ func _init(country: Country, province: Province) -> void:
 	_country = country
 	_province = province
 	
-	_province.owner_country_changed.connect(_on_province_owner_changed)
+	_province.owner_changed.connect(_on_province_owner_changed)
 	_country.money_changed.connect(_on_money_changed)
 	_province.population.size_changed.connect(_on_population_size_changed)
 	
@@ -49,7 +49,7 @@ func _calculate_maximum() -> int:
 		error_message = "The game's rules don't allow it!"
 		return 0
 	
-	if _province.owner_country() != _country:
+	if _province.owner_country != _country:
 		error_message = "The province is not under your country's control!"
 		return 0
 	
@@ -98,8 +98,8 @@ func _check_condition(condition: bool) -> void:
 	changed.emit(_maximum)
 
 
-func _on_province_owner_changed(owner_country: Country) -> void:
-	_check_condition(owner_country == _country)
+func _on_province_owner_changed(country: Country) -> void:
+	_check_condition(country == _country)
 
 
 func _on_money_changed(_money: int) -> void:

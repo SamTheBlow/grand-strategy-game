@@ -311,13 +311,13 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 		shape.append(Vector2(
 				json_data["shape"]["x"][i], json_data["shape"]["y"][i]
 		))
-	province.set_shape(shape)
+	province.polygon = shape
 	
 	province.position = (
 			Vector2(json_data["position"]["x"], json_data["position"]["y"])
 	)
 	
-	province.set_owner_country(
+	province.owner_country = (
 			game.countries.country_from_id(json_data["owner_country_id"])
 	)
 	

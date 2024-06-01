@@ -6,7 +6,8 @@
 [node name="Province" type="Node2D"]
 script = ExtResource("1_mdkkc")
 
-[node name="Shape" type="Polygon2D" parent="."]
+[node name="Shape" type="Polygon2D" parent="." node_paths=PackedStringArray("province")]
 script = ExtResource("2_okqgr")
+province = NodePath("..")
 
 [connection signal="clicked" from="Shape" to="." method="_on_shape_clicked"]

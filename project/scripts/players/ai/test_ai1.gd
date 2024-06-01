@@ -105,8 +105,8 @@ func _find_target_province(
 	var targets: Array = []
 	for link_branch: Array in link_tree:
 		var furthest_link: int = link_branch.size() - 1
-		var link_owner: Country = link_branch[furthest_link].owner_country()
-		if link_owner.id != army.owner_country.id:
+		var link_owner: Country = link_branch[furthest_link].owner_country
+		if (not link_owner) or (link_owner.id != army.owner_country.id):
 			targets.append(link_branch)
 	
 	# If there's any, send troops evenly to each province

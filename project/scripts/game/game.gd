@@ -300,10 +300,7 @@ func _setup_global_modifiers() -> void:
 func _move_camera_to_country(country: Country) -> void:
 	var target_province: Province
 	for province in world.provinces.get_provinces():
-		if (
-				province.has_owner_country()
-				and province.owner_country() == country
-		):
+		if province.owner_country and province.owner_country == country:
 			target_province = province
 			break
 	if target_province:
@@ -367,37 +364,25 @@ func _province_count_per_country() -> Array:
 	var output: Array = []
 	
 	for province in world.provinces.get_provinces():
-		if not province.has_owner_country():
+		if not province.owner_country:
 			continue
 		
 		# Find the country on our list
 		var index: int = -1
 		var output_size: int = output.size()
 		for i in output_size:
-			if output[i][0] == province.owner_country():
+			if output[i][0] == province.owner_country:
 				index = i
 				break
 		
 		# It isn't on our list. Add it
 		if index == -1:
-			output.append([province.owner_country(), 1])
+			output.append([province.owner_country, 1])
 		# It is on our list. Increase its number of owned provinces
 		else:
 			output[index][1] += 1
 	
 	return output
-
-
-## Adds an outline to a given [Province]'s links.
-## Set target_outline to true to outline them
-## as a target for an action (i.e. army movement).
-func _outline_province_links(
-		province: Province, target_outline: bool = false
-) -> void:
-	var outline_type := ProvinceShapePolygon2D.OutlineType.NEIGHBOR
-	if target_outline:
-		outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
-	province.show_neighbors(outline_type)
 
 
 func _on_new_turn(_turn: int) -> void:
@@ -426,8 +411,7 @@ func _on_province_clicked(province: Province) -> void:
 	var provinces_node: Provinces = world.provinces
 	
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, _you):
-		provinces_node.select_province(province)
-		_outline_province_links(province)
+		provinces_node.select_province(province, false)
 		return
 	
 	var your_country: Country = _you.playing_country
@@ -441,15 +425,13 @@ func _on_province_clicked(province: Province) -> void:
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return
-	provinces_node.select_province(province)
-	
-	var active_armies_: Array[Army] = world.armies.active_armies(
-			your_country, province
+	var active_armies_: Array[Army] = (
+			world.armies.active_armies(your_country, province)
 	)
-	_outline_province_links(province, active_armies_.size() > 0)
+	provinces_node.select_province(province, active_armies_.size() > 0)
 
 
-func _on_province_selected() -> void:
+func _on_province_selected(_can_target_links: bool) -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
 	component_ui.init(world.provinces.selected_province, _you)
 	turn.player_changed.connect(component_ui._on_turn_player_changed)

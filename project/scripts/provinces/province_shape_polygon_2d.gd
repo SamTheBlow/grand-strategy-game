@@ -17,20 +17,36 @@ enum OutlineType {
 	NEIGHBOR = 3,
 }
 
-var outline_type: OutlineType = OutlineType.NONE:
-	set(value):
-		outline_type = value
-		queue_redraw()
+@export var province: Province
 
-var outline_color := Color.WEB_GRAY:
+@export var outline_color := Color.WEB_GRAY:
 	set(value):
 		outline_color = value
 		queue_redraw()
 
-var outline_width: float = 10.0:
+@export var outline_width: float = 10.0:
 	set(value):
 		outline_width = value
 		queue_redraw()
+
+var _outline_type: OutlineType = OutlineType.NONE:
+	set(value):
+		_outline_type = value
+		queue_redraw()
+
+
+func _ready() -> void:
+	if not province:
+		print_debug("Province shape doesn't have reference to province!")
+		return
+	
+	province.owner_changed.connect(_on_owner_changed)
+	_on_owner_changed(province.owner_country)
+	province.selected.connect(_on_selected)
+	province.deselected.connect(_on_deselected)
+	for link in province.links:
+		link.selected.connect(_on_link_selected)
+		link.deselected.connect(_on_deselected)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -57,7 +73,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _draw() -> void:
-	match outline_type:
+	match _outline_type:
 		OutlineType.NONE:
 			pass
 		OutlineType.SELECTED:
@@ -79,3 +95,25 @@ func _draw_outline(
 		draw_line(poly[i - 1], poly[i], ocolor, width)
 		draw_circle(poly[i], radius, ocolor)
 	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
+
+
+func _on_owner_changed(country: Country) -> void:
+	if country:
+		color = country.color
+	else:
+		color = Color.WHITE
+
+
+func _on_selected(_can_target_links: bool) -> void:
+	_outline_type = ProvinceShapePolygon2D.OutlineType.SELECTED
+
+
+func _on_link_selected(can_target_links: bool) -> void:
+	if can_target_links:
+		_outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
+	else:
+		_outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR
+
+
+func _on_deselected() -> void:
+	_outline_type = ProvinceShapePolygon2D.OutlineType.NONE

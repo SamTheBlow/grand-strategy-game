@@ -18,13 +18,13 @@ func add_province(province: Province) -> void:
 	add_child(province)
 
 
-func select_province(province: Province) -> void:
+func select_province(province: Province, can_target_links: bool) -> void:
 	if selected_province == province:
 		return
 	if selected_province:
 		selected_province.deselect()
 	selected_province = province
-	selected_province.select()
+	selected_province.select(can_target_links)
 
 
 func deselect_province() -> void:
@@ -47,10 +47,7 @@ func provinces_of_country(country: Country) -> Array[Province]:
 	var children: Array[Node] = get_children()
 	for child in children:
 		var province := child as Province
-		if (
-				province.has_owner_country()
-				and province.owner_country() == country
-		):
+		if province.owner_country and province.owner_country == country:
 			output.append(province)
 	return output
 
@@ -61,8 +58,8 @@ func provinces_on_frontline(country: Country) -> Array[Province]:
 	for child in children:
 		var province := child as Province
 		if (
-				province.has_owner_country()
-				and province.owner_country() == country
+				province.owner_country
+				and province.owner_country == country
 				and province.is_frontline()
 		):
 			output.append(province)

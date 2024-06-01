@@ -11,7 +11,7 @@ func reinforce_province(province: Province) -> void:
 	if not province.game.rules.reinforcements_enabled:
 		return
 	
-	if not province.has_owner_country():
+	if not province.owner_country:
 		return
 	
 	var reinforcements_size: int = 0
@@ -36,7 +36,7 @@ func reinforce_province(province: Province) -> void:
 			province.game,
 			province.game.world.armies.new_unique_id(),
 			reinforcements_size,
-			province.owner_country(),
+			province.owner_country,
 			province
 	)
 	province.game.world.armies.merge_armies(province)

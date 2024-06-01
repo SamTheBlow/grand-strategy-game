@@ -10,13 +10,14 @@ extends Node2D
 ##
 ## See [method GameFromJSON._load_province]
 ## to see how to initialize a new province.
+# TODO move visuals to their own class
 
 
 signal clicked(this_province: Province)
-signal selected()
+signal selected(can_target_links: bool)
 signal deselected()
 
-signal owner_country_changed(owner_country: Country)
+signal owner_changed(country: Country)
 
 ## External reference
 var game: Game:
@@ -45,21 +46,48 @@ var id: int:
 var army_stack: ArmyStack
 var buildings: Buildings
 
-# Positions
 ## Where this province's [ArmyStack] will be positioned,
 ## relative to this province's position.
 var position_army_host: Vector2
 
-# Other data
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
 var links: Array[Province] = []
-## The [Country] in control of this province.
-var _owner_country := Country.new()
+
+## The [Country] in control of this province. This can be null.
+## Must initialize when the province is created.
+var owner_country: Country:
+	get:
+		# This is to preserve compatibility with 4.0 version.
+		# In 4.0, owner_country was never null, and
+		# an unclaimed country was a country with a negative id.
+		if owner_country and owner_country.id < 0:
+			return null
+		return owner_country
+	set(value):
+		if value == owner_country:
+			return
+		owner_country = value
+		owner_changed.emit(owner_country)
+
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
+
 var population: Population
+
+## The list of vertices forming this province's polygon shape.
+var polygon: PackedVector2Array:
+	get:
+		return _shape.polygon
+	set(value):
+		_shape.polygon = value
+
+var _shape: ProvinceShapePolygon2D:
+	get:
+		if not _shape:
+			_shape = $Shape as ProvinceShapePolygon2D
+		return _shape
 
 
 ## To be called when this node is created.
@@ -68,64 +96,16 @@ func init() -> void:
 	_setup_buildings()
 
 
-func province_shape() -> ProvinceShapePolygon2D:
-	return $Shape as ProvinceShapePolygon2D
-
-
-func has_owner_country() -> bool:
-	return _owner_country.id >= 0
-
-
-func owner_country() -> Country:
-	return _owner_country
-
-
-# TODO use setters
-func set_owner_country(country: Country) -> void:
-	if country == _owner_country:
-		return
-	_owner_country = country
-	
-	var shape_node: ProvinceShapePolygon2D = province_shape()
-	shape_node.color = country.color
-
-
 func income_money() -> IncomeMoney:
 	return _income_money
 
 
-func get_shape() -> PackedVector2Array:
-	return province_shape().polygon
-
-
-# TODO use setters?
-func set_shape(polygon: PackedVector2Array) -> void:
-	province_shape().polygon = polygon
-
-
-func select() -> void:
-	province_shape().outline_type = ProvinceShapePolygon2D.OutlineType.SELECTED
-	selected.emit()
+func select(can_target_links: bool) -> void:
+	selected.emit(can_target_links)
 
 
 func deselect() -> void:
-	var shape_node: ProvinceShapePolygon2D = province_shape()
-	if shape_node.outline_type == ProvinceShapePolygon2D.OutlineType.SELECTED:
-		for link in links:
-			link.deselect()
-		deselected.emit()
-	shape_node.outline_type = ProvinceShapePolygon2D.OutlineType.NONE
-
-
-## Outlines all of this province's links with given outline type.
-func show_neighbors(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
-	for link in links:
-		link.show_as_neighbor(outline_type)
-
-
-## Outlines this province's shape with given outline type.
-func show_as_neighbor(outline_type: ProvinceShapePolygon2D.OutlineType) -> void:
-	province_shape().outline_type = outline_type
+	deselected.emit()
 
 
 func is_linked_to(province: Province) -> bool:
@@ -136,7 +116,7 @@ func is_linked_to(province: Province) -> bool:
 ## are controlled by a different [Country].
 func is_frontline() -> bool:
 	for link in links:
-		if link.has_owner_country() and link.owner_country() != _owner_country:
+		if link.owner_country and link.owner_country != owner_country:
 			return true
 	return false
 
@@ -156,7 +136,8 @@ func _setup_buildings() -> void:
 
 func _on_new_turn(_turn: int) -> void:
 	ArmyReinforcements.new().reinforce_province(self)
-	_owner_country.money += _income_money.total()
+	if owner_country:
+		owner_country.money += _income_money.total()
 
 
 func _on_shape_clicked() -> void:

@@ -50,7 +50,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			game,
 			_new_army_id,
 			_number_of_troops,
-			province.owner_country(),
+			province.owner_country,
 			province
 	)
 	game.world.armies.merge_armies(province)

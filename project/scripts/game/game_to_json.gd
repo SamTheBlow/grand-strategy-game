@@ -55,11 +55,16 @@ func convert_game(game: Game) -> void:
 		var province_data: Dictionary = {
 			"id": province.id,
 			"position": {"x": province.position.x, "y": province.position.y},
-			"owner_country_id": province.owner_country().id,
 			"income_money": province.income_money().base_income,
 			"position_army_host_x": province.position_army_host.x,
 			"position_army_host_y": province.position_army_host.y,
 		}
+		
+		# This is to preserve compatibility with 4.0 version.
+		if province.owner_country:
+			province_data["owner_country_id"] = province.owner_country.id
+		else:
+			province_data["owner_country_id"] = -1
 		
 		# Links
 		var links_json: Array = []
@@ -68,7 +73,7 @@ func convert_game(game: Game) -> void:
 		province_data["links"] = links_json
 		
 		# Shape
-		var shape_vertices := Array(province.province_shape().polygon)
+		var shape_vertices := Array(province.polygon)
 		var shape_vertices_x: Array = []
 		var shape_vertices_y: Array = []
 		for i in shape_vertices.size():
