@@ -41,6 +41,25 @@ grow_vertical = 2
 size_flags_vertical = 3
 text = "Host Server"
 
+[node name="InterfaceConnecting" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CancelButton" type="Button" parent="InterfaceConnecting"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Cancel"
+
 [node name="InterfaceConnected" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
@@ -62,4 +81,5 @@ size_flags_vertical = 3
 text = "Disconnect"
 
 [connection signal="pressed" from="InterfaceDisconnected/HostButton" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="InterfaceConnecting/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="InterfaceConnected/DisconnectButton" to="." method="_on_disconnect_button_pressed"]
