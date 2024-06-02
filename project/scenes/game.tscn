@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://scenes/ui/top_bar.tscn" id="20_qfiqr"]
+[ext_resource type="Script" path="res://scripts/camera/camera_event_movement.gd" id="20_qrqmv"]
 [ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
 [ext_resource type="Script" path="res://scripts/ui/id_button.gd" id="21_l7714"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://scenes/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
@@ -73,6 +74,11 @@ camera = NodePath("..")
 [node name="CameraZoom" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
 script = ExtResource("4_331yk")
 camera = NodePath("..")
+
+[node name="CameraEventMovement" type="Node" parent="Camera" node_paths=PackedStringArray("_game", "_camera")]
+script = ExtResource("20_qrqmv")
+_game = NodePath("../..")
+_camera = NodePath("..")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2

@@ -257,7 +257,6 @@ func set_human_player(player: GamePlayer) -> void:
 	
 	_you = player
 	_you.human_status_changed.connect(_on_your_human_status_changed)
-	_move_camera_to_country(_you.playing_country)
 	
 	# Only announce a new player's turn when there is more than 1 human player
 	if game_players.number_of_playing_humans() < 2:
@@ -290,18 +289,6 @@ func _setup_global_modifiers() -> void:
 						rules.global_defender_efficiency
 				)
 		)
-
-
-## Moves the camera to one of the country's controlled provinces
-## If that country doesn't control any province, this method does nothing
-func _move_camera_to_country(country: Country) -> void:
-	var target_province: Province
-	for province in world.provinces.list():
-		if province.owner_country and province.owner_country == country:
-			target_province = province
-			break
-	if target_province:
-		camera.move_to(target_province.position_army_host)
 
 
 ## Used to determine the winner when the game ends.
