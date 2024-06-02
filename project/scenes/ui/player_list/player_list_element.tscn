@@ -8,22 +8,13 @@
 [ext_resource type="Texture2D" uid="uid://c3emi5jqexqek" path="res://assets/rename_button_256.png" id="6_pcq7h"]
 [ext_resource type="Texture2D" uid="uid://c4um15dj3d267" path="res://assets/confirm_button_256.png" id="7_6ekdo"]
 
-[node name="PlayerListElement" type="Control" node_paths=PackedStringArray("color_rect", "container", "username_label", "username_edit", "username_line_edit", "circle_buttons", "remove_button", "rename_button", "confirm_button")]
+[node name="PlayerListElement" type="Control"]
 clip_contents = true
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
 script = ExtResource("1_q6tiq")
-color_rect = NodePath("ColorRect")
-container = NodePath("HBoxContainer")
-username_label = NodePath("HBoxContainer/Username")
-username_edit = NodePath("HBoxContainer/UsernameEdit")
-username_line_edit = NodePath("HBoxContainer/UsernameEdit/LineEdit")
-circle_buttons = NodePath("CircleButtons")
-remove_button = NodePath("CircleButtons/RemoveButton")
-rename_button = NodePath("CircleButtons/RenameButton")
-confirm_button = NodePath("CircleButtons/ConfirmButton")
 username_color_human = Color(1, 1, 1, 1)
 bg_color_human = Color(0, 0, 0, 0.12549)
 
@@ -36,7 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.12549)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="Contents" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -44,13 +35,14 @@ offset_bottom = 23.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Spacing" type="Control" parent="HBoxContainer"]
+[node name="Spacing" type="Control" parent="Contents"]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.15
 
-[node name="Username" type="Label" parent="HBoxContainer"]
+[node name="UsernameLabel" type="Label" parent="Contents"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.85
@@ -59,14 +51,16 @@ text = "Player"
 vertical_alignment = 1
 clip_text = true
 
-[node name="UsernameEdit" type="Control" parent="HBoxContainer"]
+[node name="UsernameEdit" type="Control" parent="Contents"]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.85
 mouse_filter = 1
 
-[node name="LineEdit" type="LineEdit" parent="HBoxContainer/UsernameEdit"]
+[node name="UsernameLineEdit" type="LineEdit" parent="Contents/UsernameEdit"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 9
 anchor_bottom = 1.0
@@ -104,6 +98,7 @@ expand_mode = 1
 stretch_mode = 5
 
 [node name="CircleButtons" type="Control" parent="."]
+unique_name_in_owner = true
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -115,6 +110,7 @@ mouse_filter = 1
 script = ExtResource("2_w6q2s")
 
 [node name="RemoveButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 offset_left = 1152.0
 offset_right = 1152.0
@@ -126,6 +122,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="RenameButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
 layout_mode = 2
 offset_left = 1150.0
 offset_right = 1150.0
@@ -137,6 +134,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [node name="ConfirmButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 offset_left = 1148.0
@@ -150,7 +148,7 @@ stretch_mode = 5
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
-[connection signal="focus_exited" from="HBoxContainer/UsernameEdit/LineEdit" to="." method="_on_username_line_edit_focus_exited"]
+[connection signal="focus_exited" from="Contents/UsernameEdit/UsernameLineEdit" to="." method="_on_username_line_edit_focus_exited"]
 [connection signal="pressed" from="CircleButtons/RemoveButton" to="." method="_on_remove_button_pressed"]
 [connection signal="pressed" from="CircleButtons/RenameButton" to="." method="_on_rename_button_pressed"]
 [connection signal="pressed" from="CircleButtons/ConfirmButton" to="." method="_on_confirm_button_pressed"]

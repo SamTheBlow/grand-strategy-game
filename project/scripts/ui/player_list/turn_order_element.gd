@@ -6,13 +6,13 @@ extends Control
 ## and to turn it into either a local human or an AI.
 ## It also shows with an arrow if it's this player's turn to play.
 ## The circular buttons only appear when the mouse hovers over the box
-## (except when renaming a player).[br][br]
-##
+## (except when renaming a player).
+## [br][br]
 ## To use, you'll need to call "init()" and set the "player" property.
 ## You also have to set the "turn" property if you want the arrow to appear.
-##
+## [br][br]
 ## For this to work, you need to make sure that the mouse filter
-## of Control nodes in the player list is set to "Pass".
+## in the scene's Control nodes is set to "Pass".
 
 
 signal new_player_requested(game_player: GamePlayer)
@@ -123,6 +123,7 @@ func init() -> void:
 
 func _update_shown_username() -> void:
 	if not player:
+		print_debug("Player was not initialized")
 		username_label.text = ""
 		return
 	
