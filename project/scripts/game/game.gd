@@ -34,8 +34,6 @@ signal game_ended()
 @export var camera: CustomCamera2D
 @export var game_ui: Control
 @export var component_ui_root: Control
-@export var top_bar: TopBar
-@export var lobby_list_root: Node
 @export var popups: Control
 
 @export_category("Resources")
@@ -259,7 +257,6 @@ func set_human_player(player: GamePlayer) -> void:
 	
 	_you = player
 	_you.human_status_changed.connect(_on_your_human_status_changed)
-	top_bar.set_playing_country(_you.playing_country)
 	_move_camera_to_country(_you.playing_country)
 	
 	# Only announce a new player's turn when there is more than 1 human player

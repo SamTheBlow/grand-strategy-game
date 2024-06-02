@@ -3,34 +3,38 @@ extends Control
 ## The top bar that appears during a game.
 ## Shows useful information to the user.
 ##
-## Note that currently, you must manually call set_playing_country
-## when you want to update the interface's [Country] information.
-# TODO set_playing_country should be private and called automoatically
-# from here by listening to [GameTurn]'s player_changed signal
-# TODO the child node refs should probably be onready instead of export
+## The information is automatically updated. No setup required!
 
 
-@export_group("External nodes")
 @export var _game: Game
-
-@export_group("Child nodes")
-@export var country_color_rect: ColorRect
-@export var country_name_label: Label
-@export var country_money_label: Label
-@export var game_turn_label: Label
 
 # We need to store this so that we can disconnect it later
 var _money_changed_signal: Signal
 
+@onready var _country_color_rect := %CountryColorRect as ColorRect
+@onready var _country_name_label := %CountryNameLabel as Label
+@onready var _country_money_label := %CountryMoneyLabel as Label
+@onready var _game_turn_label := %GameTurnLabel as Label
+
 
 func _ready() -> void:
-	_update_turn_label(_game.turn.current_turn())
+	if not _game:
+		push_error("No game was provided to top bar.")
+		return
+	
 	_game.turn.turn_changed.connect(_on_turn_changed)
+	_update_turn_label(_game.turn.current_turn())
+	_game.turn.player_changed.connect(_on_turn_player_changed)
+	_update_country(_game.turn.playing_player().playing_country)
 
 
-func set_playing_country(country: Country) -> void:
-	country_color_rect.color = country.color
-	country_name_label.text = country.country_name
+func _update_country(country: Country) -> void:
+	if not country:
+		print_debug("Tried to update top bar info, but country is null.")
+		return
+	
+	_country_color_rect.color = country.color
+	_country_name_label.text = country.country_name
 	
 	_update_money_label(country.money)
 	if _money_changed_signal:
@@ -40,11 +44,11 @@ func set_playing_country(country: Country) -> void:
 
 
 func _update_money_label(money: int) -> void:
-	country_money_label.text = str(money)
+	_country_money_label.text = str(money)
 
 
 func _update_turn_label(turn: int) -> void:
-	game_turn_label.text = "Turn " + str(turn)
+	_game_turn_label.text = "Turn " + str(turn)
 
 
 func _on_money_changed(new_amount: int) -> void:
@@ -53,3 +57,7 @@ func _on_money_changed(new_amount: int) -> void:
 
 func _on_turn_changed(new_turn: int) -> void:
 	_update_turn_label(new_turn)
+
+
+func _on_turn_player_changed(player: GamePlayer) -> void:
+	_update_country(player.playing_country)

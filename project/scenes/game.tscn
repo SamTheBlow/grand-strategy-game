@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=28 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -14,8 +14,6 @@
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://scenes/ui/player_turn_announcement.tscn" id="8_e0v4f"]
 [ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://scenes/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://scenes/ui/player_list/player_list.tscn" id="9_pkxqv"]
-[ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="10_2dak6"]
-[ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="10_87bnf"]
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://scenes/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://scenes/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="Script" path="res://scripts/networking/action_synchronizer.gd" id="15_o3imi"]
@@ -23,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
+[ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://scenes/ui/top_bar.tscn" id="20_qfiqr"]
 [ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
 [ext_resource type="Script" path="res://scripts/ui/id_button.gd" id="21_l7714"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://scenes/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
@@ -33,7 +32,7 @@ bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "game_ui", "component_ui_root", "top_bar", "lobby_list_root", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "game_ui", "component_ui_root", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -53,8 +52,6 @@ action_sync = NodePath("ActionSynchronizer")
 camera = NodePath("Camera")
 game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
-top_bar = NodePath("UILayer/GameUI/TopBar")
-lobby_list_root = NodePath("UILayer/GameUI/RightSide/Content/LobbyList")
 popups = NodePath("UILayer/GameUI/Popups")
 battle = ExtResource("15_vh3er")
 
@@ -93,207 +90,9 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="TopBar" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game", "country_color_rect", "country_name_label", "country_money_label", "game_turn_label")]
+[node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1
-anchor_right = 1.0
-anchor_bottom = 0.1
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("10_87bnf")
 _game = NodePath("../../..")
-country_color_rect = NodePath("HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor/ColorRect")
-country_name_label = NodePath("HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryName/Label")
-country_money_label = NodePath("HBoxContainer/Money/HBoxContainer/Text")
-game_turn_label = NodePath("HBoxContainer/GameTurn/Label")
-
-[node name="BackgroundColor" type="ColorRect" parent="UILayer/GameUI/TopBar"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-color = Color(0.188235, 0.188235, 0.25098, 1)
-
-[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/TopBar"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="YourCountry" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
-
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.075
-anchor_top = 0.075
-anchor_right = 0.925
-anchor_bottom = 0.925
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer"]
-layout_mode = 2
-
-[node name="CountryColor" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
-
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.0314592
-anchor_right = 1.0
-anchor_bottom = 0.968541
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("10_2dak6")
-aspect_ratio = 1.66
-
-[node name="Spacing" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.05
-
-[node name="CountryName" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.65
-
-[node name="Label" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryName"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty"
-vertical_alignment = 1
-clip_text = true
-
-[node name="Separator" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-
-[node name="VSeparator" type="VSeparator" parent="UILayer/GameUI/TopBar/HBoxContainer/Separator"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.1
-anchor_right = 1.0
-anchor_bottom = 0.9
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Money" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.2
-
-[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/TopBar/HBoxContainer/Money"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Icon" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.25
-
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.2
-anchor_top = 0.2
-anchor_right = 0.8
-anchor_bottom = 0.8
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Control" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer"]
-layout_mode = 2
-
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.0657895
-anchor_right = 1.0
-anchor_bottom = 0.934211
-script = ExtResource("10_2dak6")
-
-[node name="Label" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-theme_override_font_sizes/font_size = 32
-text = "$"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="Text" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/Money/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.75
-text = "69420"
-vertical_alignment = 1
-
-[node name="Separator2" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-visible = false
-layout_mode = 2
-
-[node name="VSeparator" type="VSeparator" parent="UILayer/GameUI/TopBar/HBoxContainer/Separator2"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.1
-anchor_right = 1.0
-anchor_bottom = 0.9
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="Spacing" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
-
-[node name="Separator3" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-
-[node name="VSeparator" type="VSeparator" parent="UILayer/GameUI/TopBar/HBoxContainer/Separator3"]
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.1
-anchor_right = 1.0
-anchor_bottom = 0.9
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="GameTurn" type="Control" parent="UILayer/GameUI/TopBar/HBoxContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.2
-
-[node name="Label" type="Label" parent="UILayer/GameUI/TopBar/HBoxContainer/GameTurn"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Turn 69420"
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="RightSide" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
