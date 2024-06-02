@@ -27,18 +27,18 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	var troop_maximum := ArmyRecruitmentLimit.new(your_country, province)
-	if troop_maximum.maximum() < _number_of_troops:
+	var recruit_limits := ArmyRecruitmentLimits.new(your_country, province)
+	if recruit_limits.maximum() < _number_of_troops:
 		print_debug(
 				"Tried to recruit troops, but not all conditions were met: "
-				+ troop_maximum.error_message
+				+ recruit_limits.error_message
 		)
 		return
-	
-	# TODO it should be OK to recruit less than minimum if there's 
-	# already enough troops in that province
-	if _number_of_troops < game.rules.minimum_army_size:
-		print_debug("Tried recruiting less than the minimum army size.")
+	if recruit_limits.minimum() > _number_of_troops:
+		print_debug(
+				"Tried recruiting an army, but the army's size "
+				+ "would be smaller than the minimum allowed."
+		)
 		return
 	
 	your_country.money -= Army.money_cost(_number_of_troops, game.rules)
@@ -46,6 +46,13 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			Army.population_cost(_number_of_troops, game.rules)
 	)
 	
+	# If you already have an active army in this province, increase its size.
+	for army in game.world.armies.armies_in_province(province):
+		if army.owner_country == your_country and army.is_able_to_move():
+			army.army_size.add(_number_of_troops)
+			return
+	
+	# Otherwise, create a new army instead.
 	var _army: Army = Army.quick_setup(
 			game,
 			_new_army_id,
@@ -53,7 +60,6 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			province.owner_country,
 			province
 	)
-	game.world.armies.merge_armies(province)
 
 
 ## Returns this action's raw data, for the purpose of

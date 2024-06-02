@@ -18,7 +18,7 @@ var _province: Province
 ## To be called when this node is created.
 func init(province: Province, min_amount: int, max_amount: int) -> void:
 	_province = province
-	troop_slider.min_value = min_amount
+	troop_slider.min_value = maxi(1, min_amount)
 	troop_slider.max_value = max_amount
 	troop_slider.value = troop_slider.max_value
 	_new_slider_value()

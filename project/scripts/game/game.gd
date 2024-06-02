@@ -456,7 +456,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			_add_popup(build_popup)
 		1:
 			# Recruitment
-			var army_recruitment_limit := ArmyRecruitmentLimit.new(
+			var army_recruitment_limits := ArmyRecruitmentLimits.new(
 					_you.playing_country,
 					world.provinces.selected_province
 			)
@@ -465,8 +465,8 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			)
 			recruitment_popup.init(
 					world.provinces.selected_province,
-					rules.minimum_army_size,
-					army_recruitment_limit.maximum()
+					army_recruitment_limits.minimum(),
+					army_recruitment_limits.maximum()
 			)
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 			_add_popup(recruitment_popup)

@@ -136,8 +136,7 @@ anchor_right = 1.0
 anchor_bottom = 0.934211
 script = ExtResource("2_wy4xe")
 
-[node name="CountryMoneyLabel" type="Label" parent="HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
-unique_name_in_owner = true
+[node name="DollarSign" type="Label" parent="HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -150,7 +149,8 @@ text = "$"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Text" type="Label" parent="HBoxContainer/Money/HBoxContainer"]
+[node name="CountryMoneyLabel" type="Label" parent="HBoxContainer/Money/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.75

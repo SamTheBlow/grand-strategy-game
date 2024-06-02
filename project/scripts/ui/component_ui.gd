@@ -44,7 +44,7 @@ var _playing_player: GamePlayer:
 
 var _province: Province
 var _fortress_build_conditions: FortressBuildConditions
-var _army_recruitment_limit: ArmyRecruitmentLimit
+var _army_recruit_limits: ArmyRecruitmentLimits
 
 
 func _ready() -> void:
@@ -130,11 +130,11 @@ func init(province: Province, playing_player: GamePlayer) -> void:
 		node0.hide()
 	
 	if province.game.rules.recruitment_enabled:
-		_army_recruitment_limit = ArmyRecruitmentLimit.new(
+		_army_recruit_limits = ArmyRecruitmentLimits.new(
 				playing_player.playing_country, _province
 		)
-		_army_recruitment_limit.changed.connect(_on_army_maximum_changed)
-		_on_army_maximum_changed(_army_recruitment_limit.maximum())
+		_army_recruit_limits.maximum_changed.connect(_on_army_maximum_changed)
+		_on_army_maximum_changed(_army_recruit_limits.maximum())
 		left_side_nodes.append(node1)
 	else:
 		node1.hide()
@@ -191,7 +191,7 @@ func _update_build_fortress_button_disabled() -> void:
 func _update_recruit_button_disabled() -> void:
 	recruit_button.disabled = (
 			_is_actions_disabled() or
-			_army_recruitment_limit.maximum()
+			_army_recruit_limits.maximum()
 			< _province.game.rules.minimum_army_size
 	)
 
