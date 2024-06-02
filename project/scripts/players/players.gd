@@ -303,13 +303,8 @@ func _consider_add_local_player() -> void:
 
 # TODO bad code DRY: copy/paste from [Player]
 func _is_not_allowed_to_make_changes() -> bool:
-	return (
-			multiplayer
-			and multiplayer.has_multiplayer_peer()
-			and multiplayer.multiplayer_peer.get_connection_status()
-			== MultiplayerPeer.CONNECTION_CONNECTED
-			and (not multiplayer.is_server())
-			and (not _is_synchronizing)
+	return not (
+			MultiplayerUtils.has_authority(multiplayer) or _is_synchronizing
 	)
 
 

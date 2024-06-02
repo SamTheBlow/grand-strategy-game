@@ -1,5 +1,6 @@
 class_name GameFromJSON
 ## Class responsible for loading a game using JSON data.
+# TODO tons of stuff in here needs to verify & return errors
 
 
 var error: bool = true
@@ -81,7 +82,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
 	game_world_2d.init()
 	game.world = game_world_2d
-	# TODO verify & return more errors
+	# TASK verify & return errors
 	if not (
 			json_dict.has("world")
 			and json_dict["world"].has("limits")
@@ -193,7 +194,7 @@ func _load_countries(json_data: Dictionary) -> Countries:
 	return countries
 
 
-## TODO verify & return errors.
+# TASK verify & return errors
 func _load_country(json_data: Dictionary) -> Country:
 	var country := Country.new()
 	
@@ -237,7 +238,7 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 
 
 ## This function requires that game.game_players is already set
-## TODO verify & return errors.
+# TASK verify & return errors
 func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	# AI type
 	var ai_type: int = 0
@@ -282,7 +283,7 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	return player
 
 
-## TODO verify & return errors.
+# TASK verify & return errors
 func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 	var x1: int = json_data["left"]
 	var y1: int = json_data["top"]
@@ -293,7 +294,7 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 	return true
 
 
-## TODO verify & return errors.
+# TASK verify & return errors
 func _load_province(json_data: Dictionary, game: Game) -> Province:
 	var province := game.province_scene.instantiate() as Province
 	province.game = game
@@ -355,7 +356,7 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 	return false
 
 
-## TODO verify & return errors.
+# TASK verify & return errors
 func _load_army(json_data: Dictionary, game: Game) -> void:
 	var movements_made: int = 0
 	if json_data.has("number_of_movements_made"):

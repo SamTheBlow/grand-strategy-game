@@ -74,6 +74,7 @@ func raw_data() -> Dictionary:
 
 
 # TODO verify that the data is valid
+# same problem in [ActionArmyMovement], [ActionArmySplit], [ActionBuild]
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionRecruitment:
 	return ActionRecruitment.new(

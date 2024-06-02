@@ -7,7 +7,6 @@ extends PlayerAI
 
 
 # Workaround to ensure that it always uses unique army ids.
-# TODO find better solution
 var _new_id_index: int
 
 

@@ -12,7 +12,8 @@ signal deletion_requested(player: Player)
 ## Emits on clients when the player is done synchronizing with the server.
 signal sync_finished(player: Player)
 
-# TODO seems like this is no longer used. remove it maybe?
+# TODO Remove this when the ugly player assignment problem is fixed.
+# It's the only system still using this variable (see [TurnOrderElement])
 var id: int:
 	set(value):
 		if _is_not_allowed_to_make_changes():
@@ -119,10 +120,8 @@ func load_data(data: Dictionary) -> void:
 ## properties locally, the server would not know about it, so the player
 ## would just be desynced. This way, it's not possible to cheat.
 func _is_not_allowed_to_make_changes() -> bool:
-	return (
-			MultiplayerUtils.is_online(multiplayer)
-			and (not multiplayer.is_server())
-			and (not _is_synchronizing)
+	return not (
+			MultiplayerUtils.has_authority(multiplayer) or _is_synchronizing
 	)
 
 

@@ -83,6 +83,7 @@ func _input(event: InputEvent) -> void:
 
 
 # TODO this is ugly, find a way to get rid of this
+# (and get rid of it in [TurnOrderElement] too)
 ## To be called when this node is created.
 func init() -> void:
 	custom_minimum_size.y = ($Contents as Control).size.y

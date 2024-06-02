@@ -90,7 +90,6 @@ func raw_data() -> Dictionary:
 	}
 
 
-# TODO verify that the data is valid
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionArmySplit:
 	var troop_partition: Array[int] = []
