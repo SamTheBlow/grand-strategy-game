@@ -1,13 +1,12 @@
 class_name CameraDrag
 extends Node
 ## Allows the player to freely drag the camera around using the mouse.
-##
-## This node is meant to be added as a child of a CustomCamera2D node,
-## otherwise it will not do anything.
 ## 
 ## NOTICE: for this to work as intended, the camera node must be setup in the
 ## scene tree such that it is in-between the world layer and the UI layer.
 
+
+@export var camera: CustomCamera2D
 
 var _is_being_dragged: bool = false
 
@@ -54,12 +53,7 @@ func _detect_end_of_drag(event: InputEvent) -> void:
 func _drag_camera(event: InputEvent) -> void:
 	if not _is_being_dragged or not event is InputEventMouseMotion:
 		return
-	
 	var event_mouse_motion := event as InputEventMouseMotion
-	
-	var camera := get_parent() as CustomCamera2D
-	if not camera:
-		return
 	
 	# Move the camera
 	var camera_position: Vector2 = camera.position_in_bounds(camera.position)

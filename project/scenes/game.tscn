@@ -66,11 +66,13 @@ follow_viewport_enabled = true
 script = ExtResource("2_lblr6")
 world_margin = Vector2(0.25, 0.25)
 
-[node name="CameraDrag" type="Node" parent="Camera"]
+[node name="CameraDrag" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
 script = ExtResource("3_3p7sw")
+camera = NodePath("..")
 
-[node name="CameraZoom" type="Node" parent="Camera"]
+[node name="CameraZoom" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
 script = ExtResource("4_331yk")
+camera = NodePath("..")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2
