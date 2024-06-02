@@ -37,10 +37,11 @@ func _new_slider_value() -> void:
 
 func _on_troop_slider_value_changed(value: float) -> void:
 	if (
-			value > troop_slider.max_value
-			- (_army.game.rules.minimum_army_size - 1)
+			value > troop_slider.max_value - _army.game.rules.minimum_army_size
 			and value < troop_slider.max_value
 	):
+		# We return early, because setting the slider's value here
+		# triggers the signal that calls this function
 		troop_slider.value = troop_slider.max_value
 		return
 	_new_slider_value()
