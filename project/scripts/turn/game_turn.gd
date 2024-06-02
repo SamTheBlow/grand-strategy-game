@@ -56,7 +56,6 @@ func loop() -> void:
 			continue
 		
 		if player.is_human:
-			game.set_human_player(player)
 			return
 		
 		# The player is an AI. Play their actions and end their turn

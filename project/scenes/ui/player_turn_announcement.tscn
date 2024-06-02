@@ -22,7 +22,7 @@ _data = {
 "new_animation": SubResource("Animation_vqjli")
 }
 
-[node name="PlayerTurnAnnouncement" type="Control" node_paths=PackedStringArray("animation_player", "label")]
+[node name="PlayerTurnAnnouncement" type="Control"]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 3
 anchors_preset = 15
@@ -32,8 +32,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_3hekc")
-animation_player = NodePath("AnimationPlayer")
-label = NodePath("MarginContainer/VBoxContainer/HBoxContainer/Label")
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
@@ -63,7 +61,8 @@ layout_mode = 2
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Message" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
 text = "It's AAAAAAAAAAAAAAAAAAAA's turn"
@@ -82,5 +81,3 @@ layout_mode = 2
 libraries = {
 "": SubResource("AnimationLibrary_2ybpj")
 }
-
-[connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_animation_player_animation_finished"]

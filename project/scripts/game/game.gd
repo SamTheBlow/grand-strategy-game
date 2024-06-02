@@ -66,6 +66,7 @@ var turn: GameTurn:
 	set(value):
 		turn = value
 		_turn_order_list.game_turn = turn
+		_auto_end_turn = AutoEndTurn.new(self)
 
 ## You don't need to initialize this, especially if you don't want
 ## the game to have a turn limit. However, if you do want to use it,
@@ -121,9 +122,6 @@ var _modifier_request: ModifierRequest
 ## It is stored in memory only because we need it to connect to the [Chat].
 var _networking_interface: NetworkingInterface
 
-## The player currently playing.
-var _you: GamePlayer
-
 ## The user is allowed to continue playing after the game "ends".
 var _game_over: bool = false
 
@@ -147,6 +145,8 @@ var _turn_order_list: TurnOrderList:
 		if not _turn_order_list:
 			_turn_order_list = %TurnOrderList as TurnOrderList
 		return _turn_order_list
+
+var _auto_end_turn: AutoEndTurn
 
 
 ## Initialization to be done immediately after loading the game scene.
@@ -241,32 +241,6 @@ func new_action_army_movement(
 			moving_army_id, destination_province.id
 	)
 	action_sync.apply_action(action_move)
-
-
-## Updates visuals to show the player's country information.
-## Moves the camera to the player's country.
-## Plays an announcement animation of the new player's turn.
-##
-## Call this when it's a new player's turn.
-func set_human_player(player: GamePlayer) -> void:
-	if _you and _you == player:
-		return
-	
-	if _you:
-		_you.human_status_changed.disconnect(_on_your_human_status_changed)
-	
-	_you = player
-	_you.human_status_changed.connect(_on_your_human_status_changed)
-	
-	# Only announce a new player's turn when there is more than 1 human player
-	if game_players.number_of_playing_humans() < 2:
-		return
-	
-	var player_turn := (
-			player_turn_scene.instantiate() as PlayerTurnAnnouncement
-	)
-	player_turn.set_player_username(player.username)
-	game_ui.add_child(player_turn)
 
 
 ## Builds this game's global [Modifier]s according to the [GameRules].
@@ -393,12 +367,13 @@ func _on_game_over() -> void:
 
 func _on_province_clicked(province: Province) -> void:
 	var provinces_node: Provinces = world.provinces
+	var you: GamePlayer = turn.playing_player()
 	
-	if not MultiplayerUtils.has_gameplay_authority(multiplayer, _you):
+	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
 		provinces_node.select_province(province, false)
 		return
 	
-	var your_country: Country = _you.playing_country
+	var your_country: Country = you.playing_country
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
 		var active_armies: Array[Army] = world.armies.active_armies(
@@ -417,7 +392,7 @@ func _on_province_clicked(province: Province) -> void:
 
 func _on_province_selected(_can_target_links: bool) -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.init(world.provinces.selected_province, _you)
+	component_ui.init(world.provinces.selected_province, turn.playing_player())
 	turn.player_changed.connect(component_ui._on_turn_player_changed)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)
@@ -444,7 +419,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 		1:
 			# Recruitment
 			var army_recruitment_limits := ArmyRecruitmentLimits.new(
-					_you.playing_country,
+					turn.playing_player().playing_country,
 					world.provinces.selected_province
 			)
 			var recruitment_popup := (
@@ -534,10 +509,3 @@ func _on_modifiers_requested(
 ) -> void:
 	if global_modifiers.has(context.context()):
 		modifiers_.append(global_modifiers[context.context()])
-
-
-func _on_your_human_status_changed(_player: GamePlayer) -> void:
-	# If you're no longer playing as a human,
-	# skip this player's turn and continue playing
-	if not _you.is_human:
-		turn.end_turn()

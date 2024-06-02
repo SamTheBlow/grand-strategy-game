@@ -259,6 +259,10 @@ anchor_bottom = 0.8
 layout_mode = 2
 text = "End Turn"
 
+[node name="PlayerTurnAnnouncement" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("8_e0v4f")]
+layout_mode = 1
+_game = NodePath("../../..")
+
 [node name="Popups" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
 anchors_preset = 15

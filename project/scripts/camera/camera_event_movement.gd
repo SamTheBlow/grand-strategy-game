@@ -16,6 +16,7 @@ extends Node
 func _ready() -> void:
 	_camera.move_to(_camera.world_limits._limits.get_center())
 	_game.turn.player_changed.connect(_on_turn_player_changed)
+	_on_turn_player_changed(_game.turn.playing_player())
 
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
