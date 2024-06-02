@@ -80,40 +80,6 @@ func is_spectating() -> bool:
 	return playing_country == null
 
 
-# TODO doesn't really belong here... at least make the function static
-func ai_from_type(type: int) -> PlayerAI:
-	match type:
-		0:
-			return PlayerAI.new()
-		1:
-			return TestAI1.new()
-		2:
-			return TestAI2.new()
-		_:
-			print_debug("Invalid AI type.")
-			return null
-
-
-## Returns the AI type as a number, for saving/loading.
-func ai_type() -> int:
-	if not player_ai:
-		print_debug("Player AI is null.")
-		return -1
-	elif player_ai is TestAI1:
-		return 1
-	elif player_ai is TestAI2:
-		return 2
-	elif player_ai is PlayerAI:
-		return 0
-	else:
-		print_debug("Unrecognized AI type.")
-		return -1
-
-
-static func is_valid_ai_type(type: int) -> bool:
-	return type >= 0 and type <= 2
-
-
 ## For saving/loading purposes
 func raw_data() -> Dictionary:
 	var player_data: Dictionary = {}
@@ -124,7 +90,7 @@ func raw_data() -> Dictionary:
 	player_data["username"] = username
 	if is_human and player_human:
 		player_data["human_id"] = player_human.id
-	player_data["ai_type"] = ai_type()
+	player_data["ai_type"] = player_ai.type()
 	return player_data
 
 

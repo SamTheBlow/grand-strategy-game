@@ -250,7 +250,7 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		if value_type == TYPE_INT:
 			var loaded_ai_type: int = roundi(json_data["ai_type"])
 			# If the AI type is invalid, default to the dummy AI
-			if GamePlayer.is_valid_ai_type(loaded_ai_type):
+			if PlayerAI.Type.find_key(loaded_ai_type):
 				ai_type = loaded_ai_type
 		else:
 			error = true
@@ -277,7 +277,7 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		player.username = json_data["username"]
 	if json_data.has("human_id"):
 		player.player_human_id = json_data["human_id"]
-	player.player_ai = player.ai_from_type(ai_type)
+	player.player_ai = PlayerAI.from_type(ai_type)
 	
 	return player
 
