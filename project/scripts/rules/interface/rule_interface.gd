@@ -50,6 +50,22 @@ func _add_sub_rules(
 			rule_node.scenes = scenes
 			rule_node.rule = sub_rule as RuleOptions
 			_add_rule(rule_node, with_spacing, with_tabbing)
+		elif sub_rule is RuleRangeInt:
+			var rule_node := (
+					scenes.rule_range_int_scene.instantiate()
+					as RuleRangeIntNode
+			)
+			rule_node.scenes = scenes
+			rule_node.rule = sub_rule as RuleRangeInt
+			_add_rule(rule_node, with_spacing, with_tabbing)
+		elif sub_rule is RuleRangeFloat:
+			var rule_node := (
+					scenes.rule_range_float_scene.instantiate()
+					as RuleRangeFloatNode
+			)
+			rule_node.scenes = scenes
+			rule_node.rule = sub_rule as RuleRangeFloat
+			_add_rule(rule_node, with_spacing, with_tabbing)
 		else:
 			var rule_node := (
 					scenes.rule_category_scene.instantiate()

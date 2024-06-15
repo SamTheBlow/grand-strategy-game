@@ -90,6 +90,10 @@ var _category_population: RuleItem
 var _category_fortresses: RuleItem
 var _category_battle: RuleItem
 
+# 4.0 Backwards compatibility
+var reinforcements_random_range: RuleRangeInt
+var province_income_random_range: RuleRangeInt
+
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
 ## This is used to define the layout of the rule interface.
@@ -131,6 +135,8 @@ func _init() -> void:
 	_category_fortresses = RuleItem.new()
 	_category_population = RuleItem.new()
 	_category_recruitment = RuleItem.new()
+	reinforcements_random_range = RuleRangeInt.new()
+	province_income_random_range = RuleRangeInt.new()
 	
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
@@ -155,12 +161,11 @@ func _init() -> void:
 	]
 	reinforcements_option.selected = 2
 	reinforcements_option.sub_rules = [
-		reinforcements_random_min,
-		reinforcements_random_max,
+		reinforcements_random_range,
 		reinforcements_constant,
 		reinforcements_per_person,
 	]
-	reinforcements_option.option_filters = [[0, 1], [2], [3]]
+	reinforcements_option.option_filters = [[0], [1], [2]]
 	
 	reinforcements_random_min.text = "Minimum"
 	reinforcements_random_min.value = 10
@@ -243,12 +248,11 @@ func _init() -> void:
 	]
 	province_income_option.selected = 2
 	province_income_option.sub_rules = [
-		province_income_random_min,
-		province_income_random_max,
+		province_income_random_range,
 		province_income_constant,
 		province_income_per_person,
 	]
-	province_income_option.option_filters = [[0, 1], [2], [3]]
+	province_income_option.option_filters = [[0], [1], [2]]
 	
 	province_income_random_min.text = "Minimum"
 	province_income_random_min.value = 10
@@ -315,6 +319,20 @@ func _init() -> void:
 		global_defender_efficiency,
 		battle_algorithm_option,
 	]
+	
+	reinforcements_random_range.min_rule = reinforcements_random_min
+	reinforcements_random_range.max_rule = reinforcements_random_max
+	reinforcements_random_range.min_value = 10
+	reinforcements_random_range.max_value = 40
+	reinforcements_random_range.has_minimum = true
+	reinforcements_random_range.minimum = 0
+	
+	province_income_random_range.min_rule = province_income_random_min
+	province_income_random_range.max_rule = province_income_random_max
+	province_income_random_range.min_value = 10
+	province_income_random_range.max_value = 100
+	province_income_random_range.has_minimum = true
+	province_income_random_range.minimum = 0
 	
 	root_rules = [
 		turn_limit_enabled,

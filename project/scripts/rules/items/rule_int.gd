@@ -1,4 +1,3 @@
-@tool
 class_name RuleInt
 extends RuleItem
 ## A game rule that is an integer value.

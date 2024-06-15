@@ -7,3 +7,5 @@ extends Resource
 @export var rule_float_scene: PackedScene
 @export var rule_int_scene: PackedScene
 @export var rule_options_scene: PackedScene
+@export var rule_range_int_scene: PackedScene
+@export var rule_range_float_scene: PackedScene
