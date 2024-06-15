@@ -4,31 +4,35 @@ extends Node
 ## Currently only contains the [Lobby] and an interface for the [Chat].
 
 
-signal game_started(scenario: PackedScene, rules: GameRules)
+signal game_started(scenario: PackedScene)
 
 @export var networking_setup_scene: PackedScene
 
 var _chat: Chat
 
-@onready var _lobby := %Lobby as Lobby
-
 
 func _ready() -> void:
+	# TODO the networking setup stuff is ugly I think, shouldn't be here
 	var networking_setup := (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
 	networking_setup.message_sent.connect(
 			_chat._on_networking_interface_message_sent
 	)
-	_lobby.player_list.use_networking_interface(networking_setup)
+	(%Lobby as Lobby).setup_networking_interface(networking_setup)
 
 
-## Dependency injection: passes the players node to the player list.
+## Dependency injection
 func setup_players(players: Players) -> void:
-	(%Lobby as Lobby).player_list.players = players
+	(%Lobby as Lobby).players = players
 
 
-## Dependency injection.
+## Dependency injection
+func setup_rules(game_rules: GameRules) -> void:
+	(%Lobby as Lobby).game_rules = game_rules
+
+
+## Dependency injection
 func setup_chat(chat: Chat) -> void:
 	_chat = chat
 	var chat_interface := %ChatInterface as ChatInterface
@@ -36,5 +40,5 @@ func setup_chat(chat: Chat) -> void:
 	chat.connect_chat_interface(chat_interface)
 
 
-func _on_start_game_requested(scenario: PackedScene, rules: GameRules) -> void:
-	game_started.emit(scenario, rules)
+func _on_start_game_requested(scenario: PackedScene) -> void:
+	game_started.emit(scenario)

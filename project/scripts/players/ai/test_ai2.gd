@@ -172,7 +172,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 					# If any of the parts is too small, then you can't split
 					var is_large_enough: bool = true
 					for part in partition2:
-						if part < game.rules.minimum_army_size:
+						if part < game.rules.minimum_army_size.value:
 							is_large_enough = false
 							break
 					
@@ -242,7 +242,7 @@ func _try_build_fortresses(
 		borders: Array[Province],
 		danger_levels: Array[float]
 ) -> Array[Action]:
-	if not game.rules.build_fortress_enabled:
+	if not game.rules.build_fortress_enabled.value:
 		return []
 	
 	var output: Array[Action] = []
@@ -252,7 +252,7 @@ func _try_build_fortresses(
 	var expected_money: int = playing_country.money
 	while (
 			candidates.size() > 0
-			and expected_money >= game.rules.fortress_price
+			and expected_money >= game.rules.fortress_price.value
 	):
 		# Find the most endangered province
 		var most_endangered_index: int = -1
@@ -272,7 +272,7 @@ func _try_build_fortresses(
 		)
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_endangered_province.id))
-			expected_money -= game.rules.fortress_price
+			expected_money -= game.rules.fortress_price.value
 		
 		candidates.remove_at(most_endangered_index)
 	

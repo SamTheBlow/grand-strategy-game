@@ -31,6 +31,7 @@ var current_scene: Node:
 # Things that need to persist between scenes
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
+@onready var game_rules := $GameRules as GameRules
 
 ## This is to make sure that in online games,
 ## everything is properly synchronized before starting the game.
@@ -67,9 +68,9 @@ func load_game() -> void:
 
 ## Loads the test map and loads the new resulting game scene.
 ## @deprecated
-func load_game_from_scenario(scenario: Scenario1, rules: GameRules) -> void:
+func load_game_from_scenario(scenario: Scenario1) -> void:
 	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, rules, game_scene)
+	game_from_scenario.load_game(scenario, game_rules.copy(), game_scene)
 	
 	if game_from_scenario.error:
 		print_debug(game_from_scenario.error_message)
@@ -245,12 +246,10 @@ func _on_player_added(player: Player) -> void:
 
 ## Called when the "Start Game" button is pressed in the main menu.
 ## Loads the test map and starts the game.
-func _on_game_start_requested(
-		scenario_scene: PackedScene, rules: GameRules
-) -> void:
+func _on_game_start_requested(scenario_scene: PackedScene) -> void:
 	var world: Node = scenario_scene.instantiate()
 	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	load_game_from_scenario(scenario, rules)
+	load_game_from_scenario(scenario)
 
 
 ## This function's name is a bit misleading, because it's precisely
@@ -258,6 +257,7 @@ func _on_game_start_requested(
 func _on_main_menu_entered() -> void:
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.setup_players(players)
+	main_menu.setup_rules(game_rules)
 	main_menu.setup_chat(chat)
 	main_menu.game_started.connect(_on_game_start_requested)
 	_send_enter_main_menu_to_clients()

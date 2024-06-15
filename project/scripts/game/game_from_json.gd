@@ -31,10 +31,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	game.init()
 	
 	# Rules
-	var rules: GameRules = _load_rules(json_dict)
-	if not rules:
-		return
-	game.rules = rules
+	game.rules = RulesFromDict.new().result(json_dict["rules"] as Dictionary)
 	
 	# Turn
 	var turn_key: String = "turn"
@@ -122,47 +119,6 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	# Success!
 	error = false
 	result = game
-
-
-## Returns null if an error occured
-func _load_rules(json_data: Dictionary) -> GameRules:
-	var game_rules := GameRules.new()
-	
-	# Default rules
-	var rules_key: String = "rules"
-	if not json_data.has(rules_key):
-		return game_rules
-	
-	if not json_data[rules_key] is Dictionary:
-		error = true
-		error_message = "Rules property is not a dictionary."
-		return null
-	var rules_data: Dictionary = json_data[rules_key] as Dictionary
-	
-	for key in GameRules.RULE_NAMES:
-		# That's ok, use the default
-		if not rules_data.has(key):
-			continue
-		
-		var rule_type: int = typeof(game_rules.get(key))
-		
-		# Workaround because JSON doesn't support integers
-		var data_type: int = typeof(rules_data[key])
-		if rule_type == TYPE_INT:
-			rule_type = TYPE_FLOAT
-		if data_type == TYPE_INT:
-			data_type = TYPE_FLOAT
-		
-		if data_type != rule_type:
-			error = true
-			error_message = (
-					'Rule "' + key
-					+ '" is not a ' + type_string(rule_type) + '.'
-			)
-			return null
-		game_rules.set(key, rules_data[key])
-	
-	return game_rules
 
 
 func _load_countries(json_data: Dictionary) -> Countries:

@@ -161,6 +161,7 @@ func init() -> void:
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
+	rules.lock()
 	game_started.emit()
 	turn.loop()
 
@@ -194,9 +195,9 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn._turn = starting_turn
 	turn._playing_player_index = playing_player_index
 	
-	if rules.turn_limit_enabled:
+	if rules.turn_limit_enabled.value:
 		turn_limit = TurnLimit.new()
-		turn_limit.final_turn = rules.turn_limit
+		turn_limit.final_turn = rules.turn_limit.value
 		turn_limit.game_over.connect(_on_game_over)
 	
 	turn.turn_changed.connect(_on_new_turn)
@@ -247,20 +248,20 @@ func new_action_army_movement(
 ## Call this when the [GameRules] are set.
 func _setup_global_modifiers() -> void:
 	global_modifiers = {}
-	if rules.global_attacker_efficiency != 1.0:
+	if rules.global_attacker_efficiency.value != 1.0:
 		global_modifiers["attacker_efficiency"] = (
 				ModifierMultiplier.new(
 						"Base Modifier",
 						"Attackers all have this modifier by default.",
-						rules.global_attacker_efficiency
+						rules.global_attacker_efficiency.value
 				)
 		)
-	if rules.global_defender_efficiency != 1.0:
+	if rules.global_defender_efficiency.value != 1.0:
 		global_modifiers["defender_efficiency"] = (
 				ModifierMultiplier.new(
 						"Base Modifier",
 						"Defenders all have this modifier by default.",
-						rules.global_defender_efficiency
+						rules.global_defender_efficiency.value
 				)
 		)
 
@@ -412,7 +413,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			)
 			build_popup.init(
 					world.provinces.selected_province,
-					rules.fortress_price
+					rules.fortress_price.value
 			)
 			build_popup.confirmed.connect(_on_build_fortress_confirmed)
 			_add_popup(build_popup)
@@ -497,7 +498,8 @@ func _on_chat_rules_requested() -> void:
 	var lines: Array[String] = []
 	lines.append("This game's rules:")
 	for rule_name in GameRules.RULE_NAMES:
-		lines.append("-> " + rule_name + ": " + str(rules.get(rule_name)))
+		var rule_data: Variant = rules.rule_with_name(rule_name).get_data()
+		lines.append("-> " + rule_name + ": " + str(rule_data))
 	chat.send_system_message_multiline(lines)
 
 

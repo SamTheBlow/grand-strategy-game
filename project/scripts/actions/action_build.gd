@@ -36,7 +36,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	fortress.add_visuals()
 	province.buildings.add(fortress)
 	
-	your_country.money -= game.rules.fortress_price
+	your_country.money -= game.rules.fortress_price.value
 
 
 ## Returns this action's raw data, for the purpose of

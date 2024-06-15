@@ -84,7 +84,7 @@ static func quick_setup(
 		province_: Province,
 		movements_made_: int = 0,
 ) -> Army:
-	var minimum_army_size: int = game_.rules.minimum_army_size
+	var minimum_army_size: int = game_.rules.minimum_army_size.value
 	if army_size_ < minimum_army_size:
 		print_debug(
 				"Tried to create an army, "
@@ -162,12 +162,12 @@ func movements_made() -> int:
 
 ## How much in-game money it would cost to recruit given troop count.
 static func money_cost(troop_count: int, rules: GameRules) -> int:
-	return ceili(troop_count * rules.recruitment_money_per_unit)
+	return ceili(troop_count * rules.recruitment_money_per_unit.value)
 
 
 ## How much [Population] it would cost to recruit given troop count.
 static func population_cost(troop_count: int, rules: GameRules) -> int:
-	return ceili(troop_count * rules.recruitment_population_per_unit)
+	return ceili(troop_count * rules.recruitment_population_per_unit.value)
 
 
 func _on_new_turn(_turn_number: int) -> void:

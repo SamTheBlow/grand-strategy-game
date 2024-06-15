@@ -46,7 +46,7 @@ func _try_build_fortresses(
 		game: Game,
 		playing_country: Country
 ) -> Array[Action]:
-	if not game.rules.build_fortress_enabled:
+	if not game.rules.build_fortress_enabled.value:
 		return []
 	
 	var output: Array[Action] = []
@@ -58,7 +58,7 @@ func _try_build_fortresses(
 	var expected_money: int = playing_country.money
 	while (
 			candidates.size() > 0
-			and expected_money >= game.rules.fortress_price
+			and expected_money >= game.rules.fortress_price.value
 	):
 		# Find the most populated province
 		var most_populated: Province
@@ -78,7 +78,7 @@ func _try_build_fortresses(
 		)
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_populated.id))
-			expected_money -= game.rules.fortress_price
+			expected_money -= game.rules.fortress_price.value
 		
 		candidates.erase(most_populated)
 	
@@ -121,7 +121,7 @@ func _find_target_province(
 		
 		var new_army_ids: Array[int] = []
 		
-		if troops_per_army >= army.game.rules.minimum_army_size:
+		if troops_per_army >= army.game.rules.minimum_army_size.value:
 			# Create the partition
 			var troop_partition: Array[int] = []
 			for i in number_of_armies:

@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="RuleScenes" load_steps=7 format=3 uid="uid://bx0utsk51dmvw"]
+
+[ext_resource type="PackedScene" uid="uid://bo8oke3mld227" path="res://scenes/ui/rules/rule_bool.tscn" id="1_ny0no"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://scenes/ui/rules/rule_category.tscn" id="2_e3sjj"]
+[ext_resource type="PackedScene" uid="uid://dd0mqtbyhpwcg" path="res://scenes/ui/rules/rule_float.tscn" id="3_k6ecs"]
+[ext_resource type="PackedScene" uid="uid://cummjubuua6yk" path="res://scenes/ui/rules/rule_int.tscn" id="4_1megp"]
+[ext_resource type="PackedScene" uid="uid://bh8aukwuigg4e" path="res://scenes/ui/rules/rule_options.tscn" id="5_b1egf"]
+[ext_resource type="Script" path="res://scripts/rules/interface/rule_scenes.gd" id="6_md2xy"]
+
+[resource]
+script = ExtResource("6_md2xy")
+rule_category_scene = ExtResource("2_e3sjj")
+rule_boolean_scene = ExtResource("1_ny0no")
+rule_float_scene = ExtResource("3_k6ecs")
+rule_int_scene = ExtResource("4_1megp")
+rule_options_scene = ExtResource("5_b1egf")

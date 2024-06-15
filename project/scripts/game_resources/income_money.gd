@@ -23,11 +23,11 @@ func _init(base_income_: int, province: Province) -> void:
 func total() -> int:
 	var total_income: int = base_income
 	if (
-		_province.game.rules.province_income_option
+		_province.game.rules.province_income_option.selected
 		== GameRules.ProvinceIncome.POPULATION
 	):
 		total_income += floori(
-				_province.game.rules.province_income_per_person
+				_province.game.rules.province_income_per_person.value
 				* _province.population.population_size
 		)
 	return total_income
@@ -35,7 +35,7 @@ func total() -> int:
 
 func _on_population_size_changed(_new_value: int) -> void:
 	if (
-		_province.game.rules.province_income_option
+		_province.game.rules.province_income_option.selected
 		== GameRules.ProvinceIncome.POPULATION
 	):
 		changed.emit(total())

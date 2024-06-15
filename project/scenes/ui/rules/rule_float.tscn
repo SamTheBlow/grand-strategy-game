@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://dd0mqtbyhpwcg"]
+
+[ext_resource type="Script" path="res://scripts/rules/interface/items/rule_float_node.gd" id="1_6f8va"]
+
+[node name="RuleFloat" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_6f8va")
+
+[node name="Container" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="RuleContainer" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/RuleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Integer"
+
+[node name="SpinBox" type="SpinBox" parent="Container/RuleContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.0
+allow_greater = true
+allow_lesser = true
+alignment = 1

@@ -18,10 +18,7 @@ func convert_game(game: Game) -> void:
 	json_data["version"] = _version
 	
 	# Rules
-	var rules_data: Dictionary = {}
-	for rule_name in GameRules.RULE_NAMES:
-		rules_data[rule_name] = game.rules.get(rule_name)
-	json_data["rules"] = rules_data
+	json_data["rules"] = RulesToDict.new().result(game.rules)
 	
 	# Players
 	json_data["players"] = game.game_players.raw_data()

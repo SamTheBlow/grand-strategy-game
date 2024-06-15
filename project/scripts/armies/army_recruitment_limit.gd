@@ -62,13 +62,13 @@ func _calculated_minimum() -> int:
 	for army in _province.game.world.armies.armies_in_province(_province):
 		if army.owner_country == _country and army.is_able_to_move():
 			return 0
-	return _province.game.rules.minimum_army_size
+	return _province.game.rules.minimum_army_size.value
 
 
 func _calculated_maximum() -> int:
 	var game: Game = _province.game
 	
-	if not game.rules.recruitment_enabled:
+	if not game.rules.recruitment_enabled.value:
 		error_message = "The game's rules don't allow for recruitment!"
 		return 0
 	
@@ -77,7 +77,7 @@ func _calculated_maximum() -> int:
 		return 0
 	
 	# Money
-	var money_per_unit: float = game.rules.recruitment_money_per_unit
+	var money_per_unit: float = game.rules.recruitment_money_per_unit.value
 	var money_for_one_troop: int = ceili(money_per_unit)
 	if _country.money < money_for_one_troop:
 		error_message = (
@@ -90,7 +90,7 @@ func _calculated_maximum() -> int:
 	
 	# Population
 	var population_size: int = _province.population.population_size
-	var pop_per_unit: float = game.rules.recruitment_population_per_unit
+	var pop_per_unit: float = game.rules.recruitment_population_per_unit.value
 	var pop_for_one_troop: int = ceili(pop_per_unit)
 	if population_size < pop_for_one_troop:
 		error_message = (

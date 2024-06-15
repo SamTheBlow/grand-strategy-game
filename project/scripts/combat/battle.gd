@@ -17,7 +17,7 @@ func apply(attacking_army: Army, defending_army: Army) -> void:
 	
 	var game: Game = attacking_army.game
 	var damage_dealt: Array[int] = []
-	match game.rules.battle_algorithm:
+	match game.rules.battle_algorithm_option.selected:
 		0:
 			damage_dealt = _algorithm_0(attacking_army, defending_army)
 		1:

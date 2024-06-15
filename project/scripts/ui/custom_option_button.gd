@@ -1,12 +1,14 @@
 class_name CustomOptionButton
 extends OptionButton
 ## When you select an item from this button's options, it shows the
-## Control node associated with that item, and hides all the other ones.
+## Control nodes associated with that item, and hides all the other ones.
 ## Also, when this node is hidden, all of the option nodes are also hidden.
 
 
-## Make sure to put the nodes in the same order as the OptionButton options!
-@export var options: Array[Control]
+## Effectively an Array[Array[Control]].
+## Associates an array of Control nodes to each OptionButton option.
+## Make sure to put the filters in the same order as the OptionButton options!
+@export var option_filters: Array
 
 
 func _ready() -> void:
@@ -24,13 +26,16 @@ func select_item(item: int) -> void:
 
 
 func _on_item_selected(index: int) -> void:
-	for i in options.size():
-		options[i].visible = i == index
+	for i in option_filters.size():
+		for control: Control in (option_filters[i] as Array):
+			control.visible = i == index
 
 
 func _on_visibility_changed() -> void:
 	if is_visible_in_tree():
 		_on_item_selected(selected)
-	else:
-		for option in options:
-			option.hide()
+		return
+	
+	for i in option_filters.size():
+		for control: Control in (option_filters[i] as Array):
+			control.hide()

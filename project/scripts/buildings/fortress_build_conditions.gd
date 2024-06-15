@@ -38,7 +38,7 @@ func can_build() -> bool:
 func _all_conditions_are_met() -> bool:
 	var game: Game = _province.game
 	
-	if not game.rules.build_fortress_enabled:
+	if not game.rules.build_fortress_enabled.value:
 		error_message = "The game's rules don't allow it!"
 		return false
 	
@@ -46,10 +46,10 @@ func _all_conditions_are_met() -> bool:
 		error_message = "The province is not under your country's control!"
 		return false
 	
-	if _country.money < game.rules.fortress_price:
+	if _country.money < game.rules.fortress_price.value:
 		error_message = (
 				"Your country doesn't have enough money! "
-				+ "It needs " + str(game.rules.fortress_price)
+				+ "It needs " + str(game.rules.fortress_price.value)
 				+ ", but only has " + str(_country.money) + "."
 		)
 		return false
@@ -83,7 +83,7 @@ func _on_province_owner_changed(country: Country) -> void:
 
 
 func _on_money_changed(money: int) -> void:
-	_check_condition(money >= _province.game.rules.fortress_price)
+	_check_condition(money >= _province.game.rules.fortress_price.value)
 
 
 func _on_buildings_changed() -> void:

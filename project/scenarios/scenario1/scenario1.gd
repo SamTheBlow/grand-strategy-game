@@ -47,10 +47,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	json_data["version"] = "1"
 	
 	# Rules
-	var rules_data: Dictionary = {}
-	for rule_name in GameRules.RULE_NAMES:
-		rules_data[rule_name] = game_rules.get(rule_name)
-	json_data["rules"] = rules_data
+	json_data["rules"] = RulesToDict.new().result(game_rules)
 	
 	# Players and countries
 	var random_country_assignment: Array = range(starting_provinces.size())
@@ -70,7 +67,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		var country: Country = countries[i]
 		country_data["country_name"] = country.country_name
 		country_data["color"] = country.color.to_html()
-		country_data["money"] = game_rules.starting_money
+		country_data["money"] = game_rules.starting_money.value
 		countries_data.append(country_data)
 	json_data["players"] = players_data
 	json_data["countries"] = countries_data
@@ -149,15 +146,15 @@ func as_json(game_rules: GameRules) -> Dictionary:
 			armies_data.append(army_data)
 		
 		# Income
-		match game_rules.province_income_option:
+		match game_rules.province_income_option.selected:
 			GameRules.ProvinceIncome.RANDOM:
 				province_data["income_money"] = randi_range(
-						game_rules.province_income_random_min,
-						game_rules.province_income_random_max
+						game_rules.province_income_random_min.value,
+						game_rules.province_income_random_max.value
 				)
 			GameRules.ProvinceIncome.CONSTANT:
 				province_data["income_money"] = (
-						game_rules.province_income_constant
+						game_rules.province_income_constant.value
 				)
 			GameRules.ProvinceIncome.POPULATION:
 				pass
@@ -166,14 +163,14 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		var exponential_rng: float = randf() ** 2.0
 		var population_size: int = floori(exponential_rng * 1000.0)
 		if is_starting_province:
-			population_size += game_rules.extra_starting_population
+			population_size += game_rules.extra_starting_population.value
 		province_data["population"] = {
 			"size": population_size,
 		}
 		
 		# Buildings
 		var buildings_data: Array = []
-		if game_rules.start_with_fortress and is_starting_province:
+		if game_rules.start_with_fortress.value and is_starting_province:
 			buildings_data.append({"type": "fortress"})
 		province_data["buildings"] = buildings_data
 		
