@@ -198,6 +198,7 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	if rules.turn_limit_enabled.value:
 		turn_limit = TurnLimit.new()
 		turn_limit.final_turn = rules.turn_limit.value
+		turn.turn_changed.connect(turn_limit._on_new_turn)
 		turn_limit.game_over.connect(_on_game_over)
 	
 	turn.turn_changed.connect(_on_new_turn)
