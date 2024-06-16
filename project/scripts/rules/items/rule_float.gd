@@ -68,6 +68,9 @@ var maximum: float = 0:
 			value = minf(value, maximum)
 		minimum = minf(minimum, maximum)
 
+## This only serves to show this value as a percentage in interfaces
+var is_percentage: bool = false
+
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties: Array[Dictionary] = []

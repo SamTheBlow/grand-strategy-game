@@ -13,7 +13,8 @@ var min_value: int = 0:
 		
 		var old_value: int = min_value
 		min_value = value
-		min_rule.value = value
+		if min_rule:
+			min_rule.value = value
 		if max_value < min_value:
 			max_value = min_value
 		elif min_value != old_value:
@@ -27,7 +28,8 @@ var max_value: int = 0:
 		
 		var old_value: int = max_value
 		max_value = value
-		max_rule.value = value
+		if max_rule:
+			max_rule.value = value
 		if max_value < min_value:
 			min_value = max_value
 		elif max_value != old_value:

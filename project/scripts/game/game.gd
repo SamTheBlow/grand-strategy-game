@@ -73,6 +73,11 @@ var turn: GameTurn:
 ## some setup needs to be done: see [method Game.setup_turn].
 var turn_limit: TurnLimit
 
+## You don't need to initialize this, especially if you don't want
+## the game to have a province control goal. If you do want to use it,
+## some setup needs to be done: see [method Game.setup_turn].
+var province_control_goal: ProvinceControlGoal
+
 ## Keys are a modifier context (String); values are a Modifier.
 ## This property is setup automatically when loading in the game rules.
 var global_modifiers: Dictionary = {}
@@ -201,7 +206,10 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 		turn.turn_changed.connect(turn_limit._on_new_turn)
 		turn_limit.game_over.connect(_on_game_over)
 	
-	turn.turn_changed.connect(_on_new_turn)
+	province_control_goal = ProvinceControlGoal.new()
+	province_control_goal.game = self
+	turn.turn_changed.connect(province_control_goal._on_new_turn)
+	province_control_goal.game_over.connect(_on_game_over)
 
 
 ## Returns a [ModifierList] relevant to the given [ModifierContext].
@@ -270,7 +278,7 @@ func _setup_global_modifiers() -> void:
 ## Used to determine the winner when the game ends.
 func _winning_country() -> Country:
 	# Get how many provinces each country has
-	var ownership: Array = _province_count_per_country()
+	var ownership: Array = world.provinces.province_count_per_country()
 	
 	# Find which player has the most provinces
 	var winning_player_index: int = 0
@@ -298,55 +306,6 @@ func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.setup_contents(contents)
 	popups.add_child(popup)
-
-
-## Checks if someone won from controlling a certain percentage
-## of [Province]s and, if so, declares the game over.
-func _check_percentage_winner() -> void:
-	var percentage_to_win: float = 70.0
-	
-	# Get how many provinces each country has
-	var ownership: Array = _province_count_per_country()
-	
-	# Declare a winner if there is one
-	var number_of_provinces: int = world.provinces.list().size()
-	for o: Array in ownership:
-		if float(o[1]) / number_of_provinces >= percentage_to_win * 0.01:
-			_on_game_over()
-			break
-
-
-## Returns an Array telling how many [Province]s each [Country] controls.
-## Each element in the Array is an Array with two elements:
-## - Element 0 is a [Country].
-## - Element 1 is the number of [Province]s controlled by that [Country].
-func _province_count_per_country() -> Array:
-	var output: Array = []
-	
-	for province in world.provinces.list():
-		if not province.owner_country:
-			continue
-		
-		# Find the country on our list
-		var index: int = -1
-		var output_size: int = output.size()
-		for i in output_size:
-			if output[i][0] == province.owner_country:
-				index = i
-				break
-		
-		# It isn't on our list. Add it
-		if index == -1:
-			output.append([province.owner_country, 1])
-		# It is on our list. Increase its number of owned provinces
-		else:
-			output[index][1] += 1
-	
-	return output
-
-
-func _on_new_turn(_turn: int) -> void:
-	_check_percentage_winner()
 
 
 func _on_game_over() -> void:

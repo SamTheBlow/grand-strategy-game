@@ -16,6 +16,9 @@ extends Node
 const RULE_NAMES: Array[String] = [
 	"turn_limit_enabled",
 	"turn_limit",
+	"game_over_provinces_owned_option",
+	"game_over_provinces_owned_constant",
+	"game_over_provinces_owned_percentage",
 	"reinforcements_enabled",
 	"reinforcements_option",
 	"reinforcements_random_min",
@@ -58,6 +61,9 @@ enum ProvinceIncome {
 # Individual rules
 var turn_limit_enabled: RuleBool
 var turn_limit: RuleInt
+var game_over_provinces_owned_option: RuleOptions
+var game_over_provinces_owned_constant: RuleInt
+var game_over_provinces_owned_percentage: RuleFloat
 var reinforcements_enabled: RuleBool
 var reinforcements_option: RuleOptions
 var reinforcements_random_min: RuleInt
@@ -85,6 +91,7 @@ var global_defender_efficiency: RuleFloat
 var battle_algorithm_option: RuleOptions
 
 # Categories
+var _category_game_over: RuleItem
 var _category_recruitment: RuleItem
 var _category_population: RuleItem
 var _category_fortresses: RuleItem
@@ -106,6 +113,9 @@ func _init() -> void:
 	# TODO this is kinda cursed I guess
 	turn_limit_enabled = RuleBool.new()
 	turn_limit = RuleInt.new()
+	game_over_provinces_owned_option = RuleOptions.new()
+	game_over_provinces_owned_constant = RuleInt.new()
+	game_over_provinces_owned_percentage = RuleFloat.new()
 	reinforcements_enabled = RuleBool.new()
 	reinforcements_option = RuleOptions.new()
 	reinforcements_random_min = RuleInt.new()
@@ -131,10 +141,11 @@ func _init() -> void:
 	global_attacker_efficiency = RuleFloat.new()
 	global_defender_efficiency = RuleFloat.new()
 	battle_algorithm_option = RuleOptions.new()
-	_category_battle = RuleItem.new()
-	_category_fortresses = RuleItem.new()
-	_category_population = RuleItem.new()
+	_category_game_over = RuleItem.new()
 	_category_recruitment = RuleItem.new()
+	_category_population = RuleItem.new()
+	_category_fortresses = RuleItem.new()
+	_category_battle = RuleItem.new()
 	reinforcements_random_range = RuleRangeInt.new()
 	province_income_random_range = RuleRangeInt.new()
 	
@@ -144,9 +155,35 @@ func _init() -> void:
 	turn_limit_enabled.sub_rules_on = [0]
 	
 	turn_limit.text = "Final turn"
-	turn_limit.value = 50
-	turn_limit.has_minimum = true
 	turn_limit.minimum = 1
+	turn_limit.has_minimum = true
+	turn_limit.value = 50
+	
+	game_over_provinces_owned_option.text = "Number of controlled provinces"
+	game_over_provinces_owned_option.options = [
+		"Disabled",
+		"Constant",
+		"Percentage of world",
+	]
+	game_over_provinces_owned_option.selected = 2
+	game_over_provinces_owned_option.sub_rules = [
+		game_over_provinces_owned_constant,
+		game_over_provinces_owned_percentage,
+	]
+	game_over_provinces_owned_option.option_filters = [[], [0], [1]]
+	
+	game_over_provinces_owned_constant.text = "Amount"
+	game_over_provinces_owned_constant.minimum = 0
+	game_over_provinces_owned_constant.has_minimum = true
+	game_over_provinces_owned_constant.value = 40
+	
+	game_over_provinces_owned_percentage.text = "Percentage"
+	game_over_provinces_owned_percentage.is_percentage = true
+	game_over_provinces_owned_percentage.minimum = 0.0
+	game_over_provinces_owned_percentage.has_minimum = true
+	game_over_provinces_owned_percentage.maximum = 1.0
+	game_over_provinces_owned_percentage.has_maximum = true
+	game_over_provinces_owned_percentage.value = 0.7
 	
 	reinforcements_enabled.text = "Reinforcements at the start of each turn"
 	reinforcements_enabled.value = true
@@ -168,24 +205,24 @@ func _init() -> void:
 	reinforcements_option.option_filters = [[0], [1], [2]]
 	
 	reinforcements_random_min.text = "Minimum"
-	reinforcements_random_min.value = 10
-	reinforcements_random_min.has_minimum = true
 	reinforcements_random_min.minimum = 0
+	reinforcements_random_min.has_minimum = true
+	reinforcements_random_min.value = 10
 	
 	reinforcements_random_max.text = "Maximum"
-	reinforcements_random_max.value = 40
-	reinforcements_random_max.has_minimum = true
 	reinforcements_random_max.minimum = 0
+	reinforcements_random_max.has_minimum = true
+	reinforcements_random_max.value = 40
 	
 	reinforcements_constant.text = "Amount"
-	reinforcements_constant.value = 20
-	reinforcements_constant.has_minimum = true
 	reinforcements_constant.minimum = 0
+	reinforcements_constant.has_minimum = true
+	reinforcements_constant.value = 20
 	
 	reinforcements_per_person.text = "Amount per person"
-	reinforcements_per_person.value = 0.4
-	reinforcements_per_person.has_minimum = true
 	reinforcements_per_person.minimum = 0
+	reinforcements_per_person.has_minimum = true
+	reinforcements_per_person.value = 0.4
 	
 	recruitment_enabled.text = "Can recruit new armies"
 	recruitment_enabled.value = true
@@ -196,14 +233,14 @@ func _init() -> void:
 	recruitment_enabled.sub_rules_on = [0, 1]
 	
 	recruitment_money_per_unit.text = "Money cost per unit"
-	recruitment_money_per_unit.value = 0.1
-	recruitment_money_per_unit.has_minimum = true
 	recruitment_money_per_unit.minimum = 0
+	recruitment_money_per_unit.has_minimum = true
+	recruitment_money_per_unit.value = 0.1
 	
 	recruitment_population_per_unit.text = "Population cost per unit"
-	recruitment_population_per_unit.value = 1.0
-	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.minimum = 0
+	recruitment_population_per_unit.has_minimum = true
+	recruitment_population_per_unit.value = 1.0
 	
 	population_growth_enabled.text = "Population growth"
 	population_growth_enabled.value = true
@@ -213,14 +250,14 @@ func _init() -> void:
 	population_growth_enabled.sub_rules_on = [0]
 	
 	population_growth_rate.text = "Growth rate"
-	population_growth_rate.value = 0.48
-	population_growth_rate.has_minimum = true
 	population_growth_rate.minimum = 0
+	population_growth_rate.has_minimum = true
+	population_growth_rate.value = 0.48
 	
 	extra_starting_population.text = "Extra population in starting province"
-	extra_starting_population.value = 0
-	extra_starting_population.has_minimum = true
 	extra_starting_population.minimum = 0
+	extra_starting_population.has_minimum = true
+	extra_starting_population.value = 0
 	
 	start_with_fortress.text = "Start with a fortress"
 	start_with_fortress.value = true
@@ -233,14 +270,14 @@ func _init() -> void:
 	build_fortress_enabled.sub_rules_on = [0]
 	
 	fortress_price.text = "Money cost"
-	fortress_price.value = 1000
-	fortress_price.has_minimum = true
 	fortress_price.minimum = 0
+	fortress_price.has_minimum = true
+	fortress_price.value = 1000
 	
 	starting_money.text = "Starting money"
-	starting_money.value = 1000
-	starting_money.has_minimum = true
 	starting_money.minimum = 0
+	starting_money.has_minimum = true
+	starting_money.value = 1000
 	
 	province_income_option.text = "Income from provinces"
 	province_income_option.options = [
@@ -255,45 +292,51 @@ func _init() -> void:
 	province_income_option.option_filters = [[0], [1], [2]]
 	
 	province_income_random_min.text = "Minimum"
-	province_income_random_min.value = 10
-	province_income_random_min.has_minimum = true
 	province_income_random_min.minimum = 0
+	province_income_random_min.has_minimum = true
+	province_income_random_min.value = 10
 	
 	province_income_random_max.text = "Maximum"
-	province_income_random_max.value = 100
-	province_income_random_max.has_minimum = true
 	province_income_random_max.minimum = 0
+	province_income_random_max.has_minimum = true
+	province_income_random_max.value = 100
 	
 	province_income_constant.text = "Amount"
-	province_income_constant.value = 100
-	province_income_constant.has_minimum = true
 	province_income_constant.minimum = 0
+	province_income_constant.has_minimum = true
+	province_income_constant.value = 100
 	
 	province_income_per_person.text = "Income per person"
-	province_income_per_person.value = 0.075
-	province_income_per_person.has_minimum = true
 	province_income_per_person.minimum = 0
+	province_income_per_person.has_minimum = true
+	province_income_per_person.value = 0.075
 	
 	minimum_army_size.text = "Minimum army size"
-	minimum_army_size.value = 1
-	minimum_army_size.has_minimum = true
 	minimum_army_size.minimum = 1
+	minimum_army_size.has_minimum = true
+	minimum_army_size.value = 1
 	
 	global_attacker_efficiency.text = "Global attacker efficiency"
-	global_attacker_efficiency.value = 0.9
-	global_attacker_efficiency.has_minimum = true
 	global_attacker_efficiency.minimum = 0
+	global_attacker_efficiency.has_minimum = true
+	global_attacker_efficiency.value = 0.9
 	
 	global_defender_efficiency.text = "Global defender efficiency"
-	global_defender_efficiency.value = 1.0
-	global_defender_efficiency.has_minimum = true
 	global_defender_efficiency.minimum = 0
+	global_defender_efficiency.has_minimum = true
+	global_defender_efficiency.value = 1.0
 	
 	battle_algorithm_option.text = "Algorithm"
 	battle_algorithm_option.options = [
 		"Standard", "Algorithm 2"
 	]
 	battle_algorithm_option.selected = 0
+	
+	_category_game_over.text = "Game Over conditions"
+	_category_game_over.sub_rules = [
+		turn_limit_enabled,
+		game_over_provinces_owned_option,
+	]
 	
 	_category_recruitment.text = "Recruitment"
 	_category_recruitment.sub_rules = [
@@ -322,20 +365,20 @@ func _init() -> void:
 	
 	reinforcements_random_range.min_rule = reinforcements_random_min
 	reinforcements_random_range.max_rule = reinforcements_random_max
+	reinforcements_random_range.minimum = 0
+	reinforcements_random_range.has_minimum = true
 	reinforcements_random_range.min_value = 10
 	reinforcements_random_range.max_value = 40
-	reinforcements_random_range.has_minimum = true
-	reinforcements_random_range.minimum = 0
 	
 	province_income_random_range.min_rule = province_income_random_min
 	province_income_random_range.max_rule = province_income_random_max
+	province_income_random_range.minimum = 0
+	province_income_random_range.has_minimum = true
 	province_income_random_range.min_value = 10
 	province_income_random_range.max_value = 100
-	province_income_random_range.has_minimum = true
-	province_income_random_range.minimum = 0
 	
 	root_rules = [
-		turn_limit_enabled,
+		_category_game_over,
 		_category_recruitment,
 		_category_population,
 		_category_fortresses,
