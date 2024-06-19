@@ -14,6 +14,9 @@ var _army_id: int
 # one less than the number of elements in this array.
 var _troop_partition: Array[int]
 
+## This array's size should be one less than the troop partition's size.
+## Because you need to provide one new id for each newly created army,
+## but you don't need to provide a new id for the army that already exists.
 var _new_army_ids: Array[int]
 
 

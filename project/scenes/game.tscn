@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=30 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -19,6 +19,7 @@
 [ext_resource type="Script" path="res://scripts/networking/action_synchronizer.gd" id="15_o3imi"]
 [ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="15_vh3er"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
+[ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_input.gd" id="17_bla78"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://scenes/ui/top_bar.tscn" id="20_qfiqr"]
@@ -59,6 +60,10 @@ battle = ExtResource("15_vh3er")
 [node name="ActionSynchronizer" type="Node" parent="." node_paths=PackedStringArray("_game")]
 script = ExtResource("15_o3imi")
 _game = NodePath("..")
+
+[node name="AutoArrowInput" type="Node" parent="." node_paths=PackedStringArray("game")]
+script = ExtResource("17_bla78")
+game = NodePath("..")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true

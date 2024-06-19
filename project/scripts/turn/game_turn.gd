@@ -66,12 +66,15 @@ func loop() -> void:
 
 
 func _end_player_turn() -> void:
+	# Make army movements according to [AutoArrow]s
+	AutoArrowBehavior.new().apply(game)
+	
 	# Merge armies
 	for province in game.world.provinces.list():
 		game.world.armies.merge_armies(province)
 	
+	# Update province ownership
 	for province in game.world.provinces.list():
-		# Update province ownership
 		ProvinceNewOwner.new().update_province_owner(province)
 		
 		# For debugging, check if there's more than one army on any province

@@ -11,6 +11,7 @@ class_name Armies
 signal army_added(army: Army)
 
 var _list: Array[Army] = []
+var _claimed_ids: Array[int] = []
 
 
 func add_army(army: Army) -> void:
@@ -24,6 +25,11 @@ func add_army(army: Army) -> void:
 				+ "with the same id! Operation cancelled."
 		)
 		return
+	
+	# If the army's id was claimed before, unclaim it
+	var claimed_id_index: int = _claimed_ids.find(army.id)
+	if claimed_id_index != -1:
+		_claimed_ids.remove_at(claimed_id_index)
 	
 	army.destroyed.connect(remove_army)
 	_list.append(army)
@@ -84,6 +90,8 @@ func army_with_id(id: int) -> Army:
 ## Use [param number_of_ids] to choose how many new ids you want to receive.
 ## ([param number_of_ids] must be 1 or more.)
 ## They will all be unique and different from each other, guaranteed!
+## And, just like the new_unique_id function,
+## this function returns different ids each time.
 func new_unique_ids(number_of_ids: int) -> Array[int]:
 	if number_of_ids < 1:
 		push_error(
@@ -102,14 +110,23 @@ func new_unique_ids(number_of_ids: int) -> Array[int]:
 					id_is_not_unique = true
 					new_ids[i] += 1
 					break
+			for claimed_id in _claimed_ids:
+				if claimed_id == new_ids[i]:
+					id_is_not_unique = true
+					new_ids[i] += 1
+					break
+		_claimed_ids.append(new_ids[i])
 		if i != number_of_ids - 1:
 			new_ids.append(new_ids[i] + 1)
 	return new_ids
 
 
-# TODO DRY. copy/paste from [Players]
+# TODO DRY. copy/paste from [Players] kind of
 ## Provides a new unique id that is not used by any [Army] in the list.
 ## The id will be as small as possible (0 or higher).
+## Calling this function again will return a different id every time,
+## so you don't need to worry about a different piece of code
+## getting the same new id as yours.
 func new_unique_id() -> int:
 	var new_id: int = 0
 	var id_is_not_unique: bool = true
@@ -120,6 +137,12 @@ func new_unique_id() -> int:
 				id_is_not_unique = true
 				new_id += 1
 				break
+		for claimed_id in _claimed_ids:
+			if claimed_id == new_id:
+				id_is_not_unique = true
+				new_id += 1
+				break
+	_claimed_ids.append(new_id)
 	return new_id
 
 

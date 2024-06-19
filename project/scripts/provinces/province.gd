@@ -13,7 +13,11 @@ extends Node2D
 # TODO move visuals to their own class
 
 
-signal clicked(this_province: Province)
+## See [signal ProvinceShapePolygon2D.unhandled_mouse_event_occured]
+signal unhandled_mouse_event_occured(event: InputEventMouse, this: Province)
+## See [signal ProvinceShapePolygon2D.mouse_event_occured]
+signal mouse_event_occured(event: InputEventMouse, this: Province)
+
 signal selected(can_target_links: bool)
 signal deselected()
 
@@ -23,14 +27,18 @@ signal owner_changed(country: Country)
 var game: Game:
 	set(value):
 		if game:
-			clicked.disconnect(game._on_province_clicked)
+			unhandled_mouse_event_occured.disconnect(
+					game._on_province_unhandled_mouse_event
+			)
 			selected.disconnect(game._on_province_selected)
 			deselected.disconnect(game._on_province_deselected)
 			game.turn.turn_changed.disconnect(_on_new_turn)
 		
 		game = value
 		
-		clicked.connect(game._on_province_clicked)
+		unhandled_mouse_event_occured.connect(
+				game._on_province_unhandled_mouse_event
+		)
 		selected.connect(game._on_province_selected)
 		deselected.connect(game._on_province_deselected)
 		game.turn.turn_changed.connect(_on_new_turn)
@@ -121,6 +129,10 @@ func is_frontline() -> bool:
 	return false
 
 
+func mouse_is_inside_shape() -> bool:
+	return _shape.mouse_is_inside_shape()
+
+
 func _setup_army_stack() -> void:
 	army_stack = ArmyStack.new()
 	army_stack.name = "ArmyStack"
@@ -140,5 +152,9 @@ func _on_new_turn(_turn: int) -> void:
 		owner_country.money += _income_money.total()
 
 
-func _on_shape_clicked() -> void:
-	clicked.emit(self)
+func _on_shape_unhandled_mouse_event_occured(event: InputEventMouse) -> void:
+	unhandled_mouse_event_occured.emit(event, self)
+
+
+func _on_shape_mouse_event_occured(event: InputEventMouse) -> void:
+	mouse_event_occured.emit(event, self)

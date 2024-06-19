@@ -31,6 +31,9 @@ func convert_game(game: Game) -> void:
 		country_data["country_name"] = country.country_name
 		country_data["color"] = country.color.to_html()
 		country_data["money"] = country.money
+		country_data["auto_arrows"] = (
+				AutoArrowsToJSON.new().result(country.auto_arrows)
+		)
 		countries_data.append(country_data)
 	json_data["countries"] = countries_data
 	

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene load_steps=5 format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" path="res://scripts/world/game_world_2d.gd" id="1_lc7iv"]
 [ext_resource type="Script" path="res://scripts/world/world_background.gd" id="2_unrx0"]
 [ext_resource type="Script" path="res://scripts/provinces/provinces.gd" id="3_de1mq"]
+[ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_container.gd" id="4_o61mm"]
 
 [node name="World" type="Node"]
 script = ExtResource("1_lc7iv")
@@ -10,7 +11,13 @@ script = ExtResource("1_lc7iv")
 [node name="Node2D" type="Node2D" parent="."]
 
 [node name="Background" type="Node2D" parent="Node2D"]
+unique_name_in_owner = true
 script = ExtResource("2_unrx0")
 
 [node name="Provinces" type="Node2D" parent="Node2D"]
+unique_name_in_owner = true
 script = ExtResource("3_de1mq")
+
+[node name="AutoArrowContainer" type="Node2D" parent="Node2D"]
+unique_name_in_owner = true
+script = ExtResource("4_o61mm")

@@ -77,7 +77,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	
 	# World
 	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
-	game_world_2d.init()
+	game_world_2d.init(game)
 	game.world = game_world_2d
 	# TASK verify & return errors
 	if not (
@@ -115,6 +115,10 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	var armies_error: bool = _load_armies(json_dict["world"]["armies"], game)
 	if armies_error:
 		return
+	
+	# Auto arrows
+	# We have to load these after the provinces
+	_load_auto_arrows(json_dict, game)
 	
 	# Success!
 	error = false
@@ -162,6 +166,42 @@ func _load_country(json_data: Dictionary) -> Country:
 		country.money = json_data["money"]
 	
 	return country
+
+
+func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
+	if not json_dict.has("countries"):
+		return
+	
+	var countries_data: Variant = json_dict["countries"]
+	if not (countries_data is Array):
+		return
+	var countries_array := countries_data as Array
+	
+	if countries_array.size() < game.countries.countries.size():
+		return
+	
+	for i in game.countries.countries.size():
+		if not (countries_array[i] is Dictionary):
+			return
+		var country_dict := countries_array[i] as Dictionary
+		
+		if not country_dict.has("auto_arrows"):
+			continue
+		
+		game.countries.countries[i].auto_arrows = (
+				AutoArrowsFromJSON.new()
+				.result(game, country_dict["auto_arrows"])
+		)
+		
+		# Create the nodes
+		var arrows_node: AutoArrowsNode2D = (
+				(game.world as GameWorld2D).auto_arrow_container
+				.arrows_of_country(game.countries.countries[i])
+		)
+		for auto_arrow in game.countries.countries[i].auto_arrows.list():
+			var new_arrow_node := AutoArrowNode2D.new()
+			new_arrow_node.auto_arrow = auto_arrow
+			arrows_node.add(new_arrow_node)
 
 
 func _load_players(json_data: Dictionary, game: Game) -> bool:

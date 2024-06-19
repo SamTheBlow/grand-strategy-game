@@ -6,17 +6,8 @@ extends PlayerAI
 ## Tries to build fortresses on the frontline where they are needed the most.
 
 
-# Workaround to ensure that it always uses unique army ids.
-var _new_id_index: int
-
-
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
-	
-	# Unique army id workaround
-	for army in game.world.armies.list():
-		_new_id_index = maxi(_new_id_index, army.id)
-	_new_id_index += 1
 	
 	var provinces: Array[Province] = game.world.provinces.list()
 	var number_of_provinces: int = provinces.size()
@@ -154,12 +145,6 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 					if full_send:
 						new_army_count -= 1
 					
-					# Unique army id workaround
-					var new_army_ids: Array[int] = []
-					for i in new_army_count:
-						new_army_ids.append(_new_id_index)
-						_new_id_index += 1
-					
 					var partition2: Array[int] = []
 					var part_sum: int = 0
 					var parts: int = new_army_count + 1
@@ -177,6 +162,10 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 							break
 					
 					if is_large_enough:
+						var new_army_ids: Array[int] = (
+								game.world.armies
+								.new_unique_ids(new_army_count)
+						)
 						result.append(ActionArmySplit.new(
 								army.id, partition2, new_army_ids
 						))

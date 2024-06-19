@@ -2,13 +2,17 @@ class_name ProvinceShapePolygon2D
 extends Polygon2D
 ## A [Province]'s shape.
 ## It can draw an outline of your choice around the drawn polygon.
-## Emits a signal when the shape is clicked by the user.
+## Emits a signal when the mouse interacts with this shape.
 ##
 ## See this page for more info:
 ## https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
 
 
-signal clicked()
+## Emitted when a mouse event occurs and the mouse cursor is on this shape.
+## This one is only emitted when the event is unhandled.
+signal unhandled_mouse_event_occured(event: InputEventMouse)
+## Emitted when a mouse event occurs and the mouse cursor is on this shape.
+signal mouse_event_occured(event: InputEventMouse)
 
 enum OutlineType {
 	NONE = 0,
@@ -50,26 +54,19 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var event_typed := event as InputEventMouseButton
-		if (
-				event_typed.pressed
-				and not event_typed.is_echo()
-				and event_typed.button_index == MOUSE_BUTTON_LEFT
-		):
-			var mouse_position: Vector2 = get_viewport().get_mouse_position()
-			var camera: Camera2D = get_viewport().get_camera_2d()
-			var mouse_position_in_world: Vector2 = (
-					(mouse_position - get_viewport_rect().size * 0.5)
-					/ camera.zoom
-					+ camera.get_screen_center_position()
-			)
-			var local_mouse_position: Vector2 = (
-					mouse_position_in_world - global_position
-			)
-			if Geometry2D.is_point_in_polygon(local_mouse_position, polygon):
-				get_viewport().set_input_as_handled()
-				clicked.emit()
+	if not (event is InputEventMouse):
+		return
+	if not mouse_is_inside_shape():
+		return
+	unhandled_mouse_event_occured.emit(event as InputEventMouse)
+
+
+func _input(event: InputEvent) -> void:
+	if not (event is InputEventMouse):
+		return
+	if not mouse_is_inside_shape():
+		return
+	mouse_event_occured.emit(event as InputEventMouse)
 
 
 func _draw() -> void:
@@ -95,6 +92,17 @@ func _draw_outline(
 		draw_line(poly[i - 1], poly[i], ocolor, width)
 		draw_circle(poly[i], radius, ocolor)
 	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
+
+
+func mouse_is_inside_shape() -> bool:
+	var mouse_position_in_world: Vector2 = (
+			PositionScreenToWorld.new()
+			.result(get_viewport().get_mouse_position(), get_viewport())
+	)
+	var local_mouse_position: Vector2 = (
+			mouse_position_in_world - global_position
+	)
+	return Geometry2D.is_point_in_polygon(local_mouse_position, polygon)
 
 
 func _on_owner_changed(country: Country) -> void:

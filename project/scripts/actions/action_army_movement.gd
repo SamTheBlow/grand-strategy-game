@@ -40,6 +40,13 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
+	if not army.is_able_to_move():
+		push_warning(
+				"Tried to move an army, "
+				+ "but that army is currentl unable to move!"
+		)
+		return
+	
 	army.move_to_province(destination_province)
 	
 	#print("Army ", _army_id, " moved to province ", _destination_province_id)

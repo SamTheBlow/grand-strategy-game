@@ -10,4 +10,5 @@ script = ExtResource("1_mdkkc")
 script = ExtResource("2_okqgr")
 province = NodePath("..")
 
-[connection signal="clicked" from="Shape" to="." method="_on_shape_clicked"]
+[connection signal="mouse_event_occured" from="Shape" to="." method="_on_shape_mouse_event_occured"]
+[connection signal="unhandled_mouse_event_occured" from="Shape" to="." method="_on_shape_unhandled_mouse_event_occured"]

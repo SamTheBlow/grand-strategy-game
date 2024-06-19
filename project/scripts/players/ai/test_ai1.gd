@@ -6,18 +6,8 @@ extends PlayerAI
 ## Builds fortresses in the most populated provinces on the frontline.
 
 
-# Workaround to ensure that it always uses unique army ids.
-# TODO find better solution (same problem in [TestAI2])
-var _new_id_index: int
-
-
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
-	
-	# Unique army id workaround
-	for army in game.world.armies.list():
-		_new_id_index = maxi(_new_id_index, army.id)
-	_new_id_index += 1
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 	
@@ -112,44 +102,21 @@ func _find_target_province(
 	# If there's any, send troops evenly to each province
 	var number_of_targets: int = targets.size()
 	if number_of_targets > 0:
-		# Split the troops evenly
-		# If there's more targets than available troops, don't split at all
-		var troop_count: int = army.army_size.current_size()
-		var number_of_armies: int = number_of_targets + 1
-		@warning_ignore("integer_division")
-		var troops_per_army: int = troop_count / number_of_armies
+		# Build array of destination provinces
+		var destination_provinces: Array[Province] = []
+		destination_provinces.append(army.province())
+		for i in number_of_targets:
+			destination_provinces.append(targets[i][0])
 		
-		var new_army_ids: Array[int] = []
+		var army_even_split := ArmyEvenSplit.new()
+		army_even_split.apply(army, destination_provinces)
 		
-		if troops_per_army >= army.game.rules.minimum_army_size.value:
-			# Create the partition
-			var troop_partition: Array[int] = []
-			for i in number_of_armies:
-				troop_partition.append(troops_per_army)
-			troop_partition[0] += troop_count % number_of_armies
-			
-			# Unique army id workaround
-			new_army_ids = []
-			for i in number_of_targets:
-				new_army_ids.append(_new_id_index)
-				_new_id_index += 1
-			
-			var action := ActionArmySplit.new(
-					army.id,
-					troop_partition,
-					new_army_ids
-			)
-			#print("New split action created for army ", army.id, ". The new ids are: ", new_army_ids)
-			new_actions.append(action)
-		
-		# Move your armies towards the targets
-		var number_of_armies_to_move: int = new_army_ids.size()
-		for i in number_of_armies_to_move:
-			var action := ActionArmyMovement.new(
-					new_army_ids[i], targets[i][0].id
-			)
-			#print("New movement action created for army ", new_army_ids[i])
-			new_actions.append(action)
+		if army_even_split.action_army_split != null:
+			new_actions.append(army_even_split.action_army_split)
+		for i in army_even_split.action_army_movements.size():
+			if i == 0:
+				continue
+			new_actions.append(army_even_split.action_army_movements[i])
 	else:
 		# Make a new link tree
 		var new_link_tree: Array = []

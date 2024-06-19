@@ -118,7 +118,12 @@ var world: GameWorld:
 		$WorldLayer.add_child(world)
 
 ## Child node: the interface that appears when you select a [Province]
-var component_ui: ComponentUI
+var component_ui: ComponentUI:
+	set(value):
+		if component_ui != null:
+			component_ui_root.remove_child(component_ui)
+			component_ui.queue_free()
+		component_ui = value
 
 ## Automatically setup when calling [method Game.init].
 ## See also: [method Game.modifiers]
@@ -326,14 +331,29 @@ func _on_game_over() -> void:
 	_game_over = true
 
 
-func _on_province_clicked(province: Province) -> void:
+func _on_province_unhandled_mouse_event(
+		event: InputEventMouse, province: Province
+) -> void:
+	# Only proceed when the input is a left click
+	if not (event is InputEventMouseButton):
+		return
+	var event_button := event as InputEventMouseButton
+	if not (
+			event_button.pressed
+			and event_button.button_index == MOUSE_BUTTON_LEFT
+	):
+		return
+	get_viewport().set_input_as_handled()
+	
 	var provinces_node: Provinces = world.provinces
 	var you: GamePlayer = turn.playing_player()
 	
+	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
 		provinces_node.select_province(province, false)
 		return
 	
+	# If applicable, open the army movement popup
 	var your_country: Country = you.playing_country
 	if provinces_node.selected_province:
 		var selected_province: Province = provinces_node.selected_province
@@ -345,6 +365,8 @@ func _on_province_clicked(province: Province) -> void:
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return
+	
+	# Select province and highlight the linked provinces if applicable
 	var active_armies_: Array[Army] = (
 			world.armies.active_armies(your_country, province)
 	)
@@ -360,8 +382,7 @@ func _on_province_selected(_can_target_links: bool) -> void:
 
 
 func _on_province_deselected() -> void:
-	component_ui_root.remove_child(component_ui)
-	component_ui.queue_free()
+	component_ui = null
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:
