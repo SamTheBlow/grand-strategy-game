@@ -239,6 +239,20 @@ func new_unique_id() -> int:
 	return new_id
 
 
+## Returns true if the client (given by its unique id) has one or more
+## players playing as the given country, otherwise returns false.
+func client_controls_country(multiplayer_id: int, country: Country) -> bool:
+	for player in _list:
+		if (
+				player.is_human
+				and player.player_human != null
+				and player.player_human.multiplayer_id == multiplayer_id
+				and player.playing_country == country
+		):
+			return true
+	return false
+
+
 ## Converts this node into raw data for the purpose of saving/loading.
 func raw_data() -> Array:
 	var players_data: Array = []

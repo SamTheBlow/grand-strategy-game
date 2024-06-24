@@ -34,6 +34,7 @@ func init(game: Game, country_: Country) -> void:
 	)
 	_on_player_turn_changed(game.turn.playing_player())
 	game.turn.player_changed.connect(_on_player_turn_changed)
+	_country.auto_arrows.arrow_added.connect(_on_arrow_added)
 
 
 func add(auto_arrow_node: AutoArrowNode2D) -> void:
@@ -42,11 +43,23 @@ func add(auto_arrow_node: AutoArrowNode2D) -> void:
 	auto_arrow_node.removed.connect(_on_arrow_removed)
 
 
+func remove(auto_arrow: AutoArrow) -> void:
+	for node in _list:
+		if node.auto_arrow == null:
+			continue
+		if node.auto_arrow.is_equivalent_to(auto_arrow):
+			_remove_node(node)
+			return
+	push_warning(
+			"Tried removing an AutoArrow, but it had no corresponding node."
+	)
+
+
 func country() -> Country:
 	return _country
 
 
-func _on_arrow_removed(auto_arrow_node: AutoArrowNode2D) -> void:
+func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
 	if not _list.has(auto_arrow_node):
 		push_warning(
 				"Tried removing an AutoArrow node, but it wasn't on the list."
@@ -54,6 +67,16 @@ func _on_arrow_removed(auto_arrow_node: AutoArrowNode2D) -> void:
 		return
 	remove_child(auto_arrow_node)
 	_list.erase(auto_arrow_node)
+
+
+func _on_arrow_added(auto_arrow: AutoArrow) -> void:
+	var auto_arrow_node := AutoArrowNode2D.new()
+	auto_arrow_node.auto_arrow = auto_arrow
+	add(auto_arrow_node)
+
+
+func _on_arrow_removed(auto_arrow_node: AutoArrowNode2D) -> void:
+	_remove_node(auto_arrow_node)
 
 
 func _on_selected_province_changed(province: Province) -> void:

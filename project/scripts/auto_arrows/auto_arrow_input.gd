@@ -11,6 +11,7 @@ extends Node
 
 
 @export var game: Game
+@export var auto_arrow_sync: AutoArrowSync
 
 var _new_auto_arrow_node: AutoArrowNode2D
 
@@ -57,6 +58,10 @@ func _update_arrow_destination() -> void:
 
 
 func _start_arrow(province: Province) -> void:
+	var playing_country: Country = game.turn.playing_player().playing_country
+	if not auto_arrow_sync.can_apply_changes(playing_country):
+		return
+	
 	if _new_auto_arrow_node:
 		push_warning(
 				"Received a new right click, but the AutoArrow node for the "
@@ -68,8 +73,7 @@ func _start_arrow(province: Province) -> void:
 	_new_auto_arrow_node.source_province = province
 	(
 			(game.world as GameWorld2D).auto_arrow_container
-			.arrows_of_country(game.turn.playing_player().playing_country)
-			.add(_new_auto_arrow_node)
+			.arrows_of_country(playing_country).add(_new_auto_arrow_node)
 	)
 	_update_arrow_destination()
 
@@ -88,19 +92,19 @@ func _release_arrow(province: Province) -> void:
 	auto_arrow.source_province = _new_auto_arrow_node.source_province
 	auto_arrow.destination_province = province
 	
-	# This exact arrow already exists? Remove it
-	var country_arrows: AutoArrows = (
-			game.turn.playing_player().playing_country.auto_arrows
-	)
-	if country_arrows.is_duplicate(auto_arrow):
-		country_arrows.remove(auto_arrow)
-		_new_auto_arrow_node.removed.emit(_new_auto_arrow_node)
-		_new_auto_arrow_node = null
-		return
-	
-	_new_auto_arrow_node.auto_arrow = auto_arrow
+	_new_auto_arrow_node.removed.emit(_new_auto_arrow_node)
 	_new_auto_arrow_node = null
-	game.turn.playing_player().playing_country.auto_arrows.add(auto_arrow)
+	
+	var country: Country = _country()
+	if country.auto_arrows.is_duplicate(auto_arrow):
+		# This exact arrow already exists? Remove it
+		auto_arrow_sync.remove(country, auto_arrow)
+	else:
+		auto_arrow_sync.add(country, auto_arrow)
+
+
+func _country() -> Country:
+	return game.turn.playing_player().playing_country
 
 
 func _on_province_unhandled_mouse_event(
@@ -115,10 +119,7 @@ func _on_province_unhandled_mouse_event(
 			_start_arrow(province)
 			if event_button.double_click:
 				# Double right click: remove all [AutoArrow]s from the province
-				(
-						game.turn.playing_player().playing_country
-						.auto_arrows.remove_all_from_province(province)
-				)
+				auto_arrow_sync.clear_province(_country(), province)
 		else:
 			_release_arrow(province)
 		get_viewport().set_input_as_handled()

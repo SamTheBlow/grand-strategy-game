@@ -10,6 +10,13 @@ var game: Game
 var _list: Array[AutoArrowsNode2D] = []
 
 
+# DANGER this only works if you assume that countries
+# are never added or removed later in the game
+func _ready() -> void:
+	for country in game.countries.countries:
+		_new_arrows_node(country)
+
+
 func add(auto_arrows_node: AutoArrowsNode2D) -> void:
 	add_child(auto_arrows_node)
 	_list.append(auto_arrows_node)
@@ -20,8 +27,10 @@ func arrows_of_country(country: Country) -> AutoArrowsNode2D:
 	for arrows in _list:
 		if arrows.country() == country:
 			return arrows
-	
-	# Create a new node for this country
+	return _new_arrows_node(country)
+
+
+func _new_arrows_node(country: Country) -> AutoArrowsNode2D:
 	var new_node := AutoArrowsNode2D.new()
 	new_node.init(game, country)
 	add(new_node)

@@ -1,8 +1,8 @@
 class_name AutoArrows
 
 
-signal arrow_added()
-signal arrow_removed()
+signal arrow_added(auto_arrow: AutoArrow)
+signal arrow_removed(auto_arrow: AutoArrow)
 
 var _list: Array[AutoArrow] = []
 
@@ -13,7 +13,7 @@ func add(auto_arrow: AutoArrow) -> void:
 	auto_arrow.source_province_changed.connect(_on_property_changed)
 	auto_arrow.destination_province_changed.connect(_on_property_changed)
 	_list.append(auto_arrow)
-	arrow_added.emit()
+	arrow_added.emit(auto_arrow)
 
 
 ## You don't have to pass an exact reference.
@@ -41,7 +41,7 @@ func remove(auto_arrow: AutoArrow) -> void:
 	list_arrow.destination_province_changed.disconnect(_on_property_changed)
 	_list.erase(list_arrow)
 	list_arrow.removed.emit()
-	arrow_removed.emit()
+	arrow_removed.emit(list_arrow)
 
 
 func remove_all_from_province(source_province: Province) -> void:
