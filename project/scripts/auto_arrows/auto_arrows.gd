@@ -10,8 +10,6 @@ var _list: Array[AutoArrow] = []
 func add(auto_arrow: AutoArrow) -> void:
 	if is_duplicate(auto_arrow):
 		return
-	auto_arrow.source_province_changed.connect(_on_property_changed)
-	auto_arrow.destination_province_changed.connect(_on_property_changed)
 	_list.append(auto_arrow)
 	arrow_added.emit(auto_arrow)
 
@@ -37,10 +35,7 @@ func remove(auto_arrow: AutoArrow) -> void:
 		)
 		return
 	
-	list_arrow.source_province_changed.disconnect(_on_property_changed)
-	list_arrow.destination_province_changed.disconnect(_on_property_changed)
 	_list.erase(list_arrow)
-	list_arrow.removed.emit()
 	arrow_removed.emit(list_arrow)
 
 

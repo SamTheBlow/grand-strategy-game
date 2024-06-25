@@ -28,6 +28,9 @@ var _visible_flags: int = 3:
 func init(game: Game, country_: Country) -> void:
 	_country = country_
 	
+	for auto_arrow in _country.auto_arrows.list():
+		_add(auto_arrow)
+	
 	_on_selected_province_changed(game.world.provinces.selected_province)
 	game.world.provinces.selected_province_changed.connect(
 		_on_selected_province_changed
@@ -35,15 +38,20 @@ func init(game: Game, country_: Country) -> void:
 	_on_player_turn_changed(game.turn.playing_player())
 	game.turn.player_changed.connect(_on_player_turn_changed)
 	_country.auto_arrows.arrow_added.connect(_on_arrow_added)
+	_country.auto_arrows.arrow_removed.connect(_on_arrow_removed)
 
 
-func add(auto_arrow_node: AutoArrowNode2D) -> void:
-	add_child(auto_arrow_node)
-	_list.append(auto_arrow_node)
-	auto_arrow_node.removed.connect(_on_arrow_removed)
+func country() -> Country:
+	return _country
 
 
-func remove(auto_arrow: AutoArrow) -> void:
+func _add(auto_arrow: AutoArrow) -> void:
+	var auto_arrow_node := AutoArrowNode2D.new()
+	auto_arrow_node.auto_arrow = auto_arrow
+	_add_node(auto_arrow_node)
+
+
+func _remove(auto_arrow: AutoArrow) -> void:
 	for node in _list:
 		if node.auto_arrow == null:
 			continue
@@ -55,8 +63,9 @@ func remove(auto_arrow: AutoArrow) -> void:
 	)
 
 
-func country() -> Country:
-	return _country
+func _add_node(auto_arrow_node: AutoArrowNode2D) -> void:
+	add_child(auto_arrow_node)
+	_list.append(auto_arrow_node)
 
 
 func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
@@ -70,13 +79,11 @@ func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
 
 
 func _on_arrow_added(auto_arrow: AutoArrow) -> void:
-	var auto_arrow_node := AutoArrowNode2D.new()
-	auto_arrow_node.auto_arrow = auto_arrow
-	add(auto_arrow_node)
+	_add(auto_arrow)
 
 
-func _on_arrow_removed(auto_arrow_node: AutoArrowNode2D) -> void:
-	_remove_node(auto_arrow_node)
+func _on_arrow_removed(auto_arrow: AutoArrow) -> void:
+	_remove(auto_arrow)
 
 
 func _on_selected_province_changed(province: Province) -> void:

@@ -1,23 +1,23 @@
 class_name AutoArrow
+## Represents a movement from a source [Province] to a destination [Province].
+## This is (kind of) a struct: two autoarrows with the same properties
+## should be considered the same autoarrow.
+## Also, the properties are not meant to be changed, ever.
 
-
-signal removed()
-signal source_province_changed(this: AutoArrow)
-signal destination_province_changed(this: AutoArrow)
 
 var source_province: Province:
 	set(value):
-		var has_changed: bool = source_province != value
-		source_province = value
-		if has_changed:
-			source_province_changed.emit(self)
+		if source_province == null:
+			source_province = value
+			return
+		push_warning("Tried to change an AutoArrow's source province.")
 
 var destination_province: Province:
 	set(value):
-		var has_changed: bool = destination_province != value
-		destination_province = value
-		if has_changed:
-			destination_province_changed.emit(self)
+		if destination_province == null:
+			destination_province = value
+			return
+		push_warning("Tried to change an AutoArrow's destination province.")
 
 
 func is_equivalent_to(auto_arrow: AutoArrow) -> bool:

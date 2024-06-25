@@ -2,30 +2,13 @@ class_name AutoArrowNode2D
 extends Node2D
 
 
-## Emit this to request for this node to be removed.
-signal removed(this: AutoArrowNode2D)
-
 ## Can be null, in which case you can instead use manually
 ## given properties source_province and world_destination.
 var auto_arrow: AutoArrow = null:
 	set(value):
-		if auto_arrow:
-			auto_arrow.source_province_changed.disconnect(
-					_on_source_province_changed
-			)
-			auto_arrow.destination_province_changed.disconnect(
-					_on_destination_province_changed
-			)
-			auto_arrow.removed.disconnect(_on_arrow_removed)
+		if auto_arrow == value:
+			return
 		auto_arrow = value
-		if auto_arrow:
-			auto_arrow.source_province_changed.connect(
-					_on_source_province_changed
-			)
-			auto_arrow.destination_province_changed.connect(
-					_on_destination_province_changed
-			)
-			auto_arrow.removed.connect(_on_arrow_removed)
 		queue_redraw()
 
 ## Automatically gives the [code]auto_arrow[/code]'s
@@ -36,6 +19,8 @@ var source_province: Province:
 			return auto_arrow.source_province
 		return source_province
 	set(value):
+		if source_province == value:
+			return
 		source_province = value
 		if auto_arrow == null:
 			queue_redraw()
@@ -48,6 +33,8 @@ var destination_province: Province:
 			return auto_arrow.destination_province
 		return destination_province
 	set(value):
+		if destination_province == value:
+			return
 		destination_province = value
 		if auto_arrow == null:
 			queue_redraw()
@@ -60,6 +47,8 @@ var world_destination: Vector2:
 			return destination_province.position_army_host
 		return world_destination
 	set(value):
+		if world_destination == value:
+			return
 		world_destination = value
 		if destination_province == null:
 			queue_redraw()
@@ -92,15 +81,3 @@ func _draw() -> void:
 			arrow_color,
 			arrow_thickness
 	)
-
-
-func _on_source_province_changed(_auto_arrow: AutoArrow) -> void:
-	queue_redraw()
-
-
-func _on_destination_province_changed(_auto_arrow: AutoArrow) -> void:
-	queue_redraw()
-
-
-func _on_arrow_removed() -> void:
-	removed.emit(self)

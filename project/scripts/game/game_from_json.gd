@@ -192,16 +192,6 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 				AutoArrowsFromJSON.new()
 				.result(game, country_dict["auto_arrows"])
 		)
-		
-		# Create the nodes
-		var arrows_node: AutoArrowsNode2D = (
-				(game.world as GameWorld2D).auto_arrow_container
-				.arrows_of_country(game.countries.countries[i])
-		)
-		for auto_arrow in game.countries.countries[i].auto_arrows.list():
-			var new_arrow_node := AutoArrowNode2D.new()
-			new_arrow_node.auto_arrow = auto_arrow
-			arrows_node.add(new_arrow_node)
 
 
 func _load_players(json_data: Dictionary, game: Game) -> bool:
