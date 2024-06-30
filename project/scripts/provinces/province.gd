@@ -18,7 +18,7 @@ signal unhandled_mouse_event_occured(event: InputEventMouse, this: Province)
 ## See [signal ProvinceShapePolygon2D.mouse_event_occured]
 signal mouse_event_occured(event: InputEventMouse, this: Province)
 
-signal selected(can_target_links: bool)
+signal selected()
 signal deselected()
 
 signal owner_changed(country: Country)
@@ -108,12 +108,17 @@ func income_money() -> IncomeMoney:
 	return _income_money
 
 
-func select(can_target_links: bool) -> void:
-	selected.emit(can_target_links)
+func select() -> void:
+	_highlight_links()
+	selected.emit()
 
 
 func deselect() -> void:
 	deselected.emit()
+
+
+func highlight_shape(is_target: bool) -> void:
+	_shape.highlight(is_target)
 
 
 func is_linked_to(province: Province) -> bool:
@@ -144,6 +149,21 @@ func _setup_buildings() -> void:
 	buildings = Buildings.new()
 	buildings.name = "Buildings"
 	add_child(buildings)
+
+
+func _highlight_links() -> void:
+	var has_valid_army: bool = false
+	var active_armies: Array[Army] = (
+			game.world.armies
+			.active_armies(game.turn.playing_player().playing_country, self)
+	)
+	var army: Army
+	if active_armies.size() > 0:
+		army = active_armies[0]
+		has_valid_army = true
+	
+	for link in links:
+		link.highlight_shape(has_valid_army and army.can_move_to(link))
 
 
 func _on_new_turn(_turn: int) -> void:

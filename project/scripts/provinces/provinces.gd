@@ -24,6 +24,8 @@ var selected_province: Province:
 		if selected_province != null:
 			selected_province.deselect()
 		selected_province = value
+		if selected_province != null:
+			selected_province.select()
 		selected_province_changed.emit(selected_province)
 
 var _list: Array[Province] = []
@@ -38,9 +40,8 @@ func add_province(province: Province) -> void:
 	province.mouse_event_occured.connect(_on_province_mouse_event)
 
 
-func select_province(province: Province, can_target_links: bool) -> void:
+func select_province(province: Province) -> void:
 	selected_province = province
-	selected_province.select(can_target_links)
 
 
 func deselect_province() -> void:

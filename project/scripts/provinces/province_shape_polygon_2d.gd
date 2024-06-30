@@ -17,8 +17,8 @@ signal mouse_event_occured(event: InputEventMouse)
 enum OutlineType {
 	NONE = 0,
 	SELECTED = 1,
-	NEIGHBOR_TARGET = 2,
-	NEIGHBOR = 3,
+	HIGHLIGHT_TARGET = 2,
+	HIGHLIGHT = 3,
 }
 
 @export var province: Province
@@ -41,7 +41,7 @@ var _outline_type: OutlineType = OutlineType.NONE:
 
 func _ready() -> void:
 	if not province:
-		print_debug("Province shape doesn't have reference to province!")
+		push_error("Province shape doesn't have reference to province!")
 		return
 	
 	province.owner_changed.connect(_on_owner_changed)
@@ -49,7 +49,6 @@ func _ready() -> void:
 	province.selected.connect(_on_selected)
 	province.deselected.connect(_on_deselected)
 	for link in province.links:
-		link.selected.connect(_on_link_selected)
 		link.deselected.connect(_on_deselected)
 
 
@@ -75,9 +74,9 @@ func _draw() -> void:
 			pass
 		OutlineType.SELECTED:
 			_draw_outline(get_polygon(), outline_color, outline_width)
-		OutlineType.NEIGHBOR_TARGET:
+		OutlineType.HIGHLIGHT_TARGET:
 			_draw_outline(get_polygon(), outline_color, outline_width * 0.8)
-		OutlineType.NEIGHBOR:
+		OutlineType.HIGHLIGHT:
 			_draw_outline(get_polygon(), outline_color, outline_width * 0.5)
 
 
@@ -105,6 +104,13 @@ func mouse_is_inside_shape() -> bool:
 	return Geometry2D.is_point_in_polygon(local_mouse_position, polygon)
 
 
+func highlight(is_target: bool) -> void:
+	if is_target:
+		_outline_type = OutlineType.HIGHLIGHT_TARGET
+	else:
+		_outline_type = OutlineType.HIGHLIGHT
+
+
 func _on_owner_changed(country: Country) -> void:
 	if country:
 		color = country.color
@@ -112,16 +118,9 @@ func _on_owner_changed(country: Country) -> void:
 		color = Color.WHITE
 
 
-func _on_selected(_can_target_links: bool) -> void:
-	_outline_type = ProvinceShapePolygon2D.OutlineType.SELECTED
-
-
-func _on_link_selected(can_target_links: bool) -> void:
-	if can_target_links:
-		_outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR_TARGET
-	else:
-		_outline_type = ProvinceShapePolygon2D.OutlineType.NEIGHBOR
+func _on_selected() -> void:
+	_outline_type = OutlineType.SELECTED
 
 
 func _on_deselected() -> void:
-	_outline_type = ProvinceShapePolygon2D.OutlineType.NONE
+	_outline_type = OutlineType.NONE

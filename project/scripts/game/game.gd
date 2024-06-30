@@ -350,7 +350,7 @@ func _on_province_unhandled_mouse_event(
 	
 	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
-		provinces_node.select_province(province, false)
+		provinces_node.select_province(province)
 		return
 	
 	# If applicable, open the army movement popup
@@ -366,14 +366,10 @@ func _on_province_unhandled_mouse_event(
 				_add_army_movement_popup(army, province)
 				return
 	
-	# Select province and highlight the linked provinces if applicable
-	var active_armies_: Array[Army] = (
-			world.armies.active_armies(your_country, province)
-	)
-	provinces_node.select_province(province, active_armies_.size() > 0)
+	provinces_node.select_province(province)
 
 
-func _on_province_selected(_can_target_links: bool) -> void:
+func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
 	component_ui.init(world.provinces.selected_province, turn.playing_player())
 	turn.player_changed.connect(component_ui._on_turn_player_changed)
