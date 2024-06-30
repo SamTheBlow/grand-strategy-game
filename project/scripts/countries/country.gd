@@ -7,12 +7,12 @@ extends Resource
 
 signal money_changed(new_amount: int)
 
+## All countries must have a unique id
+## for the purposes of saving/loading/syncing.
+var id: int = -1
+
 @export var country_name: String = ""
 @export var color: Color = Color.WHITE
-
-## All countries must have a unique id,
-## for the purposes of saving/loading and networking.
-var id: int = -1
 
 var money: int = 0:
 	set(value):
@@ -20,3 +20,9 @@ var money: int = 0:
 		money_changed.emit(money)
 
 var auto_arrows := AutoArrows.new()
+
+
+## Returns true if this country's armies have the
+## diplomatic permission to move into given country's provinces.
+func can_move_into_country(_country: Country) -> bool:
+	return true

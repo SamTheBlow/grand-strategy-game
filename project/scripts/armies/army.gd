@@ -125,10 +125,14 @@ func is_able_to_move() -> bool:
 
 
 ## If true, the army is allowed to move to the given province.
-## An army can only move to an adjacent province.
+## An army can only move to an adjacent province. And when moving into
+## foreign territory, the army's owner must be allowed to enter.
 ## This returns true regardless of if the army is able to move at all.
 func can_move_to(destination: Province) -> bool:
-	return destination.is_linked_to(_province)
+	return (
+			destination.is_linked_to(_province)
+			and owner_country.can_move_into_country(destination.owner_country)
+	)
 
 
 ## Moves this army to the given destination province.[br]
@@ -140,6 +144,9 @@ func can_move_to(destination: Province) -> bool:
 ## consider using teleport_to_province() instead.
 func move_to_province(destination: Province) -> void:
 	if not is_able_to_move():
+		return
+	if not can_move_to(destination):
+		push_error("Tried to move an army to a province it can't move to.")
 		return
 	
 	_movements_made += 1

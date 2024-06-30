@@ -34,22 +34,18 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	if not army.province().links.has(destination_province):
-		push_warning(
-				"Tried to move an army to an invalid destination!"
-		)
-		return
-	
 	if not army.is_able_to_move():
 		push_warning(
 				"Tried to move an army, "
-				+ "but that army is currentl unable to move!"
+				+ "but that army is currently unable to move!"
 		)
 		return
 	
-	army.move_to_province(destination_province)
+	if not army.can_move_to(destination_province):
+		#push_warning("Tried to move an army to an invalid destination!")
+		return
 	
-	#print("Army ", _army_id, " moved to province ", _destination_province_id)
+	army.move_to_province(destination_province)
 
 
 ## Returns this action's raw data, for the purpose of
