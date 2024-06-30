@@ -19,10 +19,17 @@ var money: int = 0:
 		money = value
 		money_changed.emit(money)
 
+var relationships := DiplomacyRelationships.new()
+
 var auto_arrows := AutoArrows.new()
 
 
 ## Returns true if this country's armies have the
 ## diplomatic permission to move into given country's provinces.
-func can_move_into_country(_country: Country) -> bool:
-	return true
+func can_move_into_country(country: Country) -> bool:
+	return (
+			country == self
+			or country == null
+			or country.relationships.with_country(self).grants_military_access
+			or self.relationships.with_country(country).is_trespassing
+	)
