@@ -171,6 +171,25 @@ func init() -> void:
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
+	# HACK this is for testing the WIP diplomacy features
+	#var presets: Array = [
+		#preload("res://resources/diplomacy_presets/allied.tres"),
+		#preload("res://resources/diplomacy_presets/neutral.tres"),
+		#preload("res://resources/diplomacy_presets/at_war.tres"),
+	#]
+	#for i in countries.countries.size():
+		#var country_1: Country = countries.countries[i]
+		#for j in range(i + 1, countries.countries.size()):
+			#var country_2: Country = countries.countries[j]
+			#var random_preset: DiplomacyPreset = presets[randi() % 3]
+			#country_1.relationships.with_country(country_2).preset = (
+					#random_preset
+			#)
+			#country_2.relationships.with_country(country_1).preset = (
+					#random_preset
+			#)
+			#print(country_1.country_name, " + ", country_2.country_name, " = ", random_preset.name)
+	
 	rules.lock()
 	game_started.emit()
 	turn.loop()

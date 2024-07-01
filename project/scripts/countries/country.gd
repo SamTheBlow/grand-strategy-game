@@ -30,6 +30,7 @@ func can_move_into_country(country: Country) -> bool:
 	return (
 			country == self
 			or country == null
-			or country.relationships.with_country(self).grants_military_access
-			or self.relationships.with_country(country).is_trespassing
+			or
+			country.relationships.with_country(self).grants_military_access()
+			or self.relationships.with_country(country).is_trespassing()
 	)

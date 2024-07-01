@@ -27,10 +27,10 @@ func _is_fighting(army: Army, other_army: Army) -> bool:
 			army.owner_country != other_army.owner_country
 			and (
 					army.owner_country.relationships
-					.with_country(other_army.owner_country).is_fighting
+					.with_country(other_army.owner_country).is_fighting()
 					or
 					other_army.owner_country.relationships
-					.with_country(army.owner_country).is_fighting
+					.with_country(army.owner_country).is_fighting()
 			)
 	)
 

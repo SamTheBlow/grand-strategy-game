@@ -1,0 +1,12 @@
+[gd_resource type="Resource" script_class="DiplomacyPreset" load_steps=2 format=3 uid="uid://coqnkgbae8r7r"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/presets/diplomacy_preset.gd" id="1_awlgk"]
+
+[resource]
+script = ExtResource("1_awlgk")
+name = "Allied"
+settings = {
+"grants_military_access": true,
+"is_fighting": false,
+"is_trespassing": false
+}
