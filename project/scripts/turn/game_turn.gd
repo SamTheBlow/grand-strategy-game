@@ -37,7 +37,7 @@ func end_turn() -> void:
 ## ALERT if there are no human players, this causes an infinite loop!
 func loop() -> void:
 	if game.game_players.number_of_playing_humans() == 0:
-		print_debug(
+		push_warning(
 				"Started the game loop with no playing humans. "
 				+ "There will probably be an infinite loop."
 		)
@@ -76,13 +76,6 @@ func _end_player_turn() -> void:
 	# Update province ownership
 	for province in game.world.provinces.list():
 		ProvinceNewOwner.new().update_province_owner(province)
-		
-		# For debugging, check if there's more than one army on any province
-		if game.world.armies.armies_in_province(province).size() > 1:
-			print_debug(
-					"At the end of a player's turn, found more than "
-					+ "one army in province (ID: " + str(province.id) + ")."
-			)
 	
 	_go_to_next_player()
 
