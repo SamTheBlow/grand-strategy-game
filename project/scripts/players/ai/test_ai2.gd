@@ -64,80 +64,76 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			# No frontline! You probably won.
 			break
 		
-		# NOTE assuming there is only one army per province
-		var armies: Array[Army] = game.world.armies.armies_in_province(province)
+		var armies: Array[Army] = game.world.armies.active_armies(
+				player.playing_country, province
+		)
 		if armies.size() == 0:
 			continue
+		# NOTE this assumes that you only have one army in each province
 		var army: Army = armies[0]
 		var army_size: int = army.army_size.current_size()
 		
 		if borders.has(province):
-			# Get a list of all the hostile neighbors
-			var hostile_neighbors: Array[Province] = []
+			# Get a list of all the hostile link provinces
+			var hostile_links: Array[Province] = []
 			for link in province.links:
-				if link.owner_country != province.owner_country:
-					hostile_neighbors.append(link)
+				if (
+						link.owner_country != player.playing_country
+						and
+						province.owner_country.relationships
+						.with_country(link.owner_country).is_trespassing()
+				):
+					hostile_links.append(link)
 			
 			# If there is only one, then it's safe to full send.
-			if hostile_neighbors.size() == 1:
-				# NOTE again, assuming there is only one army in a province
-				var hostile_armies: Array[Army] = (
-						game.world.armies
-						.armies_in_province(hostile_neighbors[0])
+			if hostile_links.size() == 1:
+				# Take the sum of all the hostile army sizes
+				var hostile_army_size: int = _hostile_army_size(
+						army.owner_country, hostile_links[0]
 				)
 				
-				var do_it: bool = false
-				if hostile_armies.size() == 0:
-					do_it = true
-				else:
-					var hostile_army_size: int = (
-							hostile_armies[0].army_size.current_size()
-					)
-					if army_size >= hostile_army_size * 1.69:
-						do_it = true
-				
-				if do_it:
+				# If your army is relatively large enough, attack!
+				if army_size >= hostile_army_size * 1.69:
 					result.append(ActionArmyMovement.new(
-							army.id, hostile_neighbors[0].id
+							army.id, hostile_links[0].id
 					))
-			# Otherwise, we need to keep some troops at home to defend.
+			# Otherwise, we might need to keep some troops at home to defend.
 			else:
 				# The list where we put all the provinces we'll attack
 				var attack_list: Array[Province] = []
 				
-				# Get all the hostile armies
-				# If there's no army in a province, add it to the attack list
-				var hostile_armies: Array[Army] = []
-				for hostile_neighbor in hostile_neighbors:
-					var armies_in_province: Array[Army] = (
-							game.world.armies
-							.armies_in_province(hostile_neighbor)
+				# Compare a province's hostile armies with your army
+				var total_hostile_army_size: int = 0
+				for hostile_link in hostile_links:
+					# Take the sum of all the hostile army sizes
+					var hostile_army_size: int = _hostile_army_size(
+							army.owner_country, hostile_link
 					)
-					if armies_in_province.size() == 0:
-						attack_list.append(hostile_neighbor)
-					else:
-						hostile_armies.append(armies_in_province[0])
-				
-				# Compare the hostile armies with your army
-				var size_sum: int = 0
-				for hostile_army in hostile_armies:
-					var size: int = hostile_army.army_size.current_size()
-					# If any of them is too big, don't attack
-					if army_size < size:
+					
+					# If the province's army
+					# is larger than yours, don't attack at all
+					if army_size < hostile_army_size:
 						attack_list.clear()
 						break
-					# If any of them is too small, attack them
-					if army_size >= size * (1.75 + randf() * 0.5):
-						attack_list.append(hostile_army.province())
-					size_sum += size
-				# If the sum of their sizes is too big, don't attack
-				if army_size * (1.75 + randf() * 0.5) < size_sum:
+					
+					# If the province's army is small enough, attack it
+					if army_size >= hostile_army_size * (1.75 + randf() * 0.5):
+						attack_list.append(hostile_link)
+					
+					total_hostile_army_size += hostile_army_size
+				
+				# If the total size of all the hostile armies
+				# is too big, don't attack at all
+				if (
+						army_size * (1.75 + randf() * 0.5)
+						< total_hostile_army_size
+				):
 					attack_list.clear()
 				
 				if attack_list.size() > 0:
 					# If we're attacking all neighbors, then full send
 					var full_send: bool = false
-					if attack_list.size() == hostile_neighbors.size():
+					if attack_list.size() == hostile_links.size():
 						full_send = true
 					
 					# Split up the army
@@ -222,6 +218,22 @@ func _army_size(
 			if army.owner_country != playing_country:
 				output += army.army_size.current_size()
 	return output
+
+
+## Returns the total army size of all of the hostile armies in given province.
+func _hostile_army_size(your_country: Country, province: Province) -> int:
+	var hostile_army_size: int = 0
+	
+	var link_armies: Array[Army] = (
+			province.game.world.armies.armies_in_province(province)
+	)
+	for link_army in link_armies:
+		if not Country.is_fighting(your_country, link_army.owner_country):
+			continue
+		
+		hostile_army_size += link_army.army_size.current_size()
+	
+	return hostile_army_size
 
 
 # TODO DRY. This is mostly a copy/paste from the other AI...

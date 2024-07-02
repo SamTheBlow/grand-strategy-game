@@ -34,3 +34,17 @@ func can_move_into_country(country: Country) -> bool:
 			country.relationships.with_country(self).grants_military_access()
 			or self.relationships.with_country(country).is_trespassing()
 	)
+
+
+## Returns true if the two given countries are fighting each other.
+static func is_fighting(country_1: Country, country_2: Country) -> bool:
+	return (
+			country_1 != country_2
+			and (
+					country_1.relationships
+					.with_country(country_2).is_fighting()
+					or
+					country_2.relationships
+					.with_country(country_1).is_fighting()
+			)
+	)
