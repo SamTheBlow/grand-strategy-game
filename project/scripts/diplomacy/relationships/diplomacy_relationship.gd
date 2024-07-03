@@ -23,9 +23,12 @@ var recipient_country: Country
 var preset := DiplomacyPreset.new()
 
 ## Information about the relationship.
-## In the future, you will be able to add/change/remove
-## data using diplomatic actions.
+## It's possible to add/change/remove data using diplomatic actions.
 var _base_data: Dictionary = {}
+
+## A list of all the diplomatic actions
+## this country can perform with the other country.
+var _base_actions: Array[DiplomacyAction] = []
 
 
 ## If true, the country grants explicit permission to the recipient
@@ -53,6 +56,25 @@ func is_fighting() -> bool:
 			IS_FIGHTING_KEY,
 			IS_FIGHTING_DEFAULT
 	)
+
+
+# TODO sort the actions in the right order (as defined in the game rules)
+## Returns a list of all the diplomatic actions this country can perform,
+## including the preset's actions. There will be no duplicates.
+func actions() -> Array[DiplomacyAction]:
+	var output: Array[DiplomacyAction] = []
+	output.append_array(_base_actions)
+	
+	for preset_action in preset.actions:
+		var is_new_action: bool = true
+		for action in output:
+			if action.id == preset_action.id:
+				is_new_action = false
+				break
+		if is_new_action:
+			output.append(preset_action)
+	
+	return output
 
 
 ## Returns the data associated with given key.

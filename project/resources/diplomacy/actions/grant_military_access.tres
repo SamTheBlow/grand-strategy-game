@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://d1vcmgrvxolht"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_f0csu"]
+
+[resource]
+script = ExtResource("1_f0csu")
+id = 5
+name = "Grant military access"
+requires_consent = false
+available_after_turns = 0
+outcome_data = {
+"grants_military_access": true
+}

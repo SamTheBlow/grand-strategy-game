@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://j3xl6wxmu3el"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_awkot"]
+
+[resource]
+script = ExtResource("1_awkot")
+id = 7
+name = "Ask for military access"
+requires_consent = true
+available_after_turns = 0
+outcome_data = {}

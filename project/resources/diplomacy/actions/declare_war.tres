@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=3 format=3 uid="uid://c3kj2ppbkeuk6"]
+
+[ext_resource type="Resource" uid="uid://drsaelw08l4l5" path="res://resources/diplomacy/presets/at_war.tres" id="1_eaf8q"]
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_mx1p1"]
+
+[resource]
+script = ExtResource("1_mx1p1")
+id = 1
+name = "Declare war"
+requires_consent = false
+available_after_turns = 0
+outcome_preset = ExtResource("1_eaf8q")
+outcome_data = {
+"grants_military_access": false,
+"is_fighting": true,
+"is_trespassing": true
+}

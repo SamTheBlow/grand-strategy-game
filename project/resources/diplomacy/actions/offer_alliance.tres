@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=3 format=3 uid="uid://yw0vmi0myodt"]
+
+[ext_resource type="Resource" uid="uid://coqnkgbae8r7r" path="res://resources/diplomacy/presets/allied.tres" id="1_1d8kx"]
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_ejas3"]
+
+[resource]
+script = ExtResource("1_ejas3")
+id = 3
+name = "Offer alliance"
+requires_consent = true
+available_after_turns = 0
+outcome_preset = ExtResource("1_1d8kx")
+outcome_data = {}

@@ -13,4 +13,6 @@ extends Resource
 ## Invalid settings will be ignored.
 @export var settings: Dictionary = {}
 
-#@export var actions: DiplomacyRelationshipActions
+## A list of all the diplomatic actions a country can perform
+## with the other country while under this preset.
+@export var actions: Array[DiplomacyAction] = []

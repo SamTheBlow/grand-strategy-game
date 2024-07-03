@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=3 format=3 uid="uid://i0e1lhoyfteg"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_636vi"]
+[ext_resource type="Resource" uid="uid://c8mdgpc7c41f5" path="res://resources/diplomacy/presets/neutral.tres" id="1_o246y"]
+
+[resource]
+script = ExtResource("1_636vi")
+id = 4
+name = "Break alliance"
+requires_consent = false
+available_after_turns = 3
+outcome_preset = ExtResource("1_o246y")
+outcome_data = {
+"grants_military_access": false,
+"is_fighting": false,
+"is_trespassing": false
+}
