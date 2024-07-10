@@ -4,9 +4,11 @@
 
 [resource]
 script = ExtResource("1_6b00h")
+id = 2
 name = "Neutral"
 settings = {
 "grants_military_access": false,
 "is_fighting": false,
 "is_trespassing": false
 }
+actions = Array[int]([1, 3])

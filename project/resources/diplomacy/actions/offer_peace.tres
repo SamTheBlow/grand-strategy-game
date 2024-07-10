@@ -1,6 +1,5 @@
-[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=3 format=3 uid="uid://bke4orh12nfe5"]
+[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://bke4orh12nfe5"]
 
-[ext_resource type="Resource" uid="uid://c8mdgpc7c41f5" path="res://resources/diplomacy/presets/neutral.tres" id="1_3tshp"]
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_omaq3"]
 
 [resource]
@@ -9,8 +8,9 @@ id = 2
 name = "Offer peace"
 requires_consent = true
 available_after_turns = 0
-outcome_preset = ExtResource("1_3tshp")
-outcome_data = {
-"is_fighting": false,
-"is_trespassing": false
+your_outcome_data = {
+"preset_id": 2
+}
+their_outcome_data = {
+"preset_id": 2
 }

@@ -58,6 +58,8 @@ enum ProvinceIncome {
 	POPULATION = 2,
 }
 
+@export var diplomatic_actions: Array[DiplomacyAction] = []
+
 # Individual rules
 var turn_limit_enabled: RuleBool
 var turn_limit: RuleInt

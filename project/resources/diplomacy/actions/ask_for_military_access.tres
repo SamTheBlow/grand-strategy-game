@@ -8,4 +8,7 @@ id = 7
 name = "Ask for military access"
 requires_consent = true
 available_after_turns = 0
-outcome_data = {}
+your_outcome_data = {}
+their_outcome_data = {
+"grants_military_access": true
+}

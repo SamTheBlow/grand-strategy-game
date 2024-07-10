@@ -13,6 +13,7 @@ enum {
 	ARMY_MOVEMENT = 2,
 	BUILD = 3,
 	RECRUITMENT = 4,
+	DIPLOMACY = 5,
 }
 
 
@@ -28,7 +29,12 @@ func raw_data() -> Dictionary:
 
 
 ## Returns an action built with given raw data.
+## This may return null if an error occurs.
 static func from_raw_data(data: Dictionary) -> Action:
+	if not data.has("id"):
+		push_error("Action data does not have an id.")
+		return null
+	
 	match data["id"]:
 		END_TURN:
 			return ActionEndTurn.from_raw_data(data)
@@ -40,5 +46,8 @@ static func from_raw_data(data: Dictionary) -> Action:
 			return ActionBuild.from_raw_data(data)
 		RECRUITMENT:
 			return ActionRecruitment.from_raw_data(data)
+		DIPLOMACY:
+			return ActionDiplomacy.from_raw_data(data)
 		_:
+			push_error("Unrecognized action type.")
 			return null

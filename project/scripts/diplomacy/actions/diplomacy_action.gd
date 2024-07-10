@@ -22,8 +22,9 @@ extends Resource
 @export var available_after_turns: int = 0
 
 @export_group("Outcome")
-## The relationship's preset will change to this one.
-## Has no effect if the preset is not registered in the [GameRules].
-@export var outcome_preset: DiplomacyPreset = DiplomacyPreset.new()
 ## Add changes to the relationship here (see [DiplomacyRelationship]).
-@export var outcome_data: Dictionary = {}
+## Affects the source country's relationship with the target country.
+@export var your_outcome_data: Dictionary = {}
+## Add changes to the relationship here (see [DiplomacyRelationship]).
+## Affects the target country's relationship with the source country.
+@export var their_outcome_data: Dictionary = {}

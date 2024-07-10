@@ -4,6 +4,9 @@ extends Resource
 ## and the actions that can be performed to change it.
 
 
+## This preset's unique id. All presets must have their own unique id.
+@export var id: int = -1
+
 ## The name of this preset. This may be shown to the user.
 @export var name: String = "None"
 
@@ -14,5 +17,5 @@ extends Resource
 @export var settings: Dictionary = {}
 
 ## A list of all the diplomatic actions a country can perform
-## with the other country while under this preset.
-@export var actions: Array[DiplomacyAction] = []
+## with the other country while under this preset (passed by id).
+@export var actions: Array[int] = []

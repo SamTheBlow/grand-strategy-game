@@ -6,6 +6,9 @@ class_name DiplomacyRelationship
 ## be responsible for converting floats to ints or vice versa.
 
 
+const PRESET_ID_KEY: String = "preset_id"
+const PRESET_ID_DEFAULT: int = -1
+
 const GRANTS_MILITARY_ACCESS_KEY: String = "grants_military_access"
 const GRANTS_MILITARY_ACCESS_DEFAULT: bool = false
 
@@ -17,10 +20,9 @@ const IS_FIGHTING_DEFAULT: bool = true
 
 var recipient_country: Country
 
-## The preset's data overrides this object's base data.
-## If you don't want to use presets, you can leave this as is:
-## an empty preset has no effect by default.
-var preset := DiplomacyPreset.new()
+## The game's registered diplomacy presets.
+## Only these presets may be used in this relationship.
+var diplomacy_presets: DiplomacyPresets = DiplomacyPresets.new()
 
 ## Information about the relationship.
 ## It's possible to add/change/remove data using diplomatic actions.
@@ -28,7 +30,17 @@ var _base_data: Dictionary = {}
 
 ## A list of all the diplomatic actions
 ## this country can perform with the other country.
-var _base_actions: Array[DiplomacyAction] = []
+var _base_action_ids: Array[int] = []
+
+
+## The current preset associated with this relationship.
+## A preset's data overrides this object's base data.
+## There may be none, in which case this returns a new empty preset.
+func preset() -> DiplomacyPreset:
+	var preset_id: int = _get_data_recursive(
+			PRESET_ID_KEY, PRESET_ID_DEFAULT, [_base_data]
+	)
+	return diplomacy_presets.preset_from_id(preset_id)
 
 
 ## If true, the country grants explicit permission to the recipient
@@ -59,20 +71,35 @@ func is_fighting() -> bool:
 
 
 # TODO sort the actions in the right order (as defined in the game rules)
-## Returns a list of all the diplomatic actions this country can perform,
-## including the preset's actions. There will be no duplicates.
-func actions() -> Array[DiplomacyAction]:
+## Filters the given list of diplomatic actions to only return
+## the actions that are currently available to this country.
+func available_actions(
+		action_list: Array[DiplomacyAction]
+) -> Array[DiplomacyAction]:
 	var output: Array[DiplomacyAction] = []
-	output.append_array(_base_actions)
+	var available_action_ids_: Array[int] = available_action_ids()
 	
-	for preset_action in preset.actions:
+	for action in action_list:
+		if action.id in available_action_ids_:
+			output.append(action)
+	
+	return output
+
+
+## Returns a list of all the available actions, as a list of action ids.
+## The list has no duplicates.
+func available_action_ids() -> Array[int]:
+	var output: Array[int] = []
+	output.append_array(_base_action_ids)
+	
+	for preset_action_id in preset().actions:
 		var is_new_action: bool = true
-		for action in output:
-			if action.id == preset_action.id:
+		for action_id in output:
+			if action_id == preset_action_id:
 				is_new_action = false
 				break
 		if is_new_action:
-			output.append(preset_action)
+			output.append(preset_action_id)
 	
 	return output
 
@@ -83,13 +110,8 @@ func actions() -> Array[DiplomacyAction]:
 ## If it's not there either, returns the given default value.
 ## Always returns something of the same type as given default value.
 func _get_data(key: String, default_value: Variant) -> Variant:
-	# Prevent crash
-	if preset == null:
-		push_error("Diplomacy preset is null. Setting new empty preset.")
-		preset = DiplomacyPreset.new()
-	
 	return _get_data_recursive(
-			key, default_value, [preset.settings, _base_data]
+			key, default_value, [preset().settings, _base_data]
 	)
 
 

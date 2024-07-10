@@ -159,6 +159,27 @@ var _turn_order_list: TurnOrderList:
 var _auto_end_turn: AutoEndTurn
 
 
+# HACK for testing diplomacy features
+#func _process(_delta: float) -> void:
+	#var debug: Callable = func() -> void: print("Current relationship: ", turn.playing_player().playing_country.relationships.with_country(countries.country_from_id(2)).preset().name, "\nData: ", turn.playing_player().playing_country.relationships.with_country(countries.country_from_id(2))._base_data)
+	#if Input.is_action_just_pressed("z"):
+		#action_sync.apply_action(ActionDiplomacy.new(4, 2))
+		#print("Break alliance")
+		#debug.call()
+	#if Input.is_action_just_pressed("x"):
+		#action_sync.apply_action(ActionDiplomacy.new(1, 2))
+		#print("Declare war")
+		#debug.call()
+	#if Input.is_action_just_pressed("c"):
+		#action_sync.apply_action(ActionDiplomacy.new(3, 2))
+		#print("Offer alliance")
+		#debug.call()
+	#if Input.is_action_just_pressed("v"):
+		#action_sync.apply_action(ActionDiplomacy.new(2, 2))
+		#print("Offer peace")
+		#debug.call()
+
+
 ## Initialization to be done immediately after loading the game scene.
 func init() -> void:
 	_networking_interface = (
@@ -172,23 +193,14 @@ func init() -> void:
 ## Call this when you're ready to start the game loop.
 func start() -> void:
 	# HACK this is for testing the WIP diplomacy features
-	#var presets: Array = [
-		#preload("res://resources/diplomacy_presets/allied.tres"),
-		#preload("res://resources/diplomacy_presets/neutral.tres"),
-		#preload("res://resources/diplomacy_presets/at_war.tres"),
-	#]
 	#for i in countries.countries.size():
 		#var country_1: Country = countries.countries[i]
 		#for j in range(i + 1, countries.countries.size()):
 			#var country_2: Country = countries.countries[j]
-			#var random_preset: DiplomacyPreset = presets[randi() % 3]
-			#country_1.relationships.with_country(country_2).preset = (
-					#random_preset
-			#)
-			#country_2.relationships.with_country(country_1).preset = (
-					#random_preset
-			#)
-			#print(country_1.country_name, " + ", country_2.country_name, " = ", random_preset.name)
+			#var random_preset_id: int = 1 + randi() % 3
+			#country_1.relationships.with_country(country_2)._base_data["preset_id"] = random_preset_id
+			#country_2.relationships.with_country(country_1)._base_data["preset_id"] = random_preset_id
+			#print(country_1.country_name, " + ", country_2.country_name, " = ", country_1.relationships.with_country(country_2).preset().name)
 	
 	rules.lock()
 	game_started.emit()
