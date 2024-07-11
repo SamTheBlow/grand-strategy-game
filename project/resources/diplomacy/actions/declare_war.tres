@@ -1,13 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://c3kj2ppbkeuk6"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://c3kj2ppbkeuk6"]
 
-[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_mx1p1"]
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_mx1p1"]
 
 [resource]
 script = ExtResource("1_mx1p1")
 id = 1
 name = "Declare war"
 requires_consent = false
-available_after_turns = 0
+available_after_turns = 1
 your_outcome_data = {
 "preset_id": 3
 }

@@ -1,30 +1,65 @@
 class_name DiplomacyAction
-extends Resource
-## Data structure representing something that a [Country] can do to
-## change their relationship with another country.
-##
-## See also: [DiplomacyRelationship]
 
 
-## This action's unique id. All diplomacy actions must have a unique id,
-## for the purposes of saving/loading/syncing.
-@export var id: int = -1
+var _definition: DiplomacyActionDefinition
 
-## The actions's name. May be shown to the user. It doesn't have to be unique.
-@export var name: String = ""
+var _turn_it_became_available: int
 
-@export_group("Conditions")
-## If true, this action will only be performed
-## when the other country gives consent.
-@export var requires_consent: bool = false
-## From the moment this action becomes available to the country,
-## it cannot be used until this many turns have passed.
-@export var available_after_turns: int = 0
 
-@export_group("Outcome")
-## Add changes to the relationship here (see [DiplomacyRelationship]).
-## Affects the source country's relationship with the target country.
-@export var your_outcome_data: Dictionary = {}
-## Add changes to the relationship here (see [DiplomacyRelationship]).
-## Affects the target country's relationship with the source country.
-@export var their_outcome_data: Dictionary = {}
+func _init(
+		definition: DiplomacyActionDefinition,
+		turn_it_became_available: int = 1
+) -> void:
+	_definition = definition
+	_turn_it_became_available = turn_it_became_available
+
+
+## Returns the id of this action's definition.
+## All actions have their own unique id.
+func id() -> int:
+	return _definition.id
+
+
+func can_be_performed(game: Game) -> bool:
+	return cooldown_turns_remaining(game) == 0
+
+
+## The number of turns before this action can be performed.
+## Returns zero if the action can already be performed.
+func cooldown_turns_remaining(game: Game) -> int:
+	return maxi(
+			0,
+			_definition.available_after_turns
+			- (game.turn.current_turn() - _turn_it_became_available)
+	)
+
+
+## Applies this action to given relationships.
+func apply(
+		game: Game,
+		relationship: DiplomacyRelationship,
+		reverse_relationship: DiplomacyRelationship
+) -> void:
+	if not relationship.action_is_available(id()):
+		print_debug(
+				"Tried to perform a diplomatic action that isn't available."
+		)
+		return
+	
+	var current_turn: int = game.turn.current_turn()
+	if not can_be_performed(game):
+		var turns_remaining: int = cooldown_turns_remaining(game)
+		print_debug(
+				"Tried to perform a diplomatic action, but "
+				#+ "it currently cannot be performed."
+				+ "it still has a cooldown of " + str(turns_remaining)
+				+ " turn" + ("" if turns_remaining == 1 else "s") + "."
+		)
+		return
+	
+	relationship.apply_action_data(
+			_definition.your_outcome_data, current_turn
+	)
+	reverse_relationship.apply_action_data(
+			_definition.their_outcome_data, current_turn
+	)

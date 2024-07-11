@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ba1s3jpg48raf"]
+[gd_scene load_steps=7 format=3 uid="uid://ba1s3jpg48raf"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1_32ieg"]
 [ext_resource type="PackedScene" uid="uid://c74o2ubgawogb" path="res://scenes/game.tscn" id="3_hbhxv"]
@@ -6,10 +6,6 @@
 [ext_resource type="Script" path="res://scripts/players/players.gd" id="4_w8utn"]
 [ext_resource type="Script" path="res://scripts/chat/chat.gd" id="5_66lrq"]
 [ext_resource type="Script" path="res://scripts/rules/game_rules.gd" id="6_2g2by"]
-[ext_resource type="Resource" uid="uid://i0e1lhoyfteg" path="res://resources/diplomacy/actions/break_alliance.tres" id="7_hmw2x"]
-[ext_resource type="Resource" uid="uid://c3kj2ppbkeuk6" path="res://resources/diplomacy/actions/declare_war.tres" id="8_dc70l"]
-[ext_resource type="Resource" uid="uid://yw0vmi0myodt" path="res://resources/diplomacy/actions/offer_alliance.tres" id="9_c4bfr"]
-[ext_resource type="Resource" uid="uid://bke4orh12nfe5" path="res://resources/diplomacy/actions/offer_peace.tres" id="10_7qvca"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_32ieg")
@@ -25,4 +21,3 @@ players = NodePath("../Players")
 
 [node name="GameRules" type="Node" parent="."]
 script = ExtResource("6_2g2by")
-diplomatic_actions = Array[Resource("res://scripts/diplomacy/actions/diplomacy_action.gd")]([ExtResource("7_hmw2x"), ExtResource("8_dc70l"), ExtResource("9_c4bfr"), ExtResource("10_7qvca")])

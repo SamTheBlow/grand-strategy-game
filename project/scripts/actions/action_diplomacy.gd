@@ -21,15 +21,15 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	if target_country == null:
 		return
 	
-	var action_to_perform: DiplomacyAction = (
-			DiplomacyActionFromId.new()
-			.result(game.rules.diplomatic_actions, _diplomacy_action_id)
+	var relationship: DiplomacyRelationship = (
+		player.playing_country.relationships.with_country(target_country)
 	)
-	if action_to_perform == null:
-		return
+	var reverse_relationship: DiplomacyRelationship = (
+		target_country.relationships.with_country(player.playing_country)
+	)
 	
-	DiplomacyActionApply.new().perform_action(
-			player.playing_country, target_country, action_to_perform
+	relationship.action_from_id(_diplomacy_action_id).apply(
+			game, relationship, reverse_relationship
 	)
 
 

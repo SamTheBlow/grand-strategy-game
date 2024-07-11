@@ -198,8 +198,12 @@ func start() -> void:
 		#for j in range(i + 1, countries.countries.size()):
 			#var country_2: Country = countries.countries[j]
 			#var random_preset_id: int = 1 + randi() % 3
+			#country_1.relationships.with_country(country_2).diplomacy_actions = rules.diplomatic_actions
+			#country_2.relationships.with_country(country_1).diplomacy_actions = rules.diplomatic_actions
 			#country_1.relationships.with_country(country_2)._base_data["preset_id"] = random_preset_id
+			#country_1.relationships.with_country(country_2)._update_available_actions(turn.current_turn())
 			#country_2.relationships.with_country(country_1)._base_data["preset_id"] = random_preset_id
+			#country_2.relationships.with_country(country_1)._update_available_actions(turn.current_turn())
 			#print(country_1.country_name, " + ", country_2.country_name, " = ", country_1.relationships.with_country(country_2).preset().name)
 	
 	rules.lock()

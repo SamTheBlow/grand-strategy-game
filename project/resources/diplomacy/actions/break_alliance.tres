@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://i0e1lhoyfteg"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://i0e1lhoyfteg"]
 
-[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action.gd" id="1_636vi"]
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_636vi"]
 
 [resource]
 script = ExtResource("1_636vi")

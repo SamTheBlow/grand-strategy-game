@@ -23,11 +23,11 @@ func result(data_dict: Dictionary) -> GameRules:
 		game_rules.rule_with_name(key).set_data(data_dict[key])
 	
 	# TODO temporary. remove later
-	game_rules.diplomatic_actions = [
+	game_rules.diplomatic_actions = DiplomacyActionDefinitions.new([
 		load("res://resources/diplomacy/actions/break_alliance.tres"),
 		load("res://resources/diplomacy/actions/declare_war.tres"),
 		load("res://resources/diplomacy/actions/offer_alliance.tres"),
 		load("res://resources/diplomacy/actions/offer_peace.tres"),
-	]
+	])
 	
 	return game_rules
