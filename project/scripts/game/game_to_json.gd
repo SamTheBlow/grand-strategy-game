@@ -25,7 +25,7 @@ func convert_game(game: Game) -> void:
 	
 	# Countries
 	var countries_data: Array = []
-	for country in game.countries.countries:
+	for country in game.countries.list():
 		var country_data: Dictionary = {}
 		country_data["id"] = country.id
 		country_data["country_name"] = country.country_name

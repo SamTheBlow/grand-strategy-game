@@ -1,8 +1,15 @@
 class_name DiplomacyRelationships
-## A list of [DiplomacyRelationship]s.
+## A list of a country's [DiplomacyRelationship]s.
 
 
+signal relationship_created(relationship: DiplomacyRelationship)
+
+var _source_country: Country
 var _list: Array[DiplomacyRelationship] = []
+
+
+func _init(country: Country) -> void:
+	_source_country = country
 
 
 ## Creates a new relationship if there wasn't one before.
@@ -16,6 +23,8 @@ func with_country(country: Country) -> DiplomacyRelationship:
 
 func _new_relationship(country: Country) -> DiplomacyRelationship:
 	var relationship := DiplomacyRelationship.new()
+	relationship.source_country = _source_country
 	relationship.recipient_country = country
 	_list.append(relationship)
+	relationship_created.emit(relationship)
 	return relationship

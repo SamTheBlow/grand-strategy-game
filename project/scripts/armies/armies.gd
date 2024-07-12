@@ -77,6 +77,18 @@ func armies_in_province(province: Province) -> Array[Army]:
 	return output
 
 
+## Returns a new list of all armies located in given [Province]
+## that are controlled by given [Country].
+func armies_of_country_in_province(
+		owner_country: Country, province: Province
+) -> Array[Army]:
+	var output: Array[Army] = []
+	for army in _list:
+		if army.province() == province and army.owner_country == owner_country:
+			output.append(army)
+	return output
+
+
 ## Returns the [Army] that has given id.
 ## If there is no such army, returns [code]null[/code].
 func army_with_id(id: int) -> Army:

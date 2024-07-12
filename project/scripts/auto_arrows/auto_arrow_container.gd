@@ -10,11 +10,19 @@ var game: Game
 var _list: Array[AutoArrowsNode2D] = []
 
 
-# DANGER this only works if you assume that countries
-# are never added or removed later in the game
 func _ready() -> void:
-	for country in game.countries.countries:
+	if game == null:
+		push_error(
+				"AutoArrowContainer was not given a game reference. "
+				+ "It will not work as intended and it may crash the game."
+		)
+		return
+	
+	# Create nodes for the already existing countries
+	for country in game.countries.list():
 		_new_arrows_node(country)
+	
+	game.countries.country_added.connect(_on_country_added)
 
 
 func add(auto_arrows_node: AutoArrowsNode2D) -> void:
@@ -35,3 +43,7 @@ func _new_arrows_node(country: Country) -> AutoArrowsNode2D:
 	new_node.init(game, country)
 	add(new_node)
 	return new_node
+
+
+func _on_country_added(country: Country) -> void:
+	_new_arrows_node(country)

@@ -19,7 +19,7 @@ var money: int = 0:
 		money = value
 		money_changed.emit(money)
 
-var relationships := DiplomacyRelationships.new()
+var relationships := DiplomacyRelationships.new(self)
 
 var auto_arrows := AutoArrows.new()
 

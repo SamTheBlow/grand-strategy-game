@@ -6,6 +6,11 @@ class_name DiplomacyRelationship
 ## be responsible for converting floats to ints or vice versa.
 
 
+signal preset_changed(this: DiplomacyRelationship)
+signal military_access_changed(this: DiplomacyRelationship)
+signal trespassing_changed(this: DiplomacyRelationship)
+signal fighting_changed(this: DiplomacyRelationship)
+
 const PRESET_ID_KEY: String = "preset_id"
 const PRESET_ID_DEFAULT: int = -1
 
@@ -18,6 +23,7 @@ const IS_TRESPASSING_DEFAULT: bool = true
 const IS_FIGHTING_KEY: String = "is_fighting"
 const IS_FIGHTING_DEFAULT: bool = true
 
+var source_country: Country
 var recipient_country: Country
 
 ## The game's registered diplomacy presets.
@@ -52,10 +58,7 @@ func _init(
 ## A preset's data overrides this object's base data.
 ## There may be none, in which case this returns a new empty preset.
 func preset() -> DiplomacyPreset:
-	var preset_id: int = _get_data_recursive(
-			PRESET_ID_KEY, PRESET_ID_DEFAULT, [_base_data]
-	)
-	return diplomacy_presets.preset_from_id(preset_id)
+	return diplomacy_presets.preset_from_id(_preset_id())
 
 
 ## If true, the country grants explicit permission to the recipient
@@ -109,7 +112,22 @@ func action_is_available(action_id: int) -> bool:
 
 ## Applies the outcome of a [DiplomacyAction] to this relationship.
 func apply_action_data(data: Dictionary, current_turn: int) -> void:
+	var preset_id_before: int = _preset_id()
+	var grants_military_access_before: bool = grants_military_access()
+	var is_trespassing_before: bool = is_trespassing()
+	var is_fighting_before: bool = is_fighting()
+	
 	_base_data.merge(data, true)
+	
+	if _preset_id() != preset_id_before:
+		preset_changed.emit(self)
+	if grants_military_access() != grants_military_access_before:
+		military_access_changed.emit(self)
+	if is_trespassing() != is_trespassing_before:
+		trespassing_changed.emit(self)
+	if is_fighting() != is_fighting_before:
+		fighting_changed.emit(self)
+	
 	_update_available_actions(current_turn)
 
 
@@ -186,3 +204,7 @@ func _get_data_recursive(
 		)
 	
 	return value
+
+
+func _preset_id() -> int:
+	return _get_data_recursive(PRESET_ID_KEY, PRESET_ID_DEFAULT, [_base_data])

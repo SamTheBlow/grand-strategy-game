@@ -3,12 +3,15 @@ class_name GameFromJSON
 # TODO tons of stuff in here needs to verify & return errors
 
 
-var error: bool = true
+var error: bool = false
 var error_message: String = ""
 var result: Game
 
 
 func load_game(json_data: Variant, game_scene: PackedScene) -> void:
+	error = false
+	error_message = ""
+	
 	if not json_data is Dictionary:
 		error = true
 		error_message = "JSON data's root is not a dictionary."
@@ -66,10 +69,10 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		game.setup_turn()
 	
 	# Countries
-	var countries: Countries = _load_countries(json_dict)
-	if not countries:
+	for country in _loaded_countries(json_dict):
+		game.countries.add(country)
+	if error:
 		return
-	game.countries = countries
 	
 	# Players
 	if not _load_players(json_dict, game):
@@ -121,35 +124,34 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	_load_auto_arrows(json_dict, game)
 	
 	# Success!
-	error = false
 	result = game
 
 
-func _load_countries(json_data: Dictionary) -> Countries:
-	var countries := Countries.new()
+func _loaded_countries(json_data: Dictionary) -> Array[Country]:
+	var countries: Array[Country] = []
 	
 	var countries_key: String = "countries"
 	if not json_data.has(countries_key):
 		error = true
 		error_message = "No countries found in file."
-		return null
+		return []
 	if not json_data[countries_key] is Array:
 		error = true
 		error_message = "Countries property is not an array."
-		return null
+		return []
 	var countries_data: Array = json_data[countries_key]
 	
 	for country_data: Variant in countries_data:
 		if not country_data is Dictionary:
 			error = true
 			error_message = "Country data is not a dictionary."
-			return null
+			return []
 		var country_dict: Dictionary = country_data
 		
 		var country: Country = _load_country(country_dict)
-		if not country:
-			return null
-		countries.countries.append(country)
+		if country == null:
+			return []
+		countries.append(country)
 	
 	return countries
 
@@ -177,10 +179,11 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 		return
 	var countries_array := countries_data as Array
 	
-	if countries_array.size() < game.countries.countries.size():
+	if countries_array.size() < game.countries.size():
 		return
 	
-	for i in game.countries.countries.size():
+	var country_list: Array[Country] = game.countries.list()
+	for i in country_list.size():
 		if not (countries_array[i] is Dictionary):
 			return
 		var country_dict := countries_array[i] as Dictionary
@@ -188,7 +191,7 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 		if not country_dict.has("auto_arrows"):
 			continue
 		
-		game.countries.countries[i].auto_arrows = (
+		country_list[i].auto_arrows = (
 				AutoArrowsFromJSON.new()
 				.result(game, country_dict["auto_arrows"])
 		)

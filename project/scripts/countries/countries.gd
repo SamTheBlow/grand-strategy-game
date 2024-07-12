@@ -3,7 +3,14 @@ class_name Countries
 ## Provides utility function to find a country by its id.
 
 
-var countries: Array[Country] = []
+signal country_added(country: Country)
+
+var _list: Array[Country] = []
+
+
+func add(new_country: Country) -> void:
+	_list.append(new_country)
+	country_added.emit(new_country)
 
 
 ## Returns null if there is no country with the given id.
@@ -13,8 +20,18 @@ func country_from_id(id: int) -> Country:
 	if id < 0:
 		return Country.new()
 	
-	for country in countries:
+	for country in _list:
 		if country.id == id:
 			return country
 	push_error("Failed to find country with id: " + str(id))
 	return null
+
+
+## Returns a new copy of this list.
+func list() -> Array[Country]:
+	return _list.duplicate()
+
+
+## Returns the number of countries in this list.
+func size() -> int:
+	return _list.size()

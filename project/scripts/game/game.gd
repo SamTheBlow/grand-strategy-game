@@ -49,7 +49,7 @@ var rules: GameRules:
 
 ## Must setup before the game starts.
 ## All of the [Country] objects used in this game should be listed in here.
-var countries: Countries
+var countries := Countries.new()
 
 ## Must setup before the game starts.
 ## This list must not be empty.
@@ -158,6 +158,9 @@ var _turn_order_list: TurnOrderList:
 
 var _auto_end_turn: AutoEndTurn
 
+@warning_ignore("unused_private_class_variable")
+var _military_access_loss_behavior := MilitaryAccessLossBehavior.new(self)
+
 
 # HACK for testing diplomacy features
 #func _process(_delta: float) -> void:
@@ -193,10 +196,11 @@ func init() -> void:
 ## Call this when you're ready to start the game loop.
 func start() -> void:
 	# HACK this is for testing the WIP diplomacy features
-	#for i in countries.countries.size():
-		#var country_1: Country = countries.countries[i]
-		#for j in range(i + 1, countries.countries.size()):
-			#var country_2: Country = countries.countries[j]
+	#var country_list: Array[Country] = countries.list()
+	#for i in country_list.size():
+		#var country_1: Country = country_list[i]
+		#for j in range(i + 1, country_list.size()):
+			#var country_2: Country = country_list[j]
 			#var random_preset_id: int = 1 + randi() % 3
 			#country_1.relationships.with_country(country_2).diplomacy_actions = rules.diplomatic_actions
 			#country_2.relationships.with_country(country_1).diplomacy_actions = rules.diplomatic_actions
