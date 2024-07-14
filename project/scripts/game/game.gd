@@ -181,6 +181,17 @@ var _military_access_loss_behavior := MilitaryAccessLossBehavior.new(self)
 		#action_sync.apply_action(ActionDiplomacy.new(2, 2))
 		#print("Offer peace")
 		#debug.call()
+	#if Input.is_action_just_pressed("b"):
+		#print("Pressed B: allying with everyone...")
+		#for i in 11:
+			#action_sync.apply_action(ActionDiplomacy.new(2, i))
+			#action_sync.apply_action(ActionDiplomacy.new(3, i))
+		#print("Pressed B: end of command.")
+	#if Input.is_action_just_pressed("n"):
+		#print("Pressed N: breaking alliance with everyone...")
+		#for i in 11:
+			#action_sync.apply_action(ActionDiplomacy.new(4, i))
+		#print("Pressed N: end of command.")
 
 
 ## Initialization to be done immediately after loading the game scene.

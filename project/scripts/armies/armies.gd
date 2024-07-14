@@ -62,7 +62,10 @@ func merge_armies(province: Province) -> void:
 		var army1: Army = armies_to_merge[i]
 		for j in range(i + 1, number_of_armies):
 			var army2: Army = armies_to_merge[j]
-			if army1.owner_country.id == army2.owner_country.id:
+			if (
+					army1.owner_country.id == army2.owner_country.id
+					and army1.movements_made() == army2.movements_made()
+			):
 				army2.army_size.add(army1.army_size.current_size())
 				remove_army(army1)
 				break

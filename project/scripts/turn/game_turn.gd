@@ -6,7 +6,7 @@ class_name GameTurn
 
 ## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
-## This signal is called whenever it's a new player's turn to play.
+## This signal is called whenever it's a different player's turn to play.
 signal player_changed(new_player: GamePlayer)
 
 ## External reference
@@ -69,12 +69,17 @@ func _end_player_turn() -> void:
 	# Make army movements according to [AutoArrow]s
 	AutoArrowBehavior.new().apply(game)
 	
-	# Merge armies
+	# Exhaust all the armies
+	# HACK this is so that they all merge properly
+	# TODO whether or not an army is active
+	# should never matter if it's not the player's turn
+	for army in game.world.armies.list():
+		if army.owner_country == playing_player().playing_country:
+			army.exhaust()
+	
+	# Merge armies, update province ownership
 	for province in game.world.provinces.list():
 		game.world.armies.merge_armies(province)
-	
-	# Update province ownership
-	for province in game.world.provinces.list():
 		ProvinceNewOwner.new().update_province_owner(province)
 	
 	_go_to_next_player()

@@ -75,6 +75,7 @@ func _try_build_fortresses(
 	return output
 
 
+# TODO ugly outdated code! see [NearestProvinces]
 # A link tree takes the form of [[p1, p2], [p3, p4], ...]
 # where p1, p3 are direct links, p2 and p4 are links of the links, etc.
 # In this case, p2 is a link of p1 and p4 is a link of p3.

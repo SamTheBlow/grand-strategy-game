@@ -134,6 +134,21 @@ func is_frontline() -> bool:
 	return false
 
 
+## Returns the nearest province(s).
+## It may return more than one province if there's a tie.
+## It may also return an empty array if there is no valid province.
+## Optionally, you can provide a filter callable.
+## The filter must take one input of type Province and must return a boolean.
+## The filter lets you get the nearest province that fulfills
+## specific conditions. (e.g. "the nearest province that you own")
+func nearest_provinces(
+		province_filter: Callable = (
+				func(_province: Province) -> bool: return true
+		)
+) -> Array[Province]:
+	return NearestProvinces.new().nearest_provinces(self, province_filter)
+
+
 func mouse_is_inside_shape() -> bool:
 	return _shape.mouse_is_inside_shape()
 

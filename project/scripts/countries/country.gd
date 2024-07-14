@@ -26,13 +26,22 @@ var auto_arrows := AutoArrows.new()
 
 ## Returns true if this country's armies have the
 ## diplomatic permission to move into given country's provinces.
+## Also returns true if you're trespassing.
 func can_move_into_country(country: Country) -> bool:
+	return (
+			has_permission_to_move_into_country(country)
+			or self.relationships.with_country(country).is_trespassing()
+	)
+
+
+## Returns true if this country's armies have the
+## diplomatic permission to move into given country's provinces.
+func has_permission_to_move_into_country(country: Country) -> bool:
 	return (
 			country == self
 			or country == null
 			or
 			country.relationships.with_country(self).grants_military_access()
-			or self.relationships.with_country(country).is_trespassing()
 	)
 
 

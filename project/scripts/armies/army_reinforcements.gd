@@ -39,6 +39,7 @@ func reinforce_province(province: Province) -> void:
 			province.game.world.armies.new_unique_id(),
 			reinforcements_size,
 			province.owner_country,
-			province
+			province,
+			1
 	)
 	province.game.world.armies.merge_armies(province)

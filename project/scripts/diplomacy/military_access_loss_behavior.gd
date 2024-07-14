@@ -35,7 +35,7 @@ func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 	if relationship.grants_military_access():
 		return
 	
-	match 1: #_game.rules.military_access_loss_behavior_option:
+	match 2: #_game.rules.military_access_loss_behavior_option:
 		0:
 			pass
 		1:
@@ -43,7 +43,7 @@ func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 					relationship.source_country, relationship.recipient_country
 			)
 		2:
-			_teleport_armies_home(
+			_teleport_armies_out(
 					relationship.source_country, relationship.recipient_country
 			)
 		_:
@@ -65,8 +65,45 @@ func _delete_armies(
 			army.destroy()
 
 
-func _teleport_armies_home(
-		_source_country: Country, _recipient_country: Country
+func _teleport_armies_out(
+		source_country: Country, recipient_country: Country
 ) -> void:
-	# TODO implement
-	pass
+	var affected_provinces: Array[Province] = (
+			_game.world.provinces.provinces_of_country(source_country)
+	)
+	for affected_province in affected_provinces:
+		var armies_to_move: Array[Army] = (
+				_game.world.armies.armies_of_country_in_province(
+						recipient_country, affected_province
+				)
+		)
+		if armies_to_move.size() == 0:
+			continue
+		
+		var province_filter: Callable = func(province: Province) -> bool:
+			return recipient_country.has_permission_to_move_into_country(
+					province.owner_country
+			)
+		var nearest_provinces: Array[Province] = (
+				affected_province.nearest_provinces(province_filter)
+		)
+		
+		if nearest_provinces.size() == 0:
+			for army in armies_to_move:
+				army.destroy()
+			continue
+		
+		var province_to_move_to: Province = nearest_provinces[0]
+		
+		# Give priority to the army's home territory
+		for province in nearest_provinces:
+			if province.owner_country == recipient_country:
+				province_to_move_to = province
+				break
+		
+		for army in armies_to_move:
+			army.teleport_to_province(province_to_move_to)
+			army.exhaust()
+			# TODO merge armies automatically from outside this class
+			# also this is very not optimal performance-wise
+			_game.world.armies.merge_armies(province_to_move_to)

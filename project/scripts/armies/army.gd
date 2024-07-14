@@ -29,9 +29,9 @@ signal removed()
 var game: Game:
 	set(value):
 		if game:
-			game.turn.turn_changed.disconnect(_on_new_turn)
+			game.turn.player_changed.disconnect(_on_player_turn_changed)
 		game = value
-		game.turn.turn_changed.connect(_on_new_turn)
+		game.turn.player_changed.connect(_on_player_turn_changed)
 
 ## In each game, all armies must have their own unique id.
 ## This is for the purposes of saving and loading, and also for
@@ -167,6 +167,13 @@ func movements_made() -> int:
 	return _movements_made
 
 
+# TASK in the future this won't be as simple as adding +1 to movements made
+## Artificially increases the army's number of movements made
+## such that it is no longer able to move, if applicable.
+func exhaust() -> void:
+	_movements_made = 1
+
+
 ## How much in-game money it would cost to recruit given troop count.
 static func money_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_money_per_unit.value)
@@ -177,8 +184,9 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 	return ceili(troop_count * rules.recruitment_population_per_unit.value)
 
 
-func _on_new_turn(_turn_number: int) -> void:
-	_movements_made = 0
+func _on_player_turn_changed(player: GamePlayer) -> void:
+	if player.playing_country == owner_country:
+		_movements_made = 0
 
 
 func _on_size_changed(new_size: int) -> void:
