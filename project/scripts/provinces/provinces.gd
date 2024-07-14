@@ -7,6 +7,7 @@ extends Node2D
 ## Note that you are currently not meant to remove provinces from this list.
 
 
+signal province_owner_changed(province: Province)
 signal province_unhandled_mouse_event_occured(
 		event: InputEventMouse, province: Province
 )
@@ -38,6 +39,7 @@ func add_province(province: Province) -> void:
 			_on_unhandled_province_mouse_event
 	)
 	province.mouse_event_occured.connect(_on_province_mouse_event)
+	province.owner_changed.connect(_on_province_owner_changed)
 
 
 func select_province(province: Province) -> void:
@@ -120,3 +122,7 @@ func _on_province_mouse_event(
 		event: InputEventMouse, province: Province
 ) -> void:
 	province_mouse_event_occured.emit(event, province)
+
+
+func _on_province_owner_changed(province: Province) -> void:
+	province_owner_changed.emit(province)

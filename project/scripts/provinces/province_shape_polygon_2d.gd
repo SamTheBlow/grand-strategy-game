@@ -45,7 +45,7 @@ func _ready() -> void:
 		return
 	
 	province.owner_changed.connect(_on_owner_changed)
-	_on_owner_changed(province.owner_country)
+	_on_owner_changed(province)
 	province.selected.connect(_on_selected)
 	province.deselected.connect(_on_deselected)
 	for link in province.links:
@@ -111,9 +111,9 @@ func highlight(is_target: bool) -> void:
 		_outline_type = OutlineType.HIGHLIGHT
 
 
-func _on_owner_changed(country: Country) -> void:
-	if country:
-		color = country.color
+func _on_owner_changed(province_: Province) -> void:
+	if province_.owner_country != null:
+		color = province_.owner_country.color
 	else:
 		color = Color.WHITE
 

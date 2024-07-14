@@ -121,8 +121,8 @@ func _check_condition(condition: bool) -> void:
 	maximum_changed.emit(_maximum)
 
 
-func _on_province_owner_changed(country: Country) -> void:
-	_check_condition(country == _country)
+func _on_province_owner_changed(province: Province) -> void:
+	_check_condition(province.owner_country == _country)
 
 
 func _on_money_changed(_money: int) -> void:

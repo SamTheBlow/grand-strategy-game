@@ -158,8 +158,7 @@ var _turn_order_list: TurnOrderList:
 
 var _auto_end_turn: AutoEndTurn
 
-@warning_ignore("unused_private_class_variable")
-var _military_access_loss_behavior := MilitaryAccessLossBehavior.new(self)
+var _military_access_loss_behavior: MilitaryAccessLossBehavior
 
 
 # HACK for testing diplomacy features
@@ -220,6 +219,9 @@ func start() -> void:
 			#country_2.relationships.with_country(country_1)._base_data["preset_id"] = random_preset_id
 			#country_2.relationships.with_country(country_1)._update_available_actions(turn.current_turn())
 			#print(country_1.country_name, " + ", country_2.country_name, " = ", country_1.relationships.with_country(country_2).preset().name)
+	
+	# TODO this shouldn't be here in start, but, where should it go?
+	_military_access_loss_behavior = MilitaryAccessLossBehavior.new(self)
 	
 	rules.lock()
 	game_started.emit()

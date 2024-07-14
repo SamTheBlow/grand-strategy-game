@@ -78,8 +78,8 @@ func _check_condition(condition: bool) -> void:
 	can_build_changed.emit(_can_build)
 
 
-func _on_province_owner_changed(country: Country) -> void:
-	_check_condition(country == _country)
+func _on_province_owner_changed(province: Province) -> void:
+	_check_condition(province.owner_country == _country)
 
 
 func _on_money_changed(money: int) -> void:

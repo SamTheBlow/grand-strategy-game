@@ -21,7 +21,7 @@ signal mouse_event_occured(event: InputEventMouse, this: Province)
 signal selected()
 signal deselected()
 
-signal owner_changed(country: Country)
+signal owner_changed(this: Province)
 
 ## External reference
 var game: Game:
@@ -76,7 +76,7 @@ var owner_country: Country:
 		if value == owner_country:
 			return
 		owner_country = value
-		owner_changed.emit(owner_country)
+		owner_changed.emit(self)
 
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
