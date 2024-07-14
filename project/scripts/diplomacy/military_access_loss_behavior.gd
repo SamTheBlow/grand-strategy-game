@@ -70,7 +70,7 @@ func _apply(
 		affected_countries: Array[Country],
 		affected_provinces: Array[Province]
 ) -> void:
-	match 2: #_game.rules.military_access_loss_behavior_option:
+	match _game.rules.military_access_loss_behavior_option.selected:
 		0:
 			pass
 		1:

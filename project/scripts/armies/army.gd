@@ -100,8 +100,8 @@ static func quick_setup(
 	army._movements_made = movements_made_
 	
 	game_.world.armies.add_army(army)
-	army.teleport_to_province(province_)
 	army.add_visuals()
+	army.teleport_to_province(province_)
 	return army
 
 

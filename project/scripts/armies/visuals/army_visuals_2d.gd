@@ -11,6 +11,11 @@ extends Node2D
 var army: Army:
 	set(value):
 		army = value
+		army.removed.connect(_on_army_removed)
+		army.province_changed.connect(_on_army_province_changed)
+		army.moved_to_province.connect(_on_army_moved_to_province)
+		army.movements_made_changed.connect(_on_army_movements_made_changed)
+		army.game.turn.player_changed.connect(_on_turn_player_changed)
 		name = "Army" + str(army.id)
 		_add_to_province(army.province())
 
@@ -20,15 +25,10 @@ var army: Army:
 
 
 func _ready() -> void:
-	army.removed.connect(_on_army_removed)
 	army.allegiance_changed.connect(_on_army_allegiance_changed)
 	_on_army_allegiance_changed(army.owner_country)
 	army.size_changed.connect(_on_army_size_changed)
 	_on_army_size_changed(army.army_size.current_size())
-	army.province_changed.connect(_on_army_province_changed)
-	army.moved_to_province.connect(_on_army_moved_to_province)
-	army.movements_made_changed.connect(_on_army_movements_made_changed)
-	army.game.turn.player_changed.connect(_on_turn_player_changed)
 	_animation.is_playing_changed.connect(_on_animation_is_playing_changed)
 	_refresh()
 
@@ -49,6 +49,8 @@ func set_location(new_position: Vector2) -> void:
 func _add_to_province(province: Province) -> void:
 	if get_parent():
 		get_parent().remove_child(self)
+	if province == null:
+		return
 	province.army_stack.add_child(self)
 
 

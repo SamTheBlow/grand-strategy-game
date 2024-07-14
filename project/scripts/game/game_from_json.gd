@@ -69,8 +69,14 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		game.setup_turn()
 	
 	# Countries
+	var default_relationship_data: Dictionary = (
+			DiplomacyRelationships.new_default_data(game.rules)
+	)
 	for country in _loaded_countries(json_dict):
 		game.countries.add(country)
+		country.relationships = DiplomacyRelationships.new(
+				country, default_relationship_data
+		)
 	if error:
 		return
 	

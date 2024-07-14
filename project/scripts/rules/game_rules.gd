@@ -44,6 +44,11 @@ const RULE_NAMES: Array[String] = [
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
 	"battle_algorithm_option",
+	"diplomacy_presets_option",
+	"grants_military_access_default",
+	"military_access_loss_behavior_option",
+	"is_trespassing_default",
+	"is_fighting_default",
 ]
 
 enum ReinforcementsOption {
@@ -91,6 +96,11 @@ var minimum_army_size: RuleInt
 var global_attacker_efficiency: RuleFloat
 var global_defender_efficiency: RuleFloat
 var battle_algorithm_option: RuleOptions
+var diplomacy_presets_option: RuleOptions
+var grants_military_access_default: RuleBool
+var military_access_loss_behavior_option: RuleOptions
+var is_trespassing_default: RuleBool
+var is_fighting_default: RuleBool
 
 # Categories
 var _category_game_over: RuleItem
@@ -98,6 +108,8 @@ var _category_recruitment: RuleItem
 var _category_population: RuleItem
 var _category_fortresses: RuleItem
 var _category_battle: RuleItem
+var _category_diplomacy: RuleItem
+var _category_diplomacy_data: RuleItem
 
 # 4.0 Backwards compatibility
 var reinforcements_random_range: RuleRangeInt
@@ -143,11 +155,18 @@ func _init() -> void:
 	global_attacker_efficiency = RuleFloat.new()
 	global_defender_efficiency = RuleFloat.new()
 	battle_algorithm_option = RuleOptions.new()
+	diplomacy_presets_option = RuleOptions.new()
+	grants_military_access_default = RuleBool.new()
+	military_access_loss_behavior_option = RuleOptions.new()
+	is_trespassing_default = RuleBool.new()
+	is_fighting_default = RuleBool.new()
 	_category_game_over = RuleItem.new()
 	_category_recruitment = RuleItem.new()
 	_category_population = RuleItem.new()
 	_category_fortresses = RuleItem.new()
 	_category_battle = RuleItem.new()
+	_category_diplomacy = RuleItem.new()
+	_category_diplomacy_data = RuleItem.new()
 	reinforcements_random_range = RuleRangeInt.new()
 	province_income_random_range = RuleRangeInt.new()
 	
@@ -334,6 +353,31 @@ func _init() -> void:
 	]
 	battle_algorithm_option.selected = 0
 	
+	diplomacy_presets_option.text = "Default preset"
+	diplomacy_presets_option.options = [
+		"Don't use presets", "Allied", "Neutral", "At war"
+	]
+	diplomacy_presets_option.selected = 0
+	
+	grants_military_access_default.text = "Grant military access by default"
+	grants_military_access_default.value = false
+	
+	military_access_loss_behavior_option.text = (
+			"What to do to armies that no longer have military access"
+	)
+	military_access_loss_behavior_option.options = [
+		"No effect",
+		"Delete the armies",
+		"Teleport the armies to the nearest valid location",
+	]
+	military_access_loss_behavior_option.selected = 0
+	
+	is_trespassing_default.text = "Trespass in other countries by default"
+	is_trespassing_default.value = true
+	
+	is_fighting_default.text = "Fight other countries by default"
+	is_fighting_default.value = true
+	
 	_category_game_over.text = "Game Over conditions"
 	_category_game_over.sub_rules = [
 		turn_limit_enabled,
@@ -365,6 +409,22 @@ func _init() -> void:
 		battle_algorithm_option,
 	]
 	
+	_category_diplomacy.text = "Diplomacy"
+	_category_diplomacy.sub_rules = [
+		diplomacy_presets_option,
+		_category_diplomacy_data,
+		#military_access_loss_behavior_option,
+	]
+	
+	_category_diplomacy_data.text = (
+			"Relationship data (these may be overridden by presets)"
+	)
+	_category_diplomacy_data.sub_rules = [
+		grants_military_access_default,
+		is_trespassing_default,
+		is_fighting_default,
+	]
+	
 	reinforcements_random_range.min_rule = reinforcements_random_min
 	reinforcements_random_range.max_rule = reinforcements_random_max
 	reinforcements_random_range.minimum = 0
@@ -388,6 +448,7 @@ func _init() -> void:
 		province_income_option,
 		minimum_army_size,
 		_category_battle,
+		_category_diplomacy,
 	]
 
 
