@@ -219,6 +219,9 @@ func start() -> void:
 			#country_2.relationships.with_country(country_1)._base_data["preset_id"] = random_preset_id
 			#country_2.relationships.with_country(country_1)._update_available_actions(turn.current_turn())
 			#print(country_1.country_name, " + ", country_2.country_name, " = ", country_1.relationships.with_country(country_2).preset().name)
+			#print("Available actions: ")
+			#for action in country_1.relationships.with_country(country_2).available_actions():
+				#print("	", action._definition.name)
 	
 	# TODO this shouldn't be here in start, but, where should it go?
 	_military_access_loss_behavior = MilitaryAccessLossBehavior.new(self)

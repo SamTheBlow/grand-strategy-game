@@ -21,6 +21,8 @@ var money: int = 0:
 
 var relationships: DiplomacyRelationships
 
+var notifications := GameNotifications.new()
+
 var auto_arrows := AutoArrows.new()
 
 
