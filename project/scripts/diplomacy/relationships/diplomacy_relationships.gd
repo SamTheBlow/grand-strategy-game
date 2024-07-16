@@ -30,11 +30,16 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 			{} if country == null else _default_relationship_data
 	)
 	
-	var relationship := DiplomacyRelationship.new(default_data)
-	relationship.source_country = _source_country
-	relationship.recipient_country = country
-	_list.append(relationship)
-	relationship_created.emit(relationship)
+	var relationship := DiplomacyRelationship.new(
+			_source_country,
+			country,
+			default_data
+	)
+	
+	if country != null:
+		_list.append(relationship)
+		relationship_created.emit(relationship)
+	
 	return relationship
 
 

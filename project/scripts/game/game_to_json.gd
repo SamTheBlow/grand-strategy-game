@@ -31,9 +31,28 @@ func convert_game(game: Game) -> void:
 		country_data["country_name"] = country.country_name
 		country_data["color"] = country.color.to_html()
 		country_data["money"] = country.money
-		country_data["auto_arrows"] = (
+		
+		# Relationships
+		var raw_relationships: Array = (
+				DiplomacyRelationshipsToRaw.new().result(country.relationships)
+		)
+		if raw_relationships.size() > 0:
+			country_data["relationships"] = raw_relationships
+		
+		# Notifications
+		var raw_notifications: Array = (
+				GameNotificationsToRaw.new().result(country.notifications)
+		)
+		if raw_notifications.size() > 0:
+			country_data["notifications"] = raw_notifications
+		
+		# Autoarrows
+		var raw_auto_arrows: Array = (
 				AutoArrowsToJSON.new().result(country.auto_arrows)
 		)
+		if raw_auto_arrows.size() > 0:
+			country_data["auto_arrows"] = raw_auto_arrows
+		
 		countries_data.append(country_data)
 	json_data["countries"] = countries_data
 	

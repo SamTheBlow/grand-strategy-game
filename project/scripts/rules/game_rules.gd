@@ -45,6 +45,7 @@ const RULE_NAMES: Array[String] = [
 	"global_defender_efficiency",
 	"battle_algorithm_option",
 	"diplomacy_presets_option",
+	"starts_with_random_relationship_preset",
 	"grants_military_access_default",
 	"military_access_loss_behavior_option",
 	"is_trespassing_default",
@@ -97,6 +98,7 @@ var global_attacker_efficiency: RuleFloat
 var global_defender_efficiency: RuleFloat
 var battle_algorithm_option: RuleOptions
 var diplomacy_presets_option: RuleOptions
+var starts_with_random_relationship_preset: RuleBool
 var grants_military_access_default: RuleBool
 var military_access_loss_behavior_option: RuleOptions
 var is_trespassing_default: RuleBool
@@ -156,6 +158,7 @@ func _init() -> void:
 	global_defender_efficiency = RuleFloat.new()
 	battle_algorithm_option = RuleOptions.new()
 	diplomacy_presets_option = RuleOptions.new()
+	starts_with_random_relationship_preset = RuleBool.new()
 	grants_military_access_default = RuleBool.new()
 	military_access_loss_behavior_option = RuleOptions.new()
 	is_trespassing_default = RuleBool.new()
@@ -358,6 +361,17 @@ func _init() -> void:
 		"Don't use presets", "Allied", "Neutral", "At war"
 	]
 	diplomacy_presets_option.selected = 0
+	diplomacy_presets_option.sub_rules = [
+		starts_with_random_relationship_preset,
+		starts_with_random_relationship_preset,
+		starts_with_random_relationship_preset,
+	]
+	diplomacy_presets_option.option_filters = [[], [0], [1], [2]]
+	
+	starts_with_random_relationship_preset.text = (
+			"Countries start with a random relationship preset"
+	)
+	starts_with_random_relationship_preset.value = false
 	
 	grants_military_access_default.text = "Grant military access by default"
 	grants_military_access_default.value = false

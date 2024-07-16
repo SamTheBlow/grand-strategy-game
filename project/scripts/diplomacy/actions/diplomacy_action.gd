@@ -57,33 +57,13 @@ func apply(
 		)
 		return
 	
-	var apply_function: Callable = (
-			func() -> void:
-				_apply_action_data(
-						relationship, reverse_relationship, current_turn
-				)
-	)
-	
 	if _definition.requires_consent:
-		relationship.recipient_country.notifications.add(GameNotification.new(
-				game,
-				relationship.source_country,
-				relationship.recipient_country,
-				["Accept", "Decline"],
-				[apply_function, func() -> void: pass],
-		))
+		relationship.recipient_country.notifications.add(
+				_definition.new_notification(
+						game, relationship, reverse_relationship
+				)
+		)
 	else:
-		apply_function.call()
-
-
-func _apply_action_data(
-		relationship: DiplomacyRelationship,
-		reverse_relationship: DiplomacyRelationship,
-		current_turn: int
-) -> void:
-	relationship.apply_action_data(
-			_definition.your_outcome_data, current_turn
-	)
-	reverse_relationship.apply_action_data(
-			_definition.their_outcome_data, current_turn
-	)
+		_definition.apply_action_data(
+				relationship, reverse_relationship, current_turn
+		)

@@ -36,7 +36,15 @@ var diplomacy_actions := DiplomacyActionDefinitions.new()
 
 ## Information about the relationship.
 ## It's possible to add/change/remove data using diplomatic actions.
-var _base_data: Dictionary = {}
+var _base_data: Dictionary = {}:
+	set(value):
+		_base_data = value
+		# Turn the preset id into an int (because JSON turns ints into floats)
+		if (
+				_base_data.has(PRESET_ID_KEY)
+				and typeof(_base_data[PRESET_ID_KEY]) == TYPE_FLOAT
+		):
+			_base_data[PRESET_ID_KEY] = roundi(_base_data[PRESET_ID_KEY])
 
 ## A list of all the diplomatic actions
 ## this country can perform with the other country.
@@ -48,8 +56,13 @@ var _available_actions: Array[DiplomacyAction] = []
 
 
 func _init(
-		base_data: Dictionary = {}, base_action_ids: Array[int] = []
+		source_country_: Country,
+		recipient_country_: Country,
+		base_data: Dictionary = {},
+		base_action_ids: Array[int] = []
 ) -> void:
+	source_country = source_country_
+	recipient_country = recipient_country_
 	_base_data = base_data
 	_base_action_ids = base_action_ids
 
@@ -197,7 +210,10 @@ func _get_data_recursive(
 	var value: Variant = dictionary[key]
 	if typeof(value) != typeof(default_value):
 		push_warning(
-				"Diplomacy relationship data value is of wrong type. Ignoring."
+				"Diplomacy relationship data value is of wrong type. "
+				+ "It's a " + type_string(typeof(value))
+				+ ", but it should be a " + type_string(typeof(default_value))
+				+ ". Ignoring."
 		)
 		return _get_data_recursive(
 				key, default_value, fallbacks, fallback_index + 1
@@ -208,3 +224,16 @@ func _get_data_recursive(
 
 func _preset_id() -> int:
 	return _get_data_recursive(PRESET_ID_KEY, PRESET_ID_DEFAULT, [_base_data])
+
+
+## Returns the base data, but if a value in the base data
+## matches a given default value, it's not included in the output.
+func _base_data_no_defaults(default_data: Dictionary) -> Dictionary:
+	var output: Dictionary = {}
+	for key: Variant in _base_data.keys():
+		if not (
+				default_data.has(key)
+				and _base_data[key] == default_data[key]
+		):
+			output[key] = _base_data[key]
+	return output

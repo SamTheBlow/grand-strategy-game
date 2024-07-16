@@ -69,14 +69,15 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		game.setup_turn()
 	
 	# Countries
-	var default_relationship_data: Dictionary = (
-			DiplomacyRelationships.new_default_data(game.rules)
-	)
 	for country in _loaded_countries(json_dict):
 		game.countries.add(country)
-		country.relationships = DiplomacyRelationships.new(
-				country, default_relationship_data
-		)
+	if error:
+		return
+	
+	# We need all the countries to be loaded
+	# before we can load their relationships and notifications
+	_load_diplomacy_relationships(json_dict, game)
+	_load_game_notifications(json_dict, game)
 	if error:
 		return
 	
@@ -173,7 +174,88 @@ func _load_country(json_data: Dictionary) -> Country:
 	if json_data.has("money"):
 		country.money = json_data["money"]
 	
+	country.notifications = GameNotifications.new()
+	
 	return country
+
+
+func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
+	# TODO DRY. a lot of copy/paste from _load_auto_arrows()
+	if not json_dict.has("countries"):
+		return
+	
+	var countries_data: Variant = json_dict["countries"]
+	if not (countries_data is Array):
+		return
+	var countries_array := countries_data as Array
+	
+	if countries_array.size() < game.countries.size():
+		return
+	
+	var default_relationship_data: Dictionary = (
+			DiplomacyRelationships.new_default_data(game.rules)
+	)
+	
+	var country_list: Array[Country] = game.countries.list()
+	for i in country_list.size():
+		var country: Country = country_list[i]
+		country.relationships = DiplomacyRelationships.new(
+				country, default_relationship_data
+		)
+		
+		if not (countries_array[i] is Dictionary):
+			continue
+		var country_dict := countries_array[i] as Dictionary
+		
+		if not (
+				country_dict.has("relationships")
+				and country_dict["relationships"] is Array
+		):
+			continue
+		
+		var relationships_data := country_dict["relationships"] as Array
+		var relationships_from_raw := DiplomacyRelationshipsFromRaw.new()
+		relationships_from_raw.apply(
+				relationships_data, game, country, default_relationship_data
+		)
+		if relationships_from_raw.error:
+			continue
+		
+		country.relationships = relationships_from_raw.result
+
+
+func _load_game_notifications(json_dict: Dictionary, game: Game) -> void:
+	# TODO DRY. a lot of copy/paste from _load_auto_arrows()
+	if not json_dict.has("countries"):
+		return
+	
+	var countries_data: Variant = json_dict["countries"]
+	if not (countries_data is Array):
+		return
+	var countries_array := countries_data as Array
+	
+	if countries_array.size() < game.countries.size():
+		return
+	
+	var country_list: Array[Country] = game.countries.list()
+	for i in country_list.size():
+		if not (countries_array[i] is Dictionary):
+			continue
+		var country_dict := countries_array[i] as Dictionary
+		
+		if not (
+				country_dict.has("notifications")
+				and country_dict["notifications"] is Array
+		):
+			continue
+		var notifications_array := country_dict["notifications"] as Array
+		
+		var notifications_from_raw := GameNotificationsFromRaw.new()
+		notifications_from_raw.apply(game, notifications_array)
+		if notifications_from_raw.error:
+			continue
+		
+		country_list[i].notifications = notifications_from_raw.result
 
 
 func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:

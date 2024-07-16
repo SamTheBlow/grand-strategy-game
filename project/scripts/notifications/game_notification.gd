@@ -10,6 +10,10 @@ var _recipient_country: Country
 ## The turn on which this notification was created.
 var _creation_turn: int = 1
 
+## This is for saving/loading the outcomes
+@warning_ignore("unused_private_class_variable")
+var _diplomacy_action_definition: DiplomacyActionDefinition
+
 var _outcomes: Array[NotificationOutcome] = []
 
 
@@ -18,18 +22,19 @@ func _init(
 		sender_country: Country,
 		recipient_country: Country,
 		outcome_names: Array[String],
-		outcome_functions: Array[Callable]
+		outcome_functions: Array[Callable],
+		creation_turn: int = game.turn.current_turn()
 ) -> void:
 	_game = game
 	_sender_country = sender_country
 	_recipient_country = recipient_country
+	_creation_turn = creation_turn
 	
 	for i in mini(outcome_names.size(), outcome_functions.size()):
 		_outcomes.append(NotificationOutcome.new(
 				outcome_names[i], outcome_functions[i]
 		))
 	
-	_creation_turn = game.turn.current_turn()
 	game.turn.turn_changed.connect(_on_turn_changed)
 
 

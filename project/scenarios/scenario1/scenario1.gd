@@ -69,6 +69,35 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		country_data["color"] = country.color.to_html()
 		country_data["money"] = game_rules.starting_money.value
 		countries_data.append(country_data)
+	
+	if (
+			game_rules.diplomacy_presets_option.selected != 0
+			and game_rules.starts_with_random_relationship_preset.value
+	):
+		# Create and populate array with random values
+		var random_relationship_preset: Array[Dictionary] = []
+		for i in starting_provinces.size():
+			random_relationship_preset.append({})
+		for i in starting_provinces.size():
+			for j in range(i + 1, starting_provinces.size()):
+				var random_preset: int = 1 + randi() % 3
+				random_relationship_preset[i][j] = random_preset
+				random_relationship_preset[j][i] = random_preset
+		
+		# Apply random values to country data
+		for i in starting_provinces.size():
+			countries_data[i]["relationships"] = []
+			for j in random_relationship_preset.size():
+				if i == j:
+					continue
+				
+				countries_data[i]["relationships"].append({
+					"recipient_country_id": j,
+					"base_data": {
+						"preset_id": random_relationship_preset[i][j]
+					},
+				})
+	
 	json_data["players"] = players_data
 	json_data["countries"] = countries_data
 	

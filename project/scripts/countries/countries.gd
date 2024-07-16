@@ -35,3 +35,17 @@ func list() -> Array[Country]:
 ## Returns the number of countries in this list.
 func size() -> int:
 	return _list.size()
+
+
+## Debug function that prints the status of all country relationships.
+func print_relationships() -> void:
+	for country_1 in _list:
+		print("Country: ", country_1.country_name)
+		for country_2 in _list:
+			if country_1 == country_2:
+				continue
+			print(
+					"	", country_2.country_name, ": ",
+					country_1.relationships
+					.with_country(country_2).preset().name
+			)
