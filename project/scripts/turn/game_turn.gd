@@ -90,7 +90,7 @@ func _go_to_next_player() -> void:
 	if _playing_player_index >= game.game_players.size():
 		_playing_player_index = 0
 	
-	player_changed.emit(playing_player())
 	if _playing_player_index == 0:
 		_turn += 1
 		turn_changed.emit(_turn)
+	player_changed.emit(playing_player())
