@@ -8,7 +8,7 @@ extends Control
 
 signal button_pressed(button_id: int)
 
-@export_category("Line")
+@export_group("Line")
 
 @export var line_top: float = -64.0:
 	set(value):
@@ -28,14 +28,20 @@ signal button_pressed(button_id: int)
 		_update_side_nodes()
 		queue_redraw()
 
-@export_category("Inner nodes")
-@export var population_size_label: Label
-@export var income_money_label: Label
-@export var build_fortress_button: Button
-@export var recruit_button: Button
+@onready var _population_size_label := %PopulationLabel as Label
+@onready var _income_money_label := %IncomeMoneyLabel as Label
+@onready var _build_fortress_button := %BuildFortressButton as Button
+@onready var _recruit_button := %RecruitButton as Button
 
-@export var left_side_nodes: Array[Control]
-@export var right_side_nodes: Array[Control]
+@onready var _country_button := %CountryButton as CountryButton
+@onready var _left_side_nodes: Array[Control] = [
+	$Control1 as Control,
+	$Control2 as Control,
+]
+@onready var _right_side_nodes: Array[Control] = [
+	$Control4 as Control,
+	$Control5 as Control,
+]
 
 var _playing_player: GamePlayer:
 	set(value):
@@ -48,6 +54,8 @@ var _army_recruit_limits: ArmyRecruitmentLimits
 
 
 func _ready() -> void:
+	_initialize()
+	_update_country_button()
 	_update_side_nodes()
 	_update_buttons_disabled()
 
@@ -106,49 +114,66 @@ func _draw() -> void:
 ## To be called when creating this node.
 func init(province: Province, playing_player: GamePlayer) -> void:
 	_province = province
+	_playing_player = playing_player
+
+
+func _initialize() -> void:
+	if _province == null:
+		return
 	
-	_update_population_size_label(province.population.population_size)
-	province.population.size_changed.connect(_on_population_size_changed)
+	var node0: Control = _left_side_nodes[0]
+	var node1: Control = _left_side_nodes[1]
 	
-	_update_income_money_label(province.income_money().total())
-	province.income_money().changed.connect(_on_income_money_changed)
-	
-	var node0: Control = left_side_nodes[0]
-	var node1: Control = left_side_nodes[1]
-	left_side_nodes = []
-	
-	if province.game.rules.build_fortress_enabled.value:
+	if _province.game.rules.build_fortress_enabled.value:
 		_fortress_build_conditions = FortressBuildConditions.new(
-				playing_player.playing_country, _province
+				_playing_player.playing_country, _province
 		)
 		_fortress_build_conditions.can_build_changed.connect(
 				_on_fortress_can_build_changed
 		)
 		_on_fortress_can_build_changed(_fortress_build_conditions.can_build())
-		left_side_nodes.append(node0)
 	else:
 		node0.hide()
+		_left_side_nodes.erase(node0)
 	
-	if province.game.rules.recruitment_enabled.value:
+	if _province.game.rules.recruitment_enabled.value:
 		_army_recruit_limits = ArmyRecruitmentLimits.new(
-				playing_player.playing_country, _province
+				_playing_player.playing_country, _province
 		)
 		_army_recruit_limits.maximum_changed.connect(_on_army_maximum_changed)
 		_on_army_maximum_changed(_army_recruit_limits.maximum())
-		left_side_nodes.append(node1)
 	else:
 		node1.hide()
+		_left_side_nodes.erase(node1)
 	
-	_update_left_side_nodes()
-	_playing_player = playing_player
+	_country_button.pressed.connect(_province.game._on_country_button_pressed)
+	
+	_update_population_size_label(_province.population.population_size)
+	_province.population.size_changed.connect(_on_population_size_changed)
+	
+	_update_income_money_label(_province.income_money().total())
+	_province.income_money().changed.connect(_on_income_money_changed)
 
 
 func _update_population_size_label(value: int) -> void:
-	population_size_label.text = str(value)
+	if not is_node_ready():
+		return
+	_population_size_label.text = str(value)
 
 
 func _update_income_money_label(value: int) -> void:
-	income_money_label.text = str(value)
+	if not is_node_ready():
+		return
+	_income_money_label.text = str(value)
+
+
+func _update_country_button() -> void:
+	if _province == null or _province.owner_country == null:
+		_country_button.hide()
+		return
+	
+	_country_button.country = _province.owner_country
+	_country_button.show()
 
 
 func _update_side_nodes() -> void:
@@ -157,23 +182,29 @@ func _update_side_nodes() -> void:
 
 
 func _update_left_side_nodes() -> void:
+	if not is_node_ready():
+		return
+	
 	var offset_y: float = 64.0
-	for i in left_side_nodes.size():
-		left_side_nodes[i].position.x = (
-				-line_length_x - left_side_nodes[i].size.x * 0.5
+	for i in _left_side_nodes.size():
+		_left_side_nodes[i].position.x = (
+				-line_length_x - _left_side_nodes[i].size.x * 0.5
 		)
-		left_side_nodes[i].position.y = line_top + offset_y
-		offset_y += left_side_nodes[i].size.y
+		_left_side_nodes[i].position.y = line_top + offset_y
+		offset_y += _left_side_nodes[i].size.y
 
 
 func _update_right_side_nodes() -> void:
+	if not is_node_ready():
+		return
+	
 	var offset_y: float = 64.0
-	for i in right_side_nodes.size():
-		right_side_nodes[i].position.x = (
-				line_length_x - right_side_nodes[i].size.x * 0.5
+	for i in _right_side_nodes.size():
+		_right_side_nodes[i].position.x = (
+				line_length_x - _right_side_nodes[i].size.x * 0.5
 		)
-		right_side_nodes[i].position.y = line_top + offset_y
-		offset_y += right_side_nodes[i].size.y
+		_right_side_nodes[i].position.y = line_top + offset_y
+		offset_y += _right_side_nodes[i].size.y
 
 
 func _update_buttons_disabled() -> void:
@@ -182,14 +213,24 @@ func _update_buttons_disabled() -> void:
 
 
 func _update_build_fortress_button_disabled() -> void:
-	build_fortress_button.disabled = (
+	if _fortress_build_conditions == null or not is_node_ready():
+		return
+	
+	_build_fortress_button.disabled = (
 			_is_actions_disabled()
 			or not _fortress_build_conditions.can_build()
 	)
 
 
 func _update_recruit_button_disabled() -> void:
-	recruit_button.disabled = (
+	if (
+			_army_recruit_limits == null
+			or _province == null
+			or not is_node_ready()
+	):
+		return
+	
+	_recruit_button.disabled = (
 			_is_actions_disabled() or
 			_army_recruit_limits.maximum()
 			< _province.game.rules.minimum_army_size.value

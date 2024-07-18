@@ -11,14 +11,14 @@ extends Node
 signal game_started()
 signal game_ended()
 
-@export_category("Scenes")
+@export_group("Scenes")
 @export var army_scene: PackedScene
 @export var fortress_scene: PackedScene
 @export var province_scene: PackedScene
 @export var world_2d_scene: PackedScene
 @export var networking_setup_scene: PackedScene
 
-@export_category("UI scenes")
+@export_group("UI scenes")
 @export var troop_ui_scene: PackedScene
 @export var component_ui_scene: PackedScene
 @export var player_turn_scene: PackedScene
@@ -28,15 +28,16 @@ signal game_ended()
 @export var game_over_scene: PackedScene
 @export var build_fortress_scene: PackedScene
 @export var recruitment_scene: PackedScene
+@export var country_info_scene: PackedScene
 
-@export_category("Children")
+@export_group("Children")
 @export var action_sync: ActionSynchronizer
 @export var camera: CustomCamera2D
 @export var game_ui: Control
 @export var component_ui_root: Control
 @export var popups: Control
 
-@export_category("Resources")
+@export_group("Resources")
 ## Defines the outcome of a [Battle].
 @export var battle: Battle
 
@@ -543,3 +544,11 @@ func _on_modifiers_requested(
 ) -> void:
 	if global_modifiers.has(context.context()):
 		modifiers_.append(global_modifiers[context.context()])
+
+
+func _on_country_button_pressed(country: Country) -> void:
+	var country_info: Control = (
+			country_info_scene.instantiate() as CountryInfoPopup
+	)
+	country_info.country = country
+	_add_popup(country_info)

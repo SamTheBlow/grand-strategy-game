@@ -11,7 +11,7 @@ extends Control
 # We need to store this so that we can disconnect it later
 var _money_changed_signal: Signal
 
-@onready var _country_color_rect := %CountryColorRect as ColorRect
+@onready var _country_button := %CountryButton as CountryButton
 @onready var _country_name_label := %CountryNameLabel as Label
 @onready var _country_money_label := %CountryMoneyLabel as Label
 @onready var _game_turn_label := %GameTurnLabel as Label
@@ -26,6 +26,7 @@ func _ready() -> void:
 	_update_turn_label(_game.turn.current_turn())
 	_game.turn.player_changed.connect(_on_turn_player_changed)
 	_update_country(_game.turn.playing_player().playing_country)
+	_country_button.pressed.connect(_game._on_country_button_pressed)
 
 
 func _update_country(country: Country) -> void:
@@ -33,7 +34,7 @@ func _update_country(country: Country) -> void:
 		print_debug("Tried to update top bar info, but country is null.")
 		return
 	
-	_country_color_rect.color = country.color
+	_country_button.country = country
 	_country_name_label.text = country.country_name
 	
 	_update_money_label(country.money)

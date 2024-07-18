@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=3 uid="uid://dgm1qqboe50y7"]
+[gd_scene load_steps=4 format=3 uid="uid://dgm1qqboe50y7"]
 
 [ext_resource type="Script" path="res://scripts/ui/top_bar.gd" id="1_y7n1y"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://scenes/ui/country_button.tscn" id="2_ho3uv"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="2_wy4xe"]
 
 [node name="TopBar" type="Control"]
@@ -43,37 +44,26 @@ anchor_bottom = 0.925
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/YourCountry/MarginContainer"]
+[node name="CountryIconAndName" type="HBoxContainer" parent="HBoxContainer/YourCountry/MarginContainer"]
 layout_mode = 2
 
-[node name="CountryColor" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
+[node name="CountryButton" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName" instance=ExtResource("2_ho3uv")]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 
-[node name="CountryColorRect" type="ColorRect" parent="HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryColor"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = -1
-anchor_top = 0.0314592
-anchor_right = 1.0
-anchor_bottom = 0.968541
-grow_horizontal = 2
-grow_vertical = 2
-script = ExtResource("2_wy4xe")
-aspect_ratio = 1.66
-
-[node name="Spacing" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
+[node name="Spacing" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.05
 
-[node name="CountryName" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/HBoxContainer"]
+[node name="CountryName" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.65
 
-[node name="CountryNameLabel" type="Label" parent="HBoxContainer/YourCountry/MarginContainer/HBoxContainer/CountryName"]
+[node name="CountryNameLabel" type="Label" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryName"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
