@@ -365,7 +365,7 @@ func _add_army_movement_popup(army: Army, destination: Province) -> void:
 ## Adds a new [GamePopup] to the scene tree, containing given contents.
 func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
-	popup.setup_contents(contents)
+	popup.contents_node = contents
 	popups.add_child(popup)
 
 
@@ -550,5 +550,6 @@ func _on_country_button_pressed(country: Country) -> void:
 	var country_info: Control = (
 			country_info_scene.instantiate() as CountryInfoPopup
 	)
+	country_info.game = self
 	country_info.country = country
 	_add_popup(country_info)

@@ -5,7 +5,7 @@
 [ext_resource type="Script" path="res://scripts/ui/drag_source.gd" id="3_lu5dx"]
 [ext_resource type="Script" path="res://scripts/ui/popups/popup_buttons.gd" id="4_t04kf"]
 
-[node name="GamePopup" type="Control" node_paths=PackedStringArray("contents_root", "popup_buttons")]
+[node name="GamePopup" type="Control"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,8 +14,6 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_q2ltp")
-contents_root = NodePath("Draggable/MarginContainer/VBoxContainer/Contents")
-popup_buttons = NodePath("Draggable/MarginContainer/VBoxContainer/Buttons")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
@@ -63,12 +61,24 @@ layout_mode = 2
 mouse_filter = 2
 alignment = 1
 
-[node name="Contents" type="Control" parent="Draggable/MarginContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="Draggable/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
+[node name="Contents" type="ScrollContainer" parent="Draggable/MarginContainer/VBoxContainer/Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+follow_focus = true
+horizontal_scroll_mode = 0
+
 [node name="Buttons" type="HBoxContainer" parent="Draggable/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 mouse_filter = 2

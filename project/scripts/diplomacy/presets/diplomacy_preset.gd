@@ -10,6 +10,10 @@ extends Resource
 ## The name of this preset. This may be shown to the user.
 @export var name: String = "None"
 
+## The color associated with this preset. This color may be used
+## on text or on the map in appropriate circumstances.
+@export var color: Color = Color.WHITE
+
 ## The relationship data associated with this preset.
 ## The keys should be a String (see [DiplomacyRelationship]).
 ## The values may be anything depending on the key.

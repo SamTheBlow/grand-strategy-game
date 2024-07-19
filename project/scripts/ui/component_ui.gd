@@ -33,15 +33,17 @@ signal button_pressed(button_id: int)
 @onready var _build_fortress_button := %BuildFortressButton as Button
 @onready var _recruit_button := %RecruitButton as Button
 
-@onready var _country_button := %CountryButton as CountryButton
 @onready var _left_side_nodes: Array[Control] = [
 	$Control1 as Control,
 	$Control2 as Control,
 ]
 @onready var _right_side_nodes: Array[Control] = [
+	$Control3 as Control,
 	$Control4 as Control,
-	$Control5 as Control,
 ]
+@onready var _country_button := %CountryButton as CountryButton
+@onready var _relationship_preset_root := %RelationshipRoot as Control
+@onready var _relationship_preset_label := %RelationshipLabel as Label
 
 var _playing_player: GamePlayer:
 	set(value):
@@ -121,6 +123,12 @@ func _initialize() -> void:
 	if _province == null:
 		return
 	
+	_update_population_size_label(_province.population.population_size)
+	_province.population.size_changed.connect(_on_population_size_changed)
+	
+	_update_income_money_label(_province.income_money().total())
+	_province.income_money().changed.connect(_on_income_money_changed)
+	
 	var node0: Control = _left_side_nodes[0]
 	var node1: Control = _left_side_nodes[1]
 	
@@ -148,11 +156,39 @@ func _initialize() -> void:
 	
 	_country_button.pressed.connect(_province.game._on_country_button_pressed)
 	
-	_update_population_size_label(_province.population.population_size)
-	_province.population.size_changed.connect(_on_population_size_changed)
+	_refresh_relationship_preset()
+
+
+# TODO DRY. copy/paste from [CountryAndRelationship]
+func _refresh_relationship_preset() -> void:
+	if not is_node_ready():
+		return
 	
-	_update_income_money_label(_province.income_money().total())
-	_province.income_money().changed.connect(_on_income_money_changed)
+	var is_relationship_presets_enabled: bool = (
+			_province.game.rules.diplomacy_presets_option.selected != 0
+	)
+	
+	var country: Country = _province.owner_country
+	var country_to_relate_to: Country = _playing_player.playing_country
+	
+	if (
+			not is_relationship_presets_enabled
+			or country == null
+			or country_to_relate_to == null
+			or country == country_to_relate_to
+	):
+		_relationship_preset_root.hide()
+		return
+	
+	var relationship_preset: DiplomacyPreset = (
+			country_to_relate_to.relationships.with_country(country).preset()
+	)
+	
+	_relationship_preset_label.add_theme_color_override(
+			"font_color", relationship_preset.color
+	)
+	_relationship_preset_label.text = "(" + relationship_preset.name + ")"
+	_relationship_preset_root.show()
 
 
 func _update_population_size_label(value: int) -> void:

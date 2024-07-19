@@ -6,6 +6,7 @@
 script = ExtResource("1_6b00h")
 id = 2
 name = "Neutral"
+color = Color(0.74902, 0.74902, 0.74902, 1)
 settings = {
 "grants_military_access": false,
 "is_fighting": false,

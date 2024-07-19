@@ -11,6 +11,11 @@ signal pressed(country: Country)
 		has_black_outline = value
 		queue_redraw()
 
+@export var is_button_enabled: bool = true:
+	set(value):
+		is_button_enabled = value
+		_update_button_enabled()
+
 ## The country represented by this button.
 var country: Country:
 	set(value):
@@ -18,10 +23,12 @@ var country: Country:
 		_refresh()
 
 @onready var _country_icon := %CountryIcon as ColorRect
+@onready var _button := %Button as Button
 
 
 func _ready() -> void:
 	_refresh()
+	_update_button_enabled()
 
 
 func _draw() -> void:
@@ -45,6 +52,14 @@ func _refresh() -> void:
 		return
 	
 	_country_icon.color = country.color
+
+
+func _update_button_enabled() -> void:
+	if not is_node_ready():
+		return
+	
+	_button.disabled = not is_button_enabled
+	_button.visible = is_button_enabled
 
 
 func _on_button_pressed() -> void:
