@@ -1,73 +1,100 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7jj51hv4hwqq"]
+[gd_scene load_steps=3 format=3 uid="uid://de5dhmkfqssk0"]
 
-[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://scenes/ui/country_button.tscn" id="1_84m4d"]
-[ext_resource type="Script" path="res://scripts/ui/country_and_relationship.gd" id="1_j5wfm"]
+[ext_resource type="Script" path="res://scripts/ui/country_relationship_node.gd" id="1_5nc17"]
+[ext_resource type="PackedScene" uid="uid://cvxd6jpgibm68" path="res://scenes/ui/relationship_info.tscn" id="2_h1qdk"]
 
 [node name="CountryRelationship" type="Control"]
-custom_minimum_size = Vector2(0, 64)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 1
-script = ExtResource("1_j5wfm")
+script = ExtResource("1_5nc17")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_right = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.216667, 0.25, 1)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 layout_mode = 1
 anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
-grow_vertical = 2
+anchor_left = 0.1
+anchor_top = 0.1
+anchor_right = 0.9
+anchor_bottom = 0.9
+offset_left = 32.0
+offset_right = -32.0
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
-layout_mode = 2
-
-[node name="CountryButton" parent="MarginContainer/HBoxContainer" instance=ExtResource("1_84m4d")]
+[node name="Container" type="VBoxContainer" parent="MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
+alignment = 1
 
-[node name="NameRoot" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="Preset" parent="MarginContainer/Container" instance=ExtResource("2_h1qdk")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 64)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.4
-mouse_filter = 1
 
-[node name="CountryName" type="Label" parent="MarginContainer/HBoxContainer/NameRoot"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "Country Name"
+[node name="GrantsMilitaryAccess" type="HBoxContainer" parent="MarginContainer/Container"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="GrantsMilitaryAccessTitle" type="Label" parent="MarginContainer/Container/GrantsMilitaryAccess"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Grants military access:"
+horizontal_alignment = 2
 vertical_alignment = 1
 clip_text = true
 
-[node name="PresetRoot" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="GrantsMilitaryAccessInfo" parent="MarginContainer/Container/GrantsMilitaryAccess" instance=ExtResource("2_h1qdk")]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_stretch_ratio = 0.3
-mouse_filter = 1
 
-[node name="RelationshipPreset" type="Label" parent="MarginContainer/HBoxContainer/PresetRoot"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.7
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_colors/font_color = Color(0, 1, 0, 1)
-text = "(Best friends)"
+[node name="IsTrespassing" type="HBoxContainer" parent="MarginContainer/Container"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="IsTrespassingTitle" type="Label" parent="MarginContainer/Container/IsTrespassing"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Is trespassing:"
 horizontal_alignment = 2
 vertical_alignment = 1
+clip_text = true
+
+[node name="IsTrespassingInfo" parent="MarginContainer/Container/IsTrespassing" instance=ExtResource("2_h1qdk")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="IsFighting" type="HBoxContainer" parent="MarginContainer/Container"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+
+[node name="IsFightingTitle" type="Label" parent="MarginContainer/Container/IsFighting"]
+custom_minimum_size = Vector2(0, 64)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Is fighting:"
+horizontal_alignment = 2
+vertical_alignment = 1
+clip_text = true
+
+[node name="IsFightingInfo" parent="MarginContainer/Container/IsFighting" instance=ExtResource("2_h1qdk")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
