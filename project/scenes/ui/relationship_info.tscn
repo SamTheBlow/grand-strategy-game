@@ -10,6 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_e8d3o")
 
 [node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
@@ -23,6 +24,7 @@ ratio = 1.66
 
 [node name="Control" type="Control" parent="AspectRatioContainer"]
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Country1" parent="AspectRatioContainer/Control" instance=ExtResource("2_nh6o8")]
 unique_name_in_owner = true

@@ -4,6 +4,7 @@ extends Control
 ## [DiplomacyRelationship] between two countries.
 ##
 ## Note: if either country_1 or country_2 is null, this node will hide itself.
+## It will also hide itself when both given countries are the same.
 
 
 var country_1: Country:
@@ -16,7 +17,10 @@ var country_2: Country:
 		country_2 = value
 		_refresh()
 
-var is_diplomatic_presets_enabled: bool = false
+var is_relationship_presets_enabled: bool = false:
+	set(value):
+		is_relationship_presets_enabled = value
+		_refresh()
 
 @onready var _container := %Container as Control
 @onready var _preset := %Preset as RelationshipInfoNode
@@ -38,7 +42,7 @@ func _refresh() -> void:
 	if not is_node_ready():
 		return
 	
-	if country_1 == null or country_2 == null:
+	if country_1 == null or country_2 == null or country_1 == country_2:
 		hide()
 		return
 	
@@ -49,7 +53,7 @@ func _refresh() -> void:
 			country_2.relationships.with_country(country_1)
 	)
 	
-	if is_diplomatic_presets_enabled:
+	if is_relationship_presets_enabled:
 		_preset.country_1 = country_1
 		_preset.country_2 = country_2
 		_preset.info_text_1_to_2 = relationship.preset().name

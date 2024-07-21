@@ -11,6 +11,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 16
 script = ExtResource("1_lgeaj")
 _country_and_relationship_scene = ExtResource("2_a2cvv")
 _country_relationship_scene = ExtResource("3_eiu3u")
@@ -40,7 +41,7 @@ layout_mode = 2
 is_button_enabled = false
 
 [node name="Money" type="Control" parent="."]
-custom_minimum_size = Vector2(0, 64)
+custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 mouse_filter = 1
 
@@ -48,9 +49,8 @@ mouse_filter = 1
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.3
-anchor_top = 0.2
 anchor_right = 0.7
-anchor_bottom = 0.8
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -67,6 +67,10 @@ text = "Money: $999999999"
 horizontal_alignment = 1
 vertical_alignment = 1
 
+[node name="RelationshipWithPlayer" parent="." instance=ExtResource("3_eiu3u")]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="CountryList" type="Control" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
@@ -75,8 +79,7 @@ mouse_filter = 1
 [node name="MarginContainer" type="MarginContainer" parent="CountryList"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.15
-anchor_right = 0.85
+anchor_right = 1.0
 anchor_bottom = 1.0
 
 [node name="ColorRect" type="ColorRect" parent="CountryList/MarginContainer"]
@@ -134,5 +137,5 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Footer" type="Control" parent="."]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2

@@ -25,6 +25,9 @@ var _relationship_info: CountryRelationshipNode:
 
 @onready var _header := %Header as CountryAndRelationship
 @onready var _money_label := %Money as Label
+@onready var _relationship_with_player := (
+		%RelationshipWithPlayer as CountryRelationshipNode
+)
 @onready var _country_list := %CountryList as Control
 @onready var _countries := %Countries as Control
 
@@ -41,12 +44,22 @@ func _refresh() -> void:
 	if country == null or not is_node_ready():
 		return
 	
-	_header.country = country
-	_header.country_to_relate_to = game.turn.playing_player().playing_country
-	_header.is_relationship_presets_enabled = (
+	var playing_country: Country = game.turn.playing_player().playing_country
+	var is_relationship_presets_enabled: bool = (
 			game.rules.diplomacy_presets_option.selected != 0
 	)
+	
+	_header.country = country
+	_header.country_to_relate_to = playing_country
+	_header.is_relationship_presets_enabled = is_relationship_presets_enabled
+	
 	_money_label.text = "Money: $" + str(country.money)
+	
+	_relationship_with_player.country_1 = playing_country
+	_relationship_with_player.country_2 = country
+	_relationship_with_player.is_relationship_presets_enabled = (
+			is_relationship_presets_enabled
+	)
 	
 	_populate_countries()
 
@@ -62,6 +75,7 @@ func _populate_countries() -> void:
 		_countries.remove_child(node)
 		node.queue_free()
 	
+	# TODO DRY. this appears in too many places, it shouldn't. also it's ugly
 	var is_relationship_presets_enabled: bool = (
 			game.rules.diplomacy_presets_option.selected != 0
 	)
@@ -111,7 +125,7 @@ func _on_relationship_button_pressed(button_country: Country) -> void:
 	)
 	new_relationship_info.country_1 = country
 	new_relationship_info.country_2 = button_country
-	new_relationship_info.is_diplomatic_presets_enabled = (
+	new_relationship_info.is_relationship_presets_enabled = (
 			game.rules.diplomacy_presets_option.selected != 0
 	)
 	
