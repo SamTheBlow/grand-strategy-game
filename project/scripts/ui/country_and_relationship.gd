@@ -10,17 +10,18 @@ extends Control
 var country: Country:
 	set(value):
 		country = value
-		_refresh()
+		_refresh_country_info()
+		_refresh_preset_label()
 
 var is_relationship_presets_enabled: bool = false:
 	set(value):
 		is_relationship_presets_enabled = value
-		_refresh_relationship_preset()
+		_refresh_preset_label()
 
 var country_to_relate_to: Country:
 	set(value):
 		country_to_relate_to = value
-		_refresh_relationship_preset()
+		_refresh_preset_label()
 
 ## Set here the function that you want to call when the button is pressed.
 ## The function must take one parameter of type [Country], and no return value.
@@ -31,11 +32,14 @@ var button_press_outcome: Callable:
 
 @onready var _country_button := %CountryButton as CountryButton
 @onready var _country_name_label := %CountryName as Label
-@onready var _relationship_preset_label := %RelationshipPreset as Label
+@onready var _relationship_preset_label := (
+		%RelationshipPreset as RelationshipPresetLabel
+)
 
 
 func _ready() -> void:
-	_refresh()
+	_refresh_country_info()
+	_refresh_preset_label()
 	_update_is_button_enabled()
 	_update_button_press_outcome()
 
@@ -47,16 +51,22 @@ func _update_button_press_outcome() -> void:
 	_country_button.pressed.connect(button_press_outcome)
 
 
-func _refresh() -> void:
+func _refresh_country_info() -> void:
 	if country == null or not is_node_ready():
 		return
 	
 	_country_button.country = country
 	_country_name_label.text = country.country_name
-	_refresh_relationship_preset()
 
 
-func _refresh_relationship_preset() -> void:
+func _update_is_button_enabled() -> void:
+	if not is_node_ready():
+		return
+	
+	_country_button.is_button_enabled = is_button_enabled
+
+
+func _refresh_preset_label() -> void:
 	if not is_node_ready():
 		return
 	
@@ -66,22 +76,9 @@ func _refresh_relationship_preset() -> void:
 			or country_to_relate_to == null
 			or country == country_to_relate_to
 	):
-		_relationship_preset_label.hide()
+		_relationship_preset_label.relationship = null
 		return
 	
-	var relationship_preset: DiplomacyPreset = (
-			country_to_relate_to.relationships.with_country(country).preset()
+	_relationship_preset_label.relationship = (
+			country.relationships.with_country(country_to_relate_to)
 	)
-	
-	_relationship_preset_label.add_theme_color_override(
-			"font_color", relationship_preset.color
-	)
-	_relationship_preset_label.text = "(" + relationship_preset.name + ")"
-	_relationship_preset_label.show()
-
-
-func _update_is_button_enabled() -> void:
-	if not is_node_ready():
-		return
-	
-	_country_button.is_button_enabled = is_button_enabled

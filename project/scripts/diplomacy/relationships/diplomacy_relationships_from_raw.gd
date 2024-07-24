@@ -34,6 +34,7 @@ func apply(
 		)
 		if error:
 			return
+		relationship.diplomacy_actions = game.rules.diplomatic_actions
 		diplomacy_relationships._list.append(relationship)
 	
 	result = diplomacy_relationships

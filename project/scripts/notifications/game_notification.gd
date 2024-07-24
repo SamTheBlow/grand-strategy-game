@@ -1,7 +1,7 @@
 class_name GameNotification
 
 
-signal handled()
+signal handled(this: GameNotification)
 
 var _game: Game
 var _sender_country: Country
@@ -55,11 +55,11 @@ func select_outcome(outcome_index: int) -> void:
 		return
 	
 	_outcomes[outcome_index].outcome_function.call()
-	handled.emit()
+	handled.emit(self)
 
 
 func dismiss() -> void:
-	handled.emit()
+	handled.emit(self)
 
 
 func _outcome_can_be_selected() -> bool:

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://btp4jcvpp4jg2"]
+[gd_scene load_steps=5 format=3 uid="uid://btp4jcvpp4jg2"]
 
 [ext_resource type="Script" path="res://scripts/ui/component_ui.gd" id="1_p8xv2"]
 [ext_resource type="Script" path="res://scripts/ui/color_rect_aspect_ratio.gd" id="2_gn6af"]
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://scenes/ui/country_button.tscn" id="2_inqyn"]
+[ext_resource type="Script" path="res://scripts/ui/relationship_preset_label.gd" id="4_na3lj"]
 
 [node name="ComponentUi" type="Control"]
 layout_mode = 3
@@ -147,8 +148,9 @@ mouse_filter = 2
 [node name="ColorRect" type="ColorRect" parent="Control3/MarginContainer/HBoxContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.229167
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.770833
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -234,8 +236,9 @@ mouse_filter = 2
 [node name="ColorRect" type="ColorRect" parent="Control4/MarginContainer/HBoxContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 0.229167
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.770833
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -310,6 +313,7 @@ theme_override_colors/font_color = Color(0, 1, 0, 1)
 text = "(Best friends)"
 horizontal_alignment = 1
 vertical_alignment = 1
+script = ExtResource("4_na3lj")
 
 [node name="ColorRect" type="ColorRect" parent="RelationshipRoot/RelationshipLabel"]
 show_behind_parent = true

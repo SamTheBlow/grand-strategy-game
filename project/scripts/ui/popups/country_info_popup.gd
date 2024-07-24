@@ -41,7 +41,7 @@ func buttons() -> Array[String]:
 
 
 func _refresh() -> void:
-	if country == null or not is_node_ready():
+	if game == null or country == null or not is_node_ready():
 		return
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
@@ -60,6 +60,7 @@ func _refresh() -> void:
 	_relationship_with_player.is_relationship_presets_enabled = (
 			is_relationship_presets_enabled
 	)
+	_relationship_with_player.game = game
 	
 	_populate_countries()
 
@@ -128,6 +129,7 @@ func _on_relationship_button_pressed(button_country: Country) -> void:
 	new_relationship_info.is_relationship_presets_enabled = (
 			game.rules.diplomacy_presets_option.selected != 0
 	)
+	new_relationship_info.game = game
 	
 	for node in _countries.get_children():
 		if not node is CountryAndRelationship:

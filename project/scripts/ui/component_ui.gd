@@ -42,8 +42,9 @@ signal button_pressed(button_id: int)
 	$Control4 as Control,
 ]
 @onready var _country_button := %CountryButton as CountryButton
-@onready var _relationship_preset_root := %RelationshipRoot as Control
-@onready var _relationship_preset_label := %RelationshipLabel as Label
+@onready var _relationship_preset_label := (
+		%RelationshipLabel as RelationshipPresetLabel
+)
 
 var _playing_player: GamePlayer:
 	set(value):
@@ -156,20 +157,19 @@ func _initialize() -> void:
 	
 	_country_button.pressed.connect(_province.game._on_country_button_pressed)
 	
-	_refresh_relationship_preset()
+	_refresh_preset_label()
 
 
-# TODO DRY. copy/paste from [CountryAndRelationship]
-func _refresh_relationship_preset() -> void:
+# TODO DRY. somewhat a copy/paste from [CountryAndRelationship]
+func _refresh_preset_label() -> void:
 	if not is_node_ready():
 		return
 	
 	var is_relationship_presets_enabled: bool = (
 			_province.game.rules.diplomacy_presets_option.selected != 0
 	)
-	
-	var country: Country = _province.owner_country
-	var country_to_relate_to: Country = _playing_player.playing_country
+	var country: Country = _playing_player.playing_country
+	var country_to_relate_to: Country = _province.owner_country
 	
 	if (
 			not is_relationship_presets_enabled
@@ -177,18 +177,12 @@ func _refresh_relationship_preset() -> void:
 			or country_to_relate_to == null
 			or country == country_to_relate_to
 	):
-		_relationship_preset_root.hide()
+		_relationship_preset_label.relationship = null
 		return
 	
-	var relationship_preset: DiplomacyPreset = (
-			country_to_relate_to.relationships.with_country(country).preset()
+	_relationship_preset_label.relationship = (
+			country.relationships.with_country(country_to_relate_to)
 	)
-	
-	_relationship_preset_label.add_theme_color_override(
-			"font_color", relationship_preset.color
-	)
-	_relationship_preset_label.text = "(" + relationship_preset.name + ")"
-	_relationship_preset_root.show()
 
 
 func _update_population_size_label(value: int) -> void:

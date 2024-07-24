@@ -35,6 +35,8 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 			country,
 			default_data
 	)
+	if default_data.has("diplomacy_actions"):
+		relationship.diplomacy_actions = default_data["diplomacy_actions"]
 	
 	if country != null:
 		_list.append(relationship)
@@ -55,7 +57,8 @@ static func new_default_data(game_rules: GameRules) -> Dictionary:
 		),
 		DiplomacyRelationship.IS_FIGHTING_KEY: (
 				game_rules.is_fighting_default.value
-		)
+		),
+		"diplomacy_actions": game_rules.diplomatic_actions,
 	}
 	
 	# ATTENTION this code relies of the fact that the presets
