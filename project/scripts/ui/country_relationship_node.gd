@@ -19,12 +19,8 @@ var country_2: Country:
 		country_2 = value
 		_refresh()
 
-var is_relationship_presets_enabled: bool = false:
-	set(value):
-		is_relationship_presets_enabled = value
-		_refresh()
-
-## This can stay null. If so, the available actions will never be shown.
+## This can stay null. If so, the available actions will never be shown,
+## and it will be assumed that relationship presets are disabled.
 var game: Game:
 	set(value):
 		game = value
@@ -85,9 +81,19 @@ func _connect_relationship_signals(
 			.is_connected(_on_relationship_data_changed)
 	):
 		relationship.fighting_changed.connect(_on_relationship_data_changed)
+	if (
+			not relationship.available_actions_changed
+			.is_connected(_on_available_actions_changed)
+	):
+		relationship.available_actions_changed.connect(
+				_on_available_actions_changed
+		)
 
 
 func _update_minimum_height() -> void:
+	if not is_node_ready():
+		return
+	
 	_update_minimum_height_of(_data_container)
 	_update_minimum_height_of(_available_actions)
 	_update_minimum_height_of(_actions_container)
@@ -140,7 +146,7 @@ func _refresh_info() -> void:
 			country_2.relationships.with_country(country_1)
 	)
 	
-	if is_relationship_presets_enabled:
+	if game and game.rules.diplomacy_presets_option.selected != 0:
 		_preset.country_1 = country_1
 		_preset.country_2 = country_2
 		_preset.info_text_1_to_2 = relationship.preset().name
@@ -171,6 +177,8 @@ func _refresh_info() -> void:
 	_connect_relationship_signals(reverse_relationship)
 
 
+## Note that if the node is ready,
+## this automatically updates the custom minimum height.
 func _refresh_available_actions() -> void:
 	if not is_node_ready():
 		return
@@ -181,10 +189,12 @@ func _refresh_available_actions() -> void:
 	_actions_container.hide()
 	
 	if country_1 == null or country_2 == null or game == null:
+		_update_minimum_height()
 		return
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
 	if not playing_country in [country_1, country_2]:
+		_update_minimum_height()
 		return
 	
 	var relationship: DiplomacyRelationship = (
@@ -192,9 +202,6 @@ func _refresh_available_actions() -> void:
 			if playing_country == country_1 else
 			country_2.relationships.with_country(country_1)
 	)
-	
-	# TODO fix & remove
-	relationship._update_available_actions(1)
 	
 	for action in relationship.available_actions():
 		var diplomacy_action_button := (
@@ -237,3 +244,7 @@ func _on_relationship_data_changed(_relation: DiplomacyRelationship) -> void:
 	# because it'll refresh the whole thing
 	# every time an individual piece of info changes
 	_refresh_info()
+
+
+func _on_available_actions_changed(_relation: DiplomacyRelationship) -> void:
+	_refresh_available_actions()

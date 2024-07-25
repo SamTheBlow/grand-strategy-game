@@ -57,9 +57,6 @@ func _refresh() -> void:
 	
 	_relationship_with_player.country_1 = playing_country
 	_relationship_with_player.country_2 = country
-	_relationship_with_player.is_relationship_presets_enabled = (
-			is_relationship_presets_enabled
-	)
 	_relationship_with_player.game = game
 	
 	_populate_countries()
@@ -81,6 +78,10 @@ func _populate_countries() -> void:
 			game.rules.diplomacy_presets_option.selected != 0
 	)
 	
+	var spacing := Control.new()
+	spacing.custom_minimum_size.y = 24
+	_countries.add_child(spacing)
+	
 	for other_country in game.countries.list():
 		if other_country == country:
 			continue
@@ -99,18 +100,30 @@ func _populate_countries() -> void:
 		)
 		_countries.add_child(relationship_node)
 	
+	spacing = Control.new()
+	spacing.custom_minimum_size.y = 24
+	_countries.add_child(spacing)
+	
 	_update_country_list_height()
 
 
+# ATTENTION this function contains a lot of important hard coded values!
 ## Manually sets the minimum height of the country list
 func _update_country_list_height() -> void:
 	var number_of_countries: int = game.countries.size() - 1
-	# "48" is the height of the title (the thing that says "All Relationships")
-	# "4" and "(number_of_countries * 64 - 1) * 4"
-	# are the spacing between the nodes
-	# "number_of_countries * 64" is the height of all the country nodes
+	var number_of_spacing_nodes: int = 2
+	
 	var total_list_height_px := float(
-			48 + 4 + number_of_countries * 64 + (number_of_countries - 1) * 4
+			# Height of the title (the thing that says "All Relationships")
+			48
+			# Spacing between the title and contents
+			+ 4
+			# Spacing between the country nodes (and spacing nodes)
+			+ (number_of_countries + number_of_spacing_nodes - 1) * 8
+			# Height of the country nodes
+			+ number_of_countries * 64
+			# Height of the spacing nodes
+			+ number_of_spacing_nodes * 24
 	)
 	
 	if _relationship_info != null:
@@ -126,9 +139,6 @@ func _on_relationship_button_pressed(button_country: Country) -> void:
 	)
 	new_relationship_info.country_1 = country
 	new_relationship_info.country_2 = button_country
-	new_relationship_info.is_relationship_presets_enabled = (
-			game.rules.diplomacy_presets_option.selected != 0
-	)
 	new_relationship_info.game = game
 	
 	for node in _countries.get_children():

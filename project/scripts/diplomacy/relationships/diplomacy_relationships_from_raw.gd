@@ -35,6 +35,7 @@ func apply(
 		if error:
 			return
 		relationship.diplomacy_actions = game.rules.diplomatic_actions
+		relationship.initialize_actions(game.turn.current_turn())
 		diplomacy_relationships._list.append(relationship)
 	
 	result = diplomacy_relationships

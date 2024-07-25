@@ -1,15 +1,13 @@
 class_name DiplomacyRelationship
 ## Represents how one country behaves in relation with given country.
-##
-## Note: when saving/loading the data with something that doesn't
-## differentiate floats and ints (e.g. JSON), this class will not
-## be responsible for converting floats to ints or vice versa.
+# TODO the setup is confusing. document and simplify it
 
 
 signal preset_changed(this: DiplomacyRelationship)
 signal military_access_changed(this: DiplomacyRelationship)
 signal trespassing_changed(this: DiplomacyRelationship)
 signal fighting_changed(this: DiplomacyRelationship)
+signal available_actions_changed(this: DiplomacyRelationship)
 
 const PRESET_ID_KEY: String = "preset_id"
 const PRESET_ID_DEFAULT: int = -1
@@ -101,6 +99,11 @@ func is_fighting() -> bool:
 	)
 
 
+## Call this once after loading to initialize the list of available actions.
+func initialize_actions(current_turn: int) -> void:
+	_update_available_actions(current_turn)
+
+
 # TODO sort the actions in the right order (as defined in the game rules)
 ## Returns the actions that are currently available to this country.
 ## The list has no duplicates.
@@ -170,7 +173,29 @@ func _update_available_actions(current_turn: int) -> void:
 			))
 		used_ids.append(action_id)
 	
+	var old_available_actions: Array[DiplomacyAction] = (
+			_available_actions.duplicate()
+	)
 	_available_actions = new_available_actions
+	
+	if _available_actions_changed(old_available_actions, _available_actions):
+		available_actions_changed.emit(self)
+
+
+## Compares the two given lists and returns false if they both
+## contain the same elements, in any order. Otherwise, returns true.
+func _available_actions_changed(
+		old_actions: Array[DiplomacyAction],
+		new_actions: Array[DiplomacyAction]
+) -> bool:
+	if old_actions.size() != new_actions.size():
+		return true
+	
+	for old_action in old_actions:
+		if not new_actions.has(old_action):
+			return true
+	
+	return false
 
 
 ## Returns the data associated with given key.
