@@ -165,38 +165,6 @@ var _military_access_loss_behavior: MilitaryAccessLossBehavior
 @onready var _game_notifications := %GameNotifications as GameNotificationsNode
 
 
-# HACK for testing diplomacy features
-#func _process(_delta: float) -> void:
-	#var debug: Callable = func() -> void: print("Current relationship: ", turn.playing_player().playing_country.relationships.with_country(countries.country_from_id(2)).preset().name, "\nData: ", turn.playing_player().playing_country.relationships.with_country(countries.country_from_id(2))._base_data)
-	#if Input.is_action_just_pressed("z"):
-		#action_sync.apply_action(ActionDiplomacy.new(4, 2))
-		#print("Break alliance")
-		#debug.call()
-	#if Input.is_action_just_pressed("x"):
-		#action_sync.apply_action(ActionDiplomacy.new(1, 2))
-		#print("Declare war")
-		#debug.call()
-	#if Input.is_action_just_pressed("c"):
-		#action_sync.apply_action(ActionDiplomacy.new(3, 2))
-		#print("Offer alliance")
-		#debug.call()
-	#if Input.is_action_just_pressed("v"):
-		#action_sync.apply_action(ActionDiplomacy.new(2, 2))
-		#print("Offer peace")
-		#debug.call()
-	#if Input.is_action_just_pressed("b"):
-		#print("Pressed B: allying with everyone...")
-		#for i in 11:
-			#action_sync.apply_action(ActionDiplomacy.new(2, i))
-			#action_sync.apply_action(ActionDiplomacy.new(3, i))
-		#print("Pressed B: end of command.")
-	#if Input.is_action_just_pressed("n"):
-		#print("Pressed N: breaking alliance with everyone...")
-		#for i in 11:
-			#action_sync.apply_action(ActionDiplomacy.new(4, i))
-		#print("Pressed N: end of command.")
-
-
 ## Initialization to be done immediately after loading the game scene.
 func init() -> void:
 	_networking_interface = (
@@ -209,24 +177,6 @@ func init() -> void:
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
-	# HACK this is for testing the WIP diplomacy features
-	#var country_list: Array[Country] = countries.list()
-	#for i in country_list.size():
-		#var country_1: Country = country_list[i]
-		#for j in range(i + 1, country_list.size()):
-			#var country_2: Country = country_list[j]
-			#var random_preset_id: int = 1 + randi() % 3
-			#country_1.relationships.with_country(country_2).diplomacy_actions = rules.diplomatic_actions
-			#country_2.relationships.with_country(country_1).diplomacy_actions = rules.diplomatic_actions
-			#country_1.relationships.with_country(country_2)._base_data["preset_id"] = random_preset_id
-			#country_1.relationships.with_country(country_2)._update_available_actions(turn.current_turn())
-			#country_2.relationships.with_country(country_1)._base_data["preset_id"] = random_preset_id
-			#country_2.relationships.with_country(country_1)._update_available_actions(turn.current_turn())
-			#print(country_1.country_name, " + ", country_2.country_name, " = ", country_1.relationships.with_country(country_2).preset().name)
-			#print("Available actions: ")
-			#for action in country_1.relationships.with_country(country_2).available_actions():
-				#print("	", action._definition.name)
-	
 	# TODO this shouldn't be here in start, but, where should it go?
 	_military_access_loss_behavior = MilitaryAccessLossBehavior.new(self)
 	
