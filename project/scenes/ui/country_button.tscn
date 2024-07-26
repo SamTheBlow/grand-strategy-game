@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/ui/country_button.gd" id="1_rn2iu"]
 [ext_resource type="PackedScene" uid="uid://dv5h7wj8mri2l" path="res://scenes/ui/country_icon.tscn" id="2_a6sw4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6m8fg"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ha317"]
 bg_color = Color(0, 0, 0, 0)
 border_width_left = 2
 border_width_top = 2
@@ -12,7 +12,7 @@ border_width_bottom = 2
 border_color = Color(0.8, 0.8, 0.8, 0.627451)
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0d27"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_prnfo"]
 bg_color = Color(0.6, 0.6, 0.6, 0.313726)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
@@ -24,19 +24,19 @@ expand_margin_right = 4.0
 expand_margin_bottom = 4.0
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o5nsn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_csbft"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 anti_aliasing = false
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fib4r"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ff2pr"]
 bg_color = Color(0.4, 0.4, 0.4, 0.501961)
 anti_aliasing = false
 
 [sub_resource type="Theme" id="Theme_x26e2"]
-Button/styles/focus = SubResource("StyleBoxFlat_6m8fg")
-Button/styles/hover = SubResource("StyleBoxFlat_d0d27")
-Button/styles/normal = SubResource("StyleBoxFlat_o5nsn")
-Button/styles/pressed = SubResource("StyleBoxFlat_fib4r")
+Button/styles/focus = SubResource("StyleBoxFlat_ha317")
+Button/styles/hover = SubResource("StyleBoxFlat_prnfo")
+Button/styles/normal = SubResource("StyleBoxFlat_csbft")
+Button/styles/pressed = SubResource("StyleBoxFlat_ff2pr")
 
 [node name="CountryButton" type="Control"]
 custom_minimum_size = Vector2(0, 64)

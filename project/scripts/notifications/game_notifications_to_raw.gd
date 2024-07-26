@@ -13,14 +13,16 @@ func _game_notification_to_dict(
 		game_notification: GameNotification
 ) -> Dictionary:
 	var output: Dictionary = {
-		"sender_country_id": game_notification._sender_country,
-		"recipient_country_id": game_notification._recipient_country,
+		"sender_country_id": game_notification._sender_country.id,
+		"recipient_country_id": game_notification._recipient_country.id,
 		"creation_turn": game_notification._creation_turn,
+		"turns_before_dismiss": game_notification._turns_before_dismiss,
+		"was_seen_this_turn": game_notification._was_seen_this_turn,
 	}
 	
 	var diplomacy_action_id: int = -1
 	var diplomacy_action_definition: DiplomacyActionDefinition = (
-			game_notification._diplomacy_action_definition
+			game_notification.diplomacy_action_definition
 	)
 	if diplomacy_action_definition != null:
 		diplomacy_action_id = diplomacy_action_definition.id

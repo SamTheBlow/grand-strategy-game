@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=34 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -20,6 +20,7 @@
 [ext_resource type="Script" path="res://scripts/networking/action_synchronizer.gd" id="15_o3imi"]
 [ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="15_vh3er"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
+[ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://scenes/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_input.gd" id="17_bla78"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_sync.gd" id="18_vpgj8"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
@@ -29,6 +30,7 @@
 [ext_resource type="Script" path="res://scripts/ui/end_turn_interface.gd" id="21_fxgwm"]
 [ext_resource type="Script" path="res://scripts/ui/id_button.gd" id="21_l7714"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://scenes/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
+[ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://scenes/ui/notifications/game_notifications.tscn" id="25_v7fg0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ioeab"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
@@ -53,6 +55,7 @@ game_over_scene = ExtResource("16_mxtlx")
 build_fortress_scene = ExtResource("10_x38iu")
 recruitment_scene = ExtResource("11_rjf2g")
 country_info_scene = ExtResource("15_6f53u")
+notification_info_scene = ExtResource("16_r8lxu")
 action_sync = NodePath("ActionSynchronizer")
 camera = NodePath("Camera")
 game_ui = NodePath("UILayer/GameUI")
@@ -114,6 +117,18 @@ offset_bottom = 40.0
 [node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1
 _game = NodePath("../../..")
+
+[node name="GameNotifications" parent="UILayer/GameUI" instance=ExtResource("25_v7fg0")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 0.75
+anchor_bottom = 0.225
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
 
 [node name="RightSide" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
@@ -285,4 +300,5 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

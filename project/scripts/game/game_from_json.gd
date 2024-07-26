@@ -75,14 +75,19 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	
 	# We need all the countries to be loaded
-	# before we can load their relationships and notifications
+	# before we can load their relationships
 	_load_diplomacy_relationships(json_dict, game)
-	_load_game_notifications(json_dict, game)
 	if error:
 		return
 	
 	# Players
 	if not _load_players(json_dict, game):
+		return
+	
+	# We need countries and players to be loaded
+	# before we can load the notifications
+	_load_game_notifications(json_dict, game)
+	if error:
 		return
 	
 	# World

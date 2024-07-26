@@ -29,6 +29,7 @@ signal game_ended()
 @export var build_fortress_scene: PackedScene
 @export var recruitment_scene: PackedScene
 @export var country_info_scene: PackedScene
+@export var notification_info_scene: PackedScene
 
 @export_group("Children")
 @export var action_sync: ActionSynchronizer
@@ -161,6 +162,8 @@ var _auto_end_turn: AutoEndTurn
 
 var _military_access_loss_behavior: MilitaryAccessLossBehavior
 
+@onready var _game_notifications := %GameNotifications as GameNotificationsNode
+
 
 # HACK for testing diplomacy features
 #func _process(_delta: float) -> void:
@@ -229,6 +232,11 @@ func start() -> void:
 	
 	rules.lock()
 	game_started.emit()
+	
+	_game_notifications.game_notifications = (
+			turn.playing_player().playing_country.notifications
+	)
+	
 	turn.loop()
 
 
@@ -260,6 +268,7 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn.game = self
 	turn._turn = starting_turn
 	turn._playing_player_index = playing_player_index
+	turn.player_changed.connect(_on_turn_player_changed)
 	
 	if rules.turn_limit_enabled.value:
 		turn_limit = TurnLimit.new()
@@ -553,3 +562,20 @@ func _on_country_button_pressed(country: Country) -> void:
 	country_info.game = self
 	country_info.country = country
 	_add_popup(country_info)
+
+
+func _on_turn_player_changed(playing_player: GamePlayer) -> void:
+	if not is_node_ready():
+		return
+	
+	_game_notifications.game_notifications = (
+			playing_player.playing_country.notifications
+	)
+
+
+func _on_notification_pressed(game_notification: GameNotification) -> void:
+	var notification_info: Control = (
+			notification_info_scene.instantiate() as NotificationInfoPopup
+	)
+	notification_info.game_notification = game_notification
+	_add_popup(notification_info)

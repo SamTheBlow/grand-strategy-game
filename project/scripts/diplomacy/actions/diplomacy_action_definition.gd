@@ -35,7 +35,11 @@ func new_notification(
 		game: Game,
 		relationship: DiplomacyRelationship,
 		reverse_relationship: DiplomacyRelationship,
-		creation_turn: int = -1
+		creation_turn: int = game.turn.current_turn(),
+		turns_before_dismiss: int = (
+				GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
+		),
+		was_seen_this_turn: bool = false
 ) -> GameNotification:
 	var apply_function: Callable = (
 			func() -> void:
@@ -46,28 +50,19 @@ func new_notification(
 				)
 	)
 	
-	var output_notification: GameNotification
-	
-	if creation_turn < 0:
-		output_notification = GameNotification.new(
-				game,
-				relationship.source_country,
-				relationship.recipient_country,
-				["Accept", "Decline"],
-				[apply_function, func() -> void: pass]
-		)
-	
-	output_notification = GameNotification.new(
+	var output_notification := GameNotification.new(
 			game,
 			relationship.source_country,
 			relationship.recipient_country,
 			["Accept", "Decline"],
 			[apply_function, func() -> void: pass],
-			creation_turn
+			creation_turn,
+			turns_before_dismiss,
+			was_seen_this_turn,
 	)
 	
 	# TODO bad code
-	output_notification._diplomacy_action_definition = self
+	output_notification.diplomacy_action_definition = self
 	return output_notification
 
 

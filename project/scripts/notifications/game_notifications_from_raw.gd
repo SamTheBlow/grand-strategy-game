@@ -92,6 +92,22 @@ func _game_notification_from_dict(
 	):
 		creation_turn = roundi(data["creation_turn"])
 	
+	var turns_before_dismiss: int = (
+			GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
+	)
+	if (
+			data.has("turns_before_dismiss")
+			and typeof(data["turns_before_dismiss"]) in [TYPE_INT, TYPE_FLOAT]
+	):
+		turns_before_dismiss = roundi(data["turns_before_dismiss"])
+	
+	var was_seen_this_turn: bool = false
+	if (
+			data.has("was_seen_this_turn")
+			and typeof(data["was_seen_this_turn"]) == TYPE_BOOL
+	):
+		was_seen_this_turn = data["was_seen_this_turn"]
+	
 	if not (
 			data.has("diplomacy_action_id")
 			and typeof(data["diplomacy_action_id"]) in [TYPE_INT, TYPE_FLOAT]
@@ -112,5 +128,7 @@ func _game_notification_from_dict(
 			game,
 			sender_country.relationships.with_country(recipient_country),
 			recipient_country.relationships.with_country(sender_country),
-			creation_turn
+			creation_turn,
+			turns_before_dismiss,
+			was_seen_this_turn,
 	)

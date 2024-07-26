@@ -1,9 +1,9 @@
 [gd_scene load_steps=8 format=3 uid="uid://75dgexs1e3no"]
 
 [ext_resource type="Script" path="res://scripts/ui/player_list/player_list_element.gd" id="1_q6tiq"]
-[ext_resource type="Script" path="res://scripts/ui/player_list/circle_buttons.gd" id="2_w6q2s"]
 [ext_resource type="Texture2D" uid="uid://d3y7j7vyu03ii" path="res://assets/remote_player_icon_256.png" id="2_xkjfk"]
 [ext_resource type="BitMap" uid="uid://bd0cj6rcgsdqb" path="res://assets/circle_click_mask_256.png" id="3_58ie7"]
+[ext_resource type="Script" path="res://scripts/ui/list_container.gd" id="3_k1dn1"]
 [ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="5_lr6yf"]
 [ext_resource type="Texture2D" uid="uid://c3emi5jqexqek" path="res://assets/rename_button_256.png" id="6_pcq7h"]
 [ext_resource type="Texture2D" uid="uid://c4um15dj3d267" path="res://assets/confirm_button_256.png" id="7_6ekdo"]
@@ -47,7 +47,6 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.85
 theme_override_colors/font_color = Color(1, 1, 1, 1)
-text = "Player"
 vertical_alignment = 1
 clip_text = true
 
@@ -107,7 +106,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
-script = ExtResource("2_w6q2s")
+script = ExtResource("3_k1dn1")
+is_right_to_left = true
+is_node_always_square = true
 
 [node name="RemoveButton" type="TextureButton" parent="CircleButtons"]
 unique_name_in_owner = true
