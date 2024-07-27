@@ -205,7 +205,7 @@ func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 	for i in country_list.size():
 		var country: Country = country_list[i]
 		country.relationships = DiplomacyRelationships.new(
-				country, default_relationship_data
+				game, country, default_relationship_data
 		)
 		
 		if not (countries_array[i] is Dictionary):
@@ -255,12 +255,14 @@ func _load_game_notifications(json_dict: Dictionary, game: Game) -> void:
 			continue
 		var notifications_array := country_dict["notifications"] as Array
 		
+		var country: Country = country_list[i]
+		
 		var notifications_from_raw := GameNotificationsFromRaw.new()
-		notifications_from_raw.apply(game, notifications_array)
+		notifications_from_raw.apply(game, country, notifications_array)
 		if notifications_from_raw.error:
 			continue
 		
-		country_list[i].notifications = notifications_from_raw.result
+		country.notifications = notifications_from_raw.result
 
 
 func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:

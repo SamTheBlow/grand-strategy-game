@@ -7,7 +7,7 @@ var error_message: String = ""
 var result: GameNotifications
 
 
-func apply(game: Game, data: Variant) -> void:
+func apply(game: Game, country: Country, data: Variant) -> void:
 	error = false
 	error_message = ""
 	
@@ -27,7 +27,7 @@ func apply(game: Game, data: Variant) -> void:
 		var data_dict := data_element as Dictionary
 		
 		var game_notification: GameNotification = (
-				_game_notification_from_dict(game, data_dict)
+				_game_notification_from_dict(game, country, data_dict)
 		)
 		if error:
 			return
@@ -38,7 +38,7 @@ func apply(game: Game, data: Variant) -> void:
 
 ## Returns null if an error occured.
 func _game_notification_from_dict(
-		game: Game, data: Dictionary
+		game: Game, recipient_country: Country, data: Dictionary
 ) -> GameNotification:
 	if not (
 			data.has("sender_country_id")
@@ -58,29 +58,6 @@ func _game_notification_from_dict(
 		error_message = (
 				"Game notification data has an invalid sender country id. "
 				+ "(Id: " + str(sender_country_id)
-				+ ") Perhaps there isn't a country with that id."
-		)
-		return null
-	
-	if not (
-			data.has("recipient_country_id")
-			and typeof(data["recipient_country_id"]) in [TYPE_INT, TYPE_FLOAT]
-	):
-		error = true
-		error_message = (
-				"Game notification data doesn't contain "
-				+ "a recipient country id."
-		)
-		return null
-	var recipient_country_id: int = roundi(data["recipient_country_id"])
-	var recipient_country: Country = (
-			game.countries.country_from_id(recipient_country_id)
-	)
-	if recipient_country == null or recipient_country_id < 0:
-		error = true
-		error_message = (
-				"Game notification data has an invalid recipient country id. "
-				+ "(Id: " + str(recipient_country_id)
 				+ ") Perhaps there isn't a country with that id."
 		)
 		return null

@@ -7,7 +7,9 @@ signal pressed(diplomacy_action: DiplomacyAction)
 
 var diplomacy_action: DiplomacyAction:
 	set(value):
+		_disconnect_signals()
 		diplomacy_action = value
+		_connect_signals()
 		_refresh()
 
 var game: Game:
@@ -34,20 +36,44 @@ func _refresh() -> void:
 		return
 	
 	_name_label.text = diplomacy_action._definition.name
-	var turns_remaining: int = diplomacy_action.cooldown_turns_remaining(game)
-	_disabled_label.text = (
-			"Available in "
-			+ str(turns_remaining)
-			+ " turn" + ("s" if turns_remaining != 1 else "")
-	)
-	
-	_set_is_disabled(not diplomacy_action.can_be_performed(game))
+	_refresh_is_disabled()
 	show()
 
 
-func _set_is_disabled(is_disabled: bool) -> void:
+func _refresh_is_disabled() -> void:
+	var is_disabled: bool = not diplomacy_action.can_be_performed(game)
+	
 	_button.visible = not is_disabled
 	_disabled.visible = is_disabled
+	
+	if not is_disabled:
+		return
+	
+	var turns_remaining: int = diplomacy_action.cooldown_turns_remaining(game)
+	if diplomacy_action.was_performed_this_turn():
+		_disabled_label.text = "Done!"
+	elif turns_remaining > 0:
+		_disabled_label.text = (
+				"Available in "
+				+ str(turns_remaining)
+				+ " turn" + ("s" if turns_remaining != 1 else "")
+		)
+
+
+func _disconnect_signals() -> void:
+	if diplomacy_action == null:
+		return
+	
+	if diplomacy_action.performed.is_connected(_on_action_performed):
+		diplomacy_action.performed.disconnect(_on_action_performed)
+
+
+func _connect_signals() -> void:
+	if diplomacy_action == null:
+		return
+	
+	if not diplomacy_action.performed.is_connected(_on_action_performed):
+		diplomacy_action.performed.connect(_on_action_performed)
 
 
 func _on_button_pressed() -> void:
@@ -55,3 +81,7 @@ func _on_button_pressed() -> void:
 		return
 	
 	pressed.emit(diplomacy_action)
+
+
+func _on_action_performed(_diplomacy_action: DiplomacyAction) -> void:
+	_refresh_is_disabled()

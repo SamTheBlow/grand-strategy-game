@@ -4,14 +4,18 @@ class_name DiplomacyRelationships
 
 signal relationship_created(relationship: DiplomacyRelationship)
 
+var _game: Game
 var _source_country: Country
 var _default_relationship_data: Dictionary
 var _list: Array[DiplomacyRelationship] = []
 
 
 func _init(
-		country: Country, default_relationship_data: Dictionary = {}
+		game: Game,
+		country: Country,
+		default_relationship_data: Dictionary = {}
 ) -> void:
+	_game = game
 	_source_country = country
 	_default_relationship_data = default_relationship_data
 
@@ -33,6 +37,7 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 	var relationship := DiplomacyRelationship.new(
 			_source_country,
 			country,
+			_game.turn.turn_changed,
 			default_data
 	)
 	if default_data.has("diplomacy_actions"):

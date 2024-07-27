@@ -17,7 +17,7 @@ func apply(
 	var data_array := data as Array
 	
 	var diplomacy_relationships := (
-			DiplomacyRelationships.new(country, default_data)
+			DiplomacyRelationships.new(game, country, default_data)
 	)
 	
 	for data_element: Variant in data_array:
@@ -34,8 +34,6 @@ func apply(
 		)
 		if error:
 			return
-		relationship.diplomacy_actions = game.rules.diplomatic_actions
-		relationship.initialize_actions(game.turn.current_turn())
 		diplomacy_relationships._list.append(relationship)
 	
 	result = diplomacy_relationships
@@ -75,10 +73,30 @@ func _diplomacy_relationship_from_dict(
 	if (data.has("base_data") and data["base_data"] is Dictionary):
 		loaded_relationship_data.merge(data["base_data"] as Dictionary)
 	
+	var actions_already_performed: Array[int] = []
+	if (
+			data.has("actions_performed_this_turn")
+			and data["actions_performed_this_turn"] is Array
+	):
+		for element: Variant in data["actions_performed_this_turn"] as Array:
+			if not typeof(element) in [TYPE_INT, TYPE_FLOAT]:
+				continue
+			var action_id: int = roundi(element)
+			actions_already_performed.append(action_id)
+	
 	var relationship_data: Dictionary = {}
 	relationship_data.merge(default_data)
 	relationship_data.merge(loaded_relationship_data, true)
 	
-	return DiplomacyRelationship.new(
-			country, recipient_country, relationship_data
+	var relationship := DiplomacyRelationship.new(
+			country,
+			recipient_country,
+			game.turn.turn_changed,
+			relationship_data
 	)
+	
+	relationship.diplomacy_actions = game.rules.diplomatic_actions
+	relationship.initialize_actions(
+			game.turn.current_turn(), actions_already_performed
+	)
+	return relationship

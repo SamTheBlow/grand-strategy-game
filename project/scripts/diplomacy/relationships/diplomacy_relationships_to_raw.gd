@@ -18,16 +18,29 @@ func _relationship_to_dict(
 		relationship: DiplomacyRelationship,
 		default_relationship_data: Dictionary
 ) -> Dictionary:
-	var output: Dictionary = {
-		#"source_country_id": relationship.source_country.id,
-		"recipient_country_id": relationship.recipient_country.id,
-	}
+	var output: Dictionary = {}
 	
 	var base_data: Dictionary = (
 			relationship._base_data_no_defaults(default_relationship_data)
 	)
-	if base_data.is_empty():
-		return {}
+	if not base_data.is_empty():
+		output.merge({
+			"base_data": base_data
+		})
 	
-	output["base_data"] = base_data
+	var actions_performed_this_turn: Array[int] = []
+	for action in relationship.available_actions():
+		if action.was_performed_this_turn():
+			actions_performed_this_turn.append(action.id())
+	if not actions_performed_this_turn.is_empty():
+		output.merge({
+			"actions_performed_this_turn": actions_performed_this_turn
+		})
+	
+	if not output.is_empty():
+		output.merge({
+			#"source_country_id": relationship.source_country.id,
+			"recipient_country_id": relationship.recipient_country.id,
+		})
+	
 	return output
