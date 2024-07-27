@@ -5,6 +5,9 @@ signal handled(this: GameNotification)
 
 const DEFAULT_TURNS_BEFORE_DISMISS: int = 3
 
+## This is for saving/loading the outcomes (TODO it's bad code)
+var diplomacy_action_definition: DiplomacyActionDefinition
+
 var _game: Game
 var _sender_country: Country
 var _recipient_country: Country
@@ -19,10 +22,9 @@ var _turns_before_dismiss: int
 ## go down when the recipient country has seen the notification.
 var _was_seen_this_turn: bool
 
-## This is for saving/loading the outcomes (TODO it's bad code)
-var diplomacy_action_definition: DiplomacyActionDefinition
-
 var _outcomes: Array[NotificationOutcome] = []
+
+var _auto_dismiss_when_invalid: GameNotificationAutoDismissInvalid
 
 
 func _init(
@@ -47,6 +49,12 @@ func _init(
 		_outcomes.append(NotificationOutcome.new(
 				outcome_names[i], outcome_functions[i]
 		))
+	
+	_auto_dismiss_when_invalid = GameNotificationAutoDismissInvalid.new(
+			self,
+			_sender_country.relationships.with_country(_recipient_country)
+			.available_actions_changed
+	)
 	
 	game.turn.turn_changed.connect(_on_turn_changed)
 	game.turn.player_changed.connect(_on_player_changed)
