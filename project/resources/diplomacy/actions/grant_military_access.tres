@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="DiplomacyAction" load_steps=2 format=3 uid="uid://d1vcmgrvxolht"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://d1vcmgrvxolht"]
 
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_f0csu"]
 

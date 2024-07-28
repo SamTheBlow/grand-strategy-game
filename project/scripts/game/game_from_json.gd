@@ -200,14 +200,18 @@ func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 	var default_relationship_data: Dictionary = (
 			DiplomacyRelationships.new_default_data(game.rules)
 	)
+	var base_actions: Array[int] = (
+			DiplomacyRelationships.new_base_actions(game.rules)
+	)
 	
+	# We have to create all the relationships objects first
 	var country_list: Array[Country] = game.countries.list()
-	for i in country_list.size():
-		var country: Country = country_list[i]
+	for country in country_list:
 		country.relationships = DiplomacyRelationships.new(
-				game, country, default_relationship_data
+				game, country, default_relationship_data, base_actions
 		)
-		
+	
+	for i in country_list.size():
 		if not (countries_array[i] is Dictionary):
 			continue
 		var country_dict := countries_array[i] as Dictionary
@@ -218,10 +222,15 @@ func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 		):
 			continue
 		
+		var country: Country = country_list[i]
 		var relationships_data := country_dict["relationships"] as Array
 		var relationships_from_raw := DiplomacyRelationshipsFromRaw.new()
 		relationships_from_raw.apply(
-				relationships_data, game, country, default_relationship_data
+				relationships_data,
+				game,
+				country,
+				default_relationship_data,
+				base_actions,
 		)
 		if relationships_from_raw.error:
 			continue

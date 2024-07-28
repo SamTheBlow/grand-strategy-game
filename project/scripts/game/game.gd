@@ -161,6 +161,7 @@ var _turn_order_list: TurnOrderList:
 var _auto_end_turn: AutoEndTurn
 
 var _military_access_loss_behavior: MilitaryAccessLossBehavior
+var _diplomacy_relationship_auto_changes: DiplomacyRelationshipAutoChanges
 
 @onready var _game_notifications := %GameNotifications as GameNotificationsNode
 
@@ -179,6 +180,9 @@ func init() -> void:
 func start() -> void:
 	# TODO this shouldn't be here in start, but, where should it go?
 	_military_access_loss_behavior = MilitaryAccessLossBehavior.new(self)
+	_diplomacy_relationship_auto_changes = (
+			DiplomacyRelationshipAutoChanges.new(self)
+	)
 	
 	rules.lock()
 	game_started.emit()

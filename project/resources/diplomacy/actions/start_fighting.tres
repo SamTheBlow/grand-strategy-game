@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://1xq5bfaikpwu"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_3ci7i"]
+
+[resource]
+script = ExtResource("1_3ci7i")
+id = 11
+name = "Start fighting"
+requires_consent = false
+available_after_turns = 0
+your_outcome_data = {
+"is_fighting": true
+}
+their_outcome_data = {}

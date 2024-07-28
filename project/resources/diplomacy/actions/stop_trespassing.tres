@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://mqdrxwhb0kie"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_mvhgs"]
+
+[resource]
+script = ExtResource("1_mvhgs")
+id = 9
+name = "Stop trespassing"
+requires_consent = false
+available_after_turns = 0
+your_outcome_data = {
+"is_trespassing": false
+}
+their_outcome_data = {}

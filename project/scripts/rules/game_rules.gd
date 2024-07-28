@@ -47,9 +47,22 @@ const RULE_NAMES: Array[String] = [
 	"diplomacy_presets_option",
 	"starts_with_random_relationship_preset",
 	"grants_military_access_default",
+	"can_grant_military_access",
+	"can_revoke_military_access",
+	"can_ask_for_military_access",
+	"is_military_access_mutual",
+	"is_military_access_revoked_when_fighting",
 	"military_access_loss_behavior_option",
 	"is_trespassing_default",
+	"can_enable_trespassing",
+	"can_disable_trespassing",
+	"can_ask_to_stop_trespassing",
+	"automatically_fight_trespassers",
 	"is_fighting_default",
+	"can_enable_fighting",
+	"can_disable_fighting",
+	"can_ask_to_stop_fighting",
+	"automatically_fight_back",
 ]
 
 enum ReinforcementsOption {
@@ -100,9 +113,22 @@ var battle_algorithm_option: RuleOptions
 var diplomacy_presets_option: RuleOptions
 var starts_with_random_relationship_preset: RuleBool
 var grants_military_access_default: RuleBool
+var can_grant_military_access: RuleBool
+var can_revoke_military_access: RuleBool
+var can_ask_for_military_access: RuleBool
+var is_military_access_mutual: RuleBool
+var is_military_access_revoked_when_fighting: RuleBool
 var military_access_loss_behavior_option: RuleOptions
 var is_trespassing_default: RuleBool
+var can_enable_trespassing: RuleBool
+var can_disable_trespassing: RuleBool
+var can_ask_to_stop_trespassing: RuleBool
+var automatically_fight_trespassers: RuleBool
 var is_fighting_default: RuleBool
+var can_enable_fighting: RuleBool
+var can_disable_fighting: RuleBool
+var can_ask_to_stop_fighting: RuleBool
+var automatically_fight_back: RuleBool
 
 # Categories
 var _category_game_over: RuleItem
@@ -112,6 +138,9 @@ var _category_fortresses: RuleItem
 var _category_battle: RuleItem
 var _category_diplomacy: RuleItem
 var _category_diplomacy_data: RuleItem
+var _category_diplomacy_military_access: RuleItem
+var _category_diplomacy_trespassing: RuleItem
+var _category_diplomacy_fighting: RuleItem
 
 # 4.0 Backwards compatibility
 var reinforcements_random_range: RuleRangeInt
@@ -160,9 +189,22 @@ func _init() -> void:
 	diplomacy_presets_option = RuleOptions.new()
 	starts_with_random_relationship_preset = RuleBool.new()
 	grants_military_access_default = RuleBool.new()
+	can_grant_military_access = RuleBool.new()
+	can_revoke_military_access = RuleBool.new()
+	can_ask_for_military_access = RuleBool.new()
+	is_military_access_mutual = RuleBool.new()
+	is_military_access_revoked_when_fighting = RuleBool.new()
 	military_access_loss_behavior_option = RuleOptions.new()
 	is_trespassing_default = RuleBool.new()
+	can_enable_trespassing = RuleBool.new()
+	can_disable_trespassing = RuleBool.new()
+	can_ask_to_stop_trespassing = RuleBool.new()
+	automatically_fight_trespassers = RuleBool.new()
 	is_fighting_default = RuleBool.new()
+	can_enable_fighting = RuleBool.new()
+	can_disable_fighting = RuleBool.new()
+	can_ask_to_stop_fighting = RuleBool.new()
+	automatically_fight_back = RuleBool.new()
 	_category_game_over = RuleItem.new()
 	_category_recruitment = RuleItem.new()
 	_category_population = RuleItem.new()
@@ -170,6 +212,9 @@ func _init() -> void:
 	_category_battle = RuleItem.new()
 	_category_diplomacy = RuleItem.new()
 	_category_diplomacy_data = RuleItem.new()
+	_category_diplomacy_military_access = RuleItem.new()
+	_category_diplomacy_trespassing = RuleItem.new()
+	_category_diplomacy_fighting = RuleItem.new()
 	reinforcements_random_range = RuleRangeInt.new()
 	province_income_random_range = RuleRangeInt.new()
 	
@@ -376,6 +421,26 @@ func _init() -> void:
 	grants_military_access_default.text = "Grant military access by default"
 	grants_military_access_default.value = false
 	
+	can_grant_military_access.text = "Can manually grant military access"
+	can_grant_military_access.value = false
+	
+	can_revoke_military_access.text = "Can manually revoke military access"
+	can_revoke_military_access.value = false
+	
+	can_ask_for_military_access.text = "Can ask for military access"
+	can_ask_for_military_access.value = false
+	
+	is_military_access_mutual.text = (
+			"Countries automatically grant military access"
+			+ " to whoever grants it to them"
+	)
+	is_military_access_mutual.value = false
+	
+	is_military_access_revoked_when_fighting.text = (
+			"Automatically revoke military access when fighting"
+	)
+	is_military_access_revoked_when_fighting.value = true
+	
 	military_access_loss_behavior_option.text = (
 			"What to do to armies that no longer have military access"
 	)
@@ -389,8 +454,36 @@ func _init() -> void:
 	is_trespassing_default.text = "Trespass in other countries by default"
 	is_trespassing_default.value = true
 	
+	can_enable_trespassing.text = "Can manually start trespassing"
+	can_enable_trespassing.value = false
+	
+	can_disable_trespassing.text = "Can manually stop trespassing"
+	can_disable_trespassing.value = false
+	
+	can_ask_to_stop_trespassing.text = "Can ask to stop trespassing"
+	can_ask_to_stop_trespassing.value = false
+	
+	automatically_fight_trespassers.text = (
+			"Automatically start fighting trespassers"
+	)
+	automatically_fight_trespassers.value = true
+	
 	is_fighting_default.text = "Fight other countries by default"
 	is_fighting_default.value = true
+	
+	can_enable_fighting.text = "Can manually start fighting"
+	can_enable_fighting.value = false
+	
+	can_disable_fighting.text = "Can manually stop fighting"
+	can_disable_fighting.value = false
+	
+	can_ask_to_stop_fighting.text = "Can ask to stop fighting"
+	can_ask_to_stop_fighting.value = false
+	
+	automatically_fight_back.text = (
+			"Countries automatically start fighting with whoever fights them"
+	)
+	automatically_fight_back.value = true
 	
 	_category_game_over.text = "Game Over conditions"
 	_category_game_over.sub_rules = [
@@ -427,16 +520,44 @@ func _init() -> void:
 	_category_diplomacy.sub_rules = [
 		diplomacy_presets_option,
 		_category_diplomacy_data,
-		#military_access_loss_behavior_option,
 	]
 	
 	_category_diplomacy_data.text = (
 			"Relationship data (these may be overridden by presets)"
 	)
 	_category_diplomacy_data.sub_rules = [
+		_category_diplomacy_military_access,
+		_category_diplomacy_trespassing,
+		_category_diplomacy_fighting,
+	]
+	
+	_category_diplomacy_military_access.text = "Military access"
+	_category_diplomacy_military_access.sub_rules = [
 		grants_military_access_default,
+		can_grant_military_access,
+		can_revoke_military_access,
+		can_ask_for_military_access,
+		is_military_access_mutual,
+		is_military_access_revoked_when_fighting,
+		military_access_loss_behavior_option,
+	]
+	
+	_category_diplomacy_trespassing.text = "Trespassing"
+	_category_diplomacy_trespassing.sub_rules = [
 		is_trespassing_default,
+		can_enable_trespassing,
+		can_disable_trespassing,
+		can_ask_to_stop_trespassing,
+		automatically_fight_trespassers,
+	]
+	
+	_category_diplomacy_fighting.text = "Fighting"
+	_category_diplomacy_fighting.sub_rules = [
 		is_fighting_default,
+		can_enable_fighting,
+		can_disable_fighting,
+		can_ask_to_stop_fighting,
+		automatically_fight_back,
 	]
 	
 	reinforcements_random_range.min_rule = reinforcements_random_min

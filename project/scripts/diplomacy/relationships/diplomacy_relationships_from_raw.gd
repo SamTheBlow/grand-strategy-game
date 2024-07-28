@@ -8,7 +8,11 @@ var result: DiplomacyRelationships
 
 
 func apply(
-		data: Variant, game: Game, country: Country, default_data: Dictionary
+		data: Variant,
+		game: Game,
+		country: Country,
+		default_data: Dictionary,
+		base_actions: Array[int],
 ) -> void:
 	if not data is Array:
 		error = true
@@ -16,8 +20,8 @@ func apply(
 		return
 	var data_array := data as Array
 	
-	var diplomacy_relationships := (
-			DiplomacyRelationships.new(game, country, default_data)
+	var diplomacy_relationships := DiplomacyRelationships.new(
+			game, country, default_data, base_actions
 	)
 	
 	for data_element: Variant in data_array:
@@ -29,7 +33,7 @@ func apply(
 		
 		var relationship: DiplomacyRelationship = (
 				_diplomacy_relationship_from_dict(
-						game, country, data_dict, default_data
+						game, country, data_dict, default_data, base_actions
 				)
 		)
 		if error:
@@ -43,7 +47,8 @@ func _diplomacy_relationship_from_dict(
 		game: Game,
 		country: Country,
 		data: Dictionary,
-		default_data: Dictionary
+		default_data: Dictionary,
+		base_actions: Array[int],
 ) -> DiplomacyRelationship:
 	# TODO mostly copy/paste from [GameNotificationsFromRaw]
 	if not (
@@ -92,7 +97,8 @@ func _diplomacy_relationship_from_dict(
 			country,
 			recipient_country,
 			game.turn.turn_changed,
-			relationship_data
+			relationship_data.duplicate(),
+			base_actions,
 	)
 	
 	relationship.diplomacy_actions = game.rules.diplomatic_actions

@@ -167,7 +167,52 @@ func _update_available_actions(current_turn: int) -> void:
 	# over the base actions when checking for duplicates
 	var action_id_list: Array[int] = []
 	action_id_list.append_array(preset().actions)
-	action_id_list.append_array(_base_action_ids)
+	
+	# ATTENTION TODO don't hard code these conditions...
+	for base_action_id in _base_action_ids:
+		match base_action_id:
+			# Military access...
+			5:
+				if not grants_military_access():
+					action_id_list.append(base_action_id)
+			6:
+				if grants_military_access():
+					action_id_list.append(base_action_id)
+			7:
+				if (
+						not recipient_country.relationships
+						.with_country(source_country).grants_military_access()
+				):
+					action_id_list.append(base_action_id)
+			# Trespassing...
+			8:
+				if not is_trespassing():
+					action_id_list.append(base_action_id)
+			9:
+				if is_trespassing():
+					action_id_list.append(base_action_id)
+			10:
+				if (
+						recipient_country.relationships
+						.with_country(source_country).is_trespassing()
+				):
+					action_id_list.append(base_action_id)
+			# Fighting...
+			11:
+				if not is_fighting():
+					action_id_list.append(base_action_id)
+			12:
+				if is_fighting():
+					action_id_list.append(base_action_id)
+			13:
+				if (
+						recipient_country.relationships
+						.with_country(source_country).is_fighting()
+				):
+					action_id_list.append(base_action_id)
+			_:
+				action_id_list.append(base_action_id)
+	
 	var used_ids: Array[int] = []
 	for action_id in action_id_list:
 		# Avoid duplicates

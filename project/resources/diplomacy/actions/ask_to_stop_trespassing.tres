@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://cjxq7pod7pt0u"]
+
+[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_tyx8w"]
+
+[resource]
+script = ExtResource("1_tyx8w")
+id = 10
+name = "Ask to stop trespassing"
+requires_consent = true
+available_after_turns = 0
+your_outcome_data = {}
+their_outcome_data = {
+"is_trespassing": false
+}
