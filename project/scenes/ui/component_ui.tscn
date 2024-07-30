@@ -51,6 +51,7 @@ grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="Control1/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 color = Color(0.501961, 0.501961, 0.501961, 1)
 
 [node name="BuildFortressButton" type="Button" parent="Control1/MarginContainer"]
@@ -95,6 +96,7 @@ grow_vertical = 2
 
 [node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer"]
 layout_mode = 2
+mouse_filter = 2
 color = Color(0.501961, 0.501961, 0.501961, 1)
 
 [node name="RecruitButton" type="Button" parent="Control2/MarginContainer"]
@@ -286,6 +288,7 @@ offset_left = -64.0
 offset_top = -160.0
 offset_right = 64.0
 offset_bottom = -96.0
+mouse_filter = 2
 
 [node name="CountryButton" parent="Control5" instance=ExtResource("2_inqyn")]
 unique_name_in_owner = true
@@ -300,6 +303,7 @@ offset_left = 128.0
 offset_top = -128.0
 offset_right = 128.0
 offset_bottom = -128.0
+mouse_filter = 2
 
 [node name="RelationshipLabel" type="Label" parent="RelationshipRoot"]
 unique_name_in_owner = true
@@ -327,6 +331,7 @@ offset_right = 16.0
 offset_bottom = 4.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 2
 color = Color(0.24, 0.26, 0.3, 1)
 
 [connection signal="pressed" from="Control1/MarginContainer/BuildFortressButton" to="." method="_on_build_fortress_button_pressed"]

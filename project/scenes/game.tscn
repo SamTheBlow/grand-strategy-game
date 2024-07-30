@@ -113,6 +113,7 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+mouse_filter = 2
 
 [node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1
@@ -151,6 +152,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.1
+mouse_filter = 2
 script = ExtResource("20_no4y5")
 buttons = [NodePath("HBoxContainer/TurnOrderTab/TurnOrderButton"), NodePath("HBoxContainer/LobbyTab/LobbyButton")]
 corresponding_ui = [NodePath("../Content/TurnOrderList"), NodePath("../Content/LobbyList")]
