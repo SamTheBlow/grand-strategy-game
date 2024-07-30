@@ -2,6 +2,8 @@ class_name NotificationInfoPopup
 extends Control
 
 
+signal decision_made(game_notification: GameNotification, outcome_index: int)
+
 var game_notification: GameNotification:
 	set(value):
 		game_notification = value
@@ -35,9 +37,11 @@ func _on_button_pressed(button_index: int) -> void:
 	
 	match button_index:
 		0:
-			game_notification.select_outcome(0)
+			# Accept
+			decision_made.emit(game_notification, 0)
 		1:
-			game_notification.dismiss()
+			# Dismiss
+			decision_made.emit(game_notification, -1)
 		2:
 			pass
 		_:

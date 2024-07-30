@@ -9,6 +9,8 @@ extends VBoxContainer
 var game: Game:
 	set(value):
 		game = value
+		_connect_relationship_info_signal()
+		_connect_relationship_with_player_signal()
 		_populate_countries()
 
 var country: Country:
@@ -20,7 +22,9 @@ var _relationship_info: CountryRelationshipNode:
 	set(value):
 		if _relationship_info != null:
 			_relationship_info.queue_free()
+		_disconnect_relationship_info_signal()
 		_relationship_info = value
+		_connect_relationship_info_signal()
 		_update_country_list_height()
 
 @onready var _header := %Header as CountryAndRelationship
@@ -33,6 +37,7 @@ var _relationship_info: CountryRelationshipNode:
 
 
 func _ready() -> void:
+	_connect_relationship_with_player_signal()
 	_refresh()
 
 
@@ -60,6 +65,42 @@ func _refresh() -> void:
 	_relationship_with_player.game = game
 	
 	_populate_countries()
+
+
+func _disconnect_relationship_info_signal() -> void:
+	if game == null or _relationship_info == null:
+		return
+	
+	if _relationship_info.diplomacy_action_pressed.is_connected(
+			game._on_diplomacy_action_pressed
+	):
+		_relationship_info.diplomacy_action_pressed.disconnect(
+				game._on_diplomacy_action_pressed
+		)
+
+
+func _connect_relationship_info_signal() -> void:
+	if game == null or _relationship_info == null:
+		return
+	
+	if not _relationship_info.diplomacy_action_pressed.is_connected(
+			game._on_diplomacy_action_pressed
+	):
+		_relationship_info.diplomacy_action_pressed.connect(
+				game._on_diplomacy_action_pressed
+		)
+
+
+func _connect_relationship_with_player_signal() -> void:
+	if game == null or _relationship_with_player == null:
+		return
+	
+	if not _relationship_with_player.diplomacy_action_pressed.is_connected(
+			game._on_diplomacy_action_pressed
+	):
+		_relationship_with_player.diplomacy_action_pressed.connect(
+				game._on_diplomacy_action_pressed
+		)
 
 
 func _populate_countries() -> void:

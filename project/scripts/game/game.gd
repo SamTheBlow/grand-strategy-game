@@ -527,9 +527,46 @@ func _on_turn_player_changed(playing_player: GamePlayer) -> void:
 	)
 
 
+func _on_diplomacy_action_pressed(
+		diplomacy_action: DiplomacyAction,
+		recipient_country: Country
+) -> void:
+	action_sync.apply_action(ActionDiplomacy.new(
+			diplomacy_action.id(), recipient_country.id
+	))
+
+
 func _on_notification_pressed(game_notification: GameNotification) -> void:
 	var notification_info: Control = (
 			notification_info_scene.instantiate() as NotificationInfoPopup
 	)
 	notification_info.game_notification = game_notification
+	notification_info.decision_made.connect(_on_notification_decision_made)
 	_add_popup(notification_info)
+
+
+func _on_notification_dismissed(game_notification: GameNotification) -> void:
+	_on_notification_decision_made(game_notification, -1)
+
+
+func _on_notification_decision_made(
+		game_notification: GameNotification,
+		outcome_index: int,
+) -> void:
+	var notification_index: int = -1
+	# TODO bad code: private member access
+	var notifications: Array[GameNotification] = (
+			game_notification._recipient_country.notifications._list
+	)
+	for i in notifications.size():
+		if game_notification == notifications[i]:
+			notification_index = i
+			break
+	
+	if notification_index == -1:
+		push_error("Failed to find the notification's index.")
+		return
+	
+	action_sync.apply_action(ActionHandleNotification.new(
+			notification_index, outcome_index
+	))

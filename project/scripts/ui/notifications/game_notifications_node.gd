@@ -4,6 +4,7 @@ extends Control
 
 
 signal pressed(game_notification: GameNotification)
+signal dismissed(game_notification: GameNotification)
 
 @export var game_notification_scene: PackedScene
 
@@ -45,6 +46,7 @@ func _add_notification_node(game_notification: GameNotification) -> void:
 	)
 	game_notification_node.game_notification = game_notification
 	game_notification_node.pressed.connect(_on_notification_pressed)
+	game_notification_node.dismissed.connect(_on_notification_dismissed)
 	_container.add_child(game_notification_node)
 
 
@@ -81,3 +83,7 @@ func _on_notification_added(game_notification: GameNotification) -> void:
 
 func _on_notification_pressed(game_notification: GameNotification) -> void:
 	pressed.emit(game_notification)
+
+
+func _on_notification_dismissed(game_notification: GameNotification) -> void:
+	dismissed.emit(game_notification)

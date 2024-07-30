@@ -7,6 +7,10 @@ extends Control
 ## It will also hide itself when both given countries are the same.
 
 
+signal diplomacy_action_pressed(
+		diplomacy_action: DiplomacyAction, recipient_country: Country
+)
+
 @export var diplomacy_action_button_scene: PackedScene
 
 var country_1: Country:
@@ -225,18 +229,16 @@ func _on_diplomacy_action_button_pressed(
 	if country_1 == null or country_2 == null or game == null:
 		return
 	
-	var relationship_1_to_2: DiplomacyRelationship = (
-			country_1.relationships.with_country(country_2)
-	)
-	var relationship_2_to_1: DiplomacyRelationship = (
-			country_2.relationships.with_country(country_1)
-	)
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
 	if playing_country == country_1:
-		diplomacy_action.apply(game, relationship_1_to_2, relationship_2_to_1)
+		diplomacy_action_pressed.emit(diplomacy_action, country_2)
 	elif playing_country == country_2:
-		diplomacy_action.apply(game, relationship_2_to_1, relationship_1_to_2)
+		diplomacy_action_pressed.emit(diplomacy_action, country_1)
+	else:
+		push_warning(
+				"Pressed on a diplomatic action, but"
+				+ " the user is not playing as either country."
+		)
 
 
 func _on_relationship_data_changed(_relation: DiplomacyRelationship) -> void:

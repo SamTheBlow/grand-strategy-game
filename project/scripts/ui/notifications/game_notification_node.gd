@@ -6,6 +6,7 @@ extends Control
 
 
 signal pressed(game_notification: GameNotification)
+signal dismissed(game_notification: GameNotification)
 
 var game_notification: GameNotification:
 	set(value):
@@ -32,7 +33,7 @@ func _unhandled_input(_event: InputEvent) -> void:
 			and
 			get_global_rect().has_point(get_viewport().get_mouse_position())
 	):
-		game_notification.dismiss()
+		dismissed.emit(game_notification)
 		get_viewport().set_input_as_handled()
 
 
