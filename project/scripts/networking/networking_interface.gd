@@ -13,7 +13,8 @@ signal message_sent(text: String, color: Color)
 
 ## When hosting, this is the maximum number of users
 ## allowed on the server at any time, [b]excluding the host[/b].
-@export var max_clients: int = 2
+## Note that this cannot exceed 4095.
+@export var max_clients: int = 4095
 
 ## If set to true, this interface will go invisible 
 ## if the user successfully connects to a server.
