@@ -231,11 +231,12 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 
 
 func _on_player_added(player: Player) -> void:
-	if not MultiplayerUtils.has_authority(multiplayer):
-		return
-	
 	var game := current_scene as Game
 	if not game:
+		players._send_new_player_to_clients(player)
+		return
+	
+	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
 	var game_player_id: int = game.game_players.assign_player(player)
