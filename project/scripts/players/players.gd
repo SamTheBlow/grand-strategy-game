@@ -182,23 +182,19 @@ func _receive_all_data(node_names: PackedStringArray) -> void:
 #endregion
 
 
-# This was commented out because of a workaround I had to use
-# to allow for a [TurnOrderList] to request adding a new [Player]
-# as a specific [GamePlayer].
-# TODO delete this or no?
 #region Synchronize newly added player
-# The server calls this to send the info to the clients.
-# If you're not connected as a server, this function has no effect.
-#func _send_new_player_to_clients(player: Player) -> void:
-#	if not MultiplayerUtils.is_server(multiplayer):
-#		return
-#	_receive_new_player.rpc(player.name)
+## The server calls this to send the info to the clients.
+## If you're not connected as a server, this function has no effect.
+func _send_new_player_to_clients(player: Player) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	_receive_new_player.rpc(player.name)
 
 
-# The client receives one new player from the server.
-#@rpc("authority", "call_remote", "reliable")
-#func _receive_new_player(node_name: String) -> void:
-#	_add_received_player(node_name)
+## The client receives one new player from the server.
+@rpc("authority", "call_remote", "reliable")
+func _receive_new_player(node_name: String) -> void:
+	add_received_player(node_name)
 
 
 ## Add the newly received player to the bottom of the list.
