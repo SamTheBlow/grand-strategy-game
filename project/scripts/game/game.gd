@@ -187,9 +187,7 @@ func start() -> void:
 	rules.lock()
 	game_started.emit()
 	
-	_game_notifications.game_notifications = (
-			turn.playing_player().playing_country.notifications
-	)
+	_game_notifications.game_player = turn.playing_player()
 	
 	turn.loop()
 
@@ -519,18 +517,24 @@ func _on_country_button_pressed(country: Country) -> void:
 
 
 func _on_turn_player_changed(playing_player: GamePlayer) -> void:
-	if not is_node_ready():
-		return
-	
-	_game_notifications.game_notifications = (
-			playing_player.playing_country.notifications
-	)
+	_game_notifications.game_player = playing_player
 
 
 func _on_diplomacy_action_pressed(
 		diplomacy_action: DiplomacyAction,
 		recipient_country: Country
 ) -> void:
+	# TODO this check shouldn't be here...
+	if (
+			not MultiplayerUtils
+			.has_gameplay_authority(multiplayer, turn.playing_player())
+	):
+		push_warning(
+				"Tried to perform a diplomatic action, but"
+				+ " the user does not have gameplay authority!"
+		)
+		return
+	
 	action_sync.apply_action(ActionDiplomacy.new(
 			diplomacy_action.id(), recipient_country.id
 	))
@@ -553,6 +557,17 @@ func _on_notification_decision_made(
 		game_notification: GameNotification,
 		outcome_index: int,
 ) -> void:
+	# TASK this check shouldn't be here... also DRY: this is a copy/paste
+	if (
+			not MultiplayerUtils
+			.has_gameplay_authority(multiplayer, turn.playing_player())
+	):
+		push_warning(
+				"Tried to handle a game notification, but"
+				+ " the user does not have gameplay authority!"
+		)
+		return
+	
 	var notification_index: int = -1
 	# TODO bad code: private member access
 	var notifications: Array[GameNotification] = (

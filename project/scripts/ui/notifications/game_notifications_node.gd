@@ -8,12 +8,26 @@ signal dismissed(game_notification: GameNotification)
 
 @export var game_notification_scene: PackedScene
 
-var game_notifications: GameNotifications:
+var game_player: GamePlayer:
 	set(value):
-		if game_notifications == value:
+		game_player = value
+		
+		if (
+				game_player == null
+				or not MultiplayerUtils
+				.has_gameplay_authority(multiplayer, game_player)
+		):
+			_game_notifications = null
+			return
+		
+		_game_notifications = game_player.playing_country.notifications
+
+var _game_notifications: GameNotifications:
+	set(value):
+		if _game_notifications == value:
 			return
 		_disconnect_signals()
-		game_notifications = value
+		_game_notifications = value
 		_connect_signals()
 		_refresh()
 
@@ -33,10 +47,10 @@ func _refresh() -> void:
 		_container.remove_child(child)
 		child.queue_free()
 	
-	if game_notifications == null:
+	if _game_notifications == null:
 		return
 	
-	for game_notification in game_notifications.list():
+	for game_notification in _game_notifications.list():
 		_add_notification_node(game_notification)
 
 
@@ -51,25 +65,25 @@ func _add_notification_node(game_notification: GameNotification) -> void:
 
 
 func _connect_signals() -> void:
-	if game_notifications == null:
+	if _game_notifications == null:
 		return
 	
-	if not game_notifications.notification_added.is_connected(
+	if not _game_notifications.notification_added.is_connected(
 			_on_notification_added
 	):
-		game_notifications.notification_added.connect(
+		_game_notifications.notification_added.connect(
 				_on_notification_added
 		)
 
 
 func _disconnect_signals() -> void:
-	if game_notifications == null:
+	if _game_notifications == null:
 		return
 	
-	if game_notifications.notification_added.is_connected(
+	if _game_notifications.notification_added.is_connected(
 			_on_notification_added
 	):
-		game_notifications.notification_added.disconnect(
+		_game_notifications.notification_added.disconnect(
 				_on_notification_added
 		)
 

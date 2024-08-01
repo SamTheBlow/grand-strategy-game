@@ -197,7 +197,12 @@ func _refresh_available_actions() -> void:
 		return
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
-	if not playing_country in [country_1, country_2]:
+	if not (
+			playing_country in [country_1, country_2]
+			and MultiplayerUtils.has_gameplay_authority(
+					multiplayer, game.turn.playing_player()
+			)
+	):
 		_update_minimum_height()
 		return
 	
