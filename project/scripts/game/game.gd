@@ -382,7 +382,7 @@ func _on_province_unhandled_mouse_event(
 
 func _on_province_selected() -> void:
 	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.init(world.provinces.selected_province, turn.playing_player())
+	component_ui.province = world.provinces.selected_province
 	turn.player_changed.connect(component_ui._on_turn_player_changed)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)

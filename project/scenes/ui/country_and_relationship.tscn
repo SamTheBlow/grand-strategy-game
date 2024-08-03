@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://b7jj51hv4hwqq"]
+[gd_scene load_steps=5 format=3 uid="uid://b7jj51hv4hwqq"]
 
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://scenes/ui/country_button.tscn" id="1_84m4d"]
 [ext_resource type="Script" path="res://scripts/ui/country_and_relationship.gd" id="1_j5wfm"]
 [ext_resource type="Script" path="res://scripts/ui/relationship_preset_label.gd" id="3_c35fe"]
+[ext_resource type="Script" path="res://scripts/ui/relationship_preset_label_update.gd" id="4_uhlps"]
 
 [node name="CountryAndRelationship" type="Control"]
 custom_minimum_size = Vector2(0, 64)
@@ -60,8 +61,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 mouse_filter = 1
 
-[node name="RelationshipPreset" type="Label" parent="MarginContainer/HBoxContainer/PresetRoot"]
-unique_name_in_owner = true
+[node name="RelationshipPresetLabel" type="Label" parent="MarginContainer/HBoxContainer/PresetRoot"]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.7
@@ -73,3 +73,8 @@ text = "(Best friends)"
 horizontal_alignment = 2
 vertical_alignment = 1
 script = ExtResource("3_c35fe")
+
+[node name="RelationshipPresetLabelUpdate" type="Node" parent="MarginContainer/HBoxContainer/PresetRoot/RelationshipPresetLabel" node_paths=PackedStringArray("label")]
+unique_name_in_owner = true
+script = ExtResource("4_uhlps")
+label = NodePath("..")
