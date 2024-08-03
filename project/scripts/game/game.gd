@@ -163,8 +163,6 @@ var _auto_end_turn: AutoEndTurn
 var _military_access_loss_behavior: MilitaryAccessLossBehavior
 var _diplomacy_relationship_auto_changes: DiplomacyRelationshipAutoChanges
 
-@onready var _game_notifications := %GameNotifications as GameNotificationsNode
-
 
 ## Initialization to be done immediately after loading the game scene.
 func init() -> void:
@@ -186,9 +184,6 @@ func start() -> void:
 	
 	rules.lock()
 	game_started.emit()
-	
-	_game_notifications.game_player = turn.playing_player()
-	
 	turn.loop()
 
 
@@ -220,7 +215,6 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn.game = self
 	turn._turn = starting_turn
 	turn._playing_player_index = playing_player_index
-	turn.player_changed.connect(_on_turn_player_changed)
 	
 	if rules.turn_limit_enabled.value:
 		turn_limit = TurnLimit.new()
@@ -514,10 +508,6 @@ func _on_country_button_pressed(country: Country) -> void:
 	country_info.game = self
 	country_info.country = country
 	_add_popup(country_info)
-
-
-func _on_turn_player_changed(playing_player: GamePlayer) -> void:
-	_game_notifications.game_player = playing_player
 
 
 func _on_diplomacy_action_pressed(

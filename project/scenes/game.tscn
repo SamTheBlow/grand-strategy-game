@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=35 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -31,6 +31,7 @@
 [ext_resource type="Script" path="res://scripts/ui/id_button.gd" id="21_l7714"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://scenes/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
 [ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://scenes/ui/notifications/game_notifications.tscn" id="25_v7fg0"]
+[ext_resource type="Script" path="res://scripts/ui/notifications/game_notifications_setup.gd" id="27_ncc6m"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ioeab"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
@@ -120,7 +121,6 @@ layout_mode = 1
 _game = NodePath("../../..")
 
 [node name="GameNotifications" parent="UILayer/GameUI" instance=ExtResource("25_v7fg0")]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.1
@@ -130,6 +130,11 @@ offset_left = 16.0
 offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
+
+[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" node_paths=PackedStringArray("game_notifications_node", "game")]
+script = ExtResource("27_ncc6m")
+game_notifications_node = NodePath("..")
+game = NodePath("../../../..")
 
 [node name="RightSide" type="Control" parent="UILayer/GameUI"]
 layout_mode = 1
