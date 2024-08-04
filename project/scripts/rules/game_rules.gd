@@ -110,6 +110,10 @@ var minimum_army_size: RuleInt
 var global_attacker_efficiency: RuleFloat
 var global_defender_efficiency: RuleFloat
 var battle_algorithm_option: RuleOptions
+var default_ai_type: RuleInt
+var start_with_random_ai_type: RuleBool
+var default_ai_personality_option: RuleOptions
+var start_with_random_ai_personality: RuleBool
 var diplomacy_presets_option: RuleOptions
 var starts_with_random_relationship_preset: RuleBool
 var grants_military_access_default: RuleBool
@@ -136,6 +140,9 @@ var _category_recruitment: RuleItem
 var _category_population: RuleItem
 var _category_fortresses: RuleItem
 var _category_battle: RuleItem
+var _category_ai: RuleItem
+var _category_ai_type: RuleItem
+var _category_ai_personality: RuleItem
 var _category_diplomacy: RuleItem
 var _category_diplomacy_data: RuleItem
 var _category_diplomacy_military_access: RuleItem
@@ -186,6 +193,10 @@ func _init() -> void:
 	global_attacker_efficiency = RuleFloat.new()
 	global_defender_efficiency = RuleFloat.new()
 	battle_algorithm_option = RuleOptions.new()
+	default_ai_type = RuleInt.new()
+	start_with_random_ai_type = RuleBool.new()
+	default_ai_personality_option = RuleOptions.new()
+	start_with_random_ai_personality = RuleBool.new()
 	diplomacy_presets_option = RuleOptions.new()
 	starts_with_random_relationship_preset = RuleBool.new()
 	grants_military_access_default = RuleBool.new()
@@ -210,6 +221,9 @@ func _init() -> void:
 	_category_population = RuleItem.new()
 	_category_fortresses = RuleItem.new()
 	_category_battle = RuleItem.new()
+	_category_ai = RuleItem.new()
+	_category_ai_type = RuleItem.new()
+	_category_ai_personality = RuleItem.new()
 	_category_diplomacy = RuleItem.new()
 	_category_diplomacy_data = RuleItem.new()
 	_category_diplomacy_military_access = RuleItem.new()
@@ -401,6 +415,25 @@ func _init() -> void:
 	]
 	battle_algorithm_option.selected = 0
 	
+	default_ai_type.text = "Default AI type"
+	default_ai_type.minimum = 0
+	default_ai_type.has_minimum = true
+	default_ai_type.maximum = 2
+	default_ai_type.has_maximum = true
+	default_ai_type.value = 2
+	
+	start_with_random_ai_type.text = "Players start with a random AI type"
+	start_with_random_ai_type.value = true
+	
+	default_ai_personality_option.text = "Default AI personality"
+	default_ai_personality_option.options = AIPersonality.all_type_names()
+	default_ai_personality_option.selected = AIPersonality.DEFAULT_TYPE
+	
+	start_with_random_ai_personality.text = (
+			"Players start with a random AI personality"
+	)
+	start_with_random_ai_personality.value = true
+	
 	diplomacy_presets_option.text = "Default preset"
 	diplomacy_presets_option.options = [
 		"Don't use presets", "Allied", "Neutral", "At war"
@@ -516,6 +549,26 @@ func _init() -> void:
 		battle_algorithm_option,
 	]
 	
+	_category_ai.text = "AI"
+	_category_ai.sub_rules = [
+		_category_ai_type,
+		_category_ai_personality,
+	]
+	
+	_category_ai_type.text = "AI type (the way it plays)"
+	_category_ai_type.sub_rules = [
+		default_ai_type,
+		start_with_random_ai_type,
+	]
+	
+	_category_ai_personality.text = (
+			"AI personality (the way it behaves diplomatically)"
+	)
+	_category_ai_personality.sub_rules = [
+		default_ai_personality_option,
+		start_with_random_ai_personality,
+	]
+	
 	_category_diplomacy.text = "Diplomacy"
 	_category_diplomacy.sub_rules = [
 		diplomacy_presets_option,
@@ -583,6 +636,7 @@ func _init() -> void:
 		province_income_option,
 		minimum_army_size,
 		_category_battle,
+		_category_ai,
 		_category_diplomacy,
 	]
 

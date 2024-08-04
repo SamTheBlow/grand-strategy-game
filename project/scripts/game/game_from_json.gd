@@ -373,6 +373,19 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		player.player_human_id = json_data["human_id"]
 	player.player_ai = PlayerAI.from_type(ai_type)
 	
+	var ai_personality_id: int = (
+			game.rules.default_ai_personality_option.selected
+	)
+	if json_data.has("ai_personality_type"):
+		var personality_data: Variant = json_data["ai_personality_type"]
+		if typeof(personality_data) in [TYPE_INT, TYPE_FLOAT]:
+			ai_personality_id = roundi(personality_data)
+	var ai_personality: AIPersonality = (
+			AIPersonality.from_type(ai_personality_id)
+	)
+	if ai_personality != null:
+		player.player_ai.personality = ai_personality
+	
 	return player
 
 

@@ -7,7 +7,7 @@ extends PlayerAI
 
 
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
-	var result: Array[Action] = []
+	var result: Array[Action] = super(game, player)
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 	

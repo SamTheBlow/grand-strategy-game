@@ -7,7 +7,7 @@ extends PlayerAI
 
 
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
-	var result: Array[Action] = []
+	var result: Array[Action] = super(game, player)
 	
 	var provinces: Array[Province] = game.world.provinces.list()
 	var number_of_provinces: int = provinces.size()

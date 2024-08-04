@@ -14,10 +14,13 @@ enum Type {
 	TESTAI2 = 2,
 }
 
+## This is responsible for the AI's diplomatic actions. It must not be null.
+var personality := AIPersonality.from_type(AIPersonality.Type.NONE)
 
-## This is where the AI generates its actions based on a given game state
-func actions(_game: Game, _player: GamePlayer) -> Array[Action]:
-	return []
+
+## This is where the AI generates its actions based on a given game state.
+func actions(game: Game, player: GamePlayer) -> Array[Action]:
+	return personality.actions(game, player)
 
 
 ## Returns a new PlayerAI of given type, for the purposes of saving/loading.

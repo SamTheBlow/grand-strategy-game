@@ -91,6 +91,7 @@ func raw_data() -> Dictionary:
 	if is_human and player_human:
 		player_data["human_id"] = player_human.id
 	player_data["ai_type"] = player_ai.type()
+	player_data["ai_personality_type"] = player_ai.personality.type()
 	return player_data
 
 
