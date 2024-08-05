@@ -59,7 +59,6 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		player_data["id"] = i
 		player_data["is_human"] = false
 		player_data["playing_country_id"] = random_country_assignment[i]
-		player_data["ai_type"] = 1 + randi() % 2
 		players_data.append(player_data)
 		
 		var country_data: Dictionary = {}
@@ -98,6 +97,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 					},
 				})
 	
+	_populate_players_data(players_data, game_rules)
 	json_data["players"] = players_data
 	json_data["countries"] = countries_data
 	
@@ -209,3 +209,62 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	json_data["world"] = world_data
 	
 	return json_data
+
+
+## Takes an [Array] of raw [Dictionary] representing [AIPlayer]s
+## and randomizes its data according to the game rules, when applicable.
+func _populate_players_data(players_data: Array, rules: GameRules) -> void:
+	for element: Variant in players_data:
+		if not element is Dictionary:
+			continue
+		var dictionary := element as Dictionary
+		_apply_random_ai_type(dictionary, rules)
+		_apply_random_ai_personality_type(dictionary, rules)
+
+
+## Takes a raw [Dictionary] representing an [AIPlayer]
+## and randomizes its AI type.
+func _apply_random_ai_type(dictionary: Dictionary, rules: GameRules) -> void:
+	# 4.0 Backwards compatibility:
+	# When the save data doesn't contain the AI type,
+	# it must be assumed to be 0.
+	
+	if not rules.start_with_random_ai_type.value:
+		var default_ai_type: int = rules.default_ai_type.value
+		if default_ai_type != 0:
+			dictionary.merge({"ai_type": default_ai_type}, true)
+		return
+	
+	var possible_ai_types: Array = PlayerAI.Type.values()
+	possible_ai_types.erase(PlayerAI.Type.NONE)
+	if possible_ai_types.size() == 0:
+		push_error("There is no valid AI type to randomly assign!")
+		return
+	
+	var random_index: int = randi() % possible_ai_types.size()
+	var random_ai_type: int = possible_ai_types[random_index]
+	
+	dictionary.merge({"ai_type": random_ai_type}, true)
+
+
+## Takes a raw [Dictionary] representing an [AIPlayer]
+## and randomizes its AI personality type.
+func _apply_random_ai_personality_type(
+		dictionary: Dictionary, rules: GameRules
+) -> void:
+	if not rules.start_with_random_ai_personality.value:
+		return
+	
+	var possible_personality_types: Array = AIPersonality.Type.values()
+	possible_personality_types.erase(AIPersonality.Type.NONE)
+	if possible_personality_types.size() == 0:
+		push_error("There is no valid personality type to randomly assign!")
+		return
+	
+	var random_index: int = randi() % possible_personality_types.size()
+	var random_personality_type: int = possible_personality_types[random_index]
+	
+	if random_personality_type == rules.default_ai_personality_option.selected:
+		return
+	
+	dictionary.merge({"ai_personality_type": random_personality_type}, true)
