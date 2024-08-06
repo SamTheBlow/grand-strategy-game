@@ -257,6 +257,7 @@ func _apply_random_ai_personality_type(
 	
 	var possible_personality_types: Array = AIPersonality.Type.values()
 	possible_personality_types.erase(AIPersonality.Type.NONE)
+	possible_personality_types.erase(AIPersonality.Type.ACCEPTS_EVERYTHING)
 	if possible_personality_types.size() == 0:
 		push_error("There is no valid personality type to randomly assign!")
 		return

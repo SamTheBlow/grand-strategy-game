@@ -14,6 +14,7 @@ enum Type {
 	GREEDY = 4,
 	EMOTIONAL = 5,
 	ERRATIC = 6,
+	ACCEPTS_EVERYTHING = 7,
 }
 
 ## The type to be used by default in game rules and such.
@@ -28,7 +29,8 @@ static func all_type_names() -> Array[String]:
 		"Shy",
 		"Greedy",
 		"Emotional",
-		"Erratic"
+		"Erratic",
+		"Test AI: accepts everything",
 	]
 
 
@@ -56,6 +58,8 @@ static func from_type(personality_type: int) -> AIPersonality:
 			return AIPersonalityEmotional.new()
 		Type.ERRATIC:
 			return AIPersonalityErratic.new()
+		Type.ACCEPTS_EVERYTHING:
+			return AIAcceptsEverything.new()
 		_:
 			push_error("Unrecognized AI personality type.")
 			return null
@@ -75,4 +79,6 @@ func type() -> int:
 		return Type.EMOTIONAL
 	elif self is AIPersonalityErratic:
 		return Type.ERRATIC
+	elif self is AIAcceptsEverything:
+		return Type.ACCEPTS_EVERYTHING
 	return Type.NONE
