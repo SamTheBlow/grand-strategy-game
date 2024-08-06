@@ -181,19 +181,23 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		# This province is not on the frontline
 		
 		# Move the army towards the frontlines
-		var nearest_frontlines: Array = _nearest_frontlines(
-				_new_link_tree(province), province, 0
+		var province_filter: Callable = (
+				func(province_: Province) -> bool:
+					return province_.is_frontline()
 		)
-		if nearest_frontlines.size() > 0:
+		var frontline_calculation := NearestProvinces.new()
+		frontline_calculation.calculate(province, province_filter)
+		if frontline_calculation.size > 0:
 			# Take the most endangered province as the target to reach
 			var target_province: Province
 			var target_danger: float = 0.0
-			for link_tree: Array in nearest_frontlines:
-				var border: Province = link_tree[link_tree.size() - 1]
-				var i: int = borders.find(border)
-				if danger_levels[i] >= target_danger:
-					target_province = link_tree[0]
-					target_danger = danger_levels[i]
+			for i in frontline_calculation.size:
+				var border_index: int = (
+						borders.find(frontline_calculation.furthest_links[i])
+				)
+				if danger_levels[border_index] >= target_danger:
+					target_province = frontline_calculation.first_links[i]
+					target_danger = danger_levels[border_index]
 			
 			result.append(ActionArmyMovement.new(
 					army.id, target_province.id
@@ -278,60 +282,3 @@ func _try_build_fortresses(
 		candidates.remove_at(most_endangered_index)
 	
 	return output
-
-
-# A link tree takes the form of [[p1, p2], [p3, p4], ...]
-# where p1, p3 are direct links, p2 and p4 are links of the links, etc.
-# In this case, p2 is a link of p1 and p4 is a link of p3.
-# (This is a recursive function.)
-func _nearest_frontlines(
-		link_tree: Array,
-		source_province: Province,
-		depth: int
-) -> Array:
-	# Prevent infinite loop
-	if depth >= 100:
-		return []
-	
-	# Get a list of all the frontlines we've found
-	var frontline_branches: Array = []
-	for link_branch: Array in link_tree:
-		var furthest_province: Province = link_branch[link_branch.size() - 1]
-		for link in furthest_province.links:
-			if link.owner_country != source_province.owner_country:
-				frontline_branches.append(link_branch)
-				break
-	# If we found any, then we're done
-	if frontline_branches.size() > 0:
-		return frontline_branches
-	
-	# Make a new link tree
-	var new_link_tree: Array = []
-	
-	# Make a list of all the provinces we've already searched
-	var already_searched_provinces: Array[Province] = [source_province]
-	for link_branch: Array in link_tree:
-		for link: Province in link_branch:
-			if already_searched_provinces.find(link) == -1:
-				already_searched_provinces.append(link)
-	
-	# Get the linked provinces that have not been searched yet
-	for link_branch: Array in link_tree:
-		var furthest_link: int = link_branch.size() - 1
-		var next_links: Array[Province] = link_branch[furthest_link].links
-		for next_link in next_links:
-			if already_searched_provinces.find(next_link) == -1:
-				var new_branch: Array = link_branch.duplicate()
-				new_branch.append(next_link)
-				new_link_tree.append(new_branch)
-				already_searched_provinces.append(next_link)
-	
-	# Look further away for the frontline
-	return _nearest_frontlines(new_link_tree, source_province, depth + 1)
-
-
-func _new_link_tree(province: Province) -> Array:
-	var link_tree: Array = []
-	for link in province.links:
-		link_tree.append([link])
-	return link_tree

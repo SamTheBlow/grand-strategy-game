@@ -2,11 +2,28 @@ class_name NearestProvinces
 ## Class responsible for finding a [Province]'s nearest provinces.
 
 
+## The number of nearest provinces.
+## It's the same as both first_links.size() and furthest_links.size().
+var size: int = 0
+## The first step to reach a nearest province from given province.
+var first_links: Array[Province] = []
+## The nearest provinces.
+var furthest_links: Array[Province] = []
+
+
 ## The filter must take one input of type Province and must return a boolean.
-func nearest_provinces(
+func calculate(
 		province: Province, province_filter: Callable
-) -> Array[Province]:
-	return _find_nearest_provinces_recursive(province, province_filter)
+) -> void:
+	var link_branches: Array[LinkBranch] = (
+			_find_nearest_provinces_recursive(province, province_filter)
+	)
+	size = link_branches.size()
+	first_links = []
+	furthest_links = []
+	for link_branch in link_branches:
+		first_links.append(link_branch.first_link())
+		furthest_links.append(link_branch.furthest_link())
 
 
 func _find_nearest_provinces_recursive(
@@ -14,7 +31,7 @@ func _find_nearest_provinces_recursive(
 		filter: Callable,
 		link_branches: Array[LinkBranch] = _new_link_branches(province),
 		depth: int = 0,
-) -> Array[Province]:
+) -> Array[LinkBranch]:
 	# Prevent infinite loop if it's impossible to find a target to capture
 	# FIXME this will stop searching too early on very large maps
 	if depth >= 100:
@@ -27,10 +44,7 @@ func _find_nearest_provinces_recursive(
 			valid_branches.append(link_branch)
 	
 	if valid_branches.size() > 0:
-		var output: Array[Province] = []
-		for valid_branch in valid_branches:
-			output.append(valid_branch.furthest_link())
-		return output
+		return valid_branches
 	
 	var new_link_branches: Array[LinkBranch] = []
 	
@@ -82,6 +96,9 @@ func _print_branches(branches: Array[LinkBranch]) -> void:
 ## the second element is a link of the first element, and so on.
 class LinkBranch:
 	var link_chain: Array[Province] = []
+	
+	func first_link() -> Province:
+		return link_chain[0]
 	
 	func furthest_link() -> Province:
 		return link_chain[link_chain.size() - 1]

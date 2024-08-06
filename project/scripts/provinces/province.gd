@@ -146,7 +146,9 @@ func nearest_provinces(
 				func(_province: Province) -> bool: return true
 		)
 ) -> Array[Province]:
-	return NearestProvinces.new().nearest_provinces(self, province_filter)
+	var calculation := NearestProvinces.new()
+	calculation.calculate(self, province_filter)
+	return calculation.furthest_links
 
 
 func mouse_is_inside_shape() -> bool:
