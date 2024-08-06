@@ -427,7 +427,7 @@ func _init() -> void:
 	default_ai_type.value = 2
 	
 	start_with_random_ai_type.text = "Players start with a random AI type"
-	start_with_random_ai_type.value = true
+	start_with_random_ai_type.value = false
 	
 	default_ai_personality_option.text = "Default AI personality"
 	default_ai_personality_option.options = AIPersonality.all_type_names()
