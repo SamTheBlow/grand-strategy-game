@@ -41,6 +41,15 @@ func _game_notification_from_dict(
 		game: Game, recipient_country: Country, data: Dictionary
 ) -> GameNotification:
 	if not (
+			data.has("id")
+			and typeof(data["id"]) in [TYPE_INT, TYPE_FLOAT]
+	):
+		error = true
+		error_message = "Game notification data doesn't have an id."
+		return null
+	var id: int = roundi(data["id"])
+	
+	if not (
 			data.has("sender_country_id")
 			and typeof(data["sender_country_id"]) in [TYPE_INT, TYPE_FLOAT]
 	):
@@ -85,27 +94,32 @@ func _game_notification_from_dict(
 	):
 		was_seen_this_turn = data["was_seen_this_turn"]
 	
+	var new_notification: GameNotification
+	
 	if not (
 			data.has("diplomacy_action_id")
 			and typeof(data["diplomacy_action_id"]) in [TYPE_INT, TYPE_FLOAT]
 	):
-		return GameNotification.new(
+		new_notification = GameNotification.new(
 				game,
 				sender_country,
 				recipient_country,
 				["OK"],
 				[func() -> void: pass]
 		)
+	else:
+		var action_id: int = roundi(data["diplomacy_action_id"])
+		var action: DiplomacyActionDefinition = (
+				game.rules.diplomatic_actions.action_from_id(action_id)
+		)
+		new_notification = action.new_notification(
+				game,
+				sender_country.relationships.with_country(recipient_country),
+				recipient_country.relationships.with_country(sender_country),
+				creation_turn,
+				turns_before_dismiss,
+				was_seen_this_turn,
+		)
 	
-	var action_id: int = roundi(data["diplomacy_action_id"])
-	var action: DiplomacyActionDefinition = (
-			game.rules.diplomatic_actions.action_from_id(action_id)
-	)
-	return action.new_notification(
-			game,
-			sender_country.relationships.with_country(recipient_country),
-			recipient_country.relationships.with_country(sender_country),
-			creation_turn,
-			turns_before_dismiss,
-			was_seen_this_turn,
-	)
+	new_notification.id = id
+	return new_notification

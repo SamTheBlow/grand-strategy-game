@@ -5,6 +5,10 @@ signal handled(this: GameNotification)
 
 const DEFAULT_TURNS_BEFORE_DISMISS: int = 3
 
+## Each notification within a group of [GameNotifications]
+## must have a unique id.
+var id: int
+
 ## This is for saving/loading the outcomes (TODO it's bad code)
 var diplomacy_action_definition: DiplomacyActionDefinition
 

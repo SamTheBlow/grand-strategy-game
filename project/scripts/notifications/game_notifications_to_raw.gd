@@ -13,6 +13,7 @@ func _game_notification_to_dict(
 		game_notification: GameNotification
 ) -> Dictionary:
 	var output: Dictionary = {
+		"id": game_notification.id,
 		"sender_country_id": game_notification._sender_country.id,
 		"creation_turn": game_notification._creation_turn,
 		"turns_before_dismiss": game_notification._turns_before_dismiss,

@@ -544,8 +544,7 @@ func _on_notification_dismissed(game_notification: GameNotification) -> void:
 
 
 func _on_notification_decision_made(
-		game_notification: GameNotification,
-		outcome_index: int,
+		game_notification: GameNotification, outcome_index: int
 ) -> void:
 	# TASK this check shouldn't be here... also DRY: this is a copy/paste
 	if (
@@ -558,20 +557,6 @@ func _on_notification_decision_made(
 		)
 		return
 	
-	var notification_index: int = -1
-	# TODO bad code: private member access
-	var notifications: Array[GameNotification] = (
-			game_notification._recipient_country.notifications._list
-	)
-	for i in notifications.size():
-		if game_notification == notifications[i]:
-			notification_index = i
-			break
-	
-	if notification_index == -1:
-		push_error("Failed to find the notification's index.")
-		return
-	
 	action_sync.apply_action(ActionHandleNotification.new(
-			notification_index, outcome_index
+			game_notification.id, outcome_index
 	))

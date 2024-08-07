@@ -56,6 +56,7 @@ func apply(
 	if not relationship.action_is_available(id()):
 		print_debug(
 				"Tried to perform a diplomatic action that isn't available."
+				+ " (Diplomacy action id: " + str(id()) + ")"
 		)
 		return
 	
