@@ -101,11 +101,15 @@ func apply(
 		return
 	
 	if _definition.requires_consent:
-		relationship.recipient_country.notifications.add(
+		var new_notification: GameNotification = (
 				_definition.new_notification(
 						game, relationship, reverse_relationship
 				)
 		)
+		new_notification.id = (
+				relationship.recipient_country.notifications.new_unique_id()
+		)
+		relationship.recipient_country.notifications.add(new_notification)
 	else:
 		_definition.apply_action_data(
 				relationship, reverse_relationship, game.turn.current_turn()
