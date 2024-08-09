@@ -12,12 +12,10 @@ func _init(notification_id: int, outcome_index: int) -> void:
 	_outcome_index = outcome_index
 
 
-func apply_to(_game: Game, player: GamePlayer) -> void:
-	var game_notification: GameNotification = (
-			player.playing_country.notifications.from_id(_notification_id)
-	)
+func apply_to(game: Game, _player: GamePlayer) -> void:
+	var game_notification_: GameNotification = game_notification(game)
 	
-	if game_notification == null:
+	if game_notification_ == null:
 		push_error(
 				"Tried to handle a game notification, but "
 				+ "the given notification id is invalid."
@@ -25,7 +23,24 @@ func apply_to(_game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	game_notification.select_outcome(_outcome_index)
+	game_notification_.select_outcome(_outcome_index)
+
+
+## May return null.
+func game_notification(game: Game) -> GameNotification:
+	return (
+			game.turn.playing_player().playing_country.notifications
+			.from_id(_notification_id)
+	)
+
+
+func handles_the_same_notification_as(
+		action_handle_notification: ActionHandleNotification
+) -> bool:
+	return (
+			action_handle_notification._notification_id == _notification_id
+			if action_handle_notification != null else false
+	) 
 
 
 ## Returns this action's raw data, for the purpose of

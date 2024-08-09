@@ -92,6 +92,11 @@ var max_rule: RuleInt:
 		max_rule.value_changed.connect(_on_rule_max_value_changed)
 
 
+## Returns the value that's the same distance from min_value and max_value.
+func average() -> float:
+	return (max_value - min_value) * 0.5
+
+
 func get_data() -> Array:
 	return [min_value, max_value]
 

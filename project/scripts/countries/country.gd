@@ -59,3 +59,18 @@ static func is_fighting(country_1: Country, country_2: Country) -> bool:
 					.with_country(country_1).is_fighting()
 			)
 	)
+
+
+## Returns a list of all the countries that are
+## neighboring this country on the world map.
+## The returned list may contain null, in which case
+## this country neighbors unclaimed land.
+## The returned list has no duplicates.
+func neighboring_countries(provinces: Provinces) -> Array[Country]:
+	var list_of_neighbors: Array[Country] = []
+	for owned_province in provinces.provinces_of_country(self):
+		for link in owned_province.links:
+			var neighbor: Country = link.owner_country
+			if neighbor != self and not neighbor in list_of_neighbors:
+				list_of_neighbors.append(neighbor)
+	return list_of_neighbors

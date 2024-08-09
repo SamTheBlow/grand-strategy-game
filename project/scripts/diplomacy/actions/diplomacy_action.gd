@@ -29,8 +29,49 @@ func id() -> int:
 	return _definition.id
 
 
-func can_be_performed(game: Game) -> bool:
-	return cooldown_turns_remaining(game) == 0 and not _was_performed_this_turn
+## Use this to check if this action is valid in given context.
+## Then, use [code]can_be_performed[/code] to check if it can be performed.
+func is_valid(
+		relationship: DiplomacyRelationship,
+		push_errors: bool = false
+) -> bool:
+	if not relationship.action_is_available(id()):
+		if push_errors:
+			push_error(
+					"Tried to perform a diplomatic action that isn't"
+					+ " available. (Diplomacy action id: " + str(id()) + ")"
+			)
+		return false
+	
+	return true
+
+
+func can_be_performed(game: Game, push_debug_errors: bool = false) -> bool:
+	var result: bool = true
+	
+	var warning_message: String = (
+			'Tried to perform a diplomatic action ("'
+			+ _definition.name
+			+ '"), but it currently cannot be performed.'
+	)
+	
+	var turns_remaining: int = cooldown_turns_remaining(game)
+	if turns_remaining > 0:
+		result = false
+		warning_message += (
+				"\nThe action still has a cooldown of "
+				+ str(turns_remaining)
+				+ " turn" + ("" if turns_remaining == 1 else "s") + "."
+		)
+	
+	if _was_performed_this_turn:
+		result = false
+		warning_message += "\nThe action was already performed this turn."
+	
+	if result == false and push_debug_errors:
+		push_warning(warning_message)
+	
+	return result
 
 
 ## The number of turns before this action can be performed.
@@ -53,33 +94,10 @@ func apply(
 		relationship: DiplomacyRelationship,
 		reverse_relationship: DiplomacyRelationship
 ) -> void:
-	if not relationship.action_is_available(id()):
-		print_debug(
-				"Tried to perform a diplomatic action that isn't available."
-				+ " (Diplomacy action id: " + str(id()) + ")"
-		)
+	if not is_valid(relationship, true):
 		return
 	
-	var current_turn: int = game.turn.current_turn()
-	if not can_be_performed(game):
-		var debug_message: String = (
-				'Tried to perform a diplomatic action ("'
-				+ _definition.name
-				+ '"), but it currently cannot be performed.'
-		)
-		
-		var turns_remaining: int = cooldown_turns_remaining(game)
-		if turns_remaining > 0:
-			debug_message += (
-					"\nThe action still has a cooldown of "
-					+ str(turns_remaining)
-					+ " turn" + ("" if turns_remaining == 1 else "s") + "."
-			)
-		
-		if _was_performed_this_turn:
-			debug_message += "\nThe action was already performed this turn."
-		
-		print_debug(debug_message)
+	if not can_be_performed(game, true):
 		return
 	
 	if _definition.requires_consent:
@@ -90,7 +108,7 @@ func apply(
 		)
 	else:
 		_definition.apply_action_data(
-				relationship, reverse_relationship, current_turn
+				relationship, reverse_relationship, game.turn.current_turn()
 		)
 	
 	_was_performed_this_turn = true
