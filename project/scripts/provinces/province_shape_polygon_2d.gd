@@ -21,8 +21,6 @@ enum OutlineType {
 	HIGHLIGHT = 3,
 }
 
-@export var province: Province
-
 @export var outline_color := Color.WEB_GRAY:
 	set(value):
 		outline_color = value
@@ -37,19 +35,6 @@ var _outline_type: OutlineType = OutlineType.NONE:
 	set(value):
 		_outline_type = value
 		queue_redraw()
-
-
-func _ready() -> void:
-	if not province:
-		push_error("Province shape doesn't have reference to province!")
-		return
-	
-	province.owner_changed.connect(_on_owner_changed)
-	_on_owner_changed(province)
-	province.selected.connect(_on_selected)
-	province.deselected.connect(_on_deselected)
-	for link in province.links:
-		link.deselected.connect(_on_deselected)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -111,9 +96,9 @@ func highlight(is_target: bool) -> void:
 		_outline_type = OutlineType.HIGHLIGHT
 
 
-func _on_owner_changed(province_: Province) -> void:
-	if province_.owner_country != null:
-		color = province_.owner_country.color
+func _on_owner_changed(province: Province) -> void:
+	if province.owner_country != null:
+		color = province.owner_country.color
 	else:
 		color = Color.WHITE
 

@@ -13,23 +13,21 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var number_of_provinces: int = provinces.size()
 	
 	# Get a list of all my provinces
-	# Get a list of all my frontline provinces
 	var my_provinces: Array[Province] = []
-	var borders: Array[Province] = []
 	for i in number_of_provinces:
 		var province: Province = provinces[i]
 		if province.owner_country != player.playing_country:
 			continue
 		my_provinces.append(province)
-		for link in province.links:
-			if link.owner_country != player.playing_country:
-				borders.append(province)
-				break
 	
-	# Give a danger level to each border province
+	var frontline_provinces: Array[Province] = (
+			game.world.provinces.provinces_on_frontline(player.playing_country)
+	)
+	
+	# Give a danger level to each frontline province
 	# based on how well defended it is
 	var danger_levels: Array[float] = []
-	for province in borders:
+	for province in frontline_provinces:
 		var danger_level: float = 0.0
 		
 		var army_size: int = _army_size(
@@ -51,16 +49,20 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			
 			danger_level += minf(danger, 5.0)
 		
+		# Give priority to the war frontline
+		if province.is_war_frontline(player.playing_country):
+			danger_level *= 3.0
+		
 		danger_levels.append(danger_level)
 	
 	result.append_array(_try_build_fortresses(
-			game, player.playing_country, borders, danger_levels
+			game, player.playing_country, frontline_provinces, danger_levels
 	))
 	
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
 	for province in my_provinces:
-		if borders.size() == 0:
+		if frontline_provinces.size() == 0:
 			# No frontline! You probably won.
 			break
 		
@@ -73,7 +75,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		var army: Army = armies[0]
 		var army_size: int = army.army_size.current_size()
 		
-		if borders.has(province):
+		if frontline_provinces.has(province):
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
 			for link in province.links:
@@ -183,7 +185,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		# Move the army towards the frontlines
 		var province_filter: Callable = (
 				func(province_: Province) -> bool:
-					return province_.is_frontline()
+					return province_.is_frontline(player.playing_country)
 		)
 		var frontline_calculation := NearestProvinces.new()
 		frontline_calculation.calculate(province, province_filter)
@@ -193,7 +195,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			var target_danger: float = 0.0
 			for i in frontline_calculation.size:
 				var border_index: int = (
-						borders.find(frontline_calculation.furthest_links[i])
+						frontline_provinces
+						.find(frontline_calculation.furthest_links[i])
 				)
 				if danger_levels[border_index] >= target_danger:
 					target_province = frontline_calculation.first_links[i]

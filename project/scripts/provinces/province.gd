@@ -125,12 +125,50 @@ func is_linked_to(province: Province) -> bool:
 	return links.has(province)
 
 
-## Returns true if any of this province's links
-## are controlled by a different [Country].
-func is_frontline() -> bool:
+## Returns true if all the following conditions are met:
+## - Given [Country] has military access to this province.
+## - This province is not unclaimed.
+## - At least one of this province's links is either unclaimed or
+##   under control of a country which given country cannot move into.
+func is_frontline(country: Country) -> bool:
+	if not country.has_permission_to_move_into_country(owner_country):
+		return false
+	
+	if owner_country == null:
+		return false
+	
 	for link in links:
-		if link.owner_country and link.owner_country != owner_country:
+		if (
+				link.owner_country == null
+				or not country
+				.has_permission_to_move_into_country(link.owner_country)
+		):
 			return true
+	
+	return false
+
+
+## Returns true if all the following conditions are met:
+## - Given [Country] has military access to this province.
+## - This province is not unclaimed.
+## - At least one of this province's links is either unclaimed or
+##   under control of a country which given country is currently fighting.
+func is_war_frontline(country: Country) -> bool:
+	if not country.has_permission_to_move_into_country(owner_country):
+		return false
+	
+	if owner_country == null:
+		return false
+	
+	for link in links:
+		if (
+				link.owner_country == null
+				or
+				country.relationships
+				.with_country(link.owner_country).is_fighting()
+		):
+			return true
+	
 	return false
 
 
@@ -153,6 +191,28 @@ func nearest_provinces(
 
 func mouse_is_inside_shape() -> bool:
 	return _shape.mouse_is_inside_shape()
+
+
+## Debug function that clearly highlights this province on the world map.
+## To remove the highlight, pass false as an argument.
+func highlight_debug(
+		outline_color: Color = Color.BLUE, show_highlight: bool = true
+) -> void:
+	if has_node("DebugHighlight"):
+		remove_child(get_node("DebugHighlight"))
+	
+	if not show_highlight:
+		return
+	
+	var debug_highlight := ProvinceShapePolygon2D.new()
+	debug_highlight.name = "DebugHighlight"
+	debug_highlight.color = Color(0.0, 0.0, 0.0, 0.0)
+	debug_highlight.polygon = _shape.polygon
+	debug_highlight.outline_color = outline_color
+	debug_highlight._outline_type = (
+			ProvinceShapePolygon2D.OutlineType.HIGHLIGHT_TARGET
+	)
+	add_child(debug_highlight)
 
 
 func _setup_army_stack() -> void:

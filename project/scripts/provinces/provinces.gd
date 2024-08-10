@@ -63,14 +63,12 @@ func provinces_of_country(country: Country) -> Array[Province]:
 	return output
 
 
+## Returns the list of all provinces representing given [Country]'s frontline.
+## Provinces in the list are not necessarily under control of given country.
 func provinces_on_frontline(country: Country) -> Array[Province]:
 	var output: Array[Province] = []
 	for province in _list:
-		if (
-				province.owner_country
-				and province.owner_country == country
-				and province.is_frontline()
-		):
+		if province.is_frontline(country):
 			output.append(province)
 	return output
 

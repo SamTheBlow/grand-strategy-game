@@ -1,14 +1,19 @@
-[gd_scene load_steps=3 format=3 uid="uid://cppfb8jwghnqt"]
+[gd_scene load_steps=4 format=3 uid="uid://cppfb8jwghnqt"]
 
 [ext_resource type="Script" path="res://scripts/provinces/province.gd" id="1_mdkkc"]
 [ext_resource type="Script" path="res://scripts/provinces/province_shape_polygon_2d.gd" id="2_okqgr"]
+[ext_resource type="Script" path="res://scripts/provinces/province_shape_update.gd" id="3_jc4d7"]
 
 [node name="Province" type="Node2D"]
 script = ExtResource("1_mdkkc")
 
-[node name="Shape" type="Polygon2D" parent="." node_paths=PackedStringArray("province")]
+[node name="Shape" type="Polygon2D" parent="."]
 script = ExtResource("2_okqgr")
-province = NodePath("..")
+
+[node name="Update" type="Node" parent="Shape" node_paths=PackedStringArray("province_shape", "province")]
+script = ExtResource("3_jc4d7")
+province_shape = NodePath("..")
+province = NodePath("../..")
 
 [connection signal="mouse_event_occured" from="Shape" to="." method="_on_shape_mouse_event_occured"]
 [connection signal="unhandled_mouse_event_occured" from="Shape" to="." method="_on_shape_unhandled_mouse_event_occured"]
