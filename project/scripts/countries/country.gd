@@ -74,3 +74,20 @@ func neighboring_countries(provinces: Provinces) -> Array[Country]:
 			if neighbor != self and not neighbor in list_of_neighbors:
 				list_of_neighbors.append(neighbor)
 	return list_of_neighbors
+
+
+## Similar to neighboring_countries, but takes military access into account.
+## So if you can reach a country by going through another country,
+## it will be included in this list.
+## May contain null. Has no duplicates.
+func reachable_countries(provinces: Provinces) -> Array[Country]:
+	var reachable_countries_list: Array[Country] = []
+	for frontline_province in provinces.provinces_on_frontline(self):
+		for link in frontline_province.links:
+			var reachable_country: Country = link.owner_country
+			if (
+					reachable_country != self
+					and not reachable_country in reachable_countries_list
+			):
+				reachable_countries_list.append(reachable_country)
+	return reachable_countries_list
