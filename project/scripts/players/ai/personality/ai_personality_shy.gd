@@ -20,10 +20,17 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	
 	var country_list: Array[Country] = game.countries.list()
 	
-	# Find the current enemies, if any
 	var reachable_countries: Array[Country] = (
 			playing_country.reachable_countries(game.world.provinces)
 	)
+	#print("-- Reachable countries: ")
+	#for reachable_country in reachable_countries:
+		#print(
+				#"(Null)" if reachable_country == null else
+				#reachable_country.country_name
+		#)
+	
+	# Find the current enemies, if any
 	var current_enemies: Array[Country] = []
 	for country in country_list:
 		if not country in reachable_countries:
@@ -49,6 +56,11 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 			else:
 				current_enemies.append(country)
 	
+	#if current_enemies.size() > 0:
+		#print("-- Current enemies: ")
+		#for current_enemy in current_enemies:
+			#print(current_enemy.country_name)
+	
 	# Determine the candidate enemies
 	var candidate_enemies: Array[Country] = []
 	if current_enemies.size() == 0:
@@ -56,6 +68,9 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		# (unless they are all allies, in which case, consider all of them)
 		var is_all_allies: bool = true
 		for country in reachable_countries:
+			if country == null:
+				is_all_allies = false
+				continue
 			if not (
 					playing_country.relationships.with_country(country)
 					.grants_military_access()
@@ -66,6 +81,11 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 			candidate_enemies = reachable_countries.duplicate()
 	else:
 		candidate_enemies = current_enemies.duplicate()
+	
+	#if candidate_enemies.size() > 0:
+		#print("-- Candidate enemies: ")
+		#for candidate_enemy in candidate_enemies:
+			#print(candidate_enemy.country_name)
 	
 	# Between the candidate enemies, pick the weakest one
 	var country_to_attack: Country = null

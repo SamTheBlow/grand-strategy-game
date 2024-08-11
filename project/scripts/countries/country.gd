@@ -78,7 +78,9 @@ func neighboring_countries(provinces: Provinces) -> Array[Country]:
 
 ## Similar to neighboring_countries, but takes military access into account.
 ## So if you can reach a country by going through another country,
-## it will be included in this list.
+## it will also be included in this list.
+## This is a superset of neighboring_countries.
+## (All neighboring countries are guaranteed to be in this list.)
 ## May contain null. Has no duplicates.
 func reachable_countries(provinces: Provinces) -> Array[Country]:
 	var reachable_countries_list: Array[Country] = []
@@ -90,4 +92,10 @@ func reachable_countries(provinces: Provinces) -> Array[Country]:
 					and not reachable_country in reachable_countries_list
 			):
 				reachable_countries_list.append(reachable_country)
+	
+	var neighbors: Array[Country] = neighboring_countries(provinces)
+	for neighbor in neighbors:
+		if not neighbor in reachable_countries_list:
+			reachable_countries_list.append(neighbor)
+	
 	return reachable_countries_list

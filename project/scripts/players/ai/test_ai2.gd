@@ -61,7 +61,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
-	for province in my_provinces:
+	for province in game.world.provinces.list():
 		if frontline_provinces.size() == 0:
 			# No frontline! You probably won.
 			break
@@ -71,6 +71,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		)
 		if armies.size() == 0:
 			continue
+		
 		# NOTE this assumes that you only have one army in each province
 		var army: Army = armies[0]
 		var army_size: int = army.army_size.current_size()
