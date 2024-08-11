@@ -1,7 +1,7 @@
 class_name AIPersonalityInterventionist
 extends AIPersonality
 ## In order of priority:
-## - Tends to be at war with at least one of its neighbors
+## - Tends to be at war with at least one reachable nation
 ## - Tends to declare war on nations that are getting too strong
 ## - Tends to send & accept peace/alliances with weaker nations
 ## - Tends to declare war on the enemies of its allies
@@ -32,13 +32,13 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		
 		# Befriend weaker countries, fight stronger countries
 		var relative_strength: float = relative_strengths[i]
-		if relative_strength >= sum_of_strengths * 0.2:
+		if relative_strength >= sum_of_strengths * 0.3:
 			#print("Very strong country: ", country.country_name)
 			decisions.dismiss_all_offers_from(country)
 			decisions.break_alliance_with(country)
 			decisions.declare_war_to(country)
 			decisions.stop_interacting_with(country)
-		elif relative_strength >= sum_of_strengths * 0.1:
+		elif relative_strength >= sum_of_strengths * 0.15:
 			#print("Strong country: ", country.country_name)
 			decisions.dismiss_all_offers_from(country)
 		elif relative_strength < 0.3:
