@@ -18,7 +18,7 @@ enum Type {
 }
 
 ## The type to be used by default in game rules and such.
-const DEFAULT_TYPE: Type = Type.INTERVENTIONIST
+const DEFAULT_TYPE: Type = Type.NONE
 
 
 static func all_type_names() -> Array[String]:

@@ -442,7 +442,7 @@ func _init() -> void:
 	diplomacy_presets_option.options = [
 		"Don't use presets", "Allied", "Neutral", "At war"
 	]
-	diplomacy_presets_option.selected = 0
+	diplomacy_presets_option.selected = 2
 	diplomacy_presets_option.sub_rules = [
 		starts_with_random_relationship_preset,
 		starts_with_random_relationship_preset,
