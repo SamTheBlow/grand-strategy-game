@@ -13,15 +13,14 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	
 	var decisions := AIDecisionUtils.new(game)
 	
+	decisions.fight_a_reachable_country(decisions.weakest_country)
+	
 	var relative_strengths: Array[float] = (
 			decisions.relative_strength_of_countries()
 	)
 	var sum_of_strengths: float = 0.0
 	for strength in relative_strengths:
 		sum_of_strengths += strength
-	
-	# Fight at least one neighbor
-	decisions.fight_a_neighbor()
 	
 	var country_list: Array[Country] = game.countries.list()
 	for i in country_list.size():

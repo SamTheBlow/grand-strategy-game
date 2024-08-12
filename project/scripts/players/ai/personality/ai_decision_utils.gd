@@ -230,7 +230,7 @@ func dismiss_all_offers_from(sender_country: Country) -> void:
 
 ## The choice filter must take an Array[Country] and return a non-null Country.
 ## The array passed to the choice filter will never be empty.
-func fight_a_neighbor(
+func fight_a_reachable_country(
 		choice_filter: Callable = (
 				func(countries: Array[Country]) -> Country:
 					return countries.pick_random())
@@ -240,23 +240,30 @@ func fight_a_neighbor(
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
 	
-	var neighbors: Array[Country] = (
-			playing_country.neighboring_countries(game.world.provinces)
+	var reachable_countries: Array[Country] = (
+			playing_country.reachable_countries(game.world.provinces)
 	)
 	
-	if neighbors.size() == 0:
+	if reachable_countries.size() == 0:
 		return
 	
 	# Don't do it if there's still unclaimed land
-	if null in neighbors:
+	if null in reachable_countries:
 		return
 	
 	# Check that you're not already fighting at least one neighbor
-	for neighbor in neighbors:
-		if playing_country.relationships.with_country(neighbor).is_fighting():
-			return
+	var current_reachable_enemies: Array[Country] = []
+	for reachable_country in reachable_countries:
+		if (
+				playing_country.relationships.with_country(reachable_country)
+				.is_fighting()
+		):
+			current_reachable_enemies.append(reachable_country)
+	var candidate_countries: Array[Country] = reachable_countries
+	if current_reachable_enemies.size() > 0:
+		candidate_countries = current_reachable_enemies
 	
-	var new_enemy: Country = choice_filter.call(neighbors)
+	var new_enemy: Country = choice_filter.call(candidate_countries)
 	if new_enemy == null:
 		push_error(
 				"AI tried to fight one of its neighbors, but"
@@ -312,6 +319,35 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 		break_alliance_with(other_country)
 		declare_war_to(other_country)
 		stop_interacting_with(other_country)
+
+
+## Takes an array of countries and returns the weakest one of them.
+func weakest_country(countries: Array[Country]) -> Country:
+	if not game:
+		return countries[0]
+	
+	var country_list: Array[Country] = game.countries.list()
+	var relative_strengths: Array[float] = relative_strength_of_countries()
+	
+	var output_country: Country = null
+	var weakest_strength: float = 0.0
+	
+	for i in country_list.size():
+		var country: Country = country_list[i]
+		
+		if not country in countries:
+			continue
+		
+		var relative_strength: float = relative_strengths[i]
+		
+		if (
+				output_country == null
+				or relative_strength < weakest_strength
+		):
+			output_country = country
+			weakest_strength = relative_strength
+	
+	return output_country
 
 
 # TODO more, better validation
