@@ -1,5 +1,6 @@
 class_name AIPersonalityEmotional
 extends AIPersonality
+## In order of priority:
 ## - Tends to be at war with the enemies of its allies
 ## - Tends to accept alliance offers
 ## - Tends to refuse peace offers

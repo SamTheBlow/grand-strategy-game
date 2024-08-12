@@ -227,11 +227,7 @@ func dismiss_all_offers_from(sender_country: Country) -> void:
 
 ## The choice filter must take an Array[Country] and return a non-null Country.
 ## The array passed to the choice filter will never be empty.
-func fight_a_reachable_country(
-		choice_filter: Callable = (
-				func(countries: Array[Country]) -> Country:
-					return countries.pick_random())
-) -> void:
+func fight_a_reachable_country(choice_filter: Callable) -> void:
 	if not game:
 		return
 	
@@ -347,6 +343,12 @@ func weakest_country(countries: Array[Country]) -> Country:
 			weakest_strength = relative_strength
 	
 	return output_country
+
+
+## Takes an array of countries and returns one of them at random.
+func random_country(countries: Array[Country]) -> Country:
+	var random_index: int = randi_range(0, countries.size() - 1)
+	return countries[random_index]
 
 
 # TODO more, better validation
