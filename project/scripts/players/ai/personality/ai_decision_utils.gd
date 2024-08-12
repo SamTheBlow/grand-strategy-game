@@ -182,6 +182,15 @@ func declare_war_to(country: Country) -> void:
 		_add_action_diplomacy(ActionDiplomacy.new(11, country.id))
 
 
+func accept_offer(game_notification: GameNotification) -> void:
+	# NOTE assumes that the outcome with index 0 is for accepting
+	_add_action_notif(ActionHandleNotification.new(game_notification.id, 0))
+
+
+func dismiss_offer(game_notification: GameNotification) -> void:
+	_add_action_notif(ActionHandleNotification.new(game_notification.id, -1))
+
+
 func accept_all_offers() -> void:
 	if not game:
 		return
@@ -189,10 +198,7 @@ func accept_all_offers() -> void:
 	var playing_country: Country = game.turn.playing_player().playing_country
 	
 	for game_notification in playing_country.notifications.list():
-		# NOTE assumes that the outcome with index 0 is for accepting
-		_add_action_notif(
-				ActionHandleNotification.new(game_notification.id, 0)
-		)
+		accept_offer(game_notification)
 
 
 func accept_all_offers_from(sender_country: Country) -> void:
@@ -204,14 +210,9 @@ func accept_all_offers_from(sender_country: Country) -> void:
 	for game_notification in playing_country.notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
-		
-		# NOTE assumes that the outcome with index 0 is for accepting
-		_add_action_notif(
-				ActionHandleNotification.new(game_notification.id, 0)
-		)
+		accept_offer(game_notification)
 
 
-# TODO DRY. copy/paste of above function
 func dismiss_all_offers_from(sender_country: Country) -> void:
 	if not game:
 		return
@@ -221,11 +222,7 @@ func dismiss_all_offers_from(sender_country: Country) -> void:
 	for game_notification in playing_country.notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
-		
-		# NOTE assumes that the outcome with index 0 is for accepting
-		_add_action_notif(
-				ActionHandleNotification.new(game_notification.id, -1)
-		)
+		dismiss_offer(game_notification)
 
 
 ## The choice filter must take an Array[Country] and return a non-null Country.
@@ -284,6 +281,9 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
 	
+	if target_country == playing_country:
+		return
+	
 	# It only matters when you are allies
 	var relationship: DiplomacyRelationship = (
 			playing_country.relationships.with_country(target_country)
@@ -316,7 +316,6 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 		
 		#print("I am not already friends with them, so, they are my enemy.")
 		dismiss_all_offers_from(other_country)
-		break_alliance_with(other_country)
 		declare_war_to(other_country)
 		stop_interacting_with(other_country)
 
