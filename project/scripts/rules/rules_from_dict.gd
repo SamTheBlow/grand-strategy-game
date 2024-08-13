@@ -9,8 +9,9 @@ func result(data_dict: Dictionary) -> GameRules:
 		if not data_dict.has(key):
 			continue
 		
-		# Make sure the value is the correct type
-		# If not, just ignore it and keep going
+		# Make sure the value is the correct type.
+		# If not, just ignore it and keep going.
+		# Integers and floats are interchangeable.
 		var rule_type: int = typeof(game_rules.rule_with_name(key).get_data())
 		if rule_type == TYPE_INT:
 			rule_type = TYPE_FLOAT

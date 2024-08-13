@@ -120,7 +120,11 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 						break
 					
 					# If the province's army is small enough, attack it
-					if army_size >= hostile_army_size * (1.75 + randf() * 0.5):
+					if (
+							hostile_army_size
+							* (1.75 + game.rng.randf() * 0.5)
+							<= army_size
+					):
 						attack_list.append(hostile_link)
 					
 					total_hostile_army_size += hostile_army_size
@@ -128,7 +132,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				# If the total size of all the hostile armies
 				# is too big, don't attack at all
 				if (
-						army_size * (1.75 + randf() * 0.5)
+						army_size * (1.75 + game.rng.randf() * 0.5)
 						< total_hostile_army_size
 				):
 					attack_list.clear()

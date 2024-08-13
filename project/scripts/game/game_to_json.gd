@@ -20,6 +20,9 @@ func convert_game(game: Game) -> void:
 	# Rules
 	json_data["rules"] = RulesToDict.new().result(game.rules)
 	
+	# RNG
+	json_data["rng"] = RNGToRawDict.new().result(game.rng)
+	
 	# Players
 	json_data["players"] = game.game_players.raw_data()
 	

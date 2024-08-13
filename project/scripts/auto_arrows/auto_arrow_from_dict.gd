@@ -8,29 +8,21 @@ const KEY_DESTINATION_PROVINCE_ID = "destination_province_id"
 
 ## May return null if the data is invalid.
 func result(game: Game, dictionary: Dictionary) -> AutoArrow:
-	if not (
-			dictionary.has(KEY_SOURCE_PROVINCE_ID)
-			and dictionary.has(KEY_DESTINATION_PROVINCE_ID)
+	if not ParseUtils.dictionary_has_number(
+			dictionary, KEY_SOURCE_PROVINCE_ID
 	):
 		return null
+	var source_province_id: int = (
+			ParseUtils.dictionary_int(dictionary, KEY_SOURCE_PROVINCE_ID)
+	)
 	
-	var source_data: Variant = dictionary[KEY_SOURCE_PROVINCE_ID]
-	var source_province_id: int
-	if source_data is int:
-		source_province_id = source_data
-	elif source_data is float:
-		source_province_id = roundi(source_data)
-	else:
+	if not ParseUtils.dictionary_has_number(
+			dictionary, KEY_DESTINATION_PROVINCE_ID
+	):
 		return null
-	
-	var destination_data: Variant = dictionary[KEY_DESTINATION_PROVINCE_ID]
-	var destination_province_id: int
-	if destination_data is int:
-		destination_province_id = destination_data
-	elif destination_data is float:
-		destination_province_id = roundi(destination_data)
-	else:
-		return null
+	var destination_province_id: int = (
+			ParseUtils.dictionary_int(dictionary, KEY_DESTINATION_PROVINCE_ID)
+	)
 	
 	var source_province: Province = (
 			game.world.provinces.province_from_id(source_province_id)

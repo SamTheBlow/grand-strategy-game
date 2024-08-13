@@ -3,6 +3,9 @@ class_name GameFromJSON
 # TODO tons of stuff in here needs to verify & return errors
 
 
+# 4.0 Backwards compatibility: can't use a different value
+const SAVE_DATA_VERSION: String = "1"
+
 var error: bool = false
 var error_message: String = ""
 var result: Game
@@ -24,7 +27,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		error_message = "JSON data doesn't have a \"version\" property."
 		return
 	var version: String = json_dict["version"]
-	if version != "1":
+	if version != SAVE_DATA_VERSION:
 		error = true
 		error_message = "Save data is from an unrecognized version."
 		return
@@ -34,37 +37,50 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	game.init()
 	
 	# Rules
-	game.rules = RulesFromDict.new().result(json_dict["rules"] as Dictionary)
+	var rules_dict: Dictionary = {}
+	if ParseUtils.dictionary_has_dictionary(json_dict, "rules"):
+		rules_dict = json_dict["rules"]
+	game.rules = RulesFromDict.new().result(rules_dict)
+	
+	# RNG
+	# 4.0 Backwards compatibility: can't require RNG to be in the save data.
+	if ParseUtils.dictionary_has_dictionary(json_dict, "rng"):
+		game.rng = RNGFromRawDict.new().result(json_dict["rng"])
 	
 	# Turn
 	var turn_key: String = "turn"
+	var turn_property_key: String = "turn"
+	var player_player_index_key: String = "playing_player_index"
 	if json_dict.has(turn_key):
 		if not json_dict[turn_key] is Dictionary:
 			error = true
 			error_message = "Turn property (in root) is not a dictionary."
 			return
+		var turn_dict: Dictionary = json_dict[turn_key]
 		
-		# Workaround because JSON doesn't differentiate between int and float
-		var value_type: int = typeof(json_dict[turn_key]["turn"])
-		if value_type == TYPE_INT:
-			value_type = TYPE_FLOAT
-		if value_type != TYPE_FLOAT:
+		if not turn_dict.has(turn_property_key):
+			error = true
+			error_message = "Cannot find turn property."
+			return
+		if not ParseUtils.is_number(turn_dict[turn_property_key]):
 			error = true
 			error_message = "Turn property is not a number."
 			return
+		var turn: int = ParseUtils.number_as_int(turn_dict[turn_property_key])
 		
-		value_type = typeof(json_dict[turn_key]["playing_player_index"])
-		if value_type == TYPE_INT:
-			value_type = TYPE_FLOAT
-		if value_type != TYPE_FLOAT:
+		if not turn_dict.has(player_player_index_key):
+			error = true
+			error_message = "Cannot find playing player index property."
+			return
+		if not ParseUtils.is_number(turn_dict[player_player_index_key]):
 			error = true
 			error_message = "Playing player index is not a number."
 			return
-		
-		game.setup_turn(
-				roundi(json_dict[turn_key]["turn"]),
-				roundi(json_dict[turn_key]["playing_player_index"])
+		var playing_player_index: int = ParseUtils.number_as_int(
+				turn_dict[player_player_index_key]
 		)
+		
+		game.setup_turn(turn, playing_player_index)
 	else:
 		game.setup_turn()
 	
@@ -335,21 +351,12 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	# AI type
 	var ai_type: int = 0
-	if json_data.has("ai_type"):
-		var value_type: int = typeof(json_data["ai_type"])
-		# Workaround because JSON doesn't differentiate floats and ints
-		if value_type == TYPE_FLOAT:
-			value_type = TYPE_INT
-		
-		if value_type == TYPE_INT:
-			var loaded_ai_type: int = roundi(json_data["ai_type"])
-			# If the AI type is invalid, default to the dummy AI
-			if PlayerAI.Type.find_key(loaded_ai_type):
-				ai_type = loaded_ai_type
-		else:
-			error = true
-			error_message = "Player's AI type is not a number."
-			return null
+	if ParseUtils.dictionary_has_number(json_data, "ai_type"):
+		var loaded_ai_type: int = (
+				ParseUtils.dictionary_int(json_data, "ai_type")
+		)
+		if loaded_ai_type in PlayerAI.Type.values():
+			ai_type = loaded_ai_type
 	
 	var player: GamePlayer = GamePlayer.new()
 	player.id = json_data["id"]
@@ -376,10 +383,10 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	var ai_personality_id: int = (
 			game.rules.default_ai_personality_option.selected
 	)
-	if json_data.has("ai_personality_type"):
-		var personality_data: Variant = json_data["ai_personality_type"]
-		if typeof(personality_data) in [TYPE_INT, TYPE_FLOAT]:
-			ai_personality_id = roundi(personality_data)
+	if ParseUtils.dictionary_has_number(json_data, "ai_personality_type"):
+		ai_personality_id = (
+				ParseUtils.dictionary_int(json_data, "ai_personality_type")
+		)
 	var ai_personality: AIPersonality = (
 			AIPersonality.from_type(ai_personality_id)
 	)

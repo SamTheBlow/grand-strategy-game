@@ -56,14 +56,14 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		#print("Candidate for random alliance/war: ", country.country_name)
 		
 		# 4/5 chance of not doing anything
-		var is_event_happening: float = (randi() % 5) == 0
+		var is_event_happening: float = (game.rng.randi() % 5) == 0
 		if not is_event_happening:
 			continue
 		
 		#print("Let's ally them!")
 		
 		# 1/5 chance of war instead of alliance
-		var is_event_war: bool = (randi() % 5) == 0
+		var is_event_war: bool = (game.rng.randi() % 5) == 0
 		
 		if is_event_war:
 			#print("...actually, I feel like going to war!")

@@ -24,7 +24,7 @@ func _ready() -> void:
 
 # TODO Find a better solution. This doesn't 100% work.
 # Like, if a different unrelated event happens on the same frame,
-# the action will go through anyway (try spamming some random keyboard key
+# the action will go through anyway (try spamming any keyboard key
 # while spamming right click on the notification)
 func _unhandled_input(_event: InputEvent) -> void:
 	if (

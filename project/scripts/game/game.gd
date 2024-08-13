@@ -119,6 +119,8 @@ var world: GameWorld:
 			camera.world_limits = (world as GameWorld2D).limits
 		$WorldLayer.add_child(world)
 
+var rng := RandomNumberGenerator.new()
+
 ## Child node: the interface that appears when you select a [Province]
 var component_ui: ComponentUI:
 	set(value):

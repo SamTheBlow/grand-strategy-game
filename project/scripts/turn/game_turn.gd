@@ -13,8 +13,12 @@ signal player_changed(new_player: GamePlayer)
 var game: Game
 
 var _turn: int = 1
-## DANGER this implementation depends on the fact that
-## the [GamePlayers] player order never changes
+
+# TODO It's probably not impossible to create a save file that
+# loads the game with a spectator as the current playing player,
+# in which case there is no check for this, and the game will surely crash.
+# DANGER This implementation depends on the fact that
+# the [GamePlayers] player order never changes.
 var _playing_player_index: int = 0
 
 
@@ -86,11 +90,20 @@ func _end_player_turn() -> void:
 
 
 func _go_to_next_player() -> void:
-	_playing_player_index += 1
-	if _playing_player_index >= game.game_players.size():
-		_playing_player_index = 0
+	while true:
+		_playing_player_index += 1
+		
+		if _playing_player_index >= game.game_players.size():
+			_playing_player_index = 0
+			_turn += 1
+			turn_changed.emit(_turn)
+		
+		# Spectators cannot be the playing player.
+		# WARNING: if somehow all the players are spectators,
+		# this will freeze the game in an infinite loop.
+		if playing_player().is_spectating():
+			continue
+		
+		break
 	
-	if _playing_player_index == 0:
-		_turn += 1
-		turn_changed.emit(_turn)
 	player_changed.emit(playing_player())

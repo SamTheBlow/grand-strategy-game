@@ -37,12 +37,11 @@ var diplomacy_actions := DiplomacyActionDefinitions.new()
 var _base_data: Dictionary = {}:
 	set(value):
 		_base_data = value
-		# Turn the preset id into an int (because JSON turns ints into floats)
-		if (
-				_base_data.has(PRESET_ID_KEY)
-				and typeof(_base_data[PRESET_ID_KEY]) == TYPE_FLOAT
-		):
-			_base_data[PRESET_ID_KEY] = roundi(_base_data[PRESET_ID_KEY])
+		# Ensure the preset id is an int (because JSON turns ints into floats)
+		if ParseUtils.dictionary_has_number(_base_data, PRESET_ID_KEY):
+			_base_data[PRESET_ID_KEY] = (
+					ParseUtils.dictionary_int(_base_data, PRESET_ID_KEY)
+			)
 
 ## A list of all the diplomatic actions
 ## this country can perform with the other country.

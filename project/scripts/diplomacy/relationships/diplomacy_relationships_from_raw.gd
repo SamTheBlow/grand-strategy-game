@@ -51,17 +51,17 @@ func _diplomacy_relationship_from_dict(
 		base_actions: Array[int],
 ) -> DiplomacyRelationship:
 	# TODO mostly copy/paste from [GameNotificationsFromRaw]
-	if not (
-			data.has("recipient_country_id")
-			and typeof(data["recipient_country_id"]) in [TYPE_INT, TYPE_FLOAT]
-	):
+	if not ParseUtils.dictionary_has_number(data, "recipient_country_id"):
 		error = true
 		error_message = (
 				"Diplomacy relationship data doesn't contain "
 				+ "a recipient country id."
 		)
 		return null
-	var recipient_country_id: int = roundi(data["recipient_country_id"])
+	var recipient_country_id: int = (
+			ParseUtils.dictionary_int(data, "recipient_country_id")
+	)
+	
 	var recipient_country: Country = (
 			game.countries.country_from_id(recipient_country_id)
 	)
@@ -84,9 +84,9 @@ func _diplomacy_relationship_from_dict(
 			and data["actions_performed_this_turn"] is Array
 	):
 		for element: Variant in data["actions_performed_this_turn"] as Array:
-			if not typeof(element) in [TYPE_INT, TYPE_FLOAT]:
+			if not ParseUtils.is_number(element):
 				continue
-			var action_id: int = roundi(element)
+			var action_id: int = ParseUtils.number_as_int(element)
 			actions_already_performed.append(action_id)
 	
 	var relationship_data: Dictionary = {}

@@ -16,7 +16,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	
 	for game_notification in playing_country.notifications.list():
 		# 40% chance to accept
-		var is_offer_accepted: bool = (randi() % 100) < 40
+		var is_offer_accepted: bool = (game.rng.randi() % 100) < 40
 		#print("Received an offer. Do I accept it: ", is_offer_accepted)
 		
 		if is_offer_accepted:
@@ -30,7 +30,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 			continue
 		
 		# 90% chance to do nothing
-		var is_ignored: bool = (randi() % 100) < 90
+		var is_ignored: bool = (game.rng.randi() % 100) < 90
 		
 		if is_ignored:
 			continue
@@ -38,7 +38,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		#print("Decided to do something about ", country.country_name)
 		
 		# 70% chance for positive action, 30% chance for negative action
-		var is_positive_action: bool = (randi() % 100) < 70
+		var is_positive_action: bool = (game.rng.randi() % 100) < 70
 		
 		if is_positive_action:
 			#print("	+ Positive action (offer peace/alliance)")

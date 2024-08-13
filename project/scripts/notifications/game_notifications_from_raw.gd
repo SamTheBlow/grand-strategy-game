@@ -40,25 +40,22 @@ func apply(game: Game, country: Country, data: Variant) -> void:
 func _game_notification_from_dict(
 		game: Game, recipient_country: Country, data: Dictionary
 ) -> GameNotification:
-	if not (
-			data.has("id")
-			and typeof(data["id"]) in [TYPE_INT, TYPE_FLOAT]
-	):
+	if not ParseUtils.dictionary_has_number(data, "id"):
 		error = true
 		error_message = "Game notification data doesn't have an id."
 		return null
-	var id: int = roundi(data["id"])
+	var id: int = ParseUtils.dictionary_int(data, "id")
 	
-	if not (
-			data.has("sender_country_id")
-			and typeof(data["sender_country_id"]) in [TYPE_INT, TYPE_FLOAT]
-	):
+	if not ParseUtils.dictionary_has_number(data, "sender_country_id"):
 		error = true
 		error_message = (
 				"Game notification data doesn't contain a sender country id."
 		)
 		return null
-	var sender_country_id: int = roundi(data["sender_country_id"])
+	var sender_country_id: int = (
+			ParseUtils.dictionary_int(data, "sender_country_id")
+	)
+	
 	var sender_country: Country = (
 			game.countries.country_from_id(sender_country_id)
 	)
@@ -72,34 +69,24 @@ func _game_notification_from_dict(
 		return null
 	
 	var creation_turn: int = game.turn.current_turn()
-	if (
-			data.has("creation_turn")
-			and typeof(data["creation_turn"]) in [TYPE_INT, TYPE_FLOAT]
-	):
-		creation_turn = roundi(data["creation_turn"])
+	if ParseUtils.dictionary_has_number(data, "creation_turn"):
+		creation_turn = ParseUtils.dictionary_int(data, "creation_turn")
 	
 	var turns_before_dismiss: int = (
 			GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
 	)
-	if (
-			data.has("turns_before_dismiss")
-			and typeof(data["turns_before_dismiss"]) in [TYPE_INT, TYPE_FLOAT]
-	):
-		turns_before_dismiss = roundi(data["turns_before_dismiss"])
+	if ParseUtils.dictionary_has_number(data, "turns_before_dismiss"):
+		turns_before_dismiss = (
+				ParseUtils.dictionary_int(data, "turns_before_dismiss")
+		)
 	
 	var was_seen_this_turn: bool = false
-	if (
-			data.has("was_seen_this_turn")
-			and typeof(data["was_seen_this_turn"]) == TYPE_BOOL
-	):
+	if ParseUtils.dictionary_has_bool(data, "was_seen_this_turn"):
 		was_seen_this_turn = data["was_seen_this_turn"]
 	
 	var new_notification: GameNotification
 	
-	if not (
-			data.has("diplomacy_action_id")
-			and typeof(data["diplomacy_action_id"]) in [TYPE_INT, TYPE_FLOAT]
-	):
+	if not ParseUtils.dictionary_has_number(data, "diplomacy_action_id"):
 		new_notification = GameNotification.new(
 				game,
 				sender_country,
@@ -108,7 +95,9 @@ func _game_notification_from_dict(
 				[func() -> void: pass]
 		)
 	else:
-		var action_id: int = roundi(data["diplomacy_action_id"])
+		var action_id: int = (
+				ParseUtils.dictionary_int(data, "diplomacy_action_id")
+		)
 		var action: DiplomacyActionDefinition = (
 				game.rules.diplomatic_actions.action_from_id(action_id)
 		)
