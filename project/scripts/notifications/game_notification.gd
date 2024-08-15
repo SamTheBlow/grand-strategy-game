@@ -34,19 +34,24 @@ var _outcome_functions: Array[Callable] = []
 func _init(
 		game: Game,
 		recipient_country: Country,
-		creation_turn: int = game.turn.current_turn(),
+		creation_turn_: int = game.turn.current_turn(),
 		turns_before_dismiss: int = DEFAULT_TURNS_BEFORE_DISMISS,
 		was_seen_this_turn: bool = false,
 ) -> void:
 	_game = game
 	_recipient_country = recipient_country
-	_creation_turn = creation_turn
+	_creation_turn = creation_turn_
 	_turns_before_dismiss = turns_before_dismiss
 	_was_seen_this_turn = was_seen_this_turn
 	_on_player_changed(game.turn.playing_player())
 	
 	game.turn.turn_changed.connect(_on_turn_changed)
 	game.turn.player_changed.connect(_on_player_changed)
+
+
+## Returns the turn on which this notification was created.
+func creation_turn() -> int:
+	return _creation_turn
 
 
 func number_of_outcomes() -> int:

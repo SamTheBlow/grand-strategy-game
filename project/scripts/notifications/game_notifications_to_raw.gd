@@ -36,10 +36,10 @@ func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 	var output: Dictionary = {"id": game_notification.id}
 	
 	if (
-			game_notification._creation_turn
+			game_notification.creation_turn()
 			!= game_notification._game.turn.current_turn()
 	):
-		output.merge({"creation_turn": game_notification._creation_turn})
+		output.merge({"creation_turn": game_notification.creation_turn()})
 	
 	if (
 			game_notification._turns_before_dismiss

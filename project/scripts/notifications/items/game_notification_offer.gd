@@ -14,13 +14,13 @@ func _init(
 		recipient_country: Country,
 		sender_country_: Country,
 		diplomacy_action_definition: DiplomacyActionDefinition,
-		creation_turn: int = game.turn.current_turn(),
+		creation_turn_: int = game.turn.current_turn(),
 		turns_before_dismiss: int = DEFAULT_TURNS_BEFORE_DISMISS,
 		was_seen_this_turn: bool = false,
 ) -> void:
 	super._init(
 			game, recipient_country,
-			creation_turn, turns_before_dismiss, was_seen_this_turn
+			creation_turn_, turns_before_dismiss, was_seen_this_turn
 	)
 	_sender_country = sender_country_
 	_diplomacy_action_definition = diplomacy_action_definition
