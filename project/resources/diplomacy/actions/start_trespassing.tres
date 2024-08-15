@@ -6,6 +6,7 @@
 script = ExtResource("1_0s8ow")
 id = 8
 name = "Start trespassing"
+icon = "👣"
 requires_consent = false
 available_after_turns = 0
 your_outcome_data = {

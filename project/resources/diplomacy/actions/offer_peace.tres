@@ -6,6 +6,7 @@
 script = ExtResource("1_omaq3")
 id = 2
 name = "Offer peace"
+icon = "✌️"
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {

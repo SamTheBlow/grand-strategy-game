@@ -6,6 +6,7 @@
 script = ExtResource("1_3ci7i")
 id = 11
 name = "Start fighting"
+icon = "💥"
 requires_consent = false
 available_after_turns = 0
 your_outcome_data = {

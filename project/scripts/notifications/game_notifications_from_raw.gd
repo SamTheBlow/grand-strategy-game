@@ -2,6 +2,11 @@ class_name GameNotificationsFromRaw
 ## Converts given raw data into a [GameNotifications] object.
 
 
+const TYPE_KEY: String = "type"
+const TYPE_OFFER: String = "OFFER"
+const TYPE_OFFER_ACCEPTED: String = "OFFER ACCEPTED"
+const TYPE_PERFORMED_ACTION: String = "ACTION PERFORMED"
+
 var error: bool = false
 var error_message: String = ""
 var result: GameNotifications
@@ -46,6 +51,120 @@ func _game_notification_from_dict(
 		return null
 	var id: int = ParseUtils.dictionary_int(data, "id")
 	
+	var creation_turn: int = game.turn.current_turn()
+	if ParseUtils.dictionary_has_number(data, "creation_turn"):
+		creation_turn = ParseUtils.dictionary_int(data, "creation_turn")
+	
+	var turns_before_dismiss: int = (
+			GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
+	)
+	if ParseUtils.dictionary_has_number(data, "turns_before_dismiss"):
+		turns_before_dismiss = (
+				ParseUtils.dictionary_int(data, "turns_before_dismiss")
+		)
+	
+	var was_seen_this_turn: bool = false
+	if ParseUtils.dictionary_has_bool(data, "was_seen_this_turn"):
+		was_seen_this_turn = data["was_seen_this_turn"]
+	
+	var new_notification: GameNotification
+	var type: Variant = data[TYPE_KEY] if data.has(TYPE_KEY) else null
+	match type:
+		TYPE_OFFER:
+			var action_definition: DiplomacyActionDefinition = (
+					_action_definition(game, data)
+			)
+			if action_definition == null:
+				return null
+			
+			var sender_country: Country = _sender_country(game, data)
+			if sender_country == null:
+				return null
+			
+			new_notification = GameNotificationOffer.new(
+					game,
+					recipient_country,
+					sender_country,
+					action_definition,
+					creation_turn,
+					turns_before_dismiss,
+					was_seen_this_turn,
+			)
+		TYPE_OFFER_ACCEPTED:
+			# TODO DRY. Too much copy/paste here
+			var action_definition: DiplomacyActionDefinition = (
+					_action_definition(game, data)
+			)
+			if action_definition == null:
+				return null
+			
+			var sender_country: Country = _sender_country(game, data)
+			if sender_country == null:
+				return null
+			
+			new_notification = GameNotificationOfferAccepted.new(
+					game,
+					recipient_country,
+					sender_country,
+					action_definition,
+					creation_turn,
+					turns_before_dismiss,
+					was_seen_this_turn,
+			)
+		TYPE_PERFORMED_ACTION:
+			var action_definition: DiplomacyActionDefinition = (
+					_action_definition(game, data)
+			)
+			if action_definition == null:
+				return null
+			
+			var sender_country: Country = _sender_country(game, data)
+			if sender_country == null:
+				return null
+			
+			new_notification = GameNotificationPerformedAction.new(
+					game,
+					recipient_country,
+					sender_country,
+					action_definition,
+					creation_turn,
+					turns_before_dismiss,
+					was_seen_this_turn,
+			)
+		_:
+			new_notification = GameNotification.new(
+					game,
+					recipient_country,
+					creation_turn,
+					turns_before_dismiss,
+					was_seen_this_turn,
+			)
+	
+	new_notification.id = id
+	return new_notification
+
+
+func _action_definition(
+		game: Game, data: Dictionary
+) -> DiplomacyActionDefinition:
+	var output: DiplomacyActionDefinition
+	
+	if ParseUtils.dictionary_has_number(data, "diplomacy_action_id"):
+		var action_id: int = (
+				ParseUtils.dictionary_int(data, "diplomacy_action_id")
+		)
+		output = game.rules.diplomatic_actions.action_from_id(action_id)
+	
+	if output == null:
+		error = true
+		error_message = (
+				"Game notification data doesn't have a valid"
+				+ " diplomacy action definition."
+		)
+	return output
+
+
+func _sender_country(game: Game, data: Dictionary) -> Country:
 	if not ParseUtils.dictionary_has_number(data, "sender_country_id"):
 		error = true
 		error_message = (
@@ -68,47 +187,4 @@ func _game_notification_from_dict(
 		)
 		return null
 	
-	var creation_turn: int = game.turn.current_turn()
-	if ParseUtils.dictionary_has_number(data, "creation_turn"):
-		creation_turn = ParseUtils.dictionary_int(data, "creation_turn")
-	
-	var turns_before_dismiss: int = (
-			GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
-	)
-	if ParseUtils.dictionary_has_number(data, "turns_before_dismiss"):
-		turns_before_dismiss = (
-				ParseUtils.dictionary_int(data, "turns_before_dismiss")
-		)
-	
-	var was_seen_this_turn: bool = false
-	if ParseUtils.dictionary_has_bool(data, "was_seen_this_turn"):
-		was_seen_this_turn = data["was_seen_this_turn"]
-	
-	var new_notification: GameNotification
-	
-	if not ParseUtils.dictionary_has_number(data, "diplomacy_action_id"):
-		new_notification = GameNotification.new(
-				game,
-				sender_country,
-				recipient_country,
-				["OK"],
-				[func() -> void: pass]
-		)
-	else:
-		var action_id: int = (
-				ParseUtils.dictionary_int(data, "diplomacy_action_id")
-		)
-		var action: DiplomacyActionDefinition = (
-				game.rules.diplomatic_actions.action_from_id(action_id)
-		)
-		new_notification = action.new_notification(
-				game,
-				sender_country.relationships.with_country(recipient_country),
-				recipient_country.relationships.with_country(sender_country),
-				creation_turn,
-				turns_before_dismiss,
-				was_seen_this_turn,
-		)
-	
-	new_notification.id = id
-	return new_notification
+	return sender_country

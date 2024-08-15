@@ -6,6 +6,7 @@
 script = ExtResource("1_tyx8w")
 id = 10
 name = "Ask to stop trespassing"
+icon = "🙏"
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {}

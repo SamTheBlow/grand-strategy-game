@@ -9,6 +9,13 @@ var _presets: Array[DiplomacyPreset] = [
 ]
 
 
+func is_id_valid(id: int) -> bool:
+	for preset in _presets:
+		if preset.id == id:
+			return true
+	return false
+
+
 ## Returns a new empty preset if there is no preset with given id.
 ## Inputting a negative number automatically returns
 ## a new empty preset, without pushing any error.

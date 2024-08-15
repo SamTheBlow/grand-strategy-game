@@ -9,11 +9,7 @@ const DEFAULT_TURNS_BEFORE_DISMISS: int = 3
 ## must have a unique id.
 var id: int
 
-## This is for saving/loading the outcomes (TODO it's bad code)
-var diplomacy_action_definition: DiplomacyActionDefinition
-
 var _game: Game
-var _sender_country: Country
 var _recipient_country: Country
 
 ## The turn on which this notification was created.
@@ -26,46 +22,51 @@ var _turns_before_dismiss: int
 ## go down when the recipient country has seen the notification.
 var _was_seen_this_turn: bool
 
-var _outcomes: Array[NotificationOutcome] = []
-
-var _auto_dismiss_when_invalid: GameNotificationAutoDismissInvalid
+## To be setup by subclasses.
+## Please make sure there is the same number of names and functions,
+## even if the outcome is meant to do nothing.
+## If these are left empty, then there will be no outcome, in which case
+## the only way to get rid of the notification is to dismiss it.
+var _outcome_names: Array[String] = []
+var _outcome_functions: Array[Callable] = []
 
 
 func _init(
 		game: Game,
-		sender_country_: Country,
 		recipient_country: Country,
-		outcome_names: Array[String],
-		outcome_functions: Array[Callable],
 		creation_turn: int = game.turn.current_turn(),
 		turns_before_dismiss: int = DEFAULT_TURNS_BEFORE_DISMISS,
 		was_seen_this_turn: bool = false,
 ) -> void:
 	_game = game
-	_sender_country = sender_country_
 	_recipient_country = recipient_country
 	_creation_turn = creation_turn
 	_turns_before_dismiss = turns_before_dismiss
 	_was_seen_this_turn = was_seen_this_turn
 	_on_player_changed(game.turn.playing_player())
 	
-	for i in mini(outcome_names.size(), outcome_functions.size()):
-		_outcomes.append(NotificationOutcome.new(
-				outcome_names[i], outcome_functions[i]
-		))
-	
-	_auto_dismiss_when_invalid = GameNotificationAutoDismissInvalid.new(
-			self,
-			_sender_country.relationships.with_country(_recipient_country)
-			.available_actions_changed
-	)
-	
 	game.turn.turn_changed.connect(_on_turn_changed)
 	game.turn.player_changed.connect(_on_player_changed)
 
 
-func sender_country() -> Country:
-	return _sender_country
+func number_of_outcomes() -> int:
+	return _outcome_names.size()
+
+
+func outcome_names() -> Array[String]:
+	return _outcome_names.duplicate()
+
+
+## The icon to display on screen.
+## Meant to be overridden by subclasses.
+func icon() -> String:
+	return "?"
+
+
+## Human-friendly text that gives information about the notification.
+## Meant to be overridden by subclasses.
+func description() -> String:
+	return ""
 
 
 func select_outcome(outcome_index: int) -> void:
@@ -75,7 +76,7 @@ func select_outcome(outcome_index: int) -> void:
 	if outcome_index < 0:
 		dismiss()
 		return
-	elif outcome_index >= _outcomes.size():
+	elif outcome_index >= _outcome_names.size():
 		push_error(
 				"Tried to select a notification's outcome, but "
 				+ "the given outcome index is out of bounds! "
@@ -84,7 +85,7 @@ func select_outcome(outcome_index: int) -> void:
 		dismiss()
 		return
 	
-	_outcomes[outcome_index].outcome_function.call()
+	_outcome_functions[outcome_index].call()
 	handled.emit(self)
 
 
@@ -119,12 +120,3 @@ func _on_turn_changed(_turn: int) -> void:
 		if _turns_before_dismiss < 1:
 			dismiss()
 	_was_seen_this_turn = false
-
-
-class NotificationOutcome:
-	var name: String
-	var outcome_function: Callable
-	
-	func _init(name_: String, outcome_function_: Callable) -> void:
-		name = name_
-		outcome_function = outcome_function_

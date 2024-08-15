@@ -6,6 +6,7 @@
 script = ExtResource("1_mx1p1")
 id = 1
 name = "Declare war"
+icon = "🔥"
 requires_consent = false
 available_after_turns = 1
 your_outcome_data = {

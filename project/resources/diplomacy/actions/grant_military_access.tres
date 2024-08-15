@@ -6,6 +6,7 @@
 script = ExtResource("1_f0csu")
 id = 5
 name = "Grant military access"
+icon = "↪️"
 requires_consent = false
 available_after_turns = 0
 your_outcome_data = {

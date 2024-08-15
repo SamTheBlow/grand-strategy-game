@@ -6,6 +6,7 @@
 script = ExtResource("1_mvhgs")
 id = 9
 name = "Stop trespassing"
+icon = "🚷"
 requires_consent = false
 available_after_turns = 0
 your_outcome_data = {

@@ -6,6 +6,7 @@
 script = ExtResource("1_t0kf3")
 id = 6
 name = "Revoke military access"
+icon = "⛔"
 requires_consent = false
 available_after_turns = 1
 your_outcome_data = {

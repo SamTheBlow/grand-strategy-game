@@ -100,20 +100,30 @@ func apply(
 	if not can_be_performed(game, true):
 		return
 	
+	var new_notification: GameNotification
 	if _definition.requires_consent:
-		var new_notification: GameNotification = (
-				_definition.new_notification(
-						game, relationship, reverse_relationship
-				)
+		new_notification = GameNotificationOffer.new(
+				game,
+				relationship.recipient_country,
+				relationship.source_country,
+				_definition
 		)
-		new_notification.id = (
-				relationship.recipient_country.notifications.new_unique_id()
-		)
-		relationship.recipient_country.notifications.add(new_notification)
 	else:
 		_definition.apply_action_data(
 				relationship, reverse_relationship, game.turn.current_turn()
 		)
+		
+		new_notification = GameNotificationPerformedAction.new(
+				game,
+				relationship.recipient_country,
+				relationship.source_country,
+				_definition
+		)
+	
+	new_notification.id = (
+			relationship.recipient_country.notifications.new_unique_id()
+	)
+	relationship.recipient_country.notifications.add(new_notification)
 	
 	_was_performed_this_turn = true
 	performed.emit(self)

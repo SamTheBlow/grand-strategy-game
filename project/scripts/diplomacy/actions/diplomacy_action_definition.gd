@@ -13,6 +13,10 @@ extends Resource
 ## The actions's name. May be shown to the user. It doesn't have to be unique.
 @export var name: String = ""
 
+## May be used to easily differentiate actions visually.
+## Please only use one character (e.g. an emoji).
+@export var icon: String = ""
+
 @export_group("Conditions")
 ## If true, this action will only be performed
 ## when the other country gives consent.
@@ -28,42 +32,6 @@ extends Resource
 ## Add changes to the relationship here (see [DiplomacyRelationship]).
 ## Affects the target country's relationship with the source country.
 @export var their_outcome_data: Dictionary = {}
-
-
-## Leave creation_turn negative if you don't know/care.
-func new_notification(
-		game: Game,
-		relationship: DiplomacyRelationship,
-		reverse_relationship: DiplomacyRelationship,
-		creation_turn: int = game.turn.current_turn(),
-		turns_before_dismiss: int = (
-				GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
-		),
-		was_seen_this_turn: bool = false
-) -> GameNotification:
-	var apply_function: Callable = (
-			func() -> void:
-				apply_action_data(
-						relationship,
-						reverse_relationship,
-						game.turn.current_turn()
-				)
-	)
-	
-	var output_notification := GameNotification.new(
-			game,
-			relationship.source_country,
-			relationship.recipient_country,
-			["Accept", "Decline"],
-			[apply_function, func() -> void: pass],
-			creation_turn,
-			turns_before_dismiss,
-			was_seen_this_turn,
-	)
-	
-	# TODO bad code
-	output_notification.diplomacy_action_definition = self
-	return output_notification
 
 
 func apply_action_data(

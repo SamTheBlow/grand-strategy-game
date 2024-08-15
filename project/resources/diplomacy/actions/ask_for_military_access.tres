@@ -6,6 +6,7 @@
 script = ExtResource("1_awkot")
 id = 7
 name = "Ask for military access"
+icon = "🙏"
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {}

@@ -183,11 +183,17 @@ func declare_war_to(country: Country) -> void:
 
 
 func accept_offer(game_notification: GameNotification) -> void:
+	if not game_notification is GameNotificationOffer:
+		return
+	
 	# NOTE assumes that the outcome with index 0 is for accepting
 	_add_action_notif(ActionHandleNotification.new(game_notification.id, 0))
 
 
 func dismiss_offer(game_notification: GameNotification) -> void:
+	if not game_notification is GameNotificationOffer:
+		return
+	
 	_add_action_notif(ActionHandleNotification.new(game_notification.id, -1))
 
 
@@ -349,6 +355,41 @@ func weakest_country(countries: Array[Country]) -> Country:
 func random_country(countries: Array[Country]) -> Country:
 	var random_index: int = game.rng.randi_range(0, countries.size() - 1)
 	return countries[random_index]
+
+
+static func is_peace_offer(game_notification: GameNotification) -> bool:
+	if not game_notification is GameNotificationOffer:
+		return false
+	var offer := game_notification as GameNotificationOffer
+	
+	# TODO bad code: private member access
+	var recipient_outcome_data: Dictionary = (
+			offer._diplomacy_action_definition.their_outcome_data
+	)
+	return (
+			recipient_outcome_data.has("is_fighting")
+			and recipient_outcome_data["is_fighting"] == false
+	)
+
+
+static func is_alliance_offer(game_notification: GameNotification) -> bool:
+	if not game_notification is GameNotificationOffer:
+		return false
+	var offer := game_notification as GameNotificationOffer
+	
+	# TASK bad code: private member access
+	var sender_outcome_data: Dictionary = (
+			offer._diplomacy_action_definition.your_outcome_data
+	)
+	var recipient_outcome_data: Dictionary = (
+			offer._diplomacy_action_definition.their_outcome_data
+	)
+	return (
+			sender_outcome_data.has("grants_military_access")
+			and sender_outcome_data["grants_military_access"] == true
+			and recipient_outcome_data.has("grants_military_access")
+			and recipient_outcome_data["grants_military_access"] == true
+	)
 
 
 # TODO more, better validation

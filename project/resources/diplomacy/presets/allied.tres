@@ -7,6 +7,7 @@ script = ExtResource("1_awlgk")
 id = 1
 name = "Allied"
 color = Color(0, 1, 0, 1)
+icon = "💚"
 settings = {
 "grants_military_access": true,
 "is_fighting": false,

@@ -6,6 +6,7 @@
 script = ExtResource("1_636vi")
 id = 4
 name = "Break alliance"
+icon = "💔"
 requires_consent = false
 available_after_turns = 3
 your_outcome_data = {

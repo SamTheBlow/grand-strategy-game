@@ -6,6 +6,7 @@
 script = ExtResource("1_pcnq2")
 id = 13
 name = "Ask to stop fighting"
+icon = "🙏"
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {}

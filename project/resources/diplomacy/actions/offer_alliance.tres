@@ -6,6 +6,7 @@
 script = ExtResource("1_ejas3")
 id = 3
 name = "Offer alliance"
+icon = "💚"
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {

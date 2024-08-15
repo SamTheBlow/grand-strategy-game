@@ -18,29 +18,11 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		decisions.fight_enemies_of_allies(country)
 	
 	for game_notification in playing_country.notifications.list():
-		# Ignore peace offers
-		var my_outcome_data: Dictionary = (
-				game_notification.diplomacy_action_definition
-				.their_outcome_data
-		)
-		if (
-				my_outcome_data.has("is_fighting")
-				and my_outcome_data["is_fighting"] == false
-		):
+		if AIDecisionUtils.is_peace_offer(game_notification):
 			decisions.dismiss_offer(game_notification)
 			continue
 		
-		# Accept alliance offers
-		var sender_outcome_data: Dictionary = (
-				game_notification.diplomacy_action_definition
-				.your_outcome_data
-		)
-		if (
-				my_outcome_data.has("grants_military_access")
-				and my_outcome_data["grants_military_access"] == true
-				and sender_outcome_data.has("grants_military_access")
-				and sender_outcome_data["grants_military_access"] == true
-		):
+		if AIDecisionUtils.is_alliance_offer(game_notification):
 			decisions.accept_offer(game_notification)
 	
 	for country in country_list:

@@ -20,29 +20,31 @@ func _refresh() -> void:
 	if not is_node_ready() or game_notification == null:
 		return
 	
-	_label.text = (
-			game_notification.sender_country().country_name
-			+ ' has made this request: "'
-			+ game_notification.diplomacy_action_definition.name + '"'
-	)
+	_label.text = game_notification.description()
 
 
 func buttons() -> Array[String]:
-	return ["Accept", "Decline", "Decide later"]
+	if game_notification.number_of_outcomes() == 0:
+		return ["OK"]
+	
+	var outcome_names: Array[String] = game_notification.outcome_names()
+	outcome_names.append("Decide later")
+	return outcome_names
 
 
 func _on_button_pressed(button_index: int) -> void:
 	if game_notification == null:
 		return
 	
-	match button_index:
-		0:
-			# Accept
-			decision_made.emit(game_notification, 0)
-		1:
-			# Dismiss
-			decision_made.emit(game_notification, -1)
-		2:
-			pass
-		_:
-			push_warning("Unrecognized button index.")
+	if game_notification.number_of_outcomes() == 0:
+		decision_made.emit(game_notification, -1)
+		return
+	
+	var buttons_list: Array[String] = buttons()
+	if button_index >= 0 and button_index < buttons_list.size() - 1:
+		decision_made.emit(game_notification, button_index)
+	elif button_index == buttons_list.size() - 1:
+		# "Decide later"
+		pass
+	else:
+		push_warning("Pressed a button with invalid button index.")
