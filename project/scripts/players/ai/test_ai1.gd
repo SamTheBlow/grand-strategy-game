@@ -52,7 +52,7 @@ func _try_build_fortresses(
 			and expected_money >= game.rules.fortress_price.value
 	):
 		# Find the most populated province
-		var most_populated: Province
+		var most_populated: Province = null
 		for province in candidates:
 			if not most_populated:
 				most_populated = province

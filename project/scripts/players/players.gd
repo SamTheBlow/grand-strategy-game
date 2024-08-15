@@ -334,7 +334,7 @@ func _on_peer_disconnected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	
-	var group_leader: Player
+	var group_leader: Player = null
 	
 	for player in list():
 		if player.multiplayer_id == multiplayer_id:

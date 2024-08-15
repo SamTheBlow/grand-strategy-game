@@ -19,9 +19,10 @@ signal moved_to_province(province: Province)
 signal movements_made_changed(movements_made: int)
 
 ## Emitted when this army believes it has been destroyed.
-## At the time it's emitted, this node already queued itself for deletion.
+## This is used to ask the game to remove the army from the game.
 signal destroyed(this_army: Army)
 ## Emitted right after this army is actually removed from the game.
+## This is used to ask the game to remove this army's visuals.
 signal removed()
 
 ## A reference to the [Game] this army is part of.
@@ -108,6 +109,10 @@ static func quick_setup(
 func add_visuals() -> void:
 	var visuals := game.army_scene.instantiate() as ArmyVisuals2D
 	visuals.army = self
+
+
+func remove_visuals() -> void:
+	removed.emit()
 
 
 func destroy() -> void:

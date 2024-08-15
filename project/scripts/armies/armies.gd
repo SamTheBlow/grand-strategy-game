@@ -43,7 +43,7 @@ func remove_army(army: Army) -> void:
 	
 	army.destroyed.disconnect(remove_army)
 	_list.erase(army)
-	army.removed.emit()
+	army.remove_visuals()
 
 
 ## Returns a new copy of the list.
