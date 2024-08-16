@@ -20,15 +20,11 @@ var army: Army:
 		_add_to_province(army.province())
 
 @onready var _animation := $MovementAnimation as ArmyMovementAnimation2D
-@onready var _color_rect := $ColorRect as ColorRect
-@onready var _army_size_label := $ColorRect/ArmySize as Label
 
 
 func _ready() -> void:
-	army.allegiance_changed.connect(_on_army_allegiance_changed)
-	_on_army_allegiance_changed(army.owner_country)
-	army.size_changed.connect(_on_army_size_changed)
-	_on_army_size_changed(army.army_size.current_size())
+	(%ArmySizeBox as ArmySizeBox).army = army
+	
 	_animation.is_playing_changed.connect(_on_animation_is_playing_changed)
 	_refresh()
 
@@ -76,14 +72,6 @@ func _on_army_removed() -> void:
 	if get_parent():
 		get_parent().remove_child(self)
 	queue_free()
-
-
-func _on_army_allegiance_changed(country: Country) -> void:
-	_color_rect.color = country.color
-
-
-func _on_army_size_changed(army_size: int) -> void:
-	_army_size_label.text = str(army_size)
 
 
 func _on_army_province_changed(_army: Army, province: Province) -> void:

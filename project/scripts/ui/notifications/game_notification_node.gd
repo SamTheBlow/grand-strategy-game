@@ -21,11 +21,10 @@ var game_notification: GameNotification:
 
 func _ready() -> void:
 	_refresh()
-	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
-# TODO Find a better solution. This doesn't 100% work.
-# Like, if a different unrelated event happens on the same frame,
+# TODO This doesn't work at all 💀
+# Also, if a different unrelated event happens on the same frame,
 # the action will go through anyway (try spamming any keyboard key
 # while spamming right click on the notification)
 func _unhandled_input(_event: InputEvent) -> void:
@@ -53,19 +52,8 @@ func _refresh() -> void:
 		_color_rect.color = Color.WHITE
 	
 	_icon.text = game_notification.icon()
-	_resize_icon()
 	
 	show()
-
-
-func _resize_icon() -> void:
-	if _icon == null:
-		return
-	
-	if _icon.has_theme_font_size_override("font_size"):
-		_icon.remove_theme_font_size_override("font_size")
-	
-	_icon.add_theme_font_size_override("font_size", int(_icon.size.y * 0.8))
 
 
 func _disconnect_signals() -> void:
@@ -82,10 +70,6 @@ func _connect_signals() -> void:
 	
 	if not game_notification.handled.is_connected(_on_notification_handled):
 		game_notification.handled.connect(_on_notification_handled)
-
-
-func _on_viewport_size_changed() -> void:
-	_resize_icon()
 
 
 func _on_notification_handled(_game_notification: GameNotification) -> void:
