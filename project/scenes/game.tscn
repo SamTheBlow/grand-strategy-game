@@ -102,6 +102,7 @@ camera = NodePath("..")
 script = ExtResource("20_qrqmv")
 _game = NodePath("../..")
 _camera = NodePath("..")
+_start_in_center_of_map = true
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2
