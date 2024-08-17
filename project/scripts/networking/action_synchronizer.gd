@@ -20,7 +20,7 @@ func apply_action(action: Action) -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _consider_action(action_data: Dictionary) -> void:
 	if not multiplayer.is_server():
-		print_debug("Received request for server, but you're not the server")
+		push_warning("Received request for server, but you're not the server")
 		return
 	
 	_apply_action(Action.from_raw_data(action_data))

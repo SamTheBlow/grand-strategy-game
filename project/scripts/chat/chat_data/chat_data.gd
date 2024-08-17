@@ -47,9 +47,11 @@ func all_content() -> String:
 func load_data(data: Dictionary) -> void:
 	var parser := ChatDataFromDict.new()
 	parser.parse(data)
+	
 	if parser.error:
-		print_debug("Error while loading chat data: " + parser.error_message)
+		push_error("Error while loading chat data: " + parser.error_message)
 		return
+	
 	_content = parser.result_content
 	_players = parser.result_players
 	loaded.emit()
@@ -92,5 +94,5 @@ func _add_message(user_id: int, text: String) -> void:
 func _player_from_id(id: int) -> String:
 	if id >= 0 and id < _players.size():
 		return _players[id]
-	print_debug("Invalid player id for chat data")
+	push_error("Invalid player id for chat data")
 	return "???"

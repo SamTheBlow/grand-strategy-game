@@ -7,7 +7,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	if game.turn.playing_player() == player:
 		game.turn.end_turn()
 	else:
-		print_debug("Tried to end someone else's turn.")
+		push_warning("Tried to end someone else's turn.")
 
 
 ## Returns this action's raw data, for the purpose of

@@ -16,7 +16,7 @@ var _claimed_ids: Array[int] = []
 
 func add_army(army: Army) -> void:
 	if _list.has(army):
-		print_debug("Tried adding an army, but it was already on the list.")
+		push_warning("Tried adding an army, but it was already on the list.")
 		return
 	
 	if army_with_id(army.id):
@@ -38,7 +38,7 @@ func add_army(army: Army) -> void:
 
 func remove_army(army: Army) -> void:
 	if not _list.has(army):
-		print_debug("Tried removing an army, but it wasn't on the list.")
+		push_warning("Tried removing an army, but it wasn't on the list.")
 		return
 	
 	army.destroyed.disconnect(remove_army)

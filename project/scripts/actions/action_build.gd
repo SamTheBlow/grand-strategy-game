@@ -19,14 +19,14 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	)
 	
 	if not province:
-		print_debug(
+		push_warning(
 				"Tried to build a fortress in a province that doesn't exist!"
 		)
 		return
 	
 	var build_conditions := FortressBuildConditions.new(your_country, province)
 	if not build_conditions.can_build():
-		print_debug(
+		push_warning(
 				"Tried to build a fortress, but not all conditions were met: "
 				+ build_conditions.error_message
 		)

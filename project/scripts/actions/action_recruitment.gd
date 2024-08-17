@@ -22,20 +22,20 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	)
 	
 	if not province:
-		print_debug(
+		push_warning(
 				"Tried to recruit troops in a province that doesn't exist!"
 		)
 		return
 	
 	var recruit_limits := ArmyRecruitmentLimits.new(your_country, province)
 	if recruit_limits.maximum() < _number_of_troops:
-		print_debug(
+		push_warning(
 				"Tried to recruit troops, but not all conditions were met: "
 				+ recruit_limits.error_message
 		)
 		return
 	if recruit_limits.minimum() > _number_of_troops:
-		print_debug(
+		push_warning(
 				"Tried recruiting an army, but the army's size "
 				+ "would be smaller than the minimum allowed."
 		)

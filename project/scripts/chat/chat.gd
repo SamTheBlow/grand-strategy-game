@@ -44,7 +44,7 @@ func connect_chat_interface(chat_interface: ChatInterface) -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _send_all_data() -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
-		print_debug(
+		push_warning(
 				"Received a request to send all data, "
 				+ "but you are not the server!"
 		)
@@ -71,7 +71,7 @@ func send_global_message(text: String) -> void:
 		return
 	
 	if not MultiplayerUtils.is_server(multiplayer):
-		print_debug(
+		push_warning(
 				"Tried to send a global message, "
 				+ "but you do not have authority!"
 		)
@@ -86,11 +86,11 @@ func _receive_global_message(text: String) -> void:
 			MultiplayerUtils.is_online(multiplayer)
 			and multiplayer.get_remote_sender_id() != 1
 	):
-		# The user who sent this did not have authority.
+		# The user who sent this does not have authority.
 		# Probably a hacker? Anyways, deny them permission.
-		print_debug(
+		push_warning(
 				"Received a global message from someone "
-				+ "who did not have authority!"
+				+ "who does not have authority!"
 		)
 		return
 	

@@ -122,7 +122,7 @@ func init() -> void:
 
 func _update_shown_username() -> void:
 	if not player:
-		print_debug("Player was not initialized")
+		push_error("Player was not initialized")
 		username_label.text = ""
 		return
 	
@@ -215,7 +215,7 @@ func _can_edit() -> bool:
 
 func _submit_username_change() -> void:
 	if not player:
-		print_debug("Tried to change someone's username, but player is null!")
+		push_error("Tried to change someone's username, but player is null!")
 		return
 	
 	var new_username: String = username_line_edit.text.strip_edges()
@@ -255,10 +255,10 @@ func _on_player_turn_changed(_playing_player: GamePlayer) -> void:
 
 func _on_add_button_pressed() -> void:
 	if not player:
-		print_debug("Tried to make a player human, but player is null!")
+		push_error("Tried to make a player human, but player is null!")
 		return
 	if player.is_human:
-		print_debug("Player is already human!")
+		push_warning("Player is already human!")
 		return
 	
 	new_player_requested.emit(player)
@@ -266,25 +266,25 @@ func _on_add_button_pressed() -> void:
 
 func _on_remove_button_pressed() -> void:
 	if not player:
-		print_debug("Tried to remove human player, but player is null!")
+		push_error("Tried to remove human player, but player is null!")
 		return
 	if not player.is_human:
-		print_debug("Player is already not human!")
+		push_warning("Player is already not human!")
 		return
 	if is_the_only_local_human:
-		print_debug("Tried to remove the only local player.")
+		push_warning("Tried to remove the only local player.")
 		return
 	
 	if player.player_human:
 		player.player_human.request_deletion()
 	else:
-		print_debug("GamePlayer's player_human is null, weird.")
+		push_warning("GamePlayer's player_human is null, weird.")
 		player.is_human = false
 
 
 func _on_rename_button_pressed() -> void:
 	if _is_renaming:
-		print_debug("Pressed the rename button, but already renaming!")
+		push_warning("Pressed the rename button, but already renaming!")
 		return
 	
 	_is_renaming = true
@@ -292,7 +292,7 @@ func _on_rename_button_pressed() -> void:
 
 func _on_confirm_button_pressed() -> void:
 	if not _is_renaming:
-		print_debug(
+		push_warning(
 				"Pressed the confirm button, but there is nothing to confirm!"
 		)
 		return

@@ -199,7 +199,7 @@ func _on_player_deletion_requested(player: Player) -> void:
 		return
 	
 	if players.size() == 1:
-		print_debug("Tried to remove the last player. Ignoring request.")
+		push_warning("Tried to remove the last player. Ignoring request.")
 		return
 	
 	# Removing their last player? Kick them from the server

@@ -145,7 +145,7 @@ func _request_all_data() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _send_all_data() -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
+		push_warning("Received server request, but you're not the server.")
 		return
 	
 	_receive_all_data.rpc(raw_data())
@@ -155,7 +155,7 @@ func _send_all_data() -> void:
 @rpc("authority", "call_remote", "reliable")
 func _receive_all_data(data: Dictionary) -> void:
 	if multiplayer.is_server():
-		print_debug("The server received player data. Ignoring.")
+		push_warning("The server received player data. Ignoring.")
 		return
 	
 	_is_synchronizing = true
@@ -177,14 +177,14 @@ func request_deletion() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _consider_deletion() -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
+		push_warning("Received server request, but you're not the server.")
 		return
 	
 	# Only accept if this node represents the person who made the request.
 	# Unless you were given privileges (which is currently never the case),
 	# you should never be able to delete other people's players.
 	if multiplayer.get_remote_sender_id() != multiplayer_id:
-		print_debug("Someone tried to delete someone else's player.")
+		push_warning("Someone tried to delete someone else's player.")
 		return
 	
 	# Request accepted
@@ -208,14 +208,14 @@ func _request_set_custom_username(value: String) -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _consider_set_custom_username(value: String) -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
+		push_warning("Received server request, but you're not the server.")
 		return
 	
 	# Only accept if this node represents the person who made the request.
 	# Unless you were given privileges (which is currently never the case),
 	# you should never be able to change another player's username.
 	if multiplayer.get_remote_sender_id() != multiplayer_id:
-		#print_debug("Denied a username change request.")
+		push_warning("Denied a username change request.")
 		return
 	
 	# Request accepted

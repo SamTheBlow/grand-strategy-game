@@ -31,7 +31,7 @@ func _ready() -> void:
 
 func _update_country(country: Country) -> void:
 	if not country:
-		print_debug("Tried to update top bar info, but country is null.")
+		push_error("Tried to update top bar info, but country is null.")
 		return
 	
 	_country_button.country = country

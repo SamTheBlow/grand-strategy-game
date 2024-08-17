@@ -24,5 +24,8 @@ func info(info_string: String) -> Variant:
 		"defending_army":
 			return _defending_army
 		_:
-			print_debug('Modifier context: received invalid info string "%s"' % info_string)
+			push_warning(
+					"Received unrecognized info string "
+					+ '"' + info_string + '".'
+			)
 			return null

@@ -58,8 +58,8 @@ func load_game() -> void:
 	game_from_path.load_game(SAVE_FILE_PATH, game_scene)
 	
 	if game_from_path.error:
+		push_warning("Failed to load the game: ", game_from_path.error_message)
 		chat.send_system_message("Failed to load the game")
-		print_debug(game_from_path.error_message)
 		return
 	
 	chat.send_global_message("[color=#60ff60]Game loaded[/color]")
@@ -73,7 +73,11 @@ func load_game_from_scenario(scenario: Scenario1) -> void:
 	game_from_scenario.load_game(scenario, game_rules.copy(), game_scene)
 	
 	if game_from_scenario.error:
-		print_debug(game_from_scenario.error_message)
+		push_warning(
+				"Failed to load the game from scenario: ",
+				game_from_scenario.error_message
+		)
+		chat.send_system_message("Failed to load the game")
 		return
 	
 	play_game(game_from_scenario.result)
@@ -108,10 +112,11 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 	var game_to_json := GameToJSON.new()
 	game_to_json.convert_game(game)
 	if game_to_json.error:
-		print_debug(
-				"Error converting game to JSON: "
-				+ game_to_json.error_message
+		push_error(
+				"Error converting game to JSON: ",
+				game_to_json.error_message
 		)
+		chat.send_system_message("Failed to send the game to other players.")
 		return
 	
 	if multiplayer_id == -1:
@@ -129,7 +134,11 @@ func _receive_new_game(game_json: Dictionary) -> void:
 	game_from_json.load_game(game_json, game_scene)
 	
 	if game_from_json.error:
-		print_debug(game_from_json.error_message)
+		push_warning(
+				"Failed to load the received game: ",
+				game_from_json.error_message
+		)
+		chat.send_system_message("Failed to load the received game.")
 		return
 	
 	if not sync_check.is_sync_finished():
@@ -216,8 +225,8 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
 	
-	# Make sure that the client receives the
-	# updated list that contains the client's players
+	# Makes sure that the client receives the
+	# updated list that contains the client's players.
 	players.get_client_data(multiplayer_id)
 	await players.player_group_added
 	players.send_all_data(multiplayer_id)
@@ -227,7 +236,7 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 	elif current_scene is MainMenu:
 		_send_enter_main_menu_to_clients(multiplayer_id)
 	else:
-		print_debug("Unrecognized scene. Cannot sync scene with new client.")
+		push_error("Unrecognized scene. Cannot sync scene with new client.")
 
 
 func _on_player_added(player: Player) -> void:

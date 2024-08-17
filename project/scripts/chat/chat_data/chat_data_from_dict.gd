@@ -40,15 +40,15 @@ func parse(data: Dictionary) -> void:
 func _parse_content(
 		content_data: Variant, players_size: int
 ) -> Array[ChatMessage]:
-	if not (content_data is Array):
-		print_debug("Chat content data is not an Array.")
+	if content_data is not Array:
+		push_warning("Chat content data is not an Array.")
 		return []
 	var content_array := content_data as Array
 	
 	var content: Array[ChatMessage] = []
 	for chat_message_data: Variant in content_array:
 		if not (chat_message_data is Dictionary):
-			print_debug("Chat message data is not a Dictionary.")
+			push_warning("Chat message data is not a Dictionary.")
 			continue
 		var chat_message_dict := chat_message_data as Dictionary
 		
@@ -73,14 +73,14 @@ func _parse_content(
 ## Just ignore anything that isn't a string.
 func _parse_players(players_data: Variant) -> Array[String]:
 	if not (players_data is Array):
-		print_debug("Chat players data is not an Array!")
+		push_warning("Chat players data is not an Array.")
 		return []
 	var players_array := players_data as Array
 	
 	var players: Array[String] = []
 	for player_data: Variant in players_array:
 			if not (player_data is String):
-				print_debug("Chat player data is not a String!")
+				push_warning("Chat player data is not a String.")
 				continue
 			var player_string := player_data as String
 			players.append(player_string)

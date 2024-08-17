@@ -87,7 +87,7 @@ static func quick_setup(
 ) -> Army:
 	var minimum_army_size: int = game_.rules.minimum_army_size.value
 	if army_size_ < minimum_army_size:
-		print_debug(
+		push_error(
 				"Tried to create an army, "
 				+ "but its size is smaller than the minimum allowed."
 		)

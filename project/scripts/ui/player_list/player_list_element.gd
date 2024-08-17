@@ -91,7 +91,7 @@ func init() -> void:
 
 func _update_shown_username() -> void:
 	if not player:
-		print_debug("Player was not initialized")
+		push_error("Player was not initialized.")
 		username_label.text = ""
 		return
 	
@@ -147,7 +147,7 @@ func _can_edit() -> bool:
 
 func _submit_username_change() -> void:
 	if not player:
-		print_debug("Tried to change someone's username, but player is null!")
+		push_error("Tried to change someone's username, but player is null!")
 		return
 	
 	var new_username: String = username_line_edit.text.strip_edges()
@@ -179,10 +179,10 @@ func _on_username_changed(_new_username: String) -> void:
 
 func _on_remove_button_pressed() -> void:
 	if not player:
-		print_debug("Tried to remove the player, but player is null!")
+		push_error("Tried to remove the player, but player is null!")
 		return
 	if is_the_only_local_human:
-		print_debug("Tried to remove the only local player.")
+		push_warning("Tried to remove the only local player.")
 		return
 	
 	player.request_deletion()
@@ -190,7 +190,7 @@ func _on_remove_button_pressed() -> void:
 
 func _on_rename_button_pressed() -> void:
 	if _is_renaming:
-		print_debug("Pressed the rename button, but already renaming!")
+		push_warning("Pressed the rename button, but already renaming!")
 		return
 	
 	_is_renaming = true
@@ -198,7 +198,7 @@ func _on_rename_button_pressed() -> void:
 
 func _on_confirm_button_pressed() -> void:
 	if not _is_renaming:
-		print_debug(
+		push_warning(
 				"Pressed the confirm button, but there is nothing to confirm!"
 		)
 		return

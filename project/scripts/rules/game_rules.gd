@@ -715,7 +715,7 @@ func _request_all_data() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _send_all_data() -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
+		push_warning("Received server request, but you're not the server.")
 		return
 	_receive_all_data.rpc(RulesToDict.new().result(self))
 

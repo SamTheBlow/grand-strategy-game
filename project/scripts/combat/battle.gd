@@ -23,7 +23,7 @@ func apply(attacking_army: Army, defending_army: Army) -> void:
 		1:
 			damage_dealt = _algorithm_1(attacking_army, defending_army)
 		_:
-			print_debug("Unrecognized battle algorithm id.")
+			push_warning("Unrecognized battle algorithm id.")
 			return
 	var attacker_damage: int = damage_dealt[0]
 	var defender_damage: int = damage_dealt[1]

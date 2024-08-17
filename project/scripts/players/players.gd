@@ -33,7 +33,7 @@ func _ready() -> void:
 ## Appends given [Player] to the bottom of the list.
 func add_player(player: Player) -> void:
 	if _is_not_allowed_to_make_changes():
-		print_debug("Tried adding a player without permission!")
+		push_warning("Tried adding a player without permission!")
 		return
 	
 	_list.append(player)
@@ -57,7 +57,7 @@ func add_local_human_player() -> void:
 
 func remove_player(player: Player) -> void:
 	if _is_not_allowed_to_make_changes():
-		print_debug("Tried removing a player without permission!")
+		push_warning("Tried removing a player without permission!")
 		return
 	
 	if _list.has(player):
@@ -66,19 +66,19 @@ func remove_player(player: Player) -> void:
 		_send_player_removal_to_clients(player)
 		player_removed.emit(player)
 	else:
-		print_debug("Tried to remove a player, but it isn't on the list!")
+		push_warning("Tried to remove a player, but it isn't on the list!")
 
 
 func kick_player(player: Player) -> void:
 	if _is_not_allowed_to_make_changes():
-		print_debug("Tried kicking a player without permission!")
+		push_warning("Tried kicking a player without permission!")
 		return
 	
 	if _list.has(player):
 		multiplayer.multiplayer_peer.disconnect_peer(player.multiplayer_id)
 		player_kicked.emit(player)
 	else:
-		print_debug("Tried to kick a player, but it isn't on the list!")
+		push_warning("Tried to kick a player, but it isn't on the list!")
 
 
 ## Returns a new copy of this list.
@@ -145,7 +145,7 @@ func you() -> Player:
 	for player in _list:
 		if not player.is_remote():
 			return player
-	print_debug("You don't exist (is this Players list empty?)")
+	push_warning("You don't exist (is this Players list empty?)")
 	return null
 
 
@@ -230,7 +230,7 @@ func _receive_player_removal(node_name: String) -> void:
 			_is_synchronizing = false
 			return
 	
-	print_debug(
+	push_warning(
 			"Received info about removing a player,"
 			+ " but that player could not be found!"
 	)
@@ -257,7 +257,7 @@ func _send_client_data() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _receive_client_data(data: Array) -> void:
 	if not multiplayer.is_server():
-		print_debug(
+		push_warning(
 				"Received data meant for the server,"
 				+ " but you're not the server."
 		)
@@ -278,7 +278,7 @@ func _receive_client_data(data: Array) -> void:
 ## Clients call this to ask the server for a new local player.
 func _request_add_local_player() -> void:
 	if multiplayer.is_server():
-		print_debug("Server tried to make a server request.")
+		push_warning("Server tried to make a server request.")
 		return
 	_consider_add_local_player.rpc_id(1)
 
@@ -286,7 +286,7 @@ func _request_add_local_player() -> void:
 @rpc("any_peer", "call_remote", "reliable")
 func _consider_add_local_player() -> void:
 	if not multiplayer.is_server():
-		print_debug("Received server request, but you're not the server.")
+		push_warning("Received server request, but you're not the server.")
 		return
 	
 	var data := {

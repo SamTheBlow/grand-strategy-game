@@ -88,7 +88,7 @@ var global_modifiers: Dictionary = {}
 var chat: Chat:
 	get:
 		if not chat:
-			print_debug("Game's chat property is not initialized!")
+			push_warning("Game's chat property is not initialized!")
 			chat = Chat.new()
 		return chat
 	set(value):

@@ -32,13 +32,11 @@ func buttons() -> Array[String]:
 func _new_slider_value() -> void:
 	var value := int(troop_slider.value)
 	var max_value := int(troop_slider.max_value)
+	
+	# Prevent a division by zero, just in case
+	# this slider's maximum value is zero for some reason.
 	var percentage: int = 100
-	if max_value == 0:
-		print_debug(
-				"Prevented a division by zero error. "
-				+ "This slider's maximum value is zero for some reason."
-		)
-	else:
+	if max_value != 0:
 		percentage = floori(100.0 * value / float(max_value))
 	
 	troop_label.text = str(value) + " (" + str(percentage) + "%)"

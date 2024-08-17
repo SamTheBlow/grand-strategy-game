@@ -15,6 +15,7 @@ func parse(dict: Dictionary) -> void:
 	result = null
 	
 	var chat_message := ChatMessage.new()
+	
 	if dict.has("user_id"):
 		if dict["user_id"] is int:
 			var id := dict["user_id"] as int
@@ -26,12 +27,13 @@ func parse(dict: Dictionary) -> void:
 			# refers to a valid player in the chat data's player list
 			chat_message.user_id = id
 		else:
-			print_debug("Chat message player id is not an int.")
+			push_warning("Chat message player id is not an int.")
+	
 	if dict.has("text"):
 		if dict["text"] is String:
 			var text := dict["text"] as String
 			chat_message.text = text
 		else:
-			print_debug("Chat message text data is not a string.")
+			push_warning("Chat message text data is not a string.")
 	
 	result = chat_message

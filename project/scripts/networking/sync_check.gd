@@ -20,7 +20,7 @@ func _init(things_to_check: Array[Object]) -> void:
 			_number_of_things_to_check += 1
 			object.connect("sync_finished", _on_sync_finished)
 		else:
-			print_debug("Provided an object that doesn't have sync_finished!")
+			push_warning("Provided an object that doesn't have sync_finished!")
 
 
 func is_sync_finished() -> bool:

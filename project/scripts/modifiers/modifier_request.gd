@@ -32,9 +32,9 @@ func add_provider(object: Object) -> void:
 	const method_name: String = "_on_modifiers_requested"
 	
 	if not object.has_method(method_name):
-		print_debug(
+		push_warning(
 				"Tried to add a modifier provider that "
-				+ "doesn't have a \"" + method_name + "\" method."
+				+ "doesn't have method \"" + method_name + "\"."
 		)
 		return
 	
