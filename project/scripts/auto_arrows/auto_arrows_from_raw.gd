@@ -1,7 +1,7 @@
-class_name AutoArrowsFromJSON
+class_name AutoArrowsFromRaw
 ## Converts raw data back into an [AutoArrows] object.
 ## 
-## See also: [AutoArrowsToJSON], [AutoArrow]
+## See also: [AutoArrowsToRaw], [AutoArrow]
 
 
 ## Note that the given [Game]'s provinces need to be already loaded.

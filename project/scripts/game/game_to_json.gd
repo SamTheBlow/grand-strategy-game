@@ -51,7 +51,7 @@ func convert_game(game: Game) -> void:
 		
 		# Autoarrows
 		var raw_auto_arrows: Array = (
-				AutoArrowsToJSON.new().result(country.auto_arrows)
+				AutoArrowsToRaw.new().result(country.auto_arrows)
 		)
 		if raw_auto_arrows.size() > 0:
 			country_data["auto_arrows"] = raw_auto_arrows

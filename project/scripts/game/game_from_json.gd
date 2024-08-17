@@ -312,7 +312,7 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 			continue
 		
 		country_list[i].auto_arrows = (
-				AutoArrowsFromJSON.new()
+				AutoArrowsFromRaw.new()
 				.result(game, country_dict["auto_arrows"])
 		)
 

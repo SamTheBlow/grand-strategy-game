@@ -1,7 +1,7 @@
-class_name AutoArrowsToJSON
+class_name AutoArrowsToRaw
 ## Converts an [AutoArrows] object into raw data.
 ## 
-## See also: [AutoArrowsFromJSON], [AutoArrow]
+## See also: [AutoArrowsFromRaw], [AutoArrow]
 
 
 func result(auto_arrows: AutoArrows) -> Array:
