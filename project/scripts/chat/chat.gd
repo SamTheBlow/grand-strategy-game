@@ -167,6 +167,7 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 						"/help - Get a list of every command",
 						"/fs - Toggle fullscreen",
 						"/clear - Clear the chat's contents",
+						"/about - Get the game version",
 						"The commands below only work in-game:",
 						"/save - Save the game",
 						"/load - Load the saved game",
@@ -187,6 +188,12 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 					send_system_message("Switched to fullscreen")
 			"clear":
 				chat_data.clear()
+			"about":
+				send_system_message("Current version: " + str(
+						ProjectSettings.get_setting_with_override(
+								"application/config/version"
+						)
+				))
 			"save":
 				save_requested.emit()
 			"load":
