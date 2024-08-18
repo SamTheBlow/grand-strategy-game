@@ -1,8 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://8rs6mtufs60s"]
+[gd_scene load_steps=3 format=3 uid="uid://8rs6mtufs60s"]
 
 [ext_resource type="Script" path="res://scripts/ui/popups/build_fortress_popup.gd" id="1_hwjbu"]
+[ext_resource type="PackedScene" uid="uid://0xwvup7qe5f" path="res://scenes/ui/action_cost.tscn" id="2_8oley"]
 
-[node name="BuyFortressPopup" type="VBoxContainer" node_paths=PackedStringArray("cost_label")]
+[node name="BuyFortressPopup" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,11 +12,28 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_hwjbu")
-cost_label = NodePath("Label")
 
-[node name="Label" type="Label" parent="."]
+[node name="SpacingTop" type="Control" parent="."]
 layout_mode = 2
-size_flags_vertical = 6
-text = "Qwertyuiopasdfghjklzxcvbnm. I'm sorry, I don't speak watermelon."
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="Title" type="Label" parent="."]
+layout_mode = 2
+text = "Build a fortress?"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="SpacingMiddle" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="ActionCost" parent="." instance=ExtResource("2_8oley")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpacingBottom" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2

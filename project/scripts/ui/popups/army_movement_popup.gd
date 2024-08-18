@@ -3,6 +3,7 @@ extends VBoxContainer
 ## Contents for the popup that appears when the user wants to move an [Army].
 ##
 ## See [GamePopup] to learn more on how popups work.
+# TODO DRY. This code is very similar to that of [RecruitmentPopup].
 
 
 signal confirmed(army: Army, troop_count: int, destination: Province)

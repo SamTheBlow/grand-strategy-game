@@ -8,23 +8,32 @@ extends VBoxContainer
 
 signal confirmed(province: Province)
 
-@export var cost_label: Label
+var province: Province:
+	set(value):
+		province = value
+		_update_costs()
 
-var _province: Province
-
-
-## To be called when this node is created.
-func init(province: Province, cost: int) -> void:
-	_province = province
-	cost_label.text = "Build a fortress for " + str(cost) + " money?"
+@onready var _action_cost := %ActionCost as ActionCostNode
 
 
-## See [GamePopup]
+func _ready() -> void:
+	_update_costs()
+
+
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
 
-## See [GamePopup]
+func _update_costs() -> void:
+	if _action_cost == null:
+		return
+	
+	_action_cost.money_cost = (
+			null if province == null else
+			ResourceCost.new(province.game.rules.fortress_price.value)
+	)
+
+
 func _on_button_pressed(button_index: int) -> void:
 	if button_index == 1:
-		confirmed.emit(_province)
+		confirmed.emit(province)

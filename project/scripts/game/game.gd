@@ -401,10 +401,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			var build_popup := (
 					build_fortress_scene.instantiate() as BuildFortressPopup
 			)
-			build_popup.init(
-					world.provinces.selected_province,
-					rules.fortress_price.value
-			)
+			build_popup.province = world.provinces.selected_province
 			build_popup.confirmed.connect(_on_build_fortress_confirmed)
 			_add_popup(build_popup)
 		1:
@@ -416,11 +413,9 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
-			recruitment_popup.init(
-					world.provinces.selected_province,
-					army_recruitment_limits.minimum(),
-					army_recruitment_limits.maximum()
-			)
+			recruitment_popup.province = world.provinces.selected_province
+			recruitment_popup.min_amount = army_recruitment_limits.minimum()
+			recruitment_popup.max_amount = army_recruitment_limits.maximum()
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 			_add_popup(recruitment_popup)
 
