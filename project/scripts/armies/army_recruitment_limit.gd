@@ -76,6 +76,10 @@ func _calculated_maximum() -> int:
 		error_message = "The province is not under your country's control!"
 		return 0
 	
+	# Puts in here all the different limits
+	# and at the end takes the smallest one.
+	var maximums: Array[int] = []
+	
 	# Money
 	var money_per_unit: float = game.rules.recruitment_money_per_unit.value
 	var money_for_one_troop: int = ceili(money_per_unit)
@@ -86,7 +90,9 @@ func _calculated_maximum() -> int:
 				+ "but you only have " + str(_country.money) + "."
 		)
 		return 0
-	var max_troops_with_money: int = floori(_country.money / money_per_unit)
+	if money_per_unit != 0.0:
+		var max_troops_with_money: int = floori(_country.money / money_per_unit)
+		maximums.append(max_troops_with_money)
 	
 	# Population
 	var population_size: int = _province.population.population_size
@@ -99,10 +105,22 @@ func _calculated_maximum() -> int:
 				+ "but the province only has " + str(population_size) + "."
 		)
 		return 0
-	var max_troops_with_pop: int = floori(population_size / pop_per_unit)
+	if pop_per_unit != 0.0:
+		var max_troops_with_pop: int = floori(population_size / pop_per_unit)
+		maximums.append(max_troops_with_pop)
+	
+	if maximums.size() == 0:
+		error_message = "There is no limit on how many you can recruit!"
+		return 0
+	
+	# Takes the smallest of the limits.
+	var smallest_maximum: int = -1
+	for candidate_max in maximums:
+		if smallest_maximum == -1 or candidate_max < smallest_maximum:
+			smallest_maximum = candidate_max
 	
 	error_message = ""
-	return mini(max_troops_with_money, max_troops_with_pop)
+	return smallest_maximum
 
 
 func _check_condition(condition: bool) -> void:

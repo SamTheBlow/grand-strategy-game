@@ -165,7 +165,7 @@ func _update_side_node_positions(
 
 
 func _update_nodes_province() -> void:
-	if not is_node_ready():
+	if not is_node_ready() or province == null:
 		return
 	
 	_build_fortress_button.province = province

@@ -16,6 +16,14 @@ anchor_left = 0.4
 anchor_right = 0.6
 anchor_bottom = 1.0
 
+[node name="NoCosts" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+text = "(There are no costs.)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="PopulationContainer" type="HBoxContainer" parent="VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
