@@ -9,7 +9,7 @@ extends Control
 signal interface_changed()
 signal message_sent(text: String, color: Color)
 
-@export var port: int = 31400
+@export var port: int = 31401
 
 ## When hosting, this is the maximum number of users
 ## allowed on the server at any time, [b]excluding the host[/b].
