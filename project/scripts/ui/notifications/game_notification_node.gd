@@ -23,21 +23,6 @@ func _ready() -> void:
 	_refresh()
 
 
-# TODO This doesn't work at all 💀
-# Also, if a different unrelated event happens on the same frame,
-# the action will go through anyway (try spamming any keyboard key
-# while spamming right click on the notification)
-func _unhandled_input(_event: InputEvent) -> void:
-	if (
-			game_notification != null
-			and Input.is_action_just_pressed("dismiss_notification")
-			and
-			get_global_rect().has_point(get_viewport().get_mouse_position())
-	):
-		dismissed.emit(game_notification)
-		get_viewport().set_input_as_handled()
-
-
 func _refresh() -> void:
 	if not is_node_ready():
 		return
@@ -76,5 +61,9 @@ func _on_notification_handled(_game_notification: GameNotification) -> void:
 	queue_free()
 
 
-func _on_button_pressed() -> void:
+func _on_button_left_click_just_released() -> void:
 	pressed.emit(game_notification)
+
+
+func _on_button_right_click_just_released() -> void:
+	dismissed.emit(game_notification)

@@ -1,7 +1,8 @@
-[gd_scene load_steps=8 format=3 uid="uid://4ctqqicmn2mn"]
+[gd_scene load_steps=9 format=3 uid="uid://4ctqqicmn2mn"]
 
 [ext_resource type="Script" path="res://scripts/ui/notifications/game_notification_node.gd" id="1_2ds1f"]
 [ext_resource type="Script" path="res://scripts/ui/scaled_label.gd" id="2_37k4c"]
+[ext_resource type="Script" path="res://scripts/ui/custom_button.gd" id="3_dyl3y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6m8fg"]
 bg_color = Color(0, 0, 0, 0)
@@ -81,5 +82,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_b321m")
+button_mask = 3
+script = ExtResource("3_dyl3y")
+grab_focus_on_right_click = true
 
-[connection signal="pressed" from="ColorRect/Button" to="." method="_on_button_pressed"]
+[connection signal="left_click_just_released" from="ColorRect/Button" to="." method="_on_button_left_click_just_released"]
+[connection signal="right_click_just_released" from="ColorRect/Button" to="." method="_on_button_right_click_just_released"]
