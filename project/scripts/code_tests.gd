@@ -6,19 +6,22 @@ extends Node
 ## The tests will run automatically every time the game is run.
 
 
+const RUN_IN_DEBUG_BUILDS_ONLY: bool = true
 const RUN_PERFORMANCE_TESTS: bool = false
-
 const RUN_UNIT_TESTS: bool = true
 
 
 func _ready() -> void:
+	if RUN_IN_DEBUG_BUILDS_ONLY and not OS.is_debug_build():
+		return
+	
 	if RUN_PERFORMANCE_TESTS:
-		_performance_test()
+		_run_performance_test()
 	if RUN_UNIT_TESTS:
-		_unit_test()
+		_run_unit_test()
 
 
-func _performance_test() -> void:
+func _run_performance_test() -> void:
 	print("[PERFORMANCE TEST] Starting performance test")
 	
 	var number_of_tests: int = 1000000
@@ -48,7 +51,7 @@ func _performance_test() -> void:
 	print("[PERFORMANCE TEST] End of performance test")
 
 
-func _unit_test() -> void:
+func _run_unit_test() -> void:
 	print("[UNIT TEST] Starting unit tests...")
 	
 	# Run unit tests here
