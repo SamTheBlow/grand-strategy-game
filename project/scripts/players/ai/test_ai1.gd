@@ -1,8 +1,8 @@
 class_name TestAI1
 extends PlayerAI
 ## Test AI.
-## Always tries to move its armies to the nearest non-controlled province.
-## Also leaves some troops idle to defend.
+## Moves its armies towards neutral and enemy territory.
+## Always attacks. Also leaves some troops idle to defend.
 ## Builds fortresses in the most populated provinces on the frontline.
 
 
@@ -11,15 +11,10 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 	
-	var provinces: Array[Province] = game.world.provinces.list()
-	var number_of_provinces: int = provinces.size()
-	for i in number_of_provinces:
-		var province: Province = provinces[i]
-		
+	for province in game.world.provinces.list():
 		var destination_provinces: Array[Province] = (
 				_destination_provinces(province, player.playing_country)
 		)
-		
 		var your_armies: Array[Army] = (
 				game.world.armies.armies_of_country_in_province(
 						player.playing_country, province
@@ -34,8 +29,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 
 func _try_build_fortresses(
-		game: Game,
-		playing_country: Country
+		game: Game, playing_country: Country
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled.value:
 		return []
@@ -98,12 +92,18 @@ func _destination_provinces(
 		source_province: Province, playing_country: Country
 ) -> Array[Province]:
 	var province_filter: Callable = (
-			func(province_: Province) -> bool:
-				return province_.owner_country != playing_country
+			func(province: Province) -> bool:
+				return (
+						province.owner_country == null
+						or not playing_country
+						.has_permission_to_move_into_country(
+								province.owner_country
+						)
+				)
 	)
 	
 	var destination_provinces: Array[Province] = [source_province]
-	destination_provinces.append_array(
-			source_province.nearest_provinces(province_filter)
-	)
+	var calculation := NearestProvinces.new()
+	calculation.calculate(source_province, province_filter)
+	destination_provinces.append_array(calculation.first_links)
 	return destination_provinces

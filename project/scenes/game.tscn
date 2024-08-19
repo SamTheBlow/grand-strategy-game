@@ -22,7 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://scenes/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_input.gd" id="17_bla78"]
-[ext_resource type="Script" path="res://scripts/debug/debug_highlight_frontline.gd" id="18_pevj0"]
+[ext_resource type="Script" path="res://scripts/debug/debug_province_highlight.gd" id="18_pevj0"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_sync.gd" id="18_vpgj8"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
@@ -65,7 +65,7 @@ component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 popups = NodePath("UILayer/GameUI/Popups")
 battle = ExtResource("15_vh3er")
 
-[node name="DebugHighlightFrontline" type="Node" parent="." node_paths=PackedStringArray("game")]
+[node name="DebugProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("game")]
 script = ExtResource("18_pevj0")
 is_enabled = false
 game = NodePath("..")
