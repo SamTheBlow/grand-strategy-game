@@ -18,7 +18,9 @@ func convert_game(game: Game) -> void:
 	json_data["version"] = _version
 	
 	# Rules
-	json_data["rules"] = RulesToDict.new().result(game.rules)
+	var rules_data: Dictionary = RulesToDict.new().result(game.rules)
+	if not rules_data.is_empty():
+		json_data["rules"] = rules_data
 	
 	# RNG
 	json_data["rng"] = RNGToRawDict.new().result(game.rng)
