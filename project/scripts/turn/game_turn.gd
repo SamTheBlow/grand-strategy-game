@@ -70,15 +70,18 @@ func loop() -> void:
 
 
 func _end_player_turn() -> void:
+	var player: GamePlayer = playing_player()
+	
 	# Make army movements according to [AutoArrow]s
-	AutoArrowBehavior.new().apply(game)
+	if player.is_human:
+		AutoArrowBehavior.new().apply(game)
 	
 	# Exhaust all the armies
 	# HACK this is so that they all merge properly
 	# TODO whether or not an army is active
 	# should never matter if it's not the player's turn
 	for army in game.world.armies.list():
-		if army.owner_country == playing_player().playing_country:
+		if army.owner_country == player.playing_country:
 			army.exhaust()
 	
 	# Merge armies, update province ownership
