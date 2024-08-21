@@ -1,13 +1,13 @@
 class_name MilitaryAccessLossBehavior
 ## Class responsible for what to do when military access is lost.
 ##
-## Note that this must be instantiated with a game that already
-## has its countries and provinces loaded.
+## No setup needed.
 
 
 var _game: Game
 
 
+## Note that given game must already have its countries and world loaded.
 func _init(game: Game) -> void:
 	_game = game
 	
@@ -35,9 +35,7 @@ func _init(game: Game) -> void:
 
 
 func _on_country_added(country: Country) -> void:
-	country.relationships.relationship_created.connect(
-			_on_relationship_created
-	)
+	country.relationships.relationship_created.connect(_on_relationship_created)
 
 
 func _on_relationship_created(relationship: DiplomacyRelationship) -> void:
@@ -70,6 +68,7 @@ func _apply(
 		affected_countries: Array[Country],
 		affected_provinces: Array[Province]
 ) -> void:
+	# TODO bad code: hard coded values
 	match _game.rules.military_access_loss_behavior_option.selected:
 		0:
 			pass

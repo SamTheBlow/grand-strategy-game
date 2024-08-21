@@ -17,6 +17,8 @@ enum {
 	HANDLE_NOTIFICATION = 6,
 }
 
+const ID_KEY: String = "id"
+
 
 ## Takes in the current game as well as the player trying to apply the action.
 func apply_to(_game: Game, _player: GamePlayer) -> void:
@@ -32,11 +34,11 @@ func raw_data() -> Dictionary:
 ## Returns an action built with given raw data.
 ## This may return null if an error occurs.
 static func from_raw_data(data: Dictionary) -> Action:
-	if not data.has("id"):
+	if not data.has(ID_KEY):
 		push_error("Action data does not have an id.")
 		return null
 	
-	match data["id"]:
+	match data[ID_KEY]:
 		END_TURN:
 			return ActionEndTurn.from_raw_data(data)
 		ARMY_SPLIT:

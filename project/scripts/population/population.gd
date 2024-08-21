@@ -1,8 +1,6 @@
 class_name Population
-## A population, usually of a [Province] (but it doesn't have to be).
-## Its size may change at the start of each [GameTurn]
-## depending on the [GameRules].
-## Emits a signal when its size changes.
+## Represents a population size as a number.
+## Applies [PopulationGrowth] at the start of each [GameTurn].
 
 
 signal size_changed(new_value: int)

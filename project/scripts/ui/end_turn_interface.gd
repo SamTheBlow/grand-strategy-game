@@ -1,9 +1,8 @@
 class_name EndTurnInterface
 extends Control
-## The interface allowing a player to end their turn.
-## Typically contains a [Button] that says "End Turn".
-## This class is responsible for hiding the interface when
-## it is not the user's turn to play.
+## Hides itself when it is not the user's turn to play.
+## (Even though the class is named and intended for the "End Turn" button,
+## this script has no functionality specific to it.)
 
 
 @export var _game: Game
@@ -17,8 +16,9 @@ func _ready() -> void:
 
 
 func _update_visibility(player: GamePlayer) -> void:
-	visible = player and MultiplayerUtils.has_gameplay_authority(
-			multiplayer, player
+	visible = (
+			player != null
+			and MultiplayerUtils.has_gameplay_authority(multiplayer, player)
 	)
 
 

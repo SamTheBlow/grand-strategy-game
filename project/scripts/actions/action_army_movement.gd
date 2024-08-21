@@ -3,6 +3,9 @@ extends Action
 ## Moves a given [Army] to a given [Province].
 
 
+const ARMY_ID_KEY: String = "army_id"
+const DEST_PROVINCE_ID_KEY: String = "destination_province_id"
+
 var _army_id: int
 var _destination_province_id: int
 
@@ -15,6 +18,9 @@ func _init(army_id: int, destination_province_id: int) -> void:
 func apply_to(game: Game, player: GamePlayer) -> void:
 	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
+		# Note that this may sometimes be triggered by
+		# the AI making invalid moves. (See [AIDecisionUtils])
+		
 		push_warning("Tried to move an army that doesn't exist!")
 		return
 	
@@ -42,25 +48,31 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		return
 	
 	if not army.can_move_to(destination_province):
+		# Note that the reason why this is commented out is because
+		# the AI still makes many invalid moves. (See [AIDecisionUtils])
+		
 		#push_warning("Tried to move an army to an invalid destination!")
 		return
 	
 	army.move_to_province(destination_province)
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
 func raw_data() -> Dictionary:
 	return {
-		"id": ARMY_MOVEMENT,
-		"army_id": _army_id,
-		"destination_province_id": _destination_province_id,
+		ID_KEY: ARMY_MOVEMENT,
+		ARMY_ID_KEY: _army_id,
+		DEST_PROVINCE_ID_KEY: _destination_province_id,
 	}
 
 
-## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionArmyMovement:
+	if not (
+			ParseUtils.dictionary_has_number(data, ARMY_ID_KEY)
+			and ParseUtils.dictionary_has_number(data, DEST_PROVINCE_ID_KEY)
+	):
+		return null
+	
 	return ActionArmyMovement.new(
-			data["army_id"] as int,
-			data["destination_province_id"] as int
+			ParseUtils.dictionary_int(data, ARMY_ID_KEY),
+			ParseUtils.dictionary_int(data, DEST_PROVINCE_ID_KEY)
 	)

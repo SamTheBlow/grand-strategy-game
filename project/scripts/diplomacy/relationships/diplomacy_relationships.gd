@@ -8,6 +8,7 @@ var _game: Game
 var _source_country: Country
 var _default_relationship_data: Dictionary
 var _base_actions: Array[int] = []
+
 var _list: Array[DiplomacyRelationship] = []
 
 
@@ -46,6 +47,10 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 			default_data.duplicate(),
 			base_actions,
 	)
+	
+	# TODO this is ugly
+	if default_data.has("diplomacy_presets"):
+		relationship.diplomacy_presets = default_data["diplomacy_presets"]
 	if default_data.has("diplomacy_actions"):
 		relationship.diplomacy_actions = default_data["diplomacy_actions"]
 	
@@ -71,24 +76,18 @@ static func new_default_data(game_rules: GameRules) -> Dictionary:
 		DiplomacyRelationship.IS_FIGHTING_KEY: (
 				game_rules.is_fighting_default.value
 		),
+		"diplomacy_presets": game_rules.diplomatic_presets,
 		"diplomacy_actions": game_rules.diplomatic_actions,
 	}
 	
-	# ATTENTION this code relies of the fact that the presets
-	# for "allied", "neutral", "at war" have the IDs 1, 2, 3
-	match game_rules.diplomacy_presets_option.selected:
-		1:
-			# Allied
-			default_data[DiplomacyRelationship.PRESET_ID_KEY] = 1
-		2:
-			# Neutral
-			default_data[DiplomacyRelationship.PRESET_ID_KEY] = 2
-		3:
-			# At war
-			default_data[DiplomacyRelationship.PRESET_ID_KEY] = 3
-		_:
-			# Presets are disabled
-			pass
+	# ATTENTION: This assumes that the rule's value is the preset's id.
+	var diplomatic_presets_option: int = (
+			game_rules.diplomacy_presets_option.selected
+	)
+	if diplomatic_presets_option != 0:
+		default_data[DiplomacyRelationship.PRESET_ID_KEY] = (
+				diplomatic_presets_option
+		)
 	
 	return default_data
 

@@ -1,4 +1,6 @@
 class_name AutoArrows
+## List of [AutoArrow] objects.
+## Provides useful functions and signals.
 
 
 signal arrow_added(auto_arrow: AutoArrow)
@@ -8,15 +10,15 @@ var _list: Array[AutoArrow] = []
 
 
 func add(auto_arrow: AutoArrow) -> void:
-	if is_duplicate(auto_arrow):
+	if has_equivalent_in_list(auto_arrow):
 		return
+	
 	_list.append(auto_arrow)
 	arrow_added.emit(auto_arrow)
 
 
 ## You don't have to pass an exact reference.
-## Any [AutoArrow] that is considered a
-## duplicate of the given arrow will be removed.
+## Any [AutoArrow] that is considered equivalent to given arrow will be removed.
 func remove(auto_arrow: AutoArrow) -> void:
 	var list_arrow: AutoArrow
 	
@@ -39,6 +41,7 @@ func remove(auto_arrow: AutoArrow) -> void:
 	arrow_removed.emit(list_arrow)
 
 
+## Removes from this list all autoarrows whose source province is given province.
 func remove_all_from_province(source_province: Province) -> void:
 	for auto_arrow in list():
 		if auto_arrow.source_province == source_province:
@@ -50,15 +53,9 @@ func list() -> Array[AutoArrow]:
 	return _list.duplicate()
 
 
-func is_duplicate(auto_arrow: AutoArrow) -> bool:
+## Returns true if this autoarrow or an equivalent of it is already in the list.
+func has_equivalent_in_list(auto_arrow: AutoArrow) -> bool:
 	for arrow in _list:
-		if arrow == auto_arrow:
-			continue
 		if arrow.is_equivalent_to(auto_arrow):
 			return true
 	return false
-
-
-func _on_property_changed(auto_arrow: AutoArrow) -> void:
-	if is_duplicate(auto_arrow):
-		remove(auto_arrow)

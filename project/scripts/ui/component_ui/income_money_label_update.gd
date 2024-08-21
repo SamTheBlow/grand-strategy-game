@@ -1,7 +1,7 @@
 class_name IncomeMoneyLabelUpdate
 extends Node
-## Automatically updates a given [Label]'s text to show
-## a given [Province]'s [IncomeMoney].
+## Updates given [Label]'s text so that it always shows
+## given [Province]'s [IncomeMoney] even after it changes.
 ##
 ## See also: [PopulationSizeLabelUpdate], [ComponentUI]
 

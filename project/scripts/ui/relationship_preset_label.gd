@@ -1,6 +1,7 @@
 class_name RelationshipPresetLabel
 extends Label
-## A label that shows a preset relationship between two countries.
+## Updates its text and color to match
+## the [DiplomacyPreset] of given [DiplomacyRelationship].
 ## Hides itself if no relationship is given.
 
 

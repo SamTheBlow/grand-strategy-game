@@ -1,6 +1,6 @@
 class_name Countries
-## Represents a list of [Country].
-## Provides utility function to find a country by its id.
+## A list of [Country] objects.
+## Provides utility functions and signals.
 
 
 signal country_added(country: Country)

@@ -1,11 +1,7 @@
 class_name ProvinceShapePolygon2D
 extends Polygon2D
-## A [Province]'s shape.
-## It can draw an outline of your choice around the drawn polygon.
-## Emits a signal when the mouse interacts with this shape.
-##
-## See this page for more info:
-## https://godotengine.org/qa/3963/is-it-possible-to-have-a-polygon2d-with-outline
+## The visuals for a [Province]'s shape.
+## Draws an outline around its polygon, when applicable, with given properties.
 
 
 ## Emitted when a mouse event occurs and the mouse cursor is on this shape.
@@ -66,16 +62,14 @@ func _draw() -> void:
 
 
 func _draw_outline(
-		poly: PackedVector2Array,
-		ocolor: Color,
-		width: float
+		vertices: PackedVector2Array, color_: Color, width: float
 ) -> void:
 	var radius: float = width * 0.5
-	draw_circle(poly[0], radius, ocolor)
-	for i in range(1, poly.size()):
-		draw_line(poly[i - 1], poly[i], ocolor, width)
-		draw_circle(poly[i], radius, ocolor)
-	draw_line(poly[poly.size() - 1], poly[0], ocolor, width)
+	draw_circle(vertices[0], radius, color_)
+	for i in range(1, vertices.size()):
+		draw_line(vertices[i - 1], vertices[i], color_, width)
+		draw_circle(vertices[i], radius, color_)
+	draw_line(vertices[vertices.size() - 1], vertices[0], color_, width)
 
 
 func mouse_is_inside_shape() -> bool:

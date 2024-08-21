@@ -1,5 +1,8 @@
 class_name RelationshipInfoNode
 extends Control
+## Displays a single piece of information about
+## the relationship between two given countries.
+## Shows the first country's stance towards the second country, and vice versa.
 
 
 var country_1: Country:

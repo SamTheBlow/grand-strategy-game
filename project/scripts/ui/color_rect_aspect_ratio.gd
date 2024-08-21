@@ -1,6 +1,6 @@
 @tool
 extends ColorRect
-## Always ensures that this ColorRect's size has the given aspect ratio.
+## Ensures that this ColorRect's size always respects given aspect ratio.
 
 
 @export var aspect_ratio: float = 1.0:

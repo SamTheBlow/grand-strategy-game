@@ -1,4 +1,11 @@
 class_name GameNotification
+## Informs a specific [Country] of something.
+## The country can either dismiss the notification
+## or choose between some predefined outcome options.
+## The notification is automatically dismissed after some number of turns.
+##
+## This is a base class, so it doesn't do anything.
+## Extend this class to give it functionality, outcome options, etc.
 
 
 signal handled(this: GameNotification)

@@ -1,9 +1,88 @@
-class_name GameFromJSON
-## Class responsible for loading a game using JSON data.
+class_name GameFromRawDict
+## Converts raw data into a new [Game].
+##
+## See also: [GameToRawDict]
 # TODO tons of stuff in here needs to verify & return errors
+# TODO separate into smaller classes
 
+
+const VERSION_KEY: String = "version"
+const RULES_KEY: String = "rules"
+const RNG_KEY: String = "rng"
+const TURN_KEY: String = "turn"
+const WORLD_KEY: String = "world"
+const COUNTRIES_KEY: String = "countries"
+const PLAYERS_KEY: String = "players"
+
+# Specific to [GameTurn] data
+const TURN_TURN_KEY: String = "turn"
+const TURN_PLAYER_INDEX_KEY: String = "playing_player_index"
+
+# Specific to [GameWorld] data
+const WORLD_LIMITS_KEY: String = "limits"
+const WORLD_PROVINCES_KEY: String = "provinces"
+const WORLD_ARMIES_KEY: String = "armies"
+
+# Specific to [WorldLimits] data
+const WORLD_LIMIT_LEFT_KEY: String = "left"
+const WORLD_LIMIT_TOP_KEY: String = "top"
+const WORLD_LIMIT_RIGHT_KEY: String = "right"
+const WORLD_LIMIT_BOTTOM_KEY: String = "bottom"
+
+# Specific to [Country] data
+const COUNTRY_ID_KEY: String = "id"
+const COUNTRY_NAME_KEY: String = "country_name"
+const COUNTRY_COLOR_KEY: String = "color"
+const COUNTRY_MONEY_KEY: String = "money"
+const COUNTRY_RELATIONSHIPS_KEY: String = "relationships"
+const COUNTRY_NOTIFICATIONS_KEY: String = "notifications"
+const COUNTRY_AUTOARROWS_KEY: String = "auto_arrows"
+
+# Specific to [GamePlayer] data
+const PLAYER_ID_KEY: String = "id"
+const PLAYER_COUNTRY_ID_KEY: String = "playing_country_id"
+const PLAYER_IS_HUMAN_KEY: String = "is_human"
+const PLAYER_USERNAME_KEY: String = "username"
+const PLAYER_HUMAN_ID_KEY: String = "human_id"
+const PLAYER_AI_TYPE_KEY: String = "ai_type"
+const PLAYER_AI_PERSONALITY_KEY: String = "ai_personality_type"
+
+# Specific to [Province] data
+const PROVINCE_ID_KEY: String = "id"
+const PROVINCE_LINKS_KEY: String = "links"
+const PROVINCE_POSITION_ARMY_HOST_X_KEY: String = "position_army_host_x"
+const PROVINCE_POSITION_ARMY_HOST_Y_KEY: String = "position_army_host_y"
+const PROVINCE_SHAPE_KEY: String = "shape"
+const PROVINCE_POSITION_KEY: String = "position"
+const PROVINCE_POS_X_KEY: String = "x"
+const PROVINCE_POS_Y_KEY: String = "y"
+const PROVINCE_OWNER_ID_KEY: String = "owner_country_id"
+const PROVINCE_POPULATION_KEY: String = "population"
+const PROVINCE_BUILDINGS_KEY: String = "buildings"
+const PROVINCE_INCOME_MONEY_KEY: String = "income_money"
+
+# Specific to province shape data
+const PROVINCE_SHAPE_X_KEY: String = "x"
+const PROVINCE_SHAPE_Y_KEY: String = "y"
+
+# Specific to [Population] data
+const POPULATION_SIZE_KEY: String = "size"
+
+# Specific to [Building] data
+const BUILDING_TYPE_KEY: String = "type"
+const BUILDING_TYPE_FORTRESS: String = "fortress"
+
+# Specific to [Army] data
+const ARMY_MOVEMENTS_KEY: String = "number_of_movements_made"
+const ARMY_ID_KEY: String = "id"
+const ARMY_SIZE_KEY: String = "army_size"
+const ARMY_OWNER_ID_KEY: String = "owner_country_id"
+const ARMY_PROVINCE_ID_KEY: String = "province_id"
 
 # 4.0 Backwards compatibility: can't use a different value
+## The format version. If changes need to be made in the future
+## to how the game is saved and loaded, this will allow us to tell
+## if a file was made in an older or a newer version.
 const SAVE_DATA_VERSION: String = "1"
 
 var error: bool = false
@@ -22,11 +101,11 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	var json_dict: Dictionary = json_data
 	
 	# Check version
-	if not json_dict.has("version"):
+	if not json_dict.has(VERSION_KEY):
 		error = true
 		error_message = "JSON data doesn't have a \"version\" property."
 		return
-	var version: String = json_dict["version"]
+	var version: String = json_dict[VERSION_KEY]
 	if version != SAVE_DATA_VERSION:
 		error = true
 		error_message = "Save data is from an unrecognized version."
@@ -38,46 +117,43 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	
 	# Rules
 	var rules_dict: Dictionary = {}
-	if ParseUtils.dictionary_has_dictionary(json_dict, "rules"):
-		rules_dict = json_dict["rules"]
-	game.rules = RulesFromDict.new().result(rules_dict)
+	if ParseUtils.dictionary_has_dictionary(json_dict, RULES_KEY):
+		rules_dict = json_dict[RULES_KEY]
+	game.rules = RulesFromRawDict.new().result(rules_dict)
 	
 	# RNG
 	# 4.0 Backwards compatibility: can't require RNG to be in the save data.
-	if ParseUtils.dictionary_has_dictionary(json_dict, "rng"):
-		game.rng = RNGFromRawDict.new().result(json_dict["rng"])
+	if ParseUtils.dictionary_has_dictionary(json_dict, RNG_KEY):
+		game.rng = RNGFromRawDict.new().result(json_dict[RNG_KEY])
 	
 	# Turn
-	var turn_key: String = "turn"
-	var turn_property_key: String = "turn"
-	var player_player_index_key: String = "playing_player_index"
-	if json_dict.has(turn_key):
-		if not json_dict[turn_key] is Dictionary:
+	if json_dict.has(TURN_KEY):
+		if not json_dict[TURN_KEY] is Dictionary:
 			error = true
 			error_message = "Turn property (in root) is not a dictionary."
 			return
-		var turn_dict: Dictionary = json_dict[turn_key]
+		var turn_dict: Dictionary = json_dict[TURN_KEY]
 		
-		if not turn_dict.has(turn_property_key):
+		if not turn_dict.has(TURN_TURN_KEY):
 			error = true
 			error_message = "Cannot find turn property."
 			return
-		if not ParseUtils.is_number(turn_dict[turn_property_key]):
+		if not ParseUtils.is_number(turn_dict[TURN_TURN_KEY]):
 			error = true
 			error_message = "Turn property is not a number."
 			return
-		var turn: int = ParseUtils.number_as_int(turn_dict[turn_property_key])
+		var turn: int = ParseUtils.number_as_int(turn_dict[TURN_TURN_KEY])
 		
-		if not turn_dict.has(player_player_index_key):
+		if not turn_dict.has(TURN_PLAYER_INDEX_KEY):
 			error = true
 			error_message = "Cannot find playing player index property."
 			return
-		if not ParseUtils.is_number(turn_dict[player_player_index_key]):
+		if not ParseUtils.is_number(turn_dict[TURN_PLAYER_INDEX_KEY]):
 			error = true
 			error_message = "Playing player index is not a number."
 			return
 		var playing_player_index: int = ParseUtils.number_as_int(
-				turn_dict[player_player_index_key]
+				turn_dict[TURN_PLAYER_INDEX_KEY]
 		)
 		
 		game.setup_turn(turn, playing_player_index)
@@ -112,38 +188,41 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	game.world = game_world_2d
 	# TASK verify & return errors
 	if not (
-			json_dict.has("world")
-			and json_dict["world"].has("limits")
-			and json_dict["world"].has("provinces")
+			json_dict.has(WORLD_KEY)
+			and json_dict[WORLD_KEY].has(WORLD_LIMITS_KEY)
+			and json_dict[WORLD_KEY].has(WORLD_PROVINCES_KEY)
 	):
 		error = true
 		error_message = "World data is missing."
 		return
 	
 	# Camera limits
-	var limits_data: Dictionary = json_dict["world"]["limits"]
+	var limits_data: Dictionary = json_dict[WORLD_KEY][WORLD_LIMITS_KEY]
 	if not _load_world_limits(limits_data, game_world_2d.limits):
 		return
 	
 	# Provinces
-	for province_data: Dictionary in json_dict["world"]["provinces"]:
+	for province_data: Dictionary in json_dict[WORLD_KEY][WORLD_PROVINCES_KEY]:
 		var province: Province = _load_province(province_data, game)
 		if not province:
 			return
 		game_world_2d.provinces.add_province(province)
 	# 2nd loop for links
-	for province_data: Dictionary in json_dict["world"]["provinces"]:
+	for province_data: Dictionary in json_dict[WORLD_KEY][WORLD_PROVINCES_KEY]:
 		var province: Province = (
-				game_world_2d.provinces.province_from_id(province_data["id"])
+				game_world_2d.provinces
+				.province_from_id(province_data[PROVINCE_ID_KEY])
 		)
 		province.links = []
-		for link: int in province_data["links"]:
+		for link: int in province_data[PROVINCE_LINKS_KEY]:
 			province.links.append(
 					game_world_2d.provinces.province_from_id(link)
 			)
 	
 	# Armies
-	var armies_error: bool = _load_armies(json_dict["world"]["armies"], game)
+	var armies_error: bool = _load_armies(
+			json_dict[WORLD_KEY][WORLD_ARMIES_KEY], game
+	)
 	if armies_error:
 		return
 	
@@ -158,16 +237,15 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 func _loaded_countries(json_data: Dictionary) -> Array[Country]:
 	var countries: Array[Country] = []
 	
-	var countries_key: String = "countries"
-	if not json_data.has(countries_key):
+	if not json_data.has(COUNTRIES_KEY):
 		error = true
 		error_message = "No countries found in file."
 		return []
-	if not json_data[countries_key] is Array:
+	if not json_data[COUNTRIES_KEY] is Array:
 		error = true
 		error_message = "Countries property is not an array."
 		return []
-	var countries_data: Array = json_data[countries_key]
+	var countries_data: Array = json_data[COUNTRIES_KEY]
 	
 	for country_data: Variant in countries_data:
 		if not country_data is Dictionary:
@@ -188,12 +266,12 @@ func _loaded_countries(json_data: Dictionary) -> Array[Country]:
 func _load_country(json_data: Dictionary) -> Country:
 	var country := Country.new()
 	
-	country.id = json_data["id"]
-	country.country_name = json_data["country_name"]
-	country.color = Color(json_data["color"])
+	country.id = json_data[COUNTRY_ID_KEY]
+	country.country_name = json_data[COUNTRY_NAME_KEY]
+	country.color = Color(json_data[COUNTRY_COLOR_KEY])
 	
-	if json_data.has("money"):
-		country.money = json_data["money"]
+	if json_data.has(COUNTRY_MONEY_KEY):
+		country.money = json_data[COUNTRY_MONEY_KEY]
 	
 	country.notifications = GameNotifications.new()
 	
@@ -202,10 +280,10 @@ func _load_country(json_data: Dictionary) -> Country:
 
 func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 	# TODO DRY. a lot of copy/paste from _load_auto_arrows()
-	if not json_dict.has("countries"):
+	if not json_dict.has(COUNTRIES_KEY):
 		return
 	
-	var countries_data: Variant = json_dict["countries"]
+	var countries_data: Variant = json_dict[COUNTRIES_KEY]
 	if not (countries_data is Array):
 		return
 	var countries_array := countries_data as Array
@@ -233,13 +311,15 @@ func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 		var country_dict := countries_array[i] as Dictionary
 		
 		if not (
-				country_dict.has("relationships")
-				and country_dict["relationships"] is Array
+				country_dict.has(COUNTRY_RELATIONSHIPS_KEY)
+				and country_dict[COUNTRY_RELATIONSHIPS_KEY] is Array
 		):
 			continue
 		
 		var country: Country = country_list[i]
-		var relationships_data := country_dict["relationships"] as Array
+		var relationships_data := (
+				country_dict[COUNTRY_RELATIONSHIPS_KEY] as Array
+		)
 		var relationships_from_raw := DiplomacyRelationshipsFromRaw.new()
 		relationships_from_raw.apply(
 				relationships_data,
@@ -255,11 +335,11 @@ func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
 
 
 func _load_game_notifications(json_dict: Dictionary, game: Game) -> void:
-	# TODO DRY. a lot of copy/paste from _load_auto_arrows()
-	if not json_dict.has("countries"):
+	# TASK DRY. a lot of copy/paste from _load_auto_arrows()
+	if not json_dict.has(COUNTRIES_KEY):
 		return
 	
-	var countries_data: Variant = json_dict["countries"]
+	var countries_data: Variant = json_dict[COUNTRIES_KEY]
 	if not (countries_data is Array):
 		return
 	var countries_array := countries_data as Array
@@ -274,11 +354,13 @@ func _load_game_notifications(json_dict: Dictionary, game: Game) -> void:
 		var country_dict := countries_array[i] as Dictionary
 		
 		if not (
-				country_dict.has("notifications")
-				and country_dict["notifications"] is Array
+				country_dict.has(COUNTRY_NOTIFICATIONS_KEY)
+				and country_dict[COUNTRY_NOTIFICATIONS_KEY] is Array
 		):
 			continue
-		var notifications_array := country_dict["notifications"] as Array
+		var notifications_array := (
+				country_dict[COUNTRY_NOTIFICATIONS_KEY] as Array
+		)
 		
 		var country: Country = country_list[i]
 		
@@ -291,10 +373,10 @@ func _load_game_notifications(json_dict: Dictionary, game: Game) -> void:
 
 
 func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
-	if not json_dict.has("countries"):
+	if not json_dict.has(COUNTRIES_KEY):
 		return
 	
-	var countries_data: Variant = json_dict["countries"]
+	var countries_data: Variant = json_dict[COUNTRIES_KEY]
 	if not (countries_data is Array):
 		return
 	var countries_array := countries_data as Array
@@ -308,28 +390,27 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 			return
 		var country_dict := countries_array[i] as Dictionary
 		
-		if not country_dict.has("auto_arrows"):
+		if not country_dict.has(COUNTRY_AUTOARROWS_KEY):
 			continue
 		
 		country_list[i].auto_arrows = (
 				AutoArrowsFromRaw.new()
-				.result(game, country_dict["auto_arrows"])
+				.result(game, country_dict[COUNTRY_AUTOARROWS_KEY])
 		)
 
 
 func _load_players(json_data: Dictionary, game: Game) -> bool:
 	game.game_players = GamePlayers.new()
 	
-	var players_key: String = "players"
-	if not json_data.has(players_key):
+	if not json_data.has(PLAYERS_KEY):
 		error = true
 		error_message = "No players found in file."
 		return false
-	if not json_data[players_key] is Array:
+	if not json_data[PLAYERS_KEY] is Array:
 		error = true
 		error_message = "Players property is not an array."
 		return false
-	var players_data: Array = json_data[players_key]
+	var players_data: Array = json_data[PLAYERS_KEY]
 	
 	for player_data: Variant in players_data:
 		if not player_data is Dictionary:
@@ -346,46 +427,46 @@ func _load_players(json_data: Dictionary, game: Game) -> bool:
 	return true
 
 
-## This function requires that game.game_players is already set
 # TASK verify & return errors
+## This function requires that game.game_players is already set
 func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	# AI type
 	var ai_type: int = 0
-	if ParseUtils.dictionary_has_number(json_data, "ai_type"):
+	if ParseUtils.dictionary_has_number(json_data, PLAYER_AI_TYPE_KEY):
 		var loaded_ai_type: int = (
-				ParseUtils.dictionary_int(json_data, "ai_type")
+				ParseUtils.dictionary_int(json_data, PLAYER_AI_TYPE_KEY)
 		)
 		if loaded_ai_type in PlayerAI.Type.values():
 			ai_type = loaded_ai_type
 	
 	var player: GamePlayer = GamePlayer.new()
-	player.id = json_data["id"]
+	player.id = json_data[PLAYER_ID_KEY]
 	# The player is a spectator if there is no country id,
 	# of if the country id is a negative number
-	if json_data.has("playing_country_id"):
-		var country_id: int = json_data["playing_country_id"]
+	if json_data.has(PLAYER_COUNTRY_ID_KEY):
+		var country_id: int = json_data[PLAYER_COUNTRY_ID_KEY]
 		if country_id >= 0:
 			player.playing_country = (
 					game.countries.country_from_id(country_id)
 			)
-	if json_data.has("is_human"):
-		player.is_human = json_data["is_human"]
-	if json_data.has("username"):
-		if not json_data["username"] is String:
+	if json_data.has(PLAYER_IS_HUMAN_KEY):
+		player.is_human = json_data[PLAYER_IS_HUMAN_KEY]
+	if json_data.has(PLAYER_USERNAME_KEY):
+		if not json_data[PLAYER_USERNAME_KEY] is String:
 			error = true
 			error_message = "Player's username property is not a string."
 			return null
-		player.username = json_data["username"]
-	if json_data.has("human_id"):
-		player.player_human_id = json_data["human_id"]
+		player.username = json_data[PLAYER_USERNAME_KEY]
+	if json_data.has(PLAYER_HUMAN_ID_KEY):
+		player.player_human_id = json_data[PLAYER_HUMAN_ID_KEY]
 	player.player_ai = PlayerAI.from_type(ai_type)
 	
 	var ai_personality_id: int = (
 			game.rules.default_ai_personality_option.selected
 	)
-	if ParseUtils.dictionary_has_number(json_data, "ai_personality_type"):
+	if ParseUtils.dictionary_has_number(json_data, PLAYER_AI_PERSONALITY_KEY):
 		ai_personality_id = (
-				ParseUtils.dictionary_int(json_data, "ai_personality_type")
+				ParseUtils.dictionary_int(json_data, PLAYER_AI_PERSONALITY_KEY)
 		)
 	var ai_personality: AIPersonality = (
 			AIPersonality.from_type(ai_personality_id)
@@ -398,10 +479,10 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 
 # TASK verify & return errors
 func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
-	var x1: int = json_data["left"]
-	var y1: int = json_data["top"]
-	var x2: int = json_data["right"]
-	var y2: int = json_data["bottom"]
+	var x1: int = json_data[WORLD_LIMIT_LEFT_KEY]
+	var y1: int = json_data[WORLD_LIMIT_TOP_KEY]
+	var x2: int = json_data[WORLD_LIMIT_RIGHT_KEY]
+	var y2: int = json_data[WORLD_LIMIT_BOTTOM_KEY]
 	
 	limits._limits = Rect2i(x1, y1, x2 - x1, y2 - y1)
 	return true
@@ -411,35 +492,40 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 func _load_province(json_data: Dictionary, game: Game) -> Province:
 	var province := game.province_scene.instantiate() as Province
 	province.game = game
-	province.id = json_data["id"]
+	province.id = json_data[PROVINCE_ID_KEY]
 	
 	province.position_army_host = Vector2(
-			json_data["position_army_host_x"],
-			json_data["position_army_host_y"]
+			json_data[PROVINCE_POSITION_ARMY_HOST_X_KEY],
+			json_data[PROVINCE_POSITION_ARMY_HOST_Y_KEY]
 	)
 	
 	province.init()
 	
+	var shape_data: Dictionary = json_data[PROVINCE_SHAPE_KEY]
 	var shape: PackedVector2Array = []
-	for i in (json_data["shape"]["x"] as Array).size():
+	for i in (shape_data[PROVINCE_SHAPE_X_KEY] as Array).size():
 		shape.append(Vector2(
-				json_data["shape"]["x"][i], json_data["shape"]["y"][i]
+				shape_data[PROVINCE_SHAPE_X_KEY][i],
+				shape_data[PROVINCE_SHAPE_Y_KEY][i]
 		))
 	province.polygon = shape
 	
-	province.position = (
-			Vector2(json_data["position"]["x"], json_data["position"]["y"])
+	province.position = Vector2(
+			json_data[PROVINCE_POSITION_KEY][PROVINCE_POS_X_KEY],
+			json_data[PROVINCE_POSITION_KEY][PROVINCE_POS_Y_KEY]
 	)
 	
 	province.owner_country = (
-			game.countries.country_from_id(json_data["owner_country_id"])
+			game.countries.country_from_id(json_data[PROVINCE_OWNER_ID_KEY])
 	)
 	
 	province.population = Population.new(game)
-	province.population.population_size = json_data["population"]["size"]
+	province.population.population_size = (
+			json_data[PROVINCE_POPULATION_KEY][POPULATION_SIZE_KEY]
+	)
 	
-	for building: Dictionary in json_data["buildings"]:
-		if building["type"] == "fortress":
+	for building: Dictionary in json_data[PROVINCE_BUILDINGS_KEY]:
+		if building[BUILDING_TYPE_KEY] == BUILDING_TYPE_FORTRESS:
 			var fortress: Fortress = Fortress.new_fortress(
 					game, province
 			)
@@ -447,8 +533,8 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			province.buildings.add(fortress)
 	
 	var base_income: int = 0
-	if json_data.has("income_money"):
-		base_income = json_data["income_money"]
+	if json_data.has(PROVINCE_INCOME_MONEY_KEY):
+		base_income = json_data[PROVINCE_INCOME_MONEY_KEY]
 	province._income_money = IncomeMoney.new(base_income, province)
 	
 	return province
@@ -472,14 +558,16 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 # TASK verify & return errors
 func _load_army(json_data: Dictionary, game: Game) -> void:
 	var movements_made: int = 0
-	if json_data.has("number_of_movements_made"):
-		movements_made = int(json_data["number_of_movements_made"])
+	if json_data.has(ARMY_MOVEMENTS_KEY):
+		movements_made = int(json_data[ARMY_MOVEMENTS_KEY])
 	
 	var _army: Army = Army.quick_setup(
 			game,
-			json_data["id"],
-			json_data["army_size"],
-			game.countries.country_from_id(json_data["owner_country_id"]),
-			game.world.provinces.province_from_id(json_data["province_id"]),
+			json_data[ARMY_ID_KEY],
+			json_data[ARMY_SIZE_KEY],
+			game.countries.country_from_id(json_data[ARMY_OWNER_ID_KEY]),
+			game.world.provinces.province_from_id(
+					json_data[ARMY_PROVINCE_ID_KEY]
+			),
 			movements_made
 	)

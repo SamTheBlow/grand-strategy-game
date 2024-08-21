@@ -2,10 +2,12 @@ class_name Game
 extends Node
 ## The game.
 ## There are so many things to setup, there are entire classes
-## dedicated to loading the game (see [LoadGame], [GameFromJSON]...).
+## dedicated to loading the game (see [LoadGame], [GameFromRawDict]...).
 ## Setting up this node manually yourself is not recommended.
 ##
-## This is definitely the most messy script in the entire project.
+## This class is very bloated.
+## It's typical for a class to store the game in their properties
+## just to access other classes in the game.
 
 
 signal game_started()
@@ -34,7 +36,6 @@ signal game_ended()
 @export_group("Children")
 @export var action_sync: ActionSynchronizer
 @export var camera: CustomCamera2D
-@export var game_ui: Control
 @export var component_ui_root: Control
 @export var popups: Control
 
@@ -119,9 +120,12 @@ var world: GameWorld:
 			camera.world_limits = (world as GameWorld2D).limits
 		$WorldLayer.add_child(world)
 
+## The game's RNG.
+## It's important to always use this instead of built-in RNG methods
+## so that RNG stays the same when you reload the game and when you play online.
 var rng := RandomNumberGenerator.new()
 
-## Child node: the interface that appears when you select a [Province]
+## Child node: the interface that appears when you select a [Province].
 var component_ui: ComponentUI:
 	set(value):
 		if component_ui != null:
@@ -160,8 +164,8 @@ var _turn_order_list: TurnOrderList:
 			_turn_order_list = %TurnOrderList as TurnOrderList
 		return _turn_order_list
 
+# Components. These are stored here only because they need to stay referenced.
 var _auto_end_turn: AutoEndTurn
-
 var _military_access_loss_behavior: MilitaryAccessLossBehavior
 var _diplomacy_relationship_auto_changes: DiplomacyRelationshipAutoChanges
 
@@ -243,7 +247,6 @@ func add_modifier_provider(object: Object) -> void:
 	_modifier_request.add_provider(object)
 
 
-# TODO this shouldn't be here..?
 ## Creates and applies army movement as a result of the user's actions.
 func new_action_army_movement(
 		army: Army,
@@ -395,6 +398,7 @@ func _on_province_deselected() -> void:
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:
+	# TODO bad code: hard coded values
 	match button_id:
 		0:
 			# Build fortress
@@ -464,8 +468,9 @@ func _on_save_requested() -> void:
 	game_save.save_game(self, save_file_path)
 	
 	if game_save.error:
-		push_error("Saving failed: " + game_save.error_message)
-		chat.send_system_message("Saving failed: " + game_save.error_message)
+		var error_message: String = "Saving failed: " + game_save.error_message
+		push_error(error_message)
+		chat.send_system_message(error_message)
 		return
 	
 	chat.send_system_message("[b]Game saved[/b]")

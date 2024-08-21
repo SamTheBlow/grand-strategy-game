@@ -1,6 +1,7 @@
 class_name DiplomacyRelationship
 ## Represents how one country behaves in relation with given country.
 # TODO the setup is confusing. document and simplify it
+# (this class is ugly and bloated)
 
 
 signal preset_changed(this: DiplomacyRelationship)
@@ -26,7 +27,7 @@ var recipient_country: Country
 
 ## The game's registered diplomacy presets.
 ## Defines the presets that may be used in this relationship.
-var diplomacy_presets: DiplomacyPresets = DiplomacyPresets.new()
+var diplomacy_presets := DiplomacyPresets.new()
 
 ## The game's registered diplomacy actions.
 ## Defines the actions that may be used in this relationship.

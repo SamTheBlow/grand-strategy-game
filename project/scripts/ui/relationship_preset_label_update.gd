@@ -1,6 +1,6 @@
 class_name RelationshipPresetLabelUpdate
 extends Node
-## Updates the information displayed on a [RelationshipPresetLabel].
+## Sets the [DiplomacyRelationship] used for given [RelationshipPresetLabel].
 
 
 @export var label: RelationshipPresetLabel

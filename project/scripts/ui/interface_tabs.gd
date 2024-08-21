@@ -1,6 +1,6 @@
 extends Control
-## Class responsible for the different tabs on some user interface.
-## Listens to button presses, and shows their corresponding UI when pressed.
+## When one of the given buttons is pressed,
+## shows their corresponding node and hides all the other ones.
 
 
 ## The buttons to listen to. The buttons will be automatically

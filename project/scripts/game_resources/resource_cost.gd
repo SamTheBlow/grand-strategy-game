@@ -1,6 +1,7 @@
 class_name ResourceCost
 ## Class responsible for calculating how much of given game resource
 ## is required for given amount of something.
+## For example, it could calculate the money cost to recruit 69 armies.
 
 
 var _cost_for_one: float

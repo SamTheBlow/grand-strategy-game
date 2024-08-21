@@ -81,6 +81,7 @@ enum ProvinceIncome {
 	POPULATION = 2,
 }
 
+var diplomatic_presets: DiplomacyPresets
 var diplomatic_actions: DiplomacyActionDefinitions
 
 # Individual rules
@@ -666,7 +667,7 @@ func rule_with_name(rule_name: String) -> RuleItem:
 
 ## Returns a new deep copy of the game rules.
 func copy() -> GameRules:
-	return RulesFromDict.new().result(RulesToDict.new().result(self))
+	return RulesFromRawDict.new().result(RulesToRawDict.new().result(self))
 
 
 ## Permanently prevents any of the rules from changing.
@@ -717,7 +718,7 @@ func _send_all_data() -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
-	_receive_all_data.rpc(RulesToDict.new().result(self))
+	_receive_all_data.rpc(RulesToRawDict.new().result(self))
 
 
 @rpc("authority", "call_remote", "reliable")

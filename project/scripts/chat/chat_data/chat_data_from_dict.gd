@@ -5,6 +5,9 @@ class_name ChatDataFromDict
 ## See also: [ChatDataToDict]
 
 
+const CONTENT_KEY: String = "content"
+const PLAYERS_KEY: String = "players"
+
 var error: bool = false
 var error_message: String = ""
 var result_content: Array[ChatMessage] = []
@@ -18,12 +21,12 @@ func parse(data: Dictionary) -> void:
 	result_players = []
 	
 	var players: Array[String] = []
-	if data.has("players"):
-		players = _parse_players(data["players"])
+	if data.has(PLAYERS_KEY):
+		players = _parse_players(data[PLAYERS_KEY])
 	
 	var content: Array[ChatMessage] = []
-	if data.has("content"):
-		content = _parse_content(data["content"], players.size())
+	if data.has(CONTENT_KEY):
+		content = _parse_content(data[CONTENT_KEY], players.size())
 		if error:
 			return
 	
@@ -72,14 +75,14 @@ func _parse_content(
 ## The player data will always be valid since it's just strings.
 ## Just ignore anything that isn't a string.
 func _parse_players(players_data: Variant) -> Array[String]:
-	if not (players_data is Array):
+	if players_data is not Array:
 		push_warning("Chat players data is not an Array.")
 		return []
 	var players_array := players_data as Array
 	
 	var players: Array[String] = []
 	for player_data: Variant in players_array:
-			if not (player_data is String):
+			if player_data is not String:
 				push_warning("Chat player data is not a String.")
 				continue
 			var player_string := player_data as String

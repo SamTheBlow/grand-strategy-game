@@ -1,5 +1,7 @@
-class_name RulesFromDict
-## Turns given Dictionary data into a brand new [GameRules] object.
+class_name RulesFromRawDict
+## Converts raw data into a new [GameRules] resource.
+##
+## See also: [RulesToRawDict]
 
 
 func result(data_dict: Dictionary) -> GameRules:
@@ -24,6 +26,11 @@ func result(data_dict: Dictionary) -> GameRules:
 		game_rules.rule_with_name(key).set_data(data_dict[key])
 	
 	# TODO temporary. remove later
+	game_rules.diplomatic_presets = DiplomacyPresets.new([
+		load("res://resources/diplomacy/presets/allied.tres"),
+		load("res://resources/diplomacy/presets/neutral.tres"),
+		load("res://resources/diplomacy/presets/at_war.tres"),
+	])
 	game_rules.diplomatic_actions = DiplomacyActionDefinitions.new([
 		load("res://resources/diplomacy/actions/break_alliance.tres"),
 		load("res://resources/diplomacy/actions/declare_war.tres"),

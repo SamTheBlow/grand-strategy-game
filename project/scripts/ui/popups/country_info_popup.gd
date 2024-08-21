@@ -1,6 +1,8 @@
 class_name CountryInfoPopup
 extends VBoxContainer
-## The popup that displays information about a given [Country].
+## Displays information about given [Country].
+##
+## See also: [GamePopup]
 
 
 @export var _country_and_relationship_scene: PackedScene

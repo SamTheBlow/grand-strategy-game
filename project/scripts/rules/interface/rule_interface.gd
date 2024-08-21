@@ -1,5 +1,9 @@
 class_name RuleInterface
 extends MarginContainer
+## Base class. Displays information about a game rule.
+## Displays a rule's subrules recursively with indentation.
+##
+## See also: [GameRules]
 
 
 ## The number of pixels between each rule node.

@@ -14,7 +14,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 ## transfering between network clients.
 func raw_data() -> Dictionary:
 	return {
-		"id": END_TURN,
+		ID_KEY: END_TURN,
 	}
 
 

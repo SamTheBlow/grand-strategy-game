@@ -3,6 +3,8 @@ class_name RuleItem
 extends Resource
 ## Base class for a game rule.
 ## Extend this class to add functionality.
+##
+## See also: [GameRules]
 
 
 @export var text: String = ""
@@ -12,7 +14,7 @@ var sub_rules: Array[RuleItem] = []
 var _is_locked: bool = false
 
 
-## Locks this rul e and all of its subrules.
+## Locks this rule and all of its subrules.
 ## When a rule is locked, it cannot be changed anymore.
 func lock() -> void:
 	_is_locked = true

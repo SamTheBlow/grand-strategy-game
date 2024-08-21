@@ -1,5 +1,7 @@
 class_name DiplomacyRelationshipsToRaw
 ## Converts a [DiplomacyRelationships] object into raw data.
+##
+## See also: [DiplomacyRelationshipsFromRaw]
 
 
 func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
@@ -25,7 +27,7 @@ func _relationship_to_dict(
 	)
 	if not base_data.is_empty():
 		output.merge({
-			"base_data": base_data
+			DiplomacyRelationshipsFromRaw.BASE_DATA_KEY: base_data
 		})
 	
 	var actions_performed_this_turn: Array[int] = []
@@ -34,13 +36,14 @@ func _relationship_to_dict(
 			actions_performed_this_turn.append(action.id())
 	if not actions_performed_this_turn.is_empty():
 		output.merge({
-			"actions_performed_this_turn": actions_performed_this_turn
+			DiplomacyRelationshipsFromRaw.PERFORMED_ACTIONS_KEY:
+				actions_performed_this_turn,
 		})
 	
 	if not output.is_empty():
 		output.merge({
-			#"source_country_id": relationship.source_country.id,
-			"recipient_country_id": relationship.recipient_country.id,
+			DiplomacyRelationshipsFromRaw.RECIPIENT_COUNTRY_ID_KEY:
+				relationship.recipient_country.id,
 		})
 	
 	return output

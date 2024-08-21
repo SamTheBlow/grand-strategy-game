@@ -1,6 +1,7 @@
 class_name ScaledLabel
 extends Label
-## A [Label] that scales its text by given amount.
+## Scales its text by given amount.
+## Updates itself when the viewport size changes.
 
 
 ## The node to use as reference for scaling the text.[br]

@@ -14,6 +14,7 @@ var _list: Array[Army] = []
 var _claimed_ids: Array[int] = []
 
 
+## Please make sure that given army has a unique id already assigned to it.
 func add_army(army: Army) -> void:
 	if _list.has(army):
 		push_warning("Tried adding an army, but it was already on the list.")
@@ -91,11 +92,26 @@ func armies_in_province(province: Province) -> Array[Army]:
 ## Returns a new list of all armies located in given [Province]
 ## that are controlled by given [Country].
 func armies_of_country_in_province(
-		owner_country: Country, province: Province
+		country: Country, province: Province
 ) -> Array[Army]:
 	var output: Array[Army] = []
 	for army in _list:
-		if army.province() == province and army.owner_country == owner_country:
+		if army.province() == province and army.owner_country == country:
+			output.append(army)
+	return output
+
+
+## Returns a new list of all active armies that are
+## owned by given [Country] in given [Province].
+## An [Army] is said to be "active" when it is able to perform actions.
+func active_armies(country: Country, province: Province) -> Array[Army]:
+	var output: Array[Army] = []
+	for army in _list:
+		if (
+				army.province() == province
+				and army.owner_country == country
+				and army.is_able_to_move()
+		):
 			output.append(army)
 	return output
 
@@ -167,15 +183,3 @@ func new_unique_id() -> int:
 				break
 	_claimed_ids.append(new_id)
 	return new_id
-
-
-## Returns a list of all active armies that are
-## owned by given [Country] in given [Province].
-## An [Army] is said to be "active" when it is able to perform actions.
-func active_armies(country: Country, province: Province) -> Array[Army]:
-	var result: Array[Army] = []
-	var province_armies: Array[Army] = armies_in_province(province)
-	for army in province_armies:
-		if army.owner_country == country and army.is_able_to_move():
-			result.append(army)
-	return result

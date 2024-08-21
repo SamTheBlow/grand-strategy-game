@@ -1,7 +1,7 @@
 class_name PopulationSizeLabelUpdate
 extends Node
-## Automatically updates a given [Label]'s text to show
-## a given [Province]'s [Population] size.
+## Updates given [Label]'s text so that it always shows
+## given [Province]'s [Population] size even after it changes.
 ##
 ## See also: [IncomeMoneyLabelUpdate], [ComponentUI]
 

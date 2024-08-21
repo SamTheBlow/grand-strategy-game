@@ -1,13 +1,13 @@
 class_name ArmyVisuals2D
 extends Node2D
-## An [Army]'s visuals for a 2D visualization of a [GameWorld].
+## An [Army]'s visuals for a 2D world map.
 ##
-## To use, call [method ArmyVisuals2D.inject_army] to initialize this node,
-## then add it to the scene tree.
+## To use, just set the "army" property.
+## This node will then be added to the scene tree automatically.
 ## The visuals will automatically update along with the given [Army].
 
 
-## This is meant to be set only once, before entering the scene tree.
+## This is meant to be set only once.
 var army: Army:
 	set(value):
 		army = value
@@ -24,9 +24,8 @@ var army: Army:
 
 func _ready() -> void:
 	(%ArmySizeBox as ArmySizeBox).army = army
-	
 	_animation.is_playing_changed.connect(_on_animation_is_playing_changed)
-	_refresh()
+	_refresh_brightness()
 
 
 ## To avoid fighting with this node's animations for who gets to move the
@@ -50,11 +49,11 @@ func _add_to_province(province: Province) -> void:
 	province.army_stack.add_child(self)
 
 
-# TODO this is the only thing forcing us to store the army in memory
-# also it's kinda ugly?
 ## Darkens the visuals if the army cannot perform any action.
-func _refresh() -> void:
-	if (
+func _refresh_brightness() -> void:
+	var brightness: float = 1.0
+	
+	if not (
 			army.is_able_to_move()
 			or (
 					army.game.turn.playing_player().playing_country
@@ -62,10 +61,9 @@ func _refresh() -> void:
 			)
 			or _animation.is_playing()
 	):
-		modulate = Color(1.0, 1.0, 1.0, 1.0)
-	else:
-		var v: float = 0.5
-		modulate = Color(v, v, v, 1.0)
+		brightness = 0.5
+	
+	modulate = Color(brightness, brightness, brightness)
 
 
 func _on_army_removed() -> void:
@@ -84,7 +82,7 @@ func _on_army_moved_to_province(_province: Province) -> void:
 
 ## Darken the visuals when the army can no longer perform an action.
 func _on_army_movements_made_changed(_movements_made: int) -> void:
-	_refresh()
+	_refresh_brightness()
 
 
 ## When it's a new player's turn, prematurely end the movement animation.
@@ -92,10 +90,10 @@ func _on_army_movements_made_changed(_movements_made: int) -> void:
 ## Do darken them if it's your turn.
 func _on_turn_player_changed(_player: GamePlayer) -> void:
 	_animation.stop()
-	_refresh()
+	_refresh_brightness()
 
 
 ## Don't darken the visuals when an animation plays.
 ## Do darken them after the animation is over.
 func _on_animation_is_playing_changed(_is_playing: bool) -> void:
-	_refresh()
+	_refresh_brightness()

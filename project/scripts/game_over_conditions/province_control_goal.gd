@@ -33,6 +33,7 @@ func _check_number_winner(number_to_win: int) -> void:
 
 
 func _on_new_turn(_turn: int) -> void:
+	# TODO bad code: hard coded values
 	match game.rules.game_over_provinces_owned_option.selected:
 		1:
 			_check_number_winner(

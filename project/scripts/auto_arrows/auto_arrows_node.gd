@@ -1,21 +1,41 @@
 class_name AutoArrowsNode2D
 extends Node2D
-## A list of [AutoArrowNode2D].
-## There is one such list for each [Country].
-## It automatically shows or hides itself when the right conditions are met.
+## A list of [AutoArrowNode2D]. Represents given [Country]'s autoarrows.
+## Automatically shows or hides itself when the right conditions are met.
 ##
 ## See also: [AutoArrow]
 
 
-## This list represents this country's arrows.
-var _country: Country
+## May be null.
+var country: Country:
+	set(value):
+		# Disconnect signals
+		if country != null:
+			country.auto_arrows.arrow_added.disconnect(_on_arrow_added)
+			country.auto_arrows.arrow_removed.disconnect(_on_arrow_removed)
+		
+		# Clear list
+		for node in _list:
+			_remove_node(node)
+		
+		country = value
+		if country == null:
+			return
+		
+		# Initialize list
+		for auto_arrow in country.auto_arrows.list():
+			_add(auto_arrow)
+		
+		# Connect signals
+		country.auto_arrows.arrow_added.connect(_on_arrow_added)
+		country.auto_arrows.arrow_removed.connect(_on_arrow_removed)
 
 var _list: Array[AutoArrowNode2D] = []
 
 ## If any of these flags is turned on, this node will be hidden
 ## 1: No province is selected
 ## 2: The currently playing player's country doesn't match this list's country
-var _visible_flags: int = 3:
+var _visible_flags: int = 0b11:
 	set(value):
 		_visible_flags = value
 		visible = _visible_flags == 0
@@ -25,24 +45,17 @@ var _visible_flags: int = 3:
 ## But, it cannot know the initial state of the game.
 ## So we have to provide the initial state manually.
 ## This function also connects the signals.
-func init(game: Game, country_: Country) -> void:
-	_country = country_
-	
-	for auto_arrow in _country.auto_arrows.list():
-		_add(auto_arrow)
+func init(game: Game) -> void:
+	if game == null:
+		return
 	
 	_on_selected_province_changed(game.world.provinces.selected_province)
 	game.world.provinces.selected_province_changed.connect(
 		_on_selected_province_changed
 	)
+	
 	_on_player_turn_changed(game.turn.playing_player())
 	game.turn.player_changed.connect(_on_player_turn_changed)
-	_country.auto_arrows.arrow_added.connect(_on_arrow_added)
-	_country.auto_arrows.arrow_removed.connect(_on_arrow_removed)
-
-
-func country() -> Country:
-	return _country
 
 
 func _add(auto_arrow: AutoArrow) -> void:
@@ -55,15 +68,24 @@ func _remove(auto_arrow: AutoArrow) -> void:
 	for node in _list:
 		if node.auto_arrow == null:
 			continue
+		
 		if node.auto_arrow.is_equivalent_to(auto_arrow):
 			_remove_node(node)
 			return
+	
 	push_warning(
 			"Tried removing an AutoArrow, but it had no corresponding node."
 	)
 
 
 func _add_node(auto_arrow_node: AutoArrowNode2D) -> void:
+	if _list.has(auto_arrow_node):
+		push_warning(
+				"Tried adding an AutoArrowNode2D, "
+				+ "but it was already on the list."
+		)
+		return
+	
 	add_child(auto_arrow_node)
 	_list.append(auto_arrow_node)
 
@@ -74,6 +96,7 @@ func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
 				"Tried removing an AutoArrow node, but it wasn't on the list."
 		)
 		return
+	
 	remove_child(auto_arrow_node)
 	_list.erase(auto_arrow_node)
 
@@ -94,7 +117,7 @@ func _on_selected_province_changed(province: Province) -> void:
 
 
 func _on_player_turn_changed(playing_player: GamePlayer) -> void:
-	if playing_player.playing_country == _country:
+	if playing_player.playing_country == country:
 		_visible_flags &= ~2
 	else:
 		_visible_flags |= 2

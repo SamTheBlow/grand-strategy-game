@@ -4,19 +4,24 @@ extends Action
 ## proportions. You must provide a new unique id for each of the new armies.
 
 
+const ARMY_ID_KEY: String = "army_id"
+const TROOP_PARTITION_KEY: String = "troop_partition"
+const NEW_ARMY_IDS_KEY: String = "new_army_ids"
+
+## The [Army] to split up.
+## This army will be one of the resulting armies: it will not be deleted.
 var _army_id: int
 
-# This array contains the number of troops in each army.
-# So for example, [47, 53] would split an army of 100 troops
-# into one army of 47 and one army of 53.
-# NOTE: The original army will always be one of the resulting armies!
-# That means the number of new Army objects will always be
-# one less than the number of elements in this array.
+## This array contains the number of troops in each army.
+## So for example, [47, 53] would split an army of 100 troops
+## into one army of 47 and one army of 53.
+## The sum of all the values in this array must add up
+## to exactly the given army's size.
 var _troop_partition: Array[int]
 
-## This array's size should be one less than the troop partition's size.
-## Because you need to provide one new id for each newly created army,
-## but you don't need to provide a new id for the army that already exists.
+## This array's size should always be one less than the troop partition's size.
+## For example, if the troop partition is [7, 8, 9], then the original army
+## will be one of the resulting armies, so we need 2 new armies and 2 new ids.
 var _new_army_ids: Array[int]
 
 
@@ -82,29 +87,30 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	#)
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
 func raw_data() -> Dictionary:
 	return {
-		"id": ARMY_SPLIT,
-		"army_id": _army_id,
-		"troop_partition": _troop_partition,
-		"new_army_ids": _new_army_ids,
+		ID_KEY: ARMY_SPLIT,
+		ARMY_ID_KEY: _army_id,
+		TROOP_PARTITION_KEY: _troop_partition,
+		NEW_ARMY_IDS_KEY: _new_army_ids,
 	}
 
 
-## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionArmySplit:
+	if not ParseUtils.dictionary_has_number(data, ARMY_ID_KEY):
+		return null
+	
+	# TODO these are prone to crashing and also ugly
 	var troop_partition: Array[int] = []
-	for part in data["troop_partition"] as Array[int]:
+	for part in data[TROOP_PARTITION_KEY] as Array[int]:
 		troop_partition.append(part)
 	
 	var new_army_ids: Array[int] = []
-	for id in data["new_army_ids"] as Array[int]:
+	for id in data[NEW_ARMY_IDS_KEY] as Array[int]:
 		new_army_ids.append(id)
 	
 	return ActionArmySplit.new(
-			data["army_id"] as int,
+			ParseUtils.dictionary_int(data, ARMY_ID_KEY),
 			troop_partition,
 			new_army_ids
 	)

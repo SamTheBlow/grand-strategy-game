@@ -9,8 +9,6 @@ extends Control
 signal interface_changed()
 signal message_sent(text: String, color: Color)
 
-@export var port: int = 31401
-
 ## When hosting, this is the maximum number of users
 ## allowed on the server at any time, [b]excluding the host[/b].
 ## Note that this cannot exceed 4095.
@@ -20,6 +18,8 @@ signal message_sent(text: String, color: Color)
 ## if the user successfully connects to a server.
 ## It will be visible again if the user disconnects from the server.
 @export var autohide: bool = true
+
+var _port: int = 31401
 
 ## Red
 var _color_error := Color(1, 0.5, 0.5, 1)
@@ -97,7 +97,7 @@ func _connection_outcome(peer: MultiplayerPeer) -> int:
 
 func _on_host_pressed() -> void:
 	var peer := ENetMultiplayerPeer.new()
-	var error: int = peer.create_server(port, max_clients)
+	var error: int = peer.create_server(_port, max_clients)
 	
 	_handle_error(error, false)
 	
@@ -124,7 +124,7 @@ func _on_join_pressed() -> void:
 		ip_address = "localhost"
 	
 	var peer := ENetMultiplayerPeer.new()
-	var error: int = peer.create_client(ip_address, port)
+	var error: int = peer.create_client(ip_address, _port)
 	
 	_handle_error(error, true)
 	

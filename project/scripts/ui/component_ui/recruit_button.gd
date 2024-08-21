@@ -1,8 +1,8 @@
 class_name RecruitButton
 extends Button
-## Automatically disables itself when the playing player
+## Automatically disables itself when given player
 ## is unable to recruit armies in given province.
-## Also disables itself if either the province or the playing player is null.
+## Also disables itself if either the province or the player is null.
 ##
 ## See also: [BuildFortressButton], [ComponentUI]
 
@@ -15,11 +15,11 @@ var province: Province:
 		_setup_recruitment_limits()
 		_refresh_is_disabled()
 
-var playing_player: GamePlayer:
+var player: GamePlayer:
 	set(value):
-		if playing_player == value:
+		if player == value:
 			return
-		playing_player = value
+		player = value
 		_setup_recruitment_limits()
 		_refresh_is_disabled()
 
@@ -37,12 +37,12 @@ func _ready() -> void:
 
 
 func _setup_recruitment_limits() -> void:
-	if not province or not playing_player:
+	if not province or not player:
 		_army_recruit_limits = null
 		return
 	
-	_army_recruit_limits = ArmyRecruitmentLimits.new(
-			playing_player.playing_country, province
+	_army_recruit_limits = (
+			ArmyRecruitmentLimits.new(player.playing_country, province)
 	)
 
 
@@ -50,16 +50,13 @@ func _refresh_is_disabled() -> void:
 	if not is_node_ready():
 		return
 	
-	if not province or not playing_player or not _army_recruit_limits:
+	if not province or not player or not _army_recruit_limits:
 		disabled = true
 		return
 	
 	disabled = not (
-			MultiplayerUtils.has_gameplay_authority(
-					multiplayer, playing_player
-			)
-			and
-			_army_recruit_limits.maximum()
+			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
+			and _army_recruit_limits.maximum()
 			>= province.game.rules.minimum_army_size.value
 	)
 

@@ -127,7 +127,7 @@ func _check_condition(condition: bool) -> void:
 	if _maximum > 0:
 		if condition:
 			return
-		# It will always be 0, but we also need to update the error message
+		# It will always be 0, but we need to update the error message
 		_maximum = _calculated_maximum()
 	else:
 		if not condition:

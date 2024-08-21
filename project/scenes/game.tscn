@@ -40,7 +40,7 @@ bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
 bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "game_ui", "component_ui_root", "popups")]
+[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "component_ui_root", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
 fortress_scene = ExtResource("3_u3whv")
@@ -60,7 +60,6 @@ country_info_scene = ExtResource("15_6f53u")
 notification_info_scene = ExtResource("16_r8lxu")
 action_sync = NodePath("ActionSynchronizer")
 camera = NodePath("Camera")
-game_ui = NodePath("UILayer/GameUI")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 popups = NodePath("UILayer/GameUI/Popups")
 battle = ExtResource("15_vh3er")

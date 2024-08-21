@@ -1,6 +1,7 @@
 class_name GameNotificationsNode
 extends Control
-## Visual representation of a [GameNotifications] object.
+## Displays all [GameNotification]s of given [GamePlayer]'s playing country.
+## Updates itself when new notifications are received.
 
 
 signal pressed(game_notification: GameNotification)

@@ -1,6 +1,6 @@
 extends Node
-## Class responsible for setting up and updating
-## a [GameNotificationsNode] for a specific [Game].
+## Initializes and updates given [GameNotificationsNode]
+## to always use the playing player in given [Game].
 
 
 @export var game_notifications_node: GameNotificationsNode

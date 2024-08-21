@@ -1,8 +1,8 @@
 class_name GameOverPopup
 extends VBoxContainer
-## Contents for the popup that appears when the game is over.
+## Message that appears when the game is over.
 ##
-## See [GamePopup] to learn more on how popups work.
+## See also: [GamePopup]
 
 
 @export var winner_label: Label

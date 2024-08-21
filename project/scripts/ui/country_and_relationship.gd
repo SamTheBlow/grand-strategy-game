@@ -1,5 +1,7 @@
 class_name CountryAndRelationship
 extends Control
+## Displays button of given [Country] along with
+## its relationship preset with other given country, if applicable.
 
 
 @export var is_button_enabled: bool = true:

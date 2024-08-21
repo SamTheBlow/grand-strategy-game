@@ -21,6 +21,7 @@ enum Type {
 const DEFAULT_TYPE: Type = Type.NONE
 
 
+## Used for the game rules.
 static func all_type_names() -> Array[String]:
 	return [
 		"None",

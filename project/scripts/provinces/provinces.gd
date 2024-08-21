@@ -5,6 +5,7 @@ extends Node2D
 ## Also responsible for the user's selected province.
 ##
 ## Note that you are currently not meant to remove provinces from this list.
+# TODO move "selected province" code to its own class
 
 
 signal province_owner_changed(province: Province)

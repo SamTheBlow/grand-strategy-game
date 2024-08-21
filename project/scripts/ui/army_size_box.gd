@@ -1,6 +1,9 @@
 @tool
 class_name ArmySizeBox
 extends Label
+## Displays given [Army]'s size
+## inside a box colored after the army's owner country.
+## Automatically updates itself when something changes.
 
 
 ## Editor only. Meant for debugging.

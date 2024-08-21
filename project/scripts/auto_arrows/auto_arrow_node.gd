@@ -1,9 +1,33 @@
 class_name AutoArrowNode2D
 extends Node2D
+## Visual representation of an [AutoArrow].
+## Shows an arrow going from source province to any given position.
+## If a destination province is provided, points at it instead.
 
 
-## Can be null, in which case you can instead use manually
-## given properties source_province and world_destination.
+var arrow_tip_angle: float = deg_to_rad(30.0):
+	set(value):
+		arrow_tip_angle = value
+		queue_redraw()
+
+var arrow_tip_length: float = 50.0:
+	set(value):
+		arrow_tip_length = value
+		queue_redraw()
+
+var arrow_color: Color = Color.GOLD:
+	set(value):
+		arrow_color = value
+		queue_redraw()
+
+var arrow_thickness: float = 8.0:
+	set(value):
+		arrow_thickness = value
+		queue_redraw()
+
+
+## May be null, in which case you can instead use manually
+## given properties "source_province" and "world_destination".
 var auto_arrow: AutoArrow = null:
 	set(value):
 		if auto_arrow == value:
@@ -11,8 +35,8 @@ var auto_arrow: AutoArrow = null:
 		auto_arrow = value
 		queue_redraw()
 
-## Automatically gives the [code]auto_arrow[/code]'s
-## source province, if there is one.
+## When accessed, returns the "auto_arrow" property's
+## source province, if it's not null.
 var source_province: Province:
 	get:
 		if auto_arrow:
@@ -25,8 +49,8 @@ var source_province: Province:
 		if auto_arrow == null:
 			queue_redraw()
 
-## Automatically gives the [code]auto_arrow[/code]'s
-## destination province, if there is one.
+## When accessed, returns the "auto_arrow" property's
+## destination province, if it's not null.
 var destination_province: Province:
 	get:
 		if auto_arrow:
@@ -39,8 +63,8 @@ var destination_province: Province:
 		if auto_arrow == null:
 			queue_redraw()
 
-## Automatically gives the [code]destination_province[/code]'s
-## position, if there is one.
+## When accessed, returns the "destination_province" property's
+## position, if it's not null.
 var world_destination: Vector2:
 	get:
 		if destination_province:
@@ -55,10 +79,6 @@ var world_destination: Vector2:
 
 
 func _draw() -> void:
-	var arrow_tip_angle: float = deg_to_rad(30.0)
-	var arrow_tip_length: float = 50.0
-	var arrow_color: Color = Color.GOLD
-	var arrow_thickness: float = 8.0
 	draw_line(
 			source_province.position_army_host,
 			world_destination,

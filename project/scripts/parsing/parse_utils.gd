@@ -30,6 +30,11 @@ static func dictionary_has_bool(dictionary: Dictionary, key: String) -> bool:
 	return dictionary.has(key) and dictionary[key] is bool
 
 
+## Returns true if given dictionary has given key and its value is an array.
+static func dictionary_has_array(dictionary: Dictionary, key: String) -> bool:
+	return dictionary.has(key) and dictionary[key] is Array
+
+
 ## Returns true if given dictionary has given key
 ## and its value is a dictionary.
 static func dictionary_has_dictionary(

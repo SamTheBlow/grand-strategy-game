@@ -1,4 +1,7 @@
 class_name DiplomacyAction
+## Remembers and updates whether or not
+## a given [DiplomacyActionDefinition] can be performed.
+## This is also the starting point for performing the action.
 
 
 signal performed(this: DiplomacyAction)
@@ -88,16 +91,13 @@ func was_performed_this_turn() -> bool:
 	return _was_performed_this_turn
 
 
-## Applies this action to given relationships.
-func apply(
+## Performs the action, if possible.
+func perform(
 		game: Game,
 		relationship: DiplomacyRelationship,
 		reverse_relationship: DiplomacyRelationship
 ) -> void:
-	if not is_valid(relationship, true):
-		return
-	
-	if not can_be_performed(game, true):
+	if not (is_valid(relationship, true) and can_be_performed(game, true)):
 		return
 	
 	var new_notification: GameNotification

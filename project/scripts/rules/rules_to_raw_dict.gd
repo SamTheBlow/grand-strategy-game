@@ -1,5 +1,7 @@
-class_name RulesToDict
+class_name RulesToRawDict
 ## Converts a [GameRules] resource into raw data.
+##
+## See also: [RulesFromRawDict]
 
 
 func result(game_rules: GameRules) -> Dictionary:

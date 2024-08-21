@@ -1,6 +1,12 @@
 class_name DiplomacyRelationshipsFromRaw
 ## Converts raw data into a [DiplomacyRelationships] object.
+##
+## See also: [DiplomacyRelationshipsToRaw]
 
+
+const RECIPIENT_COUNTRY_ID_KEY: String = "recipient_country_id"
+const BASE_DATA_KEY: String = "base_data"
+const PERFORMED_ACTIONS_KEY: String = "actions_performed_this_turn"
 
 var error: bool = false
 var error_message: String = ""
@@ -50,8 +56,7 @@ func _diplomacy_relationship_from_dict(
 		default_data: Dictionary,
 		base_actions: Array[int],
 ) -> DiplomacyRelationship:
-	# TODO mostly copy/paste from [GameNotificationsFromRaw]
-	if not ParseUtils.dictionary_has_number(data, "recipient_country_id"):
+	if not ParseUtils.dictionary_has_number(data, RECIPIENT_COUNTRY_ID_KEY):
 		error = true
 		error_message = (
 				"Diplomacy relationship data doesn't contain "
@@ -59,7 +64,7 @@ func _diplomacy_relationship_from_dict(
 		)
 		return null
 	var recipient_country_id: int = (
-			ParseUtils.dictionary_int(data, "recipient_country_id")
+			ParseUtils.dictionary_int(data, RECIPIENT_COUNTRY_ID_KEY)
 	)
 	
 	var recipient_country: Country = (
@@ -75,15 +80,12 @@ func _diplomacy_relationship_from_dict(
 		return null
 	
 	var loaded_relationship_data: Dictionary = {}
-	if (data.has("base_data") and data["base_data"] is Dictionary):
-		loaded_relationship_data.merge(data["base_data"] as Dictionary)
+	if ParseUtils.dictionary_has_dictionary(data, BASE_DATA_KEY):
+		loaded_relationship_data.merge(data[BASE_DATA_KEY] as Dictionary)
 	
 	var actions_already_performed: Array[int] = []
-	if (
-			data.has("actions_performed_this_turn")
-			and data["actions_performed_this_turn"] is Array
-	):
-		for element: Variant in data["actions_performed_this_turn"] as Array:
+	if ParseUtils.dictionary_has_array(data, PERFORMED_ACTIONS_KEY):
+		for element: Variant in data[PERFORMED_ACTIONS_KEY] as Array:
 			if not ParseUtils.is_number(element):
 				continue
 			var action_id: int = ParseUtils.number_as_int(element)
@@ -101,6 +103,7 @@ func _diplomacy_relationship_from_dict(
 			base_actions,
 	)
 	
+	relationship.diplomacy_presets = game.rules.diplomatic_presets
 	relationship.diplomacy_actions = game.rules.diplomatic_actions
 	relationship.initialize_actions(
 			game.turn.current_turn(), actions_already_performed

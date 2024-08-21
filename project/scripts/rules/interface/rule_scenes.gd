@@ -1,5 +1,6 @@
 class_name RuleScenes
 extends Resource
+## Conveniently contains a reference to each of the [RuleInterface] scenes.
 
 
 @export var rule_category_scene: PackedScene

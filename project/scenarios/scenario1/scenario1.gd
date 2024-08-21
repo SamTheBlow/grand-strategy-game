@@ -47,7 +47,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 	json_data["version"] = "1"
 	
 	# Rules
-	json_data["rules"] = RulesToDict.new().result(game_rules)
+	json_data["rules"] = RulesToRawDict.new().result(game_rules)
 	
 	# Players and countries
 	var random_country_assignment: Array = range(starting_provinces.size())

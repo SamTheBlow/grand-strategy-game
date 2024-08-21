@@ -2,8 +2,6 @@ class_name TopBar
 extends Control
 ## The top bar that appears during a game.
 ## Shows useful information to the user.
-##
-## The information is automatically updated. No setup required!
 
 
 @export var _game: Game

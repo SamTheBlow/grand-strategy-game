@@ -14,7 +14,8 @@ enum Type {
 }
 
 
-## For the purposes of saving/loading.
+## Returns the type of building.
+## Useful to identify and differentiate buildings.
 func type() -> Type:
 	if self is Fortress:
 		return Type.FORTRESS

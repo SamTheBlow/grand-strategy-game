@@ -5,6 +5,8 @@ extends Node
 ## Note that currently, items are not meant to be removed.
 
 
+## Meant to be set only once, before entering the scene tree.
+## Not meant to be null.
 var game: Game
 
 var _list: Array[AutoArrowsNode2D] = []
@@ -12,10 +14,7 @@ var _list: Array[AutoArrowsNode2D] = []
 
 func _ready() -> void:
 	if game == null:
-		push_error(
-				"AutoArrowContainer was not given a game reference. "
-				+ "It will not work as intended and it may crash the game."
-		)
+		push_error("Game is null.")
 		return
 	
 	# Create nodes for the already existing countries
@@ -33,14 +32,15 @@ func add(auto_arrows_node: AutoArrowsNode2D) -> void:
 ## Creates a new node if the given country doesn't already have one.
 func arrows_of_country(country: Country) -> AutoArrowsNode2D:
 	for arrows in _list:
-		if arrows.country() == country:
+		if arrows.country == country:
 			return arrows
 	return _new_arrows_node(country)
 
 
 func _new_arrows_node(country: Country) -> AutoArrowsNode2D:
 	var new_node := AutoArrowsNode2D.new()
-	new_node.init(game, country)
+	new_node.country = country
+	new_node.init(game)
 	add(new_node)
 	return new_node
 

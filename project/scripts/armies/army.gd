@@ -39,7 +39,7 @@ var game: Game:
 ## the purposes of sending data about this army to network clients.
 var id: int
 
-## Provides information on this army's size. Currently cannot be null.
+## Provides information on this army's size. Currently must not be null.
 ## Must initialize when the army is created.
 var army_size: ArmySize:
 	set(value):
@@ -56,18 +56,27 @@ var army_size: ArmySize:
 ## Must initialize when the army is created.
 var owner_country: Country:
 	set(value):
+		if value == null:
+			push_warning("Tried to set an army's owner country to null!")
+			return
+		
 		owner_country = value
 		allegiance_changed.emit(owner_country)
 
-## The [Province] in which this army is located. Currently cannot be null.
+## The [Province] in which this army is located. Currently must not be null.
 ## Must initialize when the army is created.
 var _province: Province:
 	set(value):
+		if value == null:
+			push_warning("Tried to set an army's province to null!")
+			return
+		
 		_province = value
 		province_changed.emit(self, _province)
 
-# For now, there's a hard limit of 1 movement per turn,
-# but in the future we should make it possible to change the limit
+## The number of movements made by this army.
+## Currently, there's a limit of 1 movement per turn
+## and this property resets to 0 on each turn.
 var _movements_made: int = 0:
 	set(value):
 		_movements_made = value
@@ -172,21 +181,27 @@ func movements_made() -> int:
 	return _movements_made
 
 
-# TASK in the future this won't be as simple as adding +1 to movements made
 ## Artificially increases the army's number of movements made
 ## such that it is no longer able to move, if applicable.
 func exhaust() -> void:
+	# (In the future it won't be that simple)
 	_movements_made = 1
 
 
 ## How much in-game money it would cost to recruit given troop count.
 static func money_cost(troop_count: int, rules: GameRules) -> int:
-	return ceili(troop_count * rules.recruitment_money_per_unit.value)
+	return (
+			ResourceCost.new(rules.recruitment_money_per_unit.value)
+			.cost_fori(troop_count)
+	)
 
 
 ## How much [Population] it would cost to recruit given troop count.
 static func population_cost(troop_count: int, rules: GameRules) -> int:
-	return ceili(troop_count * rules.recruitment_population_per_unit.value)
+	return (
+			ResourceCost.new(rules.recruitment_population_per_unit.value)
+			.cost_fori(troop_count)
+	)
 
 
 func _on_player_turn_changed(player: GamePlayer) -> void:

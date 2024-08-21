@@ -1,17 +1,15 @@
 class_name ArmyReinforcements
-## Class responsible for spawning new armies in given [Province].
-## Creates a new [Army] under the control of the province's owner [Country].
-## The army's size depends on the [GameRules].
-## Then, armies in given province are merged together.
-##
-## This class is meant to be used when a new turn begins (see [GameTurn]).
+## Class responsible for spawning a new [Army]
+## in given [Province] according to the [GameRules].
+## Merges the armies in given province after creating an army.
 
 
 func reinforce_province(province: Province) -> void:
-	if not province.game.rules.reinforcements_enabled.value:
-		return
-	
-	if not province.owner_country:
+	if (
+			province == null
+			or not province.game.rules.reinforcements_enabled.value
+			or province.owner_country == null
+	):
 		return
 	
 	var reinforcements_size: int = 0
@@ -30,11 +28,13 @@ func reinforce_province(province: Province) -> void:
 					province.population.population_size
 					* province.game.rules.reinforcements_per_person.value
 			)
+		_:
+			push_warning("Unrecognized army reinforcements option.")
 	
 	if reinforcements_size < province.game.rules.minimum_army_size.value:
 		return
 	
-	var _army: Army = Army.quick_setup(
+	Army.quick_setup(
 			province.game,
 			province.game.world.armies.new_unique_id(),
 			reinforcements_size,

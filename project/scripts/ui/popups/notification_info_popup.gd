@@ -1,5 +1,10 @@
 class_name NotificationInfoPopup
 extends Control
+## Displays information about a certain [GameNotification].
+## Allows the user to choose between the
+## notification's different outcomes, if applicable.
+##
+## See also: [GamePopup]
 
 
 signal decision_made(game_notification: GameNotification, outcome_index: int)

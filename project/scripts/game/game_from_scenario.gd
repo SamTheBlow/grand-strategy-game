@@ -13,14 +13,14 @@ func load_game(
 		game_scene: PackedScene
 ) -> void:
 	var json_data: Dictionary = scenario.as_json(game_rules)
-	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(json_data, game_scene)
+	var game_from_raw := GameFromRawDict.new()
+	game_from_raw.load_game(json_data, game_scene)
 	
-	if game_from_json.error:
+	if game_from_raw.error:
 		error = true
-		error_message = game_from_json.error_message
+		error_message = game_from_raw.error_message
 		return
 	
 	# Success!
 	error = false
-	result = game_from_json.result
+	result = game_from_raw.result

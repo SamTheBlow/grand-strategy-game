@@ -1,6 +1,9 @@
 class_name DiplomacyActionButton
 extends Control
-## Note: this node automatically hides itself if it has invalid/missing info.
+## Button for given [DiplomacyAction].
+## If the action cannot be performed, disables the button
+## and shows a message explaining why.
+## Hides itself if either diplomacy_action or game is null.
 
 
 signal pressed(diplomacy_action: DiplomacyAction)

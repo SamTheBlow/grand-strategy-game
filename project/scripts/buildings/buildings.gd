@@ -1,6 +1,6 @@
 class_name Buildings
 extends Node
-## Represents a list of [Building] objects.
+## A list of [Building] objects.
 ## Buildings added to this list become children of this node.
 
 

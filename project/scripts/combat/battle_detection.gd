@@ -1,6 +1,7 @@
 class_name BattleDetection
 ## Detects when a [Battle] should occur and starts the battle if applicable.
-# TODO just like the rest of the battle code, this is ugly
+##
+## To use, connect the appropriate signal to "_on_army_added".
 
 
 ## Engages given [Army] into a battle with all

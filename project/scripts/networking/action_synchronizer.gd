@@ -1,6 +1,6 @@
 class_name ActionSynchronizer
 extends Node
-## Class responsible for applying and synchronizing [Action]s across clients.
+## Applies and synchronizes [Action]s across clients.
 # TODO: check if a received action is valid and allowed
 
 

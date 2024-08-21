@@ -1,10 +1,10 @@
 class_name CountryRelationshipNode
 extends Control
-## Interface that displays information about a
-## [DiplomacyRelationship] between two countries.
+## Displays information about the
+## [DiplomacyRelationship] between two given countries.
 ##
-## Note: if either country_1 or country_2 is null, this node will hide itself.
-## It will also hide itself when both given countries are the same.
+## Hides itself when either country_1 or country_2 is null.
+## Also hides itself when both given countries are the same.
 
 
 signal diplomacy_action_pressed(

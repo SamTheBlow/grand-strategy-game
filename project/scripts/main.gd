@@ -1,10 +1,7 @@
 extends Node
-## The main class that starts when the game runs.
-## It's responsible for scene transitions.
-## It's also responsible for making data persist across scenes.
-## [br][br]
-## This is one of those classes that are a bit ugly.
-## Many things found in this class are probably not supposed to be here.
+## The main class. Runs when the game is launched.
+## Takes care of scene transitions and makes data persist across scenes.
+# TODO this class is bloated
 
 
 ## The default file path for the game's save file.
@@ -109,41 +106,41 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	
-	var game_to_json := GameToJSON.new()
-	game_to_json.convert_game(game)
-	if game_to_json.error:
+	var game_to_raw := GameToRawDict.new()
+	game_to_raw.convert_game(game)
+	if game_to_raw.error:
 		push_error(
-				"Error converting game to JSON: ",
-				game_to_json.error_message
+				"Failed to convert game into raw data: ",
+				game_to_raw.error_message
 		)
 		chat.send_system_message("Failed to send the game to other players.")
 		return
 	
 	if multiplayer_id == -1:
-		_receive_new_game.rpc(game_to_json.result)
+		_receive_new_game.rpc(game_to_raw.result)
 	else:
-		_receive_new_game.rpc_id(multiplayer_id, game_to_json.result)
+		_receive_new_game.rpc_id(multiplayer_id, game_to_raw.result)
 
 
 ## The client receives a new game from the server.
-## The game is built from the given JSON data, then we wait
+## The game is built from the given raw data, then we wait
 ## until we've received everything else before we start the game.
 @rpc("authority", "call_remote", "reliable")
-func _receive_new_game(game_json: Dictionary) -> void:
-	var game_from_json := GameFromJSON.new()
-	game_from_json.load_game(game_json, game_scene)
+func _receive_new_game(game_data: Dictionary) -> void:
+	var game_from_raw := GameFromRawDict.new()
+	game_from_raw.load_game(game_data, game_scene)
 	
-	if game_from_json.error:
+	if game_from_raw.error:
 		push_warning(
 				"Failed to load the received game: ",
-				game_from_json.error_message
+				game_from_raw.error_message
 		)
 		chat.send_system_message("Failed to load the received game.")
 		return
 	
 	if not sync_check.is_sync_finished():
 		await sync_check.sync_finished
-	play_game(game_from_json.result)
+	play_game(game_from_raw.result)
 #endregion
 
 

@@ -19,6 +19,6 @@ func action_from_id(id: int) -> DiplomacyActionDefinition:
 	return null
 
 
-## Returns a reference to THE definition of the empty action
+## Returns a reference to THE definition of the empty action.
 func empty() -> DiplomacyActionDefinition:
 	return _empty

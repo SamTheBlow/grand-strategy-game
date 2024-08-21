@@ -1,7 +1,8 @@
 class_name CountryButton
 extends Control
-## A button that shows a [Country]'s color.
-## Clicking on it emits a signal.
+## Button colored after given [Country].
+## Draws a black outline around the button when enabled.
+## Clicking on it emits a signal with the country as argument.
 
 
 signal pressed(country: Country)
@@ -16,7 +17,6 @@ signal pressed(country: Country)
 		is_button_enabled = value
 		_update_button_enabled()
 
-## The country represented by this button.
 var country: Country:
 	set(value):
 		country = value

@@ -4,6 +4,10 @@ extends Action
 ## You must provide a new unique id for the new army.
 
 
+const PROVINCE_ID_KEY: String = "province_id"
+const NUMBER_OF_TROOPS_KEY: String = "number_of_troops"
+const NEW_ARMY_ID_KEY: String = "new_army_id"
+
 var _province_id: int
 var _number_of_troops: int
 var _new_army_id: int
@@ -62,23 +66,25 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	)
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
 func raw_data() -> Dictionary:
 	return {
-		"id": RECRUITMENT,
-		"province_id": _province_id,
-		"number_of_troops": _number_of_troops,
-		"new_army_id": _new_army_id,
+		ID_KEY: RECRUITMENT,
+		PROVINCE_ID_KEY: _province_id,
+		NUMBER_OF_TROOPS_KEY: _number_of_troops,
+		NEW_ARMY_ID_KEY: _new_army_id,
 	}
 
 
-# TODO verify that the data is valid
-# same problem in [ActionArmyMovement], [ActionArmySplit], [ActionBuild]
-## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionRecruitment:
+	if not (
+			ParseUtils.dictionary_has_number(data, PROVINCE_ID_KEY)
+			and ParseUtils.dictionary_has_number(data, NUMBER_OF_TROOPS_KEY)
+			and ParseUtils.dictionary_has_number(data, NEW_ARMY_ID_KEY)
+	):
+		return null
+	
 	return ActionRecruitment.new(
-			data["province_id"] as int,
-			data["number_of_troops"] as int,
-			data["new_army_id"] as int,
+			ParseUtils.dictionary_int(data, PROVINCE_ID_KEY),
+			ParseUtils.dictionary_int(data, NUMBER_OF_TROOPS_KEY),
+			ParseUtils.dictionary_int(data, NEW_ARMY_ID_KEY),
 	)

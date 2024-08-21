@@ -1,13 +1,17 @@
 class_name CustomOptionButton
 extends OptionButton
-## When you select an item from this button's options, it shows the
+## When the user selects an item from this button's options, shows the
 ## Control nodes associated with that item, and hides all the other ones.
-## Also, when this node is hidden, all of the option nodes are also hidden.
+## Hides all of the option nodes when this node is hidden.
 
 
 ## Effectively an Array[Array[Control]].
 ## Associates an array of Control nodes to each OptionButton option.
 ## Make sure to put the filters in the same order as the OptionButton options!
+##
+## For example, [[oak_node, birch_node], [apple_node, banana_node], [fish_node]]
+## would show the tree nodes when the first option is selected,
+## the food nodes for the second option, and the animal nodes for the third.
 @export var option_filters: Array
 
 

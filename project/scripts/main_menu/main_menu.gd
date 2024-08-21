@@ -1,7 +1,7 @@
 class_name MainMenu
 extends Node
-## The scene that the user enters by default.
-## Currently only contains the [Lobby] and an interface for the [Chat].
+## The main menu.
+## Currently only contains the [Lobby] and a [ChatInterface].
 
 
 signal game_started(scenario: PackedScene)

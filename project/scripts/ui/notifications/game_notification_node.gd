@@ -1,8 +1,8 @@
 class_name GameNotificationNode
 extends Control
-## Visual representation of a [GameNotification].
+## Displays given [GameNotification] to the user.
 ##
-## Note: this node hides itself when game_notification is null.
+## Hides itself when game_notification is null.
 
 
 signal pressed(game_notification: GameNotification)

@@ -10,6 +10,6 @@ func parse(chat_data: ChatData) -> Dictionary:
 		content.append(ChatMessageToDict.new().parse(chat_message))
 	
 	return {
-		"content": content,
-		"players": chat_data._players,
+		ChatDataFromDict.CONTENT_KEY: content,
+		ChatDataFromDict.PLAYERS_KEY: chat_data._players,
 	}

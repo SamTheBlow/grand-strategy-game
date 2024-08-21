@@ -5,6 +5,9 @@ extends Action
 ## See also: [DiplomacyAction], [DiplomacyRelationship].
 
 
+const DIPLOMACY_ACTION_ID_KEY: String = "diplomacy_action_id"
+const TARGET_COUNTRY_ID_KEY: String = "target_country_id"
+
 var _diplomacy_action_id: int = -1
 var _target_country_id: int = -1
 
@@ -26,7 +29,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		target_country_.relationships.with_country(player.playing_country)
 	)
 	
-	diplomacy_action(relationship).apply(
+	diplomacy_action(relationship).perform(
 			game, relationship, reverse_relationship
 	)
 
@@ -49,14 +52,20 @@ func is_equivalent_to(action_diplomacy: ActionDiplomacy) -> bool:
 
 func raw_data() -> Dictionary:
 	return {
-		"id": DIPLOMACY,
-		"diplomacy_action_id": _diplomacy_action_id,
-		"target_country_id": _target_country_id,
+		ID_KEY: DIPLOMACY,
+		DIPLOMACY_ACTION_ID_KEY: _diplomacy_action_id,
+		TARGET_COUNTRY_ID_KEY: _target_country_id,
 	}
 
 
 static func from_raw_data(data: Dictionary) -> ActionDiplomacy:
+	if not (
+			ParseUtils.dictionary_has_number(data, DIPLOMACY_ACTION_ID_KEY)
+			and ParseUtils.dictionary_has_number(data, TARGET_COUNTRY_ID_KEY)
+	):
+		return null
+	
 	return ActionDiplomacy.new(
-		data["diplomacy_action_id"] as int,
-		data["target_country_id"] as int,
+			ParseUtils.dictionary_int(data, DIPLOMACY_ACTION_ID_KEY),
+			ParseUtils.dictionary_int(data, TARGET_COUNTRY_ID_KEY),
 	)

@@ -6,6 +6,6 @@ class_name ChatMessageToDict
 
 func parse(chat_message: ChatMessage) -> Dictionary:
 	return {
-		"user_id": chat_message.user_id,
-		"text": chat_message.text,
+		ChatMessageFromDict.USER_ID_KEY: chat_message.user_id,
+		ChatMessageFromDict.TEXT_KEY: chat_message.text,
 	}

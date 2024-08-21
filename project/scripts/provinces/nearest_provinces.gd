@@ -1,5 +1,7 @@
 class_name NearestProvinces
-## Class responsible for finding a [Province]'s nearest provinces.
+## Class responsible for finding the nearest provinces to given [Province]
+## that pass a given filter. For example, you can search for the
+## nearest provinces that a certain country doesn't control.
 
 
 ## The number of nearest provinces.

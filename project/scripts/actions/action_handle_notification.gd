@@ -3,6 +3,9 @@ extends Action
 ## Handles given [GameNotification] index with given outcome index.
 
 
+const NOTIFICATION_ID_KEY: String = "notification_id"
+const OUTCOME_INDEX_KEY: String = "outcome_index"
+
 var _notification_id: int
 var _outcome_index: int
 
@@ -43,19 +46,22 @@ func handles_the_same_notification_as(
 	) 
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
 func raw_data() -> Dictionary:
 	return {
-		"id": HANDLE_NOTIFICATION,
-		"notification_id": _notification_id,
-		"outcome_index": _outcome_index,
+		ID_KEY: HANDLE_NOTIFICATION,
+		NOTIFICATION_ID_KEY: _notification_id,
+		OUTCOME_INDEX_KEY: _outcome_index,
 	}
 
 
-## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionHandleNotification:
+	if not (
+			ParseUtils.dictionary_has_number(data, NOTIFICATION_ID_KEY)
+			and ParseUtils.dictionary_has_number(data, OUTCOME_INDEX_KEY)
+	):
+		return null
+	
 	return ActionHandleNotification.new(
-			data["notification_id"] as int,
-			data["outcome_index"] as int
+			ParseUtils.dictionary_int(data, NOTIFICATION_ID_KEY),
+			ParseUtils.dictionary_int(data, OUTCOME_INDEX_KEY)
 	)

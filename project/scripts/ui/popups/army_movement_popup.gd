@@ -2,7 +2,7 @@ class_name ArmyMovementPopup
 extends VBoxContainer
 ## Contents for the popup that appears when the user wants to move an [Army].
 ##
-## See [GamePopup] to learn more on how popups work.
+## See also: [GamePopup]
 # TODO DRY. This code is very similar to that of [RecruitmentPopup].
 
 
@@ -25,7 +25,6 @@ func init(army: Army, destination: Province) -> void:
 	_new_slider_value()
 
 
-## See [GamePopup]
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
@@ -46,10 +45,10 @@ func _on_troop_slider_value_changed(value: float) -> void:
 		# triggers the signal that calls this function
 		troop_slider.value = troop_slider.max_value
 		return
+	
 	_new_slider_value()
 
 
-## See [GamePopup]
 func _on_button_pressed(button_id: int) -> void:
 	if button_id == 1:
 		var troop_count := int(troop_slider.value)

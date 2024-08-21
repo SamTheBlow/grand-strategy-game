@@ -1,5 +1,8 @@
 extends Button
 ## Utility class.
+## Provides signals for when left click or right click
+## is just pressed/released on the button.
+## Also grabs focus when right clicked, if enabled.
 ##
 ## Source: https://stackoverflow.com/questions/66090893/how-can-i-extend-godots-button-to-distinguish-left-click-vs-right-click-events
 

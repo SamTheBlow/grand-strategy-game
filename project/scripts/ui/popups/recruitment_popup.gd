@@ -3,7 +3,7 @@ extends VBoxContainer
 ## Contents for the popup that appears
 ## when the user wants to recruit a new [Army].
 ##
-## See [GamePopup] to learn more on how popups work.
+## See also: [GamePopup]
 
 
 signal confirmed(province: Province, troop_count: int)

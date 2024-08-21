@@ -24,7 +24,6 @@ var original_position: Vector2
 var target_position: Vector2
 
 
-## This only gets called while the animation is playing
 func _process(delta: float) -> void:
 	if not _is_playing:
 		return

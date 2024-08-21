@@ -1,6 +1,6 @@
 class_name PlayerTurnAnnouncement
 extends Control
-## The message that appears when it becomes a player's turn to play.
+## Displays a message when it becomes a player's turn to play, if applicable.
 ## Automatically fades out after some time.
 
 

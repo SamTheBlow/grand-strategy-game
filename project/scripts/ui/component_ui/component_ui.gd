@@ -1,9 +1,9 @@
 @tool
 class_name ComponentUI
 extends Control
-## Interface that appears around a given object.
-## It can give information about the object and have widgets like buttons.
-## (Currently only works on a [Province] object)
+## Interface that appears around a given [Province].
+## Provides information about the province
+## and has buttons with different functionalities.
 
 
 signal button_pressed(button_id: int)
@@ -193,8 +193,8 @@ func _update_nodes_playing_player(playing_player: GamePlayer) -> void:
 	if not is_node_ready():
 		return
 	
-	_build_fortress_button.playing_player = playing_player
-	_recruit_button.playing_player = playing_player
+	_build_fortress_button.player = playing_player
+	_recruit_button.player = playing_player
 	
 	_relationship_preset_label_update.country = (
 			playing_player.playing_country if playing_player else null

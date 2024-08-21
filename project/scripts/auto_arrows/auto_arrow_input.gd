@@ -112,15 +112,15 @@ func _release_preview_arrow() -> void:
 		_preview_arrow = null
 		return
 	
-	var auto_arrow := AutoArrow.new()
-	auto_arrow.source_province = _preview_arrow.source_province
-	auto_arrow.destination_province = _preview_arrow.destination_province
+	var auto_arrow := AutoArrow.new(
+			_preview_arrow.source_province, _preview_arrow.destination_province
+	)
 	
 	_preview_arrow = null
 	
 	var country: Country = _country()
-	if country.auto_arrows.is_duplicate(auto_arrow):
-		# This exact arrow already exists? Remove it
+	if country.auto_arrows.has_equivalent_in_list(auto_arrow):
+		# An equivalent arrow already exists? Remove it
 		auto_arrow_sync.remove(country, auto_arrow)
 	else:
 		auto_arrow_sync.add(country, auto_arrow)

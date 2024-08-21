@@ -1,8 +1,6 @@
 class_name IdButton
 extends Button
-## This button has an id given by some other node.
-## When pressed, this button emits a custom signal
-## that contains the button's id as an argument.
+## Has a given id. When pressed, emits a signal with the id as argument.
 ## Useful for being able to know which button
 ## was pressed among some group of buttons.
 

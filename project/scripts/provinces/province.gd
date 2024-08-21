@@ -8,7 +8,7 @@ extends Node2D
 ## involve their presence on a province:
 ## [Army], [Population], [Building], [IncomeMoney].
 ##
-## See [method GameFromJSON._load_province]
+## See [method GameFromRawDict._load_province]
 ## to see how to initialize a new province.
 # TODO move visuals to their own class
 

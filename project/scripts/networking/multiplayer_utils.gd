@@ -1,5 +1,5 @@
 class_name MultiplayerUtils
-## Utility class for online multiplayer functions.
+## Provides utility functions related to online multiplayer.
 
 
 ## Returns true if (and only if) you are connected online.

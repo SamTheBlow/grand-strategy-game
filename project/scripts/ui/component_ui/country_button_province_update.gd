@@ -1,8 +1,8 @@
 class_name CountryButtonProvinceUpdate
 extends Node
-## Updates a [CountryButton] to always show a given [Province]'s
-## owner [Country]. Hides the country button when the given
-## province is null, or when the owner country is null.
+## Updates given [CountryButton] so that it always
+## shows given [Province]'s owner [Country] even after it changes.
+## Hides the button when either given province or its owner country is null.
 
 
 @export var country_button: CountryButton

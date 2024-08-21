@@ -1,7 +1,7 @@
 class_name AutoArrowSync
 extends Node
-## Use this to add or remove [AutoArrow]s.
-## Sends the information to the other clients.
+## Applies changes related to [AutoArrow]s
+## and synchronizes them across clients. Also works in singleplayer.
 
 
 @export var game: Game

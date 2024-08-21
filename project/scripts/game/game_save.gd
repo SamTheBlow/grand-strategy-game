@@ -24,13 +24,13 @@ func save_game(game: Game, file_path: String) -> void:
 		error_message = "Failed to open the file for writing."
 		return
 	
-	var game_to_json := GameToJSON.new()
-	game_to_json.convert_game(game)
-	if game_to_json.error:
+	var game_to_raw := GameToRawDict.new()
+	game_to_raw.convert_game(game)
+	if game_to_raw.error:
 		error = true
-		error_message = game_to_json.error_message
+		error_message = game_to_raw.error_message
 		return
 	
-	file_access.store_string(JSON.stringify(game_to_json.result, "\t"))
+	file_access.store_string(JSON.stringify(game_to_raw.result, "\t"))
 	file_access.close()
 	error = false

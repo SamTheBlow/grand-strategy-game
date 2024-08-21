@@ -1,7 +1,9 @@
 class_name DiplomacyRelationshipAutoChanges
 ## Class responsible for automatic changes in a [DiplomacyRelationship].
+## For example, when its game rule is enabled, countries automatically
+## fight back when a country starts fighting them.
 ##
-## To use, just create a new instance! It does all the work automatically.
+## No setup needed.
 
 
 var _game: Game
