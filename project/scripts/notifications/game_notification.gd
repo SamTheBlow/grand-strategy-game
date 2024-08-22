@@ -69,10 +69,10 @@ func outcome_names() -> Array[String]:
 	return _outcome_names.duplicate()
 
 
-## The icon to display on screen.
+## The icon to display on screen. May be null.
 ## Meant to be overridden by subclasses.
-func icon() -> String:
-	return "?"
+func icon() -> Texture2D:
+	return null
 
 
 ## Human-friendly text that gives information about the notification.

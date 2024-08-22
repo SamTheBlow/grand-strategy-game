@@ -13,9 +13,8 @@ extends Resource
 ## The actions's name. May be shown to the user. It doesn't have to be unique.
 @export var name: String = ""
 
-## May be used to easily differentiate actions visually.
-## Please only use one character (e.g. an emoji).
-@export var icon: String = ""
+## May be used to represent the action visually.
+@export var icon: Texture2D
 
 @export_group("Conditions")
 ## If true, this action will only be performed

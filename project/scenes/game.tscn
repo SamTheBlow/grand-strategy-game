@@ -1,4 +1,4 @@
-[gd_scene load_steps=36 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=37 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army.tscn" id="2_14kbw"]
@@ -23,6 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://scenes/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_input.gd" id="17_bla78"]
 [ext_resource type="Script" path="res://scripts/debug/debug_province_highlight.gd" id="18_pevj0"]
+[ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
 [ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_sync.gd" id="18_vpgj8"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
@@ -63,6 +64,7 @@ camera = NodePath("Camera")
 component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
 popups = NodePath("UILayer/GameUI/Popups")
 battle = ExtResource("15_vh3er")
+offer_accepted_icon = ExtResource("18_te1gd")
 
 [node name="DebugProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("game")]
 script = ExtResource("18_pevj0")

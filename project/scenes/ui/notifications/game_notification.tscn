@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://4ctqqicmn2mn"]
 
 [ext_resource type="Script" path="res://scripts/ui/notifications/game_notification_node.gd" id="1_2ds1f"]
-[ext_resource type="Script" path="res://scripts/ui/scaled_label.gd" id="2_37k4c"]
+[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_iv0cq"]
 [ext_resource type="Script" path="res://scripts/ui/custom_button.gd" id="3_dyl3y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6m8fg"]
@@ -58,7 +58,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Icon" type="Label" parent="ColorRect" node_paths=PackedStringArray("anchor_node")]
+[node name="Icon" type="TextureRect" parent="ColorRect"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -66,13 +66,9 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-horizontal_alignment = 1
-vertical_alignment = 1
-clip_text = true
-script = ExtResource("2_37k4c")
-anchor_node = NodePath("..")
+texture = ExtResource("2_iv0cq")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Button" type="Button" parent="ColorRect"]
 layout_mode = 1

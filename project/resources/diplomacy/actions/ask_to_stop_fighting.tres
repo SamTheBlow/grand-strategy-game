@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://dvdfnj3lic55"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://dvdfnj3lic55"]
 
+[ext_resource type="Texture2D" uid="uid://dm34bh466qkf5" path="res://assets/openmoji/1F64F.svg" id="1_j245j"]
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_pcnq2"]
 
 [resource]
 script = ExtResource("1_pcnq2")
 id = 13
 name = "Ask to stop fighting"
-icon = "🙏"
+icon = ExtResource("1_j245j")
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {}

@@ -16,7 +16,7 @@ var game_notification: GameNotification:
 		_refresh()
 
 @onready var _color_rect := %ColorRect as ColorRect
-@onready var _icon := %Icon as Label
+@onready var _icon := %Icon as TextureRect
 
 
 func _ready() -> void:
@@ -36,7 +36,7 @@ func _refresh() -> void:
 	else:
 		_color_rect.color = Color.WHITE
 	
-	_icon.text = game_notification.icon()
+	_icon.texture = game_notification.icon()
 	
 	show()
 

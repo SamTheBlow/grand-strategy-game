@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://bke4orh12nfe5"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://bke4orh12nfe5"]
 
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_omaq3"]
+[ext_resource type="Texture2D" uid="uid://yf0cgsdncaha" path="res://assets/openmoji/1F54A.svg" id="1_uptf5"]
 
 [resource]
 script = ExtResource("1_omaq3")
 id = 2
 name = "Offer peace"
-icon = "✌️"
+icon = ExtResource("1_uptf5")
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {

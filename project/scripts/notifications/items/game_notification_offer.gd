@@ -43,7 +43,7 @@ func action_id() -> int:
 	return _diplomacy_action_definition.id
 
 
-func icon() -> String:
+func icon() -> Texture2D:
 	return _diplomacy_action_definition.icon
 
 

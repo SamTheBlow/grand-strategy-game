@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://yw0vmi0myodt"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://yw0vmi0myodt"]
 
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_ejas3"]
+[ext_resource type="Texture2D" uid="uid://jtcn81huq1mt" path="res://assets/openmoji/1F49A.svg" id="1_vsva6"]
 
 [resource]
 script = ExtResource("1_ejas3")
 id = 3
 name = "Offer alliance"
-icon = "💚"
+icon = ExtResource("1_vsva6")
 requires_consent = true
 available_after_turns = 0
 your_outcome_data = {

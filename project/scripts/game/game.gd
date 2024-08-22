@@ -42,6 +42,8 @@ signal game_ended()
 @export_group("Resources")
 ## Defines the outcome of a [Battle].
 @export var battle: Battle
+## Icon to use for [GameNotificationOfferAccepted].
+@export var offer_accepted_icon: Texture2D
 
 ## Must setup before the game starts.
 ## You are not meant to edit the rules once they are set.

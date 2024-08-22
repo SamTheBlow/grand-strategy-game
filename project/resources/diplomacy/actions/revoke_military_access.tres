@@ -1,12 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://bw7wow17qy2hc"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://bw7wow17qy2hc"]
 
+[ext_resource type="Texture2D" uid="uid://b5jxgh5kpto4q" path="res://assets/openmoji/26D4.svg" id="1_r6swv"]
 [ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_t0kf3"]
 
 [resource]
 script = ExtResource("1_t0kf3")
 id = 6
 name = "Revoke military access"
-icon = "⛔"
+icon = ExtResource("1_r6swv")
 requires_consent = false
 available_after_turns = 1
 your_outcome_data = {
