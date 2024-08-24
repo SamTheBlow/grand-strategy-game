@@ -36,6 +36,10 @@ func _init(
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
+	if _new_army_ids.size() < _troop_partition.size() - 1:
+		push_error("Did not provide enough new army IDs for splitting army.")
+		return
+	
 	var army: Army = game.world.armies.army_with_id(_army_id)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist!")
@@ -97,17 +101,22 @@ func raw_data() -> Dictionary:
 
 
 static func from_raw_data(data: Dictionary) -> ActionArmySplit:
-	if not ParseUtils.dictionary_has_number(data, ARMY_ID_KEY):
+	if not (
+			ParseUtils.dictionary_has_number(data, ARMY_ID_KEY)
+			and ParseUtils.dictionary_has_array(data, TROOP_PARTITION_KEY)
+			and ParseUtils.dictionary_has_array(data, NEW_ARMY_IDS_KEY)
+	):
 		return null
 	
-	# TODO these are prone to crashing and also ugly
-	var troop_partition: Array[int] = []
-	for part in data[TROOP_PARTITION_KEY] as Array[int]:
-		troop_partition.append(part)
+	var troop_partition: Array[int] = (
+			ParseUtils.dictionary_array_int(data, TROOP_PARTITION_KEY)
+	)
+	var new_army_ids: Array[int] = (
+			ParseUtils.dictionary_array_int(data, NEW_ARMY_IDS_KEY)
+	)
 	
-	var new_army_ids: Array[int] = []
-	for id in data[NEW_ARMY_IDS_KEY] as Array[int]:
-		new_army_ids.append(id)
+	if new_army_ids.size() < troop_partition.size() - 1:
+		return null
 	
 	return ActionArmySplit.new(
 			ParseUtils.dictionary_int(data, ARMY_ID_KEY),

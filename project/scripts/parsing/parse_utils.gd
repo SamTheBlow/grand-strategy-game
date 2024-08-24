@@ -35,12 +35,33 @@ static func dictionary_has_array(dictionary: Dictionary, key: String) -> bool:
 	return dictionary.has(key) and dictionary[key] is Array
 
 
+## Returns the value associated with given key in given dictionary, parsed
+## as an Array[int]. This may crash the game! Make sure that the dictionary
+## has the key and that it's indeed an array, with dictionary_has_array.
+static func dictionary_array_int(
+		dictionary: Dictionary, key: String
+) -> Array[int]:
+	return array_typed_int(dictionary[key])
+
+
 ## Returns true if given dictionary has given key
 ## and its value is a dictionary.
 static func dictionary_has_dictionary(
 		dictionary: Dictionary, key: String
 ) -> bool:
 	return dictionary.has(key) and dictionary[key] is Dictionary
+
+
+## Takes an untyped array and returns a typed array of type int.
+## For each of the array's elements, converts it into an int if it's a number
+## (see is_number), otherwise discards the element.
+## Do not assume the resulting array will be the same size!
+static func array_typed_int(array: Array) -> Array[int]:
+	var output: Array[int] = []
+	for element: Variant in array:
+		if is_number(element):
+			output.append(number_as_int(element))
+	return output
 
 
 ## Returns true if given variant is either an int or a float.
@@ -51,8 +72,8 @@ static func is_number(variant: Variant) -> bool:
 		TYPE_STRING:
 			var string := variant as String
 			return string.is_valid_int() or string.is_valid_float()
-	
-	return false
+		_:
+			return false
 
 
 ## Returns the given number parsed as an int.
