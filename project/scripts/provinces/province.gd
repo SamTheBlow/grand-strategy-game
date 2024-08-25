@@ -51,12 +51,8 @@ var id: int:
 		name = str(id)
 
 # Nodes
-var army_stack: ArmyStack
+var army_stack: ArmyStack2D
 var buildings: Buildings
-
-## Where this province's [ArmyStack] will be positioned,
-## relative to this province's position.
-var position_army_host: Vector2
 
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -78,10 +74,6 @@ var owner_country: Country:
 		owner_country = value
 		owner_changed.emit(self)
 
-## How much money (the in-game resource)
-## this province generates per [GameTurn].
-var _income_money: IncomeMoney
-
 var population: Population
 
 ## The list of vertices forming this province's polygon shape.
@@ -96,6 +88,22 @@ var _shape: ProvinceShapePolygon2D:
 		if not _shape:
 			_shape = $Shape as ProvinceShapePolygon2D
 		return _shape
+
+## Where this province's [ArmyStack2D] will be positioned,
+## relative to this province's position.
+var _position_army_host: Vector2:
+	set(value):
+		_position_army_host = value
+		_position_fortress = _position_army_host + Vector2(80.0, 56.0)
+
+## Where this province's [Fortress] will be positioned,
+## relative to this province's position.
+## (This property is automatically determined when setting _position_army_host.)
+var _position_fortress: Vector2
+
+## How much money (the in-game resource)
+## this province generates per [GameTurn].
+var _income_money: IncomeMoney
 
 
 ## To be called when this node is created.
@@ -119,6 +127,16 @@ func deselect() -> void:
 
 func highlight_shape(is_target: bool) -> void:
 	_shape.highlight(is_target)
+
+
+## Returns the global army host position.
+func global_position_army_host() -> Vector2:
+	return to_global(_position_army_host)
+
+
+## Returns the global fortress position.
+func global_position_fortress() -> Vector2:
+	return to_global(_position_fortress)
 
 
 func is_linked_to(province: Province) -> bool:
@@ -216,10 +234,10 @@ func highlight_debug(
 
 
 func _setup_army_stack() -> void:
-	army_stack = ArmyStack.new()
-	army_stack.name = "ArmyStack"
-	army_stack.position = position_army_host
+	army_stack = ArmyStack2D.new()
+	army_stack.name = "ArmyStack2D"
 	add_child(army_stack)
+	army_stack.position = _position_army_host
 
 
 func _setup_buildings() -> void:

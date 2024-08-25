@@ -15,13 +15,16 @@ var _is_playing: bool = false:
 			return
 		_is_playing = value
 		if _is_playing:
-			_army_visuals.global_position = original_position
+			_army_visuals.global_position = original_global_position
 		else:
-			_army_visuals.global_position = target_position
+			_army_visuals.global_position = target_global_position
 		is_playing_changed.emit(_is_playing)
 
-var original_position: Vector2
-var target_position: Vector2
+# NOTE: We need to use global position here because it's possible for the army's
+# parent to change while the animation is playing. When that happens, relative
+# values stop working because they're relative to the former parent node.
+var original_global_position: Vector2
+var target_global_position: Vector2
 
 
 func _process(delta: float) -> void:
@@ -30,12 +33,13 @@ func _process(delta: float) -> void:
 	
 	var new_position: Vector2 = (
 			_army_visuals.global_position
-			+ (target_position - original_position)
+			+ (target_global_position - original_global_position)
 			* animation_speed * delta
 	)
 	if (
-			new_position.distance_squared_to(original_position)
-			>= target_position.distance_squared_to(original_position)
+			new_position.distance_squared_to(original_global_position)
+			>=
+			target_global_position.distance_squared_to(original_global_position)
 	):
 		stop()
 	else:

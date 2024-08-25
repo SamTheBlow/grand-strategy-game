@@ -68,7 +68,7 @@ var destination_province: Province:
 var world_destination: Vector2:
 	get:
 		if destination_province:
-			return destination_province.position_army_host
+			return destination_province.global_position_army_host()
 		return world_destination
 	set(value):
 		if world_destination == value:
@@ -80,7 +80,7 @@ var world_destination: Vector2:
 
 func _draw() -> void:
 	draw_line(
-			source_province.position_army_host,
+			source_province.global_position_army_host(),
 			world_destination,
 			arrow_color,
 			arrow_thickness
@@ -88,7 +88,7 @@ func _draw() -> void:
 	draw_line(
 			world_destination,
 			world_destination
-			- (world_destination - source_province.position_army_host)
+			- (world_destination - source_province.global_position_army_host())
 			.rotated(arrow_tip_angle).normalized() * arrow_tip_length,
 			arrow_color,
 			arrow_thickness
@@ -96,7 +96,7 @@ func _draw() -> void:
 	draw_line(
 			world_destination,
 			world_destination
-			- (world_destination - source_province.position_army_host)
+			- (world_destination - source_province.global_position_army_host())
 			.rotated(-arrow_tip_angle).normalized() * arrow_tip_length,
 			arrow_color,
 			arrow_thickness

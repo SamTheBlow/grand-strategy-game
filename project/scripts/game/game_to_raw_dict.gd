@@ -87,11 +87,17 @@ func convert_game(game: Game) -> void:
 				},
 			GameFromRawDict.PROVINCE_INCOME_MONEY_KEY:
 				province.income_money().base_income,
-			GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_X_KEY:
-				province.position_army_host.x,
-			GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_Y_KEY:
-				province.position_army_host.y,
 		}
+		
+		var global_position_army_host: Vector2 = (
+				province.global_position_army_host()
+		)
+		province_data.merge({
+			GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_X_KEY:
+				global_position_army_host.x,
+			GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_Y_KEY:
+				global_position_army_host.y,
+		})
 		
 		# 4.0 backwards compatibility
 		province_data[GameFromRawDict.PROVINCE_OWNER_ID_KEY] = (

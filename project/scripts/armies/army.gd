@@ -15,6 +15,7 @@ signal allegiance_changed(country: Country)
 signal province_changed(this_army: Army, province: Province)
 ## Emitted only when using [method Army.move_to_province].
 ## Teleportation does not trigger this signal.
+## Emitted after province_changed.
 signal moved_to_province(province: Province)
 signal movements_made_changed(movements_made: int)
 

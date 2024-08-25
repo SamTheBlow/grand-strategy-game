@@ -30,19 +30,22 @@ func _ready() -> void:
 
 ## To avoid fighting with this node's animations for who gets to move the
 ## visuals, use this when you want to move the visuals to a new location.
-func set_location(new_position: Vector2) -> void:
-	_animation.target_position = new_position
+func move_to(new_position: Vector2) -> void:
+	# Sets the position anyway so that we can use global_position for the
+	# animation and then (if needed) resets the position to what it was before.
+	var _old_position: Vector2 = position
+	
+	position = new_position
+	_animation.target_global_position = global_position
 	
 	if _animation.is_playing():
-		return
-	
-	_animation.original_position = global_position
-	global_position = new_position
+		position = _old_position
 
 
-## Adds this node to the scene tree as a child of a [Province]'s [ArmyStack].
+## Adds this node to the scene tree as a child of a [Province]'s [ArmyStack2D].
 func _add_to_province(province: Province) -> void:
 	if get_parent():
+		_animation.original_global_position = global_position
 		get_parent().remove_child(self)
 	if province == null:
 		return

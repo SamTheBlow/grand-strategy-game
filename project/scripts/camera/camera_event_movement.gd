@@ -41,4 +41,4 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 			break
 	
 	if target_province:
-		_camera.move_to(target_province.position_army_host)
+		_camera.move_to(target_province.global_position_army_host())

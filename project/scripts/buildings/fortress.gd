@@ -26,13 +26,12 @@ static func new_fortress(game_: Game, province: Province) -> Fortress:
 ## Use this to add visuals. This must only be called once.
 func add_visuals() -> void:
 	var visuals: Node = game.fortress_scene.instantiate()
-	
-	if visuals.has_method("set_position"):
-		visuals.set_position(
-				_province.position_army_host + Vector2(80.0, 56.0)
-		)
-	
 	add_child(visuals)
+	
+	# We need to get the global position here because
+	# the relative position doesn't work (the parent node isn't a Node2D).
+	if visuals.has_method("set_position"):
+		visuals.set_position(_province.global_position_fortress())
 
 
 ## Provides the defense bonus to the defender when a battle occurs

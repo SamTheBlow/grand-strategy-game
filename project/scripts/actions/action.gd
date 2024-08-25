@@ -20,6 +20,8 @@ enum {
 const ID_KEY: String = "id"
 
 
+# TODO Inconsistent code: some of the subclasses don't use the player property
+# and just use the game's playing player instead
 ## Takes in the current game as well as the player trying to apply the action.
 func apply_to(_game: Game, _player: GamePlayer) -> void:
 	pass

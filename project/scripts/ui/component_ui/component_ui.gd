@@ -80,7 +80,7 @@ func _process(_delta: float) -> void:
 		return
 	
 	# Follow the object's position
-	var world_position: Vector2 = province.position_army_host
+	var world_position: Vector2 = province.global_position_army_host()
 	var zoom: Vector2 = get_viewport().get_camera_2d().zoom
 	var cam_position: Vector2 = get_viewport().get_camera_2d().global_position
 	var half_viewport_size: Vector2 = get_viewport_rect().size * 0.5
