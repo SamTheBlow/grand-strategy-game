@@ -1,9 +1,8 @@
 class_name Buildings
-extends Node
 ## A list of [Building] objects.
-## Buildings added to this list become children of this node.
 
 
+signal added(building: Building)
 signal changed()
 
 var _list: Array[Building]
@@ -11,7 +10,7 @@ var _list: Array[Building]
 
 func add(building: Building) -> void:
 	_list.append(building)
-	add_child(building)
+	added.emit(building)
 	changed.emit()
 
 

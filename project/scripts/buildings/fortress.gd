@@ -7,31 +7,16 @@ extends Building
 ## although, this currently isn't enforced.
 
 
-var game: Game
-
 var _province: Province
 
 
 ## Utility function that does all the setup work.
 ## It's recommended to use this when creating a new fortress.
-static func new_fortress(game_: Game, province: Province) -> Fortress:
+static func new_fortress(game: Game, province: Province) -> Fortress:
 	var fortress := Fortress.new()
-	fortress.name = "Fortress"
-	fortress.game = game_
 	fortress._province = province
-	game_.add_modifier_provider(fortress)
+	game.add_modifier_provider(fortress)
 	return fortress
-
-
-## Use this to add visuals. This must only be called once.
-func add_visuals() -> void:
-	var visuals: Node = game.fortress_scene.instantiate()
-	add_child(visuals)
-	
-	# We need to get the global position here because
-	# the relative position doesn't work (the parent node isn't a Node2D).
-	if visuals.has_method("set_position"):
-		visuals.set_position(_province.global_position_fortress())
 
 
 ## Provides the defense bonus to the defender when a battle occurs

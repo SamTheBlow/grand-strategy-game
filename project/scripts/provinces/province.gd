@@ -52,7 +52,6 @@ var id: int:
 
 # Nodes
 var army_stack: ArmyStack2D
-var buildings: Buildings
 
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -75,6 +74,8 @@ var owner_country: Country:
 		owner_changed.emit(self)
 
 var population: Population
+
+var buildings := Buildings.new()
 
 ## The list of vertices forming this province's polygon shape.
 var polygon: PackedVector2Array:
@@ -109,7 +110,6 @@ var _income_money: IncomeMoney
 ## To be called when this node is created.
 func init() -> void:
 	_setup_army_stack()
-	_setup_buildings()
 
 
 func income_money() -> IncomeMoney:
@@ -238,12 +238,6 @@ func _setup_army_stack() -> void:
 	army_stack.name = "ArmyStack2D"
 	add_child(army_stack)
 	army_stack.position = _position_army_host
-
-
-func _setup_buildings() -> void:
-	buildings = Buildings.new()
-	buildings.name = "Buildings"
-	add_child(buildings)
 
 
 func _highlight_links() -> void:

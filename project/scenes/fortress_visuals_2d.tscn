@@ -2,7 +2,7 @@
 
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_0vxcs"]
 
-[node name="Node2D" type="Node2D"]
+[node name="FortressVisuals2D" type="Node2D"]
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -32)

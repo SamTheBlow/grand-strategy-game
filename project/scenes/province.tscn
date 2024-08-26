@@ -1,11 +1,18 @@
-[gd_scene load_steps=4 format=3 uid="uid://cppfb8jwghnqt"]
+[gd_scene load_steps=6 format=3 uid="uid://cppfb8jwghnqt"]
 
 [ext_resource type="Script" path="res://scripts/provinces/province.gd" id="1_mdkkc"]
+[ext_resource type="Script" path="res://scripts/buildings/visuals/building_visuals_setup.gd" id="2_4f42i"]
 [ext_resource type="Script" path="res://scripts/provinces/province_shape_polygon_2d.gd" id="2_okqgr"]
+[ext_resource type="PackedScene" uid="uid://cwi4tinm2f73x" path="res://scenes/fortress_visuals_2d.tscn" id="3_23stf"]
 [ext_resource type="Script" path="res://scripts/provinces/province_shape_update.gd" id="3_jc4d7"]
 
 [node name="Province" type="Node2D"]
 script = ExtResource("1_mdkkc")
+
+[node name="BuildingVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("_province")]
+script = ExtResource("2_4f42i")
+_province = NodePath("..")
+_fortress_visuals_2d_scene = ExtResource("3_23stf")
 
 [node name="Shape" type="Polygon2D" parent="."]
 script = ExtResource("2_okqgr")

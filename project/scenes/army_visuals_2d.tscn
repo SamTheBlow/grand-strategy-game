@@ -1,21 +1,21 @@
 [gd_scene load_steps=5 format=3 uid="uid://eso260jnknd4"]
 
-[ext_resource type="Script" path="res://scripts/armies/visuals/army_visuals_2d.gd" id="1_2myql"]
-[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_cguas"]
-[ext_resource type="Script" path="res://scripts/armies/visuals/army_movement_animation.gd" id="2_jppxk"]
-[ext_resource type="Script" path="res://scripts/ui/army_size_box.gd" id="4_ntth1"]
+[ext_resource type="Script" path="res://scripts/armies/visuals/army_visuals_2d.gd" id="1_80ub2"]
+[ext_resource type="Script" path="res://scripts/armies/visuals/army_movement_animation.gd" id="2_2gbtg"]
+[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="3_5ukdx"]
+[ext_resource type="Script" path="res://scripts/ui/army_size_box.gd" id="4_r42rs"]
 
-[node name="Army" type="Node2D"]
+[node name="ArmyVisuals2D" type="Node2D"]
 z_index = 1
-script = ExtResource("1_2myql")
+script = ExtResource("1_80ub2")
 
 [node name="MovementAnimation" type="Node" parent="." node_paths=PackedStringArray("_army_visuals")]
-script = ExtResource("2_jppxk")
+script = ExtResource("2_2gbtg")
 _army_visuals = NodePath("..")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 scale = Vector2(0.5, 0.5)
-texture = ExtResource("2_cguas")
+texture = ExtResource("3_5ukdx")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -44,4 +44,4 @@ theme_override_font_sizes/font_size = 12
 text = "9999999999"
 horizontal_alignment = 1
 vertical_alignment = 1
-script = ExtResource("4_ntth1")
+script = ExtResource("4_r42rs")

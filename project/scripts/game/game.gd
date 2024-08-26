@@ -15,7 +15,6 @@ signal game_ended()
 
 @export_group("Scenes")
 @export var army_scene: PackedScene
-@export var fortress_scene: PackedScene
 @export var province_scene: PackedScene
 @export var world_2d_scene: PackedScene
 @export var networking_setup_scene: PackedScene

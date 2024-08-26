@@ -38,9 +38,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	var fortress: Fortress = Fortress.new_fortress(game, province)
-	fortress.add_visuals()
-	province.buildings.add(fortress)
+	province.buildings.add(Fortress.new_fortress(game, province))
 	
 	your_country.money -= game.rules.fortress_price.value
 

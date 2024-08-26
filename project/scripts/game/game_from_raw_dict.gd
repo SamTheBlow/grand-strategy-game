@@ -529,11 +529,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 	
 	for building: Dictionary in json_data[PROVINCE_BUILDINGS_KEY]:
 		if building[BUILDING_TYPE_KEY] == BUILDING_TYPE_FORTRESS:
-			var fortress: Fortress = Fortress.new_fortress(
-					game, province
-			)
-			fortress.add_visuals()
-			province.buildings.add(fortress)
+			province.buildings.add(Fortress.new_fortress(game, province))
 	
 	var base_income: int = 0
 	if json_data.has(PROVINCE_INCOME_MONEY_KEY):

@@ -1,5 +1,4 @@
 class_name Building
-extends Node
 ## Abstract class.
 ## A building is usually, but not always, associated with a [Province].
 ## There may or may not be more than one building
