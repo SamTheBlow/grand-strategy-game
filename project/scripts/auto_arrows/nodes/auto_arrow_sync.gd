@@ -4,7 +4,7 @@ extends Node
 ## and synchronizes them across clients. Also works in singleplayer.
 
 
-@export var game: Game
+var game: Game
 
 
 ## Returns true if the client is allowed to add or remove autoarrows.
@@ -38,7 +38,8 @@ func remove(country: Country, auto_arrow: AutoArrow) -> void:
 		_handle_request_auto_arrow_removed.rpc_id(1, country.id, data)
 
 
-func clear_province(country: Country, province: Province) -> void:
+func clear_province(province: Province) -> void:
+	var country: Country = game.turn.playing_player().playing_country
 	if not MultiplayerUtils.is_online(multiplayer):
 		_apply_clear_province(country, province)
 	elif multiplayer.is_server():
@@ -155,3 +156,12 @@ func _receive_auto_arrows_cleared(country_id: int, province_id: int) -> void:
 
 func _client_can_apply_changes(multiplayer_id: int, country: Country) -> bool:
 	return game.game_players.client_controls_country(multiplayer_id, country)
+
+
+func _on_auto_arrow_formed(auto_arrow: AutoArrow) -> void:
+	var playing_country: Country = game.turn.playing_player().playing_country
+	if playing_country.auto_arrows.has_equivalent_in_list(auto_arrow):
+		# An equivalent arrow already exists? Remove it
+		remove(playing_country, auto_arrow)
+	else:
+		add(playing_country, auto_arrow)

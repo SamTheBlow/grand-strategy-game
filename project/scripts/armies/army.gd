@@ -12,7 +12,7 @@ class_name Army
 signal size_changed(size: int)
 signal allegiance_changed(country: Country)
 ## Always emitted when the province changes.
-signal province_changed(this_army: Army, province: Province)
+signal province_changed(this_army: Army)
 ## Emitted only when using [method Army.move_to_province].
 ## Teleportation does not trigger this signal.
 ## Emitted after province_changed.
@@ -73,7 +73,7 @@ var _province: Province:
 			return
 		
 		_province = value
-		province_changed.emit(self, _province)
+		province_changed.emit(self)
 
 ## The number of movements made by this army.
 ## Currently, there's a limit of 1 movement per turn

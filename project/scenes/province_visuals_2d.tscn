@@ -1,0 +1,32 @@
+[gd_scene load_steps=7 format=3 uid="uid://cppfb8jwghnqt"]
+
+[ext_resource type="Script" path="res://scripts/provinces/visuals/province_visuals_2d.gd" id="1_n1pxo"]
+[ext_resource type="Script" path="res://scripts/buildings/visuals/building_visuals_setup.gd" id="2_4f42i"]
+[ext_resource type="Script" path="res://scripts/provinces/visuals/province_shape_polygon_2d.gd" id="2_okqgr"]
+[ext_resource type="PackedScene" uid="uid://cwi4tinm2f73x" path="res://scenes/fortress_visuals_2d.tscn" id="3_23stf"]
+[ext_resource type="Script" path="res://scripts/provinces/visuals/province_shape_update.gd" id="3_jc4d7"]
+[ext_resource type="Script" path="res://scripts/armies/visuals/army_stack.gd" id="6_ivxko"]
+
+[node name="Province" type="Node2D"]
+script = ExtResource("1_n1pxo")
+
+[node name="BuildingVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("_province_visuals")]
+script = ExtResource("2_4f42i")
+_province_visuals = NodePath("..")
+_fortress_visuals_2d_scene = ExtResource("3_23stf")
+
+[node name="Shape" type="Polygon2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_okqgr")
+
+[node name="Update" type="Node" parent="Shape" node_paths=PackedStringArray("_province_shape", "_province_visuals")]
+script = ExtResource("3_jc4d7")
+_province_shape = NodePath("..")
+_province_visuals = NodePath("../..")
+
+[node name="ArmyStack2D" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_ivxko")
+
+[connection signal="mouse_event_occured" from="Shape" to="." method="_on_shape_mouse_event_occured"]
+[connection signal="unhandled_mouse_event_occured" from="Shape" to="." method="_on_shape_unhandled_mouse_event_occured"]

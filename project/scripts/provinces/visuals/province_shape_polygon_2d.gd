@@ -83,6 +83,10 @@ func mouse_is_inside_shape() -> bool:
 	return Geometry2D.is_point_in_polygon(local_mouse_position, polygon)
 
 
+func highlight_selected() -> void:
+	_outline_type = OutlineType.SELECTED
+
+
 func highlight(is_target: bool) -> void:
 	if is_target:
 		_outline_type = OutlineType.HIGHLIGHT_TARGET
@@ -90,16 +94,12 @@ func highlight(is_target: bool) -> void:
 		_outline_type = OutlineType.HIGHLIGHT
 
 
+func remove_highlight() -> void:
+	_outline_type = OutlineType.NONE
+
+
 func _on_owner_changed(province: Province) -> void:
 	if province.owner_country != null:
 		color = province.owner_country.color
 	else:
 		color = Color.WHITE
-
-
-func _on_selected() -> void:
-	_outline_type = OutlineType.SELECTED
-
-
-func _on_deselected() -> void:
-	_outline_type = OutlineType.NONE

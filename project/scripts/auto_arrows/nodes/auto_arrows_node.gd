@@ -30,6 +30,8 @@ var country: Country:
 		country.auto_arrows.arrow_added.connect(_on_arrow_added)
 		country.auto_arrows.arrow_removed.connect(_on_arrow_removed)
 
+var province_visuals_container: ProvinceVisualsContainer2D
+
 var _list: Array[AutoArrowNode2D] = []
 
 ## If any of these flags is turned on, this node will be hidden
@@ -45,13 +47,10 @@ var _visible_flags: int = 0b11:
 ## But, it cannot know the initial state of the game.
 ## So we have to provide the initial state manually.
 ## This function also connects the signals.
-func init(game: Game) -> void:
-	if game == null:
-		return
-	
-	_on_selected_province_changed(game.world.provinces.selected_province)
-	game.world.provinces.selected_province_changed.connect(
-		_on_selected_province_changed
+func init(game: Game, province_selection: ProvinceSelection) -> void:
+	_on_selected_province_changed(province_selection.selected_province)
+	province_selection.selected_province_changed.connect(
+			_on_selected_province_changed
 	)
 	
 	_on_player_turn_changed(game.turn.playing_player())
@@ -60,16 +59,23 @@ func init(game: Game) -> void:
 
 func _add(auto_arrow: AutoArrow) -> void:
 	var auto_arrow_node := AutoArrowNode2D.new()
-	auto_arrow_node.auto_arrow = auto_arrow
+	auto_arrow_node.source_province = (
+			province_visuals_container
+			.visuals_of(auto_arrow.source_province)
+	)
+	auto_arrow_node.destination_province = (
+			province_visuals_container
+			.visuals_of(auto_arrow.destination_province)
+	)
 	_add_node(auto_arrow_node)
 
 
 func _remove(auto_arrow: AutoArrow) -> void:
 	for node in _list:
-		if node.auto_arrow == null:
+		if node.auto_arrow() == null:
 			continue
 		
-		if node.auto_arrow.is_equivalent_to(auto_arrow):
+		if node.auto_arrow().is_equivalent_to(auto_arrow):
 			_remove_node(node)
 			return
 	
@@ -110,7 +116,7 @@ func _on_arrow_removed(auto_arrow: AutoArrow) -> void:
 
 
 func _on_selected_province_changed(province: Province) -> void:
-	if province:
+	if province != null:
 		_visible_flags &= ~1
 	else:
 		_visible_flags |= 1

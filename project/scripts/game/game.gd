@@ -15,7 +15,6 @@ signal game_ended()
 
 @export_group("Scenes")
 @export var army_scene: PackedScene
-@export var province_scene: PackedScene
 @export var world_2d_scene: PackedScene
 @export var networking_setup_scene: PackedScene
 
@@ -125,14 +124,6 @@ var world: GameWorld:
 ## It's important to always use this instead of built-in RNG methods
 ## so that RNG stays the same when you reload the game and when you play online.
 var rng := RandomNumberGenerator.new()
-
-## Child node: the interface that appears when you select a [Province].
-var component_ui: ComponentUI:
-	set(value):
-		if component_ui != null:
-			component_ui_root.remove_child(component_ui)
-			component_ui.queue_free()
-		component_ui = value
 
 ## Automatically setup when calling [method Game.init].
 ## See also: [method Game.modifiers]
@@ -349,7 +340,7 @@ func _on_game_over() -> void:
 
 
 func _on_province_unhandled_mouse_event(
-		event: InputEventMouse, province: Province
+		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 ) -> void:
 	# Only proceed when the input is a left click
 	if not (event is InputEventMouseButton):
@@ -362,43 +353,41 @@ func _on_province_unhandled_mouse_event(
 		return
 	get_viewport().set_input_as_handled()
 	
-	var provinces_node: Provinces = world.provinces
+	var province: Province = province_visuals.province
 	var you: GamePlayer = turn.playing_player()
 	
 	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
-		provinces_node.select_province(province)
+		world.province_selection.selected_province = province
 		return
 	
 	# If applicable, open the army movement popup
-	var your_country: Country = you.playing_country
-	if provinces_node.selected_province:
-		var selected_province: Province = provinces_node.selected_province
+	var selected_province: Province = world.province_selection.selected_province
+	if selected_province != null:
 		var active_armies: Array[Army] = world.armies.active_armies(
-				your_country, selected_province
+				you.playing_country, selected_province
 		)
 		if active_armies.size() > 0:
+			# NOTE: assumes that countries only have one active army per province
 			var army: Army = active_armies[0]
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return
 	
-	provinces_node.select_province(province)
+	world.province_selection.selected_province = province
 
 
-func _on_province_selected() -> void:
-	component_ui = component_ui_scene.instantiate() as ComponentUI
-	component_ui.province = world.provinces.selected_province
+func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
+	var component_ui := component_ui_scene.instantiate() as ComponentUI
+	component_ui.province_visuals = province_visuals
 	turn.player_changed.connect(component_ui._on_turn_player_changed)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui_root.add_child(component_ui)
 
 
-func _on_province_deselected() -> void:
-	component_ui = null
-
-
 func _on_component_ui_button_pressed(button_id: int) -> void:
+	var selected_province: Province = world.province_selection.selected_province
+	
 	# TODO bad code: hard coded values
 	match button_id:
 		0:
@@ -406,19 +395,18 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			var build_popup := (
 					build_fortress_scene.instantiate() as BuildFortressPopup
 			)
-			build_popup.province = world.provinces.selected_province
+			build_popup.province = selected_province
 			build_popup.confirmed.connect(_on_build_fortress_confirmed)
 			_add_popup(build_popup)
 		1:
 			# Recruitment
 			var army_recruitment_limits := ArmyRecruitmentLimits.new(
-					turn.playing_player().playing_country,
-					world.provinces.selected_province
+					turn.playing_player().playing_country, selected_province
 			)
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
-			recruitment_popup.province = world.provinces.selected_province
+			recruitment_popup.province = selected_province
 			recruitment_popup.min_amount = army_recruitment_limits.minimum()
 			recruitment_popup.max_amount = army_recruitment_limits.maximum()
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
@@ -430,13 +418,13 @@ func _on_end_turn_pressed() -> void:
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
-	world.provinces.deselect_province()
+	world.province_selection.deselect_province()
 	var action_build := ActionBuild.new(province.id)
 	action_sync.apply_action(action_build)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	world.provinces.deselect_province()
+	world.province_selection.deselect_province()
 	var action_recruitment := ActionRecruitment.new(
 			province.id, troop_amount, world.armies.new_unique_id()
 	)
@@ -444,7 +432,7 @@ func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 
 
 func _on_army_movement_closed() -> void:
-	world.provinces.deselect_province()
+	world.province_selection.deselect_province()
 
 
 # Temporary feature

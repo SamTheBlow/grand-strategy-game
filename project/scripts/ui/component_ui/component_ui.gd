@@ -1,7 +1,7 @@
 @tool
 class_name ComponentUI
 extends Control
-## Interface that appears around a given [Province].
+## Interface that appears around a given [ProvinceVisuals2D].
 ## Provides information about the province
 ## and has buttons with different functionalities.
 
@@ -32,11 +32,12 @@ signal button_pressed(button_id: int)
 # (The only culprit is _initialize() I think)
 ## This may only be set once.
 ## Changing its value later may give unexpected results and crash the game.
-var province: Province:
+var province_visuals: ProvinceVisuals2D:
 	set(value):
-		if province == value:
+		if province_visuals == value:
 			return
-		province = value
+		province_visuals = value
+		province_visuals.deselected.connect(_on_province_deselected)
 		_update_nodes_province()
 
 @onready var _build_fortress_button := (
@@ -76,11 +77,11 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if not province:
+	if province_visuals == null:
 		return
 	
 	# Follow the object's position
-	var world_position: Vector2 = province.global_position_army_host()
+	var world_position: Vector2 = province_visuals.global_position_army_host()
 	var zoom: Vector2 = get_viewport().get_camera_2d().zoom
 	var cam_position: Vector2 = get_viewport().get_camera_2d().global_position
 	var half_viewport_size: Vector2 = get_viewport_rect().size * 0.5
@@ -127,8 +128,9 @@ func _draw() -> void:
 
 
 func _initialize() -> void:
-	if not province:
+	if province_visuals == null:
 		return
+	var province: Province = province_visuals.province
 	
 	var node0: Control = _left_side_nodes[0]
 	var node1: Control = _left_side_nodes[1]
@@ -165,6 +167,7 @@ func _update_side_node_positions(
 
 
 func _update_nodes_province() -> void:
+	var province: Province = province_visuals.province
 	if not is_node_ready() or province == null:
 		return
 	
@@ -211,3 +214,9 @@ func _on_recruit_button_pressed() -> void:
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	_update_nodes_playing_player(player)
+
+
+func _on_province_deselected() -> void:
+	if get_parent():
+		get_parent().remove_child(self)
+	queue_free()

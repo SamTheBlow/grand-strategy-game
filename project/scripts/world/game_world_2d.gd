@@ -5,15 +5,15 @@ extends GameWorld
 
 var limits := WorldLimits.new()
 var background: WorldBackground
-var auto_arrow_container: AutoArrowContainer
+
+
+func _ready() -> void:
+	province_selection = %ProvinceSelection as ProvinceSelection
 
 
 ## Meant to be called right after instantiating the scene
 func init(game: Game) -> void:
-	name = "World"
+	(%AutoArrowInput as AutoArrowInput).game = game
+	(%AutoArrowSync as AutoArrowSync).game = game
 	background = %Background as WorldBackground
-	provinces = %Provinces as Provinces
-	auto_arrow_container = %AutoArrowContainer as AutoArrowContainer
-	auto_arrow_container.game = game
-	
-	background.clicked.connect(provinces.deselect_province)
+	(%AutoArrows as AutoArrowContainer).game = game

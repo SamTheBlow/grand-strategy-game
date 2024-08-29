@@ -1,57 +1,30 @@
 class_name Province
-extends Node2D
 ## In a game, a province represents a certain area on the world map.
 ## It may be of any size or shape, and
 ## it may or may not be under the control of a [Country].
 ##
 ## This class has many responsibilities, as many game mechanics
-## involve their presence on a province:
-## [Army], [Population], [Building], [IncomeMoney].
+## involve their presence on a province: [Population], [Building], [IncomeMoney].
 ##
 ## See [method GameFromRawDict._load_province]
 ## to see how to initialize a new province.
-# TODO move visuals to their own class
 
-
-## See [signal ProvinceShapePolygon2D.unhandled_mouse_event_occured]
-signal unhandled_mouse_event_occured(event: InputEventMouse, this: Province)
-## See [signal ProvinceShapePolygon2D.mouse_event_occured]
-signal mouse_event_occured(event: InputEventMouse, this: Province)
-
-signal selected()
-signal deselected()
 
 signal owner_changed(this: Province)
 
 ## External reference
 var game: Game:
 	set(value):
-		if game:
-			unhandled_mouse_event_occured.disconnect(
-					game._on_province_unhandled_mouse_event
-			)
-			selected.disconnect(game._on_province_selected)
-			deselected.disconnect(game._on_province_deselected)
+		if game != null:
 			game.turn.turn_changed.disconnect(_on_new_turn)
 		
 		game = value
 		
-		unhandled_mouse_event_occured.connect(
-				game._on_province_unhandled_mouse_event
-		)
-		selected.connect(game._on_province_selected)
-		deselected.connect(game._on_province_deselected)
-		game.turn.turn_changed.connect(_on_new_turn)
+		if game != null:
+			game.turn.turn_changed.connect(_on_new_turn)
 
 ## All provinces must have a unique id for the purposes of saving/loading.
-## The node's name always matches its id.
-var id: int:
-	set(value):
-		id = value
-		name = str(id)
-
-# Nodes
-var army_stack: ArmyStack2D
+var id: int
 
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -78,65 +51,30 @@ var population: Population
 var buildings := Buildings.new()
 
 ## The list of vertices forming this province's polygon shape.
-var polygon: PackedVector2Array:
-	get:
-		return _shape.polygon
-	set(value):
-		_shape.polygon = value
+var polygon: PackedVector2Array
 
-var _shape: ProvinceShapePolygon2D:
-	get:
-		if not _shape:
-			_shape = $Shape as ProvinceShapePolygon2D
-		return _shape
+## The position to give to the visuals.
+var position: Vector2
 
 ## Where this province's [ArmyStack2D] will be positioned,
 ## relative to this province's position.
-var _position_army_host: Vector2:
+var position_army_host: Vector2:
 	set(value):
-		_position_army_host = value
-		_position_fortress = _position_army_host + Vector2(80.0, 56.0)
+		position_army_host = value
+		position_fortress = position_army_host + Vector2(80.0, 56.0)
 
 ## Where this province's [Fortress] will be positioned,
 ## relative to this province's position.
 ## (This property is automatically determined when setting _position_army_host.)
-var _position_fortress: Vector2
+var position_fortress: Vector2
 
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
 
 
-## To be called when this node is created.
-func init() -> void:
-	_setup_army_stack()
-
-
 func income_money() -> IncomeMoney:
 	return _income_money
-
-
-func select() -> void:
-	_highlight_links()
-	selected.emit()
-
-
-func deselect() -> void:
-	deselected.emit()
-
-
-func highlight_shape(is_target: bool) -> void:
-	_shape.highlight(is_target)
-
-
-## Returns the global army host position.
-func global_position_army_host() -> Vector2:
-	return to_global(_position_army_host)
-
-
-## Returns the global fortress position.
-func global_position_fortress() -> Vector2:
-	return to_global(_position_fortress)
 
 
 func is_linked_to(province: Province) -> bool:
@@ -207,63 +145,7 @@ func nearest_provinces(
 	return calculation.furthest_links
 
 
-func mouse_is_inside_shape() -> bool:
-	return _shape.mouse_is_inside_shape()
-
-
-## Debug function that clearly highlights this province on the world map.
-## To remove the highlight, pass false as an argument.
-func highlight_debug(
-		outline_color: Color = Color.BLUE, show_highlight: bool = true
-) -> void:
-	if has_node("DebugHighlight"):
-		remove_child(get_node("DebugHighlight"))
-	
-	if not show_highlight:
-		return
-	
-	var debug_highlight := ProvinceShapePolygon2D.new()
-	debug_highlight.name = "DebugHighlight"
-	debug_highlight.color = Color(0.0, 0.0, 0.0, 0.0)
-	debug_highlight.polygon = _shape.polygon
-	debug_highlight.outline_color = outline_color
-	debug_highlight._outline_type = (
-			ProvinceShapePolygon2D.OutlineType.HIGHLIGHT_TARGET
-	)
-	add_child(debug_highlight)
-
-
-func _setup_army_stack() -> void:
-	army_stack = ArmyStack2D.new()
-	army_stack.name = "ArmyStack2D"
-	add_child(army_stack)
-	army_stack.position = _position_army_host
-
-
-func _highlight_links() -> void:
-	var has_valid_army: bool = false
-	var active_armies: Array[Army] = (
-			game.world.armies
-			.active_armies(game.turn.playing_player().playing_country, self)
-	)
-	var army: Army
-	if active_armies.size() > 0:
-		army = active_armies[0]
-		has_valid_army = true
-	
-	for link in links:
-		link.highlight_shape(has_valid_army and army.can_move_to(link))
-
-
 func _on_new_turn(_turn: int) -> void:
 	ArmyReinforcements.new().reinforce_province(self)
 	if owner_country:
 		owner_country.money += _income_money.total()
-
-
-func _on_shape_unhandled_mouse_event_occured(event: InputEventMouse) -> void:
-	unhandled_mouse_event_occured.emit(event, self)
-
-
-func _on_shape_mouse_event_occured(event: InputEventMouse) -> void:
-	mouse_event_occured.emit(event, self)

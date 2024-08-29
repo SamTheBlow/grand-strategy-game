@@ -7,6 +7,8 @@ extends Node2D
 ## The visuals will automatically update along with the given [Army].
 
 
+signal province_changed(this: ArmyVisuals2D)
+
 ## This is meant to be set only once.
 var army: Army:
 	set(value):
@@ -17,7 +19,6 @@ var army: Army:
 		army.movements_made_changed.connect(_on_army_movements_made_changed)
 		army.game.turn.player_changed.connect(_on_turn_player_changed)
 		name = "Army" + str(army.id)
-		_add_to_province(army.province())
 
 @onready var _animation := $MovementAnimation as ArmyMovementAnimation2D
 
@@ -42,18 +43,11 @@ func move_to(new_position: Vector2) -> void:
 		position = _old_position
 
 
-## Adds this node to the scene tree as a child of a [Province]'s [ArmyStack2D].
-func _add_to_province(province: Province) -> void:
-	if get_parent():
-		_animation.original_global_position = global_position
-		get_parent().remove_child(self)
-	if province == null:
-		return
-	province.army_stack.add_child(self)
-
-
 ## Darkens the visuals if the army cannot perform any action.
 func _refresh_brightness() -> void:
+	if not is_node_ready():
+		return
+	
 	var brightness: float = 1.0
 	
 	if not (
@@ -75,12 +69,16 @@ func _on_army_removed() -> void:
 	queue_free()
 
 
-func _on_army_province_changed(_army: Army, province: Province) -> void:
-	_add_to_province(province)
+func _on_army_province_changed(_army: Army) -> void:
+	if get_parent():
+		_animation.original_global_position = global_position
+	
+	province_changed.emit(self)
 
 
 func _on_army_moved_to_province(_province: Province) -> void:
-	_animation.play()
+	if _animation != null:
+		_animation.play()
 
 
 ## Darken the visuals when the army can no longer perform an action.
@@ -92,7 +90,9 @@ func _on_army_movements_made_changed(_movements_made: int) -> void:
 ## Don't darken the visuals when it's another player's turn.
 ## Do darken them if it's your turn.
 func _on_turn_player_changed(_player: GamePlayer) -> void:
-	_animation.stop()
+	if _animation != null:
+		_animation.stop()
+	
 	_refresh_brightness()
 
 

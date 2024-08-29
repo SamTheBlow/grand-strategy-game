@@ -10,4 +10,5 @@ var armies: Armies:
 	set(value):
 		armies = value
 		armies.army_added.connect(battle_detection._on_army_added)
-var provinces: Provinces
+var provinces := Provinces.new()
+var province_selection: ProvinceSelection

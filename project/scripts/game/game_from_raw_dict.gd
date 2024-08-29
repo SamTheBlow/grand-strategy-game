@@ -490,7 +490,7 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 
 # TASK verify & return errors
 func _load_province(json_data: Dictionary, game: Game) -> Province:
-	var province := game.province_scene.instantiate() as Province
+	var province := Province.new()
 	province.game = game
 	province.id = json_data[PROVINCE_ID_KEY]
 	
@@ -511,12 +511,10 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 	# 4.1 Backwards Compatibility:
 	# This must be saved as a global position
 	# (not relative to the province position).
-	province._position_army_host = Vector2(
+	province.position_army_host = Vector2(
 			json_data[PROVINCE_POSITION_ARMY_HOST_X_KEY],
 			json_data[PROVINCE_POSITION_ARMY_HOST_Y_KEY]
 	) - province.position
-	
-	province.init()
 	
 	province.owner_country = (
 			game.countries.country_from_id(json_data[PROVINCE_OWNER_ID_KEY])

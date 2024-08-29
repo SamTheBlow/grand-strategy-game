@@ -23,5 +23,5 @@ func _on_army_added(army: Army) -> void:
 	army.province_changed.connect(_on_army_province_changed)
 
 
-func _on_army_province_changed(army: Army, province: Province) -> void:
-	_resolve_battles(army, province)
+func _on_army_province_changed(army: Army) -> void:
+	_resolve_battles(army, army.province())

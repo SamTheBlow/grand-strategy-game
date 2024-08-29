@@ -10,9 +10,6 @@ extends Node2D
 
 
 @export var countries: Array[Country]
-@export var world_scene: PackedScene
-@export var province_scene: PackedScene
-@export var army_scene: PackedScene
 
 var starting_provinces: Array[int] = [
 	# UK

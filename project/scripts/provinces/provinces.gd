@@ -1,54 +1,20 @@
 class_name Provinces
-extends Node2D
 ## An encapsulated list of [Province] objects.
-## Provides useful functions.
-## Also responsible for the user's selected province.
+## Provides useful functions and signals.
 ##
 ## Note that you are currently not meant to remove provinces from this list.
-# TODO move "selected province" code to its own class
 
 
+signal added(province: Province)
 signal province_owner_changed(province: Province)
-signal province_unhandled_mouse_event_occured(
-		event: InputEventMouse, province: Province
-)
-signal province_mouse_event_occured(event: InputEventMouse, province: Province)
-signal selected_province_changed(province: Province)
-
-## What province is currently being selected.
-## Selecting a province allows the user to obtain information
-## and or perform [Action]s on that province.
-## This can be null, in which case no province is selected.
-var selected_province: Province:
-	set(value):
-		if selected_province == value:
-			return
-		if selected_province != null:
-			selected_province.deselect()
-		selected_province = value
-		if selected_province != null:
-			selected_province.select()
-		selected_province_changed.emit(selected_province)
 
 var _list: Array[Province] = []
 
 
 func add_province(province: Province) -> void:
-	add_child(province)
 	_list.append(province)
-	province.unhandled_mouse_event_occured.connect(
-			_on_unhandled_province_mouse_event
-	)
-	province.mouse_event_occured.connect(_on_province_mouse_event)
 	province.owner_changed.connect(_on_province_owner_changed)
-
-
-func select_province(province: Province) -> void:
-	selected_province = province
-
-
-func deselect_province() -> void:
-	selected_province = null
+	added.emit(province)
 
 
 ## Returns a new copy of the list.
@@ -109,18 +75,6 @@ func province_count_per_country() -> Array:
 			output[index][1] += 1
 	
 	return output
-
-
-func _on_unhandled_province_mouse_event(
-		event: InputEventMouse, province: Province
-) -> void:
-	province_unhandled_mouse_event_occured.emit(event, province)
-
-
-func _on_province_mouse_event(
-		event: InputEventMouse, province: Province
-) -> void:
-	province_mouse_event_occured.emit(event, province)
 
 
 func _on_province_owner_changed(province: Province) -> void:

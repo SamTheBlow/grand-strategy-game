@@ -1,11 +1,10 @@
-[gd_scene load_steps=36 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=33 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://scripts/game/game.gd" id="1_yoos1"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army_visuals_2d.tscn" id="2_14kbw"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://scenes/ui/popups/game_popup.tscn" id="2_dx3sp"]
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
-[ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://scenes/province.tscn" id="4_52jos"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="4_331yk"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="6_5jo7e"]
 [ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://scenes/ui/player_list/networking_setup_game.tscn" id="6_b2bhm"]
@@ -20,10 +19,8 @@
 [ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="15_vh3er"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://scenes/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://scenes/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
-[ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_input.gd" id="17_bla78"]
 [ext_resource type="Script" path="res://scripts/debug/debug_province_highlight.gd" id="18_pevj0"]
 [ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
-[ext_resource type="Script" path="res://scripts/auto_arrows/auto_arrow_sync.gd" id="18_vpgj8"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://scenes/ui/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" path="res://scripts/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://scenes/ui/top_bar.tscn" id="20_qfiqr"]
@@ -43,7 +40,6 @@ bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 [node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "component_ui_root", "popups")]
 script = ExtResource("1_yoos1")
 army_scene = ExtResource("2_14kbw")
-province_scene = ExtResource("4_52jos")
 world_2d_scene = ExtResource("6_5jo7e")
 networking_setup_scene = ExtResource("6_b2bhm")
 troop_ui_scene = ExtResource("2_dx3sp")
@@ -72,15 +68,6 @@ game = NodePath("..")
 [node name="ActionSynchronizer" type="Node" parent="." node_paths=PackedStringArray("_game")]
 script = ExtResource("15_o3imi")
 _game = NodePath("..")
-
-[node name="AutoArrowInput" type="Node" parent="." node_paths=PackedStringArray("game", "auto_arrow_sync")]
-script = ExtResource("17_bla78")
-game = NodePath("..")
-auto_arrow_sync = NodePath("../AutoArrowSync")
-
-[node name="AutoArrowSync" type="Node" parent="." node_paths=PackedStringArray("game")]
-script = ExtResource("18_vpgj8")
-game = NodePath("..")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
