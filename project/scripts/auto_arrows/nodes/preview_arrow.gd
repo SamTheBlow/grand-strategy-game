@@ -27,14 +27,7 @@ func _release() -> void:
 
 
 ## Moves the arrow's tip along with the cursor.
-## Unsnaps from destination province when applicable.
 func _update_pointing_position() -> void:
-	if (
-			destination_province != null
-			and not destination_province.mouse_is_inside_shape()
-	):
-		destination_province = null
-	
 	global_pointing_position = (
 			PositionScreenToWorld.new()
 			.result(get_viewport().get_mouse_position(), get_viewport())
@@ -46,11 +39,12 @@ func _is_right_click_just_released(event: InputEventMouseButton) -> bool:
 
 
 ## Snaps the arrow to the province when applicable.
-func _on_province_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-) -> void:
-	if not event is InputEventMouseMotion:
-		return
-	
+func _on_province_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
 	if province_visuals.province.is_linked_to(source_province.province):
 		destination_province = province_visuals
+
+
+## Unsnaps the arrow from the province when applicable.
+func _on_province_mouse_exited(province_visuals: ProvinceVisuals2D) -> void:
+	if province_visuals.province == destination_province:
+		destination_province = null

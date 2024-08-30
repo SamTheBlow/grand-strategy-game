@@ -2,10 +2,10 @@ class_name ProvinceVisualsContainer2D
 extends Node2D
 
 
+signal province_mouse_entered(province_visuals: ProvinceVisuals2D)
+signal province_mouse_exited(province_visuals: ProvinceVisuals2D)
+
 signal unhandled_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-)
-signal mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 )
 
@@ -16,7 +16,12 @@ func _ready() -> void:
 		province_visuals.unhandled_mouse_event_occured.connect(
 				_on_unhandled_province_mouse_event
 		)
-		province_visuals.mouse_event_occured.connect(_on_province_mouse_event)
+		province_visuals.mouse_entered.connect(
+				func() -> void: province_mouse_entered.emit(province_visuals)
+		)
+		province_visuals.mouse_exited.connect(
+				func() -> void: province_mouse_exited.emit(province_visuals)
+		)
 
 
 func list() -> Array[ProvinceVisuals2D]:
@@ -47,9 +52,3 @@ func _on_unhandled_province_mouse_event(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 ) -> void:
 	unhandled_mouse_event_occured.emit(event, province_visuals)
-
-
-func _on_province_mouse_event(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-) -> void:
-	mouse_event_occured.emit(event, province_visuals)

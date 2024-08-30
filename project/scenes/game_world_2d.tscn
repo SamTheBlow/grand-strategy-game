@@ -50,6 +50,7 @@ unique_name_in_owner = true
 script = ExtResource("2_unrx0")
 
 [node name="Provinces" type="Node2D" parent="Node2D"]
+unique_name_in_owner = true
 script = ExtResource("5_4fqv4")
 
 [node name="AutoArrows" type="Node2D" parent="Node2D" node_paths=PackedStringArray("province_visuals_container", "province_selection")]

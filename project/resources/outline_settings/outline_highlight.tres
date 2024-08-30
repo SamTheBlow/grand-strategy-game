@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="OutlineSettings" load_steps=2 format=3 uid="uid://cpywpvw4iwvdg"]
+
+[ext_resource type="Script" path="res://scripts/provinces/visuals/outline_settings.gd" id="1_5c80n"]
+
+[resource]
+script = ExtResource("1_5c80n")
+is_outline_enabled = true
+outline_color = Color(0.501961, 0.501961, 0.501961, 1)
+outline_width = 5.0

@@ -6,7 +6,7 @@
 [ext_resource type="Script" path="res://scripts/camera/camera.gd" id="2_lblr6"]
 [ext_resource type="Script" path="res://scripts/camera/camera_drag.gd" id="3_3p7sw"]
 [ext_resource type="Script" path="res://scripts/camera/camera_zoom.gd" id="4_331yk"]
-[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/world_2d.tscn" id="6_5jo7e"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/game_world_2d.tscn" id="6_5jo7e"]
 [ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://scenes/ui/player_list/networking_setup_game.tscn" id="6_b2bhm"]
 [ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://scenes/ui/component_ui.tscn" id="7_dxau2"]
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://scenes/ui/player_turn_announcement.tscn" id="8_e0v4f"]

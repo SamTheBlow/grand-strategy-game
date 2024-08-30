@@ -24,8 +24,11 @@ func _setup_new_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
 	var preview_arrow := AutoArrowPreviewNode2D.new()
 	preview_arrow.source_province = province_visuals
 	preview_arrow.released.connect(_on_preview_arrow_released)
-	province_container.mouse_event_occured.connect(
-			preview_arrow._on_province_mouse_event_occured
+	province_container.province_mouse_entered.connect(
+			preview_arrow._on_province_mouse_entered
+	)
+	province_container.province_mouse_exited.connect(
+			preview_arrow._on_province_mouse_exited
 	)
 	
 	(

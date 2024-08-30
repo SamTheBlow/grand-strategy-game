@@ -37,5 +37,7 @@ func _highlight_provinces(color: Color, province_filter: Callable) -> void:
 	if not is_enabled or not game:
 		return
 	
-	for province in game.world.provinces.list():
-		province.highlight_debug(color, province_filter.call(province))
+	for province_visuals in (game.world as GameWorld2D).province_visuals.list():
+		province_visuals.highlight_debug(
+				color, province_filter.call(province_visuals.province)
+		)
