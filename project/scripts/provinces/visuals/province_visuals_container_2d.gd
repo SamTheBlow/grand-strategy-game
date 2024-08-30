@@ -11,17 +11,7 @@ signal unhandled_mouse_event_occured(
 
 
 func _ready() -> void:
-	# WARNING: assumes that provinces are never added to the game later on
-	for province_visuals in list():
-		province_visuals.unhandled_mouse_event_occured.connect(
-				_on_unhandled_province_mouse_event
-		)
-		province_visuals.mouse_entered.connect(
-				func() -> void: province_mouse_entered.emit(province_visuals)
-		)
-		province_visuals.mouse_exited.connect(
-				func() -> void: province_mouse_exited.emit(province_visuals)
-		)
+	child_entered_tree.connect(_on_child_entered_tree)
 
 
 func list() -> Array[ProvinceVisuals2D]:
@@ -46,6 +36,23 @@ func visuals_of(province: Province) -> ProvinceVisuals2D:
 		if visuals.province == province:
 			return visuals
 	return null
+
+
+func _on_child_entered_tree(node: Node) -> void:
+	if node is not ProvinceVisuals2D:
+		return
+	
+	var province_visuals := node as ProvinceVisuals2D
+	
+	province_visuals.unhandled_mouse_event_occured.connect(
+			_on_unhandled_province_mouse_event
+	)
+	province_visuals.mouse_entered.connect(
+			func() -> void: province_mouse_entered.emit(province_visuals)
+	)
+	province_visuals.mouse_exited.connect(
+			func() -> void: province_mouse_exited.emit(province_visuals)
+	)
 
 
 func _on_unhandled_province_mouse_event(

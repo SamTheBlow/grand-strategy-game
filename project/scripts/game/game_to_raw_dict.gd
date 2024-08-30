@@ -68,7 +68,7 @@ func convert_game(game: Game) -> void:
 	var world_data: Dictionary = {}
 	
 	if game.world is GameWorld2D:
-		var world: GameWorld2D = game.world as GameWorld2D
+		var world := game.world as GameWorld2D
 		world_data[GameFromRawDict.WORLD_LIMITS_KEY] = {
 			GameFromRawDict.WORLD_LIMIT_TOP_KEY: world.limits.limit_top(),
 			GameFromRawDict.WORLD_LIMIT_BOTTOM_KEY: world.limits.limit_bottom(),

@@ -71,6 +71,19 @@ var turn: GameTurn:
 		_turn_order_list.game_turn = turn
 		_auto_end_turn = AutoEndTurn.new(self)
 
+var world: GameWorld:
+	set(value):
+		world = value
+		
+		if world is not GameWorld2D:
+			return
+		
+		camera.world_limits = (world as GameWorld2D).limits
+		
+		world_visuals = world_2d_scene.instantiate() as WorldVisuals2D
+		world_visuals.game = self
+		world_visuals.world = world as GameWorld2D
+
 ## You don't need to initialize this, especially if you don't want
 ## the game to have a turn limit. However, if you do want to use it,
 ## some setup needs to be done: see [method Game.setup_turn].
@@ -109,16 +122,14 @@ var chat: Chat:
 		chat.rules_requested.connect(_on_chat_rules_requested)
 
 ## Child node
-var world: GameWorld:
+var world_visuals: WorldVisuals2D:
 	set(value):
-		if world and world.get_parent():
-			world.get_parent().remove_child(world)
+		if world_visuals != null and world_visuals.get_parent():
+			world_visuals.get_parent().remove_child(world_visuals)
 		
-		world = value
+		world_visuals = value
 		
-		if world is GameWorld2D:
-			camera.world_limits = (world as GameWorld2D).limits
-		$WorldLayer.add_child(world)
+		$WorldLayer.add_child(world_visuals)
 
 ## The game's RNG.
 ## It's important to always use this instead of built-in RNG methods
@@ -358,11 +369,13 @@ func _on_province_unhandled_mouse_event(
 	
 	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
-		world.province_selection.selected_province = province
+		world_visuals.province_selection.selected_province = province
 		return
 	
 	# If applicable, open the army movement popup
-	var selected_province: Province = world.province_selection.selected_province
+	var selected_province: Province = (
+			world_visuals.province_selection.selected_province
+	)
 	if selected_province != null:
 		var active_armies: Array[Army] = world.armies.active_armies(
 				you.playing_country, selected_province
@@ -374,7 +387,7 @@ func _on_province_unhandled_mouse_event(
 				_add_army_movement_popup(army, province)
 				return
 	
-	world.province_selection.selected_province = province
+	world_visuals.province_selection.selected_province = province
 
 
 func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
@@ -386,7 +399,9 @@ func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:
-	var selected_province: Province = world.province_selection.selected_province
+	var selected_province: Province = (
+			world_visuals.province_selection.selected_province
+	)
 	
 	# TODO bad code: hard coded values
 	match button_id:
@@ -418,13 +433,13 @@ func _on_end_turn_pressed() -> void:
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
-	world.province_selection.deselect_province()
+	world_visuals.province_selection.deselect_province()
 	var action_build := ActionBuild.new(province.id)
 	action_sync.apply_action(action_build)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	world.province_selection.deselect_province()
+	world_visuals.province_selection.deselect_province()
 	var action_recruitment := ActionRecruitment.new(
 			province.id, troop_amount, world.armies.new_unique_id()
 	)
@@ -432,7 +447,7 @@ func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 
 
 func _on_army_movement_closed() -> void:
-	world.province_selection.deselect_province()
+	world_visuals.province_selection.deselect_province()
 
 
 # Temporary feature

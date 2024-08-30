@@ -1,8 +1,12 @@
+class_name ProvinceVisualsSetup
 extends Node
-## Spawns province visuals for given [GameWorld2D].
+## Spawns province visuals to match given [Provinces].
 
 
-@export var _game_world_2d: GameWorld2D
+var provinces: Provinces:
+	set(value):
+		provinces = value
+		_initialize()
 
 ## The province visuals will become children of this node.
 @export var container: Node2D
@@ -11,8 +15,8 @@ extends Node
 @export var _province_visuals_scene: PackedScene
 
 
-func _ready() -> void:
-	for province in _game_world_2d.provinces.list():
+func _initialize() -> void:
+	for province in provinces.list():
 		_add_province(province)
 
 

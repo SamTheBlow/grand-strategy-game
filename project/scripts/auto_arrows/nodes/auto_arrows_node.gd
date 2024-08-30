@@ -47,14 +47,14 @@ var _visible_flags: int = 0b11:
 ## But, it cannot know the initial state of the game.
 ## So we have to provide the initial state manually.
 ## This function also connects the signals.
-func init(game: Game, province_selection: ProvinceSelection) -> void:
+func init(turn: GameTurn, province_selection: ProvinceSelection) -> void:
 	_on_selected_province_changed(province_selection.selected_province)
 	province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)
 	
-	_on_player_turn_changed(game.turn.playing_player())
-	game.turn.player_changed.connect(_on_player_turn_changed)
+	_on_player_turn_changed(turn.playing_player())
+	turn.player_changed.connect(_on_player_turn_changed)
 
 
 func _add(auto_arrow: AutoArrow) -> void:

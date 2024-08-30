@@ -12,11 +12,11 @@ signal auto_arrow_formed(auto_arrow: AutoArrow)
 @export var province_container: ProvinceVisualsContainer2D
 @export var auto_arrow_container: AutoArrowContainer
 
-var game: Game
+var turn: GameTurn
 
 
 func _setup_new_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = turn.playing_player().playing_country
 	
 	if not auto_arrow_sync.can_apply_changes(playing_country):
 		return

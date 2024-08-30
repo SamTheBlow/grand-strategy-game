@@ -1,22 +1,26 @@
 class_name AutoArrowContainer
 extends Node2D
-## Creates new [AutoArrowsNode2D]s for given [Game] and adds them as children.
+## Creates new [AutoArrowsNode2D]s and adds them as children.
 ## Provides utility functions.
 
 
 @export var province_visuals_container: ProvinceVisualsContainer2D
 @export var province_selection: ProvinceSelection
 
-## Meant to be set only once, before entering the scene tree.
-## Not meant to be null.
-var game: Game
+var game: Game:
+	set(value):
+		game = value
+		_initialize()
 
 var _list: Array[AutoArrowsNode2D] = []
 
 
 func _ready() -> void:
+	_initialize()
+
+
+func _initialize() -> void:
 	if game == null:
-		push_error("Game is null.")
 		return
 	
 	# Create nodes for the already existing countries
@@ -38,7 +42,7 @@ func _new_arrows_node(country: Country) -> AutoArrowsNode2D:
 	var new_node := AutoArrowsNode2D.new()
 	new_node.country = country
 	new_node.province_visuals_container = province_visuals_container
-	new_node.init(game, province_selection)
+	new_node.init(game.turn, province_selection)
 	
 	add_child(new_node)
 	_list.append(new_node)

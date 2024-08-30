@@ -1,18 +1,33 @@
+class_name ArmyVisualsSetup
 extends Node
 
 
-@export var _game_world_2d: GameWorld2D
+var armies: Armies:
+	set(value):
+		_disconnect_signals()
+		armies = value
+		_initialize()
+
 @export var _provinces_container: ProvinceVisualsContainer2D
 
 ## The scene's root node must extend [ArmyVisuals2D].
 @export var _army_visuals_scene: PackedScene
 
 
-func _ready() -> void:
-	for army in _game_world_2d.armies.list():
+func _disconnect_signals() -> void:
+	if armies == null:
+		return
+	
+	if armies.army_added.is_connected(_on_army_added):
+		armies.army_added.disconnect(_on_army_added)
+
+
+func _initialize() -> void:
+	for army in armies.list():
 		_add_army(army)
 	
-	_game_world_2d.armies.army_added.connect(_on_army_added)
+	if not armies.army_added.is_connected(_on_army_added):
+		armies.army_added.connect(_on_army_added)
 
 
 func _add_army(army: Army) -> void:
@@ -20,8 +35,8 @@ func _add_army(army: Army) -> void:
 	new_army_visuals.army = army
 	
 	# Why call_deferred?
-	# Because we should give time for the province visuals to spawn.
-	call_deferred("_on_province_changed", new_army_visuals)
+	# Because we need to give time for the province visuals to spawn.
+	_on_province_changed.call_deferred(new_army_visuals)
 	
 	new_army_visuals.province_changed.connect(_on_province_changed)
 

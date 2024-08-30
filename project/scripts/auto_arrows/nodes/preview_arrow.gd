@@ -46,5 +46,5 @@ func _on_province_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
 
 ## Unsnaps the arrow from the province when applicable.
 func _on_province_mouse_exited(province_visuals: ProvinceVisuals2D) -> void:
-	if province_visuals.province == destination_province:
+	if province_visuals == destination_province:
 		destination_province = null

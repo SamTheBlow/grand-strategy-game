@@ -183,9 +183,8 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	
 	# World
-	var game_world_2d := game.world_2d_scene.instantiate() as GameWorld2D
-	game_world_2d.init(game)
-	game.world = game_world_2d
+	var world := GameWorld2D.new()
+	game.world = world
 	# TASK verify & return errors
 	if not (
 			json_dict.has(WORLD_KEY)
@@ -198,7 +197,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 	
 	# Camera limits
 	var limits_data: Dictionary = json_dict[WORLD_KEY][WORLD_LIMITS_KEY]
-	if not _load_world_limits(limits_data, game_world_2d.limits):
+	if not _load_world_limits(limits_data, world.limits):
 		return
 	
 	# Provinces
@@ -206,18 +205,15 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		var province: Province = _load_province(province_data, game)
 		if not province:
 			return
-		game_world_2d.provinces.add_province(province)
+		world.provinces.add_province(province)
 	# 2nd loop for links
 	for province_data: Dictionary in json_dict[WORLD_KEY][WORLD_PROVINCES_KEY]:
 		var province: Province = (
-				game_world_2d.provinces
-				.province_from_id(province_data[PROVINCE_ID_KEY])
+				world.provinces.province_from_id(province_data[PROVINCE_ID_KEY])
 		)
 		province.links = []
 		for link: int in province_data[PROVINCE_LINKS_KEY]:
-			province.links.append(
-					game_world_2d.provinces.province_from_id(link)
-			)
+			province.links.append(world.provinces.province_from_id(link))
 	
 	# Armies
 	var armies_error: bool = _load_armies(
