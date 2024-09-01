@@ -8,9 +8,9 @@ extends VBoxContainer
 @export var _country_and_relationship_scene: PackedScene
 @export var _country_relationship_scene: PackedScene
 
-var game: Game:
+var game_node: GameNode:
 	set(value):
-		game = value
+		game_node = value
 		_connect_relationship_info_signal()
 		_connect_relationship_with_player_signal()
 		_populate_countries()
@@ -48,8 +48,9 @@ func buttons() -> Array[String]:
 
 
 func _refresh() -> void:
-	if game == null or country == null or not is_node_ready():
+	if game_node == null or country == null or not is_node_ready():
 		return
+	var game: Game = game_node.game
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
 	var is_relationship_presets_enabled: bool = (
@@ -70,44 +71,45 @@ func _refresh() -> void:
 
 
 func _disconnect_relationship_info_signal() -> void:
-	if game == null or _relationship_info == null:
+	if game_node == null or _relationship_info == null:
 		return
 	
 	if _relationship_info.diplomacy_action_pressed.is_connected(
-			game._on_diplomacy_action_pressed
+			game_node._on_diplomacy_action_pressed
 	):
 		_relationship_info.diplomacy_action_pressed.disconnect(
-				game._on_diplomacy_action_pressed
+				game_node._on_diplomacy_action_pressed
 		)
 
 
 func _connect_relationship_info_signal() -> void:
-	if game == null or _relationship_info == null:
+	if game_node == null or _relationship_info == null:
 		return
 	
 	if not _relationship_info.diplomacy_action_pressed.is_connected(
-			game._on_diplomacy_action_pressed
+			game_node._on_diplomacy_action_pressed
 	):
 		_relationship_info.diplomacy_action_pressed.connect(
-				game._on_diplomacy_action_pressed
+				game_node._on_diplomacy_action_pressed
 		)
 
 
 func _connect_relationship_with_player_signal() -> void:
-	if game == null or _relationship_with_player == null:
+	if game_node == null or _relationship_with_player == null:
 		return
 	
 	if not _relationship_with_player.diplomacy_action_pressed.is_connected(
-			game._on_diplomacy_action_pressed
+			game_node._on_diplomacy_action_pressed
 	):
 		_relationship_with_player.diplomacy_action_pressed.connect(
-				game._on_diplomacy_action_pressed
+				game_node._on_diplomacy_action_pressed
 		)
 
 
 func _populate_countries() -> void:
-	if country == null or game == null or not is_node_ready():
+	if country == null or game_node == null or not is_node_ready():
 		return
+	var game: Game = game_node.game
 	
 	# TODO DRY. This isn't the only place where we need to
 	# remove all of a node's children... Might want
@@ -153,7 +155,7 @@ func _populate_countries() -> void:
 # ATTENTION this function contains a lot of important hard coded values!
 ## Manually sets the minimum height of the country list
 func _update_country_list_height() -> void:
-	var number_of_countries: int = game.countries.size() - 1
+	var number_of_countries: int = game_node.game.countries.size() - 1
 	var number_of_spacing_nodes: int = 2
 	
 	var total_list_height_px := float(
@@ -182,7 +184,7 @@ func _on_relationship_button_pressed(button_country: Country) -> void:
 	)
 	new_relationship_info.country_1 = country
 	new_relationship_info.country_2 = button_country
-	new_relationship_info.game = game
+	new_relationship_info.game = game_node.game
 	
 	for node in _countries.get_children():
 		if not node is CountryAndRelationship:

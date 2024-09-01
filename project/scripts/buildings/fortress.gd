@@ -15,7 +15,7 @@ var _province: Province
 static func new_fortress(game: Game, province: Province) -> Fortress:
 	var fortress := Fortress.new()
 	fortress._province = province
-	game.add_modifier_provider(fortress)
+	game.modifier_request.add_provider(fortress)
 	return fortress
 
 

@@ -10,7 +10,7 @@
 [node name="Main" type="Node"]
 script = ExtResource("1_32ieg")
 main_menu_scene = ExtResource("4_sn8ov")
-game_scene = ExtResource("3_hbhxv")
+_game_scene = ExtResource("3_hbhxv")
 
 [node name="Players" type="Node" parent="."]
 script = ExtResource("4_w8utn")

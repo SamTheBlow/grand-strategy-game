@@ -42,8 +42,10 @@ var username: String = "":
 		
 		username = value
 		if is_human and player_human:
+			# The [Player] class takes care of synchronizing
 			player_human.custom_username = value
 		else:
+			# We need to synchronize it ourselves
 			_inform_clients_of_username_change()
 		
 		username_changed.emit(value)
@@ -97,7 +99,7 @@ func raw_data() -> Dictionary:
 
 #region Synchronize username
 func _inform_clients_of_username_change() -> void:
-	if not MultiplayerUtils.has_authority(multiplayer) or not is_inside_tree():
+	if not MultiplayerUtils.is_server(multiplayer) or not is_inside_tree():
 		return
 	
 	_receive_new_username.rpc(username)

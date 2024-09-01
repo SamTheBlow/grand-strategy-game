@@ -22,10 +22,8 @@ signal movements_made_changed(movements_made: int)
 ## Emitted when this army believes it has been destroyed.
 ## This is used to ask the game to remove the army from the game.
 signal destroyed(this_army: Army)
-## Emitted right after this army is actually removed from the game.
-## This is used to ask the game to remove this army's visuals.
-signal removed()
 
+# TODO figure out how to remove this
 ## A reference to the [Game] this army is part of.
 ## Must initialize when the army is created.
 var game: Game:
@@ -111,18 +109,8 @@ static func quick_setup(
 	army._movements_made = movements_made_
 	
 	game_.world.armies.add_army(army)
-	army.add_visuals()
 	army.teleport_to_province(province_)
 	return army
-
-
-func add_visuals() -> void:
-	var visuals := game.army_scene.instantiate() as ArmyVisuals2D
-	visuals.army = self
-
-
-func remove_visuals() -> void:
-	removed.emit()
 
 
 func destroy() -> void:

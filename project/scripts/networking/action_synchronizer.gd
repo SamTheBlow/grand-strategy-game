@@ -4,7 +4,7 @@ extends Node
 # TODO: check if a received action is valid and allowed
 
 
-@export var _game: Game
+@export var _game: GameNode
 
 
 func apply_action(action: Action) -> void:
@@ -33,4 +33,4 @@ func _receive_action(action_data: Dictionary) -> void:
 
 
 func _apply_action(action: Action) -> void:
-	action.apply_to(_game, _game.turn.playing_player())
+	action.apply_to(_game.game, _game.game.turn.playing_player())

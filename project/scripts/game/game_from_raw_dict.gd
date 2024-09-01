@@ -90,7 +90,7 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(json_data: Variant, game_scene: PackedScene) -> void:
+func load_game(json_data: Variant) -> void:
 	error = false
 	error_message = ""
 	
@@ -112,8 +112,7 @@ func load_game(json_data: Variant, game_scene: PackedScene) -> void:
 		return
 	
 	# Loading begins!
-	var game := game_scene.instantiate() as Game
-	game.init()
+	var game := Game.new()
 	
 	# Rules
 	var rules_dict: Dictionary = {}

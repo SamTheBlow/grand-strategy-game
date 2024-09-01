@@ -4,7 +4,7 @@ extends Control
 ## Automatically fades out after some time.
 
 
-@export var _game: Game
+@export var _game: GameNode
 
 @onready var _animation_player := $AnimationPlayer as AnimationPlayer
 @onready var _label := %Message as Label
@@ -12,15 +12,15 @@ extends Control
 
 func _ready() -> void:
 	modulate.a = 0.0
-	_game.turn.player_changed.connect(_on_turn_player_changed)
-	_on_turn_player_changed(_game.turn.playing_player())
+	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_on_turn_player_changed(_game.game.turn.playing_player())
 
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	_animation_player.stop()
 	
 	# Only announce a new player's turn when there is more than 1 human player
-	if _game.game_players.number_of_playing_humans() < 2:
+	if _game.game.game_players.number_of_playing_humans() < 2:
 		return
 	
 	_label.text = "It's " + player.username + "'s turn"

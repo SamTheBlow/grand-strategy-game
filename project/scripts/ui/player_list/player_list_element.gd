@@ -13,7 +13,6 @@ extends Control
 # TODO DRY: a LOT of code here is copy/pasted from [TurnOrderElement]
 
 
-# TODO this is the same as in [TurnOrderElement]...
 @export var username_color_human: Color
 @export var bg_color_human: Color
 

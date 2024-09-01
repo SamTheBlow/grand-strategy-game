@@ -13,7 +13,6 @@ signal province_changed(this: ArmyVisuals2D)
 var army: Army:
 	set(value):
 		army = value
-		army.removed.connect(_on_army_removed)
 		army.province_changed.connect(_on_army_province_changed)
 		army.moved_to_province.connect(_on_army_moved_to_province)
 		army.movements_made_changed.connect(_on_army_movements_made_changed)
@@ -63,7 +62,12 @@ func _refresh_brightness() -> void:
 	modulate = Color(brightness, brightness, brightness)
 
 
-func _on_army_removed() -> void:
+# TODO This is called on every single army visuals whenever an army is removed...
+# Check how bad this is performance wise, and figure out a better way if needed
+func _on_army_removed(removed_army: Army) -> void:
+	if removed_army != army:
+		return
+	
 	if get_parent():
 		get_parent().remove_child(self)
 	queue_free()

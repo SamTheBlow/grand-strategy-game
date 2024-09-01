@@ -89,6 +89,7 @@ func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 func _create_elements() -> void:
 	for player in players.list():
 		_add_element(player)
+	_update_size()
 	_update_elements()
 
 

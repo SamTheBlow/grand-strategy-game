@@ -13,12 +13,6 @@ class_name ModifierRequest
 
 signal modifiers_requested(array: Array[Modifier], context: ModifierContext)
 
-var _game: Node
-
-
-func _init(game: Node) -> void:
-	_game = game
-
 
 func modifiers(context: ModifierContext) -> ModifierList:
 	var array: Array[Modifier] = []

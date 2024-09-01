@@ -21,10 +21,9 @@ script = ExtResource("3_2lnh4")
 container = NodePath("../Provinces")
 _province_visuals_scene = ExtResource("4_fscts")
 
-[node name="ProvinceSelection" type="Node" parent="." node_paths=PackedStringArray("_province_visuals_container")]
+[node name="ProvinceSelection" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("4_axwnt")
-_province_visuals_container = NodePath("../Provinces")
 
 [node name="ArmyVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("_provinces_container")]
 unique_name_in_owner = true
@@ -57,6 +56,8 @@ script = ExtResource("4_o61mm")
 province_visuals_container = NodePath("../Provinces")
 province_selection = NodePath("../ProvinceSelection")
 
+[connection signal="province_deselected" from="ProvinceSelection" to="Provinces" method="_on_province_deselected"]
+[connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
 [connection signal="auto_arrow_formed" from="AutoArrowInput" to="AutoArrowSync" method="_on_auto_arrow_formed"]
 [connection signal="province_double_right_clicked" from="AutoArrowInput" to="AutoArrowSync" method="clear_province"]
 [connection signal="clicked" from="Background" to="ProvinceSelection" method="deselect_province"]

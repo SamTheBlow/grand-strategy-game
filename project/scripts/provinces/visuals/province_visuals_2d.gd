@@ -141,29 +141,19 @@ func _update_shape_color() -> void:
 
 
 func _connect_signals() -> void:
-	if province == null or province.game == null:
+	if province == null:
 		return
 	
 	if not province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.connect(_on_owner_changed)
-	
-	unhandled_mouse_event_occured.connect(
-			province.game._on_province_unhandled_mouse_event
-	)
-	selected.connect(province.game._on_province_selected)
 
 
 func _disconnect_signals() -> void:
-	if province == null or province.game == null:
+	if province == null:
 		return
 	
 	if province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.disconnect(_on_owner_changed)
-	
-	unhandled_mouse_event_occured.disconnect(
-			province.game._on_province_unhandled_mouse_event
-	)
-	selected.disconnect(province.game._on_province_selected)
 
 
 func _on_owner_changed(_province: Province) -> void:

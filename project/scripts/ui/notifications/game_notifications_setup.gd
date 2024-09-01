@@ -4,15 +4,15 @@ extends Node
 
 
 @export var game_notifications_node: GameNotificationsNode
-@export var game: Game
+@export var _game: GameNode
 
 
 func _ready() -> void:
-	if not game_notifications_node or not game:
+	if not game_notifications_node or not _game:
 		return
 	
-	game_notifications_node.game_player = game.turn.playing_player()
-	game.turn.player_changed.connect(_on_turn_player_changed)
+	game_notifications_node.game_player = _game.game.turn.playing_player()
+	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 
 
 func _on_turn_player_changed(playing_player: GamePlayer) -> void:

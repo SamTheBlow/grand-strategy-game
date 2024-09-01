@@ -127,6 +127,13 @@ func _draw() -> void:
 	)
 
 
+func connect_country_button_pressed(callable: Callable) -> void:
+	if not is_node_ready():
+		await ready
+	
+	_country_button.pressed.connect(callable)
+
+
 func _initialize() -> void:
 	if province_visuals == null:
 		return
@@ -142,8 +149,6 @@ func _initialize() -> void:
 	if not province.game.rules.recruitment_enabled.value:
 		node1.hide()
 		_left_side_nodes.erase(node1)
-	
-	_country_button.pressed.connect(province.game._on_country_button_pressed)
 
 
 func _reposition_side_nodes() -> void:

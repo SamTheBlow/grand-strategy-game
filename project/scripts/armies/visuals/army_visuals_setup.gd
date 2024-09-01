@@ -39,6 +39,7 @@ func _add_army(army: Army) -> void:
 	_on_province_changed.call_deferred(new_army_visuals)
 	
 	new_army_visuals.province_changed.connect(_on_province_changed)
+	armies.army_removed.connect(new_army_visuals._on_army_removed)
 
 
 func _on_army_added(army: Army) -> void:

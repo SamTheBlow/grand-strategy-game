@@ -46,5 +46,6 @@ func result(data_dict: Dictionary) -> GameRules:
 		load("res://resources/diplomacy/actions/stop_fighting.tres"),
 		load("res://resources/diplomacy/actions/ask_to_stop_fighting.tres"),
 	])
+	game_rules.battle = load("res://resources/battle.tres") as Battle
 	
 	return game_rules

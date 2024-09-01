@@ -7,14 +7,10 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(
-		scenario: Scenario1,
-		game_rules: GameRules,
-		game_scene: PackedScene
-) -> void:
+func load_game(scenario: Scenario1, game_rules: GameRules) -> void:
 	var json_data: Dictionary = scenario.as_json(game_rules)
 	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(json_data, game_scene)
+	game_from_raw.load_game(json_data)
 	
 	if game_from_raw.error:
 		error = true

@@ -73,9 +73,7 @@ func _ready() -> void:
 
 
 ## If you don't want to use one, use [code]null[/code] as the input.
-func use_networking_interface(
-		networking_interface: NetworkingInterface
-) -> void:
+func use_networking_interface(networking_interface: NetworkingInterface) -> void:
 	# Remove all children
 	for child in networking_setup.get_children():
 		networking_setup.remove_child(child)
@@ -111,6 +109,7 @@ func _add_element(player: Player) -> void:
 func _create_elements() -> void:
 	for player in players.list():
 		_add_element(player)
+	_update_size()
 	_update_elements()
 
 

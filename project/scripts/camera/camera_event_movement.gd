@@ -4,7 +4,7 @@ extends Node
 ## These events can be enabled or disabled individually.
 
 
-@export var _game: Game
+@export var _game: GameNode
 @export var _camera: CustomCamera2D
 
 ## If true, after the game loads,
@@ -22,10 +22,11 @@ func _ready() -> void:
 	if _start_in_center_of_map:
 		_camera.move_to(_camera.world_limits._limits.get_center())
 	
-	_game.turn.player_changed.connect(_on_turn_player_changed)
-	_on_turn_player_changed(_game.turn.playing_player())
+	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_on_turn_player_changed(_game.game.turn.playing_player())
 
 
+# TODO this broke
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	if not _move_to_playing_country:
 		return
@@ -35,7 +36,7 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 		return
 	
 	var target_province: Province
-	for province in _game.world.provinces.list():
+	for province in _game.game.world.provinces.list():
 		if province.owner_country and province.owner_country == country:
 			target_province = province
 			break

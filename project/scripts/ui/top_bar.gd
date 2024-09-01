@@ -4,7 +4,7 @@ extends Control
 ## Shows useful information to the user.
 
 
-@export var _game: Game
+@export var _game: GameNode
 
 # We need to store this so that we can disconnect it later
 var _money_changed_signal: Signal
@@ -20,10 +20,10 @@ func _ready() -> void:
 		push_error("No game was provided to top bar.")
 		return
 	
-	_game.turn.turn_changed.connect(_on_turn_changed)
-	_update_turn_label(_game.turn.current_turn())
-	_game.turn.player_changed.connect(_on_turn_player_changed)
-	_update_country(_game.turn.playing_player().playing_country)
+	_game.game.turn.turn_changed.connect(_on_turn_changed)
+	_update_turn_label(_game.game.turn.current_turn())
+	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_update_country(_game.game.turn.playing_player().playing_country)
 	_country_button.pressed.connect(_game._on_country_button_pressed)
 
 

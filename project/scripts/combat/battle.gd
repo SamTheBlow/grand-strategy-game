@@ -50,13 +50,15 @@ func _algorithm_0(attacking_army: Army, defending_army: Army) -> Array[int]:
 	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
-			game.modifiers(_context_attacker_efficiency).resultf()
+			game.modifier_request.modifiers(_context_attacker_efficiency)
+			.resultf()
 	)
 	var attacker_damage: int = floori(attacker_army_size * attacker_efficiency)
 	
 	var defender_army_size: int = defending_army.army_size.current_size()
 	var defender_efficiency: float = (
-			game.modifiers(_context_defender_efficiency).resultf()
+			game.modifier_request.modifiers(_context_defender_efficiency)
+			.resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	
@@ -67,13 +69,15 @@ func _algorithm_1(attacking_army: Army, defending_army: Army) -> Array[int]:
 	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
-			game.modifiers(_context_attacker_efficiency).resultf()
+			game.modifier_request.modifiers(_context_attacker_efficiency)
+			.resultf()
 	)
 	var attacker_damage: int = floori(attacker_army_size * attacker_efficiency)
 	
 	var defender_army_size: int = defending_army.army_size.current_size()
 	var defender_efficiency: float = (
-			game.modifiers(_context_defender_efficiency).resultf()
+			game.modifier_request.modifiers(_context_defender_efficiency)
+			.resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	

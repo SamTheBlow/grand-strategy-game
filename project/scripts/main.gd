@@ -12,8 +12,8 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 ## The scene to jump to when entering the main menu.
 @export var main_menu_scene: PackedScene
 ## The scene to jump to when entering a game.
-## We also need this scene whenever we want to create or load a game.
-@export var game_scene: PackedScene
+## Its root node must be a [GameNode].
+@export var _game_scene: PackedScene
 
 ## Setting this automatically removes the previous scene
 ## from the scene tree and adds the new scene to the scene tree.
@@ -52,7 +52,7 @@ func _ready() -> void:
 ## and loads the new game scene.
 func load_game() -> void:
 	var game_from_path := GameFromPath.new()
-	game_from_path.load_game(SAVE_FILE_PATH, game_scene)
+	game_from_path.load_game(SAVE_FILE_PATH)
 	
 	if game_from_path.error:
 		push_warning("Failed to load the game: ", game_from_path.error_message)
@@ -67,7 +67,7 @@ func load_game() -> void:
 ## @deprecated
 func load_game_from_scenario(scenario: Scenario1) -> void:
 	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, game_rules.copy(), game_scene)
+	game_from_scenario.load_game(scenario, game_rules.copy())
 	
 	if game_from_scenario.error:
 		push_warning(
@@ -80,21 +80,25 @@ func load_game_from_scenario(scenario: Scenario1) -> void:
 	play_game(game_from_scenario.result)
 
 
-## Takes a Game instance, connects its signals, injects some dependencies
+## Takes a [Game] instance, connects its signals, injects some dependencies
 ## into it, sets it as the current scene and starts the game loop.
 ## If playing online multiplayer, this is where the game is sent to clients.
 func play_game(game: Game) -> void:
-	# bad code
-	game._turn_order_list.new_human_player_requested.connect(
+	var game_node := _game_scene.instantiate() as GameNode
+	game_node.game = game
+	game_node.chat = chat
+	game_node.game_ended.connect(_on_main_menu_entered)
+	game_node.set_players(players)
+	current_scene = game_node
+	
+	# TASK bad code
+	game_node._turn_order_list.new_human_player_requested.connect(
 			_on_game_new_player_requested
 	)
 	
 	game.game_started.connect(_on_game_started)
-	game.game_ended.connect(_on_main_menu_entered)
-	game.chat = chat
-	game.setup_players(players)
+	game.game_players.assign_lobby(players)
 	_send_game_to_clients(game)
-	current_scene = game
 	game.start()
 
 
@@ -128,7 +132,7 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_game(game_data: Dictionary) -> void:
 	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(game_data, game_scene)
+	game_from_raw.load_game(game_data)
 	
 	if game_from_raw.error:
 		push_warning(
@@ -181,9 +185,9 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	var player: Player = players.add_received_player(str(player_id))
 	await player.sync_finished
 	
-	if not current_scene is Game:
+	if not current_scene is GameNode:
 		return
-	(current_scene as Game).game_players.assign_player(
+	(current_scene as GameNode).game_players.assign_player(
 			player, game_player_id
 	)
 #endregion
@@ -201,7 +205,8 @@ func _add_new_player(game_player_id: int) -> void:
 	
 	# horrible
 	var game_player: GamePlayer = (
-			(current_scene as Game).game_players.player_from_id(game_player_id)
+			(current_scene as GameNode).game
+			.game_players.player_from_id(game_player_id)
 	)
 	
 	# DANGER this relies on the fact that new_unique_id will
@@ -228,8 +233,8 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 	await players.player_group_added
 	players.send_all_data(multiplayer_id)
 	
-	if current_scene is Game:
-		_send_game_to_clients(current_scene as Game, multiplayer_id)
+	if current_scene is GameNode:
+		_send_game_to_clients((current_scene as GameNode).game, multiplayer_id)
 	elif current_scene is MainMenu:
 		_send_enter_main_menu_to_clients(multiplayer_id)
 	else:
@@ -237,15 +242,15 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 
 
 func _on_player_added(player: Player) -> void:
-	var game := current_scene as Game
-	if not game:
+	var game_node := current_scene as GameNode
+	if not game_node:
 		players._send_new_player_to_clients(player)
 		return
 	
 	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
-	var game_player_id: int = game.game_players.assign_player(player)
+	var game_player_id: int = game_node.game.game_players.assign_player(player)
 	
 	if MultiplayerUtils.is_server(multiplayer):
 		_send_new_player_to_clients(player.id, game_player_id)

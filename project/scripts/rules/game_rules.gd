@@ -83,6 +83,7 @@ enum ProvinceIncome {
 
 var diplomatic_presets: DiplomacyPresets
 var diplomatic_actions: DiplomacyActionDefinitions
+var battle: Battle
 
 # Individual rules
 var turn_limit_enabled: RuleBool

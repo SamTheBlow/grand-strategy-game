@@ -5,7 +5,6 @@ extends GameNotification
 
 var _country_that_accepted: Country
 var _diplomacy_action_definition: DiplomacyActionDefinition
-var _icon: Texture2D
 
 
 func _init(
@@ -23,7 +22,6 @@ func _init(
 	)
 	_country_that_accepted = country_that_accepted
 	_diplomacy_action_definition = diplomacy_action_definition
-	_icon = game.offer_accepted_icon
 
 
 func sender_country() -> Country:
@@ -35,7 +33,7 @@ func action_id() -> int:
 
 
 func icon() -> Texture2D:
-	return _icon
+	return _game.offer_accepted_icon
 
 
 func description() -> String:

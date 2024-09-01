@@ -90,7 +90,7 @@ func convert_game(game: Game) -> void:
 		}
 		
 		var global_position_army_host: Vector2 = (
-				province.global_position_army_host()
+				province.position + province.position_army_host
 		)
 		province_data.merge({
 			GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_X_KEY:

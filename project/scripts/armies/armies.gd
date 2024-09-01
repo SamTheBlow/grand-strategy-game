@@ -9,6 +9,7 @@ class_name Armies
 
 
 signal army_added(army: Army)
+signal army_removed(army: Army)
 
 var _list: Array[Army] = []
 var _claimed_ids: Array[int] = []
@@ -44,7 +45,7 @@ func remove_army(army: Army) -> void:
 	
 	army.destroyed.disconnect(remove_army)
 	_list.erase(army)
-	army.remove_visuals()
+	army_removed.emit(army)
 
 
 ## Returns a new copy of the list.

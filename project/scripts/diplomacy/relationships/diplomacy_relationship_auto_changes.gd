@@ -13,7 +13,7 @@ func _init(game: Game) -> void:
 	_game = game
 	
 	# TODO bad code: private member access
-	for country in _game.countries._list:
+	for country in _game.countries.list():
 		for relationship in country.relationships._list:
 			_connect_relationship(relationship)
 		country.relationships.relationship_created.connect(

@@ -20,7 +20,7 @@ var error_message: String = ""
 var result: Game
 
 
-func load_game(file_path: String, game_scene: PackedScene) -> void:
+func load_game(file_path: String) -> void:
 	# Load the file
 	var file_json := FileJSON.new()
 	file_json.load_json(file_path)
@@ -31,7 +31,7 @@ func load_game(file_path: String, game_scene: PackedScene) -> void:
 	
 	# Load the game using the file data
 	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(file_json.result, game_scene)
+	game_from_raw.load_game(file_json.result)
 	if game_from_raw.error:
 		error = true
 		error_message = game_from_raw.error_message
