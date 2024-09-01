@@ -1,0 +1,169 @@
+[gd_scene load_steps=7 format=3 uid="uid://bmtb3thxlc0ms"]
+
+[ext_resource type="Script" path="res://source/chat/visuals/chat_interface.gd" id="1_1pqug"]
+[ext_resource type="Script" path="res://source/chat/visuals/chat_minimize_button.gd" id="2_c1jfd"]
+[ext_resource type="Script" path="res://source/chat/visuals/chat_maximize_button.gd" id="3_qakug"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgfag"]
+bg_color = Color(0.4, 0.4, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a4ja3"]
+bg_color = Color(0.5, 0.5, 0.5, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k4cif"]
+bg_color = Color(0.3, 0.3, 0.3, 1)
+
+[node name="ChatInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_1pqug")
+
+[node name="ChatContents" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="ChatContents"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.25098)
+
+[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+grow_horizontal = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChatContents/ColorRect/MarginContainer"]
+layout_mode = 2
+
+[node name="Log" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ColorRect" type="ColorRect" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.85098, 0.85098, 0.85098, 0.501961)
+
+[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+
+[node name="ChatText" type="RichTextLabel" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+bbcode_enabled = true
+scroll_following = true
+
+[node name="Spacing" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 8)
+layout_mode = 2
+
+[node name="ChatInput" type="LineEdit" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Type here"
+
+[node name="MinimizeButtonArea" type="Control" parent="ChatContents" node_paths=PackedStringArray("chat_contents", "maximize_button")]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -40.0
+offset_bottom = 40.0
+grow_horizontal = 0
+script = ExtResource("2_c1jfd")
+chat_contents = NodePath("..")
+maximize_button = NodePath("../../MaximizeButtonArea")
+
+[node name="MinimizeButton" type="Button" parent="ChatContents/MinimizeButtonArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_lgfag")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_k4cif")
+
+[node name="Label" type="Label" parent="ChatContents/MinimizeButtonArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MaximizeButtonArea" type="Control" parent="." node_paths=PackedStringArray("chat_contents")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -40.0
+offset_right = 40.0
+grow_vertical = 0
+script = ExtResource("3_qakug")
+chat_contents = NodePath("../ChatContents")
+
+[node name="MaximizeButton" type="Button" parent="MaximizeButtonArea"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_lgfag")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_k4cif")
+
+[node name="Label" type="Label" parent="MaximizeButtonArea"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 48
+text = "/"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="text_submitted" from="ChatContents/ColorRect/MarginContainer/VBoxContainer/ChatInput" to="." method="_on_input_text_submitted"]

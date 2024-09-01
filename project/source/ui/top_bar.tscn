@@ -1,0 +1,195 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgm1qqboe50y7"]
+
+[ext_resource type="Script" path="res://source/ui/top_bar.gd" id="1_y7n1y"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="2_ho3uv"]
+[ext_resource type="Script" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="2_wy4xe"]
+
+[node name="TopBar" type="Control"]
+layout_mode = 3
+anchor_right = 1.0
+anchor_bottom = 0.1
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_y7n1y")
+
+[node name="BackgroundColor" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.188235, 0.188235, 0.25098, 1)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="YourCountry" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/YourCountry"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.075
+anchor_top = 0.075
+anchor_right = 0.925
+anchor_bottom = 0.925
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="CountryIconAndName" type="HBoxContainer" parent="HBoxContainer/YourCountry/MarginContainer"]
+layout_mode = 2
+
+[node name="CountryButton" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName" instance=ExtResource("2_ho3uv")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="Spacing" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+
+[node name="CountryName" type="Control" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.65
+
+[node name="CountryNameLabel" type="Label" parent="HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryName"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "One two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen twenty"
+vertical_alignment = 1
+clip_text = true
+
+[node name="Separator" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/Separator"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Money" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Money"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Icon" type="Control" parent="HBoxContainer/Money/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Money/HBoxContainer/Icon"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.8
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="HBoxContainer/Money/HBoxContainer/Icon/MarginContainer"]
+layout_mode = 2
+
+[node name="ColorRect" type="ColorRect" parent="HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.0657895
+anchor_right = 1.0
+anchor_bottom = 0.934211
+script = ExtResource("2_wy4xe")
+
+[node name="DollarSign" type="Label" parent="HBoxContainer/Money/HBoxContainer/Icon/MarginContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "$"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CountryMoneyLabel" type="Label" parent="HBoxContainer/Money/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+text = "69420"
+vertical_alignment = 1
+
+[node name="Separator2" type="Control" parent="HBoxContainer"]
+visible = false
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/Separator2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Spacing" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="Separator3" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer/Separator3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="GameTurn" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="GameTurnLabel" type="Label" parent="HBoxContainer/GameTurn"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Turn 69420"
+horizontal_alignment = 1
+vertical_alignment = 1

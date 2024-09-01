@@ -1,0 +1,305 @@
+[gd_scene load_steps=32 format=3 uid="uid://c74o2ubgawogb"]
+
+[ext_resource type="Script" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
+[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
+[ext_resource type="Script" path="res://source/camera/camera.gd" id="2_lblr6"]
+[ext_resource type="Script" path="res://source/camera/camera_drag.gd" id="3_3p7sw"]
+[ext_resource type="Script" path="res://source/camera/camera_zoom.gd" id="4_331yk"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="6_5jo7e"]
+[ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://source/networking/networking_setup_game.tscn" id="6_b2bhm"]
+[ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://source/ui/component_ui/component_ui.tscn" id="7_dxau2"]
+[ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://source/ui/player_turn_announcement.tscn" id="8_e0v4f"]
+[ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://source/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
+[ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="9_pkxqv"]
+[ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://source/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
+[ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://source/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
+[ext_resource type="PackedScene" uid="uid://2hy14ir4o0ps" path="res://source/ui/popups/country_info_popup.tscn" id="15_6f53u"]
+[ext_resource type="Script" path="res://source/networking/action_synchronizer.gd" id="15_o3imi"]
+[ext_resource type="Resource" uid="uid://cuylrn1evjy6r" path="res://resources/battle.tres" id="15_vh3er"]
+[ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://source/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
+[ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
+[ext_resource type="Script" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
+[ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
+[ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="20_446nu"]
+[ext_resource type="Script" path="res://source/ui/utils/interface_tabs.gd" id="20_no4y5"]
+[ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://source/ui/top_bar.tscn" id="20_qfiqr"]
+[ext_resource type="Script" path="res://source/camera/camera_event_movement.gd" id="20_qrqmv"]
+[ext_resource type="Script" path="res://source/ui/end_turn_interface.gd" id="21_fxgwm"]
+[ext_resource type="Script" path="res://source/ui/utils/id_button.gd" id="21_l7714"]
+[ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://source/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
+[ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://source/notifications/visuals/game_notifications.tscn" id="25_v7fg0"]
+[ext_resource type="Script" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ioeab"]
+bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
+bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="Game" type="Node" node_paths=PackedStringArray("action_sync", "camera", "component_ui_root", "popups")]
+script = ExtResource("1_g7hfo")
+networking_setup_scene = ExtResource("6_b2bhm")
+troop_ui_scene = ExtResource("2_dx3sp")
+component_ui_scene = ExtResource("7_dxau2")
+player_turn_scene = ExtResource("8_e0v4f")
+player_list_scene = ExtResource("9_pkxqv")
+popup_scene = ExtResource("2_dx3sp")
+army_movement_scene = ExtResource("8_nnt8b")
+game_over_scene = ExtResource("16_mxtlx")
+build_fortress_scene = ExtResource("10_x38iu")
+recruitment_scene = ExtResource("11_rjf2g")
+country_info_scene = ExtResource("15_6f53u")
+notification_info_scene = ExtResource("16_r8lxu")
+action_sync = NodePath("ActionSynchronizer")
+camera = NodePath("Camera")
+component_ui_root = NodePath("UILayer/GameUI/ComponentUI")
+popups = NodePath("UILayer/GameUI/Popups")
+battle = ExtResource("15_vh3er")
+offer_accepted_icon = ExtResource("18_te1gd")
+
+[node name="DebugProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("_game")]
+script = ExtResource("18_pevj0")
+is_enabled = false
+_game = NodePath("..")
+
+[node name="ActionSynchronizer" type="Node" parent="." node_paths=PackedStringArray("_game")]
+script = ExtResource("15_o3imi")
+_game = NodePath("..")
+
+[node name="WorldLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="WorldVisuals2D" parent="WorldLayer" instance=ExtResource("6_5jo7e")]
+unique_name_in_owner = true
+
+[node name="Camera" type="Camera2D" parent="."]
+script = ExtResource("2_lblr6")
+world_margin = Vector2(0.25, 0.25)
+
+[node name="CameraDrag" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
+script = ExtResource("3_3p7sw")
+camera = NodePath("..")
+
+[node name="CameraZoom" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
+script = ExtResource("4_331yk")
+camera = NodePath("..")
+
+[node name="CameraEventMovement" type="Node" parent="Camera" node_paths=PackedStringArray("_game", "_camera")]
+script = ExtResource("20_qrqmv")
+_game = NodePath("../..")
+_camera = NodePath("..")
+_start_in_center_of_map = true
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="GameUI" type="Control" parent="UILayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ComponentUI" type="Control" parent="UILayer/GameUI"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 2
+
+[node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
+layout_mode = 1
+_game = NodePath("../../..")
+
+[node name="GameNotifications" parent="UILayer/GameUI" instance=ExtResource("25_v7fg0")]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 0.75
+anchor_bottom = 0.225
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+
+[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" node_paths=PackedStringArray("game_notifications_node", "_game")]
+script = ExtResource("27_ncc6m")
+game_notifications_node = NodePath("..")
+_game = NodePath("../../../..")
+
+[node name="RightSide" type="Control" parent="UILayer/GameUI"]
+layout_mode = 1
+anchor_left = 0.75
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.8
+offset_left = 16.0
+offset_top = 16.0
+offset_right = -16.0
+offset_bottom = -16.0
+mouse_filter = 2
+
+[node name="Tabs" type="Control" parent="UILayer/GameUI/RightSide" node_paths=PackedStringArray("buttons", "corresponding_ui")]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.1
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+mouse_filter = 2
+script = ExtResource("20_no4y5")
+buttons = [NodePath("HBoxContainer/TurnOrderTab/TurnOrderButton"), NodePath("HBoxContainer/LobbyTab/LobbyButton")]
+corresponding_ui = [NodePath("../Content/TurnOrderList"), NodePath("../Content/LobbyList")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/RightSide/Tabs"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TurnOrderTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="TurnOrderButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_ioeab")
+text = "Turn Order"
+script = ExtResource("21_l7714")
+
+[node name="LobbyTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.423529, 0.537255, 0.65098, 0.878431)
+
+[node name="LobbyButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_bh543")
+text = "Lobby"
+script = ExtResource("21_l7714")
+
+[node name="Content" type="Control" parent="UILayer/GameUI/RightSide"]
+layout_mode = 1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.9
+mouse_filter = 2
+
+[node name="TurnOrderList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="TurnOrderList" parent="UILayer/GameUI/RightSide/Content/TurnOrderList" instance=ExtResource("22_ufuwj")]
+unique_name_in_owner = true
+layout_mode = 1
+
+[node name="LobbyList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="PlayerList" parent="UILayer/GameUI/RightSide/Content/LobbyList" instance=ExtResource("9_pkxqv")]
+unique_name_in_owner = true
+layout_mode = 1
+offset_bottom = 107.0
+is_shrunk = true
+
+[node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.7
+anchor_right = 0.3
+
+[node name="EndTurnInterface" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game")]
+layout_mode = 1
+anchor_left = 0.8
+anchor_top = 0.8
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("21_fxgwm")
+_game = NodePath("../../..")
+
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/EndTurnInterface"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.25098)
+
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/EndTurnInterface"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.2
+anchor_top = 0.2
+anchor_right = 0.8
+anchor_bottom = 0.8
+
+[node name="EndTurn" type="Button" parent="UILayer/GameUI/EndTurnInterface/MarginContainer"]
+layout_mode = 2
+text = "End Turn"
+
+[node name="PlayerTurnAnnouncement" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("8_e0v4f")]
+layout_mode = 1
+_game = NodePath("../../..")
+
+[node name="Popups" type="Control" parent="UILayer/GameUI"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
+[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
+[connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

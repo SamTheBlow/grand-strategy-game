@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://1xq5bfaikpwu"]
 
-[ext_resource type="Script" path="res://scripts/diplomacy/actions/diplomacy_action_definition.gd" id="1_3ci7i"]
+[ext_resource type="Script" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_3ci7i"]
 [ext_resource type="Texture2D" uid="uid://1j3wofrnrbay" path="res://assets/openmoji/1F4A5.svg" id="1_8hlw8"]
 
 [resource]

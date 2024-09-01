@@ -1,0 +1,64 @@
+[gd_scene load_steps=12 format=3 uid="uid://dpgoa2yg5bjcp"]
+
+[ext_resource type="Script" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
+[ext_resource type="Script" path="res://source/world/visuals/world_background.gd" id="2_unrx0"]
+[ext_resource type="Script" path="res://source/provinces/visuals/province_visuals_setup.gd" id="3_2lnh4"]
+[ext_resource type="Script" path="res://source/armies/visuals/army_visuals_setup.gd" id="4_0v0rh"]
+[ext_resource type="Script" path="res://source/provinces/visuals/province_selection.gd" id="4_axwnt"]
+[ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://source/provinces/visuals/province_visuals_2d.tscn" id="4_fscts"]
+[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_container.gd" id="4_o61mm"]
+[ext_resource type="Script" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
+[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="5_4u3au"]
+[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_sync.gd" id="6_2g55h"]
+[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://source/armies/visuals/army_visuals_2d.tscn" id="6_toace"]
+
+[node name="WorldVisuals2D" type="Node2D"]
+script = ExtResource("1_im3sb")
+
+[node name="ProvinceVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("container")]
+unique_name_in_owner = true
+script = ExtResource("3_2lnh4")
+container = NodePath("../Provinces")
+_province_visuals_scene = ExtResource("4_fscts")
+
+[node name="ProvinceSelection" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("4_axwnt")
+
+[node name="ArmyVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("_provinces_container")]
+unique_name_in_owner = true
+script = ExtResource("4_0v0rh")
+_provinces_container = NodePath("../Provinces")
+_army_visuals_scene = ExtResource("6_toace")
+
+[node name="AutoArrowInput" type="Node" parent="." node_paths=PackedStringArray("auto_arrow_sync", "province_container", "auto_arrow_container")]
+unique_name_in_owner = true
+script = ExtResource("5_4u3au")
+auto_arrow_sync = NodePath("../AutoArrowSync")
+province_container = NodePath("../Provinces")
+auto_arrow_container = NodePath("../AutoArrows")
+
+[node name="AutoArrowSync" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("6_2g55h")
+
+[node name="Background" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("2_unrx0")
+
+[node name="Provinces" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_4fqv4")
+
+[node name="AutoArrows" type="Node2D" parent="." node_paths=PackedStringArray("province_visuals_container", "province_selection")]
+unique_name_in_owner = true
+script = ExtResource("4_o61mm")
+province_visuals_container = NodePath("../Provinces")
+province_selection = NodePath("../ProvinceSelection")
+
+[connection signal="province_deselected" from="ProvinceSelection" to="Provinces" method="_on_province_deselected"]
+[connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
+[connection signal="auto_arrow_formed" from="AutoArrowInput" to="AutoArrowSync" method="_on_auto_arrow_formed"]
+[connection signal="province_double_right_clicked" from="AutoArrowInput" to="AutoArrowSync" method="clear_province"]
+[connection signal="clicked" from="Background" to="ProvinceSelection" method="deselect_province"]
+[connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]

@@ -1,0 +1,142 @@
+[gd_scene load_steps=4 format=3 uid="uid://2hy14ir4o0ps"]
+
+[ext_resource type="Script" path="res://source/ui/popups/country_info_popup.gd" id="1_lgeaj"]
+[ext_resource type="PackedScene" uid="uid://b7jj51hv4hwqq" path="res://source/ui/country_and_relationship.tscn" id="2_a2cvv"]
+[ext_resource type="PackedScene" uid="uid://de5dhmkfqssk0" path="res://source/ui/country_relationship.tscn" id="3_eiu3u"]
+
+[node name="CountryInfo" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 16
+script = ExtResource("1_lgeaj")
+_country_and_relationship_scene = ExtResource("2_a2cvv")
+_country_relationship_scene = ExtResource("3_eiu3u")
+
+[node name="IconAndName" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="IconAndName"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_right = 0.9
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="IconAndName/MarginContainer"]
+layout_mode = 2
+mouse_filter = 1
+color = Color(0.24, 0.26, 0.3, 1)
+
+[node name="Header" parent="IconAndName/MarginContainer" instance=ExtResource("2_a2cvv")]
+unique_name_in_owner = true
+layout_mode = 2
+is_button_enabled = false
+
+[node name="Money" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Money"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.3
+anchor_right = 0.7
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Money/MarginContainer"]
+layout_mode = 2
+mouse_filter = 1
+color = Color(0.34, 0.36, 0.4, 1)
+
+[node name="Money" type="Label" parent="Money/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+text = "Money: $999999999"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RelationshipWithPlayer" parent="." instance=ExtResource("3_eiu3u")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CountryList" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="CountryList"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="ColorRect" type="ColorRect" parent="CountryList/MarginContainer"]
+layout_mode = 2
+mouse_filter = 1
+color = Color(0.24, 0.26, 0.3, 1)
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CountryList/MarginContainer"]
+layout_mode = 2
+
+[node name="Control" type="Control" parent="CountryList/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="ColorRect" type="ColorRect" parent="CountryList/MarginContainer/VBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.2, 0.216667, 0.25, 1)
+
+[node name="AllRelationships" type="Label" parent="CountryList/MarginContainer/VBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 0
+text = "All Relationships"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Control2" type="Control" parent="CountryList/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CountryList/MarginContainer/VBoxContainer/Control2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="Countries" type="VBoxContainer" parent="CountryList/MarginContainer/VBoxContainer/Control2/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Footer" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2

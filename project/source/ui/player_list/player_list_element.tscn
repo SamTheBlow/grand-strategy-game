@@ -1,0 +1,155 @@
+[gd_scene load_steps=8 format=3 uid="uid://75dgexs1e3no"]
+
+[ext_resource type="Script" path="res://source/ui/player_list/player_list_element.gd" id="1_q6tiq"]
+[ext_resource type="Texture2D" uid="uid://d3y7j7vyu03ii" path="res://assets/remote_player_icon_256.png" id="2_xkjfk"]
+[ext_resource type="BitMap" uid="uid://bd0cj6rcgsdqb" path="res://assets/circle_click_mask_256.png" id="3_58ie7"]
+[ext_resource type="Script" path="res://source/ui/utils/list_container.gd" id="3_k1dn1"]
+[ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="5_lr6yf"]
+[ext_resource type="Texture2D" uid="uid://c3emi5jqexqek" path="res://assets/rename_button_256.png" id="6_pcq7h"]
+[ext_resource type="Texture2D" uid="uid://c4um15dj3d267" path="res://assets/confirm_button_256.png" id="7_6ekdo"]
+
+[node name="PlayerListElement" type="Control"]
+clip_contents = true
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+script = ExtResource("1_q6tiq")
+username_color_human = Color(1, 1, 1, 1)
+bg_color_human = Color(0, 0, 0, 0.12549)
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.12549)
+
+[node name="Contents" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Spacing" type="Control" parent="Contents"]
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.15
+
+[node name="UsernameLabel" type="Label" parent="Contents"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+vertical_alignment = 1
+clip_text = true
+
+[node name="UsernameEdit" type="Control" parent="Contents"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+mouse_filter = 1
+
+[node name="UsernameLineEdit" type="LineEdit" parent="Contents/UsernameEdit"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 9
+anchor_bottom = 1.0
+offset_right = 67.0625
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.85
+placeholder_text = "Username..."
+expand_to_text_length = true
+flat = true
+caret_blink = true
+
+[node name="OnlineStatus" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(32, 0)
+layout_mode = 1
+anchors_preset = 11
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 2
+mouse_filter = 1
+
+[node name="TextureRect" type="TextureRect" parent="OnlineStatus"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_xkjfk")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="CircleButtons" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("3_k1dn1")
+is_right_to_left = true
+is_node_always_square = true
+
+[node name="RemoveButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 1152.0
+offset_right = 1152.0
+size_flags_stretch_ratio = 0.1
+mouse_filter = 1
+texture_normal = ExtResource("5_lr6yf")
+texture_click_mask = ExtResource("3_58ie7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="RenameButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+offset_left = 1150.0
+offset_right = 1150.0
+size_flags_stretch_ratio = 0.1
+mouse_filter = 1
+texture_normal = ExtResource("6_pcq7h")
+texture_click_mask = ExtResource("3_58ie7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="ConfirmButton" type="TextureButton" parent="CircleButtons"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+offset_left = 1148.0
+offset_right = 1148.0
+size_flags_stretch_ratio = 0.1
+mouse_filter = 1
+texture_normal = ExtResource("7_6ekdo")
+texture_click_mask = ExtResource("3_58ie7")
+ignore_texture_size = true
+stretch_mode = 5
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="focus_exited" from="Contents/UsernameEdit/UsernameLineEdit" to="." method="_on_username_line_edit_focus_exited"]
+[connection signal="pressed" from="CircleButtons/RemoveButton" to="." method="_on_remove_button_pressed"]
+[connection signal="pressed" from="CircleButtons/RenameButton" to="." method="_on_rename_button_pressed"]
+[connection signal="pressed" from="CircleButtons/ConfirmButton" to="." method="_on_confirm_button_pressed"]

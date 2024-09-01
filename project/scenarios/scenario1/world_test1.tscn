@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" path="res://scenarios/scenario1/province_test_data.gd" id="1_klkwd"]
 [ext_resource type="Script" path="res://scenarios/scenario1/scenario1.gd" id="2_ubikp"]
-[ext_resource type="Script" path="res://scripts/countries/country.gd" id="3_5xvxv"]
+[ext_resource type="Script" path="res://source/countries/country.gd" id="3_5xvxv"]
 [ext_resource type="Resource" uid="uid://budtwwnm7e2qh" path="res://resources/countries/uk.tres" id="3_y838x"]
 [ext_resource type="Resource" uid="uid://urfsfaoah1mj" path="res://resources/countries/france.tres" id="4_a32yr"]
 [ext_resource type="Resource" uid="uid://dcf0inkj1rd22" path="res://resources/countries/germany.tres" id="5_irogq"]
@@ -14,9 +14,9 @@
 [ext_resource type="Resource" uid="uid://dwme1ktslqmi5" path="res://resources/countries/austria.tres" id="11_rlrm2"]
 [ext_resource type="Resource" uid="uid://bo2m8meuph3kv" path="res://resources/countries/morocco.tres" id="12_40d2v"]
 [ext_resource type="Resource" uid="uid://dug1edcvb2y1w" path="res://resources/countries/algeria.tres" id="13_5il8d"]
-[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://scenes/game_world_2d.tscn" id="14_ambny"]
-[ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://scenes/province_visuals_2d.tscn" id="15_55msn"]
-[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://scenes/army_visuals_2d.tscn" id="16_320pj"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="14_ambny"]
+[ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://source/provinces/visuals/province_visuals_2d.tscn" id="15_55msn"]
+[ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://source/armies/visuals/army_visuals_2d.tscn" id="16_320pj"]
 
 [node name="TestData" type="Node2D"]
 

@@ -1,0 +1,363 @@
+[gd_scene load_steps=11 format=3 uid="uid://btp4jcvpp4jg2"]
+
+[ext_resource type="Script" path="res://source/ui/component_ui/component_ui.gd" id="1_p8xv2"]
+[ext_resource type="Script" path="res://source/ui/component_ui/build_fortress_button.gd" id="2_bi4y4"]
+[ext_resource type="Script" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="2_gn6af"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="2_inqyn"]
+[ext_resource type="Script" path="res://source/ui/component_ui/recruit_button.gd" id="3_5wcn6"]
+[ext_resource type="Script" path="res://source/ui/relationship_preset_label.gd" id="4_na3lj"]
+[ext_resource type="Script" path="res://source/ui/component_ui/population_size_label_update.gd" id="5_ksixc"]
+[ext_resource type="Script" path="res://source/ui/component_ui/country_button_province_update.gd" id="6_c2q6e"]
+[ext_resource type="Script" path="res://source/ui/component_ui/income_money_label_update.gd" id="6_fxygr"]
+[ext_resource type="Script" path="res://source/ui/relationship_preset_label_update.gd" id="7_txgoj"]
+
+[node name="ComponentUi" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_p8xv2")
+line_top = -128.0
+line_bottom = 96.0
+line_length_x = 192.0
+
+[node name="Control1" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -256.0
+offset_top = -64.0
+offset_right = -128.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control1/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control1"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control1/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.501961, 0.501961, 0.501961, 1)
+
+[node name="BuildFortressButton" type="Button" parent="Control1/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Build Fortress"
+script = ExtResource("2_bi4y4")
+
+[node name="Control2" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -256.0
+offset_right = -128.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+offset_left = -2.0
+offset_top = -2.0
+offset_right = 2.0
+offset_bottom = 2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control2"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control2/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.501961, 0.501961, 0.501961, 1)
+
+[node name="RecruitButton" type="Button" parent="Control2/MarginContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Recruit"
+script = ExtResource("3_5wcn6")
+
+[node name="Control3" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 128.0
+offset_top = -64.0
+offset_right = 256.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control3/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.25098, 0.25098, 0.25098, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control3"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control3/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Control3/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control3/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.229167
+anchor_right = 1.0
+anchor_bottom = 0.770833
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_gn6af")
+
+[node name="Label" type="Label" parent="Control3/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "P"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacing" type="Control" parent="Control3/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+mouse_filter = 2
+
+[node name="Text" type="Control" parent="Control3/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+mouse_filter = 2
+
+[node name="PopulationLabel" type="Label" parent="Control3/MarginContainer/HBoxContainer/Text"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+text = "420691337"
+vertical_alignment = 1
+clip_text = true
+
+[node name="PopulationSizeLabelUpdate" type="Node" parent="Control3/MarginContainer/HBoxContainer/Text/PopulationLabel" node_paths=PackedStringArray("label")]
+unique_name_in_owner = true
+script = ExtResource("5_ksixc")
+label = NodePath("..")
+
+[node name="Control4" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 128.0
+offset_right = 256.0
+offset_bottom = 64.0
+mouse_filter = 2
+
+[node name="MarginContainer2" type="MarginContainer" parent="Control4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 0.9
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control4/MarginContainer2"]
+layout_mode = 2
+mouse_filter = 2
+color = Color(0.25098, 0.25098, 0.25098, 1)
+
+[node name="MarginContainer" type="MarginContainer" parent="Control4"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+mouse_filter = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control4/MarginContainer"]
+layout_mode = 2
+mouse_filter = 2
+
+[node name="Control" type="Control" parent="Control4/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.25
+mouse_filter = 2
+
+[node name="ColorRect" type="ColorRect" parent="Control4/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.229167
+anchor_right = 1.0
+anchor_bottom = 0.770833
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("2_gn6af")
+
+[node name="Label" type="Label" parent="Control4/MarginContainer/HBoxContainer/Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "$"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacing" type="Control" parent="Control4/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.05
+mouse_filter = 2
+
+[node name="Text" type="Control" parent="Control4/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.7
+mouse_filter = 2
+
+[node name="IncomeMoneyLabel" type="Label" parent="Control4/MarginContainer/HBoxContainer/Text"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.75
+text = "69420"
+vertical_alignment = 1
+clip_text = true
+
+[node name="IncomeMoneyLabelUpdate" type="Node" parent="Control4/MarginContainer/HBoxContainer/Text/IncomeMoneyLabel" node_paths=PackedStringArray("label")]
+unique_name_in_owner = true
+script = ExtResource("6_fxygr")
+label = NodePath("..")
+
+[node name="Control5" type="Control" parent="."]
+anchors_preset = 0
+offset_left = -64.0
+offset_top = -160.0
+offset_right = 64.0
+offset_bottom = -96.0
+mouse_filter = 2
+
+[node name="CountryButton" parent="Control5" instance=ExtResource("2_inqyn")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+has_black_outline = true
+
+[node name="CountryButtonProvinceUpdate" type="Node" parent="Control5/CountryButton" node_paths=PackedStringArray("country_button")]
+unique_name_in_owner = true
+script = ExtResource("6_c2q6e")
+country_button = NodePath("..")
+
+[node name="RelationshipRoot" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = 128.0
+offset_top = -128.0
+offset_right = 128.0
+offset_bottom = -128.0
+mouse_filter = 2
+
+[node name="RelationshipLabel" type="Label" parent="RelationshipRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+text = "(Best friends)"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("4_na3lj")
+
+[node name="RelationshipPresetLabelUpdate" type="Node" parent="RelationshipRoot/RelationshipLabel" node_paths=PackedStringArray("label")]
+unique_name_in_owner = true
+script = ExtResource("7_txgoj")
+label = NodePath("..")
+
+[node name="ColorRect" type="ColorRect" parent="RelationshipRoot/RelationshipLabel"]
+show_behind_parent = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -16.0
+offset_top = -4.0
+offset_right = 16.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.24, 0.26, 0.3, 1)
+
+[connection signal="pressed" from="Control1/MarginContainer/BuildFortressButton" to="." method="_on_build_fortress_button_pressed"]
+[connection signal="pressed" from="Control2/MarginContainer/RecruitButton" to="." method="_on_recruit_button_pressed"]

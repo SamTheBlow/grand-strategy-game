@@ -1,0 +1,113 @@
+[gd_scene load_steps=7 format=3 uid="uid://s68xdpyt6mng"]
+
+[ext_resource type="Script" path="res://source/ui/diplomacy_action_button.gd" id="1_be54w"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3dtd"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.8, 0.8, 0.627451)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_trc8c"]
+bg_color = Color(0.6, 0.6, 0.6, 0.313726)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ljnnk"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iaw8b"]
+bg_color = Color(0.4, 0.4, 0.4, 0.501961)
+anti_aliasing = false
+
+[sub_resource type="Theme" id="Theme_aprw4"]
+Button/styles/focus = SubResource("StyleBoxFlat_g3dtd")
+Button/styles/hover = SubResource("StyleBoxFlat_trc8c")
+Button/styles/normal = SubResource("StyleBoxFlat_ljnnk")
+Button/styles/pressed = SubResource("StyleBoxFlat_iaw8b")
+
+[node name="DiplomacyActionButton" type="Control"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_be54w")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.4, 0.433333, 0.5, 1)
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_aprw4")
+
+[node name="NameLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.1
+anchor_right = 0.9
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Diplomacy Action Name"
+vertical_alignment = 1
+
+[node name="Disabled" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="ColorRect" type="ColorRect" parent="Disabled"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.16, 0.173333, 0.2, 0.627451)
+
+[node name="DisabledLabel" type="Label" parent="Disabled"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "DISABLED"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]

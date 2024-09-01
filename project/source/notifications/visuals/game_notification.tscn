@@ -1,0 +1,86 @@
+[gd_scene load_steps=9 format=3 uid="uid://4ctqqicmn2mn"]
+
+[ext_resource type="Script" path="res://source/notifications/visuals/game_notification_node.gd" id="1_2ds1f"]
+[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_iv0cq"]
+[ext_resource type="Script" path="res://source/ui/utils/custom_button.gd" id="3_dyl3y"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6m8fg"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.8, 0.8, 0.8, 0.627451)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d0d27"]
+bg_color = Color(0.6, 0.6, 0.6, 0.313726)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+expand_margin_left = 4.0
+expand_margin_top = 4.0
+expand_margin_right = 4.0
+expand_margin_bottom = 4.0
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o5nsn"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+anti_aliasing = false
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fib4r"]
+bg_color = Color(0.4, 0.4, 0.4, 0.501961)
+anti_aliasing = false
+
+[sub_resource type="Theme" id="Theme_b321m"]
+Button/styles/focus = SubResource("StyleBoxFlat_6m8fg")
+Button/styles/hover = SubResource("StyleBoxFlat_d0d27")
+Button/styles/normal = SubResource("StyleBoxFlat_o5nsn")
+Button/styles/pressed = SubResource("StyleBoxFlat_fib4r")
+
+[node name="GameNotification" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_2ds1f")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Icon" type="TextureRect" parent="ColorRect"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_iv0cq")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Button" type="Button" parent="ColorRect"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_b321m")
+button_mask = 3
+script = ExtResource("3_dyl3y")
+grab_focus_on_right_click = true
+
+[connection signal="left_click_just_released" from="ColorRect/Button" to="." method="_on_button_left_click_just_released"]
+[connection signal="right_click_just_released" from="ColorRect/Button" to="." method="_on_button_right_click_just_released"]

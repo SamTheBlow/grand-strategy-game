@@ -12,13 +12,13 @@ config_version=5
 
 config/name="Grand Strategy Game"
 config/version="4.2"
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://source/main.tscn"
 config/features=PackedStringArray("4.3")
 config/icon="res://assets/flag_icon.png"
 
 [autoload]
 
-CodeTests="*res://scripts/code_tests.gd"
+CodeTests="*res://source/code_tests.gd"
 
 [debug]
 
@@ -35,8 +35,7 @@ folder_colors={
 "res://assets/": "red",
 "res://resources/": "teal",
 "res://scenarios/": "gray",
-"res://scenes/": "orange",
-"res://scripts/": "blue"
+"res://source/": "blue"
 }
 
 [filesystem]

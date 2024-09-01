@@ -1,0 +1,148 @@
+[gd_scene load_steps=7 format=3 uid="uid://b735rxfcexqks"]
+
+[ext_resource type="Script" path="res://source/main_menu/lobby.gd" id="1_hty1g"]
+[ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://scenarios/scenario1/world_test1.tscn" id="2_aiiyc"]
+[ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/rules/interface/items/rule_root.tscn" id="3_hb7ro"]
+[ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
+[ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="5_wcm5s"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gme8j"]
+
+[node name="Lobby" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_hty1g")
+scenario_scene = ExtResource("2_aiiyc")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(1, 1, 1, 0.188235)
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Spacing75" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 75.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Spacing75"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = -16.0
+offset_bottom = -32.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
+layout_mode = 2
+follow_focus = true
+
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gme8j")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer"]
+layout_mode = 2
+
+[node name="MarginLeft" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(12, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginTop" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="Rules" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("3_hb7ro")]
+unique_name_in_owner = true
+layout_mode = 2
+scenes = ExtResource("5_wcm5s")
+
+[node name="MarginBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="MarginRight" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+custom_minimum_size = Vector2(12, 0)
+layout_mode = 2
+
+[node name="RulesDisabled" type="ColorRect" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+color = Color(0.25098, 0.25098, 0.25098, 0.25098)
+
+[node name="Spacing25" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 25.0
+
+[node name="MarginContainer" type="MarginContainer" parent="HBoxContainer/Spacing25"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = -32.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing25/MarginContainer"]
+layout_mode = 2
+
+[node name="Spacing80" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 80.0
+
+[node name="PlayerList" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing80" instance=ExtResource("5_6wm1c")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_bottom = 1.0
+offset_bottom = 0.0
+grow_vertical = 2
+
+[node name="Spacing20" type="Control" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 20.0
+
+[node name="StartButton" type="Button" parent="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing20"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_top = -26.5
+offset_bottom = 26.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 32
+text = "Start Game"
+
+[connection signal="pressed" from="HBoxContainer/Spacing25/MarginContainer/VBoxContainer/Spacing20/StartButton" to="." method="_on_start_button_pressed"]

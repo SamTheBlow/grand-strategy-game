@@ -1,0 +1,13 @@
+[gd_scene load_steps=2 format=3 uid="uid://dv5h7wj8mri2l"]
+
+[ext_resource type="Script" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="1_idkw5"]
+
+[node name="CountryIcon" type="ColorRect"]
+anchors_preset = -1
+anchor_left = 0.033125
+anchor_right = 0.966875
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_idkw5")
+aspect_ratio = 1.66

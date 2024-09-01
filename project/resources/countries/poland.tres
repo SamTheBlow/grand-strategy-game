@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="Countryy" load_steps=2 format=3 uid="uid://b1q61ly136ci5"]
 
-[ext_resource type="Script" path="res://scripts/countries/country.gd" id="1_ak12o"]
+[ext_resource type="Script" path="res://source/countries/country.gd" id="1_ak12o"]
 
 [resource]
 script = ExtResource("1_ak12o")

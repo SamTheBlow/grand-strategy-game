@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="OutlineSettings" load_steps=2 format=3 uid="uid://bi56vn2u78rtm"]
 
-[ext_resource type="Script" path="res://scripts/provinces/visuals/outline_settings.gd" id="1_i0hlk"]
+[ext_resource type="Script" path="res://source/provinces/visuals/outline_settings.gd" id="1_i0hlk"]
 
 [resource]
 script = ExtResource("1_i0hlk")

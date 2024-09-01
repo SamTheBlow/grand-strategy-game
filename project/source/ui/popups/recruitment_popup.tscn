@@ -1,0 +1,44 @@
+[gd_scene load_steps=3 format=3 uid="uid://dmta7gru0kbr2"]
+
+[ext_resource type="Script" path="res://source/ui/popups/recruitment_popup.gd" id="1_vaaa4"]
+[ext_resource type="PackedScene" uid="uid://0xwvup7qe5f" path="res://source/ui/action_cost.tscn" id="2_fgo8b"]
+
+[node name="RecruitmentPopup" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_vaaa4")
+
+[node name="SpacingTop" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+
+[node name="ActionCost" parent="." instance=ExtResource("2_fgo8b")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="SpacingMiddle" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 24)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="TroopSlider" type="HSlider" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="TroopLabel" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SpacingBottom" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
