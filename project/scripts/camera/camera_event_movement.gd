@@ -20,6 +20,10 @@ extends Node
 
 func _ready() -> void:
 	if _start_in_center_of_map:
+		# Need to wait for the world limits to load
+		if not _game.is_node_ready():
+			await _game.ready
+		
 		_camera.move_to(_camera.world_limits._limits.get_center())
 	
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
@@ -42,4 +46,11 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 			break
 	
 	if target_province:
-		_camera.move_to(target_province.global_position_army_host())
+		# Need to wait for the world visuals to load
+		if not _game.is_node_ready():
+			await _game.ready
+		
+		_camera.move_to(
+				_game.world_visuals.province_visuals
+				.visuals_of(target_province).global_position_army_host()
+		)
