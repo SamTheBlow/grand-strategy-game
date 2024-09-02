@@ -1,4 +1,12 @@
 class_name Game
+## The game.
+## There are so many things to setup, there are entire classes
+## dedicated to loading the game (see [LoadGame], [GameFromRawDict]...).
+## Doing the setup manually yourself is not recommended.
+##
+## This class is very bloated.
+## It's typical for a class to store the game in their properties
+## just to access other classes in the game.
 
 
 signal game_started()

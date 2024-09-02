@@ -13,8 +13,20 @@ signal start_game_requested(scenario: PackedScene)
 
 @export var scenario_scene: PackedScene
 
-var players: Players
-var game_rules: GameRules
+var players: Players:
+	set(value):
+		players = value
+		_setup_players()
+
+var game_rules: GameRules:
+	set(value):
+		game_rules = value
+		_setup_game_rules()
+
+var networking_interface: NetworkingInterface:
+	set(value):
+		networking_interface = value
+		_setup_networking_interface()
 
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _rules_interface := %Rules as RuleRootNode
@@ -23,15 +35,9 @@ var game_rules: GameRules
 
 
 func _ready() -> void:
-	if players:
-		_player_list.players = players
-	else:
-		push_error("Players were not injected in the lobby.")
-	
-	if game_rules:
-		_rules_interface.game_rules = game_rules
-	else:
-		push_error("Game rules were not injected in the lobby.")
+	_setup_players()
+	_setup_game_rules()
+	_setup_networking_interface()
 	
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
@@ -39,8 +45,25 @@ func _ready() -> void:
 	_update_start_button_disabled()
 
 
-func setup_networking_interface(interface: NetworkingInterface) -> void:
-	(%PlayerList as PlayerList).use_networking_interface(interface)
+func _setup_players() -> void:
+	if not is_node_ready():
+		return
+	
+	_player_list.players = players
+
+
+func _setup_game_rules() -> void:
+	if not is_node_ready() or game_rules == null:
+		return
+	
+	_rules_interface.game_rules = game_rules
+
+
+func _setup_networking_interface() -> void:
+	if not is_node_ready():
+		return
+	
+	_player_list.networking_interface = networking_interface
 
 
 ## When connected to an online game,

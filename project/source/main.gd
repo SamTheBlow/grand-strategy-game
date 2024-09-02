@@ -87,7 +87,7 @@ func play_game(game: Game) -> void:
 	var game_node := _game_scene.instantiate() as GameNode
 	game_node.game = game
 	game_node.chat = chat
-	game_node.game_ended.connect(_on_main_menu_entered)
+	game_node.exited.connect(_on_main_menu_entered)
 	game_node.set_players(players)
 	current_scene = game_node
 	

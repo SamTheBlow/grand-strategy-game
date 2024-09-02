@@ -4,24 +4,24 @@ extends Control
 ## Class responsible for displaying a list of [Player]s.
 ## It shows all players by their username.
 ## The user, when allowed, can add, remove and rename players.
-## [br][br]
-## This list can also include a [NetworkingInterface] at the bottom.
-## To include one, use [method PlayerList.use_networking_interface].
+## Optionally, this list can also include a [NetworkingInterface] at the bottom.
 
 
-@export_category("References")
-@export var player_list_element: PackedScene
-@export var margin: Control
-@export var container: Control
-@export var add_player_button: Control
-@export var spacing: Control
-@export var networking_setup: Control
+## The scene's root node must extend [PlayerListElement].
+@export var _player_list_element_scene: PackedScene
 
-@export_category("Variables")
+## Optional. When set, adds this interface at the bottom of the list.
+@export var networking_interface: NetworkingInterface:
+	set(value):
+		_disconnect_signals()
+		networking_interface = value
+		_connect_signals()
+		_setup_networking_interface()
+		_update_size()
 
 ## If true, the player list shrinks down to the size of the contents.
 ## If false, it uses the given position/anchors as usual.
-## Do not change this while the game is running.
+## Please do not change this value while the game is running.
 @export var is_shrunk: bool = true:
 	set(value):
 		is_shrunk = value
@@ -45,6 +45,10 @@ var players: Players:
 			_clear_elements()
 		
 		players = value
+		
+		if players == null:
+			return
+		
 		_create_elements()
 		players.player_added.connect(_on_player_added)
 		players.player_removed.connect(_on_player_removed)
@@ -52,63 +56,87 @@ var players: Players:
 		if players.size() == 0:
 			_add_human_player()
 
-var _is_using_network_interface: bool = false:
-	set(value):
-		_is_using_network_interface = value
-		_update_networking_interface_visibility()
-		_update_size()
-
 var _visual_players: Array[PlayerListElement] = []
 
+@onready var _margin := %MarginContainer as Control
+@onready var _container := %ElementContainer as Control
 @onready var _add_player_root := %AddPlayerRoot as Control
+
+@onready var _spacing := %Spacing as Control
+@onready var _networking_setup := %NetworkingSetup as Control
 
 
 func _ready() -> void:
 	if not players:
 		players = Players.new()
-	_update_networking_interface_visibility()
+	
+	_setup_networking_interface()
 	_update_margin_offsets()
 	_update_size()
+	
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
-## If you don't want to use one, use [code]null[/code] as the input.
-func use_networking_interface(networking_interface: NetworkingInterface) -> void:
-	# Remove all children
-	for child in networking_setup.get_children():
-		networking_setup.remove_child(child)
-	
-	if not networking_interface:
-		_is_using_network_interface = false
+func _setup_networking_interface() -> void:
+	if not is_node_ready():
 		return
 	
-	networking_interface.interface_changed.connect(
-			_on_networking_interface_changed
-	)
-	networking_setup.add_child(networking_interface)
-	_is_using_network_interface = true
+	# Remove all children
+	for child in _networking_setup.get_children():
+		_networking_setup.remove_child(child)
+	
+	# Show/hide nodes
+	var node_exists: bool = networking_interface != null
+	_spacing.visible = node_exists
+	_networking_setup.visible = node_exists
+	
+	# Add child
+	if node_exists:
+		_networking_setup.add_child(networking_interface)
 
 
-func _update_networking_interface_visibility() -> void:
-	spacing.visible = _is_using_network_interface
-	networking_setup.visible = _is_using_network_interface
+func _disconnect_signals() -> void:
+	if networking_interface == null:
+		return
+	
+	if (
+			networking_interface.interface_changed
+			.is_connected(_on_networking_interface_changed)
+	):
+		networking_interface.interface_changed.disconnect(
+				_on_networking_interface_changed
+		)
+
+
+func _connect_signals() -> void:
+	if networking_interface == null:
+		return
+	
+	if not (
+			networking_interface.interface_changed
+			.is_connected(_on_networking_interface_changed)
+	):
+		networking_interface.interface_changed.connect(
+				_on_networking_interface_changed
+		)
 
 
 func _add_element(player: Player) -> void:
 	player.deletion_requested.connect(_on_player_deletion_requested)
 	player.sync_finished.connect(_on_player_sync_finished)
 	
-	var element := player_list_element.instantiate() as PlayerListElement
+	var element := _player_list_element_scene.instantiate() as PlayerListElement
 	element.player = player
 	element.init()
 	_visual_players.append(element)
-	container.add_child(element)
-	container.move_child(element, -2)
+	_container.add_child(element)
+	_container.move_child(element, -2)
 
 
 func _create_elements() -> void:
 	for player in players.list():
 		_add_element(player)
+	
 	_update_size()
 	_update_elements()
 
@@ -128,18 +156,19 @@ func _clear_elements() -> void:
 	for element in _visual_players:
 		element.get_parent().remove_child(element)
 		element.queue_free()
+	
 	_visual_players.clear()
 
 
-## To be called when the margin_pixels property changes.
+## Updates the margin node according to the margin_pixels property.
 func _update_margin_offsets() -> void:
-	if not margin:
+	if not is_node_ready():
 		return
 	
-	margin.offset_left = margin_pixels
-	margin.offset_right = -margin_pixels
-	margin.offset_top = margin_pixels
-	margin.offset_bottom = -margin_pixels
+	_margin.offset_left = margin_pixels
+	_margin.offset_right = -margin_pixels
+	_margin.offset_top = margin_pixels
+	_margin.offset_bottom = -margin_pixels
 
 
 ## Manually sets this node's size.
@@ -147,7 +176,7 @@ func _update_margin_offsets() -> void:
 ## Call this whenever any child node's vertical size changes.
 ## This function has no effect when [code]is_shrunk[/code] is set to false.
 func _update_size() -> void:
-	if not is_inside_tree() or not is_shrunk:
+	if not is_node_ready() or not is_shrunk:
 		return
 	
 	var new_size: int = 0
@@ -162,9 +191,9 @@ func _update_size() -> void:
 		new_size += roundi(_add_player_root.size.y) + 4
 	
 	# Add the size of the server setup, when it's there
-	if networking_setup.visible:
+	if _networking_setup.visible:
 		new_size += 8 + 4
-		new_size += roundi(networking_setup.custom_minimum_size.y) + 4
+		new_size += roundi(_networking_setup.custom_minimum_size.y) + 4
 	
 	if new_size > 0:
 		new_size -= 4
@@ -215,8 +244,8 @@ func _on_add_player_button_pressed() -> void:
 
 
 func _on_networking_interface_changed() -> void:
-	networking_setup.custom_minimum_size = (
-			(networking_setup.get_child(0) as Control).custom_minimum_size
+	_networking_setup.custom_minimum_size = (
+			(_networking_setup.get_child(0) as Control).custom_minimum_size
 	)
 
 

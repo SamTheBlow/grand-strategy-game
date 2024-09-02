@@ -122,7 +122,7 @@ func _update_margin_offsets() -> void:
 ## Call this whenever any child node's vertical size changes.
 ## This function has no effect when [code]is_shrunk[/code] is set to false.
 func _update_size() -> void:
-	if not is_inside_tree() or not is_shrunk:
+	if not is_node_ready() or not is_shrunk:
 		return
 	
 	var new_size: int = 0

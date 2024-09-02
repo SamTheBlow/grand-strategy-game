@@ -134,7 +134,7 @@ func _update_shown_username() -> void:
 
 
 func _update_turn_indicator() -> void:
-	if not is_inside_tree():
+	if not is_node_ready():
 		return
 	
 	if (not turn) or (not player):
@@ -148,7 +148,7 @@ func _update_turn_indicator() -> void:
 
 
 func _update_appearance() -> void:
-	if not is_inside_tree():
+	if not is_node_ready():
 		return
 	
 	_update_shown_username()
@@ -172,7 +172,7 @@ func _update_appearance() -> void:
 
 
 func _update_button_visibility() -> void:
-	if not is_inside_tree():
+	if not is_node_ready():
 		return
 	
 	add_button.visible = (

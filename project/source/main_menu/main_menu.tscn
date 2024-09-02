@@ -7,7 +7,7 @@
 
 [node name="MainMenu" type="Node"]
 script = ExtResource("1_kwhjp")
-networking_setup_scene = ExtResource("2_j4u0p")
+networking_interface_scene = ExtResource("2_j4u0p")
 
 [node name="Background" type="Control" parent="."]
 layout_mode = 3

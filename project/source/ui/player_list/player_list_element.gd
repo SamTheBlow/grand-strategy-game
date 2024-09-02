@@ -98,7 +98,7 @@ func _update_shown_username() -> void:
 
 
 func _update_appearance() -> void:
-	if not is_inside_tree():
+	if not is_node_ready():
 		return
 	
 	_update_shown_username()
@@ -114,7 +114,7 @@ func _update_appearance() -> void:
 
 
 func _update_button_visibility() -> void:
-	if not is_inside_tree():
+	if not is_node_ready():
 		return
 	
 	_update_remove_button_visibility()

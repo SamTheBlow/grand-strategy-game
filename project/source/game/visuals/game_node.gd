@@ -1,16 +1,10 @@
 class_name GameNode
 extends Node
-## The game.
-## There are so many things to setup, there are entire classes
-## dedicated to loading the game (see [LoadGame], [GameFromRawDict]...).
-## Setting up this node manually yourself is not recommended.
-##
-## This class is very bloated.
-## It's typical for a class to store the game in their properties
-## just to access other classes in the game.
+## Visuals for a given [Game].
+# TODO bloated class
 
 
-signal game_ended()
+signal exited()
 
 @export_group("Scenes")
 @export var networking_setup_scene: PackedScene
@@ -75,8 +69,6 @@ func _ready() -> void:
 	game.game_players.name = "GamePlayers"
 	add_child(game.game_players)
 	
-	_turn_order_list.game_turn = game.turn
-	
 	if game.world is not GameWorld2D:
 		return
 	var world_2d := game.world as GameWorld2D
@@ -98,13 +90,13 @@ func _ready() -> void:
 	networking_interface.message_sent.connect(
 			chat._on_networking_interface_message_sent
 	)
+	_player_list.networking_interface = networking_interface
 	
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
 	
-	_player_list.use_networking_interface(networking_interface)
-	
 	_turn_order_list.players = game.game_players
+	_turn_order_list.game_turn = game.turn
 
 
 func set_players(players: Players) -> void:
@@ -308,7 +300,7 @@ func _on_exit_to_main_menu_requested() -> void:
 		chat.send_system_message("Only the server can exit to main menu!")
 		return
 	
-	game_ended.emit()
+	exited.emit()
 
 
 func _on_chat_rules_requested() -> void:

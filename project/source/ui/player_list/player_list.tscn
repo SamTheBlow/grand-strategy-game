@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://source/ui/player_list/player_list.gd" id="1_2x7vk"]
 [ext_resource type="PackedScene" uid="uid://75dgexs1e3no" path="res://source/ui/player_list/player_list_element.tscn" id="2_vdcoh"]
 
-[node name="PlayerList" type="Control" node_paths=PackedStringArray("margin", "container", "add_player_button", "spacing", "networking_setup")]
+[node name="PlayerList" type="Control"]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
@@ -11,12 +11,7 @@ offset_bottom = 90.0
 grow_horizontal = 2
 size_flags_vertical = 0
 script = ExtResource("1_2x7vk")
-player_list_element = ExtResource("2_vdcoh")
-margin = NodePath("MarginContainer")
-container = NodePath("MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer")
-add_player_button = NodePath("MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/AddPlayerRoot/Margin/AddPlayerButton")
-spacing = NodePath("MarginContainer/Control/VBoxContainer/Spacing")
-networking_setup = NodePath("MarginContainer/Control/VBoxContainer/NetworkingSetup")
+_player_list_element_scene = ExtResource("2_vdcoh")
 is_shrunk = false
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -29,6 +24,7 @@ grow_vertical = 2
 color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -56,24 +52,25 @@ layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Control/VBoxContainer/ScrollContainer"]
+[node name="ElementContainer" type="VBoxContainer" parent="MarginContainer/Control/VBoxContainer/ScrollContainer"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AddPlayerRoot" type="Control" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer"]
+[node name="AddPlayerRoot" type="Control" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/ElementContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Margin" type="Control" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/AddPlayerRoot"]
+[node name="Margin" type="Control" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/ElementContainer/AddPlayerRoot"]
 layout_mode = 1
 anchor_left = 0.2
 anchor_top = 0.2
 anchor_right = 0.8
 anchor_bottom = 0.8
 
-[node name="AddPlayerButton" type="Button" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/AddPlayerRoot/Margin"]
+[node name="AddPlayerButton" type="Button" parent="MarginContainer/Control/VBoxContainer/ScrollContainer/ElementContainer/AddPlayerRoot/Margin"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -85,15 +82,15 @@ size_flags_vertical = 3
 text = "Add local player"
 
 [node name="Spacing" type="Control" parent="MarginContainer/Control/VBoxContainer"]
+unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
 [node name="NetworkingSetup" type="Control" parent="MarginContainer/Control/VBoxContainer"]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 size_flags_vertical = 8
 
-[connection signal="mouse_entered" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" to="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" method="_on_mouse_entered"]
-[connection signal="mouse_exited" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" to="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/PlayerListElement" method="_on_mouse_exited"]
-[connection signal="pressed" from="MarginContainer/Control/VBoxContainer/ScrollContainer/VBoxContainer/AddPlayerRoot/Margin/AddPlayerButton" to="." method="_on_add_player_button_pressed"]
+[connection signal="pressed" from="MarginContainer/Control/VBoxContainer/ScrollContainer/ElementContainer/AddPlayerRoot/Margin/AddPlayerButton" to="." method="_on_add_player_button_pressed"]

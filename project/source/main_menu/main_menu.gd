@@ -6,38 +6,46 @@ extends Node
 
 signal game_started(scenario: PackedScene)
 
-@export var networking_setup_scene: PackedScene
+@export var networking_interface_scene: PackedScene
 
+var _players: Players
+var _game_rules: GameRules
 var _chat: Chat
+
+@onready var _lobby := %Lobby as Lobby
+@onready var _chat_interface := %ChatInterface as ChatInterface
 
 
 func _ready() -> void:
-	# TODO the networking setup stuff is ugly I think, shouldn't be here
-	var networking_setup := (
-			networking_setup_scene.instantiate() as NetworkingInterface
+	# TODO this networking interface stuff is ugly I think, shouldn't be here
+	var networking_interface := (
+			networking_interface_scene.instantiate() as NetworkingInterface
 	)
-	networking_setup.message_sent.connect(
+	networking_interface.message_sent.connect(
 			_chat._on_networking_interface_message_sent
 	)
-	(%Lobby as Lobby).setup_networking_interface(networking_setup)
+	
+	_chat_interface.chat_data = _chat.chat_data
+	_chat.connect_chat_interface(_chat_interface)
+	
+	_lobby.players = _players
+	_lobby.game_rules = _game_rules
+	_lobby.networking_interface = networking_interface
 
 
 ## Dependency injection
 func setup_players(players: Players) -> void:
-	(%Lobby as Lobby).players = players
+	_players = players
 
 
 ## Dependency injection
 func setup_rules(game_rules: GameRules) -> void:
-	(%Lobby as Lobby).game_rules = game_rules
+	_game_rules = game_rules
 
 
 ## Dependency injection
 func setup_chat(chat: Chat) -> void:
 	_chat = chat
-	var chat_interface := %ChatInterface as ChatInterface
-	chat_interface.chat_data = chat.chat_data
-	chat.connect_chat_interface(chat_interface)
 
 
 func _on_start_game_requested(scenario: PackedScene) -> void:
