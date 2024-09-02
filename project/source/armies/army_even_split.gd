@@ -15,6 +15,12 @@ var action_army_split: ActionArmySplit
 ## then an invalid action will be created anyway.
 var action_army_movements: Array[ActionArmyMovement] = []
 
+var _armies: Armies
+
+
+func _init(armies: Armies) -> void:
+	_armies = armies
+
 
 func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	var number_of_targets: int = destination_provinces.size()
@@ -22,14 +28,15 @@ func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	@warning_ignore("integer_division")
 	var troops_per_army: int = troop_count / number_of_targets
 	
-	if troops_per_army < army.game.rules.minimum_army_size.value:
+	# TODO
+	# Check using the game's minimum size for a new army
+	# instead of the given army's minimum size
+	if troops_per_army < army.army_size.minimum():
 		return
 	
 	var new_army_ids: Array[int] = []
 	if number_of_targets > 1:
-		new_army_ids = (
-				army.game.world.armies.new_unique_ids(number_of_targets - 1)
-		)
+		new_army_ids = _armies.new_unique_ids(number_of_targets - 1)
 		
 		# Create the partition
 		var troop_partition: Array[int] = []

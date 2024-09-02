@@ -17,6 +17,10 @@ signal game_over(winning_country: Country)
 var rules: GameRules:
 	set(value):
 		rules = value
+		rules.battle.battle_algorithm_option = (
+				rules.battle_algorithm_option.selected
+		)
+		rules.battle.modifier_request = modifier_request
 		_setup_global_modifiers()
 
 ## Must setup before the game starts.

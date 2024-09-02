@@ -21,9 +21,9 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				)
 		)
 		for army in your_armies:
-			result.append_array(
-					_new_movement_actions(army, destination_provinces)
-			)
+			result.append_array(_new_movement_actions(
+					army, destination_provinces, game.world.armies
+			))
 	
 	return result
 
@@ -71,11 +71,11 @@ func _try_build_fortresses(
 
 
 func _new_movement_actions(
-		army: Army, destination_provinces: Array[Province]
+		army: Army, destination_provinces: Array[Province], armies: Armies
 ) -> Array[Action]:
 	var new_actions: Array[Action] = []
 	
-	var army_even_split := ArmyEvenSplit.new()
+	var army_even_split := ArmyEvenSplit.new(armies)
 	army_even_split.apply(army, destination_provinces)
 	
 	if army_even_split.action_army_split != null:

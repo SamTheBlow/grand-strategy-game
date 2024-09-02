@@ -24,8 +24,12 @@ func _initialize() -> void:
 	if not is_node_ready():
 		await ready
 	
+	var playing_country := PlayingCountry.new(game.turn)
+	
 	_province_setup.provinces = world.provinces
+	_army_visuals_setup.playing_country = playing_country
 	_army_visuals_setup.armies = world.armies
-	_auto_arrow_input.turn = game.turn
+	_auto_arrow_input.playing_country = playing_country
 	_auto_arrow_sync.game = game
-	_auto_arrows.game = game
+	_auto_arrows.playing_country = playing_country
+	_auto_arrows.countries = game.countries

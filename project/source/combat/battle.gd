@@ -1,32 +1,42 @@
 class_name Battle
 extends Resource
-## This class defines the outcome of a battle between two opposing [Army].
-## The algorithm used to determine the outcome depends on the [GameRules].
+## This class defines the outcome of a battle between two opposing armies.
 # TODO this class is ugly, needs refactoring!
 
 
 @export var _context_attacker_efficiency: ModifierContext
 @export var _context_defender_efficiency: ModifierContext
 
+var battle_algorithm_option: int = 0
+var modifier_request: ModifierRequest
+
+var _both_armies_survived: bool = true
+
 
 func apply(attacking_army: Army, defending_army: Army) -> void:
 	#print("A battle is about to begin!")
+	#print("Algorithm: ", battle_algorithm_option)
 	
 	_context_attacker_efficiency._defending_army = defending_army
 	_context_defender_efficiency._defending_army = defending_army
 	
-	var game: Game = attacking_army.game
 	var damage_dealt: Array[int] = []
-	match game.rules.battle_algorithm_option.selected:
+	match battle_algorithm_option:
 		0:
 			damage_dealt = _algorithm_0(attacking_army, defending_army)
 		1:
 			damage_dealt = _algorithm_1(attacking_army, defending_army)
 		_:
-			push_warning("Unrecognized battle algorithm id.")
+			push_error("Unrecognized battle algorithm id.")
 			return
 	var attacker_damage: int = damage_dealt[0]
 	var defender_damage: int = damage_dealt[1]
+	
+	_both_armies_survived = true
+	var army_death: Callable = func(_army: Army) -> void:
+		_both_armies_survived = false
+	attacking_army.destroyed.connect(army_death)
+	defending_army.destroyed.connect(army_death)
 	
 	# The attacker attacks first
 	#print("=====\nA battle occurs!")
@@ -39,26 +49,24 @@ func apply(attacking_army: Army, defending_army: Army) -> void:
 	attacking_army.army_size.remove(defender_damage)
 	#print("Attacker army size is down to %s" % attacking_army.army_size.current_size())
 	
+	#print("Both armies survived? ", _both_armies_survived)
+	
 	# If both armies survived the battle, destroy the attacker
 	# (ensures that at least one side is destroyed)
-	var army_list: Array[Army] = game.world.armies.list()
-	if army_list.has(attacking_army) and army_list.has(defending_army):
+	if _both_armies_survived:
 		attacking_army.destroy()
 
 
 func _algorithm_0(attacking_army: Army, defending_army: Army) -> Array[int]:
-	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
-			game.modifier_request.modifiers(_context_attacker_efficiency)
-			.resultf()
+			modifier_request.modifiers(_context_attacker_efficiency).resultf()
 	)
 	var attacker_damage: int = floori(attacker_army_size * attacker_efficiency)
 	
 	var defender_army_size: int = defending_army.army_size.current_size()
 	var defender_efficiency: float = (
-			game.modifier_request.modifiers(_context_defender_efficiency)
-			.resultf()
+			modifier_request.modifiers(_context_defender_efficiency).resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	
@@ -66,18 +74,15 @@ func _algorithm_0(attacking_army: Army, defending_army: Army) -> Array[int]:
 
 
 func _algorithm_1(attacking_army: Army, defending_army: Army) -> Array[int]:
-	var game: Game = attacking_army.game
 	var attacker_army_size: int = attacking_army.army_size.current_size()
 	var attacker_efficiency: float = (
-			game.modifier_request.modifiers(_context_attacker_efficiency)
-			.resultf()
+			modifier_request.modifiers(_context_attacker_efficiency).resultf()
 	)
 	var attacker_damage: int = floori(attacker_army_size * attacker_efficiency)
 	
 	var defender_army_size: int = defending_army.army_size.current_size()
 	var defender_efficiency: float = (
-			game.modifier_request.modifiers(_context_defender_efficiency)
-			.resultf()
+			modifier_request.modifiers(_context_defender_efficiency).resultf()
 	)
 	var defender_damage: int = floori(defender_army_size * defender_efficiency)
 	

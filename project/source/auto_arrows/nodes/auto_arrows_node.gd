@@ -32,6 +32,9 @@ var country: Country:
 
 var province_visuals_container: ProvinceVisualsContainer2D
 
+## We need this to stay in memory
+var _playing_country: PlayingCountry
+
 var _list: Array[AutoArrowNode2D] = []
 
 ## If any of these flags is turned on, this node will be hidden
@@ -47,14 +50,17 @@ var _visible_flags: int = 0b11:
 ## But, it cannot know the initial state of the game.
 ## So we have to provide the initial state manually.
 ## This function also connects the signals.
-func init(turn: GameTurn, province_selection: ProvinceSelection) -> void:
+func init(
+		playing_country: PlayingCountry, province_selection: ProvinceSelection
+) -> void:
 	_on_selected_province_changed(province_selection.selected_province)
 	province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)
 	
-	_on_player_turn_changed(turn.playing_player())
-	turn.player_changed.connect(_on_player_turn_changed)
+	_playing_country = playing_country
+	_on_playing_country_changed(playing_country.country())
+	playing_country.changed.connect(_on_playing_country_changed)
 
 
 func _add(auto_arrow: AutoArrow) -> void:
@@ -122,8 +128,8 @@ func _on_selected_province_changed(province: Province) -> void:
 		_visible_flags |= 1
 
 
-func _on_player_turn_changed(playing_player: GamePlayer) -> void:
-	if playing_player.playing_country == country:
+func _on_playing_country_changed(new_playing_country: Country) -> void:
+	if new_playing_country == country:
 		_visible_flags &= ~2
 	else:
 		_visible_flags |= 2

@@ -2,6 +2,9 @@ class_name ArmyVisualsSetup
 extends Node
 
 
+## Make sure to set this before settings armies...
+var playing_country: PlayingCountry
+
 var armies: Armies:
 	set(value):
 		_disconnect_signals()
@@ -33,6 +36,7 @@ func _initialize() -> void:
 func _add_army(army: Army) -> void:
 	var new_army_visuals := _army_visuals_scene.instantiate() as ArmyVisuals2D
 	new_army_visuals.army = army
+	new_army_visuals.playing_country = playing_country
 	
 	# Why call_deferred?
 	# Because we need to give time for the province visuals to spawn.

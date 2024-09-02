@@ -23,16 +23,6 @@ signal movements_made_changed(movements_made: int)
 ## This is used to ask the game to remove the army from the game.
 signal destroyed(this_army: Army)
 
-# TODO figure out how to remove this
-## A reference to the [Game] this army is part of.
-## Must initialize when the army is created.
-var game: Game:
-	set(value):
-		if game:
-			game.turn.player_changed.disconnect(_on_player_turn_changed)
-		game = value
-		game.turn.player_changed.connect(_on_player_turn_changed)
-
 ## In each game, all armies must have their own unique id.
 ## This is for the purposes of saving and loading, and also for
 ## the purposes of sending data about this army to network clients.
@@ -86,14 +76,14 @@ var _movements_made: int = 0:
 ## Automatically adds the army to the game and moves it to given [Province].
 ## It is recommended to use this when creating a new army.
 static func quick_setup(
-		game_: Game,
+		game: Game,
 		id_: int,
 		army_size_: int,
 		owner_country_: Country,
 		province_: Province,
 		movements_made_: int = 0,
 ) -> Army:
-	var minimum_army_size: int = game_.rules.minimum_army_size.value
+	var minimum_army_size: int = game.rules.minimum_army_size.value
 	if army_size_ < minimum_army_size:
 		push_error(
 				"Tried to create an army, "
@@ -102,13 +92,13 @@ static func quick_setup(
 		return null
 	
 	var army := Army.new()
-	army.game = game_
 	army.id = id_
 	army.army_size = ArmySize.new(army_size_, minimum_army_size)
 	army.owner_country = owner_country_
 	army._movements_made = movements_made_
 	
-	game_.world.armies.add_army(army)
+	game.turn.player_changed.connect(army._on_player_turn_changed)
+	game.world.armies.add_army(army)
 	army.teleport_to_province(province_)
 	return army
 

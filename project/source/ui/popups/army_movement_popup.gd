@@ -19,7 +19,7 @@ var _destination: Province
 func init(army: Army, destination: Province) -> void:
 	_army = army
 	_destination = destination
-	troop_slider.min_value = _army.game.rules.minimum_army_size.value
+	troop_slider.min_value = _army.army_size.minimum()
 	troop_slider.max_value = _army.army_size.current_size()
 	troop_slider.value = troop_slider.max_value
 	_new_slider_value()
@@ -37,8 +37,7 @@ func _new_slider_value() -> void:
 
 func _on_troop_slider_value_changed(value: float) -> void:
 	if (
-			value >
-			troop_slider.max_value - _army.game.rules.minimum_army_size.value
+			value > troop_slider.max_value - _army.army_size.minimum()
 			and value < troop_slider.max_value
 	):
 		# We return early, because setting the slider's value here

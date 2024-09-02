@@ -31,7 +31,7 @@ func apply(game: Game) -> void:
 			# is already going to be called on all clients anyway,
 			# and the clients already have the information they need
 			# (ATTENTION) assuming the [AutoArrowNode2D]s are correctly synced
-			var army_even_split := ArmyEvenSplit.new()
+			var army_even_split := ArmyEvenSplit.new(game.world.armies)
 			army_even_split.apply(army, arrow_destinations[i].destinations)
 			if army_even_split.action_army_split != null:
 				army_even_split.action_army_split.apply_to(game, player)

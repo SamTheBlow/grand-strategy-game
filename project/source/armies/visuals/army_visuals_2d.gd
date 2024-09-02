@@ -2,9 +2,7 @@ class_name ArmyVisuals2D
 extends Node2D
 ## An [Army]'s visuals for a 2D world map.
 ##
-## To use, just set the "army" property.
-## This node will then be added to the scene tree automatically.
-## The visuals will automatically update along with the given [Army].
+## To use, just set the "army" and "playing_country" properties.
 
 
 signal province_changed(this: ArmyVisuals2D)
@@ -16,8 +14,13 @@ var army: Army:
 		army.province_changed.connect(_on_army_province_changed)
 		army.moved_to_province.connect(_on_army_moved_to_province)
 		army.movements_made_changed.connect(_on_army_movements_made_changed)
-		army.game.turn.player_changed.connect(_on_turn_player_changed)
 		name = "Army" + str(army.id)
+
+## Stops animations and updates tint when the playing country changes.
+var playing_country: PlayingCountry:
+	set(value):
+		playing_country = value
+		playing_country.changed.connect(_on_playing_country_changed)
 
 @onready var _animation := $MovementAnimation as ArmyMovementAnimation2D
 
@@ -48,13 +51,13 @@ func _refresh_brightness() -> void:
 		return
 	
 	var brightness: float = 1.0
+	var current_playing_country: Country = (
+			playing_country.country() if playing_country != null else null
+	)
 	
 	if not (
 			army.is_able_to_move()
-			or (
-					army.game.turn.playing_player().playing_country
-					!= army.owner_country
-			)
+			or current_playing_country != army.owner_country
 			or _animation.is_playing()
 	):
 		brightness = 0.5
@@ -90,10 +93,10 @@ func _on_army_movements_made_changed(_movements_made: int) -> void:
 	_refresh_brightness()
 
 
-## When it's a new player's turn, prematurely end the movement animation.
-## Don't darken the visuals when it's another player's turn.
+## When it's another country's turn, prematurely end the movement animation.
+## Don't darken the visuals when it's another country's turn.
 ## Do darken them if it's your turn.
-func _on_turn_player_changed(_player: GamePlayer) -> void:
+func _on_playing_country_changed(_country: Country) -> void:
 	if _animation != null:
 		_animation.stop()
 	
