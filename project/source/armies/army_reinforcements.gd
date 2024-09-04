@@ -1,45 +1,60 @@
 class_name ArmyReinforcements
-## Class responsible for spawning a new [Army]
-## in given [Province] according to the [GameRules].
+## Class responsible for spawning a new [Army] in given
+## [Province] according to the [GameRules] at the start of each turn.
 ## Merges the armies in given province after creating an army.
 
 
-func reinforce_province(province: Province) -> void:
+var _game: Game
+var _province: Province
+
+
+func _init(game: Game, province: Province) -> void:
+	_game = game
+	_province = province
+	
+	_game.turn.turn_changed.connect(_on_new_turn)
+
+
+func _reinforce_province() -> void:
 	if (
-			province == null
-			or not province.game.rules.reinforcements_enabled.value
-			or province.owner_country == null
+			_province == null
+			or _province.owner_country == null
+			or not _game.rules.reinforcements_enabled.value
 	):
 		return
 	
 	var reinforcements_size: int = 0
-	match province.game.rules.reinforcements_option.selected:
+	match _game.rules.reinforcements_option.selected:
 		GameRules.ReinforcementsOption.RANDOM:
-			reinforcements_size = province.game.rng.randi_range(
-					province.game.rules.reinforcements_random_min.value,
-					province.game.rules.reinforcements_random_max.value
+			reinforcements_size = _game.rng.randi_range(
+					_game.rules.reinforcements_random_min.value,
+					_game.rules.reinforcements_random_max.value
 			)
 		GameRules.ReinforcementsOption.CONSTANT:
 			reinforcements_size = (
-					province.game.rules.reinforcements_constant.value
+					_game.rules.reinforcements_constant.value
 			)
 		GameRules.ReinforcementsOption.POPULATION:
 			reinforcements_size = floori(
-					province.population.population_size
-					* province.game.rules.reinforcements_per_person.value
+					_province.population.population_size
+					* _game.rules.reinforcements_per_person.value
 			)
 		_:
 			push_warning("Unrecognized army reinforcements option.")
 	
-	if reinforcements_size < province.game.rules.minimum_army_size.value:
+	if reinforcements_size < _game.rules.minimum_army_size.value:
 		return
 	
 	Army.quick_setup(
-			province.game,
-			province.game.world.armies.new_unique_id(),
+			_game,
+			_game.world.armies.new_unique_id(),
 			reinforcements_size,
-			province.owner_country,
-			province,
+			_province.owner_country,
+			_province,
 			1
 	)
-	province.game.world.armies.merge_armies(province)
+	_game.world.armies.merge_armies(_province)
+
+
+func _on_new_turn(_turn: int) -> void:
+	_reinforce_province()

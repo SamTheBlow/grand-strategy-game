@@ -85,9 +85,12 @@ func convert_game(game: Game) -> void:
 					GameFromRawDict.PROVINCE_POS_X_KEY: province.position.x,
 					GameFromRawDict.PROVINCE_POS_Y_KEY: province.position.y,
 				},
-			GameFromRawDict.PROVINCE_INCOME_MONEY_KEY:
-				province.income_money().base_income,
 		}
+		if province.income_money() is IncomeMoneyConstant:
+			province_data.merge({
+				GameFromRawDict.PROVINCE_INCOME_MONEY_KEY:
+					province.income_money().total(),
+			})
 		
 		var global_position_army_host: Vector2 = (
 				province.position + province.position_army_host

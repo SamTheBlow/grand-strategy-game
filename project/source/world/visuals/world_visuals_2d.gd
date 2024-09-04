@@ -14,6 +14,7 @@ var game: Game
 @onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
 
 @onready var _province_setup := %ProvinceVisualsSetup as ProvinceVisualsSetup
+@onready var _province_highlight := %ProvinceHighlight as ProvinceHighlight
 @onready var _army_visuals_setup := %ArmyVisualsSetup as ArmyVisualsSetup
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
 @onready var _auto_arrow_sync := %AutoArrowSync as AutoArrowSync
@@ -27,6 +28,8 @@ func _initialize() -> void:
 	var playing_country := PlayingCountry.new(game.turn)
 	
 	_province_setup.provinces = world.provinces
+	_province_highlight.armies = world.armies
+	_province_highlight.playing_country = playing_country
 	_army_visuals_setup.playing_country = playing_country
 	_army_visuals_setup.armies = world.armies
 	_auto_arrow_input.playing_country = playing_country

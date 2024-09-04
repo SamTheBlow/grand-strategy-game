@@ -65,29 +65,8 @@ func _on_unhandled_province_mouse_event(
 
 func _on_province_selected(province: Province) -> void:
 	visuals_of(province).select()
-	
-	var has_valid_army: bool = false
-	var active_armies: Array[Army] = (
-			province.game.world.armies.active_armies(
-					province.game.turn.playing_player().playing_country,
-					province
-			)
-	)
-	var army: Army
-	if active_armies.size() > 0:
-		army = active_armies[0]
-		has_valid_army = true
-	
-	for link_visuals in links_of(province):
-		link_visuals.highlight_shape(
-				has_valid_army and army.can_move_to(link_visuals.province)
-		)
-	
 	province_selected.emit(visuals_of(province))
 
 
 func _on_province_deselected(province: Province) -> void:
 	visuals_of(province).deselect()
-	
-	for link_visuals in links_of(province):
-		link_visuals.remove_highlight()

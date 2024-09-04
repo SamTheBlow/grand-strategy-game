@@ -12,16 +12,9 @@ class_name Province
 
 signal owner_changed(this: Province)
 
+# TODO slowly, step by step, get rid of this
 ## External reference
-var game: Game:
-	set(value):
-		if game != null:
-			game.turn.turn_changed.disconnect(_on_new_turn)
-		
-		game = value
-		
-		if game != null:
-			game.turn.turn_changed.connect(_on_new_turn)
+var game: Game
 
 ## All provinces must have a unique id for the purposes of saving/loading.
 var id: int
@@ -71,6 +64,12 @@ var position_fortress: Vector2
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
+
+var _components: Array = []
+
+
+func add_component(object: Object) -> void:
+	_components.append(object)
 
 
 func income_money() -> IncomeMoney:
@@ -143,9 +142,3 @@ func nearest_provinces(
 	var calculation := NearestProvinces.new()
 	calculation.calculate(self, province_filter)
 	return calculation.furthest_links
-
-
-func _on_new_turn(_turn: int) -> void:
-	ArmyReinforcements.new().reinforce_province(self)
-	if owner_country:
-		owner_country.money += _income_money.total()

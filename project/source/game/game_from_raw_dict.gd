@@ -524,18 +524,34 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 		if building[BUILDING_TYPE_KEY] == BUILDING_TYPE_FORTRESS:
 			province.buildings.add(Fortress.new_fortress(game, province))
 	
-	var base_income: int = 0
-	if json_data.has(PROVINCE_INCOME_MONEY_KEY):
-		base_income = json_data[PROVINCE_INCOME_MONEY_KEY]
-	province._income_money = IncomeMoney.new(base_income, province)
+	if (
+			game.rules.province_income_option.selected
+			== GameRules.ProvinceIncome.POPULATION
+	):
+		province._income_money = IncomeMoneyPerPopulation.new(
+				province.population, game.rules.province_income_per_person.value
+		)
+	else:
+		var base_income: int = 0
+		if ParseUtils.dictionary_has_number(
+				json_data, PROVINCE_INCOME_MONEY_KEY
+		):
+			base_income = ParseUtils.dictionary_int(
+					json_data, PROVINCE_INCOME_MONEY_KEY
+			)
+		
+		province._income_money = IncomeMoneyConstant.new(base_income)
 	
+	province.add_component(ArmyReinforcements.new(game, province))
+	province.add_component(IncomeEachTurn.new(province, game.turn.turn_changed))
+	province.add_component(ProvinceOwnershipUpdate.new(
+			province, game.world.armies, game.turn.player_turn_ended
+	))
 	return province
 
 
 ## Returns true if an error occured, false otherwise.
 func _load_armies(json_data: Array, game: Game) -> bool:
-	game.world.armies = Armies.new()
-	
 	for army_data: Variant in json_data:
 		if not army_data is Dictionary:
 			error = true

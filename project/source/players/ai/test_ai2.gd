@@ -92,7 +92,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			if hostile_links.size() == 1:
 				# Take the sum of all the hostile army sizes
 				var hostile_army_size: int = _hostile_army_size(
-						army.owner_country, hostile_links[0]
+						army.owner_country,
+						game.world.armies.armies_in_province(hostile_links[0])
 				)
 				
 				# If your army is relatively large enough, attack!
@@ -110,7 +111,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				for hostile_link in hostile_links:
 					# Take the sum of all the hostile army sizes
 					var hostile_army_size: int = _hostile_army_size(
-							army.owner_country, hostile_link
+							army.owner_country,
+							game.world.armies.armies_in_province(hostile_link)
 					)
 					
 					# If the province's army
@@ -232,18 +234,13 @@ func _army_size(
 	return output
 
 
-## Returns the total army size of all of the hostile armies in given province.
-func _hostile_army_size(your_country: Country, province: Province) -> int:
+## Returns the total army size of all of the hostile armies in given army list.
+func _hostile_army_size(your_country: Country, army_list: Array[Army]) -> int:
 	var hostile_army_size: int = 0
 	
-	var link_armies: Array[Army] = (
-			province.game.world.armies.armies_in_province(province)
-	)
-	for link_army in link_armies:
-		if not Country.is_fighting(your_country, link_army.owner_country):
-			continue
-		
-		hostile_army_size += link_army.army_size.current_size()
+	for army in army_list:
+		if Country.is_fighting(your_country, army.owner_country):
+			hostile_army_size += army.army_size.current_size()
 	
 	return hostile_army_size
 

@@ -6,6 +6,8 @@ class_name GameTurn
 
 ## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
+## Emitted after a player ends their turn, but before the next player's turn.
+signal player_turn_ended(playing_player: GamePlayer)
 ## This signal is called whenever it's a different player's turn to play.
 signal player_changed(new_player: GamePlayer)
 
@@ -84,15 +86,16 @@ func _end_player_turn() -> void:
 		if army.owner_country == player.playing_country:
 			army.exhaust()
 	
-	# Merge armies, update province ownership
+	# Merge armies
 	for province in game.world.provinces.list():
 		game.world.armies.merge_armies(province)
-		ProvinceNewOwner.new().update_province_owner(province)
 	
 	_go_to_next_player()
 
 
 func _go_to_next_player() -> void:
+	player_turn_ended.emit(playing_player())
+	
 	while true:
 		_playing_player_index += 1
 		
