@@ -55,32 +55,6 @@ func add_local_human_player() -> void:
 	add_player(player)
 
 
-func remove_player(player: Player) -> void:
-	if _is_not_allowed_to_make_changes():
-		push_warning("Tried removing a player without permission!")
-		return
-	
-	if _list.has(player):
-		_list.erase(player)
-		remove_child(player)
-		_send_player_removal_to_clients(player)
-		player_removed.emit(player)
-	else:
-		push_warning("Tried to remove a player, but it isn't on the list!")
-
-
-func kick_player(player: Player) -> void:
-	if _is_not_allowed_to_make_changes():
-		push_warning("Tried kicking a player without permission!")
-		return
-	
-	if _list.has(player):
-		multiplayer.multiplayer_peer.disconnect_peer(player.multiplayer_id)
-		player_kicked.emit(player)
-	else:
-		push_warning("Tried to kick a player, but it isn't on the list!")
-
-
 ## Returns a new copy of this list.
 func list() -> Array[Player]:
 	return _list.duplicate()
@@ -95,14 +69,6 @@ func number_of_local_humans() -> int:
 	var output: int = 0
 	for player in _list:
 		if not player.is_remote():
-			output += 1
-	return output
-
-
-func number_of_humans_with_multiplayer_id(multiplayer_id: int) -> int:
-	var output: int = 0
-	for player in _list:
-		if player.multiplayer_id == multiplayer_id:
 			output += 1
 	return output
 
@@ -168,10 +134,8 @@ func _receive_all_data(node_names: PackedStringArray) -> void:
 	_sync_check.number_of_players = node_names.size()
 	
 	# Remove all the old nodes
-	_is_synchronizing = true
 	for player in list():
-		remove_player(player)
-	_is_synchronizing = false
+		_remove_player(player)
 	
 	# Add the new nodes
 	for node_name in node_names:
@@ -208,32 +172,6 @@ func add_received_player(node_name: String) -> Player:
 	add_player(player)
 	_is_synchronizing = false
 	return player
-#endregion
-
-
-#region Synchronize player removal
-## The server calls this to send the info to all clients.
-## If you're not connected as a server, this function has no effect.
-func _send_player_removal_to_clients(player: Player) -> void:
-	if not MultiplayerUtils.is_server(multiplayer):
-		return
-	_receive_player_removal.rpc(player.name)
-
-
-## The client receives the name of the player to remove.
-@rpc("authority", "call_remote", "reliable")
-func _receive_player_removal(node_name: String) -> void:
-	for player in _list:
-		if player.name == node_name:
-			_is_synchronizing = true
-			remove_player(player)
-			_is_synchronizing = false
-			return
-	
-	push_warning(
-			"Received info about removing a player,"
-			+ " but that player could not be found!"
-	)
 #endregion
 
 
@@ -297,6 +235,87 @@ func _consider_add_local_player() -> void:
 #endregion
 
 
+#region Synchronize player removal
+## If you're the server, removes the player, sends the info to clients,
+## and kicks the player's client when applicable.
+## If you're a client, sends a request to the server.
+func remove_player(player: Player) -> void:
+	if not MultiplayerUtils.has_authority(multiplayer):
+		_consider_player_removal.rpc_id(1, player.name)
+		return
+	
+	_remove_player(player)
+	
+	# Send the removal to clients
+	_receive_player_removal.rpc(player.name)
+	
+	# Kick a client when removing their last player
+	if _number_of_humans_with_multiplayer_id(player.multiplayer_id) == 0:
+		multiplayer.multiplayer_peer.disconnect_peer(player.multiplayer_id)
+		player_kicked.emit(player)
+
+
+## The server receives a player removal request from a client.
+@rpc("any_peer", "call_remote", "reliable")
+func _consider_player_removal(player_name: String) -> void:
+	if not multiplayer.is_server():
+		push_warning("Received server request, but you're not the server.")
+		return
+	
+	var player_to_remove: Player
+	for player in _list:
+		if player.name == player_name:
+			player_to_remove = player
+			break
+	if player_to_remove == null:
+		# Invalid player name
+		return
+	
+	# Only accept if the user who made the request has authority over the player.
+	# Unless you were given privileges (which is currently never the case),
+	# you should never be able to delete other people's players.
+	if multiplayer.get_remote_sender_id() != player_to_remove.multiplayer_id:
+		push_warning("Someone tried to delete someone else's player.")
+		return
+	
+	# Request accepted
+	remove_player(player_to_remove)
+
+
+## The client receives the name of the player to remove.
+@rpc("authority", "call_remote", "reliable")
+func _receive_player_removal(node_name: String) -> void:
+	for player in _list:
+		if player.name == node_name:
+			_remove_player(player)
+			return
+	
+	push_warning(
+			"Received info about removing a player,"
+			+ " but that player could not be found!"
+	)
+#endregion
+
+
+## Removes given player from the list.
+func _remove_player(player: Player) -> void:
+	if not _list.has(player):
+		push_warning("Tried to remove a player, but it isn't on the list!")
+		return
+	
+	remove_child(player)
+	_list.erase(player)
+	player_removed.emit(player)
+
+
+func _number_of_humans_with_multiplayer_id(multiplayer_id: int) -> int:
+	var output: int = 0
+	for player in _list:
+		if player.multiplayer_id == multiplayer_id:
+			output += 1
+	return output
+
+
 # TODO bad code DRY: copy/paste from [Player]
 func _is_not_allowed_to_make_changes() -> bool:
 	return not (
@@ -325,7 +344,7 @@ func _add_remote_player(
 func _on_server_disconnected() -> void:
 	for player in list():
 		if player.is_remote():
-			remove_player(player)
+			_remove_player(player)
 		else:
 			player.multiplayer_id = 1
 
@@ -338,9 +357,9 @@ func _on_peer_disconnected(multiplayer_id: int) -> void:
 	
 	for player in list():
 		if player.multiplayer_id == multiplayer_id:
-			if not group_leader:
+			if group_leader == null:
 				group_leader = player
 			remove_player(player)
 	
-	if group_leader:
+	if group_leader != null:
 		player_group_removed.emit(group_leader)

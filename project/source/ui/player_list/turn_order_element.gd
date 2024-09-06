@@ -16,6 +16,7 @@ extends Control
 
 
 signal new_player_requested(game_player: GamePlayer)
+signal delete_pressed(game_player: GamePlayer)
 
 @export var username_color_human: Color
 @export var username_color_ai: Color
@@ -276,7 +277,7 @@ func _on_remove_button_pressed() -> void:
 		return
 	
 	if player.player_human:
-		player.player_human.request_deletion()
+		delete_pressed.emit(player)
 	else:
 		push_warning("GamePlayer's player_human is null, weird.")
 		player.is_human = false

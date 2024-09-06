@@ -187,7 +187,7 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	
 	if not current_scene is GameNode:
 		return
-	(current_scene as GameNode).game_players.assign_player(
+	(current_scene as GameNode).game.game_players.assign_player(
 			player, game_player_id
 	)
 #endregion

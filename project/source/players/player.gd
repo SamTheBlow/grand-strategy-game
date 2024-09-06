@@ -8,7 +8,6 @@ extends Node
 
 
 signal username_changed(new_username: String)
-signal deletion_requested(player: Player)
 ## Emits on clients when the player is done synchronizing with the server.
 signal sync_finished(player: Player)
 
@@ -162,38 +161,6 @@ func _receive_all_data(data: Dictionary) -> void:
 	load_data(data)
 	_is_synchronizing = false
 	sync_finished.emit(self)
-#endregion
-
-
-#region Request deletion
-func request_deletion() -> void:
-	if MultiplayerUtils.has_authority(multiplayer):
-		deletion_requested.emit(self)
-		return
-	
-	_consider_deletion.rpc_id(1)
-
-
-@rpc("any_peer", "call_remote", "reliable")
-func _consider_deletion() -> void:
-	if not multiplayer.is_server():
-		push_warning("Received server request, but you're not the server.")
-		return
-	
-	# Only accept if this node represents the person who made the request.
-	# Unless you were given privileges (which is currently never the case),
-	# you should never be able to delete other people's players.
-	if multiplayer.get_remote_sender_id() != multiplayer_id:
-		push_warning("Someone tried to delete someone else's player.")
-		return
-	
-	# Request accepted
-	_receive_deletion_approval.rpc()
-
-
-@rpc("authority", "call_local", "reliable")
-func _receive_deletion_approval() -> void:
-	deletion_requested.emit(self)
 #endregion
 
 

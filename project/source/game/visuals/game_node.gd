@@ -103,6 +103,7 @@ func set_players(players: Players) -> void:
 	if not is_node_ready():
 		await ready
 	_player_list.players = players
+	_turn_order_list.player_removal_requested.connect(players.remove_player)
 
 
 ## Creates and applies army movement as a result of the user's actions.

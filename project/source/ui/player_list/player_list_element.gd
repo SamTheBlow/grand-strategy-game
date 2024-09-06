@@ -13,6 +13,8 @@ extends Control
 # TODO DRY: a LOT of code here is copy/pasted from [TurnOrderElement]
 
 
+signal delete_pressed(player: Player)
+
 @export var username_color_human: Color
 @export var bg_color_human: Color
 
@@ -184,7 +186,7 @@ func _on_remove_button_pressed() -> void:
 		push_warning("Tried to remove the only local player.")
 		return
 	
-	player.request_deletion()
+	delete_pressed.emit(player)
 
 
 func _on_rename_button_pressed() -> void:

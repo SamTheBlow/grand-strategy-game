@@ -120,12 +120,12 @@ func _connect_signals() -> void:
 
 
 func _add_element(player: Player) -> void:
-	player.deletion_requested.connect(_on_player_deletion_requested)
 	player.sync_finished.connect(_on_player_sync_finished)
 	
 	var element := _player_list_element_scene.instantiate() as PlayerListElement
 	element.player = player
 	element.init()
+	element.delete_pressed.connect(_on_element_delete_pressed)
 	_visual_players.append(element)
 	_container.add_child(element)
 	_container.move_child(element, -2)
@@ -140,8 +140,6 @@ func _create_elements() -> void:
 
 
 func _remove_element(player: Player) -> void:
-	player.deletion_requested.disconnect(_on_player_deletion_requested)
-	
 	for visual in _visual_players:
 		if visual.player == player:
 			visual.get_parent().remove_child(visual)
@@ -217,20 +215,11 @@ func _on_viewport_size_changed() -> void:
 	_update_size()
 
 
-func _on_player_deletion_requested(player: Player) -> void:
-	if not MultiplayerUtils.has_authority(multiplayer):
-		return
-	
+func _on_element_delete_pressed(player: Player) -> void:
 	if players.size() == 1:
 		push_warning("Tried to remove the last player. Ignoring request.")
 		return
 	
-	# Removing their last player? Kick them from the server
-	if players.number_of_humans_with_multiplayer_id(player.multiplayer_id) < 2:
-		players.kick_player(player)
-		return
-	
-	# Remove the player
 	players.remove_player(player)
 
 

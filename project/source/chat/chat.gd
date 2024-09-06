@@ -66,18 +66,17 @@ func _receive_all_data(chat_data_dict: Dictionary) -> void:
 #region Send global message
 ## Sends a message to all users. Clients are not allowed to call this.
 func send_global_message(text: String) -> void:
-	if not MultiplayerUtils.is_online(multiplayer):
-		_receive_global_message(text)
-		return
-	
-	if not MultiplayerUtils.is_server(multiplayer):
+	if not MultiplayerUtils.has_authority(multiplayer):
 		push_warning(
 				"Tried to send a global message, "
 				+ "but you do not have authority!"
 		)
 		return
 	
-	_receive_global_message.rpc(text)
+	if MultiplayerUtils.is_online(multiplayer):
+		_receive_global_message.rpc(text)
+	else:
+		_receive_global_message(text)
 
 
 @rpc("any_peer", "call_local", "reliable")

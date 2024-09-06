@@ -9,6 +9,7 @@ extends Control
 
 
 signal new_human_player_requested(game_player: GamePlayer)
+signal player_removal_requested(player: Player)
 
 @export var turn_order_element: PackedScene
 
@@ -77,6 +78,7 @@ func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 		player.player_human.sync_finished.connect(_on_player_sync_finished)
 	
 	var element := turn_order_element.instantiate() as TurnOrderElement
+	element.delete_pressed.connect(_on_element_delete_pressed)
 	element.new_player_requested.connect(_on_new_player_requested)
 	element.player = player
 	element.init()
@@ -152,6 +154,12 @@ func _update_elements() -> void:
 
 func _on_viewport_size_changed() -> void:
 	_update_size()
+
+
+func _on_element_delete_pressed(game_player: GamePlayer) -> void:
+	if not game_player.is_human or game_player.player_human == null:
+		return
+	player_removal_requested.emit(game_player.player_human)
 
 
 func _on_player_added(player: GamePlayer, position_index: int) -> void:
