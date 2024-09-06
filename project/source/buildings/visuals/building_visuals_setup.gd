@@ -26,10 +26,7 @@ var _list: Array[Node] = []
 
 
 func _reset() -> void:
-	for node in _list:
-		if node.get_parent() != null:
-			node.get_parent().remove_child(node)
-		node.queue_free()
+	NodeUtils.delete_nodes(_list)
 	
 	if buildings == null:
 		return

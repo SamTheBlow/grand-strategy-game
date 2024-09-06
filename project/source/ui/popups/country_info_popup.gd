@@ -111,12 +111,7 @@ func _populate_countries() -> void:
 		return
 	var game: Game = game_node.game
 	
-	# TODO DRY. This isn't the only place where we need to
-	# remove all of a node's children... Might want
-	# to make a utility class for this
-	for node in _countries.get_children():
-		_countries.remove_child(node)
-		node.queue_free()
+	NodeUtils.delete_all_children(_countries)
 	
 	# TODO DRY. this appears in too many places, it shouldn't. also it's ugly
 	var is_relationship_presets_enabled: bool = (

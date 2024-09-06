@@ -43,10 +43,7 @@ func _refresh() -> void:
 	if not is_node_ready():
 		return
 	
-	# TASK yet another instance of code that deletes all children. DRY
-	for child in _container.get_children():
-		_container.remove_child(child)
-		child.queue_free()
+	NodeUtils.delete_all_children(_container)
 	
 	if _game_notifications == null:
 		return

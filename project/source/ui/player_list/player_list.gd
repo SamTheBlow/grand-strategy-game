@@ -81,9 +81,7 @@ func _setup_networking_interface() -> void:
 	if not is_node_ready():
 		return
 	
-	# Remove all children
-	for child in _networking_setup.get_children():
-		_networking_setup.remove_child(child)
+	NodeUtils.delete_all_children(_networking_setup)
 	
 	# Show/hide nodes
 	var node_exists: bool = networking_interface != null
@@ -153,10 +151,7 @@ func _remove_element(player: Player) -> void:
 
 
 func _clear_elements() -> void:
-	for element in _visual_players:
-		element.get_parent().remove_child(element)
-		element.queue_free()
-	
+	NodeUtils.delete_nodes(_visual_players)
 	_visual_players.clear()
 
 

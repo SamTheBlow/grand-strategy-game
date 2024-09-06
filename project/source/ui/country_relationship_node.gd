@@ -187,9 +187,7 @@ func _refresh_available_actions() -> void:
 	if not is_node_ready():
 		return
 	
-	for child in _available_actions.get_children():
-		_available_actions.remove_child(child)
-		child.queue_free()
+	NodeUtils.delete_all_children(_available_actions)
 	_actions_container.hide()
 	
 	if country_1 == null or country_2 == null or game == null:

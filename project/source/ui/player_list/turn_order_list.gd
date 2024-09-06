@@ -103,9 +103,7 @@ func _remove_element(player: GamePlayer) -> void:
 
 
 func _clear_elements() -> void:
-	for element in _visual_players:
-		element.get_parent().remove_child(element)
-		element.queue_free()
+	NodeUtils.delete_nodes(_visual_players)
 	_visual_players.clear()
 
 
