@@ -30,7 +30,9 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 	
-	var build_conditions := FortressBuildConditions.new(your_country, province)
+	var build_conditions := (
+			FortressBuildConditions.new(your_country, province, game)
+	)
 	if not build_conditions.can_build():
 		push_warning(
 				"Tried to build a fortress, but not all conditions were met: "

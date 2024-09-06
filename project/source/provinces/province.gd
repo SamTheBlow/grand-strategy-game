@@ -12,10 +12,6 @@ class_name Province
 
 signal owner_changed(this: Province)
 
-# TODO slowly, step by step, get rid of this
-## External reference
-var game: Game
-
 ## All provinces must have a unique id for the purposes of saving/loading.
 var id: int
 

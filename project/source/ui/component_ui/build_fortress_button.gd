@@ -5,6 +5,7 @@ extends Button
 ## Also disables itself if either the province or the player is null.
 ##
 ## See also: [RecruitButton], [ComponentUI]
+# TODO this code looks a lot like the code for [RecruitButton]
 
 
 var province: Province:
@@ -23,6 +24,14 @@ var player: GamePlayer:
 		_setup_build_conditions()
 		_refresh_is_disabled()
 
+var game: Game:
+	set(value):
+		if game == value:
+			return
+		game = value
+		_setup_build_conditions()
+		_refresh_is_disabled()
+
 var _fortress_build_conditions: FortressBuildConditions:
 	set(value):
 		if _fortress_build_conditions == value:
@@ -37,12 +46,12 @@ func _ready() -> void:
 
 
 func _setup_build_conditions() -> void:
-	if not province or not player:
+	if province == null or player == null or game == null:
 		_fortress_build_conditions = null
 		return
 	
 	_fortress_build_conditions = (
-			FortressBuildConditions.new(player.playing_country, province)
+			FortressBuildConditions.new(player.playing_country, province, game)
 	)
 
 
@@ -50,7 +59,7 @@ func _refresh_is_disabled() -> void:
 	if not is_node_ready():
 		return
 	
-	if not province or not player or not _fortress_build_conditions:
+	if player == null or _fortress_build_conditions == null:
 		disabled = true
 		return
 	
@@ -61,7 +70,7 @@ func _refresh_is_disabled() -> void:
 
 
 func _connect_signals() -> void:
-	if not _fortress_build_conditions:
+	if _fortress_build_conditions == null:
 		return
 	
 	if not (
@@ -74,7 +83,7 @@ func _connect_signals() -> void:
 
 
 func _disconnect_signals() -> void:
-	if not _fortress_build_conditions:
+	if _fortress_build_conditions == null:
 		return
 	
 	if (

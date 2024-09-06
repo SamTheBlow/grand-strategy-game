@@ -23,6 +23,14 @@ var player: GamePlayer:
 		_setup_recruitment_limits()
 		_refresh_is_disabled()
 
+var game: Game:
+	set(value):
+		if game == value:
+			return
+		game = value
+		_setup_recruitment_limits()
+		_refresh_is_disabled()
+
 var _army_recruit_limits: ArmyRecruitmentLimits:
 	set(value):
 		if _army_recruit_limits == value:
@@ -37,12 +45,12 @@ func _ready() -> void:
 
 
 func _setup_recruitment_limits() -> void:
-	if not province or not player:
+	if province == null or player == null or game == null:
 		_army_recruit_limits = null
 		return
 	
 	_army_recruit_limits = (
-			ArmyRecruitmentLimits.new(player.playing_country, province)
+			ArmyRecruitmentLimits.new(player.playing_country, province, game)
 	)
 
 
@@ -50,19 +58,19 @@ func _refresh_is_disabled() -> void:
 	if not is_node_ready():
 		return
 	
-	if not province or not player or not _army_recruit_limits:
+	if province == null or player == null or _army_recruit_limits == null:
 		disabled = true
 		return
 	
 	disabled = not (
 			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
 			and _army_recruit_limits.maximum()
-			>= province.game.rules.minimum_army_size.value
+			>= game.rules.minimum_army_size.value
 	)
 
 
 func _connect_signals() -> void:
-	if not _army_recruit_limits:
+	if _army_recruit_limits == null:
 		return
 	
 	if not (
@@ -73,7 +81,7 @@ func _connect_signals() -> void:
 
 
 func _disconnect_signals() -> void:
-	if not _army_recruit_limits:
+	if _army_recruit_limits == null:
 		return
 	
 	if (

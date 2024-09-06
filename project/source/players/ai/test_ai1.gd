@@ -59,7 +59,7 @@ func _try_build_fortresses(
 		
 		# Build in that province, if possible
 		var build_conditions := FortressBuildConditions.new(
-				playing_country, most_populated
+				playing_country, most_populated, game
 		)
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_populated.id))

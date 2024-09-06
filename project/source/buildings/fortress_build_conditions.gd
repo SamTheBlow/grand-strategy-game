@@ -1,9 +1,8 @@
 class_name FortressBuildConditions
-## Class responsible for whether or not
-## a player can build a fortress in a given province.
+## Determines whether or not a given country
+## can build a fortress in a given province.
 ##
-## On the very moment that the player is (or isn't) now able to build one,
-## the signal "can_build_changed" is emitted.
+## Emits a signal right when the country becomes able/unable to build one.
 ##
 ## If you need to check manually, you can use the "can_build" method.
 ## If you can't build one, the property "error_message" will contain
@@ -17,12 +16,14 @@ var error_message: String = ""
 
 var _country: Country
 var _province: Province
+var _game: Game
 var _can_build: bool
 
 
-func _init(country: Country, province: Province) -> void:
+func _init(country: Country, province: Province, game: Game) -> void:
 	_country = country
 	_province = province
+	_game = game
 	
 	_province.owner_changed.connect(_on_province_owner_changed)
 	_country.money_changed.connect(_on_money_changed)
@@ -36,20 +37,19 @@ func can_build() -> bool:
 
 
 func _all_conditions_are_met() -> bool:
-	var game: Game = _province.game
-	
-	if not game.rules.build_fortress_enabled.value:
+	if not _game.rules.build_fortress_enabled.value:
 		error_message = "The game's rules don't allow it!"
 		return false
 	
 	if _province.owner_country != _country:
-		error_message = "The province is not under your country's control!"
+		error_message = "The province is not under the country's control!"
 		return false
 	
-	if _country.money < game.rules.fortress_price.value:
+	var fortress_price: int = _game.rules.fortress_price.value
+	if _country.money < fortress_price:
 		error_message = (
-				"Your country doesn't have enough money! "
-				+ "It needs " + str(game.rules.fortress_price.value)
+				"The country doesn't have enough money! "
+				+ "It needs " + str(fortress_price)
 				+ ", but only has " + str(_country.money) + "."
 		)
 		return false
@@ -83,7 +83,7 @@ func _on_province_owner_changed(province: Province) -> void:
 
 
 func _on_money_changed(money: int) -> void:
-	_check_condition(money >= _province.game.rules.fortress_price.value)
+	_check_condition(money >= _game.rules.fortress_price.value)
 
 
 func _on_buildings_changed() -> void:

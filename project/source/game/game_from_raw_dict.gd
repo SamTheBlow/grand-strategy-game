@@ -486,7 +486,6 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 # TASK verify & return errors
 func _load_province(json_data: Dictionary, game: Game) -> Province:
 	var province := Province.new()
-	province.game = game
 	province.id = json_data[PROVINCE_ID_KEY]
 	
 	var shape_data: Dictionary = json_data[PROVINCE_SHAPE_KEY]

@@ -29,6 +29,11 @@ var money_cost: ResourceCost:
 
 
 func _ready() -> void:
+	if population_cost == null:
+		push_error("Population cost is null.")
+	if money_cost == null:
+		push_error("Money cost is null.")
+	
 	_update_costs()
 
 

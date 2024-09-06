@@ -4,34 +4,31 @@ extends VBoxContainer
 ## when the user wants to build a [Fortress].
 ##
 ## See also: [GamePopup]
+# TODO a lot of copy/paste from [RecruitmentPopup]
 
 
 signal confirmed(province: Province)
 
-var province: Province:
-	set(value):
-		province = value
-		_update_costs()
+## This will be passed as an argument for the confirmed signal.
+var province: Province
 
-@onready var _action_cost := %ActionCost as ActionCostNode
-
-
-func _ready() -> void:
-	_update_costs()
+var _action_cost: ActionCostNode:
+	get:
+		if _action_cost == null:
+			_action_cost = %ActionCost as ActionCostNode
+		return _action_cost
 
 
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
 
-func _update_costs() -> void:
-	if _action_cost == null:
-		return
-	
-	_action_cost.money_cost = (
-			null if province == null else
-			ResourceCost.new(province.game.rules.fortress_price.value)
-	)
+func set_population_cost(population_cost: ResourceCost) -> void:
+	_action_cost.population_cost = population_cost
+
+
+func set_money_cost(money_cost: ResourceCost) -> void:
+	_action_cost.money_cost = money_cost
 
 
 func _on_button_pressed(button_index: int) -> void:

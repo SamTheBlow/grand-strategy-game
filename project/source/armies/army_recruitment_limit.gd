@@ -17,13 +17,15 @@ var error_message: String = ""
 
 var _country: Country
 var _province: Province
+var _game: Game
 var _minimum: int
 var _maximum: int
 
 
-func _init(country: Country, province: Province) -> void:
+func _init(country: Country, province: Province, game: Game) -> void:
 	_country = country
 	_province = province
+	_game = game
 	
 	_province.owner_changed.connect(_on_province_owner_changed)
 	_country.money_changed.connect(_on_money_changed)
@@ -59,16 +61,17 @@ func _calculated_minimum() -> int:
 	# Because an army's size will always be at least the minimum size,
 	# if the country controls any (active) army on the province,
 	# then the minimum you can recruit will always be 0.
-	for army in _province.game.world.armies.armies_in_province(_province):
-		if army.owner_country == _country and army.is_able_to_move():
-			return 0
-	return _province.game.rules.minimum_army_size.value
+	var active_armies: Array[Army] = (
+			_game.world.armies.active_armies(_country, _province)
+	)
+	if active_armies.size() > 0:
+		return 0
+	
+	return _game.rules.minimum_army_size.value
 
 
 func _calculated_maximum() -> int:
-	var game: Game = _province.game
-	
-	if not game.rules.recruitment_enabled.value:
+	if not _game.rules.recruitment_enabled.value:
 		error_message = "The game's rules don't allow for recruitment!"
 		return 0
 	
@@ -81,7 +84,7 @@ func _calculated_maximum() -> int:
 	var maximums: Array[int] = []
 	
 	# Money
-	var money_per_unit: float = game.rules.recruitment_money_per_unit.value
+	var money_per_unit: float = _game.rules.recruitment_money_per_unit.value
 	var money_for_one_troop: int = ceili(money_per_unit)
 	if _country.money < money_for_one_troop:
 		error_message = (
@@ -96,7 +99,7 @@ func _calculated_maximum() -> int:
 	
 	# Population
 	var population_size: int = _province.population.population_size
-	var pop_per_unit: float = game.rules.recruitment_population_per_unit.value
+	var pop_per_unit: float = _game.rules.recruitment_population_per_unit.value
 	var pop_for_one_troop: int = ceili(pop_per_unit)
 	if population_size < pop_for_one_troop:
 		error_message = (

@@ -206,8 +206,8 @@ func _on_province_unhandled_mouse_event(
 
 func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
 	var component_ui := component_ui_scene.instantiate() as ComponentUI
+	component_ui.game = game
 	component_ui.province_visuals = province_visuals
-	game.turn.player_changed.connect(component_ui._on_turn_player_changed)
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui.connect_country_button_pressed(_on_country_button_pressed)
 	component_ui_root.add_child(component_ui)
@@ -226,19 +226,33 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 					build_fortress_scene.instantiate() as BuildFortressPopup
 			)
 			build_popup.province = selected_province
+			build_popup.set_population_cost(ResourceCost.new(0))
+			build_popup.set_money_cost(ResourceCost.new(
+					game.rules.fortress_price.value
+			))
 			build_popup.confirmed.connect(_on_build_fortress_confirmed)
 			_add_popup(build_popup)
 		1:
 			# Recruitment
-			var army_recruitment_limits := ArmyRecruitmentLimits.new(
-					game.turn.playing_player().playing_country, selected_province
-			)
 			var recruitment_popup := (
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
 			recruitment_popup.province = selected_province
-			recruitment_popup.min_amount = army_recruitment_limits.minimum()
-			recruitment_popup.max_amount = army_recruitment_limits.maximum()
+			
+			var recruitment_limits := ArmyRecruitmentLimits.new(
+					game.turn.playing_player().playing_country,
+					selected_province,
+					game
+			)
+			recruitment_popup.set_minimum_amount(recruitment_limits.minimum())
+			recruitment_popup.set_maximum_amount(recruitment_limits.maximum())
+			
+			recruitment_popup.set_population_cost(ResourceCost.new(
+					game.rules.recruitment_population_per_unit.value
+			))
+			recruitment_popup.set_money_cost(ResourceCost.new(
+					game.rules.recruitment_money_per_unit.value
+			))
 			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 			_add_popup(recruitment_popup)
 

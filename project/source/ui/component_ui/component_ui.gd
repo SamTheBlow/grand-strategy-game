@@ -28,16 +28,30 @@ signal button_pressed(button_id: int)
 		_reposition_side_nodes()
 		queue_redraw()
 
-# TODO Make it possible to change this value.
-# (The only culprit is _initialize() I think)
-## This may only be set once.
-## Changing its value later may give unexpected results and crash the game.
+## May be null, in which case some functionalities will be disabled.
+var game: Game:
+	set(value):
+		if game == value:
+			return
+		
+		if game != null:
+			game.turn.player_changed.disconnect(_on_turn_player_changed)
+		game = value
+		if game != null:
+			game.turn.player_changed.connect(_on_turn_player_changed)
+		_update_nodes_game()
+
+## May be null, in which case some fuctionalities will be disabled.
 var province_visuals: ProvinceVisuals2D:
 	set(value):
 		if province_visuals == value:
 			return
+		
+		if province_visuals != null:
+			province_visuals.deselected.disconnect(_on_province_deselected)
 		province_visuals = value
-		province_visuals.deselected.connect(_on_province_deselected)
+		if province_visuals != null:
+			province_visuals.deselected.connect(_on_province_deselected)
 		_update_nodes_province()
 
 @onready var _build_fortress_button := (
@@ -71,8 +85,9 @@ var province_visuals: ProvinceVisuals2D:
 
 
 func _ready() -> void:
-	_initialize()
 	_reposition_side_nodes()
+	
+	_update_nodes_game()
 	_update_nodes_province()
 
 
@@ -134,23 +149,6 @@ func connect_country_button_pressed(callable: Callable) -> void:
 	_country_button.pressed.connect(callable)
 
 
-func _initialize() -> void:
-	if province_visuals == null:
-		return
-	var province: Province = province_visuals.province
-	
-	var node0: Control = _left_side_nodes[0]
-	var node1: Control = _left_side_nodes[1]
-	
-	if not province.game.rules.build_fortress_enabled.value:
-		node0.hide()
-		_left_side_nodes.erase(node0)
-	
-	if not province.game.rules.recruitment_enabled.value:
-		node1.hide()
-		_left_side_nodes.erase(node1)
-
-
 func _reposition_side_nodes() -> void:
 	# Left side
 	_update_side_node_positions(_left_side_nodes, -line_length_x)
@@ -165,15 +163,47 @@ func _update_side_node_positions(
 		return
 	
 	var offset_y: float = 64.0
-	for i in side_nodes.size():
-		side_nodes[i].position.x = offset_x - side_nodes[i].size.x * 0.5
-		side_nodes[i].position.y = offset_y + line_top
-		offset_y += side_nodes[i].size.y
+	for node in side_nodes:
+		if not node.visible:
+			continue
+		
+		node.position.x = offset_x - node.size.x * 0.5
+		node.position.y = offset_y + line_top
+		offset_y += node.size.y
+
+
+func _update_nodes_game() -> void:
+	if not is_node_ready():
+		return
+	
+	if game != null:
+		_left_side_nodes[0].visible = game.rules.build_fortress_enabled.value
+		_left_side_nodes[1].visible = game.rules.recruitment_enabled.value
+		
+		_build_fortress_button.game = game
+		_recruit_button.game = game
+		_relationship_preset_label_update.is_relationship_presets_enabled = (
+				game.rules.diplomacy_presets_option.selected != 0
+		)
+		
+		_update_nodes_playing_player(game.turn.playing_player())
+	else:
+		_left_side_nodes[0].visible = false
+		_left_side_nodes[1].visible = false
+		
+		_build_fortress_button.game = null
+		_recruit_button.game = null
+		_relationship_preset_label_update.is_relationship_presets_enabled = false
+		
+		_update_nodes_playing_player(null)
 
 
 func _update_nodes_province() -> void:
+	if not is_node_ready() or province_visuals == null:
+		return
+	
 	var province: Province = province_visuals.province
-	if not is_node_ready() or province == null:
+	if province == null:
 		return
 	
 	_build_fortress_button.province = province
@@ -184,16 +214,8 @@ func _update_nodes_province() -> void:
 	
 	_country_button_province_update.province = province
 	
-	_relationship_preset_label_update.is_relationship_presets_enabled = (
-			province.game.rules.diplomacy_presets_option.selected != 0
-			if province else false
-	)
 	_relationship_preset_label_update.country_to_relate_to = (
-			province.owner_country if province else null
-	)
-	
-	_update_nodes_playing_player(
-			province.game.turn.playing_player() if province else null
+			province.owner_country
 	)
 
 
