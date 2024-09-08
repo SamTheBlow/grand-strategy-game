@@ -29,6 +29,7 @@ var current_scene: Node:
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
 @onready var game_rules := $GameRules as GameRules
+@onready var game_sync := $GameSync as Node
 
 ## This is to make sure that in online games,
 ## everything is properly synchronized before starting the game.
@@ -98,6 +99,16 @@ func play_game(game: Game) -> void:
 	
 	game.game_started.connect(_on_game_started)
 	game.game_players.assign_lobby(players)
+	
+	# TODO
+	# If any username change occurs after creating this node on
+	# the server, but before creating this node on the client,
+	# synchronization will fail with a debugger error
+	# and the client will never receive the new username.
+	var game_username_sync := GameUsernameSync.new()
+	game_username_sync.game_players = game.game_players
+	game_sync.add_child(game_username_sync)
+	
 	_send_game_to_clients(game)
 	game.start()
 
@@ -267,6 +278,9 @@ func _on_game_start_requested(scenario_scene: PackedScene) -> void:
 ## This function's name is a bit misleading, because it's precisely
 ## the function that makes you enter the main menu.
 func _on_main_menu_entered() -> void:
+	# Remove the game synchronization nodes
+	NodeUtils.delete_all_children(game_sync)
+	
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.setup_players(players)
 	main_menu.setup_rules(game_rules)

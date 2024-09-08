@@ -66,9 +66,6 @@ var chat: Chat:
 
 
 func _ready() -> void:
-	game.game_players.name = "GamePlayers"
-	add_child(game.game_players)
-	
 	if game.world is not GameWorld2D:
 		return
 	var world_2d := game.world as GameWorld2D

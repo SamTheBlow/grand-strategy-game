@@ -242,7 +242,7 @@ func _on_username_line_edit_focus_exited() -> void:
 		_is_renaming = false
 
 
-func _on_username_changed(_new_username: String) -> void:
+func _on_username_changed(_game_player: GamePlayer) -> void:
 	_update_shown_username()
 
 

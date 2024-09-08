@@ -1,19 +1,21 @@
 class_name GamePlayers
-extends Node
 ## An encapsulated list of [GamePlayer] nodes.
 ## Provides useful functions and signals.
 
 
-signal player_added(player: GamePlayer, position_index: int)
-signal player_removed(player: GamePlayer)
+signal player_added(game_player: GamePlayer, position_index: int)
+signal player_removed(game_player: GamePlayer)
+signal username_changed(game_player: GamePlayer)
 
 var _list: Array[GamePlayer] = []
 
 
 func add_player(player: GamePlayer) -> void:
+	if _list.has(player):
+		return
+	
+	player.username_changed.connect(_on_username_changed)
 	_list.append(player)
-	player.name = str(player.id)
-	add_child(player)
 	player_added.emit(player, _list.size() - 1)
 
 
@@ -21,8 +23,8 @@ func remove_player(player: GamePlayer) -> void:
 	if not _list.has(player):
 		return
 	
+	player.username_changed.disconnect(_on_username_changed)
 	_list.erase(player)
-	remove_child(player)
 	player_removed.emit(player)
 
 
@@ -279,3 +281,7 @@ func _on_player_removed(player: Player) -> void:
 			else:
 				game_player.is_human = false
 			return
+
+
+func _on_username_changed(game_player: GamePlayer) -> void:
+	username_changed.emit(game_player)

@@ -1,12 +1,11 @@
 class_name GamePlayer
-extends Node
 ## Class responsible for a game's player.
 ## This player can be either a human or an AI.
 ## The player may either control a [Country] or spectate.
 
 
-signal human_status_changed(player: GamePlayer)
-signal username_changed(new_username: String)
+signal human_status_changed(this: GamePlayer)
+signal username_changed(this: GamePlayer)
 
 ## All players have a unique id, for the purposes of
 ## saving/loading and networking. (You must ensure their unicity yourself)
@@ -25,9 +24,9 @@ var is_human: bool = false:
 		human_status_changed.emit(self)
 
 ## This player's username. Allows you to give AI players a username.
-## This property is automatically sync'd to a human [Player]'s username.
-## If this property is set to an empty String, then it returns
-## the playing country's name, or, if spectating, returns "Spectator".
+## Changing this value automatically changes a human [Player]'s username.
+## If this property is set to an empty String, then it returns "Spectator"
+## when spectating, otherwise returns the playing country's name.
 var username: String = "":
 	get:
 		if username != "":
@@ -41,14 +40,11 @@ var username: String = "":
 			return
 		
 		username = value
-		if is_human and player_human:
-			# The [Player] class takes care of synchronizing
-			player_human.custom_username = value
-		else:
-			# We need to synchronize it ourselves
-			_inform_clients_of_username_change()
 		
-		username_changed.emit(value)
+		if is_human and player_human:
+			player_human.custom_username = value
+		
+		username_changed.emit(self)
 
 ## A reference to this human player's [Player] object.
 ## It is only relevant when [code]is_human[/code] is set to true.
@@ -95,20 +91,6 @@ func raw_data() -> Dictionary:
 	player_data["ai_type"] = player_ai.type()
 	player_data["ai_personality_type"] = player_ai.personality.type()
 	return player_data
-
-
-#region Synchronize username
-func _inform_clients_of_username_change() -> void:
-	if not MultiplayerUtils.is_server(multiplayer) or not is_inside_tree():
-		return
-	
-	_receive_new_username.rpc(username)
-
-
-@rpc("authority", "call_remote", "reliable")
-func _receive_new_username(value: String) -> void:
-	username = value
-#endregion
 
 
 func _on_username_changed(new_username: String) -> void:
