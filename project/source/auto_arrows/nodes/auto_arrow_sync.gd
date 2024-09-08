@@ -1,167 +1,71 @@
 class_name AutoArrowSync
 extends Node
-## Applies changes related to [AutoArrow]s
-## and synchronizes them across clients. Also works in singleplayer.
+## Listens to autoarrows being added or removed.
+## If you're online as the server, sends the changes to all clients.
 
 
-var game: Game
+var game: Game:
+	set(value):
+		game = value
+		
+		for country in game.countries.list():
+			_on_country_added(country)
+		game.countries.country_added.connect(_on_country_added)
+
+var _connections: Array[CountryAutoArrowConnections] = []
 
 
-## Returns true if the client is allowed to add or remove autoarrows.
-func can_apply_changes(country: Country) -> bool:
-	if not MultiplayerUtils.is_online(multiplayer):
-		return true
-	return _client_can_apply_changes(multiplayer.get_unique_id(), country)
+func _enter_tree() -> void:
+	# The node needs to have the same name across all clients,
+	# otherwise synchronization will fail.
+	name = "AutoArrowSync"
 
 
-func add(country: Country, auto_arrow: AutoArrow) -> void:
-	if not MultiplayerUtils.is_online(multiplayer):
-		_apply_add(country, auto_arrow)
+func _on_country_added(country: Country) -> void:
+	_connections.append(CountryAutoArrowConnections.new(country, self))
+
+
+func _on_auto_arrow_added(country: Country, auto_arrow: AutoArrow) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
 	
-	var data: Dictionary = AutoArrowToDict.new().result(auto_arrow)
-	if multiplayer.is_server():
-		_handle_request_auto_arrow_added(country.id, data)
-	else:
-		_handle_request_auto_arrow_added.rpc_id(1, country.id, data)
+	_receive_auto_arrow_added.rpc(
+			country.id, AutoArrowToDict.new().result(auto_arrow)
+	)
 
 
-func remove(country: Country, auto_arrow: AutoArrow) -> void:
-	if not MultiplayerUtils.is_online(multiplayer):
-		_apply_remove(country, auto_arrow)
-		return
-	
-	var data: Dictionary = AutoArrowToDict.new().result(auto_arrow)
-	if multiplayer.is_server():
-		_handle_request_auto_arrow_removed(country.id, data)
-	else:
-		_handle_request_auto_arrow_removed.rpc_id(1, country.id, data)
-
-
-func clear_province(province: Province) -> void:
-	var country: Country = game.turn.playing_player().playing_country
-	if not MultiplayerUtils.is_online(multiplayer):
-		_apply_clear_province(country, province)
-	elif multiplayer.is_server():
-		_handle_request_auto_arrows_cleared(country.id, province.id)
-	else:
-		_handle_request_auto_arrows_cleared.rpc_id(1, country.id, province.id)
-
-
-func _apply_add(country: Country, auto_arrow: AutoArrow) -> void:
+## The client receives the info from the server.
+@rpc("authority", "call_remote", "reliable")
+func _receive_auto_arrow_added(country_id: int, arrow_data: Dictionary) -> void:
+	var country: Country = game.countries.country_from_id(country_id)
+	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
 	country.auto_arrows.add(auto_arrow)
 
 
-func _apply_remove(country: Country, auto_arrow: AutoArrow) -> void:
+func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	
+	_receive_auto_arrow_removed.rpc(
+			country.id, AutoArrowToDict.new().result(auto_arrow)
+	)
+
+
+## The client receives the info from the server.
+@rpc("authority", "call_remote", "reliable")
+func _receive_auto_arrow_removed(country_id: int, arrow_data: Dictionary) -> void:
+	var country: Country = game.countries.country_from_id(country_id)
+	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
 	country.auto_arrows.remove(auto_arrow)
 
 
-func _apply_clear_province(country: Country, province: Province) -> void:
-	country.auto_arrows.remove_all_from_province(province)
-
-
-#region Synchronize when an autoarrow is added
-@rpc("any_peer", "call_remote", "reliable")
-func _handle_request_auto_arrow_added(
-		country_id: int, arrow_data: Dictionary
-) -> void:
-	if not multiplayer.is_server():
-		push_warning("Received server request, but you're not the server.")
-		return
-	
-	# Check if the sender is allowed to add an autoarrow.
-	var request_sender_id: int = multiplayer.get_remote_sender_id()
-	if request_sender_id == 0:
-		request_sender_id = 1
-	var country: Country = game.countries.country_from_id(country_id)
-	if not _client_can_apply_changes(request_sender_id, country):
-		return
-	
-	_receive_auto_arrow_added.rpc(country_id, arrow_data)
-
-
-@rpc("authority", "call_local", "reliable")
-func _receive_auto_arrow_added(
-		country_id: int, arrow_data: Dictionary
-) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
-	if country == null:
-		return
-	_apply_add(country, AutoArrowFromDict.new().result(game, arrow_data))
-#endregion
-
-
-#region Synchronize when an autoarrow is removed
-@rpc("any_peer", "call_remote", "reliable")
-func _handle_request_auto_arrow_removed(
-		country_id: int, arrow_data: Dictionary
-) -> void:
-	if not multiplayer.is_server():
-		push_warning("Received server request, but you're not the server.")
-		return
-	
-	# Check if the sender is allowed to remove an autoarrow.
-	var request_sender_id: int = multiplayer.get_remote_sender_id()
-	if request_sender_id == 0:
-		request_sender_id = 1
-	var country: Country = game.countries.country_from_id(country_id)
-	if not _client_can_apply_changes(request_sender_id, country):
-		return
-	
-	_receive_auto_arrow_removed.rpc(country_id, arrow_data)
-
-
-@rpc("authority", "call_local", "reliable")
-func _receive_auto_arrow_removed(
-		country_id: int, arrow_data: Dictionary
-) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
-	if country == null:
-		return
-	_apply_remove(country, AutoArrowFromDict.new().result(game, arrow_data))
-#endregion
-
-
-#region Synchronize when all autoarrows are removed from a province
-@rpc("any_peer", "call_remote", "reliable")
-func _handle_request_auto_arrows_cleared(
-		country_id: int, province_id: int
-) -> void:
-	if not multiplayer.is_server():
-		push_warning("Received server request, but you're not the server.")
-		return
-	
-	# Check if the sender is allowed to remove the autoarrows.
-	var request_sender_id: int = multiplayer.get_remote_sender_id()
-	if request_sender_id == 0:
-		request_sender_id = 1
-	var country: Country = game.countries.country_from_id(country_id)
-	if not _client_can_apply_changes(request_sender_id, country):
-		return
-	
-	_receive_auto_arrows_cleared.rpc(country_id, province_id)
-
-
-@rpc("authority", "call_local", "reliable")
-func _receive_auto_arrows_cleared(country_id: int, province_id: int) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
-	if country == null:
-		return
-	var province: Province = game.world.provinces.province_from_id(province_id)
-	if province == null:
-		return
-	_apply_clear_province(country, province)
-#endregion
-
-
-func _client_can_apply_changes(multiplayer_id: int, country: Country) -> bool:
-	return game.game_players.client_controls_country(multiplayer_id, country)
-
-
-func _on_auto_arrow_formed(auto_arrow: AutoArrow) -> void:
-	var playing_country: Country = game.turn.playing_player().playing_country
-	if playing_country.auto_arrows.has_equivalent_in_list(auto_arrow):
-		# An equivalent arrow already exists? Remove it
-		remove(playing_country, auto_arrow)
-	else:
-		add(playing_country, auto_arrow)
+class CountryAutoArrowConnections:
+	func _init(country: Country, auto_arrow_sync: AutoArrowSync) -> void:
+		country.auto_arrows.arrow_added.connect(
+				func(auto_arrow: AutoArrow) -> void:
+					auto_arrow_sync._on_auto_arrow_added(country, auto_arrow)
+		)
+		country.auto_arrows.arrow_removed.connect(
+				func(auto_arrow: AutoArrow) -> void:
+					auto_arrow_sync._on_auto_arrow_removed(country, auto_arrow)
+		)

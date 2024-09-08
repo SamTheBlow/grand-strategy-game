@@ -17,7 +17,6 @@ var game: Game
 @onready var _province_highlight := %ProvinceHighlight as ProvinceHighlight
 @onready var _army_visuals_setup := %ArmyVisualsSetup as ArmyVisualsSetup
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
-@onready var _auto_arrow_sync := %AutoArrowSync as AutoArrowSync
 @onready var _auto_arrows := %AutoArrows as AutoArrowContainer
 
 
@@ -32,7 +31,6 @@ func _initialize() -> void:
 	_province_highlight.playing_country = playing_country
 	_army_visuals_setup.playing_country = playing_country
 	_army_visuals_setup.armies = world.armies
-	_auto_arrow_input.playing_country = playing_country
-	_auto_arrow_sync.game = game
+	_auto_arrow_input.game = game
 	_auto_arrows.playing_country = playing_country
 	_auto_arrows.countries = game.countries

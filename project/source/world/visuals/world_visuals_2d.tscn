@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene load_steps=12 format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" path="res://source/world/visuals/world_background.gd" id="2_unrx0"]
@@ -8,10 +8,9 @@
 [ext_resource type="PackedScene" uid="uid://cppfb8jwghnqt" path="res://source/provinces/visuals/province_visuals_2d.tscn" id="4_fscts"]
 [ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_container.gd" id="4_o61mm"]
 [ext_resource type="Script" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
-[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="5_4u3au"]
 [ext_resource type="Script" path="res://source/provinces/visuals/province_highlight.gd" id="5_bd3lk"]
-[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_sync.gd" id="6_2g55h"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://source/armies/visuals/army_visuals_2d.tscn" id="6_toace"]
+[ext_resource type="Script" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 
 [node name="WorldVisuals2D" type="Node2D"]
 script = ExtResource("1_im3sb")
@@ -37,16 +36,9 @@ script = ExtResource("4_0v0rh")
 _provinces_container = NodePath("../Provinces")
 _army_visuals_scene = ExtResource("6_toace")
 
-[node name="AutoArrowInput" type="Node" parent="." node_paths=PackedStringArray("auto_arrow_sync", "province_container", "auto_arrow_container")]
+[node name="AutoArrowInput" type="Node" parent="."]
 unique_name_in_owner = true
-script = ExtResource("5_4u3au")
-auto_arrow_sync = NodePath("../AutoArrowSync")
-province_container = NodePath("../Provinces")
-auto_arrow_container = NodePath("../AutoArrows")
-
-[node name="AutoArrowSync" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("6_2g55h")
+script = ExtResource("9_g4nb7")
 
 [node name="Background" type="Node2D" parent="."]
 unique_name_in_owner = true
@@ -62,11 +54,11 @@ script = ExtResource("4_o61mm")
 province_visuals_container = NodePath("../Provinces")
 province_selection = NodePath("../ProvinceSelection")
 
-[connection signal="province_deselected" from="ProvinceSelection" to="Provinces" method="_on_province_deselected"]
 [connection signal="province_deselected" from="ProvinceSelection" to="ProvinceHighlight" method="_on_province_deselected"]
-[connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
+[connection signal="province_deselected" from="ProvinceSelection" to="Provinces" method="_on_province_deselected"]
 [connection signal="province_selected" from="ProvinceSelection" to="ProvinceHighlight" method="_on_province_selected"]
-[connection signal="auto_arrow_formed" from="AutoArrowInput" to="AutoArrowSync" method="_on_auto_arrow_formed"]
-[connection signal="province_double_right_clicked" from="AutoArrowInput" to="AutoArrowSync" method="clear_province"]
+[connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
+[connection signal="preview_arrow_created" from="AutoArrowInput" to="Provinces" method="_on_preview_arrow_created"]
+[connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
 [connection signal="clicked" from="Background" to="ProvinceSelection" method="deselect_province"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]

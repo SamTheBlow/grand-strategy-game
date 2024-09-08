@@ -70,3 +70,8 @@ func _on_province_selected(province: Province) -> void:
 
 func _on_province_deselected(province: Province) -> void:
 	visuals_of(province).deselect()
+
+
+func _on_preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D) -> void:
+	province_mouse_entered.connect(preview_arrow._on_province_mouse_entered)
+	province_mouse_exited.connect(preview_arrow._on_province_mouse_exited)

@@ -109,6 +109,10 @@ func play_game(game: Game) -> void:
 	game_username_sync.game_players = game.game_players
 	game_sync.add_child(game_username_sync)
 	
+	var auto_arrow_sync := AutoArrowSync.new()
+	auto_arrow_sync.game = game
+	game_sync.add_child(auto_arrow_sync)
+	
 	_send_game_to_clients(game)
 	game.start()
 
