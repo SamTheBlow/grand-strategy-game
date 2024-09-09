@@ -21,5 +21,3 @@ players = NodePath("../Players")
 
 [node name="GameRules" type="Node" parent="."]
 script = ExtResource("6_2g2by")
-
-[node name="GameSync" type="Node" parent="."]

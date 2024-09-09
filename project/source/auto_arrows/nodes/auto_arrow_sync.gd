@@ -15,6 +15,10 @@ var game: Game:
 var _connections: Array[CountryAutoArrowConnections] = []
 
 
+func _init(game_: Game = null) -> void:
+	game = game_
+
+
 func _enter_tree() -> void:
 	# The node needs to have the same name across all clients,
 	# otherwise synchronization will fail.

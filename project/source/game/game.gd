@@ -11,6 +11,7 @@ class_name Game
 
 signal game_started()
 signal game_over(winning_country: Country)
+signal action_applied(action: Action)
 
 ## Must setup before the game starts.
 ## You are not meant to edit the rules once they are set.
@@ -98,6 +99,11 @@ func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
 	turn.game = self
 	turn._turn = starting_turn
 	turn._playing_player_index = playing_player_index
+
+
+func apply_action(action: Action) -> void:
+	action.apply_to(self, turn.playing_player())
+	action_applied.emit(action)
 
 
 ## Builds this game's global [Modifier]s according to the [GameRules].

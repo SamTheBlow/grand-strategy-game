@@ -10,6 +10,10 @@ var game_players: GamePlayers:
 		game_players.username_changed.connect(_on_username_changed)
 
 
+func _init(game_players_: GamePlayers = null) -> void:
+	game_players = game_players_
+
+
 func _enter_tree() -> void:
 	# The node needs to have the same name across all clients,
 	# otherwise synchronization will fail.

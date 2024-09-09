@@ -23,7 +23,6 @@ signal exited()
 @export var notification_info_scene: PackedScene
 
 @export_group("Children")
-@export var action_sync: ActionSynchronizer
 @export var camera: CustomCamera2D
 @export var component_ui_root: Control
 @export var popups: Control
@@ -60,6 +59,7 @@ var chat: Chat:
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
+@onready var _action_input := %ActionInput as ActionInput
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
@@ -70,7 +70,7 @@ func _ready() -> void:
 		return
 	var world_2d := game.world as GameWorld2D
 	
-	camera.world_limits = world_2d.limits
+	_action_input.game = game
 	
 	world_visuals.game = game
 	world_visuals.world = world_2d
@@ -80,6 +80,8 @@ func _ready() -> void:
 	world_visuals.province_visuals.unhandled_mouse_event_occured.connect(
 			_on_province_unhandled_mouse_event
 	)
+	
+	camera.world_limits = world_2d.limits
 	
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
@@ -120,14 +122,14 @@ func new_action_army_movement(
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
-		action_sync.apply_action(action_split)
+		_action_input.apply_action(action_split)
 		
 		moving_army_id = new_army_id
 	
 	var action_move := ActionArmyMovement.new(
 			moving_army_id, destination_province.id
 	)
-	action_sync.apply_action(action_move)
+	_action_input.apply_action(action_move)
 
 
 ## Creates the popup that appears when you want to move an [Army].
@@ -256,13 +258,13 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 
 
 func _on_end_turn_pressed() -> void:
-	action_sync.apply_action(ActionEndTurn.new())
+	_action_input.apply_action(ActionEndTurn.new())
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
 	world_visuals.province_selection.deselect_province()
 	var action_build := ActionBuild.new(province.id)
-	action_sync.apply_action(action_build)
+	_action_input.apply_action(action_build)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
@@ -270,7 +272,7 @@ func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 	var action_recruitment := ActionRecruitment.new(
 			province.id, troop_amount, game.world.armies.new_unique_id()
 	)
-	action_sync.apply_action(action_recruitment)
+	_action_input.apply_action(action_recruitment)
 
 
 func _on_army_movement_closed() -> void:
@@ -346,7 +348,7 @@ func _on_diplomacy_action_pressed(
 		)
 		return
 	
-	action_sync.apply_action(ActionDiplomacy.new(
+	_action_input.apply_action(ActionDiplomacy.new(
 			diplomacy_action.id(), recipient_country.id
 	))
 
@@ -378,6 +380,6 @@ func _on_notification_decision_made(
 		)
 		return
 	
-	action_sync.apply_action(ActionHandleNotification.new(
+	_action_input.apply_action(ActionHandleNotification.new(
 			game_notification.id, outcome_index
 	))
