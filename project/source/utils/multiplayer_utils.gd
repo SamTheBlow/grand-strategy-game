@@ -33,5 +33,5 @@ static func has_gameplay_authority(
 ) -> bool:
 	return not (
 			is_online(multiplayer) and player.is_human
-			and player.player_human and player.player_human.is_remote()
+			and player.player_human != null and player.player_human.is_remote()
 	)

@@ -13,11 +13,7 @@ var game_player: GamePlayer:
 	set(value):
 		game_player = value
 		
-		if (
-				game_player == null
-				or not MultiplayerUtils
-				.has_gameplay_authority(multiplayer, game_player)
-		):
+		if game_player == null:
 			_game_notifications = null
 			return
 		

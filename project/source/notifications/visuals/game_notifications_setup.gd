@@ -3,19 +3,28 @@ extends Node
 ## to always use the playing player in given [Game].
 
 
-@export var game_notifications_node: GameNotificationsNode
+@export var _game_notifications_node: GameNotificationsNode
 @export var _game: GameNode
 
 
 func _ready() -> void:
-	if not game_notifications_node or not _game:
+	if _game_notifications_node == null or _game == null:
+		push_error("An export variable is null, oops.")
 		return
 	
-	game_notifications_node.game_player = _game.game.turn.playing_player()
+	_update_player(_game.game.turn.playing_player())
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 
 
+func _update_player(playing_player: GamePlayer) -> void:
+	if MultiplayerUtils.has_gameplay_authority(multiplayer, playing_player):
+		_game_notifications_node.game_player = playing_player
+	else:
+		_game_notifications_node.game_player = null
+
+
 func _on_turn_player_changed(playing_player: GamePlayer) -> void:
-	if not game_notifications_node:
+	if _game_notifications_node == null:
 		return
-	game_notifications_node.game_player = playing_player
+	
+	_update_player(playing_player)

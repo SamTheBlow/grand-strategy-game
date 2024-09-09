@@ -123,9 +123,9 @@ offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
 
-[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" node_paths=PackedStringArray("game_notifications_node", "_game")]
+[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" node_paths=PackedStringArray("_game_notifications_node", "_game")]
 script = ExtResource("27_ncc6m")
-game_notifications_node = NodePath("..")
+_game_notifications_node = NodePath("..")
 _game = NodePath("../../../..")
 
 [node name="RightSide" type="Control" parent="UILayer/GameUI"]
