@@ -23,6 +23,8 @@ var _turn: int = 1
 # the [GamePlayers] player order never changes.
 var _playing_player_index: int = 0
 
+var _is_not_asked_to_stop: bool
+
 
 func current_turn() -> int:
 	return _turn
@@ -40,21 +42,17 @@ func end_turn() -> void:
 
 
 ## Plays out each player's turn, one at a time.
-## ALERT if there are no human players, this causes an infinite loop!
+## NOTE: if the game has no human players, an infinite loop occurs!
+## In that case, consider using stop() to break the loop at some point.
 func loop() -> void:
 	if game.game_players.number_of_playing_humans() == 0:
 		push_warning(
-				"Started the game loop with no playing humans. "
-				+ "There will probably be an infinite loop."
+				"Running the game loop with no human players! "
+				+ "This will cause an infinite loop."
 		)
-		#for player in game.game_players.list():
-		#	print(player.username, " (HUMAN)" if player.is_human else " (AI)")
 	
-	while true:
-		# Uncomment this to watch how an AI-only game ends :D
-		#if game._game_over:
-		#	break
-		
+	_is_not_asked_to_stop = true
+	while _is_not_asked_to_stop:
 		var player: GamePlayer = playing_player()
 		
 		if player.is_spectating():
@@ -69,6 +67,11 @@ func loop() -> void:
 		for action in actions:
 			action.apply_to(game, player)
 		_end_player_turn()
+
+
+## Forces the loop to break. Has no effect if the loop is not running.
+func stop() -> void:
+	_is_not_asked_to_stop = false
 
 
 func _end_player_turn() -> void:

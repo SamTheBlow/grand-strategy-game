@@ -4,11 +4,17 @@ class_name RulesFromRawDict
 ## See also: [RulesToRawDict]
 
 
+## Note that calling this function with an empty dictionary
+## is equivalent to creating a new instance of [GameRules].
 func result(data_dict: Dictionary) -> GameRules:
 	var game_rules := GameRules.new()
-	for key in GameRules.RULE_NAMES:
-		# If the rule isn't there, that's ok, just use the default
-		if not data_dict.has(key):
+	
+	for variant_key: Variant in data_dict.keys():
+		if variant_key is not String:
+			continue
+		var key := variant_key as String
+		
+		if not key in GameRules.RULE_NAMES:
 			continue
 		
 		# Make sure the value is the correct type.
@@ -24,28 +30,5 @@ func result(data_dict: Dictionary) -> GameRules:
 			continue
 		
 		game_rules.rule_with_name(key).set_data(data_dict[key])
-	
-	# TODO temporary. remove later
-	game_rules.diplomatic_presets = DiplomacyPresets.new([
-		load("res://resources/diplomacy/presets/allied.tres"),
-		load("res://resources/diplomacy/presets/neutral.tres"),
-		load("res://resources/diplomacy/presets/at_war.tres"),
-	])
-	game_rules.diplomatic_actions = DiplomacyActionDefinitions.new([
-		load("res://resources/diplomacy/actions/break_alliance.tres"),
-		load("res://resources/diplomacy/actions/declare_war.tres"),
-		load("res://resources/diplomacy/actions/offer_alliance.tres"),
-		load("res://resources/diplomacy/actions/offer_peace.tres"),
-		load("res://resources/diplomacy/actions/grant_military_access.tres"),
-		load("res://resources/diplomacy/actions/revoke_military_access.tres"),
-		load("res://resources/diplomacy/actions/ask_for_military_access.tres"),
-		load("res://resources/diplomacy/actions/start_trespassing.tres"),
-		load("res://resources/diplomacy/actions/stop_trespassing.tres"),
-		load("res://resources/diplomacy/actions/ask_to_stop_trespassing.tres"),
-		load("res://resources/diplomacy/actions/start_fighting.tres"),
-		load("res://resources/diplomacy/actions/stop_fighting.tres"),
-		load("res://resources/diplomacy/actions/ask_to_stop_fighting.tres"),
-	])
-	game_rules.battle = load("res://resources/battle.tres") as Battle
 	
 	return game_rules

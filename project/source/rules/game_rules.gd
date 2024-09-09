@@ -645,6 +645,29 @@ func _init() -> void:
 		_category_ai,
 		_category_diplomacy,
 	]
+	
+	# TODO temporary. remove later
+	diplomatic_presets = DiplomacyPresets.new([
+		load("res://resources/diplomacy/presets/allied.tres"),
+		load("res://resources/diplomacy/presets/neutral.tres"),
+		load("res://resources/diplomacy/presets/at_war.tres"),
+	])
+	diplomatic_actions = DiplomacyActionDefinitions.new([
+		load("res://resources/diplomacy/actions/break_alliance.tres"),
+		load("res://resources/diplomacy/actions/declare_war.tres"),
+		load("res://resources/diplomacy/actions/offer_alliance.tres"),
+		load("res://resources/diplomacy/actions/offer_peace.tres"),
+		load("res://resources/diplomacy/actions/grant_military_access.tres"),
+		load("res://resources/diplomacy/actions/revoke_military_access.tres"),
+		load("res://resources/diplomacy/actions/ask_for_military_access.tres"),
+		load("res://resources/diplomacy/actions/start_trespassing.tres"),
+		load("res://resources/diplomacy/actions/stop_trespassing.tres"),
+		load("res://resources/diplomacy/actions/ask_to_stop_trespassing.tres"),
+		load("res://resources/diplomacy/actions/start_fighting.tres"),
+		load("res://resources/diplomacy/actions/stop_fighting.tres"),
+		load("res://resources/diplomacy/actions/ask_to_stop_fighting.tres"),
+	])
+	battle = load("res://resources/battle.tres") as Battle
 
 
 func _ready() -> void:

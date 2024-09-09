@@ -19,9 +19,14 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 ## from the scene tree and adds the new scene to the scene tree.
 var current_scene: Node:
 	set(value):
-		if current_scene:
+		if current_scene != null:
 			remove_child(current_scene)
 			current_scene.queue_free()
+		
+		# TODO bad code: this assumes the name of the node
+		if has_node("GameSync"):
+			remove_child(get_node("GameSync"))
+		
 		current_scene = value
 		add_child(current_scene)
 
@@ -270,11 +275,6 @@ func _on_game_start_requested(scenario_scene: PackedScene) -> void:
 ## This function's name is a bit misleading, because it's precisely
 ## the function that makes you enter the main menu.
 func _on_main_menu_entered() -> void:
-	# TODO bad code: this assumes the name of the node
-	# Remove the game synchronization node
-	if has_node("GameSync"):
-		remove_child(get_node("GameSync"))
-	
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.setup_players(players)
 	main_menu.setup_rules(game_rules)
