@@ -102,7 +102,8 @@ func play_game(game: Game) -> void:
 	)
 	
 	game.game_started.connect(_on_game_started)
-	game.game_players.assign_lobby(players)
+	players.player_removed.connect(game.game_players._on_player_removed)
+	PlayerAssignment.new(players, game.game_players).assign_all()
 	
 	add_child(GameSync.new(game))
 	
@@ -195,8 +196,12 @@ func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	
 	if not current_scene is GameNode:
 		return
-	(current_scene as GameNode).game.game_players.assign_player(
-			player, game_player_id
+	var game_scene := current_scene as GameNode
+	var game_players: GamePlayers = game_scene.game.game_players
+	var game_player: GamePlayer = game_players.player_from_id(game_player_id)
+	(
+			PlayerAssignment.new(players, game_players)
+			.assign_player_to(player, game_player)
 	)
 #endregion
 
@@ -258,7 +263,19 @@ func _on_player_added(player: Player) -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		return
 	
-	var game_player_id: int = game_node.game.game_players.assign_player(player)
+	(
+			PlayerAssignment.new(players, game_node.game.game_players)
+			.assign_player(player)
+	)
+	var game_player_id: int
+	for game_player in game_node.game.game_players.list():
+		if (
+				game_player.is_human
+				and game_player.player_human != null
+				and game_player.player_human == player
+		):
+			game_player_id = game_player.id
+			break
 	
 	if MultiplayerUtils.is_server(multiplayer):
 		_send_new_player_to_clients(player.id, game_player_id)
