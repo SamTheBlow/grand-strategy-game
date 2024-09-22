@@ -123,25 +123,24 @@ func raw_data() -> Array:
 	return players_data
 
 
-func _new_spectator(player: Player) -> GamePlayer:
-	var new_spectator := GamePlayer.new()
-	new_spectator.id = new_unique_id()
-	new_spectator.player_human = player
-	new_spectator.is_human = true
-	return new_spectator
-
-
+# TODO move this to a different class
+## Finds the [GamePlayer] associated with given [Player].
+## Turns it into an AI. If it's a spectator, removes it from the list.
 func _on_player_removed(player: Player) -> void:
 	for game_player in _list:
-		if (not game_player.is_human) or (not game_player.player_human):
+		if (
+				not game_player.is_human
+				or game_player.player_human == null
+				or game_player.player_human != player
+		):
 			continue
 		
-		if game_player.player_human == player:
-			if game_player.is_spectating():
-				remove_player(game_player)
-			else:
-				game_player.is_human = false
-			return
+		game_player.is_human = false
+		
+		if game_player.is_spectating():
+			remove_player(game_player)
+		
+		break
 
 
 func _on_username_changed(game_player: GamePlayer) -> void:
