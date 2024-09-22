@@ -150,7 +150,7 @@ func _refresh_info() -> void:
 			country_2.relationships.with_country(country_1)
 	)
 	
-	if game and game.rules.diplomacy_presets_option.selected != 0:
+	if game != null and game.rules.is_diplomacy_presets_enabled():
 		_preset.country_1 = country_1
 		_preset.country_2 = country_2
 		_preset.info_text_1_to_2 = relationship.preset().name

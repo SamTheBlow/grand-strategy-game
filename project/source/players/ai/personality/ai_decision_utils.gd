@@ -139,7 +139,7 @@ func make_peace_with(country: Country) -> void:
 		return
 	
 	# ATTENTION TODO hard coded diplomatic action IDs
-	if game.rules.diplomacy_presets_option.selected != 0:
+	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(2, country.id))
 	if game.rules.can_ask_to_stop_trespassing.value:
 		_add_action_diplomacy(ActionDiplomacy.new(10, country.id))
@@ -152,7 +152,7 @@ func make_alliance_with(country: Country) -> void:
 		return
 	
 	# TASK hard coded diplomatic action IDs
-	if game.rules.diplomacy_presets_option.selected != 0:
+	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(3, country.id))
 	if game.rules.can_ask_for_military_access.value:
 		_add_action_diplomacy(ActionDiplomacy.new(7, country.id))
@@ -163,7 +163,7 @@ func break_alliance_with(country: Country) -> void:
 		return
 	
 	# TASK hard coded diplomatic action IDs
-	if game.rules.diplomacy_presets_option.selected != 0:
+	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(4, country.id))
 	if game.rules.can_revoke_military_access.value:
 		_add_action_diplomacy(ActionDiplomacy.new(6, country.id))
@@ -174,7 +174,7 @@ func declare_war_to(country: Country) -> void:
 		return
 	
 	# TASK hard coded diplomatic action IDs
-	if game.rules.diplomacy_presets_option.selected != 0:
+	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(1, country.id))
 	if game.rules.can_enable_trespassing.value:
 		_add_action_diplomacy(ActionDiplomacy.new(8, country.id))

@@ -80,13 +80,10 @@ static func new_default_data(game_rules: GameRules) -> Dictionary:
 		"diplomacy_actions": game_rules.diplomatic_actions,
 	}
 	
-	# ATTENTION: This assumes that the rule's value is the preset's id.
-	var diplomatic_presets_option: int = (
-			game_rules.diplomacy_presets_option.selected
-	)
-	if diplomatic_presets_option != 0:
+	if game_rules.is_diplomacy_presets_enabled():
+		# ATTENTION: This assumes that the rule's value is the preset's id.
 		default_data[DiplomacyRelationship.PRESET_ID_KEY] = (
-				diplomatic_presets_option
+				game_rules.diplomacy_presets_option.selected
 		)
 	
 	return default_data

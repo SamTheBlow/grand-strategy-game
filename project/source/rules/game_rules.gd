@@ -706,6 +706,10 @@ func lock() -> void:
 		rule.lock()
 
 
+func is_diplomacy_presets_enabled() -> bool:
+	return diplomacy_presets_option.selected != 0
+
+
 func _connect_signals() -> void:
 	for rule_name in RULE_NAMES:
 		var rule: RuleItem = rule_with_name(rule_name)

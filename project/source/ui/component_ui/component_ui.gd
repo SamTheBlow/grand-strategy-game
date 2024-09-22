@@ -182,8 +182,8 @@ func _update_nodes_game() -> void:
 		
 		_build_fortress_button.game = game
 		_recruit_button.game = game
-		_relationship_preset_label_update.is_relationship_presets_enabled = (
-				game.rules.diplomacy_presets_option.selected != 0
+		_relationship_preset_label_update.is_disabled = (
+				not game.rules.is_diplomacy_presets_enabled()
 		)
 		
 		_update_nodes_playing_player(game.turn.playing_player())
@@ -193,7 +193,7 @@ func _update_nodes_game() -> void:
 		
 		_build_fortress_button.game = null
 		_recruit_button.game = null
-		_relationship_preset_label_update.is_relationship_presets_enabled = false
+		_relationship_preset_label_update.is_disabled = true
 		
 		_update_nodes_playing_player(null)
 

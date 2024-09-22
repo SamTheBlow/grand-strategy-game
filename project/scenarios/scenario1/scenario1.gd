@@ -67,7 +67,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 		countries_data.append(country_data)
 	
 	if (
-			game_rules.diplomacy_presets_option.selected != 0
+			game_rules.is_diplomacy_presets_enabled()
 			and game_rules.starts_with_random_relationship_preset.value
 	):
 		# Create and populate array with random values

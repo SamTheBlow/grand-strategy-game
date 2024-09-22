@@ -9,9 +9,9 @@ extends Control
 		is_button_enabled = value
 		_update_is_button_enabled()
 
-var is_relationship_presets_enabled: bool = false:
+var is_relationship_presets_disabled: bool = true:
 	set(value):
-		is_relationship_presets_enabled = value
+		is_relationship_presets_disabled = value
 		_refresh_preset_label(0)
 
 var country: Country:
@@ -70,7 +70,7 @@ func _update_is_button_enabled() -> void:
 
 ## Thing to refresh:
 ## -1 -> (Everything)
-##  0 -> is_relationship_presets_enabled
+##  0 -> is_disabled
 ##  1 -> country
 ##  2 -> country_to_relate_to
 func _refresh_preset_label(thing_to_refresh: int = -1) -> void:
@@ -78,9 +78,7 @@ func _refresh_preset_label(thing_to_refresh: int = -1) -> void:
 		return
 	
 	if thing_to_refresh == -1 or thing_to_refresh == 0:
-		_label_update.is_relationship_presets_enabled = (
-				is_relationship_presets_enabled
-		)
+		_label_update.is_disabled = is_relationship_presets_disabled
 	if thing_to_refresh == -1 or thing_to_refresh == 1:
 		_label_update.country = country
 	if thing_to_refresh == -1 or thing_to_refresh == 2:

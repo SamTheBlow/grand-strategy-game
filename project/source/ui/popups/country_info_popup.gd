@@ -53,13 +53,12 @@ func _refresh() -> void:
 	var game: Game = game_node.game
 	
 	var playing_country: Country = game.turn.playing_player().playing_country
-	var is_relationship_presets_enabled: bool = (
-			game.rules.diplomacy_presets_option.selected != 0
-	)
 	
 	_header.country = country
 	_header.country_to_relate_to = playing_country
-	_header.is_relationship_presets_enabled = is_relationship_presets_enabled
+	_header.is_relationship_presets_disabled = (
+			not game.rules.is_diplomacy_presets_enabled()
+	)
 	
 	_money_label.text = "Money: $" + str(country.money)
 	
@@ -113,11 +112,6 @@ func _populate_countries() -> void:
 	
 	NodeUtils.delete_all_children(_countries)
 	
-	# TODO DRY. this appears in too many places, it shouldn't. also it's ugly
-	var is_relationship_presets_enabled: bool = (
-			game.rules.diplomacy_presets_option.selected != 0
-	)
-	
 	var spacing := Control.new()
 	spacing.custom_minimum_size.y = 24
 	_countries.add_child(spacing)
@@ -132,8 +126,8 @@ func _populate_countries() -> void:
 		)
 		relationship_node.country = other_country
 		relationship_node.country_to_relate_to = country
-		relationship_node.is_relationship_presets_enabled = (
-				is_relationship_presets_enabled
+		relationship_node.is_relationship_presets_disabled = (
+				not game.rules.is_diplomacy_presets_enabled()
 		)
 		relationship_node.button_press_outcome = (
 				_on_relationship_button_pressed

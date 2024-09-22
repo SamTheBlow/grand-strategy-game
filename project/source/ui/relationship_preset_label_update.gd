@@ -5,9 +5,9 @@ extends Node
 
 @export var label: RelationshipPresetLabel
 
-var is_relationship_presets_enabled: bool:
+var is_disabled: bool = false:
 	set(value):
-		is_relationship_presets_enabled = value
+		is_disabled = value
 		_refresh()
 
 var country: Country:
@@ -30,9 +30,9 @@ func _refresh() -> void:
 		return
 	
 	if (
-			not is_relationship_presets_enabled
-			or not country
-			or not country_to_relate_to
+			is_disabled
+			or country == null
+			or country_to_relate_to == null
 			or country == country_to_relate_to
 	):
 		label.relationship = null
