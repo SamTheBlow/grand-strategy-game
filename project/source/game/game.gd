@@ -74,9 +74,7 @@ func start() -> void:
 		turn_limit.game_over.connect(_on_game_over)
 		_components.append(turn_limit)
 	
-	var province_control_goal := ProvinceControlGoal.new()
-	province_control_goal.game = self
-	turn.turn_changed.connect(province_control_goal._on_new_turn)
+	var province_control_goal := ProvinceControlGoal.new(self)
 	province_control_goal.game_over.connect(_on_game_over)
 	_components.append(province_control_goal)
 	
@@ -129,18 +127,22 @@ func _setup_global_modifiers() -> void:
 
 
 ## Used to determine the winner when the game ends.
+## Currently returns the country that controls the most provinces.
 func _winning_country() -> Country:
-	# Get how many provinces each country has
-	var ownership: Array = world.provinces.province_count_per_country()
+	# Count how many provinces each country has
+	var pcpc := ProvinceCountPerCountry.new()
+	pcpc.calculate(world.provinces.list())
 	
-	# Find which player has the most provinces
+	# Determine which country controls the most provinces
 	var winning_player_index: int = 0
-	var number_of_players: int = ownership.size()
-	for i in number_of_players:
-		if ownership[i][1] > ownership[winning_player_index][1]:
+	for i in pcpc.countries.size():
+		if (
+				pcpc.number_of_provinces[i]
+				> pcpc.number_of_provinces[winning_player_index]
+		):
 			winning_player_index = i
 	
-	return ownership[winning_player_index][0]
+	return pcpc.countries[winning_player_index]
 
 
 func _on_game_over() -> void:

@@ -1,12 +1,16 @@
 class_name ProvinceControlGoal
-## Responsible for telling when a [Country] meets the [Game]'s
+## Emits the game_over signal when any [Country] meets the [Game]'s
 ## game over condition for number of [Province]s controlled.
-## Emits a signal when the condition is met.
 
 
 signal game_over()
 
-var game: Game
+var _game: Game
+
+
+func _init(game: Game) -> void:
+	_game = game
+	_game.turn.turn_changed.connect(_on_new_turn)
 
 
 ## Checks if someone won from controlling a certain percentage
@@ -14,10 +18,17 @@ var game: Game
 ##
 ## percentage_to_win should be a value from 0.0 to 1.0.
 func _check_percentage_winner(percentage_to_win: float) -> void:
-	var ownership: Array = game.world.provinces.province_count_per_country()
-	var number_of_provinces: int = game.world.provinces.list().size()
-	for o: Array in ownership:
-		if float(o[1]) / number_of_provinces >= percentage_to_win:
+	var provinces_list: Array[Province] = _game.world.provinces.list()
+	var number_of_provinces: int = provinces_list.size()
+	
+	var pcpc := ProvinceCountPerCountry.new()
+	pcpc.calculate(provinces_list)
+	
+	for i in pcpc.countries.size():
+		if (
+				float(pcpc.number_of_provinces[i]) / number_of_provinces
+				>= percentage_to_win
+		):
 			game_over.emit()
 			break
 
@@ -25,21 +36,22 @@ func _check_percentage_winner(percentage_to_win: float) -> void:
 ## Checks if someone won from controlling a certain number
 ## of [Province]s and, if so, declares the game over.
 func _check_number_winner(number_to_win: int) -> void:
-	var ownership: Array = game.world.provinces.province_count_per_country()
-	for o: Array in ownership:
-		if o[1] >= number_to_win:
+	var pcpc := ProvinceCountPerCountry.new()
+	pcpc.calculate(_game.world.provinces.list())
+	
+	for i in pcpc.countries.size():
+		if pcpc.number_of_provinces[i] >= number_to_win:
 			game_over.emit()
 			break
 
 
 func _on_new_turn(_turn: int) -> void:
-	# TODO bad code: hard coded values
-	match game.rules.game_over_provinces_owned_option.selected:
-		1:
+	match _game.rules.game_over_provinces_owned_option.selected:
+		GameRules.GameOverProvincesOwnedOption.CONSTANT:
 			_check_number_winner(
-					game.rules.game_over_provinces_owned_constant.value
+					_game.rules.game_over_provinces_owned_constant.value
 			)
-		2:
+		GameRules.GameOverProvincesOwnedOption.PERCENTAGE:
 			_check_percentage_winner(
-					game.rules.game_over_provinces_owned_percentage.value
+					_game.rules.game_over_provinces_owned_percentage.value
 			)

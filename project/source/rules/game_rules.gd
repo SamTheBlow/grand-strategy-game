@@ -81,6 +81,12 @@ enum ProvinceIncome {
 	POPULATION = 2,
 }
 
+enum GameOverProvincesOwnedOption {
+	DISABLED = 0,
+	CONSTANT = 1,
+	PERCENTAGE = 2,
+}
+
 var diplomatic_presets: DiplomacyPresets
 var diplomatic_actions: DiplomacyActionDefinitions
 var battle: Battle
