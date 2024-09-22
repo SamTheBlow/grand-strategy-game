@@ -24,6 +24,8 @@ func _ready() -> void:
 	_update_turn_label(_game.game.turn.current_turn())
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 	_update_country(_game.game.turn.playing_player().playing_country)
+	
+	# TODO bad code: private function
 	_country_button.pressed.connect(_game._on_country_button_pressed)
 
 

@@ -86,6 +86,7 @@ func _ready() -> void:
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
+	# TODO bad code: private function
 	networking_interface.message_sent.connect(
 			chat._on_networking_interface_message_sent
 	)

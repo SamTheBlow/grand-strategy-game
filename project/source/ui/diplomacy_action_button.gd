@@ -38,7 +38,9 @@ func _refresh() -> void:
 		hide()
 		return
 	
+	# TODO bad code: private member access
 	_name_label.text = diplomacy_action._definition.name
+	
 	_refresh_is_disabled()
 	show()
 

@@ -2,7 +2,7 @@ class_name ArmyVisualsSetup
 extends Node
 
 
-## Make sure to set this before settings armies...
+## Make sure to set this before setting armies...
 var playing_country: PlayingCountry
 
 var armies: Armies:
@@ -43,6 +43,8 @@ func _add_army(army: Army) -> void:
 	_on_province_changed.call_deferred(new_army_visuals)
 	
 	new_army_visuals.province_changed.connect(_on_province_changed)
+	
+	# TODO bad code: private function
 	armies.army_removed.connect(new_army_visuals._on_army_removed)
 
 

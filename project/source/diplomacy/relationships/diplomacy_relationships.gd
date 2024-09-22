@@ -24,6 +24,11 @@ func _init(
 	_base_actions = base_actions
 
 
+## Returns a new copy of the list.
+func list() -> Array[DiplomacyRelationship]:
+	return _list.duplicate()
+
+
 ## Creates a new relationship if there wasn't one before.
 ## This never returns null.
 func with_country(country: Country) -> DiplomacyRelationship:

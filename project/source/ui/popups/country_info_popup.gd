@@ -73,6 +73,7 @@ func _disconnect_relationship_info_signal() -> void:
 	if game_node == null or _relationship_info == null:
 		return
 	
+	# TODO bad code: private function (6 occurences)
 	if _relationship_info.diplomacy_action_pressed.is_connected(
 			game_node._on_diplomacy_action_pressed
 	):

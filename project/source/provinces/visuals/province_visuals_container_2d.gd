@@ -73,5 +73,6 @@ func _on_province_deselected(province: Province) -> void:
 
 
 func _on_preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D) -> void:
+	# TODO bad code: private function
 	province_mouse_entered.connect(preview_arrow._on_province_mouse_entered)
 	province_mouse_exited.connect(preview_arrow._on_province_mouse_exited)

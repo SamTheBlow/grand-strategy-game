@@ -111,6 +111,7 @@ func initialize_actions(
 	_update_available_actions(current_turn)
 	for action in _available_actions:
 		if action.id() in actions_already_performed:
+			# TODO bad code: private member access
 			action._was_performed_this_turn = true
 
 

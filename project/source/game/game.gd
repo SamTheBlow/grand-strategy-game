@@ -70,6 +70,7 @@ func start() -> void:
 	if rules.turn_limit_enabled.value:
 		var turn_limit := TurnLimit.new()
 		turn_limit.final_turn = rules.turn_limit.value
+		# TODO bad code: private function
 		turn.turn_changed.connect(turn_limit._on_new_turn)
 		turn_limit.game_over.connect(_on_game_over)
 		_components.append(turn_limit)
@@ -90,6 +91,7 @@ func start() -> void:
 	turn.loop()
 
 
+# TODO bad code: private member access
 ## Initializes the [member Game.turn].
 ## The [member Game.rules] must be setup beforehand.
 func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:

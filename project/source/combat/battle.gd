@@ -1,7 +1,7 @@
 class_name Battle
 extends Resource
 ## This class defines the outcome of a battle between two opposing armies.
-# TODO this class is ugly, needs refactoring!
+# TODO this class is ugly, needs lots of refactoring!
 
 
 @export var _context_attacker_efficiency: ModifierContext

@@ -18,6 +18,7 @@ var _chat: Chat
 
 func _ready() -> void:
 	# TODO this networking interface stuff is ugly I think, shouldn't be here
+	# TODO bad code: private function
 	var networking_interface := (
 			networking_interface_scene.instantiate() as NetworkingInterface
 	)

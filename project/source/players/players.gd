@@ -167,6 +167,7 @@ func add_received_player(node_name: String) -> Player:
 	var player := Player.new()
 	player.name = node_name
 	if _sync_check:
+		# TODO bad code: private function
 		player.sync_finished.connect(_sync_check._on_player_sync_finished)
 	_is_synchronizing = true
 	add_player(player)
