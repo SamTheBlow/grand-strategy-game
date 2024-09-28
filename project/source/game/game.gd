@@ -19,7 +19,7 @@ var rules: GameRules:
 	set(value):
 		rules = value
 		rules.battle.battle_algorithm_option = (
-				rules.battle_algorithm_option.selected
+				rules.battle_algorithm_option.selected_value()
 		)
 		rules.battle.modifier_request = modifier_request
 		_setup_global_modifiers()

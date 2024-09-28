@@ -22,7 +22,7 @@ const DEFAULT_TYPE: Type = Type.NONE
 
 
 ## Used for the game rules.
-static func all_type_names() -> Array[String]:
+static func type_names() -> Array[String]:
 	return [
 		"None",
 		"Interventionist",
@@ -33,6 +33,16 @@ static func all_type_names() -> Array[String]:
 		"Erratic",
 		"Test AI: accepts everything",
 	]
+
+
+## Used for the game rules.
+static func type_values() -> Array[int]:
+	var output: Array[int] = []
+	for value: Variant in Type.values():
+		if value is not int:
+			continue
+		output.append(value)
+	return output
 
 
 ## This is where the AI generates its actions based on a given game state.

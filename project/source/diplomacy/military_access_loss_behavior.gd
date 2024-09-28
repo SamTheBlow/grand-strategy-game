@@ -69,7 +69,7 @@ func _apply(
 		affected_provinces: Array[Province]
 ) -> void:
 	# TODO bad code: hard coded values
-	match _game.rules.military_access_loss_behavior_option.selected:
+	match _game.rules.military_access_loss_behavior_option.selected_value():
 		0:
 			pass
 		1:

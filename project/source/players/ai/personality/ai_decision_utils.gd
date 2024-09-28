@@ -69,7 +69,7 @@ func strength_of_countries() -> Array[float]:
 			var province_score: float = 0.0
 			
 			# Score for money income
-			match game.rules.province_income_option.selected:
+			match game.rules.province_income_option.selected_value():
 				GameRules.ProvinceIncome.RANDOM:
 					province_score += (
 							SCORE_WEIGHT_MONEY_INCOME
@@ -89,7 +89,7 @@ func strength_of_countries() -> Array[float]:
 			
 			# Score for reinforcements
 			if game.rules.reinforcements_enabled:
-				match game.rules.reinforcements_option.selected:
+				match game.rules.reinforcements_option.selected_value():
 					GameRules.ReinforcementsOption.RANDOM:
 						province_score += (
 								SCORE_WEIGHT_REINFORCEMENTS

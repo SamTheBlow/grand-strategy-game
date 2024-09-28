@@ -46,7 +46,7 @@ func _check_number_winner(number_to_win: int) -> void:
 
 
 func _on_new_turn(_turn: int) -> void:
-	match _game.rules.game_over_provinces_owned_option.selected:
+	match _game.rules.game_over_provinces_owned_option.selected_value():
 		GameRules.GameOverProvincesOwnedOption.CONSTANT:
 			_check_number_winner(
 					_game.rules.game_over_provinces_owned_constant.value

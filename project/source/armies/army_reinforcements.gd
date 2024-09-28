@@ -24,7 +24,7 @@ func _reinforce_province() -> void:
 		return
 	
 	var reinforcements_size: int = 0
-	match _game.rules.reinforcements_option.selected:
+	match _game.rules.reinforcements_option.selected_value():
 		GameRules.ReinforcementsOption.RANDOM:
 			reinforcements_size = _game.rng.randi_range(
 					_game.rules.reinforcements_random_min.value,

@@ -456,15 +456,15 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		player.player_human_id = json_data[PLAYER_HUMAN_ID_KEY]
 	player.player_ai = PlayerAI.from_type(ai_type)
 	
-	var ai_personality_id: int = (
-			game.rules.default_ai_personality_option.selected
+	var ai_personality_type: int = (
+			game.rules.default_ai_personality_option.selected_value()
 	)
 	if ParseUtils.dictionary_has_number(json_data, PLAYER_AI_PERSONALITY_KEY):
-		ai_personality_id = (
+		ai_personality_type = (
 				ParseUtils.dictionary_int(json_data, PLAYER_AI_PERSONALITY_KEY)
 		)
 	var ai_personality: AIPersonality = (
-			AIPersonality.from_type(ai_personality_id)
+			AIPersonality.from_type(ai_personality_type)
 	)
 	if ai_personality != null:
 		player.player_ai.personality = ai_personality
@@ -524,7 +524,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			province.buildings.add(Fortress.new_fortress(game, province))
 	
 	if (
-			game.rules.province_income_option.selected
+			game.rules.province_income_option.selected_value()
 			== GameRules.ProvinceIncome.POPULATION
 	):
 		province._income_money = IncomeMoneyPerPopulation.new(

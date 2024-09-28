@@ -260,7 +260,7 @@ func _init() -> void:
 		"Constant",
 		"Percentage of world",
 	]
-	game_over_provinces_owned_option.selected = 2
+	game_over_provinces_owned_option.selected_index = 2
 	game_over_provinces_owned_option.sub_rules = [
 		game_over_provinces_owned_constant,
 		game_over_provinces_owned_percentage,
@@ -291,7 +291,7 @@ func _init() -> void:
 	reinforcements_option.options = [
 		"Random", "Constant", "Proportional to population size"
 	]
-	reinforcements_option.selected = 2
+	reinforcements_option.selected_index = 2
 	reinforcements_option.sub_rules = [
 		reinforcements_random_range,
 		reinforcements_constant,
@@ -378,7 +378,7 @@ func _init() -> void:
 	province_income_option.options = [
 		"Random", "Constant", "Proportional to population size"
 	]
-	province_income_option.selected = 2
+	province_income_option.selected_index = 2
 	province_income_option.sub_rules = [
 		province_income_random_range,
 		province_income_constant,
@@ -425,7 +425,7 @@ func _init() -> void:
 	battle_algorithm_option.options = [
 		"Standard", "Algorithm 2"
 	]
-	battle_algorithm_option.selected = 0
+	battle_algorithm_option.selected_index = 0
 	
 	default_ai_type.text = "Default AI type"
 	default_ai_type.minimum = 0
@@ -438,8 +438,12 @@ func _init() -> void:
 	start_with_random_ai_type.value = false
 	
 	default_ai_personality_option.text = "Default AI personality"
-	default_ai_personality_option.options = AIPersonality.all_type_names()
-	default_ai_personality_option.selected = AIPersonality.DEFAULT_TYPE
+	default_ai_personality_option.options = AIPersonality.type_names()
+	default_ai_personality_option.option_value_map = AIPersonality.type_values()
+	default_ai_personality_option.selected_index = (
+			default_ai_personality_option
+			.index_of_value(AIPersonality.DEFAULT_TYPE)
+	)
 	
 	start_with_random_ai_personality.text = (
 			"Players start with a random AI personality"
@@ -450,7 +454,7 @@ func _init() -> void:
 	diplomacy_presets_option.options = [
 		"Don't use presets", "Allied", "Neutral", "At war"
 	]
-	diplomacy_presets_option.selected = 2
+	diplomacy_presets_option.selected_index = 2
 	diplomacy_presets_option.sub_rules = [
 		starts_with_random_relationship_preset,
 		starts_with_random_relationship_preset,
@@ -494,7 +498,7 @@ func _init() -> void:
 		"Delete the armies",
 		"Teleport the armies to the nearest valid location",
 	]
-	military_access_loss_behavior_option.selected = 0
+	military_access_loss_behavior_option.selected_index = 0
 	
 	is_trespassing_default.text = "Trespass in other countries by default"
 	is_trespassing_default.value = true
@@ -707,7 +711,7 @@ func lock() -> void:
 
 
 func is_diplomacy_presets_enabled() -> bool:
-	return diplomacy_presets_option.selected != 0
+	return diplomacy_presets_option.selected_value() != 0
 
 
 func _connect_signals() -> void:

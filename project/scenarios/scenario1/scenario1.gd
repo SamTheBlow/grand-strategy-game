@@ -172,7 +172,7 @@ func as_json(game_rules: GameRules) -> Dictionary:
 			armies_data.append(army_data)
 		
 		# Income
-		match game_rules.province_income_option.selected:
+		match game_rules.province_income_option.selected_value():
 			GameRules.ProvinceIncome.RANDOM:
 				province_data["income_money"] = randi_range(
 						game_rules.province_income_random_min.value,
@@ -252,7 +252,7 @@ func _apply_random_ai_personality_type(
 	if not rules.start_with_random_ai_personality.value:
 		return
 	
-	var possible_personality_types: Array = AIPersonality.Type.values()
+	var possible_personality_types: Array[int] = AIPersonality.type_values()
 	possible_personality_types.erase(AIPersonality.Type.NONE)
 	possible_personality_types.erase(AIPersonality.Type.ACCEPTS_EVERYTHING)
 	if possible_personality_types.size() == 0:
@@ -262,7 +262,10 @@ func _apply_random_ai_personality_type(
 	var random_index: int = randi() % possible_personality_types.size()
 	var random_personality_type: int = possible_personality_types[random_index]
 	
-	if random_personality_type == rules.default_ai_personality_option.selected:
+	if (
+			random_personality_type
+			== rules.default_ai_personality_option.selected_value()
+	):
 		return
 	
 	dictionary.merge({"ai_personality_type": random_personality_type}, true)
