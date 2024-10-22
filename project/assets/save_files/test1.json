@@ -1,57 +1,57 @@
 {
 	"countries": [
 		{
-			"color": "bf0000ff",
+			"color": "bf0000",
 			"country_name": "United Kingdom",
 			"id": 0
 		},
 		{
-			"color": "0088ffff",
+			"color": "0088ff",
 			"country_name": "France",
 			"id": 1
 		},
 		{
-			"color": "807560ff",
+			"color": "807560",
 			"country_name": "Germany",
 			"id": 2
 		},
 		{
-			"color": "6080bfff",
+			"color": "6080bf",
 			"country_name": "Russia",
 			"id": 3
 		},
 		{
-			"color": "40ff40ff",
+			"color": "40ff40",
 			"country_name": "Italy",
 			"id": 4
 		},
 		{
-			"color": "ffaa80ff",
+			"color": "ffaa80",
 			"country_name": "Poland",
 			"id": 5
 		},
 		{
-			"color": "bf7060ff",
+			"color": "bf7060",
 			"country_name": "Switzerland",
 			"id": 6
 		},
 		{
-			"color": "60bf60ff",
+			"color": "60bf60",
 			"country_name": "Ireland",
 			"id": 7
 		},
 		{
-			"color": "bfffffff",
+			"color": "bfffff",
 			"country_name": "Austria",
 			"id": 8
 		},
 		{
-			"color": "804020ff",
+			"color": "804020",
 			"country_name": "Morocco",
 			"id": 9
 		},
 		{
-			"color": "afbf60ff",
+			"color": "afbf60",
 			"country_name": "Algeria",
 			"id": 10
 		}

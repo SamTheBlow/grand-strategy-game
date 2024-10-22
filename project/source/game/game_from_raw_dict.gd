@@ -263,7 +263,10 @@ func _load_country(json_data: Dictionary) -> Country:
 	
 	country.id = json_data[COUNTRY_ID_KEY]
 	country.country_name = json_data[COUNTRY_NAME_KEY]
-	country.color = Color(json_data[COUNTRY_COLOR_KEY])
+	
+	_load_country_color(json_data, country)
+	if error:
+		return null
 	
 	if json_data.has(COUNTRY_MONEY_KEY):
 		country.money = json_data[COUNTRY_MONEY_KEY]
@@ -271,6 +274,27 @@ func _load_country(json_data: Dictionary) -> Country:
 	country.notifications = GameNotifications.new()
 	
 	return country
+
+
+func _load_country_color(json_dict: Dictionary, country: Country) -> void:
+	if not ParseUtils.dictionary_has_string(json_dict, COUNTRY_COLOR_KEY):
+		error = true
+		error_message = "Country data does not contain a color (as HTML string)."
+		return
+	
+	var color_string: String = json_dict[COUNTRY_COLOR_KEY]
+	
+	if not Color.html_is_valid(color_string):
+		error = true
+		error_message = "Country data contains an invalid color string."
+		return
+	
+	var country_color: Color = Color.html(color_string)
+	
+	# Remove transparency
+	country_color.a = 1.0
+	
+	country.color = country_color
 
 
 func _load_diplomacy_relationships(json_dict: Dictionary, game: Game) -> void:
@@ -566,19 +590,59 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 	return false
 
 
-# TASK verify & return errors
 func _load_army(json_data: Dictionary, game: Game) -> void:
+	# Army ID (mandatory)
+	if not ParseUtils.dictionary_has_number(json_data, ARMY_ID_KEY):
+		error = true
+		error_message = "Army data doesn't contain an id."
+		return
+	# TASK verify that the army id is unique
+	var id: int = ParseUtils.dictionary_int(json_data, ARMY_ID_KEY)
+	
+	# Army size (optional, defaults to 1)
+	var army_size: int = 1
+	if ParseUtils.dictionary_has_number(json_data, ARMY_SIZE_KEY):
+		army_size = ParseUtils.dictionary_int(json_data, ARMY_SIZE_KEY)
+	
+	# Owner country (mandatory)
+	if not ParseUtils.dictionary_has_number(json_data, ARMY_OWNER_ID_KEY):
+		error = true
+		error_message = "Army data doesn't contain an owner country id."
+		return
+	var owner_country_id: int = (
+			ParseUtils.dictionary_int(json_data, ARMY_OWNER_ID_KEY)
+	)
+	var owner_country: Country = game.countries.country_from_id(owner_country_id)
+	if owner_country == null:
+		error = true
+		error_message = (
+				"Army data contains an invalid owner country id ("
+				+ str(owner_country_id) + ")."
+		)
+		return
+	
+	# Province (mandatory)
+	if not ParseUtils.dictionary_has_number(json_data, ARMY_PROVINCE_ID_KEY):
+		error = true
+		error_message = "Army data doesn't contain a province id."
+		return
+	var province_id: int = (
+			ParseUtils.dictionary_int(json_data, ARMY_PROVINCE_ID_KEY)
+	)
+	var province: Province = game.world.provinces.province_from_id(province_id)
+	if province == null:
+		error = true
+		error_message = (
+				"Army data contains an invalid province id ("
+				+ str(province_id) + ")."
+		)
+		return
+	
+	# Movements made (optional, defaults to 0)
 	var movements_made: int = 0
-	if json_data.has(ARMY_MOVEMENTS_KEY):
-		movements_made = int(json_data[ARMY_MOVEMENTS_KEY])
+	if ParseUtils.dictionary_has_number(json_data, ARMY_MOVEMENTS_KEY):
+		movements_made = ParseUtils.dictionary_int(json_data, ARMY_MOVEMENTS_KEY)
 	
 	var _army: Army = Army.quick_setup(
-			game,
-			json_data[ARMY_ID_KEY],
-			json_data[ARMY_SIZE_KEY],
-			game.countries.country_from_id(json_data[ARMY_OWNER_ID_KEY]),
-			game.world.provinces.province_from_id(
-					json_data[ARMY_PROVINCE_ID_KEY]
-			),
-			movements_made
+			game, id, army_size, owner_country, province, movements_made
 	)

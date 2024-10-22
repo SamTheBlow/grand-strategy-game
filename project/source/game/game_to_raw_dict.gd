@@ -28,11 +28,13 @@ func convert_game(game: Game) -> void:
 	# Countries
 	var countries_data: Array = []
 	for country in game.countries.list():
-		var country_data: Dictionary = {}
-		country_data[GameFromRawDict.COUNTRY_ID_KEY] = country.id
-		country_data[GameFromRawDict.COUNTRY_NAME_KEY] = country.country_name
-		country_data[GameFromRawDict.COUNTRY_COLOR_KEY] = country.color.to_html()
-		country_data[GameFromRawDict.COUNTRY_MONEY_KEY] = country.money
+		var country_data: Dictionary = {
+			GameFromRawDict.COUNTRY_ID_KEY: country.id,
+			GameFromRawDict.COUNTRY_NAME_KEY: country.country_name,
+			# Intentionally don't include transparency for the country color
+			GameFromRawDict.COUNTRY_COLOR_KEY: country.color.to_html(false),
+			GameFromRawDict.COUNTRY_MONEY_KEY: country.money,
+		}
 		
 		# Relationships
 		var raw_relationships: Array = (
@@ -102,7 +104,7 @@ func convert_game(game: Game) -> void:
 				global_position_army_host.y,
 		})
 		
-		# 4.0 backwards compatibility
+		# 4.0 backwards compatibility: data must always have a province owner id.
 		province_data[GameFromRawDict.PROVINCE_OWNER_ID_KEY] = (
 				province.owner_country.id
 				if province.owner_country != null else -1
@@ -140,7 +142,10 @@ func convert_game(game: Game) -> void:
 				GameFromRawDict.BUILDING_TYPE_KEY:
 					GameFromRawDict.BUILDING_TYPE_FORTRESS
 			})
-		province_data[GameFromRawDict.PROVINCE_BUILDINGS_KEY] = buildings_data
+		# 4.0 backwards compatibility: data must always have a buildings array.
+		province_data.merge({
+			GameFromRawDict.PROVINCE_BUILDINGS_KEY: buildings_data,
+		})
 		
 		provinces_data.append(province_data)
 	world_data[GameFromRawDict.WORLD_PROVINCES_KEY] = provinces_data
@@ -153,8 +158,14 @@ func convert_game(game: Game) -> void:
 			GameFromRawDict.ARMY_SIZE_KEY: army.army_size.current_size(),
 			GameFromRawDict.ARMY_OWNER_ID_KEY: army.owner_country.id,
 			GameFromRawDict.ARMY_PROVINCE_ID_KEY: army.province().id,
-			GameFromRawDict.ARMY_MOVEMENTS_KEY: army.movements_made(),
 		}
+		
+		# Movements made (only include this when it's not the default 0)
+		if army.movements_made() != 0:
+			army_data.merge({
+				GameFromRawDict.ARMY_MOVEMENTS_KEY: army.movements_made(),
+			})
+		
 		armies_data.append(army_data)
 	world_data[GameFromRawDict.WORLD_ARMIES_KEY] = armies_data
 	

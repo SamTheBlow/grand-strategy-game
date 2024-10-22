@@ -1,17 +1,17 @@
 {
 	"countries": [
 		{
-			"color": "aa0000ff",
+			"color": "aa0000",
 			"country_name": "Red Nation",
 			"id": 0
 		},
 		{
-			"color": "0022aaff",
+			"color": "0022aa",
 			"country_name": "Blue Nation",
 			"id": 1
 		},
 		{
-			"color": "20aa20ff",
+			"color": "20aa20",
 			"country_name": "Green Nation",
 			"id": 2
 		}
