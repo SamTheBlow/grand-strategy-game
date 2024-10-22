@@ -9,9 +9,7 @@ extends Control
 ## respective properties before adding this node to the scene tree.
 
 
-signal start_game_requested(scenario: PackedScene)
-
-@export var scenario_scene: PackedScene
+signal start_game_requested(generation_settings: GameRules)
 
 var players: Players:
 	set(value):
@@ -85,7 +83,7 @@ func _update_start_button_disabled() -> void:
 
 
 func _on_start_button_pressed() -> void:
-	start_game_requested.emit(scenario_scene)
+	start_game_requested.emit(game_rules)
 
 
 func _on_connected_to_server() -> void:

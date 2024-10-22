@@ -4,7 +4,7 @@ extends Node
 ## Currently only contains the [Lobby] and a [ChatInterface].
 
 
-signal game_started(scenario: PackedScene)
+signal game_started(generation_settings: GameRules)
 
 @export var networking_interface_scene: PackedScene
 
@@ -49,5 +49,5 @@ func setup_chat(chat: Chat) -> void:
 	_chat = chat
 
 
-func _on_start_game_requested(scenario: PackedScene) -> void:
-	game_started.emit(scenario)
+func _on_start_game_requested(generation_settings: GameRules) -> void:
+	game_started.emit(generation_settings)

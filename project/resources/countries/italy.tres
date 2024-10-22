@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="Countryy" load_steps=2 format=3 uid="uid://cv1c3otxwnw0c"]
-
-[ext_resource type="Script" path="res://source/countries/country.gd" id="1_8o8qd"]
-
-[resource]
-script = ExtResource("1_8o8qd")
-country_name = "Italy"
-color = Color(0.25098, 1, 0.25098, 1)

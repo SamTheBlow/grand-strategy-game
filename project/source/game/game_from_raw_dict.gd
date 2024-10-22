@@ -510,18 +510,22 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			json_data[PROVINCE_POSITION_ARMY_HOST_Y_KEY]
 	) - province.position
 	
-	province.owner_country = (
-			game.countries.country_from_id(json_data[PROVINCE_OWNER_ID_KEY])
-	)
+	if ParseUtils.dictionary_has_number(json_data, PROVINCE_OWNER_ID_KEY):
+		var country_id: int = (
+				ParseUtils.dictionary_int(json_data, PROVINCE_OWNER_ID_KEY)
+		)
+		province.owner_country = game.countries.country_from_id(country_id)
 	
 	province.population = Population.new(game)
 	province.population.population_size = (
 			json_data[PROVINCE_POPULATION_KEY][POPULATION_SIZE_KEY]
 	)
 	
-	for building: Dictionary in json_data[PROVINCE_BUILDINGS_KEY]:
-		if building[BUILDING_TYPE_KEY] == BUILDING_TYPE_FORTRESS:
-			province.buildings.add(Fortress.new_fortress(game, province))
+	if ParseUtils.dictionary_has_array(json_data, PROVINCE_BUILDINGS_KEY):
+		var buildings: Array = json_data[PROVINCE_BUILDINGS_KEY]
+		for building: Dictionary in buildings:
+			if building[BUILDING_TYPE_KEY] == BUILDING_TYPE_FORTRESS:
+				province.buildings.add(Fortress.new_fortress(game, province))
 	
 	if (
 			game.rules.province_income_option.selected_value()

@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="Country" load_steps=2 format=3 uid="uid://dwme1ktslqmi5"]
-
-[ext_resource type="Script" path="res://source/countries/country.gd" id="1_f4dvs"]
-
-[resource]
-script = ExtResource("1_f4dvs")
-country_name = "Austria"
-color = Color(0.74902, 1, 1, 1)

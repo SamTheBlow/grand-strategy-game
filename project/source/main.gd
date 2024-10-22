@@ -68,21 +68,21 @@ func load_game() -> void:
 	play_game(game_from_path.result)
 
 
-## Loads the test map and loads the new resulting game scene.
-## @deprecated
-func load_game_from_scenario(scenario: Scenario1) -> void:
-	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, game_rules.copy())
+## Loads the test map and populates it with given generation settings.
+func load_game_populated(generation_settings: GameRules) -> void:
+	var populated_game := GameLoadPopulated.new()
+	populated_game.load_game(
+			"res://assets/save_files/test1.json", generation_settings
+	)
 	
-	if game_from_scenario.error:
+	if populated_game.error:
 		push_warning(
-				"Failed to load the game from scenario: ",
-				game_from_scenario.error_message
+				"Failed to load & setup game: ", populated_game.error_message
 		)
-		chat.send_system_message("Failed to load the game")
+		chat.send_system_message("Failed to load & setup the game")
 		return
 	
-	play_game(game_from_scenario.result)
+	play_game(populated_game.result)
 
 
 ## Takes a [Game] instance, connects its signals, injects some dependencies
@@ -283,10 +283,8 @@ func _on_player_added(player: Player) -> void:
 
 ## Called when the "Start Game" button is pressed in the main menu.
 ## Loads the test map and starts the game.
-func _on_game_start_requested(scenario_scene: PackedScene) -> void:
-	var world: Node = scenario_scene.instantiate()
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	load_game_from_scenario(scenario)
+func _on_game_start_requested(generation_settings: GameRules) -> void:
+	load_game_populated(generation_settings)
 
 
 ## This function's name is a bit misleading, because it's precisely

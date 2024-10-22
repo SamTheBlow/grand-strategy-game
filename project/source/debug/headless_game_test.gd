@@ -1,10 +1,11 @@
 extends Node
-## Runs a new [Game] loaded from given scenario scene, without any visuals,
+## Runs a new [Game] from given file path, without any visuals,
 ## and lets the AIs play for 500 turns or until the game is over.
 ## Then, gives basic information about the game's outcome.
 
 
-@export var scenario_scene: PackedScene
+## The file path of the game to load.
+@export var load_file_path: String = "res://assets/save_files/test1.json"
 
 ## If true, this node will have no effect.
 @export var is_disabled: bool = false
@@ -22,16 +23,13 @@ func _ready() -> void:
 	if is_disabled:
 		return
 	
-	var world: Node = scenario_scene.instantiate()
-	var scenario := world.get_node("Scenarios/Scenario1") as Scenario1
-	
 	var game_rules := GameRules.new()
 	game_rules.turn_limit_enabled.value = true
 	game_rules.turn_limit.value = 500
 	
-	var game_from_scenario := GameFromScenario.new()
-	game_from_scenario.load_game(scenario, game_rules)
-	_game = game_from_scenario.result
+	var populated_game := GameLoadPopulated.new()
+	populated_game.load_game(load_file_path, game_rules)
+	_game = populated_game.result
 	
 	print("[HeadlessGameTest] Running the game...")
 	_game.turn.turn_changed.connect(_on_turn_changed)

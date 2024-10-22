@@ -1,8 +1,0 @@
-[gd_resource type="Resource" script_class="Countryy" load_steps=2 format=3 uid="uid://urfsfaoah1mj"]
-
-[ext_resource type="Script" path="res://source/countries/country.gd" id="1_cgcl2"]
-
-[resource]
-script = ExtResource("1_cgcl2")
-country_name = "France"
-color = Color(0, 0.533333, 1, 1)

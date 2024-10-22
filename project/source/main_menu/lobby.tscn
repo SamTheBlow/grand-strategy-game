@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=6 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" path="res://source/main_menu/lobby.gd" id="1_hty1g"]
-[ext_resource type="PackedScene" uid="uid://dt7gjsuwry1nc" path="res://scenarios/scenario1/world_test1.tscn" id="2_aiiyc"]
 [ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/rules/interface/items/rule_root.tscn" id="3_hb7ro"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
 [ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="5_wcm5s"]
@@ -16,7 +15,6 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_hty1g")
-scenario_scene = ExtResource("2_aiiyc")
 
 [node name="Background" type="ColorRect" parent="."]
 layout_mode = 1
