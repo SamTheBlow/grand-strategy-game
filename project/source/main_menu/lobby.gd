@@ -9,7 +9,7 @@ extends Control
 ## respective properties before adding this node to the scene tree.
 
 
-signal start_game_requested(generation_settings: GameRules)
+signal start_game_requested(map_file_path: String, game_rules: GameRules)
 
 var players: Players:
 	set(value):
@@ -27,7 +27,8 @@ var networking_interface: NetworkingInterface:
 		_setup_networking_interface()
 
 @onready var _player_list := %PlayerList as PlayerList
-@onready var _rules_interface := %Rules as RuleRootNode
+@onready var _map_interface := %Map as MapTabNode
+@onready var _rules_interface := %Rules as RulesTabNode
 @onready var _rules_disabled_node := %RulesDisabled as Control
 @onready var _start_button := %StartButton as Button
 
@@ -83,7 +84,8 @@ func _update_start_button_disabled() -> void:
 
 
 func _on_start_button_pressed() -> void:
-	start_game_requested.emit(game_rules)
+	var map_file_path: String = _map_interface.selected_map_file_path()
+	start_game_requested.emit(map_file_path, game_rules)
 
 
 func _on_connected_to_server() -> void:

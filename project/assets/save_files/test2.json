@@ -1,21 +1,25 @@
 {
 	"countries": [
 		{
-			"color": "aa0000",
+			"color": "f00000",
 			"country_name": "Red Nation",
 			"id": 0
 		},
 		{
-			"color": "0022aa",
+			"color": "0088ff",
 			"country_name": "Blue Nation",
 			"id": 1
 		},
 		{
-			"color": "20aa20",
+			"color": "20ff20",
 			"country_name": "Green Nation",
 			"id": 2
 		}
 	],
+	"meta": {
+		"icon": "../icon.svg",
+		"name": "Test map 2"
+	},
 	"version": "1",
 	"world": {
 		"armies": [

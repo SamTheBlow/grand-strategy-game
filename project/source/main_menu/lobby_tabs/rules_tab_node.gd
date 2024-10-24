@@ -1,4 +1,4 @@
-class_name RuleRootNode
+class_name RulesTabNode
 extends RuleInterface
 
 

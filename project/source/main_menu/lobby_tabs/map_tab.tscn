@@ -1,0 +1,143 @@
+[gd_scene load_steps=7 format=3 uid="uid://d0g80dnd658x4"]
+
+[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_tab_node.gd" id="1_g66gv"]
+[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_list_builtin.gd" id="1_rvbcv"]
+[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_id_system.gd" id="1_wn3fb"]
+[ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/lobby_tabs/map_option.tscn" id="3_552hi"]
+[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_list_custom.gd" id="5_gqysx"]
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_5umsw"]
+color = Color(1, 1, 1, 1)
+vertical = true
+
+[node name="Map" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_g66gv")
+
+[node name="ImportDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+title = "Import a file or scan a folder"
+initial_position = 1
+size = Vector2i(1200, 800)
+ok_button_text = "Select"
+dialog_hide_on_ok = true
+file_mode = 3
+access = 2
+filters = PackedStringArray("*.json")
+show_hidden_files = true
+
+[node name="MapIdSystem" type="Node" parent="."]
+script = ExtResource("1_wn3fb")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="BuiltInMaps" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Title" type="Label" parent="HBoxContainer/BuiltInMaps"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.075
+theme_override_font_sizes/font_size = 20
+text = "Built-in maps"
+vertical_alignment = 2
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/BuiltInMaps"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Control" type="PanelContainer" parent="HBoxContainer/BuiltInMaps/ScrollContainer"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MapListBuiltin" type="VBoxContainer" parent="HBoxContainer/BuiltInMaps/ScrollContainer/Control" node_paths=PackedStringArray("id_system")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+script = ExtResource("1_rvbcv")
+builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json"])
+id_system = NodePath("../../../../../MapIdSystem")
+map_option_node_scene = ExtResource("3_552hi")
+
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 64
+theme_override_styles/separator = SubResource("StyleBoxLine_5umsw")
+
+[node name="CustomMaps" type="Control" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Top" type="Control" parent="HBoxContainer/CustomMaps"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.075
+
+[node name="Title" type="Label" parent="HBoxContainer/CustomMaps/Top"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "Custom maps"
+vertical_alignment = 2
+
+[node name="ImportButton" type="Button" parent="HBoxContainer/CustomMaps/Top"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.8
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+text = "Import"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/CustomMaps"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.1
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Control" type="PanelContainer" parent="HBoxContainer/CustomMaps/ScrollContainer"]
+self_modulate = Color(1, 1, 1, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="MapListCustom" type="VBoxContainer" parent="HBoxContainer/CustomMaps/ScrollContainer/Control" node_paths=PackedStringArray("id_system")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+script = ExtResource("5_gqysx")
+id_system = NodePath("../../../../../MapIdSystem")
+map_option_node_scene = ExtResource("3_552hi")
+
+[connection signal="dir_selected" from="ImportDialog" to="HBoxContainer/CustomMaps/ScrollContainer/Control/MapListCustom" method="_on_import_dialog_dir_selected"]
+[connection signal="file_selected" from="ImportDialog" to="HBoxContainer/CustomMaps/ScrollContainer/Control/MapListCustom" method="_on_import_dialog_file_selected"]
+[connection signal="files_selected" from="ImportDialog" to="HBoxContainer/CustomMaps/ScrollContainer/Control/MapListCustom" method="_on_import_dialog_files_selected"]
+[connection signal="map_selected" from="HBoxContainer/BuiltInMaps/ScrollContainer/Control/MapListBuiltin" to="." method="_on_map_selected"]
+[connection signal="pressed" from="HBoxContainer/CustomMaps/Top/ImportButton" to="." method="_on_import_button_pressed"]
+[connection signal="map_selected" from="HBoxContainer/CustomMaps/ScrollContainer/Control/MapListCustom" to="." method="_on_map_selected"]

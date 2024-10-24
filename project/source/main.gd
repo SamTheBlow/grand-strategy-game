@@ -68,12 +68,12 @@ func load_game() -> void:
 	play_game(game_from_path.result)
 
 
-## Loads the test map and populates it with given generation settings.
-func load_game_populated(generation_settings: GameRules) -> void:
+## Loads map at given file path and populates it with given generation settings.
+func load_game_populated(
+		map_file_path: String, generation_settings: GameRules
+) -> void:
 	var populated_game := GameLoadPopulated.new()
-	populated_game.load_game(
-			"res://assets/save_files/test1.json", generation_settings
-	)
+	populated_game.load_game(map_file_path, generation_settings)
 	
 	if populated_game.error:
 		push_warning(
@@ -283,8 +283,10 @@ func _on_player_added(player: Player) -> void:
 
 ## Called when the "Start Game" button is pressed in the main menu.
 ## Loads the test map and starts the game.
-func _on_game_start_requested(generation_settings: GameRules) -> void:
-	load_game_populated(generation_settings)
+func _on_game_start_requested(
+		map_file_path: String, generation_settings: GameRules
+) -> void:
+	load_game_populated(map_file_path, generation_settings)
 
 
 ## This function's name is a bit misleading, because it's precisely

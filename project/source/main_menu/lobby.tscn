@@ -1,7 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=10 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" path="res://source/main_menu/lobby.gd" id="1_hty1g"]
-[ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/rules/interface/items/rule_root.tscn" id="3_hb7ro"]
+[ext_resource type="Script" path="res://source/ui/utils/interface_tabs.gd" id="2_vjg4m"]
+[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="3_ebbbm"]
+[ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/main_menu/lobby_tabs/rules_tab.tscn" id="3_hb7ro"]
+[ext_resource type="Script" path="res://source/ui/utils/id_button.gd" id="3_w00gd"]
+[ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/lobby_tabs/map_tab.tscn" id="5_0x7ha"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
 [ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="5_wcm5s"]
 
@@ -48,45 +52,90 @@ offset_top = 32.0
 offset_right = -16.0
 offset_bottom = -32.0
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer"]
 layout_mode = 2
+
+[node name="Tabs" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer" node_paths=PackedStringArray("buttons", "corresponding_ui")]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+script = ExtResource("2_vjg4m")
+buttons = [NodePath("HBoxContainer/Map"), NodePath("HBoxContainer/Rules")]
+corresponding_ui = [NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Map"), NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Rules")]
+
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 8
+
+[node name="Map" type="Button" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = ExtResource("3_ebbbm")
+text = "Map"
+script = ExtResource("3_w00gd")
+
+[node name="Rules" type="Button" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = ExtResource("3_ebbbm")
+text = "Rules"
+script = ExtResource("3_w00gd")
+id = 1
+
+[node name="Spacing" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 3.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
 follow_focus = true
 
-[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer"]
+[node name="PanelContainer" type="PanelContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gme8j")
 
-[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer"]
 layout_mode = 2
 
-[node name="MarginLeft" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+[node name="MarginLeft" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(12, 0)
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="MarginTop" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="MarginTop" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
-[node name="Rules" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("3_hb7ro")]
+[node name="Map" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("5_0x7ha")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Rules" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("3_hb7ro")]
 unique_name_in_owner = true
 layout_mode = 2
 scenes = ExtResource("5_wcm5s")
 
-[node name="MarginBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
+[node name="MarginBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
-[node name="MarginRight" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer/HBoxContainer"]
+[node name="MarginRight" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer"]
 custom_minimum_size = Vector2(12, 0)
 layout_mode = 2
 
-[node name="RulesDisabled" type="ColorRect" parent="HBoxContainer/Spacing75/MarginContainer/ScrollContainer/PanelContainer"]
+[node name="RulesDisabled" type="ColorRect" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 color = Color(0.25098, 0.25098, 0.25098, 0.25098)

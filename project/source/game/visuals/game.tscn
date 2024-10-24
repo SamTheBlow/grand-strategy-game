@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=31 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -28,13 +28,8 @@
 [ext_resource type="Script" path="res://source/ui/utils/id_button.gd" id="21_l7714"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://source/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
 [ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://source/notifications/visuals/game_notifications.tscn" id="25_v7fg0"]
+[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="26_eobj4"]
 [ext_resource type="Script" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ioeab"]
-bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bh543"]
-bg_color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
 [node name="Game" type="Node" node_paths=PackedStringArray("camera", "component_ui_root", "popups")]
 script = ExtResource("1_g7hfo")
@@ -182,7 +177,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_ioeab")
+theme_override_styles/normal = ExtResource("26_eobj4")
 text = "Turn Order"
 script = ExtResource("21_l7714")
 
@@ -206,7 +201,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_bh543")
+theme_override_styles/normal = ExtResource("26_eobj4")
 text = "Lobby"
 script = ExtResource("21_l7714")
 
