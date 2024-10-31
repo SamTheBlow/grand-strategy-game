@@ -18,6 +18,8 @@ var _selected_map_node: MapOptionNode
 		%MapListBuiltin as MapListBuiltin
 )
 @onready var _map_list_custom: MapListNode = %MapListCustom as MapListNode
+@onready var _scroll_builtin := %ScrollBuiltin as ScrollContainer
+@onready var _scroll_custom := %ScrollCustom as ScrollContainer
 @onready var _import_dialog := %ImportDialog as FileDialog
 
 
@@ -79,6 +81,37 @@ func _update_map_menu_state() -> void:
 	
 	# Highlight the selected map
 	_on_map_selected()
+	
+	# Scroll down so that the selected map is visible on screen
+	_scroll_to_selected_map()
+
+
+func _scroll_to_selected_map() -> void:
+	if _selected_map_node == null:
+		return
+	
+	var scroll_container: ScrollContainer
+	var map_list: MapListNode
+	
+	if map_menu_state.is_selected_map_builtin():
+		scroll_container = _scroll_builtin
+		map_list = _map_list_builtin
+	else:
+		scroll_container = _scroll_custom
+		map_list = _map_list_custom
+	
+	# Calculate the amount of vertical scroll to be done
+	var scroll_vertical: int = 0
+	var separation: int = map_list.get_theme_constant("separation")
+	for node in map_list.get_children():
+		if node == _selected_map_node:
+			break
+		if node is not Control:
+			continue
+		var control := node as Control
+		scroll_vertical += floori(control.size.y) + separation
+	
+	scroll_container.set_v_scroll.call_deferred(scroll_vertical)
 
 
 ## Called when the user clicks on a map to select it.
@@ -95,7 +128,8 @@ func _on_map_selected() -> void:
 
 
 func _on_custom_map_added(map_metadata: MapMetadata) -> void:
-	_map_list_custom.add_map(map_metadata, map_menu_state.number_of_maps())
+	var new_map_id: int = map_menu_state.number_of_maps() - 1
+	_map_list_custom.add_map(map_metadata, new_map_id)
 
 
 func _on_state_changed(_state: MapMenuState) -> void:

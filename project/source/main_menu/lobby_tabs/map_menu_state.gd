@@ -29,6 +29,12 @@ func set_selected_map_id(map_id: int) -> void:
 	selected_map_changed.emit()
 
 
+## Returns true if the selected map id
+## is a valid index in the built-in maps array.
+func is_selected_map_builtin() -> bool:
+	return _selected_map_id >= 0 and _selected_map_id < _builtin_maps.size()
+
+
 func builtin_maps() -> Array[MapMetadata]:
 	return _builtin_maps.duplicate()
 

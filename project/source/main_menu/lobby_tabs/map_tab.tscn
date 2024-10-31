@@ -57,20 +57,21 @@ theme_override_font_sizes/font_size = 20
 text = "Built-in maps"
 vertical_alignment = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/BuiltInMaps"]
+[node name="ScrollBuiltin" type="ScrollContainer" parent="HBoxContainer/BuiltInMaps"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.1
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Control" type="PanelContainer" parent="HBoxContainer/BuiltInMaps/ScrollContainer"]
+[node name="Control" type="PanelContainer" parent="HBoxContainer/BuiltInMaps/ScrollBuiltin"]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MapListBuiltin" type="VBoxContainer" parent="HBoxContainer/BuiltInMaps/ScrollContainer/Control"]
+[node name="MapListBuiltin" type="VBoxContainer" parent="HBoxContainer/BuiltInMaps/ScrollBuiltin/Control"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -117,20 +118,21 @@ offset_right = -4.0
 offset_bottom = -4.0
 text = "Import"
 
-[node name="ScrollContainer" type="ScrollContainer" parent="HBoxContainer/CustomMaps"]
+[node name="ScrollCustom" type="ScrollContainer" parent="HBoxContainer/CustomMaps"]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.1
 anchor_right = 1.0
 anchor_bottom = 1.0
 
-[node name="Control" type="PanelContainer" parent="HBoxContainer/CustomMaps/ScrollContainer"]
+[node name="Control" type="PanelContainer" parent="HBoxContainer/CustomMaps/ScrollCustom"]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="MapListCustom" type="VBoxContainer" parent="HBoxContainer/CustomMaps/ScrollContainer/Control"]
+[node name="MapListCustom" type="VBoxContainer" parent="HBoxContainer/CustomMaps/ScrollCustom/Control"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -142,6 +144,6 @@ map_option_node_scene = ExtResource("3_552hi")
 [connection signal="dir_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_dir_selected"]
 [connection signal="file_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_file_selected"]
 [connection signal="files_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_files_selected"]
-[connection signal="map_selected" from="HBoxContainer/BuiltInMaps/ScrollContainer/Control/MapListBuiltin" to="." method="_on_map_clicked"]
+[connection signal="map_selected" from="HBoxContainer/BuiltInMaps/ScrollBuiltin/Control/MapListBuiltin" to="." method="_on_map_clicked"]
 [connection signal="pressed" from="HBoxContainer/CustomMaps/Top/ImportButton" to="." method="_on_import_button_pressed"]
-[connection signal="map_selected" from="HBoxContainer/CustomMaps/ScrollContainer/Control/MapListCustom" to="." method="_on_map_clicked"]
+[connection signal="map_selected" from="HBoxContainer/CustomMaps/ScrollCustom/Control/MapListCustom" to="." method="_on_map_clicked"]
