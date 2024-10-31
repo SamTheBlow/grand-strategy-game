@@ -31,6 +31,7 @@ var current_scene: Node:
 		add_child(current_scene)
 
 # Things that need to persist between scenes
+var map_menu_state := MapMenuState.new()
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
 @onready var game_rules := $GameRules as GameRules
@@ -293,9 +294,7 @@ func _on_game_start_requested(
 ## the function that makes you enter the main menu.
 func _on_main_menu_entered() -> void:
 	var main_menu := main_menu_scene.instantiate() as MainMenu
-	main_menu.setup_players(players)
-	main_menu.setup_rules(game_rules)
-	main_menu.setup_chat(chat)
+	main_menu.inject(players, map_menu_state, game_rules, chat)
 	main_menu.game_started.connect(_on_game_start_requested)
 	_send_enter_main_menu_to_clients()
 	current_scene = main_menu

@@ -5,37 +5,27 @@ extends VBoxContainer
 
 signal map_selected(map_id: int)
 
-@export var id_system: MapIdSystem
 ## The scene's root node must extend [MapOptionNode].
 @export var map_option_node_scene: PackedScene
 
 var _list: Array[MapOptionNode] = []
 
 
-func _ready() -> void:
-	for child in get_children():
-		if child is MapOptionNode:
-			_list.append(child)
-
-
-func add_map(file_path: String) -> void:
-	# Don't add the map if it's already on the list
-	for node in _list:
-		if node.file_path == file_path:
-			return
-	
+func add_map(map_metadata: MapMetadata, map_id: int) -> void:
 	var new_map := map_option_node_scene.instantiate() as MapOptionNode
-	new_map.file_path = file_path
-	new_map.id = id_system.new_unique_id()
+	new_map.map_metadata = map_metadata
+	new_map.id = map_id
 	new_map.selected.connect(_on_map_selected)
 	add_child(new_map)
 	_list.append(new_map)
 
 
 ## Calls add_map for each file path in given array.
-func add_maps(file_paths: PackedStringArray) -> void:
-	for file_path in file_paths:
-		add_map(file_path)
+func add_maps(map_data_array: Array[MapMetadata], starting_map_id: int) -> void:
+	var map_id: int = starting_map_id
+	for map_data in map_data_array:
+		add_map(map_data, map_id)
+		map_id += 1
 
 
 ## May return null if there is no map with given id.

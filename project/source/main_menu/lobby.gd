@@ -16,6 +16,11 @@ var players: Players:
 		players = value
 		_setup_players()
 
+var map_menu_state: MapMenuState:
+	set(value):
+		map_menu_state = value
+		_setup_map_menu_state()
+
 var game_rules: GameRules:
 	set(value):
 		game_rules = value
@@ -35,6 +40,7 @@ var networking_interface: NetworkingInterface:
 
 func _ready() -> void:
 	_setup_players()
+	_setup_map_menu_state()
 	_setup_game_rules()
 	_setup_networking_interface()
 	
@@ -49,6 +55,13 @@ func _setup_players() -> void:
 		return
 	
 	_player_list.players = players
+
+
+func _setup_map_menu_state() -> void:
+	if not is_node_ready():
+		return
+	
+	_map_interface.map_menu_state = map_menu_state
 
 
 func _setup_game_rules() -> void:

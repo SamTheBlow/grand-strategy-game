@@ -9,6 +9,7 @@ signal game_started(map_file_path: String, generation_settings: GameRules)
 @export var networking_interface_scene: PackedScene
 
 var _players: Players
+var _map_menu_state: MapMenuState
 var _game_rules: GameRules
 var _chat: Chat
 
@@ -30,22 +31,21 @@ func _ready() -> void:
 	_chat.connect_chat_interface(_chat_interface)
 	
 	_lobby.players = _players
+	_lobby.map_menu_state = _map_menu_state
 	_lobby.game_rules = _game_rules
 	_lobby.networking_interface = networking_interface
 
 
 ## Dependency injection
-func setup_players(players: Players) -> void:
+func inject(
+		players: Players,
+		map_menu_state: MapMenuState,
+		game_rules: GameRules,
+		chat: Chat,
+) -> void:
 	_players = players
-
-
-## Dependency injection
-func setup_rules(game_rules: GameRules) -> void:
+	_map_menu_state = map_menu_state
 	_game_rules = game_rules
-
-
-## Dependency injection
-func setup_chat(chat: Chat) -> void:
 	_chat = chat
 
 

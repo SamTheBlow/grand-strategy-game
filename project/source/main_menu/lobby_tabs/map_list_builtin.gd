@@ -7,14 +7,8 @@ extends MapListNode
 @export var builtin_maps: Array[String] = []
 
 
-func _ready() -> void:
-	super()
-	for file_path in builtin_maps:
-		add_map(file_path)
-
-
-func add_map(file_path: String) -> void:
-	super(file_path)
+func add_map(map_metadata: MapMetadata, map_id: int) -> void:
+	super(map_metadata, map_id)
 	
 	# Hide the file path for built-in maps
 	if _list.size() > 0:

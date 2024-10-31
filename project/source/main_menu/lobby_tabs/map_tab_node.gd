@@ -7,28 +7,33 @@ extends MarginContainer
 ## There must be a map selected, and only one map can be selected at a time.
 
 
-signal map_selected(map_file_path: String)
+var map_menu_state: MapMenuState:
+	set(value):
+		map_menu_state = value
+		_update_map_menu_state()
 
-var _selected_map_id: int = 0
+var _selected_map_node: MapOptionNode
 
-@onready var _map_lists: Array[MapListNode] = [
-	%MapListBuiltin as MapListNode,
-	%MapListCustom as MapListNode,
-]
-
+@onready var _map_list_builtin: MapListBuiltin = (
+		%MapListBuiltin as MapListBuiltin
+)
+@onready var _map_list_custom: MapListNode = %MapListCustom as MapListNode
 @onready var _import_dialog := %ImportDialog as FileDialog
 
 
 func _ready() -> void:
-	_map_from_id(_selected_map_id).select()
+	_update_map_menu_state()
 
 
 func selected_map_file_path() -> String:
-	return _map_from_id(_selected_map_id).file_path
+	return (
+			_map_node_with_id(map_menu_state.selected_map_id())
+			.map_metadata.file_path
+	)
 
 
-func _map_from_id(map_id: int) -> MapOptionNode:
-	for map_list in _map_lists:
+func _map_node_with_id(map_id: int) -> MapOptionNode:
+	for map_list: MapListNode in [_map_list_builtin, _map_list_custom]:
 		var map_option_node: MapOptionNode = map_list.map_with_id(map_id)
 		if map_option_node != null:
 			return map_option_node
@@ -39,11 +44,62 @@ func _map_from_id(map_id: int) -> MapOptionNode:
 	return null
 
 
-func _on_map_selected(map_id: int) -> void:
-	_map_from_id(_selected_map_id).deselect()
-	_selected_map_id = map_id
-	_map_from_id(_selected_map_id).select()
-	map_selected.emit(selected_map_file_path())
+func _update_map_menu_state() -> void:
+	if map_menu_state == null or not is_node_ready():
+		return
+	
+	if not map_menu_state.selected_map_changed.is_connected(_on_map_selected):
+		map_menu_state.selected_map_changed.connect(_on_map_selected)
+	if not map_menu_state.custom_map_added.is_connected(_on_custom_map_added):
+		map_menu_state.custom_map_added.connect(_on_custom_map_added)
+	if not map_menu_state.state_changed.is_connected(_on_state_changed):
+		map_menu_state.state_changed.connect(_on_state_changed)
+	
+	(%MapMenuSync as MapMenuSync).active_state = map_menu_state
+	(%CustomMapImport as CustomMapImport).map_menu_state = map_menu_state
+	
+	# Load the built-in maps if they aren't loaded already
+	if map_menu_state.builtin_maps().size() == 0:
+		for builtin_map_file_path in _map_list_builtin.builtin_maps:
+			var builtin_map: MapMetadata = (
+					MapMetadata.from_file_path(builtin_map_file_path)
+			)
+			if builtin_map == null:
+				continue
+			map_menu_state.add_builtin_map(builtin_map)
+	
+	# Load the [MapOptionNode]s
+	var builtin_maps: Array[MapMetadata] = map_menu_state.builtin_maps()
+	_map_list_builtin.add_maps(builtin_maps, 0)
+	_map_list_custom.add_maps(map_menu_state.custom_maps(), builtin_maps.size())
+	
+	# If no map is selected, select the first map on the list by default
+	if map_menu_state.selected_map_id() == -1:
+		map_menu_state.set_selected_map_id(0)
+	
+	# Highlight the selected map
+	_on_map_selected()
+
+
+## Called when the user clicks on a map to select it.
+func _on_map_clicked(map_id: int) -> void:
+	map_menu_state.set_selected_map_id(map_id)
+
+
+## Called when the map menu state emits the signal "selected_map_changed".
+func _on_map_selected() -> void:
+	if _selected_map_node != null:
+		_selected_map_node.deselect()
+	_selected_map_node = _map_node_with_id(map_menu_state.selected_map_id())
+	_selected_map_node.select()
+
+
+func _on_custom_map_added(map_metadata: MapMetadata) -> void:
+	_map_list_custom.add_map(map_metadata, map_menu_state.number_of_maps())
+
+
+func _on_state_changed(_state: MapMenuState) -> void:
+	_update_map_menu_state()
 
 
 func _on_import_button_pressed() -> void:
