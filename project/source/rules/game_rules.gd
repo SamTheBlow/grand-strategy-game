@@ -168,7 +168,7 @@ var province_income_random_range: RuleRangeInt
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
 ## This is used to define the layout of the rule interface.
-## See also: [RulesTabNode]
+## See also: [RulesMenu]
 var root_rules: Array[RuleItem] = []
 
 

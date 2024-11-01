@@ -175,7 +175,8 @@ func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
 ## The client receives the info that we've entered the main menu.
 @rpc("authority", "call_remote", "reliable")
 func _receive_enter_main_menu() -> void:
-	_on_main_menu_entered()
+	if current_scene is not MainMenu:
+		_on_main_menu_entered()
 #endregion
 
 

@@ -1,11 +1,11 @@
 [gd_scene load_steps=8 format=3 uid="uid://d0g80dnd658x4"]
 
-[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_tab_node.gd" id="1_g66gv"]
-[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_list_builtin.gd" id="1_rvbcv"]
-[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_menu_sync.gd" id="2_2dfxo"]
-[ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/lobby_tabs/map_option.tscn" id="3_552hi"]
-[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/custom_map_import.gd" id="5_gqysx"]
-[ext_resource type="Script" path="res://source/main_menu/lobby_tabs/map_list_node.gd" id="6_t3cyj"]
+[ext_resource type="Script" path="res://source/main_menu/map_menu/map_menu.gd" id="1_fym1c"]
+[ext_resource type="Script" path="res://source/main_menu/map_menu/map_menu_sync.gd" id="2_mwcy0"]
+[ext_resource type="Script" path="res://source/main_menu/map_menu/custom_map_import.gd" id="3_2hr2h"]
+[ext_resource type="Script" path="res://source/main_menu/map_menu/map_list_builtin.gd" id="4_seblq"]
+[ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/map_menu/map_option.tscn" id="5_8fgbh"]
+[ext_resource type="Script" path="res://source/main_menu/map_menu/map_list_node.gd" id="6_12ix3"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_5umsw"]
 color = Color(1, 1, 1, 1)
@@ -19,15 +19,15 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-script = ExtResource("1_g66gv")
+script = ExtResource("1_fym1c")
 
 [node name="MapMenuSync" type="Node" parent="."]
 unique_name_in_owner = true
-script = ExtResource("2_2dfxo")
+script = ExtResource("2_mwcy0")
 
 [node name="CustomMapImport" type="Node" parent="."]
 unique_name_in_owner = true
-script = ExtResource("5_gqysx")
+script = ExtResource("3_2hr2h")
 
 [node name="ImportDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
@@ -77,9 +77,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
-script = ExtResource("1_rvbcv")
+script = ExtResource("4_seblq")
 builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json"])
-map_option_node_scene = ExtResource("3_552hi")
+map_option_node_scene = ExtResource("5_8fgbh")
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
@@ -138,9 +138,10 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
-script = ExtResource("6_t3cyj")
-map_option_node_scene = ExtResource("3_552hi")
+script = ExtResource("6_12ix3")
+map_option_node_scene = ExtResource("5_8fgbh")
 
+[connection signal="state_changed" from="MapMenuSync" to="." method="set_map_menu_state"]
 [connection signal="dir_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_dir_selected"]
 [connection signal="file_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_file_selected"]
 [connection signal="files_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_files_selected"]

@@ -1,4 +1,4 @@
-class_name RulesTabNode
+class_name RulesMenu
 extends RuleInterface
 
 

@@ -32,8 +32,8 @@ var networking_interface: NetworkingInterface:
 		_setup_networking_interface()
 
 @onready var _player_list := %PlayerList as PlayerList
-@onready var _map_interface := %Map as MapTabNode
-@onready var _rules_interface := %Rules as RulesTabNode
+@onready var _map_interface := %Map as MapMenu
+@onready var _rules_interface := %Rules as RulesMenu
 @onready var _rules_disabled_node := %RulesDisabled as Control
 @onready var _start_button := %StartButton as Button
 

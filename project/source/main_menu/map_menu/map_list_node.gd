@@ -28,6 +28,12 @@ func add_maps(map_data_array: Array[MapMetadata], starting_map_id: int) -> void:
 		map_id += 1
 
 
+func clear() -> void:
+	for map_option_node in _list:
+		remove_child(map_option_node)
+	_list.clear()
+
+
 ## May return null if there is no map with given id.
 func map_with_id(map_id: int) -> MapOptionNode:
 	for map_node in _list:

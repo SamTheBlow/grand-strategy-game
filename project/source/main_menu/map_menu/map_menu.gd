@@ -1,4 +1,4 @@
-class_name MapTabNode
+class_name MapMenu
 extends MarginContainer
 ## In the main menu, this is the tab for choosing the map.
 ## Shows all the available maps (built-in and custom).
@@ -8,22 +8,29 @@ extends MarginContainer
 
 
 var map_menu_state: MapMenuState:
-	set(value):
-		map_menu_state = value
-		_update_map_menu_state()
+	set = set_map_menu_state
 
 var _selected_map_node: MapOptionNode
 
+@onready var _sync := %MapMenuSync as MapMenuSync
+@onready var _import_dialog := %ImportDialog as FileDialog
 @onready var _map_list_builtin: MapListBuiltin = (
 		%MapListBuiltin as MapListBuiltin
 )
 @onready var _map_list_custom: MapListNode = %MapListCustom as MapListNode
 @onready var _scroll_builtin := %ScrollBuiltin as ScrollContainer
 @onready var _scroll_custom := %ScrollCustom as ScrollContainer
-@onready var _import_dialog := %ImportDialog as FileDialog
 
 
 func _ready() -> void:
+	_update_map_menu_state()
+
+
+# This is its own function so that other nodes can have signals that call this.
+func set_map_menu_state(value: MapMenuState) -> void:
+	_disconnect_signals()
+	map_menu_state = value
+	_connect_signals()
 	_update_map_menu_state()
 
 
@@ -50,14 +57,12 @@ func _update_map_menu_state() -> void:
 	if map_menu_state == null or not is_node_ready():
 		return
 	
-	if not map_menu_state.selected_map_changed.is_connected(_on_map_selected):
-		map_menu_state.selected_map_changed.connect(_on_map_selected)
-	if not map_menu_state.custom_map_added.is_connected(_on_custom_map_added):
-		map_menu_state.custom_map_added.connect(_on_custom_map_added)
-	if not map_menu_state.state_changed.is_connected(_on_state_changed):
-		map_menu_state.state_changed.connect(_on_state_changed)
+	_sync.active_state = map_menu_state
+	# Only set the current state as the local state
+	# the first time this function is called.
+	if _sync.local_state == null:
+		_sync.local_state = map_menu_state
 	
-	(%MapMenuSync as MapMenuSync).active_state = map_menu_state
 	(%CustomMapImport as CustomMapImport).map_menu_state = map_menu_state
 	
 	# Load the built-in maps if they aren't loaded already
@@ -69,6 +74,10 @@ func _update_map_menu_state() -> void:
 			if builtin_map == null:
 				continue
 			map_menu_state.add_builtin_map(builtin_map)
+	
+	# Remove any existing [MapOptionNode]
+	_map_list_builtin.clear()
+	_map_list_custom.clear()
 	
 	# Load the [MapOptionNode]s
 	var builtin_maps: Array[MapMetadata] = map_menu_state.builtin_maps()
@@ -112,6 +121,30 @@ func _scroll_to_selected_map() -> void:
 		scroll_vertical += floori(control.size.y) + separation
 	
 	scroll_container.set_v_scroll.call_deferred(scroll_vertical)
+
+
+func _connect_signals() -> void:
+	if map_menu_state == null:
+		return
+	
+	if not map_menu_state.selected_map_changed.is_connected(_on_map_selected):
+		map_menu_state.selected_map_changed.connect(_on_map_selected)
+	if not map_menu_state.custom_map_added.is_connected(_on_custom_map_added):
+		map_menu_state.custom_map_added.connect(_on_custom_map_added)
+	if not map_menu_state.state_changed.is_connected(_on_state_changed):
+		map_menu_state.state_changed.connect(_on_state_changed)
+
+
+func _disconnect_signals() -> void:
+	if map_menu_state == null:
+		return
+	
+	if map_menu_state.selected_map_changed.is_connected(_on_map_selected):
+		map_menu_state.selected_map_changed.disconnect(_on_map_selected)
+	if map_menu_state.custom_map_added.is_connected(_on_custom_map_added):
+		map_menu_state.custom_map_added.disconnect(_on_custom_map_added)
+	if map_menu_state.state_changed.is_connected(_on_state_changed):
+		map_menu_state.state_changed.disconnect(_on_state_changed)
 
 
 ## Called when the user clicks on a map to select it.
