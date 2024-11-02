@@ -79,7 +79,7 @@ func _send_active_state_to_clients() -> void:
 		return
 	
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc(active_state.get_raw_state())
+		_receive_state.rpc(active_state.get_raw_state(false))
 
 
 ## Updates the entire state on clients.
@@ -111,13 +111,13 @@ func _on_selected_map_changed() -> void:
 ## On the server, sends the newly added custom map to all clients.
 func _on_custom_map_added(map_metadata: MapMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_new_custom_map.rpc(map_metadata.to_dict())
+		_receive_new_custom_map.rpc(map_metadata.to_dict(false))
 
 
 ## On the server, sends the current state to the new client.
 func _on_peer_connected(peer_id: int) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc_id(peer_id, active_state.get_raw_state())
+		_receive_state.rpc_id(peer_id, active_state.get_raw_state(false))
 
 
 ## Resets the menu's state on disconnected clients.

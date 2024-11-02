@@ -58,14 +58,15 @@ func number_of_maps() -> int:
 
 
 ## Returns the entire state as a Dictionary. Useful for networking.
-func get_raw_state() -> Dictionary:
+## If include_file_paths is set to false, file paths will not be included.
+func get_raw_state(include_file_paths: bool = true) -> Dictionary:
 	var _raw_builtin_maps: Array = []
 	for builtin_map in _builtin_maps:
-		_raw_builtin_maps.append(builtin_map.to_dict())
+		_raw_builtin_maps.append(builtin_map.to_dict(include_file_paths))
 	
 	var _raw_custom_maps: Array = []
 	for custom_map in _custom_maps:
-		_raw_custom_maps.append(custom_map.to_dict())
+		_raw_custom_maps.append(custom_map.to_dict(include_file_paths))
 	
 	return {
 		KEY_SELECTED_MAP: _selected_map_id,

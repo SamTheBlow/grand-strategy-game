@@ -83,18 +83,30 @@ static func _map_icon_from_path(
 
 
 ## Returns the entire state as a raw Dictionary.
-func to_dict() -> Dictionary:
-	return {
+## If include_file_path is set to false, the file path will not be included.
+func to_dict(include_file_path: bool = true) -> Dictionary:
+	var output := {
 		"id": id,
 		"map_name": map_name,
-		"file_path": file_path,
 	}
+	
+	if include_file_path:
+		output.merge({
+			"file_path": file_path,
+		})
+	
+	return output
 
 
 ## Returns a new instance of this object built using given raw Dictionary.
 static func from_dict(dict: Dictionary) -> MapMetadata:
 	var new_map_data := MapMetadata.new()
-	new_map_data.id = dict["id"]
-	new_map_data.map_name = dict["map_name"]
-	new_map_data.file_path = dict["file_path"]
+	
+	if ParseUtils.dictionary_has_number(dict, "id"):
+		new_map_data.id = ParseUtils.dictionary_int(dict, "id")
+	if ParseUtils.dictionary_has_string(dict, "map_name"):
+		new_map_data.map_name = dict["map_name"]
+	if ParseUtils.dictionary_has_string(dict, "file_path"):
+		new_map_data.file_path = dict["file_path"]
+	
 	return new_map_data

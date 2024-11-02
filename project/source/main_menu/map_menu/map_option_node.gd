@@ -8,7 +8,8 @@ signal selected(id: int)
 @export var color_normal: Color
 @export var color_selected: Color
 
-@export var is_file_path_visible: bool = true:
+## If set to false, the file path will stay hidden no matter what.
+var is_file_path_visible: bool = true:
 	set(value):
 		is_file_path_visible = value
 		_update_file_path_visibility()
@@ -17,6 +18,7 @@ var map_metadata := MapMetadata.new():
 	set(value):
 		map_metadata = value
 		_update_info()
+		_update_file_path_visibility()
 
 var id: int = -1
 var _is_selected: bool = false
@@ -57,8 +59,12 @@ func _update_background_color() -> void:
 
 
 func _update_file_path_visibility() -> void:
-	if _file_path_node != null:
-		_file_path_node.visible = is_file_path_visible
+	if _file_path_node == null:
+		return
+	
+	_file_path_node.visible = (
+			is_file_path_visible and map_metadata.file_path != ""
+	)
 
 
 func _update_info() -> void:
