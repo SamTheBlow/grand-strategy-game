@@ -6,6 +6,8 @@ extends Node
 ## - The list of custom maps (idem)
 ## - The currently selected map
 ## When leaving a server, resets the entire state to what it was before joining.
+##
+## See also: [RulesMenuSync]
 
 
 ## Emitted on clients when the client receives a new state from the server,

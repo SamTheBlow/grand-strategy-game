@@ -1,18 +1,38 @@
 class_name GameRules
-extends Node
 ## Defines all the details on how a [Game] is to be played.
 ## This is just a data structure; it cannot enforce rules on its own.
 ## The different objects in the game must carefully read this object's
 ## properties in order to behave correctly.
 ##
-## This class is also responsible for defining the rule layout,
-## and for synchronizing the rules in online multiplayer.
+## This class is also responsible for defining the rule layout
+## for visual representation of the rules in a menu.
 
+
+signal rule_changed(rule_name: String, rule_item: RuleItem)
+
+enum ReinforcementsOption {
+	RANDOM = 0,
+	CONSTANT = 1,
+	POPULATION = 2,
+}
+
+enum ProvinceIncome {
+	RANDOM = 0,
+	CONSTANT = 1,
+	POPULATION = 2,
+}
+
+enum GameOverProvincesOwnedOption {
+	DISABLED = 0,
+	CONSTANT = 1,
+	PERCENTAGE = 2,
+}
 
 ## All of the individual rules.
 ## They must all point to a property in this class of type [RuleItem],
 ## and all of these [RuleItem]s must have a "value" property
-## as well as a "value_changed" signal.
+## as well as a "value_changed" signal. This signal must
+## pass itself (a [RuleItem]) as the only argument.
 const RULE_NAMES: Array[String] = [
 	"turn_limit_enabled",
 	"turn_limit",
@@ -68,24 +88,6 @@ const RULE_NAMES: Array[String] = [
 	"can_ask_to_stop_fighting",
 	"automatically_fight_back",
 ]
-
-enum ReinforcementsOption {
-	RANDOM = 0,
-	CONSTANT = 1,
-	POPULATION = 2,
-}
-
-enum ProvinceIncome {
-	RANDOM = 0,
-	CONSTANT = 1,
-	POPULATION = 2,
-}
-
-enum GameOverProvincesOwnedOption {
-	DISABLED = 0,
-	CONSTANT = 1,
-	PERCENTAGE = 2,
-}
 
 var diplomatic_presets: DiplomacyPresets
 var diplomatic_actions: DiplomacyActionDefinitions
@@ -656,6 +658,8 @@ func _init() -> void:
 		_category_diplomacy,
 	]
 	
+	_connect_signals()
+	
 	# TODO temporary. remove later
 	diplomatic_presets = DiplomacyPresets.new([
 		load("res://resources/diplomacy/presets/allied.tres"),
@@ -678,11 +682,6 @@ func _init() -> void:
 		load("res://resources/diplomacy/actions/ask_to_stop_fighting.tres"),
 	])
 	battle = load("res://resources/battle.tres") as Battle
-
-
-func _ready() -> void:
-	multiplayer.connected_to_server.connect(_on_connected_to_server)
-	_connect_signals()
 
 
 func all_rules() -> Array[RuleItem]:
@@ -742,48 +741,5 @@ func _set_rule(rule_name: String, value: Variant) -> void:
 	rule_item.set_data(value)
 
 
-#region Synchronize all the rules
-## Clients call this to ask the server for a full synchronization.
-## Has no effect if you're the server.
-func _request_all_data() -> void:
-	if multiplayer.is_server():
-		return
-	_send_all_data.rpc_id(1)
-
-
-@rpc("any_peer", "call_remote", "reliable")
-func _send_all_data() -> void:
-	if not multiplayer.is_server():
-		push_warning("Received server request, but you're not the server.")
-		return
-	_receive_all_data.rpc(RulesToRawDict.new().result(self))
-
-
-@rpc("authority", "call_remote", "reliable")
-func _receive_all_data(data: Dictionary) -> void:
-	for rule_name: String in data.keys():
-		_set_rule(rule_name, data.get(rule_name))
-#endregion
-
-
-#region Synchronize one specific rule
-## The server calls this to inform clients of a rule change.
-## This function has no effect if you're not connected as a server.
-func _send_rule_change_to_clients(rule_item: RuleItem) -> void:
-	if not MultiplayerUtils.is_server(multiplayer):
-		return
-	_receive_rule_change.rpc(_name_of_rule(rule_item), rule_item.get_data())
-
-
-@rpc("authority", "call_remote", "reliable")
-func _receive_rule_change(rule_name: String, value: Variant) -> void:
-	_set_rule(rule_name, value)
-#endregion
-
-
 func _on_rule_value_changed(rule_item: RuleItem) -> void:
-	_send_rule_change_to_clients(rule_item)
-
-
-func _on_connected_to_server() -> void:
-	_request_all_data()
+	rule_changed.emit(_name_of_rule(rule_item), rule_item)

@@ -16,6 +16,14 @@ extends MarginContainer
 @onready var _container := %Container as Control
 
 
+## Removes all existing rule nodes.
+func _clear() -> void:
+	if _container == null:
+		return
+	
+	NodeUtils.remove_all_children(_container)
+
+
 func _add_sub_rules(
 		sub_rules: Array[RuleItem],
 		with_spacing: bool = false,
