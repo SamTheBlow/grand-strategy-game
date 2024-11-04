@@ -2,15 +2,37 @@ class_name MapMetadata
 ## Data structure. Contains a game map's metadata.
 
 
+signal setting_changed(this: MapMetadata)
+signal state_updated(this: MapMetadata)
+
+# The keys used in save files
 const KEY_METADATA: String = "meta"
 const KEY_META_NAME: String = "name"
 const KEY_META_ICON: String = "icon"
+const KEY_META_SETTINGS: String = "settings"
 
-var id: int = -1
+# The keys used internally for the properties in this class
+const KEY_STATE_MAP_NAME: String = "map_name"
+const KEY_STATE_FILE_PATH: String = "file_path"
+const KEY_STATE_ICON: String = "icon"
+const KEY_STATE_SETTINGS: String = "settings"
+
 var map_name: String = ""
 var file_path: String = ""
 ## The map may have no icon, in which case this will be null.
 var icon: Texture2D
+## Keys must be of type String, values may be any "raw" type.
+var settings: Dictionary = {}
+
+
+## Emits a signal.
+## Please use this rather than manually editing the settings property.
+func set_setting(key: String, value: Variant) -> void:
+	if not ParseUtils.dictionary_has_dictionary(settings, key):
+		return
+	var setting_dict: Dictionary = settings[key]
+	setting_dict[MapSettings.KEY_VALUE] = value
+	setting_changed.emit(self)
 
 
 ## Returns a new MapMetadata instance with data loaded from given file path.
@@ -42,6 +64,15 @@ static func from_file_path(base_path: String) -> MapMetadata:
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
 		var map_icon_file_path: String = meta_dict[KEY_META_ICON]
 		result.icon = _map_icon_from_path(base_path, map_icon_file_path)
+	
+	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
+		# Only load settings whose key is of type String.
+		var settings_dict: Dictionary = meta_dict[KEY_META_SETTINGS]
+		for key: Variant in settings_dict.keys():
+			if key is not String:
+				continue
+			var key_string := key as String
+			result.settings.merge({key_string: settings_dict[key_string]})
 	
 	return result
 
@@ -86,13 +117,13 @@ static func _map_icon_from_path(
 ## If include_file_path is set to false, the file path will not be included.
 func to_dict(include_file_path: bool = true) -> Dictionary:
 	var output := {
-		"id": id,
-		"map_name": map_name,
+		KEY_STATE_MAP_NAME: map_name,
+		KEY_STATE_SETTINGS: settings,
 	}
 	
 	if include_file_path:
 		output.merge({
-			"file_path": file_path,
+			KEY_STATE_FILE_PATH: file_path,
 		})
 	
 	return output
@@ -102,11 +133,19 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 static func from_dict(dict: Dictionary) -> MapMetadata:
 	var new_map_data := MapMetadata.new()
 	
-	if ParseUtils.dictionary_has_number(dict, "id"):
-		new_map_data.id = ParseUtils.dictionary_int(dict, "id")
-	if ParseUtils.dictionary_has_string(dict, "map_name"):
-		new_map_data.map_name = dict["map_name"]
-	if ParseUtils.dictionary_has_string(dict, "file_path"):
-		new_map_data.file_path = dict["file_path"]
+	if ParseUtils.dictionary_has_string(dict, KEY_STATE_MAP_NAME):
+		new_map_data.map_name = dict[KEY_STATE_MAP_NAME]
+	if ParseUtils.dictionary_has_string(dict, KEY_STATE_FILE_PATH):
+		new_map_data.file_path = dict[KEY_STATE_FILE_PATH]
+	if ParseUtils.dictionary_has_dictionary(dict, KEY_STATE_SETTINGS):
+		new_map_data.settings = dict[KEY_STATE_SETTINGS]
 	
 	return new_map_data
+
+
+## Copies the state of this metadata to match the given one.
+func copy_state_of(map_metadata: MapMetadata) -> void:
+	map_name = map_metadata.map_name
+	file_path = map_metadata.file_path
+	settings = map_metadata.settings
+	state_updated.emit(self)

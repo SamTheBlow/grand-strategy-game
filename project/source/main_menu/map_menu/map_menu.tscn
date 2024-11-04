@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://d0g80dnd658x4"]
+[gd_scene load_steps=9 format=3 uid="uid://d0g80dnd658x4"]
 
 [ext_resource type="Script" path="res://source/main_menu/map_menu/map_menu.gd" id="1_fym1c"]
 [ext_resource type="Script" path="res://source/main_menu/map_menu/map_menu_sync.gd" id="2_mwcy0"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://source/main_menu/map_menu/map_list_builtin.gd" id="4_seblq"]
 [ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/map_menu/map_option.tscn" id="5_8fgbh"]
 [ext_resource type="Script" path="res://source/main_menu/map_menu/map_list_node.gd" id="6_12ix3"]
+[ext_resource type="PackedScene" uid="uid://7dfhary26tgm" path="res://source/main_menu/map_menu/map_settings.tscn" id="6_mboei"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_5umsw"]
 color = Color(1, 1, 1, 1)
@@ -78,8 +79,9 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 script = ExtResource("4_seblq")
-builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json"])
+builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
 map_option_node_scene = ExtResource("5_8fgbh")
+map_settings_scene = ExtResource("6_mboei")
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
 layout_mode = 2
@@ -140,6 +142,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 8
 script = ExtResource("6_12ix3")
 map_option_node_scene = ExtResource("5_8fgbh")
+map_settings_scene = ExtResource("6_mboei")
 
 [connection signal="state_changed" from="MapMenuSync" to="." method="set_map_menu_state"]
 [connection signal="dir_selected" from="ImportDialog" to="CustomMapImport" method="_on_import_dialog_dir_selected"]

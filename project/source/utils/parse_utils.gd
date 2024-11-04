@@ -25,6 +25,13 @@ static func dictionary_int(dictionary: Dictionary, key: String) -> int:
 	return number_as_int(dictionary[key])
 
 
+## Returns the value associated with given key in given dictionary,
+## parsed as a float. This may crash the game! Make sure that the dictionary
+## has the key and that it's indeed a number, using dictionary_has_number.
+static func dictionary_float(dictionary: Dictionary, key: String) -> float:
+	return number_as_float(dictionary[key])
+
+
 ## Returns true if given dictionary has given key and its value is a boolean.
 static func dictionary_has_bool(dictionary: Dictionary, key: String) -> bool:
 	return dictionary.has(key) and dictionary[key] is bool
@@ -98,3 +105,22 @@ static func number_as_int(variant: Variant) -> int:
 	
 	push_error("That's not a valid number!")
 	return 0
+
+
+## Returns the given number parsed as a float.
+## Consider using is_number first to make sure it's a number.
+static func number_as_float(variant: Variant) -> float:
+	match typeof(variant):
+		TYPE_INT:
+			return float(variant)
+		TYPE_FLOAT:
+			return variant
+		TYPE_STRING:
+			var string := variant as String
+			if string.is_valid_int():
+				return number_as_float(string.to_int())
+			elif string.is_valid_float():
+				return string.to_float()
+	
+	push_error("That's not a valid number!")
+	return 0.0

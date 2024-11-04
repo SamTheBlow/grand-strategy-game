@@ -8,6 +8,9 @@ signal selected_map_changed()
 signal builtin_map_added(map_metadata: MapMetadata)
 ## This is not emitted when updating the entire state at once.
 signal custom_map_added(map_metadata: MapMetadata)
+## Emitted when information inside a map's metadata is changed.
+## This is not emitted when updating the entire state at once.
+signal metadata_changed(map_id: int, map_metadata: MapMetadata)
 ## Emitted after the entire state is updated.
 signal state_changed(this: MapMenuState)
 
@@ -18,6 +21,20 @@ const KEY_CUSTOM_MAP_LIST: String = "custom_map_list"
 var _selected_map_id: int = -1
 var _builtin_maps: Array[MapMetadata] = []
 var _custom_maps: Array[MapMetadata] = []
+
+
+## May return null if there is no map with given map id.
+func map_with_id(map_id: int) -> MapMetadata:
+	var counter: int = 0
+	for map in _builtin_maps:
+		if counter == map_id:
+			return map
+		counter += 1
+	for map in _custom_maps:
+		if counter == map_id:
+			return map
+		counter += 1
+	return null
 
 
 func selected_map_id() -> int:
@@ -40,6 +57,7 @@ func builtin_maps() -> Array[MapMetadata]:
 
 
 func add_builtin_map(map_metadata: MapMetadata) -> void:
+	map_metadata.setting_changed.connect(_on_metadata_changed)
 	_builtin_maps.append(map_metadata)
 	builtin_map_added.emit(map_metadata)
 
@@ -49,6 +67,7 @@ func custom_maps() -> Array[MapMetadata]:
 
 
 func add_custom_map(map_metadata: MapMetadata) -> void:
+	map_metadata.setting_changed.connect(_on_metadata_changed)
 	_custom_maps.append(map_metadata)
 	custom_map_added.emit(map_metadata)
 
@@ -99,4 +118,26 @@ func _populate_map_list(map_list: Array[MapMetadata], list_data: Array) -> void:
 		if element is not Dictionary:
 			continue
 		var map_data := element as Dictionary
-		map_list.append(MapMetadata.from_dict(map_data))
+		
+		var map_metadata: MapMetadata = MapMetadata.from_dict(map_data)
+		map_metadata.setting_changed.connect(_on_metadata_changed)
+		
+		map_list.append(map_metadata)
+
+
+## Returns -1 if this metadata is not on one of the lists.
+func _id_of(metadata: MapMetadata) -> int:
+	var output: int = 0
+	for map in _builtin_maps:
+		if metadata == map:
+			return output
+		output += 1
+	for map in _custom_maps:
+		if metadata == map:
+			return output
+		output += 1
+	return -1
+
+
+func _on_metadata_changed(metadata: MapMetadata) -> void:
+	metadata_changed.emit(_id_of(metadata), metadata)

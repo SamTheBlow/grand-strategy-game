@@ -1,0 +1,31 @@
+[gd_scene load_steps=2 format=3 uid="uid://ydwe327bb446"]
+
+[ext_resource type="Script" path="res://source/main_menu/map_menu/map_settings_items/setting_float_node.gd" id="1_p2ldh"]
+
+[node name="SettingFloat" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_p2ldh")
+
+[node name="Container" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Container"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Container/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Integer"
+
+[node name="SpinBox" type="SpinBox" parent="Container/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.0
+allow_greater = true
+allow_lesser = true
+alignment = 1

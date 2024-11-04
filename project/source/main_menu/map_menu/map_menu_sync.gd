@@ -56,6 +56,11 @@ func _connect_signals() -> void:
 			.is_connected(_on_custom_map_added)
 	):
 		active_state.custom_map_added.connect(_on_custom_map_added)
+	if (
+			not active_state.metadata_changed
+			.is_connected(_on_metadata_changed)
+	):
+		active_state.metadata_changed.connect(_on_metadata_changed)
 
 
 func _disconnect_signals() -> void:
@@ -72,6 +77,11 @@ func _disconnect_signals() -> void:
 			.is_connected(_on_custom_map_added)
 	):
 		active_state.custom_map_added.disconnect(_on_custom_map_added)
+	if (
+			active_state.metadata_changed
+			.is_connected(_on_metadata_changed)
+	):
+		active_state.metadata_changed.disconnect(_on_metadata_changed)
 
 
 ## Sends the active state to all clients.
@@ -104,6 +114,17 @@ func _receive_new_custom_map(raw_map_metadata: Dictionary) -> void:
 	active_state.add_custom_map(MapMetadata.from_dict(raw_map_metadata))
 
 
+## Updates a map's metadata on clients.
+@rpc("authority", "call_remote", "reliable")
+func _receive_metadata_change(map_id: int, raw_map_metadata: Dictionary) -> void:
+	var metadata_to_change: MapMetadata = active_state.map_with_id(map_id)
+	if metadata_to_change == null:
+		push_error("Received an invalid map metadata id when trying to sync.")
+		return
+	
+	metadata_to_change.copy_state_of(MapMetadata.from_dict(raw_map_metadata))
+
+
 ## On the server, sends the newly selected map to all clients.
 func _on_selected_map_changed() -> void:
 	if MultiplayerUtils.is_server(multiplayer):
@@ -114,6 +135,12 @@ func _on_selected_map_changed() -> void:
 func _on_custom_map_added(map_metadata: MapMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_new_custom_map.rpc(map_metadata.to_dict(false))
+
+
+## On the server, sends the changed metadata to all clients.
+func _on_metadata_changed(map_id: int, map_metadata: MapMetadata) -> void:
+	if MultiplayerUtils.is_server(multiplayer):
+		_receive_metadata_change.rpc(map_id, map_metadata.to_dict(false))
 
 
 ## On the server, sends the current state to the new client.

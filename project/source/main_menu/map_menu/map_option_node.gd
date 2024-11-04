@@ -20,6 +20,8 @@ var map_metadata := MapMetadata.new():
 		_update_info()
 		_update_file_path_visibility()
 
+var map_settings: MapSettings
+
 var id: int = -1
 var _is_selected: bool = false
 
@@ -33,29 +35,36 @@ var _is_selected: bool = false
 func _ready() -> void:
 	_update_info()
 	_update_background_color()
+	_update_settings_visibility()
 	_update_file_path_visibility()
 
 
-## Adds highlight to this item.
+## Adds highlight and shows the map's settings.
 func select() -> void:
 	if _is_selected:
 		return
 	
 	_is_selected = true
 	_update_background_color()
+	_update_settings_visibility()
 
 
-## Removes highlight from this item.
+## Removes highlight and hides the map's settings.
 func deselect() -> void:
 	if not _is_selected:
 		return
 	
 	_is_selected = false
 	_update_background_color()
+	_update_settings_visibility()
 
 
 func _update_background_color() -> void:
 	_background_color.color = color_selected if _is_selected else color_normal
+
+
+func _update_settings_visibility() -> void:
+	map_settings.visible = _is_selected and not map_settings.is_empty()
 
 
 func _update_file_path_visibility() -> void:
@@ -68,12 +77,13 @@ func _update_file_path_visibility() -> void:
 
 
 func _update_info() -> void:
-	if not is_node_ready():
+	if map_metadata == null or not is_node_ready():
 		return
 	
 	_icon_texture.texture = map_metadata.icon
 	_name_label.text = map_metadata.map_name
 	_file_path_label.text = map_metadata.file_path
+	map_settings.map_metadata = map_metadata
 
 
 func _on_button_pressed() -> void:

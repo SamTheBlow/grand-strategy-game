@@ -7,6 +7,8 @@ signal map_selected(map_id: int)
 
 ## The scene's root node must extend [MapOptionNode].
 @export var map_option_node_scene: PackedScene
+## The scene's root node must extend [MapSettings].
+@export var map_settings_scene: PackedScene
 
 var _list: Array[MapOptionNode] = []
 
@@ -16,7 +18,12 @@ func add_map(map_metadata: MapMetadata, map_id: int) -> void:
 	new_map.map_metadata = map_metadata
 	new_map.id = map_id
 	new_map.selected.connect(_on_map_selected)
+	
+	var map_settings := map_settings_scene.instantiate() as MapSettings
+	new_map.map_settings = map_settings
+	
 	add_child(new_map)
+	add_child(map_settings)
 	_list.append(new_map)
 
 
