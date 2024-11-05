@@ -215,6 +215,10 @@ func load_game(json_data: Variant) -> void:
 			province.links.append(world.provinces.province_from_id(link))
 	
 	# Armies
+	if not ParseUtils.dictionary_has_array(
+			json_dict[WORLD_KEY], WORLD_ARMIES_KEY
+	):
+		json_dict[WORLD_KEY][WORLD_ARMIES_KEY] = []
 	var armies_error: bool = _load_armies(
 			json_dict[WORLD_KEY][WORLD_ARMIES_KEY], game
 	)

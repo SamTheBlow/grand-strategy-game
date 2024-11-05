@@ -34,11 +34,8 @@ func set_map_menu_state(value: MapMenuState) -> void:
 	_update_map_menu_state()
 
 
-func selected_map_file_path() -> String:
-	return (
-			_map_node_with_id(map_menu_state.selected_map_id())
-			.map_metadata.file_path
-	)
+func selected_map() -> MapMetadata:
+	return _selected_map_node.map_metadata
 
 
 func _map_node_with_id(map_id: int) -> MapOptionNode:

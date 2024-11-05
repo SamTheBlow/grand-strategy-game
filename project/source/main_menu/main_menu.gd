@@ -4,7 +4,7 @@ extends Node
 ## Currently only contains the [Lobby] and a [ChatInterface].
 
 
-signal game_started(map_file_path: String, generation_settings: GameRules)
+signal game_started(map_metadata: MapMetadata, generation_settings: GameRules)
 
 @export var networking_interface_scene: PackedScene
 
@@ -50,6 +50,6 @@ func inject(
 
 
 func _on_start_game_requested(
-		map_file_path: String, generation_settings: GameRules
+		map_metadata: MapMetadata, generation_settings: GameRules
 ) -> void:
-	game_started.emit(map_file_path, generation_settings)
+	game_started.emit(map_metadata, generation_settings)

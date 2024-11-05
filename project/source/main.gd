@@ -71,10 +71,15 @@ func load_game() -> void:
 
 ## Loads map at given file path and populates it with given generation settings.
 func load_game_populated(
-		map_file_path: String, generation_settings: GameRules
+		map_metadata: MapMetadata, generation_settings: GameRules
 ) -> void:
+	# Temporary
+	if map_metadata.file_path == "res://assets/save_files/test3.json":
+		load_game_generated(map_metadata, generation_settings)
+		return
+	
 	var populated_game := GameLoadPopulated.new()
-	populated_game.load_game(map_file_path, generation_settings)
+	populated_game.load_game(map_metadata.file_path, generation_settings)
 	
 	if populated_game.error:
 		push_warning(
@@ -84,6 +89,23 @@ func load_game_populated(
 		return
 	
 	play_game(populated_game.result)
+
+
+## Generates a world and populates it with given generation settings.
+func load_game_generated(
+		map_metadata: MapMetadata, game_rules: GameRules
+) -> void:
+	var generated_game := GameLoadGenerated.new()
+	generated_game.load_game(map_metadata, game_rules)
+	
+	if generated_game.error:
+		push_warning(
+				"Failed to load & setup game: ", generated_game.error_message
+		)
+		chat.send_system_message("Failed to load & setup the game")
+		return
+	
+	play_game(generated_game.result)
 
 
 ## Takes a [Game] instance, connects its signals, injects some dependencies
@@ -286,9 +308,9 @@ func _on_player_added(player: Player) -> void:
 ## Called when the "Start Game" button is pressed in the main menu.
 ## Loads the test map and starts the game.
 func _on_game_start_requested(
-		map_file_path: String, generation_settings: GameRules
+		map_metadata: MapMetadata, generation_settings: GameRules
 ) -> void:
-	load_game_populated(map_file_path, generation_settings)
+	load_game_populated(map_metadata, generation_settings)
 
 
 ## This function's name is a bit misleading, because it's precisely
