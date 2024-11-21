@@ -124,6 +124,9 @@ func apply(input_json: Variant, generation_settings: GameRules) -> void:
 		):
 			_add_fortress(province_data)
 	
+	# Armies
+	_add_starting_armies(world_data)
+	
 	output_json["world"] = world_data
 	
 	result = output_json
@@ -361,6 +364,42 @@ func _apply_random_ai_personality_type(
 		return
 	
 	dictionary.merge({"ai_personality_type": random_personality_type}, true)
+
+
+## Adds an army of given size in one province of each country.
+func _add_starting_armies(world_data: Dictionary, army_size: int = 1000) -> void:
+	var army_array: Array = []
+	
+	var already_supplied_country_ids: Array[int] = []
+	var provinces_array := (
+			world_data[GameFromRawDict.WORLD_PROVINCES_KEY] as Array
+	)
+	for province_data: Variant in provinces_array:
+		var province_dict := province_data as Dictionary
+		if not ParseUtils.dictionary_has_number(
+				province_dict, GameFromRawDict.PROVINCE_OWNER_ID_KEY
+		):
+			continue
+		var owner_id: int = ParseUtils.dictionary_int(
+				province_dict, GameFromRawDict.PROVINCE_OWNER_ID_KEY
+		)
+		if owner_id == -1 or owner_id in already_supplied_country_ids:
+			continue
+		
+		var army_id: int = already_supplied_country_ids.size() + 1
+		var province_id: int = ParseUtils.dictionary_int(
+				province_dict, GameFromRawDict.PROVINCE_ID_KEY
+		)
+		
+		army_array.append({
+			GameFromRawDict.ARMY_ID_KEY: army_id,
+			GameFromRawDict.ARMY_SIZE_KEY: army_size,
+			GameFromRawDict.ARMY_OWNER_ID_KEY: owner_id,
+			GameFromRawDict.ARMY_PROVINCE_ID_KEY: province_id,
+		})
+		already_supplied_country_ids.append(owner_id)
+	
+	world_data.merge({GameFromRawDict.WORLD_ARMIES_KEY: army_array}, true)
 
 
 func _add_fortress(province_data: Dictionary) -> void:

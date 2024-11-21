@@ -28,10 +28,12 @@ static func has_authority(multiplayer: MultiplayerAPI) -> bool:
 
 
 ## Returns true if you represent the given player.
+## In other words, the given player is a human player and isn't a remote player.
 static func has_gameplay_authority(
 		multiplayer: MultiplayerAPI, player: GamePlayer
 ) -> bool:
-	return not (
-			is_online(multiplayer) and player.is_human
-			and player.player_human != null and player.player_human.is_remote()
+	return player.is_human and not (
+			is_online(multiplayer)
+			and player.player_human != null
+			and player.player_human.is_remote()
 	)

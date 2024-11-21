@@ -30,4 +30,4 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 
 func _on_player_human_status_changed(player: GamePlayer) -> void:
 	if not player.is_human:
-		_turn.end_turn()
+		_turn.start()

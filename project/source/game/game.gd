@@ -3,10 +3,6 @@ class_name Game
 ## There are so many things to setup, there are entire classes
 ## dedicated to loading the game (see [LoadGame], [GameFromRawDict]...).
 ## Doing the setup manually yourself is not recommended.
-##
-## This class is very bloated.
-## It's typical for a class to store the game in their properties
-## just to access other classes in the game.
 
 
 signal game_started()
@@ -88,17 +84,13 @@ func start() -> void:
 	
 	rules.lock()
 	game_started.emit()
-	turn.loop()
+	turn.start()
 
 
-# TODO bad code: private member access
 ## Initializes the [member Game.turn].
 ## The [member Game.rules] must be setup beforehand.
 func setup_turn(starting_turn: int = 1, playing_player_index: int = 0) -> void:
-	turn = GameTurn.new()
-	turn.game = self
-	turn._turn = starting_turn
-	turn._playing_player_index = playing_player_index
+	turn = GameTurn.new(self, starting_turn, playing_player_index)
 
 
 func apply_action(action: Action) -> void:
