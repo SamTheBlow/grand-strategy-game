@@ -48,7 +48,7 @@ var owner_country: Country:
 		if value == null:
 			push_warning("Tried to set an army's owner country to null!")
 			return
-		
+
 		owner_country = value
 		allegiance_changed.emit(owner_country)
 
@@ -59,7 +59,7 @@ var _province: Province:
 		if value == null:
 			push_warning("Tried to set an army's province to null!")
 			return
-		
+
 		_province = value
 		province_changed.emit(self)
 
@@ -90,13 +90,13 @@ static func quick_setup(
 				+ "but its size is smaller than the minimum allowed."
 		)
 		return null
-	
+
 	var army := Army.new()
 	army.id = id_
 	army.army_size = ArmySize.new(army_size_, minimum_army_size)
 	army.owner_country = owner_country_
 	army._movements_made = movements_made_
-	
+
 	game.turn.player_changed.connect(army._on_player_turn_changed)
 	game.world.armies.add_army(army)
 	army.teleport_to_province(province_)
@@ -141,7 +141,7 @@ func move_to_province(destination: Province) -> void:
 	if not can_move_to(destination):
 		push_error("Tried to move an army to a province it can't move to.")
 		return
-	
+
 	_movements_made += 1
 	_province = destination
 	moved_to_province.emit(destination)
@@ -165,6 +165,14 @@ func movements_made() -> int:
 func exhaust() -> void:
 	# (In the future it won't be that simple)
 	_movements_made = 1
+
+
+## Returns true if this army is currently trespassing in a foreign province.
+func is_trespassing() -> bool:
+	return (
+			owner_country.relationships.with_country(_province.owner_country)
+			.is_trespassing()
+	)
 
 
 ## How much in-game money it would cost to recruit given troop count.

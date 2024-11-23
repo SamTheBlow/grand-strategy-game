@@ -24,13 +24,13 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	var province: Province = (
 			game.world.provinces.province_from_id(_province_id)
 	)
-	
+
 	if not province:
 		push_warning(
 				"Tried to recruit troops in a province that doesn't exist!"
 		)
 		return
-	
+
 	var recruit_limits := ArmyRecruitmentLimits.new(your_country, province, game)
 	if recruit_limits.maximum() < _number_of_troops:
 		push_warning(
@@ -44,18 +44,18 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 				+ "would be smaller than the minimum allowed."
 		)
 		return
-	
+
 	your_country.money -= Army.money_cost(_number_of_troops, game.rules)
 	province.population.population_size -= (
 			Army.population_cost(_number_of_troops, game.rules)
 	)
-	
+
 	# If you already have an active army in this province, increase its size.
-	for army in game.world.armies.armies_in_province(province):
+	for army in province.armies.list:
 		if army.owner_country == your_country and army.is_able_to_move():
 			army.army_size.add(_number_of_troops)
 			return
-	
+
 	# Otherwise, create a new army instead.
 	var _army: Army = Army.quick_setup(
 			game,
@@ -82,7 +82,7 @@ static func from_raw_data(data: Dictionary) -> ActionRecruitment:
 			and ParseUtils.dictionary_has_number(data, NEW_ARMY_ID_KEY)
 	):
 		return null
-	
+
 	return ActionRecruitment.new(
 			ParseUtils.dictionary_int(data, PROVINCE_ID_KEY),
 			ParseUtils.dictionary_int(data, NUMBER_OF_TROOPS_KEY),

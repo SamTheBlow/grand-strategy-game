@@ -2,14 +2,12 @@ class_name BattleDetection
 ## Detects when a [Battle] should occur and starts the battles when applicable.
 
 
-var _armies: Armies
 var _battle: Battle
 
 
 func _init(armies: Armies, battle: Battle) -> void:
-	_armies = armies
 	_battle = battle
-	
+
 	for army in armies.list():
 		_on_army_added(army)
 	armies.army_added.connect(_on_army_added)
@@ -18,7 +16,7 @@ func _init(armies: Armies, battle: Battle) -> void:
 ## Checks for [Battles] that need to occur in given [Army]'s [Province].
 ## Makes the battles happen, when applicable.
 func _resolve_battles(army: Army) -> void:
-	for other_army in _armies.armies_in_province(army.province()):
+	for other_army in army.province().armies.list:
 		if Country.is_fighting(army.owner_country, other_army.owner_country):
 			_battle.apply(army, other_army)
 

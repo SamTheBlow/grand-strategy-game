@@ -61,7 +61,16 @@ var position_fortress: Vector2
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
 
+## A list of every [Army] located in this province.
+var armies: ArmiesInProvince
+
+## Add to this array any object that you want to keep in scope
+## for as long as this province is in scope.
 var _components: Array = []
+
+
+func _init(armies_list: Armies) -> void:
+	armies = ArmiesInProvince.new(armies_list, self)
 
 
 func add_component(object: Object) -> void:
@@ -84,10 +93,10 @@ func is_linked_to(province: Province) -> bool:
 func is_frontline(country: Country) -> bool:
 	if not country.has_permission_to_move_into_country(owner_country):
 		return false
-	
+
 	if owner_country == null:
 		return false
-	
+
 	for link in links:
 		if (
 				link.owner_country == null
@@ -95,7 +104,7 @@ func is_frontline(country: Country) -> bool:
 				.has_permission_to_move_into_country(link.owner_country)
 		):
 			return true
-	
+
 	return false
 
 
@@ -107,10 +116,10 @@ func is_frontline(country: Country) -> bool:
 func is_war_frontline(country: Country) -> bool:
 	if not country.has_permission_to_move_into_country(owner_country):
 		return false
-	
+
 	if owner_country == null:
 		return false
-	
+
 	for link in links:
 		if (
 				link.owner_country == null
@@ -119,7 +128,7 @@ func is_war_frontline(country: Country) -> bool:
 				.with_country(link.owner_country).is_fighting()
 		):
 			return true
-	
+
 	return false
 
 

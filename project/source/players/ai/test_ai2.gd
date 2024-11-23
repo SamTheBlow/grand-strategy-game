@@ -8,10 +8,10 @@ extends PlayerAI
 
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = super(game, player)
-	
+
 	var provinces: Array[Province] = game.world.provinces.list()
 	var number_of_provinces: int = provinces.size()
-	
+
 	# Get a list of all my provinces
 	var my_provinces: Array[Province] = []
 	for i in number_of_provinces:
@@ -19,63 +19,63 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		if province.owner_country != player.playing_country:
 			continue
 		my_provinces.append(province)
-	
+
 	var frontline_provinces: Array[Province] = (
 			game.world.provinces.provinces_on_frontline(player.playing_country)
 	)
-	
+
 	# Give a danger level to each frontline province
 	# based on how well defended it is
 	var danger_levels: Array[float] = []
 	for province in frontline_provinces:
 		var danger_level: float = 0.0
-		
-		var army_size: int = _army_size(
-				game, province, true, player.playing_country
+
+		var army_size: int = (
+				_army_size(province, true, player.playing_country)
 		)
 		for link in province.links:
 			if link.owner_country == player.playing_country:
 				continue
-			var enemy_army_size: int = _army_size(
-					game, link, false, player.playing_country
+			var enemy_army_size: int = (
+					_army_size(link, false, player.playing_country)
 			)
-			
+
 			var danger: float = enemy_army_size / (army_size + 0.01)
 			# Reduce penalty when there's a fortress
 			if link.buildings.list().size() > 0:
 				danger *= 0.5
 			# Amplify penalty in extreme cases
 			danger **= 2.0
-			
+
 			danger_level += minf(danger, 5.0)
-		
+
 		# Give priority to the war frontline
 		if province.is_war_frontline(player.playing_country):
 			danger_level *= 3.0
-		
+
 		danger_levels.append(danger_level)
-	
+
 	result.append_array(_try_build_fortresses(
 			game, player.playing_country, frontline_provinces, danger_levels
 	))
-	
+
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
 	for province in game.world.provinces.list():
 		if frontline_provinces.size() == 0:
 			# No frontline! You probably won.
 			break
-		
+
 		var armies: Array[Army] = game.world.armies.active_armies(
 				player.playing_country, province
 		)
 		if armies.size() == 0:
 			continue
-		
+
 		# NOTE this assumes that you only have one army in each province
 		var army: Army = armies[0]
 		var army_size: int = army.army_size.current_size()
-		
+
 		if frontline_provinces.has(province):
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
@@ -87,15 +87,14 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 						.with_country(link.owner_country).is_trespassing()
 				):
 					hostile_links.append(link)
-			
+
 			# If there is only one, then it's safe to full send.
 			if hostile_links.size() == 1:
 				# Take the sum of all the hostile army sizes
 				var hostile_army_size: int = _hostile_army_size(
-						army.owner_country,
-						game.world.armies.armies_in_province(hostile_links[0])
+						army.owner_country, hostile_links[0].armies.list
 				)
-				
+
 				# If your army is relatively large enough, attack!
 				if army_size >= hostile_army_size * 1.69:
 					result.append(ActionArmyMovement.new(
@@ -105,22 +104,21 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			else:
 				# The list where we put all the provinces we'll attack
 				var attack_list: Array[Province] = []
-				
+
 				# Compare a province's hostile armies with your army
 				var total_hostile_army_size: int = 0
 				for hostile_link in hostile_links:
 					# Take the sum of all the hostile army sizes
 					var hostile_army_size: int = _hostile_army_size(
-							army.owner_country,
-							game.world.armies.armies_in_province(hostile_link)
+							army.owner_country, hostile_link.armies.list
 					)
-					
+
 					# If the province's army
 					# is larger than yours, don't attack at all
 					if army_size < hostile_army_size:
 						attack_list.clear()
 						break
-					
+
 					# If the province's army is small enough, attack it
 					if (
 							hostile_army_size
@@ -128,9 +126,9 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 							<= army_size
 					):
 						attack_list.append(hostile_link)
-					
+
 					total_hostile_army_size += hostile_army_size
-				
+
 				# If the total size of all the hostile armies
 				# is too big, don't attack at all
 				if (
@@ -138,18 +136,18 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 						< total_hostile_army_size
 				):
 					attack_list.clear()
-				
+
 				if attack_list.size() > 0:
 					# If we're attacking all neighbors, then full send
 					var full_send: bool = false
 					if attack_list.size() == hostile_links.size():
 						full_send = true
-					
+
 					# Split up the army
 					var new_army_count: int = attack_list.size()
 					if full_send:
 						new_army_count -= 1
-					
+
 					var partition2: Array[int] = []
 					var part_sum: int = 0
 					var parts: int = new_army_count + 1
@@ -158,14 +156,14 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 						partition2.append(part)
 						part_sum += part
 					partition2[0] += army_size - part_sum
-					
+
 					# If any of the parts is too small, then you can't split
 					var is_large_enough: bool = true
 					for part in partition2:
 						if part < game.rules.minimum_army_size.value:
 							is_large_enough = false
 							break
-					
+
 					if is_large_enough:
 						var new_army_ids: Array[int] = (
 								game.world.armies
@@ -174,7 +172,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 						result.append(ActionArmySplit.new(
 								army.id, partition2, new_army_ids
 						))
-						
+
 						# Move the new armies
 						for i in attack_list.size():
 							if full_send and i == attack_list.size() - 1:
@@ -185,10 +183,10 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 							result.append(ActionArmyMovement.new(
 									new_army_ids[i], attack_list[i].id
 							))
-			
+
 			continue
 		# This province is not on the frontline
-		
+
 		# Move the army towards the frontlines
 		var province_filter: Callable = (
 				func(province_: Province) -> bool:
@@ -208,40 +206,40 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				if danger_levels[border_index] >= target_danger:
 					target_province = frontline_calculation.first_links[i]
 					target_danger = danger_levels[border_index]
-			
+
 			result.append(ActionArmyMovement.new(
 					army.id, target_province.id
 			))
-	
+
 	return result
 
 
 func _army_size(
-		game: Game,
 		province: Province,
 		is_yours: bool,
 		playing_country: Country
 ) -> int:
 	var output: int = 0
-	var armies: Array[Army] = game.world.armies.armies_in_province(province)
-	for army in armies:
+
+	for army in province.armies.list:
 		if is_yours:
 			if army.owner_country == playing_country:
 				output += army.army_size.current_size()
 		else:
 			if army.owner_country != playing_country:
 				output += army.army_size.current_size()
+
 	return output
 
 
 ## Returns the total army size of all of the hostile armies in given army list.
 func _hostile_army_size(your_country: Country, army_list: Array[Army]) -> int:
 	var hostile_army_size: int = 0
-	
+
 	for army in army_list:
 		if Country.is_fighting(your_country, army.owner_country):
 			hostile_army_size += army.army_size.current_size()
-	
+
 	return hostile_army_size
 
 
@@ -254,9 +252,9 @@ func _try_build_fortresses(
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled.value:
 		return []
-	
+
 	var output: Array[Action] = []
-	
+
 	# Try building in each province, starting from the most populated
 	var candidates: Array[Province] = borders.duplicate()
 	var expected_money: int = playing_country.money
@@ -275,7 +273,7 @@ func _try_build_fortresses(
 		var most_endangered_province: Province = (
 				candidates[most_endangered_index]
 		)
-		
+
 		# Build in that province, if possible
 		var build_conditions := FortressBuildConditions.new(
 				playing_country, most_endangered_province, game
@@ -283,7 +281,7 @@ func _try_build_fortresses(
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_endangered_province.id))
 			expected_money -= game.rules.fortress_price.value
-		
+
 		candidates.remove_at(most_endangered_index)
-	
+
 	return output

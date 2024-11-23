@@ -20,19 +20,19 @@ func add_army(army: Army) -> void:
 	if _list.has(army):
 		push_warning("Tried adding an army, but it was already on the list.")
 		return
-	
+
 	if army_with_id(army.id):
 		push_error(
 				"Tried adding an army, but there is already an army "
 				+ "with the same id! Operation cancelled."
 		)
 		return
-	
+
 	# If the army's id was claimed before, unclaim it
 	var claimed_id_index: int = _claimed_ids.find(army.id)
 	if claimed_id_index != -1:
 		_claimed_ids.remove_at(claimed_id_index)
-	
+
 	army.destroyed.connect(remove_army)
 	_list.append(army)
 	army_added.emit(army)
@@ -42,7 +42,7 @@ func remove_army(army: Army) -> void:
 	if not _list.has(army):
 		push_warning("Tried removing an army, but it wasn't on the list.")
 		return
-	
+
 	army.destroyed.disconnect(remove_army)
 	_list.erase(army)
 	army_removed.emit(army)
@@ -58,7 +58,7 @@ func list() -> Array[Army]:
 ## When more than one [Army] is controlled by the same [Country]
 ## in the same [Province], it's possible to merge them into one single [Army].
 func merge_armies(province: Province) -> void:
-	var armies_to_merge: Array[Army] = armies_in_province(province)
+	var armies_to_merge: Array[Army] = province.armies.list.duplicate()
 	var number_of_armies: int = armies_to_merge.size()
 	for i in number_of_armies:
 		var army1: Army = armies_to_merge[i]
@@ -77,15 +77,6 @@ func armies_of_country(country: Country) -> Array[Army]:
 	var output: Array[Army] = []
 	for army in _list:
 		if army.owner_country == country:
-			output.append(army)
-	return output
-
-
-## Returns a new list of all armies located in given [Province].
-func armies_in_province(province: Province) -> Array[Army]:
-	var output: Array[Army] = []
-	for army in _list:
-		if army.province() == province:
 			output.append(army)
 	return output
 
@@ -139,7 +130,7 @@ func new_unique_ids(number_of_ids: int) -> Array[int]:
 				+ str(number_of_ids) + ") of new unique ids."
 		)
 		return []
-	
+
 	var new_ids: Array[int] = [0]
 	for i in number_of_ids:
 		var id_is_not_unique: bool = true

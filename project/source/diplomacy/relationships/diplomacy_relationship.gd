@@ -85,8 +85,9 @@ func grants_military_access() -> bool:
 	)
 
 
-## If true, the country will move its armies into the recipient's
+## If true, the country may move its armies into the recipient's
 ## provinces without permission.
+## It may also take control over the recipient's provinces.
 func is_trespassing() -> bool:
 	return _get_data(
 			IS_TRESPASSING_KEY,
@@ -143,9 +144,9 @@ func apply_action_data(data: Dictionary, current_turn: int) -> void:
 	var grants_military_access_before: bool = grants_military_access()
 	var is_trespassing_before: bool = is_trespassing()
 	var is_fighting_before: bool = is_fighting()
-	
+
 	_base_data.merge(data, true)
-	
+
 	if _preset_id() != preset_id_before:
 		preset_changed.emit(self)
 	if grants_military_access() != grants_military_access_before:
@@ -154,7 +155,7 @@ func apply_action_data(data: Dictionary, current_turn: int) -> void:
 		trespassing_changed.emit(self)
 	if is_fighting() != is_fighting_before:
 		fighting_changed.emit(self)
-	
+
 	_update_available_actions(current_turn)
 
 
@@ -162,13 +163,13 @@ func apply_action_data(data: Dictionary, current_turn: int) -> void:
 ## Some actions may only be performed after some number of turns.
 func _update_available_actions(current_turn: int) -> void:
 	var new_available_actions: Array[DiplomacyAction] = []
-	
+
 	# It's important here that we iterate through
 	# all of the preset's actions first, so they they have priority
 	# over the base actions when checking for duplicates
 	var action_id_list: Array[int] = []
 	action_id_list.append_array(preset().actions)
-	
+
 	# ATTENTION TODO don't hard code these conditions...
 	for base_action_id in _base_action_ids:
 		match base_action_id:
@@ -213,13 +214,13 @@ func _update_available_actions(current_turn: int) -> void:
 					action_id_list.append(base_action_id)
 			_:
 				action_id_list.append(base_action_id)
-	
+
 	var used_ids: Array[int] = []
 	for action_id in action_id_list:
 		# Avoid duplicates
 		if action_id in used_ids:
 			continue
-		
+
 		if action_is_available(action_id):
 			new_available_actions.append(action_from_id(action_id))
 		else:
@@ -229,12 +230,12 @@ func _update_available_actions(current_turn: int) -> void:
 					current_turn
 			))
 		used_ids.append(action_id)
-	
+
 	var old_available_actions: Array[DiplomacyAction] = (
 			_available_actions.duplicate()
 	)
 	_available_actions = new_available_actions
-	
+
 	if _available_actions_changed(old_available_actions, _available_actions):
 		available_actions_changed.emit(self)
 
@@ -247,11 +248,11 @@ func _available_actions_changed(
 ) -> bool:
 	if old_actions.size() != new_actions.size():
 		return true
-	
+
 	for old_action in old_actions:
 		if not new_actions.has(old_action):
 			return true
-	
+
 	return false
 
 
@@ -282,13 +283,13 @@ func _get_data_recursive(
 ) -> Variant:
 	if fallback_index >= fallbacks.size():
 		return default_value
-	
+
 	var dictionary: Dictionary = fallbacks[fallback_index]
 	if not dictionary.has(key):
 		return _get_data_recursive(
 				key, default_value, fallbacks, fallback_index + 1
 		)
-	
+
 	var value: Variant = dictionary[key]
 	if typeof(value) != typeof(default_value):
 		push_warning(
@@ -300,7 +301,7 @@ func _get_data_recursive(
 		return _get_data_recursive(
 				key, default_value, fallbacks, fallback_index + 1
 		)
-	
+
 	return value
 
 
