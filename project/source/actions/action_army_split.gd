@@ -39,19 +39,19 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	if _new_army_ids.size() < _troop_partition.size() - 1:
 		push_error("Did not provide enough new army IDs for splitting army.")
 		return
-	
-	var army: Army = game.world.armies.army_with_id(_army_id)
+
+	var army: Army = game.world.armies.army_from_id(_army_id)
 	if not army:
 		push_warning("Tried to split an army that doesn't exist!")
 		return
-	
+
 	if army.owner_country != player.playing_country:
 		push_warning(
 				"Tried to split an army, "
 				+ "but the army is not under the player's control!"
 		)
 		return
-	
+
 	var partition_sum: int = 0
 	for army_size in _troop_partition:
 		if army_size < army.army_size.minimum():
@@ -61,7 +61,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			)
 			return
 		partition_sum += army_size
-	
+
 	if partition_sum != army.army_size.current_size():
 		push_warning(
 				"Tried to split an army, but the given partition's sum "
@@ -70,21 +70,21 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 				+ str(partition_sum) + "."
 		)
 		return
-	
+
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
 		# Create the new army
 		var _army_clone: Army = Army.quick_setup(
 				game,
-				_new_army_ids[i],
 				_troop_partition[i + 1],
 				army.owner_country,
-				army.province()
+				army.province(),
+				_new_army_ids[i]
 		)
-		
+
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])
-	
+
 	#print(
 	#		"Army ", army.id, " in province ", army.province().id,
 	#		" was split into ", _new_army_ids
@@ -107,17 +107,17 @@ static func from_raw_data(data: Dictionary) -> ActionArmySplit:
 			and ParseUtils.dictionary_has_array(data, NEW_ARMY_IDS_KEY)
 	):
 		return null
-	
+
 	var troop_partition: Array[int] = (
 			ParseUtils.dictionary_array_int(data, TROOP_PARTITION_KEY)
 	)
 	var new_army_ids: Array[int] = (
 			ParseUtils.dictionary_array_int(data, NEW_ARMY_IDS_KEY)
 	)
-	
+
 	if new_army_ids.size() < troop_partition.size() - 1:
 		return null
-	
+
 	return ActionArmySplit.new(
 			ParseUtils.dictionary_int(data, ARMY_ID_KEY),
 			troop_partition,

@@ -7,9 +7,9 @@ class_name GamePlayer
 signal human_status_changed(this: GamePlayer)
 signal username_changed(this: GamePlayer)
 
-## All players have a unique id, for the purposes of
-## saving/loading and networking. (You must ensure their unicity yourself)
-var id: int
+## The unique id assigned to this player.
+## Each player has its own id. Useful for saving/loading, networking, etc.
+var id: int = -1
 
 ## Null means the player is spectating.
 var playing_country: Country
@@ -38,12 +38,12 @@ var username: String = "":
 	set(value):
 		if username == value:
 			return
-		
+
 		username = value
-		
+
 		if is_human and player_human:
 			player_human.custom_username = value
-		
+
 		username_changed.emit(self)
 
 ## A reference to this human player's [Player] object.
@@ -53,12 +53,12 @@ var player_human: Player:
 	set(value):
 		if player_human:
 			player_human.username_changed.disconnect(_on_username_changed)
-		
+
 		if value:
 			player_human = null
 			username = value.username()
 			value.username_changed.connect(_on_username_changed)
-		
+
 		player_human = value
 
 # TODO this is ugly

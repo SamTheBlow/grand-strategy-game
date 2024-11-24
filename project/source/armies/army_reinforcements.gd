@@ -11,7 +11,7 @@ var _province: Province
 func _init(game: Game, province: Province) -> void:
 	_game = game
 	_province = province
-	
+
 	_game.turn.turn_changed.connect(_on_new_turn)
 
 
@@ -22,7 +22,7 @@ func _reinforce_province() -> void:
 			or not _game.rules.reinforcements_enabled.value
 	):
 		return
-	
+
 	var reinforcements_size: int = 0
 	match _game.rules.reinforcements_option.selected_value():
 		GameRules.ReinforcementsOption.RANDOM:
@@ -41,16 +41,16 @@ func _reinforce_province() -> void:
 			)
 		_:
 			push_warning("Unrecognized army reinforcements option.")
-	
+
 	if reinforcements_size < _game.rules.minimum_army_size.value:
 		return
-	
+
 	Army.quick_setup(
 			_game,
-			_game.world.armies.new_unique_id(),
 			reinforcements_size,
 			_province.owner_country,
 			_province,
+			-1,
 			1
 	)
 	_game.world.armies.merge_armies(_province)

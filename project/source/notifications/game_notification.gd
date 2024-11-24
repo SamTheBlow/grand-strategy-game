@@ -12,9 +12,10 @@ signal handled(this: GameNotification)
 
 const DEFAULT_TURNS_BEFORE_DISMISS: int = 3
 
-## Each notification within a group of [GameNotifications]
-## must have a unique id.
-var id: int
+## The unique id assigned to this notification.
+## Each notification has its own id.
+## Useful for saving/loading, networking, etc.
+var id: int = -1
 
 var _game: Game
 var _recipient_country: Country
@@ -51,7 +52,7 @@ func _init(
 	_turns_before_dismiss = turns_before_dismiss
 	_was_seen_this_turn = was_seen_this_turn
 	_on_player_changed(game.turn.playing_player())
-	
+
 	game.turn.turn_changed.connect(_on_turn_changed)
 	game.turn.player_changed.connect(_on_player_changed)
 
@@ -84,7 +85,7 @@ func description() -> String:
 func select_outcome(outcome_index: int) -> void:
 	if not _outcome_can_be_selected():
 		return
-	
+
 	if outcome_index < 0:
 		dismiss()
 		return
@@ -96,7 +97,7 @@ func select_outcome(outcome_index: int) -> void:
 		)
 		dismiss()
 		return
-	
+
 	_outcome_functions[outcome_index].call()
 	handled.emit(self)
 
@@ -108,16 +109,16 @@ func dismiss() -> void:
 func _outcome_can_be_selected() -> bool:
 	if _game == null:
 		return true
-	
+
 	var playing_country: Country = _game.turn.playing_player().playing_country
-	
+
 	if playing_country != _recipient_country:
 		push_warning(
 				"Tried to select an outcome for a notification, but "
 				+ "a country cannot handle another country's notifications!"
 		)
 		return false
-	
+
 	return true
 
 

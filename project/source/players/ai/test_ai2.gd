@@ -166,8 +166,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 					if is_large_enough:
 						var new_army_ids: Array[int] = (
-								game.world.armies
-								.new_unique_ids(new_army_count)
+								game.world.armies.id_system()
+								.new_unique_ids(new_army_count, false)
 						)
 						result.append(ActionArmySplit.new(
 								army.id, partition2, new_army_ids

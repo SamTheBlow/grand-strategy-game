@@ -27,27 +27,30 @@ func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	var troop_count: int = army.army_size.current_size()
 	@warning_ignore("integer_division")
 	var troops_per_army: int = troop_count / number_of_targets
-	
+
 	# TODO
 	# Check using the game's minimum size for a new army
 	# instead of the given army's minimum size
 	if troops_per_army < army.army_size.minimum():
 		return
-	
+
 	var new_army_ids: Array[int] = []
 	if number_of_targets > 1:
-		new_army_ids = _armies.new_unique_ids(number_of_targets - 1)
-		
+		new_army_ids = (
+				_armies.id_system()
+				.new_unique_ids(number_of_targets - 1, false)
+		)
+
 		# Create the partition
 		var troop_partition: Array[int] = []
 		for i in number_of_targets:
 			troop_partition.append(troops_per_army)
 		troop_partition[0] += troop_count % number_of_targets
-		
+
 		action_army_split = ActionArmySplit.new(
 				army.id, troop_partition, new_army_ids
 		)
-	
+
 	for i in number_of_targets:
 		var army_id: int = army.id if i == 0 else new_army_ids[i - 1]
 		action_army_movements.append(ActionArmyMovement.new(

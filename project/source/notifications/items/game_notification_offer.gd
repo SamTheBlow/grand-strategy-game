@@ -24,13 +24,13 @@ func _init(
 	)
 	_sender_country = sender_country_
 	_diplomacy_action_definition = diplomacy_action_definition
-	
+
 	_components.append(AutoDismissInvalidOffer.new(
 			self,
 			_sender_country.relationships.with_country(_recipient_country)
 			.available_actions_changed
 	))
-	
+
 	_outcome_names = ["Accept", "Decline"]
 	_outcome_functions = [_accept, func() -> void: pass]
 
@@ -63,12 +63,10 @@ func _accept() -> void:
 			.with_country(_sender_country),
 			_game.turn.current_turn()
 	)
-	
-	var new_notification := GameNotificationOfferAccepted.new(
+
+	_sender_country.notifications.add(GameNotificationOfferAccepted.new(
 			_game,
 			_sender_country,
 			_recipient_country,
 			_diplomacy_action_definition
-	)
-	new_notification.id = _sender_country.notifications.new_unique_id()
-	_sender_country.notifications.add(new_notification)
+	))

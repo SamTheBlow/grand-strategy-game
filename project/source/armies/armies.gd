@@ -2,37 +2,38 @@ class_name Armies
 ## An encapsulated list of [Army] objects.
 ## Provides utility functions for manipulating the list and
 ## for accessing a specific [Army] or a specific subset of the list.
-##
-## This class also provides functions to give you new unique ids
-## for newly created armies that you wish to add to this list.
-## See also: [member Army.id]
 
 
 signal army_added(army: Army)
 signal army_removed(army: Army)
 
 var _list: Array[Army] = []
-var _claimed_ids: Array[int] = []
+var _unique_id_system := UniqueIdSystem.new()
 
 
-## Please make sure that given army has a unique id already assigned to it.
-func add_army(army: Army) -> void:
+## Note that this overwrites the army's id.
+## If you want the army to use a specific id, pass it as an argument.
+##
+## An error will occur if given id is not available.
+## Use is_id_available first to verify (see [UniqueIdSystem]).
+func add_army(army: Army, specific_id: int = -1) -> void:
 	if _list.has(army):
 		push_warning("Tried adding an army, but it was already on the list.")
 		return
 
-	if army_with_id(army.id):
+	var id: int = specific_id
+	if not _unique_id_system.is_id_valid(specific_id):
+		id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(specific_id):
 		push_error(
-				"Tried adding an army, but there is already an army "
-				+ "with the same id! Operation cancelled."
+				"Specified army id is not unique."
+				+ " (id: " + str(specific_id) + ")"
 		)
-		return
+		id = _unique_id_system.new_unique_id()
+	else:
+		_unique_id_system.claim_id(specific_id)
 
-	# If the army's id was claimed before, unclaim it
-	var claimed_id_index: int = _claimed_ids.find(army.id)
-	if claimed_id_index != -1:
-		_claimed_ids.remove_at(claimed_id_index)
-
+	army.id = id
 	army.destroyed.connect(remove_army)
 	_list.append(army)
 	army_added.emit(army)
@@ -110,68 +111,12 @@ func active_armies(country: Country, province: Province) -> Array[Army]:
 
 ## Returns the [Army] that has given id.
 ## If there is no such army, returns [code]null[/code].
-func army_with_id(id: int) -> Army:
+func army_from_id(id: int) -> Army:
 	for army in _list:
 		if army.id == id:
 			return army
 	return null
 
 
-## Provides unique ids that are not used by any [Army] in the list.
-## Use [param number_of_ids] to choose how many new ids you want to receive.
-## ([param number_of_ids] must be 1 or more.)
-## They will all be unique and different from each other, guaranteed!
-## And, just like the new_unique_id function,
-## this function returns different ids each time.
-func new_unique_ids(number_of_ids: int) -> Array[int]:
-	if number_of_ids < 1:
-		push_error(
-				"Asked for an invalid amount ("
-				+ str(number_of_ids) + ") of new unique ids."
-		)
-		return []
-
-	var new_ids: Array[int] = [0]
-	for i in number_of_ids:
-		var id_is_not_unique: bool = true
-		while id_is_not_unique:
-			id_is_not_unique = false
-			for army in _list:
-				if army.id == new_ids[i]:
-					id_is_not_unique = true
-					new_ids[i] += 1
-					break
-			for claimed_id in _claimed_ids:
-				if claimed_id == new_ids[i]:
-					id_is_not_unique = true
-					new_ids[i] += 1
-					break
-		_claimed_ids.append(new_ids[i])
-		if i != number_of_ids - 1:
-			new_ids.append(new_ids[i] + 1)
-	return new_ids
-
-
-# TODO DRY. copy/paste from [Players] kind of
-## Provides a new unique id that is not used by any [Army] in the list.
-## The id will be as small as possible (0 or higher).
-## Calling this function again will return a different id every time,
-## so you don't need to worry about a different piece of code
-## getting the same new id as yours.
-func new_unique_id() -> int:
-	var new_id: int = 0
-	var id_is_not_unique: bool = true
-	while id_is_not_unique:
-		id_is_not_unique = false
-		for army in _list:
-			if army.id == new_id:
-				id_is_not_unique = true
-				new_id += 1
-				break
-		for claimed_id in _claimed_ids:
-			if claimed_id == new_id:
-				id_is_not_unique = true
-				new_id += 1
-				break
-	_claimed_ids.append(new_id)
-	return new_id
+func id_system() -> UniqueIdSystem:
+	return _unique_id_system

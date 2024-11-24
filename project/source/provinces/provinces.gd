@@ -9,9 +9,28 @@ signal added(province: Province)
 signal province_owner_changed(province: Province)
 
 var _list: Array[Province] = []
+var _unique_id_system := UniqueIdSystem.new()
 
 
-func add_province(province: Province) -> void:
+## Note that this overwrites the province's id.
+## If you want the province to use a specific id, pass it as an argument.
+##
+## An error will occur if given id is not available.
+## Use is_id_available first to verify (see [UniqueIdSystem]).
+func add_province(province: Province, specific_id: int = -1) -> void:
+	var id: int = specific_id
+	if not _unique_id_system.is_id_valid(specific_id):
+		id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(specific_id):
+		push_error(
+				"Specified province id is not unique."
+				+ " (id: " + str(specific_id) + ")"
+		)
+		id = _unique_id_system.new_unique_id()
+	else:
+		_unique_id_system.claim_id(specific_id)
+
+	province.id = id
 	_list.append(province)
 	province.owner_changed.connect(_on_province_owner_changed)
 	added.emit(province)
@@ -46,6 +65,10 @@ func province_from_id(id: int) -> Province:
 		if province.id == id:
 			return province
 	return null
+
+
+func id_system() -> UniqueIdSystem:
+	return _unique_id_system
 
 
 func _on_province_owner_changed(province: Province) -> void:

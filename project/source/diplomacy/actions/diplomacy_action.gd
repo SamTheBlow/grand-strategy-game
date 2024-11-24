@@ -45,19 +45,19 @@ func is_valid(
 					+ " available. (Diplomacy action id: " + str(id()) + ")"
 			)
 		return false
-	
+
 	return true
 
 
 func can_be_performed(game: Game, push_debug_errors: bool = false) -> bool:
 	var result: bool = true
-	
+
 	var warning_message: String = (
 			'Tried to perform a diplomatic action ("'
 			+ _definition.name
 			+ '"), but it currently cannot be performed.'
 	)
-	
+
 	var turns_remaining: int = cooldown_turns_remaining(game)
 	if turns_remaining > 0:
 		result = false
@@ -66,14 +66,14 @@ func can_be_performed(game: Game, push_debug_errors: bool = false) -> bool:
 				+ str(turns_remaining)
 				+ " turn" + ("" if turns_remaining == 1 else "s") + "."
 		)
-	
+
 	if _was_performed_this_turn:
 		result = false
 		warning_message += "\nThe action was already performed this turn."
-	
+
 	if result == false and push_debug_errors:
 		push_warning(warning_message)
-	
+
 	return result
 
 
@@ -99,7 +99,7 @@ func perform(
 ) -> void:
 	if not (is_valid(relationship, true) and can_be_performed(game, true)):
 		return
-	
+
 	var new_notification: GameNotification
 	if _definition.requires_consent:
 		new_notification = GameNotificationOffer.new(
@@ -112,19 +112,16 @@ func perform(
 		_definition.apply_action_data(
 				relationship, reverse_relationship, game.turn.current_turn()
 		)
-		
+
 		new_notification = GameNotificationPerformedAction.new(
 				game,
 				relationship.recipient_country,
 				relationship.source_country,
 				_definition
 		)
-	
-	new_notification.id = (
-			relationship.recipient_country.notifications.new_unique_id()
-	)
+
 	relationship.recipient_country.notifications.add(new_notification)
-	
+
 	_was_performed_this_turn = true
 	performed.emit(self)
 

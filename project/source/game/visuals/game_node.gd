@@ -49,7 +49,7 @@ var chat: Chat:
 		return chat
 	set(value):
 		chat = value
-		
+
 		chat.save_requested.connect(_on_save_requested)
 		chat.load_requested.connect(_on_load_requested)
 		chat.exit_to_main_menu_requested.connect(
@@ -69,9 +69,9 @@ func _ready() -> void:
 	if game.world is not GameWorld2D:
 		return
 	var world_2d := game.world as GameWorld2D
-	
+
 	_action_input.game = game
-	
+
 	world_visuals.game = game
 	world_visuals.world = world_2d
 	world_visuals.province_visuals.province_selected.connect(
@@ -80,9 +80,9 @@ func _ready() -> void:
 	world_visuals.province_visuals.unhandled_mouse_event_occured.connect(
 			_on_province_unhandled_mouse_event
 	)
-	
+
 	camera.world_limits = world_2d.limits
-	
+
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
@@ -91,10 +91,10 @@ func _ready() -> void:
 			chat._on_networking_interface_message_sent
 	)
 	_player_list.networking_interface = networking_interface
-	
+
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
-	
+
 	_turn_order_list.players = game.game_players
 	_turn_order_list.game_turn = game.turn
 
@@ -113,20 +113,22 @@ func new_action_army_movement(
 		destination_province: Province
 ) -> void:
 	var moving_army_id: int = army.id
-	
+
 	# Split the army into two if needed
 	var army_size: int = army.army_size.current_size()
 	if army_size > number_of_troops:
-		var new_army_id: int = game.world.armies.new_unique_id()
+		var new_army_id: int = (
+				game.world.armies.id_system().new_unique_id(false)
+		)
 		var action_split := ActionArmySplit.new(
 				army.id,
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
 		)
 		_action_input.apply_action(action_split)
-		
+
 		moving_army_id = new_army_id
-	
+
 	var action_move := ActionArmyMovement.new(
 			moving_army_id, destination_province.id
 	)
@@ -155,7 +157,7 @@ func _on_game_over(winning_country: Country) -> void:
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
 	game_over_popup.init(winning_country)
 	_add_popup(game_over_popup)
-	
+
 	chat.send_global_message(
 			"The game is over! The winner is "
 			+ str(winning_country.country_name) + "."
@@ -178,15 +180,15 @@ func _on_province_unhandled_mouse_event(
 	):
 		return
 	get_viewport().set_input_as_handled()
-	
+
 	var province: Province = province_visuals.province
 	var you: GamePlayer = game.turn.playing_player()
-	
+
 	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
 		world_visuals.province_selection.selected_province = province
 		return
-	
+
 	# If applicable, open the army movement popup
 	var selected_province: Province = (
 			world_visuals.province_selection.selected_province
@@ -201,7 +203,7 @@ func _on_province_unhandled_mouse_event(
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return
-	
+
 	world_visuals.province_selection.selected_province = province
 
 
@@ -218,7 +220,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 	var selected_province: Province = (
 			world_visuals.province_selection.selected_province
 	)
-	
+
 	# TODO bad code: hard coded values
 	match button_id:
 		0:
@@ -239,7 +241,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 					recruitment_scene.instantiate() as RecruitmentPopup
 			)
 			recruitment_popup.province = selected_province
-			
+
 			var recruitment_limits := ArmyRecruitmentLimits.new(
 					game.turn.playing_player().playing_country,
 					selected_province,
@@ -247,7 +249,7 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 			)
 			recruitment_popup.set_minimum_amount(recruitment_limits.minimum())
 			recruitment_popup.set_maximum_amount(recruitment_limits.maximum())
-			
+
 			recruitment_popup.set_population_cost(ResourceCost.new(
 					game.rules.recruitment_population_per_unit.value
 			))
@@ -271,7 +273,9 @@ func _on_build_fortress_confirmed(province: Province) -> void:
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 	world_visuals.province_selection.deselect_province()
 	var action_recruitment := ActionRecruitment.new(
-			province.id, troop_amount, game.world.armies.new_unique_id()
+			province.id,
+			troop_amount,
+			game.world.armies.id_system().new_unique_id(false)
 	)
 	_action_input.apply_action(action_recruitment)
 
@@ -285,28 +289,28 @@ func _on_load_requested() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		chat.send_system_message("Only the server can load a game!")
 		return
-	
+
 	chat.send_system_message("Loading the save file...")
-	
+
 	get_parent().load_game()
 
 
 func _on_save_requested() -> void:
 	chat.send_system_message("Saving the game...")
-	
+
 	# TODO bad code (don't use get_parent like that)
 	# The player should be able to change the file path for save files
 	var save_file_path: String = get_parent().SAVE_FILE_PATH
-	
+
 	var game_save := GameSave.new()
 	game_save.save_game(game, save_file_path)
-	
+
 	if game_save.error:
 		var error_message: String = "Saving failed: " + game_save.error_message
 		push_error(error_message)
 		chat.send_system_message(error_message)
 		return
-	
+
 	chat.send_system_message("[b]Game saved[/b]")
 
 
@@ -314,7 +318,7 @@ func _on_exit_to_main_menu_requested() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		chat.send_system_message("Only the server can exit to main menu!")
 		return
-	
+
 	exited.emit()
 
 
@@ -348,7 +352,7 @@ func _on_diplomacy_action_pressed(
 				+ " the user does not have gameplay authority!"
 		)
 		return
-	
+
 	_action_input.apply_action(ActionDiplomacy.new(
 			diplomacy_action.id(), recipient_country.id
 	))
@@ -380,7 +384,7 @@ func _on_notification_decision_made(
 				+ " the user does not have gameplay authority!"
 		)
 		return
-	
+
 	_action_input.apply_action(ActionHandleNotification.new(
 			game_notification.id, outcome_index
 	))

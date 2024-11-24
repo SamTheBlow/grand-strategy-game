@@ -6,10 +6,30 @@ signal notification_added(game_notification: GameNotification)
 signal notification_removed(game_notification: GameNotification)
 
 var _list: Array[GameNotification] = []
+var _unique_id_system := UniqueIdSystem.new()
 
 
-func add(game_notification: GameNotification) -> void:
+## Note that this overwrites the notification's id.
+## If you want it to use a specific id, pass it as an argument.
+##
+## An error will occur if given id is not available.
+## Use is_id_available first to verify (see [UniqueIdSystem]).
+func add(game_notification: GameNotification, specific_id: int = -1) -> void:
 	_remove_duplicates_of(game_notification)
+
+	var id: int = specific_id
+	if not _unique_id_system.is_id_valid(specific_id):
+		id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(specific_id):
+		push_error(
+				"Specified GameNotification id is not unique."
+				+ " (id: " + str(specific_id) + ")"
+		)
+		id = _unique_id_system.new_unique_id()
+	else:
+		_unique_id_system.claim_id(specific_id)
+
+	game_notification.id = id
 	game_notification.handled.connect(_on_notification_handled)
 	_list.append(game_notification)
 	notification_added.emit(game_notification)
@@ -28,20 +48,8 @@ func from_id(id: int) -> GameNotification:
 	return null
 
 
-# TODO DRY. copy/paste from [Players]
-## Provides a new unique id that is not used by any item in the list.
-## The id will be as small as possible (0 or higher).
-func new_unique_id() -> int:
-	var new_id: int = 0
-	var id_is_not_unique: bool = true
-	while id_is_not_unique:
-		id_is_not_unique = false
-		for element in _list:
-			if element.id == new_id:
-				id_is_not_unique = true
-				new_id += 1
-				break
-	return new_id
+func id_system() -> UniqueIdSystem:
+	return _unique_id_system
 
 
 func _remove(game_notification: GameNotification) -> void:
@@ -90,7 +98,7 @@ func _is_duplicate(notif_1: GameNotification, notif_2: GameNotification) -> bool
 				and performed_action_1.creation_turn()
 				== performed_action_2.creation_turn()
 		)
-	
+
 	return false
 
 

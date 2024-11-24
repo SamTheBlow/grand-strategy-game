@@ -7,12 +7,12 @@ extends Resource
 
 signal money_changed(new_amount: int)
 
-## All countries must have a unique id
-## for the purposes of saving/loading/syncing.
-var id: int = -1
-
 @export var country_name: String = ""
 @export var color: Color = Color.WHITE
+
+## The unique id assigned to this country.
+## Each country has its own id. Useful for saving/loading, networking, etc.
+var id: int = -1
 
 var money: int = 0:
 	set(value):
@@ -92,10 +92,10 @@ func reachable_countries(provinces: Provinces) -> Array[Country]:
 					and not reachable_country in reachable_countries_list
 			):
 				reachable_countries_list.append(reachable_country)
-	
+
 	var neighbors: Array[Country] = neighboring_countries(provinces)
 	for neighbor in neighbors:
 		if not neighbor in reachable_countries_list:
 			reachable_countries_list.append(neighbor)
-	
+
 	return reachable_countries_list

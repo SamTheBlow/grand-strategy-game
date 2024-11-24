@@ -3,8 +3,8 @@ class_name Province
 ## It may be of any size or shape, and
 ## it may or may not be under the control of a [Country].
 ##
-## This class has many responsibilities, as many game mechanics
-## involve their presence on a province: [Population], [Building], [IncomeMoney].
+## This class has many responsibilities, as many game mechanics involve
+## their presence on a province: [Population], [Building], [IncomeMoney].
 ##
 ## See [method GameFromRawDict._load_province]
 ## to see how to initialize a new province.
@@ -12,8 +12,9 @@ class_name Province
 
 signal owner_changed(this: Province)
 
-## All provinces must have a unique id for the purposes of saving/loading.
-var id: int
+## The unique id assigned to this province.
+## Each province has its own id. Useful for saving/loading, networking, etc.
+var id: int = -1
 
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -57,12 +58,12 @@ var position_army_host: Vector2:
 ## (This property is automatically determined when setting _position_army_host.)
 var position_fortress: Vector2
 
+## A list of every [Army] located in this province.
+var armies: ArmiesInProvince
+
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
-
-## A list of every [Army] located in this province.
-var armies: ArmiesInProvince
 
 ## Add to this array any object that you want to keep in scope
 ## for as long as this province is in scope.

@@ -30,14 +30,14 @@ func assign_players(players: Array[Player]) -> void:
 			unassigned_players.append(player)
 	if unassigned_players.size() == 0:
 		return
-	
+
 	# Get a list of all unassigned [GamePlayer]s.
 	# These will be the only valid candidates for assignation.
 	var unassigned_game_players: Array[GamePlayer] = []
 	for game_player in _game_players.list():
 		if not game_player.is_human or game_player.player_human == null:
 			unassigned_game_players.append(game_player)
-	
+
 	# Assign players a GamePlayer whose human_player_id matches
 	for player in players:
 		for game_player in (
@@ -46,16 +46,16 @@ func assign_players(players: Array[Player]) -> void:
 			# Make sure it's still unassigned...
 			if not (game_player in unassigned_game_players):
 				continue
-			
+
 			if game_player.player_human_id != player.id:
 				continue
-			
+
 			game_player.player_human = player
 			game_player.is_human = true
 			unassigned_game_players.erase(game_player)
 			unassigned_players.erase(player)
 			break
-	
+
 	# Assign players a GamePlayer whose name matches
 	for player in unassigned_players.duplicate() as Array[Player]:
 		for game_player in (
@@ -64,16 +64,16 @@ func assign_players(players: Array[Player]) -> void:
 			# Make sure it's still unassigned...
 			if not (game_player in unassigned_game_players):
 				continue
-			
+
 			if game_player.username != player.username():
 				continue
-			
+
 			game_player.player_human = player
 			game_player.is_human = true
 			unassigned_game_players.erase(game_player)
 			unassigned_players.erase(player)
 			break
-	
+
 	for player in unassigned_players:
 		# Assign them a random unassigned GamePlayer.
 		if unassigned_game_players.size() > 0:
@@ -85,7 +85,7 @@ func assign_players(players: Array[Player]) -> void:
 			chosen_player.is_human = true
 			unassigned_game_players.erase(chosen_player)
 			continue
-		
+
 		# There isn't any GamePlayer to assign? Create a new spectator.
 		_game_players.add_player(_new_spectator(player))
 
@@ -105,14 +105,13 @@ func assign_player_to(player: Player, game_player: GamePlayer) -> void:
 	if game_player == null or game_player.player_human != null:
 		assign_player(player)
 		return
-	
+
 	game_player.player_human = player
 	game_player.is_human = true
 
 
 func _new_spectator(player: Player) -> GamePlayer:
 	var new_spectator := GamePlayer.new()
-	new_spectator.id = _game_players.new_unique_id()
 	new_spectator.player_human = player
 	new_spectator.is_human = true
 	return new_spectator

@@ -172,7 +172,8 @@ func load_game(json_data: Variant) -> void:
 		return
 
 	# Players
-	if not _load_players(json_dict, game):
+	_load_players(json_dict, game)
+	if error:
 		return
 
 	# We need countries and players to be loaded
@@ -201,10 +202,9 @@ func load_game(json_data: Variant) -> void:
 
 	# Provinces
 	for province_data: Dictionary in json_dict[WORLD_KEY][WORLD_PROVINCES_KEY]:
-		var province: Province = _load_province(province_data, game)
-		if not province:
+		_load_province(province_data, game)
+		if error:
 			return
-		world.provinces.add_province(province)
 	# 2nd loop for links
 	for province_data: Dictionary in json_dict[WORLD_KEY][WORLD_PROVINCES_KEY]:
 		var province: Province = (
@@ -283,7 +283,9 @@ func _load_country(json_data: Dictionary) -> Country:
 func _load_country_color(json_dict: Dictionary, country: Country) -> void:
 	if not ParseUtils.dictionary_has_string(json_dict, COUNTRY_COLOR_KEY):
 		error = true
-		error_message = "Country data does not contain a color (as HTML string)."
+		error_message = (
+				"Country data does not contain a color (as HTML string)."
+		)
 		return
 
 	var color_string: String = json_dict[COUNTRY_COLOR_KEY]
@@ -422,37 +424,54 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 		)
 
 
-func _load_players(json_data: Dictionary, game: Game) -> bool:
+func _load_players(json_data: Dictionary, game: Game) -> void:
 	game.game_players = GamePlayers.new()
 
 	if not json_data.has(PLAYERS_KEY):
 		error = true
 		error_message = "No players found in file."
-		return false
+		return
 	if not json_data[PLAYERS_KEY] is Array:
 		error = true
 		error_message = "Players property is not an array."
-		return false
+		return
 	var players_data: Array = json_data[PLAYERS_KEY]
 
 	for player_data: Variant in players_data:
 		if not player_data is Dictionary:
 			error = true
 			error_message = "Player data is not a dictionary."
-			return false
+			return
 		var player_dict: Dictionary = player_data
 
-		var player: GamePlayer = _load_player(player_dict, game)
-		if not player:
-			return false
-		game.game_players.add_player(player)
-
-	return true
+		_load_player(player_dict, game)
+		if error:
+			return
 
 
 # TASK verify & return errors
 ## This function requires that game.game_players is already set
-func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
+func _load_player(json_data: Dictionary, game: Game) -> void:
+	var player := GamePlayer.new()
+
+	# Player ID (mandatory)
+	if not ParseUtils.dictionary_has_number(json_data, PLAYER_ID_KEY):
+		error = true
+		error_message = "Player data doesn't contain an id."
+		return
+	var id: int = ParseUtils.dictionary_int(json_data, PLAYER_ID_KEY)
+
+	# Verify that the id is valid and available.
+	# If not, then the entire data is invalid.
+	if not game.game_players.id_system().is_id_available(id):
+		error = true
+		error_message = (
+				"Found an invalid player id."
+				+ " Perhaps another player has the same id?"
+				+ " (id: " + str(id) + ")"
+		)
+		return
+
 	# AI type
 	var ai_type: int = 0
 	if ParseUtils.dictionary_has_number(json_data, PLAYER_AI_TYPE_KEY):
@@ -462,8 +481,6 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		if loaded_ai_type in PlayerAI.Type.values():
 			ai_type = loaded_ai_type
 
-	var player: GamePlayer = GamePlayer.new()
-	player.id = json_data[PLAYER_ID_KEY]
 	# The player is a spectator if there is no country id,
 	# of if the country id is a negative number
 	if json_data.has(PLAYER_COUNTRY_ID_KEY):
@@ -478,7 +495,7 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 		if not json_data[PLAYER_USERNAME_KEY] is String:
 			error = true
 			error_message = "Player's username property is not a string."
-			return null
+			return
 		player.username = json_data[PLAYER_USERNAME_KEY]
 	if json_data.has(PLAYER_HUMAN_ID_KEY):
 		player.player_human_id = json_data[PLAYER_HUMAN_ID_KEY]
@@ -497,7 +514,7 @@ func _load_player(json_data: Dictionary, game: Game) -> GamePlayer:
 	if ai_personality != null:
 		player.player_ai.personality = ai_personality
 
-	return player
+	game.game_players.add_player(player, id)
 
 
 # TASK verify & return errors
@@ -512,9 +529,27 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 
 
 # TASK verify & return errors
-func _load_province(json_data: Dictionary, game: Game) -> Province:
+## Returns true if an error occured.
+func _load_province(json_data: Dictionary, game: Game) -> void:
 	var province := Province.new(game.world.armies)
-	province.id = json_data[PROVINCE_ID_KEY]
+
+	# Province ID (mandatory)
+	if not ParseUtils.dictionary_has_number(json_data, PROVINCE_ID_KEY):
+		error = true
+		error_message = "Province data doesn't contain an id."
+		return
+	var id: int = ParseUtils.dictionary_int(json_data, PROVINCE_ID_KEY)
+
+	# Verify that the id is valid and available.
+	# If not, then the entire data is invalid.
+	if not game.world.provinces.id_system().is_id_available(id):
+		error = true
+		error_message = (
+				"Found an invalid province id."
+				+ " Perhaps another province has the same id?"
+				+ " (id: " + str(id) + ")"
+		)
+		return
 
 	var shape_data: Dictionary = json_data[PROVINCE_SHAPE_KEY]
 	var shape: PackedVector2Array = []
@@ -560,7 +595,8 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 			== GameRules.ProvinceIncome.POPULATION
 	):
 		province._income_money = IncomeMoneyPerPopulation.new(
-				province.population, game.rules.province_income_per_person.value
+				province.population,
+				game.rules.province_income_per_person.value
 		)
 	else:
 		var base_income: int = 0
@@ -578,7 +614,7 @@ func _load_province(json_data: Dictionary, game: Game) -> Province:
 	province.add_component(ProvinceOwnershipUpdate.new(
 			province, game.turn.player_turn_ended
 	))
-	return province
+	game.world.provinces.add_province(province, id)
 
 
 ## Returns true if an error occured, false otherwise.
@@ -591,6 +627,7 @@ func _load_armies(json_data: Array, game: Game) -> bool:
 		var army_dict: Dictionary = army_data
 
 		_load_army(army_dict, game)
+
 	return false
 
 
@@ -600,8 +637,18 @@ func _load_army(json_data: Dictionary, game: Game) -> void:
 		error = true
 		error_message = "Army data doesn't contain an id."
 		return
-	# TASK verify that the army id is unique
 	var id: int = ParseUtils.dictionary_int(json_data, ARMY_ID_KEY)
+
+	# Verify that the id is valid and available.
+	# If not, then the entire data is invalid.
+	if not game.world.armies.id_system().is_id_available(id):
+		error = true
+		error_message = (
+				"Found an invalid army id."
+				+ " Perhaps another army has the same id?"
+				+ " (id: " + str(id) + ")"
+		)
+		return
 
 	# Army size (optional, defaults to 1)
 	var army_size: int = 1
@@ -616,7 +663,9 @@ func _load_army(json_data: Dictionary, game: Game) -> void:
 	var owner_country_id: int = (
 			ParseUtils.dictionary_int(json_data, ARMY_OWNER_ID_KEY)
 	)
-	var owner_country: Country = game.countries.country_from_id(owner_country_id)
+	var owner_country: Country = (
+			game.countries.country_from_id(owner_country_id)
+	)
 	if owner_country == null:
 		error = true
 		error_message = (
@@ -645,8 +694,10 @@ func _load_army(json_data: Dictionary, game: Game) -> void:
 	# Movements made (optional, defaults to 0)
 	var movements_made: int = 0
 	if ParseUtils.dictionary_has_number(json_data, ARMY_MOVEMENTS_KEY):
-		movements_made = ParseUtils.dictionary_int(json_data, ARMY_MOVEMENTS_KEY)
+		movements_made = (
+				ParseUtils.dictionary_int(json_data, ARMY_MOVEMENTS_KEY)
+		)
 
 	var _army: Army = Army.quick_setup(
-			game, id, army_size, owner_country, province, movements_made
+			game, army_size, owner_country, province, id, movements_made
 	)

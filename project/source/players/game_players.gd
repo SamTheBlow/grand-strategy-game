@@ -8,12 +8,31 @@ signal player_removed(game_player: GamePlayer)
 signal username_changed(game_player: GamePlayer)
 
 var _list: Array[GamePlayer] = []
+var _unique_id_system := UniqueIdSystem.new()
 
 
-func add_player(player: GamePlayer) -> void:
+## Note that this overwrites the player's id.
+## If you want the player to use a specific id, pass it as an argument.
+##
+## An error will occur if given id is not available.
+## Use is_id_available first to verify (see [UniqueIdSystem]).
+func add_player(player: GamePlayer, specific_id: int = -1) -> void:
 	if _list.has(player):
 		return
-	
+
+	var id: int = specific_id
+	if not _unique_id_system.is_id_valid(specific_id):
+		id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(specific_id):
+		push_error(
+				"Specified player id is not unique."
+				+ " (id: " + str(specific_id) + ")"
+		)
+		id = _unique_id_system.new_unique_id()
+	else:
+		_unique_id_system.claim_id(specific_id)
+
+	player.id = id
 	player.username_changed.connect(_on_username_changed)
 	_list.append(player)
 	player_added.emit(player, _list.size() - 1)
@@ -22,7 +41,7 @@ func add_player(player: GamePlayer) -> void:
 func remove_player(player: GamePlayer) -> void:
 	if not _list.has(player):
 		return
-	
+
 	player.username_changed.disconnect(_on_username_changed)
 	_list.erase(player)
 	player_removed.emit(player)
@@ -55,6 +74,10 @@ func player_from_id(id: int) -> GamePlayer:
 	return null
 
 
+func id_system() -> UniqueIdSystem:
+	return _unique_id_system
+
+
 func number_of_humans() -> int:
 	var output: int = 0
 	for player in _list:
@@ -83,22 +106,6 @@ func number_of_local_humans() -> int:
 		):
 			output += 1
 	return output
-
-
-# TODO DRY. copy/paste from [Players]
-## Provides a new unique id that is not used by any player in the list.
-## The id will be as small as possible (0 or higher).
-func new_unique_id() -> int:
-	var new_id: int = 0
-	var id_is_not_unique: bool = true
-	while id_is_not_unique:
-		id_is_not_unique = false
-		for player in _list:
-			if player.id == new_id:
-				id_is_not_unique = true
-				new_id += 1
-				break
-	return new_id
 
 
 ## Returns true if the client (given by its unique id) has one or more
@@ -134,12 +141,12 @@ func _on_player_removed(player: Player) -> void:
 				or game_player.player_human != player
 		):
 			continue
-		
+
 		game_player.is_human = false
-		
+
 		if game_player.is_spectating():
 			remove_player(game_player)
-		
+
 		break
 
 
