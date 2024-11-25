@@ -23,11 +23,11 @@ var active_state: MapMenuState:
 	set(value):
 		if active_state == value:
 			return
-		
+
 		_disconnect_signals()
 		active_state = value
 		_connect_signals()
-		
+
 		_send_active_state_to_clients()
 
 ## This is the user's personal state.
@@ -45,7 +45,7 @@ func _ready() -> void:
 func _connect_signals() -> void:
 	if active_state == null:
 		return
-	
+
 	if (
 			not active_state.selected_map_changed
 			.is_connected(_on_selected_map_changed)
@@ -66,7 +66,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if active_state == null:
 		return
-	
+
 	if (
 			active_state.selected_map_changed
 			.is_connected(_on_selected_map_changed)
@@ -89,7 +89,7 @@ func _disconnect_signals() -> void:
 func _send_active_state_to_clients() -> void:
 	if active_state == null or not is_node_ready():
 		return
-	
+
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_state.rpc(active_state.get_raw_state(false))
 
@@ -116,12 +116,14 @@ func _receive_new_custom_map(raw_map_metadata: Dictionary) -> void:
 
 ## Updates a map's metadata on clients.
 @rpc("authority", "call_remote", "reliable")
-func _receive_metadata_change(map_id: int, raw_map_metadata: Dictionary) -> void:
+func _receive_metadata_change(
+		map_id: int, raw_map_metadata: Dictionary
+) -> void:
 	var metadata_to_change: MapMetadata = active_state.map_with_id(map_id)
 	if metadata_to_change == null:
 		push_error("Received an invalid map metadata id when trying to sync.")
 		return
-	
+
 	metadata_to_change.copy_state_of(MapMetadata.from_dict(raw_map_metadata))
 
 

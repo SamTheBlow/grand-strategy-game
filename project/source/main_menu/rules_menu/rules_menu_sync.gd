@@ -19,11 +19,11 @@ var active_state: GameRules:
 	set(value):
 		if active_state == value:
 			return
-		
+
 		_disconnect_signals()
 		active_state = value
 		_connect_signals()
-		
+
 		_send_active_state_to_clients()
 
 ## This is the user's personal state.
@@ -41,7 +41,7 @@ func _ready() -> void:
 func _connect_signals() -> void:
 	if active_state == null:
 		return
-	
+
 	if (
 			not active_state.rule_changed
 			.is_connected(_on_rule_changed)
@@ -52,7 +52,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if active_state == null:
 		return
-	
+
 	if (
 			active_state.rule_changed
 			.is_connected(_on_rule_changed)
@@ -65,7 +65,7 @@ func _disconnect_signals() -> void:
 func _send_active_state_to_clients() -> void:
 	if active_state == null or not is_node_ready():
 		return
-	
+
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_state.rpc(RulesToRawDict.new().result(active_state))
 
@@ -94,7 +94,9 @@ func _on_rule_changed(rule_name: String, rule_item: RuleItem) -> void:
 ## On the server, sends the current state to the new client.
 func _on_peer_connected(peer_id: int) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc_id(peer_id, RulesToRawDict.new().result(active_state))
+		_receive_state.rpc_id(
+				peer_id, RulesToRawDict.new().result(active_state)
+		)
 
 
 ## Resets the menu's state on disconnected clients.

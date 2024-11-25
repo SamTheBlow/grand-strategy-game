@@ -20,7 +20,8 @@ func _enter_tree() -> void:
 	name = "ActionSync"
 
 
-## The client receives a new [Action] from the server and applies it immediately.
+## The client receives a new [Action]
+## from the server and applies it immediately.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_action(action_data: Dictionary) -> void:
 	game.apply_action(Action.from_raw_data(action_data))
@@ -29,5 +30,5 @@ func _receive_new_action(action_data: Dictionary) -> void:
 func _on_action_applied(action: Action) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-	
+
 	_receive_new_action.rpc(action.raw_data())

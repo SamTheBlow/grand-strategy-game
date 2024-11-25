@@ -9,18 +9,18 @@ var source_province: ProvinceVisuals2D:
 	set(value):
 		if source_province == value:
 			return
-		
+
 		source_province = value
-		
+
 		position = source_province.global_position_army_host()
 
 var destination_province: ProvinceVisuals2D:
 	set(value):
 		if destination_province == value:
 			return
-		
+
 		destination_province = value
-		
+
 		if destination_province == null:
 			return
 		_arrow.position_tip = (
@@ -32,9 +32,9 @@ var global_pointing_position: Vector2:
 	set(value):
 		if global_pointing_position == value:
 			return
-		
+
 		global_pointing_position = value
-		
+
 		if destination_province == null:
 			_arrow.position_tip = to_local(global_pointing_position)
 
@@ -46,4 +46,6 @@ func _ready() -> void:
 
 
 func auto_arrow() -> AutoArrow:
-	return AutoArrow.new(source_province.province, destination_province.province)
+	return AutoArrow.new(
+			source_province.province, destination_province.province
+	)

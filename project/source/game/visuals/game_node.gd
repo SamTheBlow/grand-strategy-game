@@ -198,7 +198,8 @@ func _on_province_unhandled_mouse_event(
 				you.playing_country, selected_province
 		)
 		if active_armies.size() > 0:
-			# NOTE: assumes that countries only have one active army per province
+			# NOTE: assumes that countries only have
+			# one active army per province
 			var army: Army = active_armies[0]
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)

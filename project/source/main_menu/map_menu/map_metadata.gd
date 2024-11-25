@@ -36,8 +36,7 @@ func set_setting(key: String, value: Variant) -> void:
 
 
 ## Returns a new MapMetadata instance with data loaded from given file path.
-## You still have to assign it an ID manually, however.
-## This may return null if an error occurs, e.g. the file's contents are invalid.
+## Returns null if an error occurs, e.g. the file's contents are invalid.
 static func from_file_path(base_path: String) -> MapMetadata:
 	var file_json := FileJSON.new()
 	file_json.load_json(base_path)
@@ -52,19 +51,19 @@ static func from_file_path(base_path: String) -> MapMetadata:
 	if not ParseUtils.dictionary_has_dictionary(json_dict, KEY_METADATA):
 		return null
 	var meta_dict := json_dict[KEY_METADATA] as Dictionary
-	
+
 	var result := MapMetadata.new()
 	result.file_path = base_path
-	
+
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_NAME):
 		result.map_name = meta_dict[KEY_META_NAME]
 	else:
 		result.map_name = "(No name)"
-	
+
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
 		var map_icon_file_path: String = meta_dict[KEY_META_ICON]
 		result.icon = _map_icon_from_path(base_path, map_icon_file_path)
-	
+
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
 		# Only load settings whose key is of type String.
 		var settings_dict: Dictionary = meta_dict[KEY_META_SETTINGS]
@@ -73,7 +72,7 @@ static func from_file_path(base_path: String) -> MapMetadata:
 				continue
 			var key_string := key as String
 			result.settings.merge({key_string: settings_dict[key_string]})
-	
+
 	return result
 
 
@@ -90,18 +89,18 @@ static func _map_icon_from_path(
 		#	"Please make sure the icon's file path is relative to the map's."
 		#)
 		return null
-	
+
 	var map_dir: DirAccess = DirAccess.open(base_path.get_base_dir())
 	if not map_dir.file_exists(icon_file_path):
 		#push_error("File for map icon does not exist.")
 		return null
-	
+
 	map_dir.change_dir(icon_file_path.get_base_dir())
 	var true_icon_path: String = (
 			map_dir.get_current_dir().path_join(icon_file_path.get_file())
 	)
 	#print_debug("Loading icon: ", true_icon_path)
-	
+
 	# I'm not sure if this works in 100% of cases but it seems good enough
 	if true_icon_path.begins_with("res://"):
 		# This is most likely an already imported texture, so load it normally
@@ -120,26 +119,26 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 		KEY_STATE_MAP_NAME: map_name,
 		KEY_STATE_SETTINGS: settings,
 	}
-	
+
 	if include_file_path:
 		output.merge({
 			KEY_STATE_FILE_PATH: file_path,
 		})
-	
+
 	return output
 
 
 ## Returns a new instance of this object built using given raw Dictionary.
 static func from_dict(dict: Dictionary) -> MapMetadata:
 	var new_map_data := MapMetadata.new()
-	
+
 	if ParseUtils.dictionary_has_string(dict, KEY_STATE_MAP_NAME):
 		new_map_data.map_name = dict[KEY_STATE_MAP_NAME]
 	if ParseUtils.dictionary_has_string(dict, KEY_STATE_FILE_PATH):
 		new_map_data.file_path = dict[KEY_STATE_FILE_PATH]
 	if ParseUtils.dictionary_has_dictionary(dict, KEY_STATE_SETTINGS):
 		new_map_data.settings = dict[KEY_STATE_SETTINGS]
-	
+
 	return new_map_data
 
 

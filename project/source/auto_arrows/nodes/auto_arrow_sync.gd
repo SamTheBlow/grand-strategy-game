@@ -7,7 +7,7 @@ extends Node
 var game: Game:
 	set(value):
 		game = value
-		
+
 		for country in game.countries.list():
 			_on_country_added(country)
 		game.countries.country_added.connect(_on_country_added)
@@ -32,7 +32,7 @@ func _on_country_added(country: Country) -> void:
 func _on_auto_arrow_added(country: Country, auto_arrow: AutoArrow) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-	
+
 	_receive_auto_arrow_added.rpc(
 			country.id, AutoArrowToDict.new().result(auto_arrow)
 	)
@@ -49,7 +49,7 @@ func _receive_auto_arrow_added(country_id: int, arrow_data: Dictionary) -> void:
 func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-	
+
 	_receive_auto_arrow_removed.rpc(
 			country.id, AutoArrowToDict.new().result(auto_arrow)
 	)
@@ -57,7 +57,9 @@ func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
 
 ## The client receives the info from the server.
 @rpc("authority", "call_remote", "reliable")
-func _receive_auto_arrow_removed(country_id: int, arrow_data: Dictionary) -> void:
+func _receive_auto_arrow_removed(
+		country_id: int, arrow_data: Dictionary
+) -> void:
 	var country: Country = game.countries.country_from_id(country_id)
 	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
 	country.auto_arrows.remove(auto_arrow)

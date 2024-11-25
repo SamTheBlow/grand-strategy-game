@@ -35,7 +35,7 @@ func add_player(player: Player) -> void:
 	if _is_not_allowed_to_make_changes():
 		push_warning("Tried adding a player without permission!")
 		return
-	
+
 	_list.append(player)
 	add_child(player)
 	#_send_new_player_to_clients(player)
@@ -48,7 +48,7 @@ func add_local_human_player() -> void:
 	if _is_not_allowed_to_make_changes():
 		_request_add_local_player()
 		return
-	
+
 	var player: Player = Player.new()
 	player.id = new_unique_id()
 	player.custom_username = new_default_username()
@@ -120,7 +120,7 @@ func you() -> Player:
 func send_all_data(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
-	
+
 	var node_names: PackedStringArray = []
 	for player in _list:
 		node_names.append(player.name)
@@ -132,15 +132,15 @@ func send_all_data(multiplayer_id: int) -> void:
 func _receive_all_data(node_names: PackedStringArray) -> void:
 	_sync_check = PlayersSyncCheck.new()
 	_sync_check.number_of_players = node_names.size()
-	
+
 	# Remove all the old nodes
 	for player in list():
 		_remove_player(player)
-	
+
 	# Add the new nodes
 	for node_name in node_names:
 		add_received_player(node_name)
-	
+
 	await _sync_check.sync_finished
 	sync_finished.emit(self)
 #endregion
@@ -201,11 +201,11 @@ func _receive_client_data(data: Array) -> void:
 				+ " but you're not the server."
 		)
 		return
-	
+
 	var multiplayer_id: int = multiplayer.get_remote_sender_id()
 	for player_data: Dictionary in data:
 		_add_remote_player(multiplayer_id, player_data)
-	
+
 	for player in _list:
 		if player.multiplayer_id == multiplayer_id:
 			player_group_added.emit(player)
@@ -227,7 +227,7 @@ func _consider_add_local_player() -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
-	
+
 	var data := {
 		"is_human": true,
 		"custom_username": new_default_username(),
@@ -244,12 +244,12 @@ func remove_player(player: Player) -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		_consider_player_removal.rpc_id(1, player.name)
 		return
-	
+
 	_remove_player(player)
-	
+
 	# Send the removal to clients
 	_receive_player_removal.rpc(player.name)
-	
+
 	# Kick a client when removing their last player
 	if _number_of_humans_with_multiplayer_id(player.multiplayer_id) == 0:
 		multiplayer.multiplayer_peer.disconnect_peer(player.multiplayer_id)
@@ -262,7 +262,7 @@ func _consider_player_removal(player_name: String) -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
-	
+
 	var player_to_remove: Player
 	for player in _list:
 		if player.name == player_name:
@@ -271,14 +271,15 @@ func _consider_player_removal(player_name: String) -> void:
 	if player_to_remove == null:
 		# Invalid player name
 		return
-	
-	# Only accept if the user who made the request has authority over the player.
+
+	# Only accept if the user who made the request
+	# has authority over the player.
 	# Unless you were given privileges (which is currently never the case),
 	# you should never be able to delete other people's players.
 	if multiplayer.get_remote_sender_id() != player_to_remove.multiplayer_id:
 		push_warning("Someone tried to delete someone else's player.")
 		return
-	
+
 	# Request accepted
 	remove_player(player_to_remove)
 
@@ -290,7 +291,7 @@ func _receive_player_removal(node_name: String) -> void:
 		if player.name == node_name:
 			_remove_player(player)
 			return
-	
+
 	push_warning(
 			"Received info about removing a player,"
 			+ " but that player could not be found!"
@@ -303,7 +304,7 @@ func _remove_player(player: Player) -> void:
 	if not _list.has(player):
 		push_warning("Tried to remove a player, but it isn't on the list!")
 		return
-	
+
 	remove_child(player)
 	_list.erase(player)
 	player_removed.emit(player)
@@ -334,7 +335,7 @@ func _add_remote_player(
 ) -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		return
-	
+
 	var player := Player.new()
 	player.load_data(player_data)
 	player.id = new_unique_id()
@@ -353,14 +354,14 @@ func _on_server_disconnected() -> void:
 func _on_peer_disconnected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
-	
+
 	var group_leader: Player = null
-	
+
 	for player in list():
 		if player.multiplayer_id == multiplayer_id:
 			if group_leader == null:
 				group_leader = player
 			remove_player(player)
-	
+
 	if group_leader != null:
 		player_group_removed.emit(group_leader)

@@ -64,7 +64,9 @@ func _remove_duplicates_of(game_notification: GameNotification) -> void:
 			_remove(element)
 
 
-func _is_duplicate(notif_1: GameNotification, notif_2: GameNotification) -> bool:
+func _is_duplicate(
+		notif_1: GameNotification, notif_2: GameNotification
+) -> bool:
 	if notif_1 is GameNotificationOffer and notif_2 is GameNotificationOffer:
 		var offer_1 := notif_1 as GameNotificationOffer
 		var offer_2 := notif_2 as GameNotificationOffer

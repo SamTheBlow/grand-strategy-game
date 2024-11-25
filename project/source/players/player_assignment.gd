@@ -80,7 +80,9 @@ func assign_players(players: Array[Player]) -> void:
 			var random_index: int = (
 					randi_range(0, unassigned_game_players.size() - 1)
 			)
-			var chosen_player: GamePlayer = unassigned_game_players[random_index]
+			var chosen_player: GamePlayer = (
+					unassigned_game_players[random_index]
+			)
 			chosen_player.player_human = player
 			chosen_player.is_human = true
 			unassigned_game_players.erase(chosen_player)

@@ -12,7 +12,7 @@ var _list: Array[AutoArrow] = []
 func add(auto_arrow: AutoArrow) -> void:
 	if has_equivalent_in_list(auto_arrow):
 		return
-	
+
 	_list.append(auto_arrow)
 	arrow_added.emit(auto_arrow)
 
@@ -21,7 +21,7 @@ func add(auto_arrow: AutoArrow) -> void:
 ## Any [AutoArrow] that is considered equivalent to given arrow will be removed.
 func remove(auto_arrow: AutoArrow) -> void:
 	var list_arrow: AutoArrow
-	
+
 	if _list.has(auto_arrow):
 		list_arrow = auto_arrow
 	else:
@@ -29,19 +29,20 @@ func remove(auto_arrow: AutoArrow) -> void:
 			if auto_arrow.is_equivalent_to(arrow):
 				list_arrow = arrow
 				break
-	
+
 	if list_arrow == null:
 		push_warning(
 				"Tried removing an AutoArrow, but "
 				+ "there was no equivalent arrow on the list."
 		)
 		return
-	
+
 	_list.erase(list_arrow)
 	arrow_removed.emit(list_arrow)
 
 
-## Removes from this list all autoarrows whose source province is given province.
+## Removes from this list all autoarrows
+## whose source province is given province.
 func remove_all_from_province(source_province: Province) -> void:
 	for auto_arrow in list():
 		if auto_arrow.source_province == source_province:
