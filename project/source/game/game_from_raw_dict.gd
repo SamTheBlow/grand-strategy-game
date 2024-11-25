@@ -531,7 +531,7 @@ func _load_world_limits(json_data: Dictionary, limits: WorldLimits) -> bool:
 # TASK verify & return errors
 ## Returns true if an error occured.
 func _load_province(json_data: Dictionary, game: Game) -> void:
-	var province := Province.new(game.world.armies)
+	var province := Province.new()
 
 	# Province ID (mandatory)
 	if not ParseUtils.dictionary_has_number(json_data, PROVINCE_ID_KEY):

@@ -59,7 +59,7 @@ var position_army_host: Vector2:
 var position_fortress: Vector2
 
 ## A list of every [Army] located in this province.
-var armies: ArmiesInProvince
+var armies := ArmiesInProvince.new()
 
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
@@ -68,10 +68,6 @@ var _income_money: IncomeMoney
 ## Add to this array any object that you want to keep in scope
 ## for as long as this province is in scope.
 var _components: Array = []
-
-
-func _init(armies_list: Armies) -> void:
-	armies = ArmiesInProvince.new(armies_list, self)
 
 
 func add_component(object: Object) -> void:

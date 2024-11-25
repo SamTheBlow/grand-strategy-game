@@ -1,46 +1,36 @@
 class_name ArmiesInProvince
-## Keeps track of all armies located in given [Province].
+## Stores a list of armies.
+## Automatically removes an [Army] from the list when it changes province.
+# This doesn't automatically add armies when they enter the province, and it
+# doesn't automatically remove armies when they are removed from the game.
+# It's for performance reasons. Those things are handled by a separate class.
+# See [ArmiesInProvinceSystem].
 
 
-var _province: Province
-
-# TODO figure out how to expose the list without having to create a new copy.
-# This is important because creating copies of very large arrays is slow.
-# And not creating a new copy is also bad because
-# then outsiders can add or remove items.
-## IMPORTANT: Do not add or remove items from this array!
+# TODO figure out how to expose the list without creating a new copy
+# and while also preventing array manipulation from the outside.
+# Creating copies of very large arrays is slow.
+# And if we don't create a copy, then outsiders can add or remove items
+# with no way for us to know about it.
+## IMPORTANT: Do not directly add or remove items from this array!
 ## It will screw up everything.
 var list: Array[Army] = []
 
 
-func _init(armies: Armies, province: Province) -> void:
-	_province = province
-
-	for army in armies.list():
-		_on_army_added(army)
-
-	armies.army_added.connect(_on_army_added)
-	armies.army_removed.connect(_on_army_removed)
-
-
-func _on_army_added(army: Army) -> void:
-	if army.province() == _province:
-		list.append(army)
+## Adds given army to the list.
+## Please use this, do not manipulate the array directly.
+func add(army: Army) -> void:
+	list.append(army)
 	army.province_changed.connect(_on_army_province_changed)
 
 
-func _on_army_removed(army: Army) -> void:
+## Removes given army from the list.
+## Please use this, do not manipulate the array directly.
+func remove(army: Army) -> void:
+	list.erase(army)
 	army.province_changed.disconnect(_on_army_province_changed)
-	if army in list:
-		list.erase(army)
 
 
+## Removes the army from the list. (The army moved out of the province.)
 func _on_army_province_changed(army: Army) -> void:
-	if army.province() == _province:
-		# The army changed province and is now in the target province.
-		# That means it wasn't there before. Add it to the list.
-		list.append(army)
-	elif army in list:
-		# The army was in the list, and it changed province.
-		# That means it moved out of the province. Remove it from the list.
-		list.erase(army)
+	remove(army)
