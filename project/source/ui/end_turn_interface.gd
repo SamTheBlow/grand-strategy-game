@@ -9,7 +9,10 @@ extends Control
 
 
 func _ready() -> void:
-	_update_visibility(_game.game.turn.playing_player())
+	# TODO don't use call_deferred
+	# Right now we have to because players are assigned
+	# after this node is created, for some reason.
+	_update_visibility.call_deferred(_game.game.turn.playing_player())
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 
 
