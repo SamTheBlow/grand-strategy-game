@@ -6,9 +6,9 @@ class_name DiplomacyRelationshipsToRaw
 
 func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
 	var output_array: Array = []
-	for relationship in diplomacy_relationships._list:
+	for country: Country in diplomacy_relationships.list:
 		var relationship_dict: Dictionary = _relationship_to_dict(
-				relationship,
+				diplomacy_relationships.list[country],
 				diplomacy_relationships._default_relationship_data
 		)
 		if not relationship_dict.is_empty():
@@ -21,7 +21,7 @@ func _relationship_to_dict(
 		default_relationship_data: Dictionary
 ) -> Dictionary:
 	var output: Dictionary = {}
-	
+
 	var base_data: Dictionary = (
 			relationship._base_data_no_defaults(default_relationship_data)
 	)
@@ -29,7 +29,7 @@ func _relationship_to_dict(
 		output.merge({
 			DiplomacyRelationshipsFromRaw.BASE_DATA_KEY: base_data
 		})
-	
+
 	var actions_performed_this_turn: Array[int] = []
 	for action in relationship.available_actions():
 		if action.was_performed_this_turn():
@@ -39,11 +39,11 @@ func _relationship_to_dict(
 			DiplomacyRelationshipsFromRaw.PERFORMED_ACTIONS_KEY:
 				actions_performed_this_turn,
 		})
-	
+
 	if not output.is_empty():
 		output.merge({
 			DiplomacyRelationshipsFromRaw.RECIPIENT_COUNTRY_ID_KEY:
 				relationship.recipient_country.id,
 		})
-	
+
 	return output

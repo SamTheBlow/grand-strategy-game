@@ -11,10 +11,10 @@ var _game: Game
 
 func _init(game: Game) -> void:
 	_game = game
-	
+
 	for country in _game.countries.list():
-		for relationship in country.relationships.list():
-			_connect_relationship(relationship)
+		for key: Country in country.relationships.list:
+			_connect_relationship(country.relationships.list[key])
 		country.relationships.relationship_created.connect(
 				_on_relationship_created
 		)
@@ -62,7 +62,7 @@ func _on_fighting_changed(relationship: DiplomacyRelationship) -> void:
 			and relationship.is_fighting()
 	):
 		_apply_data(relationship, {"grants_military_access": false})
-	
+
 	if (
 			_game.rules.automatically_fight_back.value
 			and relationship.is_fighting()

@@ -25,18 +25,18 @@ func apply(
 		error_message = "Data is not an array."
 		return
 	var data_array := data as Array
-	
+
 	var diplomacy_relationships := DiplomacyRelationships.new(
 			game, country, default_data, base_actions
 	)
-	
+
 	for data_element: Variant in data_array:
 		if not data_element is Dictionary:
 			error = true
 			error_message = "Data element is not a dictionary."
 			return
 		var data_dict := data_element as Dictionary
-		
+
 		var relationship: DiplomacyRelationship = (
 				_diplomacy_relationship_from_dict(
 						game, country, data_dict, default_data, base_actions
@@ -44,8 +44,11 @@ func apply(
 		)
 		if error:
 			return
-		diplomacy_relationships._list.append(relationship)
-	
+
+		diplomacy_relationships.list[relationship.recipient_country] = (
+				relationship
+		)
+
 	result = diplomacy_relationships
 
 
@@ -66,7 +69,7 @@ func _diplomacy_relationship_from_dict(
 	var recipient_country_id: int = (
 			ParseUtils.dictionary_int(data, RECIPIENT_COUNTRY_ID_KEY)
 	)
-	
+
 	var recipient_country: Country = (
 			game.countries.country_from_id(recipient_country_id)
 	)
@@ -78,11 +81,11 @@ func _diplomacy_relationship_from_dict(
 				+ ") Perhaps there isn't a country with that id."
 		)
 		return null
-	
+
 	var loaded_relationship_data: Dictionary = {}
 	if ParseUtils.dictionary_has_dictionary(data, BASE_DATA_KEY):
 		loaded_relationship_data.merge(data[BASE_DATA_KEY] as Dictionary)
-	
+
 	var actions_already_performed: Array[int] = []
 	if ParseUtils.dictionary_has_array(data, PERFORMED_ACTIONS_KEY):
 		for element: Variant in data[PERFORMED_ACTIONS_KEY] as Array:
@@ -90,11 +93,11 @@ func _diplomacy_relationship_from_dict(
 				continue
 			var action_id: int = ParseUtils.number_as_int(element)
 			actions_already_performed.append(action_id)
-	
+
 	var relationship_data: Dictionary = {}
 	relationship_data.merge(default_data)
 	relationship_data.merge(loaded_relationship_data, true)
-	
+
 	var relationship := DiplomacyRelationship.new(
 			country,
 			recipient_country,
@@ -102,7 +105,7 @@ func _diplomacy_relationship_from_dict(
 			relationship_data.duplicate(),
 			base_actions,
 	)
-	
+
 	relationship.diplomacy_presets = game.rules.diplomatic_presets
 	relationship.diplomacy_actions = game.rules.diplomatic_actions
 	relationship.initialize_actions(

@@ -9,7 +9,10 @@ var _source_country: Country
 var _default_relationship_data: Dictionary
 var _base_actions: Array[int] = []
 
-var _list: Array[DiplomacyRelationship] = []
+## Dictionary[Country, DiplomacyRelationship]
+## This is a dictionary for performance reasons.
+## Do not manipulate the dictionary directly!
+var list: Dictionary = {}
 
 
 func _init(
@@ -24,17 +27,11 @@ func _init(
 	_base_actions = base_actions
 
 
-## Returns a new copy of the list.
-func list() -> Array[DiplomacyRelationship]:
-	return _list.duplicate()
-
-
 ## Creates a new relationship if there wasn't one before.
 ## This never returns null.
 func with_country(country: Country) -> DiplomacyRelationship:
-	for relationship in _list:
-		if relationship.recipient_country == country:
-			return relationship
+	if list.has(country):
+		return list[country]
 	return _new_relationship(country)
 
 
@@ -44,7 +41,7 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 	if country != null:
 		default_data = _default_relationship_data
 		base_actions = _base_actions
-	
+
 	var relationship := DiplomacyRelationship.new(
 			_source_country,
 			country,
@@ -52,19 +49,19 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 			default_data.duplicate(),
 			base_actions,
 	)
-	
+
 	# TODO this is ugly
 	if default_data.has("diplomacy_presets"):
 		relationship.diplomacy_presets = default_data["diplomacy_presets"]
 	if default_data.has("diplomacy_actions"):
 		relationship.diplomacy_actions = default_data["diplomacy_actions"]
-	
+
 	if country != null:
-		_list.append(relationship)
+		list[country] = relationship
 		relationship_created.emit(relationship)
-		
+
 		relationship.initialize_actions(_game.turn.current_turn())
-	
+
 	return relationship
 
 
@@ -84,13 +81,13 @@ static func new_default_data(game_rules: GameRules) -> Dictionary:
 		"diplomacy_presets": game_rules.diplomatic_presets,
 		"diplomacy_actions": game_rules.diplomatic_actions,
 	}
-	
+
 	if game_rules.is_diplomacy_presets_enabled():
 		# ATTENTION: This assumes that the rule's value is the preset's id.
 		default_data[DiplomacyRelationship.PRESET_ID_KEY] = (
 				game_rules.diplomacy_presets_option.selected_value()
 		)
-	
+
 	return default_data
 
 
@@ -98,7 +95,7 @@ static func new_default_data(game_rules: GameRules) -> Dictionary:
 ## that will be available to all countries by default.
 static func new_base_actions(game_rules: GameRules) -> Array[int]:
 	var output: Array[int] = []
-	
+
 	# ATTENTION TODO hard coded values for diplomacy action IDs
 	if game_rules.can_grant_military_access.value:
 		output.append(5)
@@ -118,5 +115,5 @@ static func new_base_actions(game_rules: GameRules) -> Array[int]:
 		output.append(12)
 	if game_rules.can_ask_to_stop_fighting.value:
 		output.append(13)
-	
+
 	return output
