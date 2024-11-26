@@ -23,13 +23,6 @@ var links: Array[Province] = []
 ## The [Country] in control of this province. This can be null.
 ## Must initialize when the province is created.
 var owner_country: Country:
-	get:
-		# This is to preserve compatibility with 4.0 version.
-		# In 4.0, owner_country was never null, and
-		# an unclaimed country was a country with a negative id.
-		if owner_country and owner_country.id < 0:
-			return null
-		return owner_country
 	set(value):
 		if value == owner_country:
 			return
