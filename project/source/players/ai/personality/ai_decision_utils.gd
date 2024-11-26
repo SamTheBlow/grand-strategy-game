@@ -35,11 +35,11 @@ func relative_strength_of_countries() -> Array[float]:
 	for strength in strengths:
 		if strength > largest_strength:
 			largest_strength = strength
-	
+
 	# Prevent division by zero
 	if largest_strength == 0.0:
 		largest_strength = 1.0
-	
+
 	var relative_strengths: Array[float] = []
 	for strength in strengths:
 		relative_strengths.append(strength / largest_strength)
@@ -52,22 +52,22 @@ func relative_strength_of_countries() -> Array[float]:
 func strength_of_countries() -> Array[float]:
 	if not game:
 		return []
-	
+
 	const SCORE_WEIGHT_MONEY_INCOME: float = 1.0
 	const SCORE_WEIGHT_REINFORCEMENTS: float = 100.0
 	const SCORE_WEIGHT_EXISTING_ARMIES: float = 10.0
-	
+
 	var strengths: Array[float] = []
-	
+
 	for country in game.countries.list():
 		var country_score: float = 0.0
 		var provinces_of_country: Array[Province] = (
-				game.world.provinces.provinces_of_country(country)
+				game.world.provinces_of_countries.list[country].list
 		)
-		
+
 		for province in provinces_of_country:
 			var province_score: float = 0.0
-			
+
 			# Score for money income
 			match game.rules.province_income_option.selected_value():
 				GameRules.ProvinceIncome.RANDOM:
@@ -86,7 +86,7 @@ func strength_of_countries() -> Array[float]:
 							* province.population.population_size
 							* game.rules.province_income_per_person.value
 					)
-			
+
 			# Score for reinforcements
 			if game.rules.reinforcements_enabled:
 				match game.rules.reinforcements_option.selected_value():
@@ -107,9 +107,9 @@ func strength_of_countries() -> Array[float]:
 								* province.population.population_size
 								* game.rules.reinforcements_per_person.value
 						)
-			
+
 			country_score += province_score
-		
+
 		# Score for existing armies
 		var armies_of_country: Array[Army] = (
 				game.world.armies.armies_of_country(country)
@@ -119,9 +119,9 @@ func strength_of_countries() -> Array[float]:
 					SCORE_WEIGHT_EXISTING_ARMIES
 					* army.army_size.current_size()
 			)
-		
+
 		strengths.append(country_score)
-	
+
 	return strengths
 
 
@@ -137,7 +137,7 @@ func stop_interacting_with(country: Country) -> void:
 func make_peace_with(country: Country) -> void:
 	if not game:
 		return
-	
+
 	# ATTENTION TODO hard coded diplomatic action IDs
 	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(2, country.id))
@@ -150,7 +150,7 @@ func make_peace_with(country: Country) -> void:
 func make_alliance_with(country: Country) -> void:
 	if not game:
 		return
-	
+
 	# TASK hard coded diplomatic action IDs
 	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(3, country.id))
@@ -161,7 +161,7 @@ func make_alliance_with(country: Country) -> void:
 func break_alliance_with(country: Country) -> void:
 	if not game:
 		return
-	
+
 	# TASK hard coded diplomatic action IDs
 	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(4, country.id))
@@ -172,7 +172,7 @@ func break_alliance_with(country: Country) -> void:
 func declare_war_to(country: Country) -> void:
 	if not game:
 		return
-	
+
 	# TASK hard coded diplomatic action IDs
 	if game.rules.is_diplomacy_presets_enabled():
 		_add_action_diplomacy(ActionDiplomacy.new(1, country.id))
@@ -185,7 +185,7 @@ func declare_war_to(country: Country) -> void:
 func accept_offer(game_notification: GameNotification) -> void:
 	if not game_notification is GameNotificationOffer:
 		return
-	
+
 	# NOTE assumes that the outcome with index 0 is for accepting
 	_add_action_notif(ActionHandleNotification.new(game_notification.id, 0))
 
@@ -193,16 +193,16 @@ func accept_offer(game_notification: GameNotification) -> void:
 func dismiss_offer(game_notification: GameNotification) -> void:
 	if not game_notification is GameNotificationOffer:
 		return
-	
+
 	_add_action_notif(ActionHandleNotification.new(game_notification.id, -1))
 
 
 func accept_all_offers() -> void:
 	if not game:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
+
 	for game_notification in playing_country.notifications.list():
 		accept_offer(game_notification)
 
@@ -210,9 +210,9 @@ func accept_all_offers() -> void:
 func accept_all_offers_from(sender_country: Country) -> void:
 	if not game:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
+
 	for game_notification in playing_country.notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
@@ -222,9 +222,9 @@ func accept_all_offers_from(sender_country: Country) -> void:
 func dismiss_all_offers_from(sender_country: Country) -> void:
 	if not game:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
+
 	for game_notification in playing_country.notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
@@ -236,20 +236,23 @@ func dismiss_all_offers_from(sender_country: Country) -> void:
 func fight_a_reachable_country(choice_filter: Callable) -> void:
 	if not game:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
+
 	var reachable_countries: Array[Country] = (
-			playing_country.reachable_countries(game.world.provinces)
+			playing_country.reachable_countries(
+					game.world.provinces_of_countries.list[playing_country],
+					game.world.provinces
+			)
 	)
-	
+
 	if reachable_countries.size() == 0:
 		return
-	
+
 	# Don't do it if there's still unclaimed land
 	if null in reachable_countries:
 		return
-	
+
 	# Check that you're not already fighting at least one neighbor
 	var current_reachable_enemies: Array[Country] = []
 	for reachable_country in reachable_countries:
@@ -261,7 +264,7 @@ func fight_a_reachable_country(choice_filter: Callable) -> void:
 	var candidate_countries: Array[Country] = reachable_countries
 	if current_reachable_enemies.size() > 0:
 		candidate_countries = current_reachable_enemies
-	
+
 	var new_enemy: Country = choice_filter.call(candidate_countries)
 	if new_enemy == null:
 		push_error(
@@ -269,7 +272,7 @@ func fight_a_reachable_country(choice_filter: Callable) -> void:
 				+ " the choice filter resulted in a null value!"
 		)
 		return
-	
+
 	dismiss_all_offers_from(new_enemy)
 	break_alliance_with(new_enemy)
 	declare_war_to(new_enemy)
@@ -280,42 +283,42 @@ func fight_a_reachable_country(choice_filter: Callable) -> void:
 func fight_enemies_of_allies(target_country: Country) -> void:
 	if not game:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
-	
+
 	if target_country == playing_country:
 		return
-	
+
 	# It only matters when you are allies
 	var relationship: DiplomacyRelationship = (
 			playing_country.relationships.with_country(target_country)
 	)
 	if not relationship.grants_military_access():
 		return
-	
+
 	for other_country in game.countries.list():
 		if other_country in [playing_country, target_country]:
 			continue
-		
+
 		# It only matters when they are enemies
 		var relationship_with_other_country: DiplomacyRelationship = (
 				target_country.relationships.with_country(other_country)
 		)
 		if not relationship_with_other_country.is_fighting():
 			continue
-		
+
 		#print(
 		#		other_country.country_name, " is the enemy of my friend ",
 		#		target_country.country_name, "."
 		#)
-		
+
 		# Don't be hostile if the other country is already your ally
 		if (
 				playing_country.relationships.with_country(other_country)
 				.grants_military_access()
 		):
 			continue
-		
+
 		#print("I am not already friends with them, so, they are my enemy.")
 		dismiss_all_offers_from(other_country)
 		declare_war_to(other_country)
@@ -326,28 +329,28 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 func weakest_country(countries: Array[Country]) -> Country:
 	if not game:
 		return countries[0]
-	
+
 	var country_list: Array[Country] = game.countries.list()
 	var relative_strengths: Array[float] = relative_strength_of_countries()
-	
+
 	var output_country: Country = null
 	var weakest_strength: float = 0.0
-	
+
 	for i in country_list.size():
 		var country: Country = country_list[i]
-		
+
 		if not country in countries:
 			continue
-		
+
 		var relative_strength: float = relative_strengths[i]
-		
+
 		if (
 				output_country == null
 				or relative_strength < weakest_strength
 		):
 			output_country = country
 			weakest_strength = relative_strength
-	
+
 	return output_country
 
 
@@ -361,7 +364,7 @@ static func is_peace_offer(game_notification: GameNotification) -> bool:
 	if not game_notification is GameNotificationOffer:
 		return false
 	var offer := game_notification as GameNotificationOffer
-	
+
 	# TODO bad code: private member access
 	var recipient_outcome_data: Dictionary = (
 			offer._diplomacy_action_definition.their_outcome_data
@@ -376,7 +379,7 @@ static func is_alliance_offer(game_notification: GameNotification) -> bool:
 	if not game_notification is GameNotificationOffer:
 		return false
 	var offer := game_notification as GameNotificationOffer
-	
+
 	# TASK bad code: private member access
 	var sender_outcome_data: Dictionary = (
 			offer._diplomacy_action_definition.your_outcome_data
@@ -396,18 +399,18 @@ static func is_alliance_offer(game_notification: GameNotification) -> bool:
 func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 	if not game:
 		return
-	
+
 	if (
 			action_diplomacy.target_country(game)
 			in _countries_done_interacting_with
 	):
 		return
-	
+
 	# Avoid making the same action twice
 	for other_action in _action_list:
 		if action_diplomacy.is_equivalent_to(other_action as ActionDiplomacy):
 			return
-	
+
 	# Avoid making an invalid action
 	var target_country: Country = action_diplomacy.target_country(game)
 	var relationship: DiplomacyRelationship = (
@@ -421,7 +424,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 		return
 	if not diplomacy_action.can_be_performed(game):
 		return
-	
+
 	# HACK very ugly
 	# Prevent edge case where it declares war first, which is valid,
 	# and then it offers alliance which is also valid here
@@ -451,7 +454,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 				== action_diplomacy.target_country(game)
 		):
 			return
-	
+
 	_action_list.append(action_diplomacy)
 
 
@@ -462,11 +465,11 @@ func _add_action_notif(action_notif: ActionHandleNotification) -> void:
 			in _countries_done_interacting_with
 	):
 		return
-	
+
 	# Avoid handling the same notification twice
 	for action in _action_list:
 		var other_action_notif := action as ActionHandleNotification
 		if action_notif.handles_the_same_notification_as(other_action_notif):
 			return
-	
+
 	_action_list.append(action_notif)

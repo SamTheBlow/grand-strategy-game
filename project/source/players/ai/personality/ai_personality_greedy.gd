@@ -11,37 +11,40 @@ extends AIPersonality
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
 	#print("--- Greedy ", playing_country.country_name)
-	
+
 	var decisions := AIDecisionUtils.new(game)
-	
+
 	var relative_strengths: Array[float] = (
 			decisions.relative_strength_of_countries()
 	)
-	
+
 	# Get sum of strengths
 	var sum_of_strengths: float = 0.0
 	for strength in relative_strengths:
 		sum_of_strengths += strength
-	
+
 	# Get the playing country's strength
 	var country_list: Array[Country] = game.countries.list()
 	var my_relative_strength: float = 0.0
 	for i in country_list.size():
 		if country_list[i] == playing_country:
 			my_relative_strength = relative_strengths[i]
-	
+
 	var reachable_countries: Array[Country] = (
-			playing_country.reachable_countries(game.world.provinces)
+			playing_country.reachable_countries(
+					game.world.provinces_of_countries.list[playing_country],
+					game.world.provinces
+			)
 	)
-	
+
 	decisions.fight_a_reachable_country(decisions.weakest_country)
-	
+
 	for i in country_list.size():
 		var country: Country = country_list[i]
-		
+
 		if country == playing_country:
 			continue
-		
+
 		# Fight weak countries, befriend strong countries
 		var relative_strength: float = relative_strengths[i]
 		if (
@@ -63,6 +66,6 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 			decisions.accept_all_offers_from(country)
 			decisions.make_peace_with(country)
 			decisions.make_alliance_with(country)
-	
+
 	#print("---")
 	return decisions.action_list()

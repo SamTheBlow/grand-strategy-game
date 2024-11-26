@@ -8,3 +8,4 @@ var armies := Armies.new()
 var provinces := Provinces.new()
 
 var armies_in_province := ArmiesInProvinceSystem.new(armies)
+var provinces_of_countries := ProvincesOfCountries.new(provinces)

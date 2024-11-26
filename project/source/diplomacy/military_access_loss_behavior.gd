@@ -10,24 +10,24 @@ var _game: Game
 ## Note that given game must already have its countries and world loaded.
 func _init(game: Game) -> void:
 	_game = game
-	
+
 	if game.countries == null:
 		push_error(
 				"Created a military access loss behavior, but "
 				+ "the game's countries is null! It will have no effect."
 		)
 		return
-	
+
 	if game.world == null:
 		push_error(
 				"Created a military access loss behavior, but "
 				+ "the game's world is null! It will have no effect."
 		)
 		return
-	
+
 	for country in game.countries.list():
 		_on_country_added(country)
-	
+
 	game.countries.country_added.connect(_on_country_added)
 	game.world.provinces.province_owner_changed.connect(
 			_on_province_owner_changed
@@ -45,10 +45,10 @@ func _on_relationship_created(relationship: DiplomacyRelationship) -> void:
 func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 	if relationship.grants_military_access():
 		return
-	
+
 	var affected_provinces: Array[Province] = (
-			_game.world.provinces
-			.provinces_of_country(relationship.source_country)
+			_game.world.provinces_of_countries
+			.list[relationship.source_country].list
 	)
 	_apply([relationship.recipient_country], affected_provinces)
 
@@ -60,7 +60,7 @@ func _on_province_owner_changed(province: Province) -> void:
 				province.owner_country
 		):
 			affected_countries.append(country)
-	
+
 	_apply(affected_countries, [province])
 
 
@@ -107,7 +107,7 @@ func _teleport_armies_out(
 			)
 			if armies_to_move.size() == 0:
 				continue
-			
+
 			var province_filter: Callable = func(province: Province) -> bool:
 				return affected_country.has_permission_to_move_into_country(
 						province.owner_country
@@ -115,20 +115,20 @@ func _teleport_armies_out(
 			var nearest_provinces: Array[Province] = (
 					affected_province.nearest_provinces(province_filter)
 			)
-			
+
 			if nearest_provinces.size() == 0:
 				for army in armies_to_move:
 					army.destroy()
 				continue
-			
+
 			var province_to_move_to: Province = nearest_provinces[0]
-			
+
 			# Give priority to the army's home territory
 			for province in nearest_provinces:
 				if province.owner_country == affected_country:
 					province_to_move_to = province
 					break
-			
+
 			for army in armies_to_move:
 				army.teleport_to_province(province_to_move_to)
 				army.exhaust()

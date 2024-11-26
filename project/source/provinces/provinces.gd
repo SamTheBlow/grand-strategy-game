@@ -41,14 +41,6 @@ func list() -> Array[Province]:
 	return _list.duplicate()
 
 
-func provinces_of_country(country: Country) -> Array[Province]:
-	var output: Array[Province] = []
-	for province in _list:
-		if province.owner_country and province.owner_country == country:
-			output.append(province)
-	return output
-
-
 ## Returns the list of all provinces representing given [Country]'s frontline.
 ## Provinces in the list are not necessarily under control of given country.
 func provinces_on_frontline(country: Country) -> Array[Province]:
