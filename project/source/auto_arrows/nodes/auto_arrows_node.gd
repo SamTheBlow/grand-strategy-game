@@ -13,19 +13,19 @@ var country: Country:
 		if country != null:
 			country.auto_arrows.arrow_added.disconnect(_on_arrow_added)
 			country.auto_arrows.arrow_removed.disconnect(_on_arrow_removed)
-		
+
 		# Clear list
 		for node in _list:
 			_remove_node(node)
-		
+
 		country = value
 		if country == null:
 			return
-		
+
 		# Initialize list
 		for auto_arrow in country.auto_arrows.list():
 			_add(auto_arrow)
-		
+
 		# Connect signals
 		country.auto_arrows.arrow_added.connect(_on_arrow_added)
 		country.auto_arrows.arrow_removed.connect(_on_arrow_removed)
@@ -57,7 +57,7 @@ func init(
 	province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)
-	
+
 	_playing_country = playing_country
 	_on_playing_country_changed(playing_country.country())
 	playing_country.changed.connect(_on_playing_country_changed)
@@ -67,11 +67,11 @@ func _add(auto_arrow: AutoArrow) -> void:
 	var auto_arrow_node := AutoArrowNode2D.new()
 	auto_arrow_node.source_province = (
 			province_visuals_container
-			.visuals_of(auto_arrow.source_province)
+			.visuals_of_province[auto_arrow.source_province]
 	)
 	auto_arrow_node.destination_province = (
 			province_visuals_container
-			.visuals_of(auto_arrow.destination_province)
+			.visuals_of_province[auto_arrow.destination_province]
 	)
 	_add_node(auto_arrow_node)
 
@@ -80,11 +80,11 @@ func _remove(auto_arrow: AutoArrow) -> void:
 	for node in _list:
 		if node.auto_arrow() == null:
 			continue
-		
+
 		if node.auto_arrow().is_equivalent_to(auto_arrow):
 			_remove_node(node)
 			return
-	
+
 	push_warning(
 			"Tried removing an AutoArrow, but it had no corresponding node."
 	)
@@ -97,7 +97,7 @@ func _add_node(auto_arrow_node: AutoArrowNode2D) -> void:
 				+ "but it was already on the list."
 		)
 		return
-	
+
 	add_child(auto_arrow_node)
 	_list.append(auto_arrow_node)
 
@@ -108,7 +108,7 @@ func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
 				"Tried removing an AutoArrow node, but it wasn't on the list."
 		)
 		return
-	
+
 	remove_child(auto_arrow_node)
 	_list.erase(auto_arrow_node)
 

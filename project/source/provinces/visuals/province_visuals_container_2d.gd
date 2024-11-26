@@ -11,41 +11,36 @@ signal unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 )
 
+## Do not manipulate the array directly!
+var list: Array[ProvinceVisuals2D] = []
+
+## Dictionary[Province, ProvinceVisuals2D]
+## Maps a province to its visuals, for performance reasons.
+## Do not manipulate the dictionary directly!
+var visuals_of_province: Dictionary = {}
+
 
 func _ready() -> void:
 	child_entered_tree.connect(_on_child_entered_tree)
 
 
-func list() -> Array[ProvinceVisuals2D]:
-	var output: Array[ProvinceVisuals2D] = []
-	for child in get_children():
-		if child is ProvinceVisuals2D:
-			output.append(child)
-	return output
-
-
+## Returns the visuals for each of given [Province]'s linked provinces.
 func links_of(province: Province) -> Array[ProvinceVisuals2D]:
 	var output: Array[ProvinceVisuals2D] = []
-	for other_visuals in list():
-		if other_visuals.province.is_linked_to(province):
-			output.append(other_visuals)
+	for linked_province in province.links:
+		output.append(visuals_of_province[linked_province])
 	return output
-
-
-## May return null.
-func visuals_of(province: Province) -> ProvinceVisuals2D:
-	for visuals in list():
-		if visuals.province == province:
-			return visuals
-	return null
 
 
 func _on_child_entered_tree(node: Node) -> void:
 	if node is not ProvinceVisuals2D:
 		return
-	
+
 	var province_visuals := node as ProvinceVisuals2D
-	
+
+	list.append(province_visuals)
+	visuals_of_province[province_visuals.province] = province_visuals
+
 	province_visuals.unhandled_mouse_event_occured.connect(
 			_on_unhandled_province_mouse_event
 	)
@@ -64,12 +59,14 @@ func _on_unhandled_province_mouse_event(
 
 
 func _on_province_selected(province: Province) -> void:
-	visuals_of(province).select()
-	province_selected.emit(visuals_of(province))
+	var visuals: ProvinceVisuals2D = visuals_of_province[province]
+	visuals.select()
+	province_selected.emit(visuals)
 
 
 func _on_province_deselected(province: Province) -> void:
-	visuals_of(province).deselect()
+	var visuals: ProvinceVisuals2D = visuals_of_province[province]
+	visuals.deselect()
 
 
 func _on_preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D) -> void:

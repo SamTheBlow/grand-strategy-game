@@ -39,8 +39,8 @@ func _province_filter_testai1(province: Province) -> bool:
 func _highlight_provinces(color: Color, province_filter: Callable) -> void:
 	if not is_enabled or _game.world_visuals.province_visuals == null:
 		return
-	
-	for province_visuals in _game.world_visuals.province_visuals.list():
+
+	for province_visuals in _game.world_visuals.province_visuals.list:
 		province_visuals.highlight_debug(
 				color, province_filter.call(province_visuals.province)
 		)

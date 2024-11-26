@@ -23,10 +23,10 @@ func _ready() -> void:
 		# Need to wait for the world limits to load
 		if not _game.is_node_ready():
 			await _game.ready
-		
+
 		# TODO bad code: private member access
 		_camera.move_to(_camera.world_limits._limits.get_center())
-	
+
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 	_on_turn_player_changed(_game.game.turn.playing_player())
 
@@ -34,23 +34,24 @@ func _ready() -> void:
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	if not _move_to_playing_country:
 		return
-	
+
 	var country: Country = player.playing_country
 	if not country:
 		return
-	
+
 	var target_province: Province
 	for province in _game.game.world.provinces.list():
 		if province.owner_country and province.owner_country == country:
 			target_province = province
 			break
-	
+
 	if target_province:
 		# Need to wait for the world visuals to load
 		if not _game.is_node_ready():
 			await _game.ready
-		
+
 		_camera.move_to(
 				_game.world_visuals.province_visuals
-				.visuals_of(target_province).global_position_army_host()
+				.visuals_of_province[target_province]
+				.global_position_army_host()
 		)
