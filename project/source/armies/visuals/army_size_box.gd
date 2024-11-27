@@ -39,6 +39,7 @@ func _ready() -> void:
 	_box = ColoredBox.new()
 	_box.show_behind_parent = true
 	_box.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_box.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	add_child(_box, false, Node.INTERNAL_MODE_FRONT)
 
 	if Engine.is_editor_hint():
