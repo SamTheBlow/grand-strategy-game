@@ -194,13 +194,21 @@ func _on_province_unhandled_mouse_event(
 			world_visuals.province_selection.selected_province
 	)
 	if selected_province != null:
-		var active_armies: Array[Army] = game.world.armies.active_armies(
-				you.playing_country, selected_province
+		var my_active_armies_in_province: Array[Army] = (
+				game.world.armies_in_each_province
+				.dictionary[selected_province].list.duplicate()
 		)
-		if active_armies.size() > 0:
+		for army: Army in my_active_armies_in_province.duplicate():
+			if not (
+					army.owner_country == you.playing_country
+					and army.is_able_to_move()
+			):
+				my_active_armies_in_province.erase(army)
+
+		if my_active_armies_in_province.size() > 0:
 			# NOTE: assumes that countries only have
 			# one active army per province
-			var army: Army = active_armies[0]
+			var army: Army = my_active_armies_in_province[0]
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
 				return

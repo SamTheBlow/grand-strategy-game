@@ -69,9 +69,18 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			# No frontline! You probably won.
 			break
 
-		var armies: Array[Army] = game.world.armies.active_armies(
-				player.playing_country, province
+		# Get list of all your active armies
+		var armies: Array[Army] = (
+				game.world.armies_in_each_province
+				.dictionary[province].list.duplicate()
 		)
+		for army: Army in armies.duplicate():
+			if not (
+					army.owner_country == player.playing_country
+					and army.is_able_to_move()
+			):
+				armies.erase(army)
+
 		if armies.size() == 0:
 			continue
 

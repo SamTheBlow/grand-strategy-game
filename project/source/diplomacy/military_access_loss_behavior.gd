@@ -86,12 +86,13 @@ func _delete_armies(
 ) -> void:
 	for affected_country in affected_countries:
 		for province in affected_provinces:
-			var armies_to_delete: Array[Army] = (
-					_game.world.armies
-					.armies_of_country_in_province(affected_country, province)
+			var armies_in_province: Array[Army] = (
+					_game.world.armies_in_each_province
+					.dictionary[province].list
 			)
-			for army in armies_to_delete:
-				army.destroy()
+			for army in armies_in_province:
+				if army.owner_country == affected_country:
+					army.destroy()
 
 
 func _teleport_armies_out(
@@ -100,12 +101,11 @@ func _teleport_armies_out(
 ) -> void:
 	for affected_country in affected_countries:
 		for affected_province in affected_provinces:
-			var armies_to_move: Array[Army] = (
-					_game.world.armies.armies_of_country_in_province(
-							affected_country, affected_province
-					)
+			var armies_in_province: Array[Army] = (
+					_game.world.armies_in_each_province
+					.dictionary[affected_province].list
 			)
-			if armies_to_move.size() == 0:
+			if armies_in_province.size() == 0:
 				continue
 
 			var province_filter: Callable = func(province: Province) -> bool:
@@ -117,8 +117,9 @@ func _teleport_armies_out(
 			)
 
 			if nearest_provinces.size() == 0:
-				for army in armies_to_move:
-					army.destroy()
+				for army in armies_in_province:
+					if army.owner_country == affected_country:
+						army.destroy()
 				continue
 
 			var province_to_move_to: Province = nearest_provinces[0]
@@ -129,7 +130,10 @@ func _teleport_armies_out(
 					province_to_move_to = province
 					break
 
-			for army in armies_to_move:
+			for army in armies_in_province:
+				if army.owner_country != affected_country:
+					continue
+
 				army.teleport_to_province(province_to_move_to)
 				army.exhaust()
 

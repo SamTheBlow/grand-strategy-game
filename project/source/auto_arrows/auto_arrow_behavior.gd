@@ -4,7 +4,7 @@ class_name AutoArrowBehavior
 
 func apply(game: Game) -> void:
 	var player: GamePlayer = game.turn.playing_player()
-	
+
 	# Get the source provinces and the arrow destinations.
 	# Each source province has its own list of arrow destinations.
 	var source_provinces: Array[Province] = []
@@ -20,13 +20,20 @@ func apply(game: Game) -> void:
 		arrow_destinations[source_province_index].add(
 				auto_arrow.destination_province
 		)
-	
+
 	for i in source_provinces.size():
 		var source_province: Province = source_provinces[i]
-		for army in (
-				game.world.armies
-				.active_armies(player.playing_country, source_province)
-		):
+		var armies_in_province: Array[Army] = (
+				game.world.armies_in_each_province
+				.dictionary[source_province].list
+		)
+		for army in armies_in_province:
+			if not (
+					army.owner_country == player.playing_country
+					and army.is_able_to_move()
+			):
+				continue
+
 			# Here we don't use [ActionSynchronizer] because this function
 			# is already going to be called on all clients anyway,
 			# and the clients already have the information they need
@@ -44,11 +51,9 @@ func apply(game: Game) -> void:
 ## as defined by the country's autoarrows.
 class ArrowDestinations:
 	var destinations: Array[Province] = []
-	
-	
+
 	func add(destination_province: Province) -> void:
 		destinations.append(destination_province)
-	
-	
+
 	func number_of_destinations() -> int:
 		return destinations.size()

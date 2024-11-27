@@ -74,33 +74,6 @@ func merge_armies(armies_in_province: ArmiesInProvince) -> void:
 				break
 
 
-## Returns a new list of all armies located in given [Province]
-## that are controlled by given [Country].
-func armies_of_country_in_province(
-		country: Country, province: Province
-) -> Array[Army]:
-	var output: Array[Army] = []
-	for army in _list:
-		if army.province() == province and army.owner_country == country:
-			output.append(army)
-	return output
-
-
-## Returns a new list of all active armies that are
-## owned by given [Country] in given [Province].
-## An [Army] is said to be "active" when it is able to perform actions.
-func active_armies(country: Country, province: Province) -> Array[Army]:
-	var output: Array[Army] = []
-	for army in _list:
-		if (
-				army.province() == province
-				and army.owner_country == country
-				and army.is_able_to_move()
-		):
-			output.append(army)
-	return output
-
-
 ## Returns the [Army] that has given id.
 ## If there is no such army, returns [code]null[/code].
 func army_from_id(id: int) -> Army:
