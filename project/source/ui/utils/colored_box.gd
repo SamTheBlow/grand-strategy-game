@@ -31,24 +31,23 @@ extends Control
 
 
 func _draw() -> void:
-	var x: float = -left_right_margin
-	var y: float = -top_bottom_margin
-	var width: float = box_size.x + left_right_margin * 2.0
-	var height: float = box_size.y + top_bottom_margin * 2.0
-	
 	if is_outline_inside:
-		draw_rect(Rect2(x, y, width, height), outline_color)
+		draw_rect(Rect2(Vector2.ZERO, box_size), outline_color)
 		draw_rect(
 				Rect2(
 						outline_width,
 						outline_width,
-						width - outline_width * 2.0,
-						height - outline_width * 2.0
+						box_size.x - outline_width * 2.0,
+						box_size.y - outline_width * 2.0
 				),
 				inside_color
 		)
 		return
-	
+
+	var x: float = -left_right_margin
+	var y: float = -top_bottom_margin
+	var width: float = box_size.x + left_right_margin * 2.0
+	var height: float = box_size.y + top_bottom_margin * 2.0
 	if outline_width > 0.0:
 		draw_rect(
 				Rect2(
