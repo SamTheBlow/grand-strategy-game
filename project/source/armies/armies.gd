@@ -74,14 +74,6 @@ func merge_armies(armies_in_province: ArmiesInProvince) -> void:
 				break
 
 
-func armies_of_country(country: Country) -> Array[Army]:
-	var output: Array[Army] = []
-	for army in _list:
-		if army.owner_country == country:
-			output.append(army)
-	return output
-
-
 ## Returns a new list of all armies located in given [Province]
 ## that are controlled by given [Country].
 func armies_of_country_in_province(

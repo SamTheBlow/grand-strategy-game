@@ -185,6 +185,9 @@ func load_game(json_data: Variant) -> void:
 	# World
 	var world := GameWorld2D.new()
 	game.world = world
+	world.armies_of_each_country = (
+			ArmiesOfEachCountry.new(game.countries, game.world.armies)
+	)
 	# TASK verify & return errors
 	if not (
 			json_dict.has(WORLD_KEY)
