@@ -609,12 +609,14 @@ func _load_province(json_data: Dictionary, game: Game) -> void:
 
 		province._income_money = IncomeMoneyConstant.new(base_income)
 
+	game.world.provinces.add_province(province, id)
 	province.add_component(ArmyReinforcements.new(game, province))
 	province.add_component(IncomeEachTurn.new(province, game.turn.turn_changed))
 	province.add_component(ProvinceOwnershipUpdate.new(
-			province, game.turn.player_turn_ended
+			province,
+			game.world.armies_in_each_province.dictionary[province],
+			game.turn.player_turn_ended
 	))
-	game.world.provinces.add_province(province, id)
 
 
 ## Returns true if an error occured, false otherwise.

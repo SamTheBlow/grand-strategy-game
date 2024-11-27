@@ -54,12 +54,12 @@ func list() -> Array[Army]:
 	return _list.duplicate()
 
 
-## Merges all armies in given province when applicable.
+## Merges given armies when applicable.
 ##
 ## When more than one [Army] is controlled by the same [Country]
 ## in the same [Province], it's possible to merge them into one single [Army].
-func merge_armies(province: Province) -> void:
-	var armies_to_merge: Array[Army] = province.armies.list.duplicate()
+func merge_armies(armies_in_province: ArmiesInProvince) -> void:
+	var armies_to_merge: Array[Army] = armies_in_province.list.duplicate()
 	var number_of_armies: int = armies_to_merge.size()
 	for i in number_of_armies:
 		var army1: Army = armies_to_merge[i]

@@ -51,9 +51,6 @@ var position_army_host: Vector2:
 ## (This property is automatically determined when setting _position_army_host.)
 var position_fortress: Vector2
 
-## A list of every [Army] located in this province.
-var armies := ArmiesInProvince.new()
-
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney

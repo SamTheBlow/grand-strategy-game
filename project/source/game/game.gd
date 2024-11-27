@@ -70,18 +70,20 @@ func start() -> void:
 		turn.turn_changed.connect(turn_limit._on_new_turn)
 		turn_limit.game_over.connect(_on_game_over)
 		_components.append(turn_limit)
-	
+
 	var province_control_goal := ProvinceControlGoal.new(self)
 	province_control_goal.game_over.connect(_on_game_over)
 	_components.append(province_control_goal)
-	
+
 	_components.append_array([
 		MilitaryAccessLossBehavior.new(self),
 		DiplomacyRelationshipAutoChanges.new(self),
 		AutoEndTurn.new(self),
-		BattleDetection.new(world.armies, rules.battle),
+		BattleDetection.new(
+				world.armies, world.armies_in_each_province, rules.battle
+		),
 	])
-	
+
 	rules.lock()
 	game_started.emit()
 	turn.start()
@@ -126,7 +128,7 @@ func _winning_country() -> Country:
 	# Count how many provinces each country has
 	var pcpc := ProvinceCountPerCountry.new()
 	pcpc.calculate(world.provinces.list())
-	
+
 	# Determine which country controls the most provinces
 	var winning_player_index: int = 0
 	for i in pcpc.countries.size():
@@ -135,14 +137,14 @@ func _winning_country() -> Country:
 				> pcpc.number_of_provinces[winning_player_index]
 		):
 			winning_player_index = i
-	
+
 	return pcpc.countries[winning_player_index]
 
 
 func _on_game_over() -> void:
 	if _game_over:
 		return
-	
+
 	_game_over = true
 	var winning_country: Country = _winning_country()
 	game_over.emit(winning_country)

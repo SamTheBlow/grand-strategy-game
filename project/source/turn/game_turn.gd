@@ -28,7 +28,7 @@ func _init(game: Game, starting_turn: int, playing_player_index: int) -> void:
 	_game = game
 	_turn = starting_turn
 	_playing_player_index = playing_player_index
-	
+
 	_ai_thread.finished.connect(_on_ai_finished)
 
 
@@ -45,7 +45,7 @@ func playing_player() -> GamePlayer:
 func end_turn() -> void:
 	if not playing_player().is_human:
 		return
-	
+
 	_end_player_turn()
 
 
@@ -54,27 +54,27 @@ func end_turn() -> void:
 ## and waits for the thread to be finished.
 func start() -> void:
 	var player: GamePlayer = playing_player()
-	
+
 	# Skip spectators
 	if player.is_spectating():
 		_go_to_next_player()
 		start()
 		return
-	
+
 	if player.is_human:
 		return
-	
+
 	# The player is an AI. Play their actions in a separate thread.
 	_ai_thread.run(_game, player, player.player_ai)
 
 
 func _end_player_turn() -> void:
 	var player: GamePlayer = playing_player()
-	
+
 	# Make army movements according to [AutoArrow]s
 	if player.is_human:
 		AutoArrowBehavior.new().apply(_game)
-	
+
 	# Exhaust all the armies
 	# HACK this is so that they all merge properly
 	# TODO whether or not an army is active
@@ -82,11 +82,15 @@ func _end_player_turn() -> void:
 	for army in _game.world.armies.list():
 		if army.owner_country == player.playing_country:
 			army.exhaust()
-	
+
 	# Merge armies
-	for province in _game.world.provinces.list():
-		_game.world.armies.merge_armies(province)
-	
+	for province: Province in (
+			_game.world.armies_in_each_province.dictionary.keys()
+	):
+		_game.world.armies.merge_armies(
+				_game.world.armies_in_each_province.dictionary[province]
+		)
+
 	player_turn_ended.emit(player)
 	_go_to_next_player()
 	start()
@@ -94,24 +98,24 @@ func _end_player_turn() -> void:
 
 func _go_to_next_player() -> void:
 	_playing_player_index += 1
-	
+
 	if _playing_player_index >= _game.game_players.size():
 		_playing_player_index = 0
 		_turn += 1
 		turn_changed.emit(_turn)
-	
+
 	# Spectators cannot be the playing player.
 	# WARNING: if somehow all the players are spectators,
 	# this will freeze the game in an infinite loop.
 	if playing_player().is_spectating():
 		_go_to_next_player()
 		return
-	
+
 	player_changed.emit(playing_player())
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:
 	for action in actions:
 		action.apply_to(_game, playing_player())
-	
+
 	_end_player_turn()

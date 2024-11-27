@@ -3,11 +3,17 @@ class_name ProvinceOwnershipUpdate
 ## Once it is determined, it is applied immediately.
 
 
+var _armies_in_province: ArmiesInProvince
 var _province: Province
 
 
-func _init(province: Province, player_turn_ended: Signal) -> void:
+func _init(
+		province: Province,
+		armies_in_province: ArmiesInProvince,
+		player_turn_ended: Signal
+) -> void:
 	_province = province
+	_armies_in_province = armies_in_province
 	player_turn_ended.connect(_on_player_turn_ended)
 
 
@@ -15,7 +21,7 @@ func _update_ownership() -> void:
 	var current_owner: Country = _province.owner_country
 	var new_owner: Country = current_owner
 
-	for army in _province.armies.list:
+	for army in _armies_in_province.list:
 		# If the current owner has an army here,
 		# then the province can't be taken by someone else.
 		if army.owner_country == current_owner:

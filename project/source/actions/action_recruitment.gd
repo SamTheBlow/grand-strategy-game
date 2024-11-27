@@ -53,7 +53,9 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	)
 
 	# If you already have an active army in this province, increase its size.
-	for army in province.armies.list:
+	for army: Army in (
+			game.world.armies_in_each_province.dictionary[province].list
+	):
 		if army.owner_country == your_country and army.is_able_to_move():
 			army.army_size.add(_number_of_troops)
 			return

@@ -10,6 +10,9 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = super(game, player)
 
 	var provinces: Array[Province] = game.world.provinces.list()
+	var armies_in_province: Dictionary = (
+			game.world.armies_in_each_province.dictionary
+	)
 	var number_of_provinces: int = provinces.size()
 
 	# Get a list of all my provinces
@@ -30,14 +33,14 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	for province in frontline_provinces:
 		var danger_level: float = 0.0
 
-		var army_size: int = (
-				_army_size(province, true, player.playing_country)
+		var army_size: int = _army_size(
+				armies_in_province[province], true, player.playing_country
 		)
 		for link in province.links:
 			if link.owner_country == player.playing_country:
 				continue
-			var enemy_army_size: int = (
-					_army_size(link, false, player.playing_country)
+			var enemy_army_size: int = _army_size(
+					armies_in_province[link], false, player.playing_country
 			)
 
 			var danger: float = enemy_army_size / (army_size + 0.01)
@@ -92,7 +95,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			if hostile_links.size() == 1:
 				# Take the sum of all the hostile army sizes
 				var hostile_army_size: int = _hostile_army_size(
-						army.owner_country, hostile_links[0].armies.list
+						army.owner_country,
+						armies_in_province[hostile_links[0]].list
 				)
 
 				# If your army is relatively large enough, attack!
@@ -110,7 +114,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				for hostile_link in hostile_links:
 					# Take the sum of all the hostile army sizes
 					var hostile_army_size: int = _hostile_army_size(
-							army.owner_country, hostile_link.armies.list
+							army.owner_country,
+							armies_in_province[hostile_link].list
 					)
 
 					# If the province's army
@@ -215,13 +220,13 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 
 func _army_size(
-		province: Province,
+		armies_in_province: ArmiesInProvince,
 		is_yours: bool,
 		playing_country: Country
 ) -> int:
 	var output: int = 0
 
-	for army in province.armies.list:
+	for army in armies_in_province.list:
 		if is_yours:
 			if army.owner_country == playing_country:
 				output += army.army_size.current_size()
