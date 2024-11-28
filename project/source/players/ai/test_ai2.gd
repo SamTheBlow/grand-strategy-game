@@ -13,23 +13,24 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var armies_in_province: Dictionary = (
 			game.world.armies_in_each_province.dictionary
 	)
-	var number_of_provinces: int = provinces.size()
-
-	# Get a list of all my provinces
-	var my_provinces: Array[Province] = []
-	for i in number_of_provinces:
-		var province: Province = provinces[i]
-		if province.owner_country != player.playing_country:
-			continue
-		my_provinces.append(province)
-
 	var frontline_provinces: Array[Province] = (
 			game.world.provinces.provinces_on_frontline(player.playing_country)
 	)
+	var my_armies: Array[Army] = (
+			game.world.armies_of_each_country
+			.dictionary[player.playing_country].list
+	)
+
+	if frontline_provinces.size() == 0:
+		# No frontline! You probably won.
+		return []
 
 	# Give a danger level to each frontline province
-	# based on how well defended it is
-	var danger_levels: Array[float] = []
+	# based on how well defended it is.
+	#
+	# danger_levels is a Dictionary[Province, float].
+	# Each frontline province is guaranteed to be in this dictionary.
+	var danger_levels: Dictionary = {}
 	for province in frontline_provinces:
 		var danger_level: float = 0.0
 
@@ -56,7 +57,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		if province.is_war_frontline(player.playing_country):
 			danger_level *= 3.0
 
-		danger_levels.append(danger_level)
+		danger_levels[province] = danger_level
 
 	result.append_array(_try_build_fortresses(
 			game, player.playing_country, frontline_provinces, danger_levels
@@ -64,31 +65,16 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
-	for province in game.world.provinces.list():
-		if frontline_provinces.size() == 0:
-			# No frontline! You probably won.
-			break
-
-		# Get list of all your active armies
-		var armies: Array[Army] = (
-				game.world.armies_in_each_province
-				.dictionary[province].list.duplicate()
-		)
-		for army: Army in armies.duplicate():
-			if not (
-					army.owner_country == player.playing_country
-					and army.is_able_to_move()
-			):
-				armies.erase(army)
-
-		if armies.size() == 0:
+	for army in my_armies:
+		if army.is_able_to_move() == false:
 			continue
 
-		# NOTE this assumes that you only have one army in each province
-		var army: Army = armies[0]
-		var army_size: int = army.army_size.current_size()
+		var province: Province = army.province()
 
+		# Is this army on the frontline?
 		if frontline_provinces.has(province):
+			var army_size: int = army.army_size.current_size()
+
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
 			for link in province.links:
@@ -213,13 +199,12 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			var target_province: Province
 			var target_danger: float = 0.0
 			for i in frontline_calculation.size:
-				var border_index: int = (
-						frontline_provinces
-						.find(frontline_calculation.furthest_links[i])
+				var frontline_province: Province = (
+						frontline_calculation.furthest_links[i]
 				)
-				if danger_levels[border_index] >= target_danger:
+				if danger_levels[frontline_province] >= target_danger:
 					target_province = frontline_calculation.first_links[i]
-					target_danger = danger_levels[border_index]
+					target_danger = danger_levels[frontline_province]
 
 			result.append(ActionArmyMovement.new(
 					army.id, target_province.id
@@ -262,7 +247,7 @@ func _try_build_fortresses(
 		game: Game,
 		playing_country: Country,
 		borders: Array[Province],
-		danger_levels: Array[float]
+		danger_levels: Dictionary
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled.value:
 		return []
@@ -277,16 +262,16 @@ func _try_build_fortresses(
 			and expected_money >= game.rules.fortress_price.value
 	):
 		# Find the most endangered province
-		var most_endangered_index: int = -1
+		var most_endangered_province: Province = null
+		var most_endangered_index: int = 0
 		for i in candidates.size():
 			if (
-					most_endangered_index == -1
-					or danger_levels[i] > danger_levels[most_endangered_index]
+					most_endangered_province == null
+					or danger_levels[candidates[i]]
+					> danger_levels[most_endangered_province]
 			):
+				most_endangered_province = candidates[i]
 				most_endangered_index = i
-		var most_endangered_province: Province = (
-				candidates[most_endangered_index]
-		)
 
 		# Build in that province, if possible
 		var build_conditions := FortressBuildConditions.new(
