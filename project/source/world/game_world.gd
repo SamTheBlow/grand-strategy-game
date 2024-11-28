@@ -8,5 +8,5 @@ var armies := Armies.new()
 var provinces := Provinces.new()
 
 var armies_in_each_province := ArmiesInEachProvince.new(provinces, armies)
-var provinces_of_countries := ProvincesOfCountries.new(provinces)
 var armies_of_each_country: ArmiesOfEachCountry
+var provinces_of_each_country: ProvincesOfEachCountry

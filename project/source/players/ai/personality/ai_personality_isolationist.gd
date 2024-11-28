@@ -27,7 +27,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 
 	var candidate_countries: Array[Country] = []
 	var neighbors: Array[Country] = playing_country.neighboring_countries(
-			game.world.provinces_of_countries.list[playing_country]
+			game.world.provinces_of_each_country.dictionary[playing_country]
 	)
 
 	for i in country_list.size():

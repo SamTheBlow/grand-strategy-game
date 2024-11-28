@@ -32,7 +32,8 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 
 	var reachable_countries: Array[Country] = (
 			playing_country.reachable_countries(
-					game.world.provinces_of_countries.list[playing_country],
+					game.world.provinces_of_each_country
+					.dictionary[playing_country],
 					game.world.provinces
 			)
 	)

@@ -1,7 +1,13 @@
 class_name ArmiesOfEachCountry
+## Provides a dictionary where each [Country]
+## is assigned a list of all armies controlled by that country.
 
 
 ## Dictionary[Country, ArmiesOfCountry]
+## All countries in the game are guaranteed to be in this dictionary,
+## so no need to check if the dictionary has some country.
+## Also, null is a valid key. It will give you the list of
+## all armies that don't have an owner country.
 ## Do not manipulate this dictionary directly!
 var dictionary: Dictionary = {null: ArmiesOfCountry.new()}
 
