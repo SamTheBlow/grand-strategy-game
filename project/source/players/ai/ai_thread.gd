@@ -17,9 +17,13 @@ func run(game: Game, player: GamePlayer, ai: PlayerAI) -> void:
 	if is_running():
 		push_error("Tried to run an AI thread, but it is already running.")
 		return
-	
+
 	if _thread.is_started():
 		_thread.wait_to_finish()
+
+	# If you want to run the AI in the main thread for debugging,
+	# just uncomment this line and comment out the other one.
+	#_thread_function(ai, game, player)
 	_thread.start(_thread_function.bind(ai, game, player))
 
 
