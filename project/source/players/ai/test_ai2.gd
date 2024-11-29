@@ -246,7 +246,7 @@ func _hostile_army_size(your_country: Country, army_list: Array[Army]) -> int:
 func _try_build_fortresses(
 		game: Game,
 		playing_country: Country,
-		borders: Array[Province],
+		frontline_provinces: Array[Province],
 		danger_levels: Dictionary
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled.value:
@@ -254,33 +254,29 @@ func _try_build_fortresses(
 
 	var output: Array[Action] = []
 
-	# Try building in each province, starting from the most populated
-	var candidates: Array[Province] = borders.duplicate()
+	var candidates: Array[Province] = frontline_provinces.duplicate()
 	var expected_money: int = playing_country.money
+
+	# Sort the provinces from most to least endangered
+	candidates.sort_custom(
+			func(element1: Province, element2: Province) -> bool:
+				return danger_levels[element1] < danger_levels[element2]
+	)
+
+	# Try building in each province, starting from the most endangered
+	var i: int = 0
 	while (
-			candidates.size() > 0
+			i < candidates.size()
 			and expected_money >= game.rules.fortress_price.value
 	):
-		# Find the most endangered province
-		var most_endangered_province: Province = null
-		var most_endangered_index: int = 0
-		for i in candidates.size():
-			if (
-					most_endangered_province == null
-					or danger_levels[candidates[i]]
-					> danger_levels[most_endangered_province]
-			):
-				most_endangered_province = candidates[i]
-				most_endangered_index = i
-
 		# Build in that province, if possible
 		var build_conditions := FortressBuildConditions.new(
-				playing_country, most_endangered_province, game
+				playing_country, candidates[i], game
 		)
 		if build_conditions.can_build():
-			output.append(ActionBuild.new(most_endangered_province.id))
+			output.append(ActionBuild.new(candidates[i].id))
 			expected_money -= game.rules.fortress_price.value
 
-		candidates.remove_at(most_endangered_index)
+		i += 1
 
 	return output
