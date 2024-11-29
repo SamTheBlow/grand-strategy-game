@@ -34,14 +34,15 @@ func _generated_link_branches(
 	var is_not_stuck: bool = true
 
 	# Keep track of which provinces have already been searched.
-	var already_searched_provinces: Array[Province] = [province]
+	# We use dictionaries for performance.
+	var already_searched_provinces: Dictionary = {}
 
 	var link_branches: Array[LinkBranch] = []
 	for link in province.links:
 		var link_branch := LinkBranch.new()
 		link_branch.link_chain = [link]
 		link_branches.append(link_branch)
-		already_searched_provinces.append(link)
+		already_searched_provinces[link] = 1
 
 	while is_not_stuck:
 		# Get a list of all the branches that pass the filter.
@@ -55,9 +56,8 @@ func _generated_link_branches(
 		if valid_branches.size() > 0:
 			return valid_branches
 
-		# If we haven't found a new province,
-		# it means we're stuck and no more progress can be made,
-		# in which case we'll need to exit the loop.
+		# If we don't find a new province, it means we're stuck and no more
+		# progress can be made, in which case we'll need to exit the loop.
 		is_not_stuck = false
 
 		# Extend the branches to look for provinces further away.
@@ -65,12 +65,12 @@ func _generated_link_branches(
 		for link_branch in link_branches:
 			var next_links: Array[Province] = link_branch.furthest_link().links
 			for next_link in next_links:
-				if not already_searched_provinces.has(next_link):
-					new_link_branches.append(
-							link_branch.extended_with(next_link)
-					)
-					already_searched_provinces.append(next_link)
-					is_not_stuck = true
+				if already_searched_provinces.has(next_link):
+					continue
+
+				new_link_branches.append(link_branch.extended_with(next_link))
+				already_searched_provinces[next_link] = 1
+				is_not_stuck = true
 
 		# Only keep branches that are still finding new provinces.
 		link_branches = new_link_branches
@@ -89,26 +89,3 @@ func _print_branches(branches: Array[LinkBranch]) -> void:
 					"; Country: ", province.owner_country.country_name
 			)
 	print("End of branch tree.")
-
-
-## Gives information on how to get from one province to another.
-## The first province in the array is a link of the original province,
-## the second element is a link of the first element, and so on.
-class LinkBranch:
-	var link_chain: Array[Province] = []
-
-	func first_link() -> Province:
-		return link_chain[0]
-
-	func furthest_link() -> Province:
-		return link_chain[link_chain.size() - 1]
-
-	## Returns a new link branch with a new link chain.
-	## The new link chain is the same as this branch's chain,
-	## but with given new link appended at the end.
-	func extended_with(new_link: Province) -> LinkBranch:
-		var new_branch := LinkBranch.new()
-		for link in link_chain:
-			new_branch.link_chain.append(link)
-		new_branch.link_chain.append(new_link)
-		return new_branch

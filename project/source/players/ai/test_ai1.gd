@@ -11,6 +11,22 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 
+	var armies_of_player: Array[Army] = (
+			game.world.armies_of_each_country
+			.dictionary[player.playing_country].list
+	)
+	if armies_of_player.size() >= 50:
+		result.append_array(_actions_many(game, player))
+	else:
+		result.append_array(_actions_few(game, player))
+
+	return result
+
+
+## Faster when you have few armies.
+func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
+	var result: Array[Action] = []
+
 	for province in game.world.provinces.list():
 		var destination_provinces: Array[Province] = (
 				_destination_provinces(province, player.playing_country)
@@ -25,6 +41,44 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			result.append_array(_new_movement_actions(
 					army, destination_provinces, game.world.armies
 			))
+
+	return result
+
+
+## Faster when you have lots of armies.
+func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
+	var result: Array[Action] = []
+
+	# Create list of destinations for the pathfinding
+	var destinations: Array[Province] = []
+	for province in game.world.provinces.list():
+		if (
+				province.owner_country == null
+				or not player.playing_country
+				.has_permission_to_move_into_country(
+						province.owner_country
+				)
+		):
+			destinations.append(province)
+
+	# Do the pathfinding
+	var province_pathfinding := ProvincePathfinding.new(game.world.provinces)
+	province_pathfinding.generate(destinations)
+
+	# Create actions for each army
+	for my_army: Army in (
+			game.world.armies_of_each_country
+			.dictionary[player.playing_country].list
+	):
+		var my_province: Province = my_army.province()
+		var provinces_to_move_to: Array[Province] = [my_province]
+		var link_branches: Array = province_pathfinding.paths[my_province]
+		for link_branch: LinkBranch in link_branches:
+			provinces_to_move_to.append(link_branch.furthest_link())
+
+		result.append_array(_new_movement_actions(
+				my_army, provinces_to_move_to, game.world.armies
+		))
 
 	return result
 
