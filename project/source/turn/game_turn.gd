@@ -75,20 +75,13 @@ func _end_player_turn() -> void:
 	if player.is_human:
 		AutoArrowBehavior.new().apply(_game)
 
-	# Exhaust all the armies
-	# HACK this is so that they all merge properly
-	# TODO whether or not an army is active
-	# should never matter if it's not the player's turn
-	for army in _game.world.armies.list():
-		if army.owner_country == player.playing_country:
-			army.exhaust()
-
 	# Merge armies
 	for province: Province in (
 			_game.world.armies_in_each_province.dictionary.keys()
 	):
 		_game.world.armies.merge_armies(
-				_game.world.armies_in_each_province.dictionary[province]
+				_game.world.armies_in_each_province.dictionary[province],
+				player.playing_country
 		)
 
 	player_turn_ended.emit(player)

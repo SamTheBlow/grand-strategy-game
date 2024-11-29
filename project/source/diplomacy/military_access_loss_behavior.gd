@@ -138,8 +138,8 @@ func _teleport_armies_out(
 				army.exhaust()
 
 				# TODO merge armies automatically from outside this class
-				# also this is very not optimal performance-wise
 				_game.world.armies.merge_armies(
 						_game.world.armies_in_each_province
-						.dictionary[province_to_move_to]
+						.dictionary[province_to_move_to],
+						_game.turn.playing_player().playing_country
 				)

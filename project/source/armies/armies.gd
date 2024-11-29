@@ -58,7 +58,9 @@ func list() -> Array[Army]:
 ##
 ## When more than one [Army] is controlled by the same [Country]
 ## in the same [Province], it's possible to merge them into one single [Army].
-func merge_armies(armies_in_province: ArmiesInProvince) -> void:
+func merge_armies(
+		armies_in_province: ArmiesInProvince, playing_country: Country
+) -> void:
 	var armies_to_merge: Array[Army] = armies_in_province.list.duplicate()
 	var number_of_armies: int = armies_to_merge.size()
 	for i in number_of_armies:
@@ -66,8 +68,11 @@ func merge_armies(armies_in_province: ArmiesInProvince) -> void:
 		for j in range(i + 1, number_of_armies):
 			var army2: Army = armies_to_merge[j]
 			if (
-					army1.owner_country.id == army2.owner_country.id
-					and army1.movements_made() == army2.movements_made()
+					army1.owner_country == army2.owner_country
+					and (
+							army1.owner_country != playing_country
+							or army1.movements_made() == army2.movements_made()
+					)
 			):
 				army2.army_size.add(army1.army_size.current_size())
 				remove_army(army1)
