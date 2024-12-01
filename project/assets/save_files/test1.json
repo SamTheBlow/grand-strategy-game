@@ -57,7 +57,7 @@
 		}
 	],
 	"meta": {
-		"icon": "../flag_icon.png",
+		"icon": "../icon.svg",
 		"name": "Test map 1"
 	},
 	"version": "1",

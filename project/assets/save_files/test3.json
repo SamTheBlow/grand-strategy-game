@@ -1,42 +1,24 @@
 {
-	"meta": {
-		"icon": "../flag_icon.png",
-		"name": "Random Hex Grid",
-		"settings": {
-			"GRID_WIDTH": {
-				"type": "int",
-				"value": 80,
-				"text": "Grid width: ",
-			},
-			"GRID_HEIGHT": {
-				"type": "int",
-				"value": 48,
-				"text": "Grid height: ",
-			},
-			"NUMBER_OF_COUNTRIES": {
-				"type": "int",
-				"value": 100,
-				"text": "Number of starting countries: ",
-			},
-			"SPREAD_COUNTRIES_EVENLY": {
-				"type": "bool",
-				"value": true,
-				"text": "Spread countries evenly: ",
-			},
-			"FLOAT_TEST": {
-				"type": "float",
-				"value": 3.14159,
-				"text": "This is a test float: ",
-			},
-			"OPTIONS_TEST": {
-				"type": "options",
-				"value": 2,
-				"text": "This is a test options: ",
-				"options": [
-					"Hello World!", "Another option", "Default", "Oatmeal"
-				],
-			},
-		}
-	},
-	"version": "1",
+  "meta": {
+    "icon": "../flag_icon.png",
+    "name": "Random Hex Grid",
+    "settings": {
+      "GRID_WIDTH": {
+        "type": "int",
+        "value": 80,
+        "text": "Grid width: "
+      },
+      "GRID_HEIGHT": {
+        "type": "int",
+        "value": 48,
+        "text": "Grid height: "
+      },
+      "NUMBER_OF_COUNTRIES": {
+        "type": "int",
+        "value": 100,
+        "text": "Number of starting countries: "
+      }
+    }
+  },
+  "version": "1"
 }

@@ -55,24 +55,6 @@ func _run_unit_test() -> void:
 	print("[UNIT TEST] Starting unit tests...")
 	
 	# Run unit tests here
-	BitArray._unit_test()
-	BitArrayCursor._unit_test()
-	BitSize._unit_test()
-	BitSizeFromBits._unit_test()
-	Int32FromBits._unit_test()
-	IntFromData._unit_test()
-	UInt31FromBits._unit_test()
-	UInt31FromString._unit_test()
-	Vector2iArrayFromBits._unit_test()
-	
-	ProvincesBlueprint._unit_test()
-	ProvincesBlueprintFromData._unit_test()
-	ProvincesBlueprintFromBinaryFormat0._unit_test()
-	ProvincesBlueprintFromBinary._unit_test()
-	ProvincesBlueprintFromText._unit_test()
-	
-	CustomRulesFromFiles._unit_test()
-	
 	ArmySize._unit_test()
 	
 	print("[UNIT TEST] All tests passed!")

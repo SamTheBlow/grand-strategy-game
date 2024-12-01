@@ -17,22 +17,6 @@
         "type": "int",
         "value": 100,
         "text": "Number of starting countries: "
-      },
-      "SPREAD_COUNTRIES_EVENLY": {
-        "type": "bool",
-        "value": true,
-        "text": "Spread countries evenly: "
-      },
-      "FLOAT_TEST": {
-        "type": "float",
-        "value": 3.14159,
-        "text": "This is a test float: "
-      },
-      "OPTIONS_TEST": {
-        "type": "options",
-        "value": 2,
-        "text": "This is a test options: ",
-        "options": ["Hello World!", "Another option", "Default", "Oatmeal"]
       }
     }
   },
