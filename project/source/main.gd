@@ -69,24 +69,6 @@ func load_game() -> void:
 	play_game(game_from_path.result)
 
 
-## Loads a new game, generates data if applicable and
-## populates the data with given generation settings.
-func load_game_with_setup(
-		map_metadata: MapMetadata, game_rules: GameRules
-) -> void:
-	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(map_metadata, game_rules)
-
-	if generated_game.error:
-		push_warning(
-				"Failed to load & setup game: ", generated_game.error_message
-		)
-		chat.send_system_message("Failed to load & setup the game")
-		return
-
-	play_game(generated_game.result)
-
-
 ## Takes a [Game] instance, connects its signals, injects some dependencies
 ## into it, sets it as the current scene and starts the game loop.
 ## If playing online multiplayer, this is where the game is sent to clients.
@@ -284,12 +266,10 @@ func _on_player_added(player: Player) -> void:
 		_send_new_player_to_clients(player.id, game_player_id)
 
 
-## Called when the "Start Game" button is pressed in the main menu.
-## Loads the test map and starts the game.
-func _on_game_start_requested(
-		map_metadata: MapMetadata, generation_settings: GameRules
-) -> void:
-	load_game_with_setup(map_metadata, generation_settings)
+## Called when the "Start Game" button is pressed in the main menu,
+## after it's done loading/generating the game.
+func _on_game_start_requested(game: Game) -> void:
+	play_game(game)
 
 
 ## This function's name is a bit misleading, because it's precisely
