@@ -22,11 +22,11 @@ var current_scene: Node:
 		if current_scene != null:
 			remove_child(current_scene)
 			current_scene.queue_free()
-		
+
 		# TODO bad code: this assumes the name of the node
 		if has_node("GameSync"):
 			remove_child(get_node("GameSync"))
-		
+
 		current_scene = value
 		add_child(current_scene)
 
@@ -45,9 +45,9 @@ func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.peer_connected.connect(_on_multiplayer_peer_connected)
 	players.player_added.connect(_on_player_added)
-	
+
 	chat.send_global_message("Type /help to get a list of commands.")
-	
+
 	# Enter the main menu when the game starts running
 	_on_main_menu_entered()
 
@@ -59,52 +59,31 @@ func _ready() -> void:
 func load_game() -> void:
 	var game_from_path := GameFromPath.new()
 	game_from_path.load_game(SAVE_FILE_PATH)
-	
+
 	if game_from_path.error:
 		push_warning("Failed to load the game: ", game_from_path.error_message)
 		chat.send_system_message("Failed to load the game")
 		return
-	
+
 	chat.send_global_message("[color=#60ff60]Game loaded[/color]")
 	play_game(game_from_path.result)
 
 
-## Loads map at given file path and populates it with given generation settings.
-func load_game_populated(
-		map_metadata: MapMetadata, generation_settings: GameRules
-) -> void:
-	# Temporary
-	if map_metadata.file_path == "res://assets/save_files/test3.json":
-		load_game_generated(map_metadata, generation_settings)
-		return
-	
-	var populated_game := GameLoadPopulated.new()
-	populated_game.load_game(map_metadata.file_path, generation_settings)
-	
-	if populated_game.error:
-		push_warning(
-				"Failed to load & setup game: ", populated_game.error_message
-		)
-		chat.send_system_message("Failed to load & setup the game")
-		return
-	
-	play_game(populated_game.result)
-
-
-## Generates a world and populates it with given generation settings.
-func load_game_generated(
+## Loads a new game, generates data if applicable and
+## populates the data with given generation settings.
+func load_game_with_setup(
 		map_metadata: MapMetadata, game_rules: GameRules
 ) -> void:
 	var generated_game := GameLoadGenerated.new()
 	generated_game.load_game(map_metadata, game_rules)
-	
+
 	if generated_game.error:
 		push_warning(
 				"Failed to load & setup game: ", generated_game.error_message
 		)
 		chat.send_system_message("Failed to load & setup the game")
 		return
-	
+
 	play_game(generated_game.result)
 
 
@@ -118,18 +97,18 @@ func play_game(game: Game) -> void:
 	game_node.exited.connect(_on_main_menu_entered)
 	game_node.set_players(players)
 	current_scene = game_node
-	
+
 	# TASK bad code
 	game_node._turn_order_list.new_human_player_requested.connect(
 			_on_game_new_player_requested
 	)
-	
+
 	game.game_started.connect(_on_game_started)
 	players.player_removed.connect(game.game_players._on_player_removed)
 	PlayerAssignment.new(players, game.game_players).assign_all()
-	
+
 	add_child(GameSync.new(game))
-	
+
 	_send_game_to_clients(game)
 	game.start()
 
@@ -141,7 +120,7 @@ func play_game(game: Game) -> void:
 func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-	
+
 	var game_to_raw := GameToRawDict.new()
 	game_to_raw.convert_game(game)
 	if game_to_raw.error:
@@ -151,7 +130,7 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 		)
 		chat.send_system_message("Failed to send the game to other players.")
 		return
-	
+
 	if multiplayer_id == -1:
 		_receive_new_game.rpc(game_to_raw.result)
 	else:
@@ -165,7 +144,7 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 func _receive_new_game(game_data: Dictionary) -> void:
 	var game_from_raw := GameFromRawDict.new()
 	game_from_raw.load_game(game_data)
-	
+
 	if game_from_raw.error:
 		push_warning(
 				"Failed to load the received game: ",
@@ -173,7 +152,7 @@ func _receive_new_game(game_data: Dictionary) -> void:
 		)
 		chat.send_system_message("Failed to load the received game.")
 		return
-	
+
 	if not sync_check.is_sync_finished():
 		await sync_check.sync_finished
 	play_game(game_from_raw.result)
@@ -187,7 +166,7 @@ func _receive_new_game(game_data: Dictionary) -> void:
 func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-	
+
 	if multiplayer_id == -1:
 		_receive_enter_main_menu.rpc()
 	else:
@@ -217,7 +196,7 @@ func _send_new_player_to_clients(player_id: int, game_player_id: int) -> void:
 func _receive_new_player(player_id: int, game_player_id: int) -> void:
 	var player: Player = players.add_received_player(str(player_id))
 	await player.sync_finished
-	
+
 	if not current_scene is GameNode:
 		return
 	var game_scene := current_scene as GameNode
@@ -239,13 +218,13 @@ func _add_new_player(game_player_id: int) -> void:
 	var multiplayer_id: int = multiplayer.get_remote_sender_id()
 	if multiplayer_id == 0:
 		multiplayer_id = 1
-	
+
 	# horrible
 	var game_player: GamePlayer = (
 			(current_scene as GameNode).game
 			.game_players.player_from_id(game_player_id)
 	)
-	
+
 	# DANGER this relies on the fact that new_unique_id will
 	# return the same thing when Players adds the new player
 	game_player.player_human_id = players.new_unique_id()
@@ -263,13 +242,13 @@ func _on_connected_to_server() -> void:
 func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 	if not multiplayer.is_server():
 		return
-	
+
 	# Makes sure that the client receives the
 	# updated list that contains the client's players.
 	players.get_client_data(multiplayer_id)
 	await players.player_group_added
 	players.send_all_data(multiplayer_id)
-	
+
 	if current_scene is GameNode:
 		_send_game_to_clients((current_scene as GameNode).game, multiplayer_id)
 	elif current_scene is MainMenu:
@@ -283,10 +262,10 @@ func _on_player_added(player: Player) -> void:
 	if not game_node:
 		players._send_new_player_to_clients(player)
 		return
-	
+
 	if not MultiplayerUtils.has_authority(multiplayer):
 		return
-	
+
 	(
 			PlayerAssignment.new(players, game_node.game.game_players)
 			.assign_player(player)
@@ -300,7 +279,7 @@ func _on_player_added(player: Player) -> void:
 		):
 			game_player_id = game_player.id
 			break
-	
+
 	if MultiplayerUtils.is_server(multiplayer):
 		_send_new_player_to_clients(player.id, game_player_id)
 
@@ -310,7 +289,7 @@ func _on_player_added(player: Player) -> void:
 func _on_game_start_requested(
 		map_metadata: MapMetadata, generation_settings: GameRules
 ) -> void:
-	load_game_populated(map_metadata, generation_settings)
+	load_game_with_setup(map_metadata, generation_settings)
 
 
 ## This function's name is a bit misleading, because it's precisely

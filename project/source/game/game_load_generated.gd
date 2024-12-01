@@ -1,7 +1,8 @@
 class_name GameLoadGenerated
 ## Loads a [Game] from given [MapMetadata].
-## Generates the world, countries, etc. Then, populates the data
-## using given generation settings (see [PopulatedSaveFile]).
+## When applicable, generates the world, countries, etc.
+## Then, populates the game data using given generation settings
+## (see [PopulatedSaveFile]).
 
 
 var error: bool = true
@@ -20,58 +21,22 @@ func load_game(
 		error_message = file_json.error_message
 		return
 
-	# Generate data
-	var map_settings: Dictionary = map_metadata.settings
-	var random_hex_grid := RandomHexGrid.new()
+	# Generate data, if applicable
+	var game_generation: GameGeneration
+	if map_metadata.map_name == "Random Hex Grid":
+		game_generation = RandomHexGrid.new()
+	elif map_metadata.map_name == "Random Square Grid":
+		game_generation = RandomSquareGrid.new()
+	elif map_metadata.map_name == "Random Freeform":
+		game_generation = RandomFreeform.new()
 
-	if not ParseUtils.dictionary_has_dictionary(map_settings, "GRID_WIDTH"):
-		error = true
-		error_message = "No grid width found."
-		return
-	var setting_dict: Dictionary = map_settings["GRID_WIDTH"]
-	if not ParseUtils.dictionary_has_number(
-			setting_dict, MapSettings.KEY_VALUE
-	):
-		error = true
-		error_message = "No grid width found (the setting has no value)."
-		return
-	random_hex_grid.grid_width = (
-			ParseUtils.dictionary_int(setting_dict, MapSettings.KEY_VALUE)
-	)
-
-	if not ParseUtils.dictionary_has_dictionary(map_settings, "GRID_HEIGHT"):
-		error = true
-		error_message = "No grid height found."
-		return
-	setting_dict = map_settings["GRID_HEIGHT"]
-	if not ParseUtils.dictionary_has_number(
-			setting_dict, MapSettings.KEY_VALUE
-	):
-		error = true
-		error_message = "No grid height found (the setting has no value)."
-		return
-	random_hex_grid.grid_height = (
-			ParseUtils.dictionary_int(setting_dict, MapSettings.KEY_VALUE)
-	)
-
-	if not ParseUtils.dictionary_has_dictionary(
-			map_settings, "NUMBER_OF_COUNTRIES"
-	):
-		error = true
-		error_message = "No number of countries found."
-		return
-	setting_dict = map_settings["NUMBER_OF_COUNTRIES"]
-	if not ParseUtils.dictionary_has_number(
-			setting_dict, MapSettings.KEY_VALUE
-	):
-		error = true
-		error_message = "No number of countries found (setting has no value)."
-		return
-	random_hex_grid.number_of_countries = (
-			ParseUtils.dictionary_int(setting_dict, MapSettings.KEY_VALUE)
-	)
-
-	random_hex_grid.apply(file_json.result)
+	if game_generation != null:
+		game_generation.load_settings(map_metadata.settings)
+		if game_generation.error:
+			error = true
+			error_message = game_generation.error_message
+			return
+		game_generation.apply(file_json.result)
 
 	# Modify the JSON data
 	var populated_save_file := PopulatedSaveFile.new()
