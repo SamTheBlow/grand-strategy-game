@@ -37,10 +37,14 @@ func move_to(new_position: Vector2) -> void:
 	# Sets the position anyway so that we can use global_position for the
 	# animation and then (if needed) resets the position to what it was before.
 	var _old_position: Vector2 = position
-	
+
 	position = new_position
+
+	if _animation == null:
+		return
+
 	_animation.target_global_position = global_position
-	
+
 	if _animation.is_playing():
 		position = _old_position
 
@@ -49,19 +53,19 @@ func move_to(new_position: Vector2) -> void:
 func _refresh_brightness() -> void:
 	if not is_node_ready():
 		return
-	
+
 	var brightness: float = 1.0
 	var current_playing_country: Country = (
 			playing_country.country() if playing_country != null else null
 	)
-	
+
 	if not (
 			army.is_able_to_move()
 			or current_playing_country != army.owner_country
 			or _animation.is_playing()
 	):
 		brightness = 0.5
-	
+
 	modulate = Color(brightness, brightness, brightness)
 
 
@@ -70,16 +74,16 @@ func _refresh_brightness() -> void:
 func _on_army_removed(removed_army: Army) -> void:
 	if removed_army != army:
 		return
-	
-	if get_parent():
+
+	if get_parent() != null:
 		get_parent().remove_child(self)
 	queue_free()
 
 
 func _on_army_province_changed(_army: Army) -> void:
-	if get_parent():
+	if _animation != null and get_parent() != null:
 		_animation.original_global_position = global_position
-	
+
 	province_changed.emit(self)
 
 
@@ -99,7 +103,7 @@ func _on_army_movements_made_changed(_movements_made: int) -> void:
 func _on_playing_country_changed(_country: Country) -> void:
 	if _animation != null:
 		_animation.stop()
-	
+
 	_refresh_brightness()
 
 
