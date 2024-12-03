@@ -22,13 +22,9 @@ func load_game(
 		return
 
 	# Generate data, if applicable
-	var game_generation: GameGeneration
-	if map_metadata.map_name == "Random Hex Grid":
-		game_generation = RandomHexGrid.new()
-	elif map_metadata.map_name == "Random Square Grid":
-		game_generation = RandomSquareGrid.new()
-	elif map_metadata.map_name == "Random Freeform":
-		game_generation = RandomFreeform.new()
+	var game_generation: GameGeneration = null
+	if map_metadata.map_name == "Random Grid World":
+		game_generation = RandomGridWorld.new()
 
 	if game_generation != null:
 		game_generation.load_settings(map_metadata.settings)

@@ -7,8 +7,10 @@ var error: bool = false
 var error_message: String = ""
 
 
+## Updates the error and error_message properties according to the outcome.
 func apply(_raw_data: Dictionary) -> void:
-	pass
+	error = false
+	error_message = ""
 
 
 ## Updates the error and error_message properties according to the outcome.

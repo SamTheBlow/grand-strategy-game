@@ -1,28 +1,46 @@
-class_name RandomFreeform
+class_name RandomGridWorld
 extends GameGeneration
-## Takes given JSON data and populates it with a "freeform" map,
+## Manipulates given raw data to generate new worlds with code.
+## Populates it with province data,
 ## adds in some countries and places those countries on the map.
-##
-## See also: [FreeformGeneration]
 
 
 var grid_width: int = 1
 var grid_height: int = 1
 var number_of_countries: int = 2
+var grid_shape_option: int = 0
 var use_noise: bool = false
 var noise_frequency: float = 1.0
 var noise_threshold: float = 0.0
 
 
 func apply(raw_data: Dictionary) -> void:
-	FreeformGeneration.new().apply(
-			raw_data,
-			grid_width,
-			grid_height,
-			use_noise,
-			noise_frequency,
-			noise_threshold
-	)
+	super(raw_data)
+
+	match grid_shape_option:
+		0:
+			HexGridGeneration.new().apply(
+					raw_data,
+					grid_width,
+					grid_height,
+					use_noise,
+					noise_frequency,
+					noise_threshold
+			)
+		1:
+			SquareGridGeneration.new().apply(
+					raw_data,
+					grid_width,
+					grid_height,
+					use_noise,
+					noise_frequency,
+					noise_threshold
+			)
+		_:
+			error = true
+			error_message = "Unrecognized grid shape option."
+			return
+
 	CountryGeneration.new().apply(raw_data, number_of_countries)
 	CountryPlacementGeneration.new().apply(raw_data)
 
@@ -77,6 +95,24 @@ func load_settings(map_settings: Dictionary) -> void:
 		error_message = "No number of countries found (setting has no value)."
 		return
 	number_of_countries = (
+			ParseUtils.dictionary_int(setting_dict, MapSettings.KEY_VALUE)
+	)
+
+	# Load grid shape
+	if not ParseUtils.dictionary_has_dictionary(
+			map_settings, "GRID_SHAPE"
+	):
+		error = true
+		error_message = "No grip shape found."
+		return
+	setting_dict = map_settings["GRID_SHAPE"]
+	if not ParseUtils.dictionary_has_number(
+			setting_dict, MapSettings.KEY_VALUE
+	):
+		error = true
+		error_message = "No grid shape found (setting has no value)."
+		return
+	grid_shape_option = (
 			ParseUtils.dictionary_int(setting_dict, MapSettings.KEY_VALUE)
 	)
 

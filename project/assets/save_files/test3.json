@@ -1,7 +1,7 @@
 {
   "meta": {
     "icon": "../flag_icon.png",
-    "name": "Random Hex Grid",
+    "name": "Random Grid World",
     "settings": {
       "GRID_WIDTH": {
         "type": "int",
@@ -17,6 +17,12 @@
         "type": "int",
         "value": 100,
         "text": "Number of starting countries: "
+      },
+      "GRID_SHAPE": {
+        "type": "options",
+        "value": 0,
+        "options": ["Hex Grid", "Square Grid"],
+        "text": "Grid shape: "
       },
       "USE_NOISE": {
         "type": "bool",

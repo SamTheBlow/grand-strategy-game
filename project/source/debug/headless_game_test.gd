@@ -27,17 +27,11 @@ func _ready() -> void:
 	game_rules.turn_limit_enabled.value = true
 	game_rules.turn_limit.value = 500
 
-	# Temporary
-	if load_file_path == "res://assets/save_files/test3.json":
-		var generated_game := GameLoadGenerated.new()
-		generated_game.load_game(
-				MapMetadata.from_file_path(load_file_path), game_rules
-		)
-		_game = generated_game.result
-	else:
-		var populated_game := GameLoadPopulated.new()
-		populated_game.load_game(load_file_path, game_rules)
-		_game = populated_game.result
+	var generated_game := GameLoadGenerated.new()
+	generated_game.load_game(
+			MapMetadata.from_file_path(load_file_path), game_rules
+	)
+	_game = generated_game.result
 
 	print("[HeadlessGameTest] Running the game...")
 	_game.turn.turn_changed.connect(_on_turn_changed)

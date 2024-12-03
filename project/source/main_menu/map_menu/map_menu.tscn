@@ -79,7 +79,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 script = ExtResource("4_seblq")
-builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json", "res://assets/save_files/test4.json"])
+builtin_maps = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
 map_option_node_scene = ExtResource("5_8fgbh")
 map_settings_scene = ExtResource("6_mboei")
 
