@@ -17,6 +17,21 @@
         "type": "int",
         "value": 100,
         "text": "Number of starting countries: "
+      },
+      "USE_NOISE": {
+        "type": "bool",
+        "value": false,
+        "text": "Use random noise to generate terrain: "
+      },
+      "NOISE_FREQUENCY": {
+        "type": "float",
+        "value": 0.03,
+        "text": "Noise frequency: "
+      },
+      "NOISE_THRESHOLD": {
+        "type": "float",
+        "value": -0.1,
+        "text": "Noise threshold (from -1.0 to 1.0): "
       }
     }
   },
