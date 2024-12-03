@@ -23,6 +23,10 @@ var _playing_player_index: int = 0
 
 var _ai_thread := AIThread.new()
 
+# When true, doesn't play the next player's turn after the AI submits
+# their moves, and calling "start()" has no effect.
+var _is_gameplay_loop_interrupted: bool = false
+
 
 func _init(game: Game, starting_turn: int, playing_player_index: int) -> void:
 	_game = game
@@ -53,6 +57,9 @@ func end_turn() -> void:
 ## Skips spectators. When it's an AI's turn, creates a new thread for the AI
 ## and waits for the thread to be finished.
 func start() -> void:
+	if _is_gameplay_loop_interrupted:
+		return
+
 	var player: GamePlayer = playing_player()
 
 	# Skip spectators
@@ -66,6 +73,12 @@ func start() -> void:
 
 	# The player is an AI. Play their actions in a separate thread.
 	_ai_thread.run(_game, player, player.player_ai)
+
+
+# Stops the gameplay loop.
+# Useful when it's an AI only game and you want the game loop to end.
+func stop() -> void:
+	_is_gameplay_loop_interrupted = true
 
 
 func _end_player_turn() -> void:
@@ -108,6 +121,9 @@ func _go_to_next_player() -> void:
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:
+	if _is_gameplay_loop_interrupted:
+		return
+
 	for action in actions:
 		action.apply_to(_game, playing_player())
 
