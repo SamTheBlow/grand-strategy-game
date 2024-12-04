@@ -11,7 +11,7 @@ extends MainLoop
 
 const ARG_TURN_LIMIT: String = "turnlimit"
 const ARG_SAVE: String = "savegame"
-
+const ARG_AUTOSAVE: String = "autosave"
 
 ## Command line argument: "++turnlimit=500"
 var turn_limit: int = 500
@@ -26,9 +26,14 @@ var save_the_game: bool = false
 ## The path for the save file. Irrelevant if save_the_game is false.
 var save_file_path: String = "user://gamesave.json"
 
+## Autosaves the game at the start of every X turns
+## (even if save_the_game is set to false).
+## Has no effect when 0 or less.
+## Command line argument: "++autosave=10" autosaves every 10 turns.
+var autosave_interval: int = 0
+
 var _game: Game
 var _is_finished: bool = false
-var _previous_time_ticks: int
 
 
 func _initialize() -> void:
@@ -69,33 +74,28 @@ func _load_cmdline_args() -> void:
 		elif arg.begins_with(ARG_SAVE):
 			save_the_game = true
 			print("The game will be saved at the end.")
+		if arg.begins_with(ARG_AUTOSAVE):
+			arg = arg.right(-ARG_AUTOSAVE.length())
+			if arg.begins_with("=") or arg.begins_with(" "):
+				arg = arg.right(-1)
+				if arg.is_valid_int():
+					autosave_interval = maxi(arg.to_int(), 0)
+					if autosave_interval > 0:
+						print(
+								"The game will autosave every ",
+								autosave_interval, " turns."
+						)
 
 
 func _print_with_time(message: String) -> void:
-	var current_time_ticks: int = Time.get_ticks_usec()
-	if _previous_time_ticks == 0:
-		print(message)
-	else:
-		print(
-				message,
-				" (",
-				_formatted_time(current_time_ticks - _previous_time_ticks),
-				")"
-		)
-	_previous_time_ticks = current_time_ticks
-
-
-func _formatted_time(elapsed_ticks_usec: int) -> String:
-	if elapsed_ticks_usec < 1_000_000:
-		return ("%.3f" % (elapsed_ticks_usec / 1000.0)) + " ms"
-	if elapsed_ticks_usec < 60_000_000:
-		return ("%.3f" % (elapsed_ticks_usec / 1_000_000.0)) + " seconds"
-	if elapsed_ticks_usec < 3_600_000_000:
-		return ("%.3f" % (elapsed_ticks_usec / 60_000_000.0)) + " minutes"
-	return ("%.3f" % (elapsed_ticks_usec / 3_600_000_000.0)) + " hours"
+	print("[", Time.get_time_string_from_system(), "] ", message)
 
 
 func _on_turn_changed(turn: int) -> void:
+	# Autosave
+	if autosave_interval > 0 and (turn - 1) % autosave_interval == 0:
+		_save_game()
+
 	_print_with_time("Turn " + str(turn))
 
 
@@ -121,15 +121,18 @@ func _on_game_over(winner_country: Country) -> void:
 	print(debug_text)
 
 	if save_the_game:
-		var game_save := GameSave.new()
-		game_save.save_game(_game, save_file_path)
-
-		if game_save.error:
-			print(
-					"[ERROR] Failed to save the game: ",
-					game_save.error_message
-			)
-		else:
-			print("Game saved!")
+		_save_game()
 
 	_is_finished = true
+
+
+func _save_game() -> void:
+	var game_save := GameSave.new()
+	game_save.save_game(_game, save_file_path)
+
+	if game_save.error:
+		_print_with_time(
+				"[ERROR] Failed to save the game: " + game_save.error_message
+		)
+	else:
+		_print_with_time("Game saved!")
