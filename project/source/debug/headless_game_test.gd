@@ -37,6 +37,7 @@ var _is_finished: bool = false
 
 
 func _initialize() -> void:
+	randomize()
 	_load_cmdline_args()
 
 	var game_rules := GameRules.new()
