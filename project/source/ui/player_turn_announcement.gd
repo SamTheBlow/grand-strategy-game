@@ -18,10 +18,14 @@ func _ready() -> void:
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	_animation_player.stop()
-	
+
 	# Only announce a new player's turn when there is more than 1 human player
 	if _game.game.game_players.number_of_playing_humans() < 2:
 		return
-	
+
+	# Only make the announcement when it's a human player's turn
+	if not player.is_human:
+		return
+
 	_label.text = "It's " + player.username + "'s turn"
 	_animation_player.play("new_animation")
