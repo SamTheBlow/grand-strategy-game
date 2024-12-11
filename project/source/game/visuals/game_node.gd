@@ -33,12 +33,14 @@ signal exited()
 ## Icon to use for [GameNotificationOfferAccepted].
 @export var offer_accepted_icon: Texture2D
 
-
 var game: Game:
 	set(value):
 		game = value
 		game.game_over.connect(_on_game_over)
 		game.offer_accepted_icon = offer_accepted_icon
+
+## Reference to external node
+var players: Players
 
 ## Reference to external node
 var chat: Chat:
@@ -56,6 +58,8 @@ var chat: Chat:
 				_on_exit_to_main_menu_requested
 		)
 		chat.rules_requested.connect(_on_chat_rules_requested)
+
+var _player_assignment: PlayerAssignment
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
@@ -90,49 +94,33 @@ func _ready() -> void:
 	networking_interface.message_sent.connect(
 			chat._on_networking_interface_message_sent
 	)
+	_player_list.players = players
 	_player_list.networking_interface = networking_interface
+	_player_list.player_added.connect(_on_player_list_player_added)
 
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
 
+	_player_assignment = PlayerAssignment.new(players, game.game_players)
+
 	_turn_order_list.players = game.game_players
 	_turn_order_list.game_turn = game.turn
-
-
-func set_players(players: Players) -> void:
-	if not is_node_ready():
-		await ready
-	_player_list.players = players
 	_turn_order_list.player_removal_requested.connect(players.remove_player)
-
-
-## Creates and applies army movement as a result of the user's actions.
-func new_action_army_movement(
-		army: Army,
-		number_of_troops: int,
-		destination_province: Province
-) -> void:
-	var moving_army_id: int = army.id
-
-	# Split the army into two if needed
-	var army_size: int = army.army_size.current_size()
-	if army_size > number_of_troops:
-		var new_army_id: int = (
-				game.world.armies.id_system().new_unique_id(false)
-		)
-		var action_split := ActionArmySplit.new(
-				army.id,
-				[army_size - number_of_troops, number_of_troops],
-				[new_army_id]
-		)
-		_action_input.apply_action(action_split)
-
-		moving_army_id = new_army_id
-
-	var action_move := ActionArmyMovement.new(
-			moving_army_id, destination_province.id
+	_turn_order_list.new_human_player_requested.connect(
+			_on_new_human_player_requested
 	)
-	_action_input.apply_action(action_move)
+
+	var game_sync := GameSync.new(game)
+	var player_assignment_sync := PlayerAssignmentSync.new(_player_assignment)
+	game_sync.add_child(player_assignment_sync)
+	add_child(game_sync)
+
+	if MultiplayerUtils.has_authority(multiplayer):
+		game.start()
+	else:
+		player_assignment_sync.sync_finished.connect(
+				_on_player_assignment_sync_finished
+		)
 
 
 ## Creates the popup that appears when you want to move an [Army].
@@ -141,7 +129,7 @@ func _add_army_movement_popup(army: Army, destination: Province) -> void:
 			army_movement_scene.instantiate() as ArmyMovementPopup
 	)
 	army_movement_popup.init(army, destination)
-	army_movement_popup.confirmed.connect(new_action_army_movement)
+	army_movement_popup.confirmed.connect(_on_army_movement_confirmed)
 	army_movement_popup.tree_exited.connect(_on_army_movement_closed)
 	_add_popup(army_movement_popup)
 
@@ -151,6 +139,41 @@ func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.contents_node = contents
 	popups.add_child(popup)
+
+
+## Adds a new Player and assigns it to a specific GamePlayer.
+func _add_player_and_assign(
+		game_player: GamePlayer, multiplayer_id: int = 1
+) -> void:
+	if not MultiplayerUtils.has_authority(multiplayer):
+		push_error(
+				"Tried to add & assign a new player, "
+				+ "but you do not have authority."
+		)
+		return
+
+	if game_player == null:
+		push_warning("Invalid GamePlayer id.")
+		return
+	if game_player.is_human and game_player.player_human != null:
+		push_warning(
+				"Tried to assign a new player to a GamePlayer that "
+				+ "already has a player assigned to it."
+		)
+		return
+
+	var new_player: Player = players.new_player(multiplayer_id)
+	players.add_player(new_player)
+	_player_assignment.assign_player_to(new_player, game_player)
+
+
+## The server receives a client's request to add and assign a new player.
+@rpc("any_peer", "call_remote", "reliable")
+func _receive_add_player_and_assign(game_player_id: int) -> void:
+	_add_player_and_assign(
+			game.game_players.player_from_id(game_player_id),
+			multiplayer.get_remote_sender_id()
+	)
 
 
 func _on_game_over(winning_country: Country) -> void:
@@ -289,6 +312,35 @@ func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
 	_action_input.apply_action(action_recruitment)
 
 
+## Creates and applies army movement as a result of the user's actions.
+func _on_army_movement_confirmed(
+		army: Army,
+		number_of_troops: int,
+		destination_province: Province
+) -> void:
+	var moving_army_id: int = army.id
+
+	# Split the army into two if needed
+	var army_size: int = army.army_size.current_size()
+	if army_size > number_of_troops:
+		var new_army_id: int = (
+				game.world.armies.id_system().new_unique_id(false)
+		)
+		var action_split := ActionArmySplit.new(
+				army.id,
+				[army_size - number_of_troops, number_of_troops],
+				[new_army_id]
+		)
+		_action_input.apply_action(action_split)
+
+		moving_army_id = new_army_id
+
+	var action_move := ActionArmyMovement.new(
+			moving_army_id, destination_province.id
+	)
+	_action_input.apply_action(action_move)
+
+
 func _on_army_movement_closed() -> void:
 	world_visuals.province_selection.deselect_province()
 
@@ -329,6 +381,22 @@ func _on_exit_to_main_menu_requested() -> void:
 		return
 
 	exited.emit()
+
+
+## Clients start the game when synchronization is finished.
+func _on_player_assignment_sync_finished() -> void:
+	game.start()
+
+
+func _on_player_list_player_added(player: Player) -> void:
+	_player_assignment.assign_player(player)
+
+
+func _on_new_human_player_requested(game_player: GamePlayer) -> void:
+	if MultiplayerUtils.has_authority(multiplayer):
+		_add_player_and_assign(game_player)
+	else:
+		_receive_add_player_and_assign.rpc_id(1, game_player.id)
 
 
 func _on_chat_rules_requested() -> void:

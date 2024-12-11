@@ -42,7 +42,7 @@ var username: String = "":
 		username = value
 
 		if is_human and player_human:
-			player_human.custom_username = value
+			player_human.set_username(value)
 
 		username_changed.emit(self)
 
@@ -61,14 +61,6 @@ var player_human: Player:
 
 		player_human = value
 
-# TODO this is ugly
-## For loading purposes. -1 means it doesn't represent any human player.
-var player_human_id: int = -1:
-	get:
-		if player_human:
-			return player_human.id
-		return player_human_id
-
 ## This player's AI.
 ## It may only be used when [code]is_human[/code] is set to false.
 var player_ai := PlayerAI.new()
@@ -86,8 +78,6 @@ func raw_data() -> Dictionary:
 		player_data["playing_country_id"] = playing_country.id
 	player_data["is_human"] = is_human
 	player_data["username"] = username
-	if is_human and player_human:
-		player_data["human_id"] = player_human.id
 	player_data["ai_type"] = player_ai.type()
 	player_data["ai_personality_type"] = player_ai.personality.type()
 	return player_data

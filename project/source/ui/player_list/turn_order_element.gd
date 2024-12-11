@@ -25,21 +25,21 @@ signal delete_pressed(game_player: GamePlayer)
 
 var player: GamePlayer:
 	set(value):
-		if player:
+		if player != null:
 			player.human_status_changed.disconnect(_on_human_status_changed)
 			player.username_changed.disconnect(_on_username_changed)
-			if player.player_human:
+			if player.is_human and player.player_human != null:
 				player.player_human.sync_finished.disconnect(
 						_on_player_sync_finished
 				)
-		
+
 		player = value
 		_update_appearance()
-		
-		if player:
+
+		if player != null:
 			player.human_status_changed.connect(_on_human_status_changed)
 			player.username_changed.connect(_on_username_changed)
-			if player.player_human:
+			if player.is_human and player.player_human != null:
 				player.player_human.sync_finished.connect(
 						_on_player_sync_finished
 				)
@@ -49,10 +49,10 @@ var turn: GameTurn:
 	set(value):
 		if turn:
 			turn.player_changed.disconnect(_on_player_turn_changed)
-		
+
 		turn = value
 		_update_turn_indicator()
-		
+
 		if turn:
 			turn.player_changed.connect(_on_player_turn_changed)
 
@@ -107,7 +107,7 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if (not _is_renaming) or (not event is InputEventMouseButton):
 		return
-	
+
 	if (
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
 			and (event as InputEventMouseButton).pressed
@@ -126,7 +126,7 @@ func _update_shown_username() -> void:
 		push_error("Player was not initialized")
 		username_label.text = ""
 		return
-	
+
 	username_label.text = player.username
 	if not player.is_human:
 		username_label.text += " (AI)"
@@ -137,11 +137,11 @@ func _update_shown_username() -> void:
 func _update_turn_indicator() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if (not turn) or (not player):
 		arrow_label.text = ""
 		return
-	
+
 	if turn.playing_player() == player:
 		arrow_label.text = "->"
 	else:
@@ -151,9 +151,9 @@ func _update_turn_indicator() -> void:
 func _update_appearance() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_update_shown_username()
-	
+
 	if (not player) or player.is_human:
 		username_label.add_theme_color_override(
 				"font_color", username_color_human
@@ -164,18 +164,18 @@ func _update_appearance() -> void:
 				"font_color", username_color_ai
 		)
 		color_rect.color = bg_color_ai
-	
+
 	_online_status.visible = (
 			player and player.player_human and player.player_human.is_remote()
 	)
-	
+
 	_update_button_visibility()
 
 
 func _update_button_visibility() -> void:
 	if not is_node_ready():
 		return
-	
+
 	add_button.visible = (
 			player
 			and not player.is_human
@@ -189,7 +189,7 @@ func _update_button_visibility() -> void:
 func _update_remove_button_visibility() -> void:
 	if not remove_button:
 		return
-	
+
 	remove_button.visible = (
 			player
 			and player.is_human
@@ -218,7 +218,7 @@ func _submit_username_change() -> void:
 	if not player:
 		push_error("Tried to change someone's username, but player is null!")
 		return
-	
+
 	var new_username: String = username_line_edit.text.strip_edges()
 	if new_username == "" or new_username == player.username:
 		return
@@ -247,6 +247,17 @@ func _on_username_changed(_game_player: GamePlayer) -> void:
 
 
 func _on_human_status_changed(_changed_player: GamePlayer) -> void:
+	# We are possibly dealing with a new [Player] instance,
+	# so we need to connect signals.
+	if (
+			player.is_human
+			and player.player_human != null
+			and not player.player_human.sync_finished.is_connected(
+					_on_player_sync_finished
+			)
+	):
+		player.player_human.sync_finished.connect(_on_player_sync_finished)
+
 	_update_appearance()
 
 
@@ -261,7 +272,7 @@ func _on_add_button_pressed() -> void:
 	if player.is_human:
 		push_warning("Player is already human!")
 		return
-	
+
 	new_player_requested.emit(player)
 
 
@@ -275,7 +286,7 @@ func _on_remove_button_pressed() -> void:
 	if is_the_only_local_human:
 		push_warning("Tried to remove the only local player.")
 		return
-	
+
 	if player.player_human:
 		delete_pressed.emit(player)
 	else:
@@ -287,7 +298,7 @@ func _on_rename_button_pressed() -> void:
 	if _is_renaming:
 		push_warning("Pressed the rename button, but already renaming!")
 		return
-	
+
 	_is_renaming = true
 
 
@@ -297,7 +308,7 @@ func _on_confirm_button_pressed() -> void:
 				"Pressed the confirm button, but there is nothing to confirm!"
 		)
 		return
-	
+
 	_is_renaming = false
 
 

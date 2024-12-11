@@ -5,12 +5,6 @@ extends Node
 
 
 func _init(game: Game) -> void:
-	# TODO
-	# If any username change occurs after creating this node on
-	# the server, but before creating this node on the client,
-	# synchronization will fail with a debugger error
-	# and the client will never receive the new username.
-	# Same thing for all the other sync nodes.
 	add_child(GameUsernameSync.new(game.game_players))
 	add_child(AutoArrowSync.new(game))
 	add_child(ActionSync.new(game))

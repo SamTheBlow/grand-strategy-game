@@ -76,7 +76,8 @@ static func array_typed_int(array: Array) -> Array[int]:
 	return output
 
 
-## Returns true if given variant is either an int or a float.
+## Returns true if given [Variant] is either an [int], a [float],
+## or a [String] that is a valid [int] or [float].
 static func is_number(variant: Variant) -> bool:
 	match typeof(variant):
 		TYPE_INT, TYPE_FLOAT:
@@ -102,7 +103,7 @@ static func number_as_int(variant: Variant) -> int:
 				return string.to_int()
 			elif string.is_valid_float():
 				return number_as_int(string.to_float())
-	
+
 	push_error("That's not a valid number!")
 	return 0
 
@@ -121,6 +122,6 @@ static func number_as_float(variant: Variant) -> float:
 				return number_as_float(string.to_int())
 			elif string.is_valid_float():
 				return string.to_float()
-	
+
 	push_error("That's not a valid number!")
 	return 0.0

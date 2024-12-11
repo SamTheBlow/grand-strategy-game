@@ -20,10 +20,12 @@ signal delete_pressed(player: Player)
 
 var player: Player:
 	set(value):
-		if player:
+		if player != null:
+			player.multiplayer_id_changed.disconnect(_on_multiplayer_id_changed)
 			player.username_changed.disconnect(_on_username_changed)
 			player.sync_finished.disconnect(_on_player_sync_finished)
 		player = value
+		player.multiplayer_id_changed.connect(_on_multiplayer_id_changed)
 		player.username_changed.connect(_on_username_changed)
 		player.sync_finished.connect(_on_player_sync_finished)
 		_update_appearance()
@@ -60,6 +62,7 @@ var _is_renaming: bool = false:
 
 
 func _ready() -> void:
+	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	username_label.visible = true
 	username_edit.visible = false
 	_update_appearance()
@@ -74,7 +77,7 @@ func _process(_delta: float) -> void:
 func _input(event: InputEvent) -> void:
 	if (not _is_renaming) or (not event is InputEventMouseButton):
 		return
-	
+
 	if (
 			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
 			and (event as InputEventMouseButton).pressed
@@ -91,34 +94,34 @@ func init() -> void:
 
 
 func _update_shown_username() -> void:
-	if not player:
+	if player == null:
 		push_error("Player was not initialized.")
 		username_label.text = ""
 		return
-	
+
 	username_label.text = player.username()
 
 
 func _update_appearance() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_update_shown_username()
-	
+
 	username_label.add_theme_color_override(
 			"font_color", username_color_human
 	)
 	color_rect.color = bg_color_human
-	
+
 	_online_status.visible = player.is_remote()
-	
+
 	_update_button_visibility()
 
 
 func _update_button_visibility() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_update_remove_button_visibility()
 	rename_button.visible = (not _is_renaming) and _can_edit()
 	confirm_button.visible = _is_renaming
@@ -127,7 +130,7 @@ func _update_button_visibility() -> void:
 func _update_remove_button_visibility() -> void:
 	if not remove_button:
 		return
-	
+
 	remove_button.visible = (
 			_can_edit()
 			and not is_the_only_local_human
@@ -137,24 +140,23 @@ func _update_remove_button_visibility() -> void:
 
 ## Returns true if you're able to edit this player.
 ## When connected to a server, you only have control over local players.
-## If you're the server, you have full control over everything.
+## If you're not a client, then you always have control over all players.
 func _can_edit() -> bool:
 	return (
-			not MultiplayerUtils.is_online(multiplayer)
-			or multiplayer.is_server()
-			or (player and (not player.is_remote()))
+			MultiplayerUtils.has_authority(multiplayer)
+			or (player != null and (not player.is_remote()))
 	)
 
 
 func _submit_username_change() -> void:
-	if not player:
+	if player == null:
 		push_error("Tried to change someone's username, but player is null!")
 		return
-	
+
 	var new_username: String = username_line_edit.text.strip_edges()
 	if new_username == "" or new_username == player.username():
 		return
-	player.custom_username = new_username
+	player.set_username(new_username)
 
 
 func _is_mouse_inside() -> bool:
@@ -174,18 +176,22 @@ func _on_username_line_edit_focus_exited() -> void:
 		_is_renaming = false
 
 
+func _on_multiplayer_id_changed(_player: Player) -> void:
+	_update_appearance()
+
+
 func _on_username_changed(_new_username: String) -> void:
 	_update_shown_username()
 
 
 func _on_remove_button_pressed() -> void:
-	if not player:
+	if player == null:
 		push_error("Tried to remove the player, but player is null!")
 		return
 	if is_the_only_local_human:
 		push_warning("Tried to remove the only local player.")
 		return
-	
+
 	delete_pressed.emit(player)
 
 
@@ -193,7 +199,7 @@ func _on_rename_button_pressed() -> void:
 	if _is_renaming:
 		push_warning("Pressed the rename button, but already renaming!")
 		return
-	
+
 	_is_renaming = true
 
 
@@ -203,9 +209,15 @@ func _on_confirm_button_pressed() -> void:
 				"Pressed the confirm button, but there is nothing to confirm!"
 		)
 		return
-	
+
 	_is_renaming = false
 
 
 func _on_player_sync_finished(_player: Player) -> void:
+	_update_appearance()
+
+
+## When disconnected, update the UI so that
+## remote players now appear as local players.
+func _on_server_disconnected() -> void:
 	_update_appearance()

@@ -241,7 +241,7 @@ mouse_filter = 2
 [node name="PlayerList" parent="UILayer/GameUI/RightSide/Content/LobbyList" instance=ExtResource("9_pkxqv")]
 unique_name_in_owner = true
 layout_mode = 1
-offset_bottom = 107.0
+offset_bottom = 80.0
 is_shrunk = true
 
 [node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]

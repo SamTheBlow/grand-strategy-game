@@ -1,22 +1,17 @@
 class_name AutoArrowSync
 extends Node
-## Listens to autoarrows being added or removed.
-## If you're online as the server, sends the changes to all clients.
+## Listens to [AutoArrow]s being added or removed in given [Game].
+## The server sends changes to all clients, and clients update accordingly.
+# TODO If arrows are added/removed before this node is ready on a client,
+# the client will never receive the info.
 
 
-var game: Game:
-	set(value):
-		game = value
-
-		for country in game.countries.list():
-			_on_country_added(country)
-		game.countries.country_added.connect(_on_country_added)
-
+var _game: Game
 var _connections: Array[CountryAutoArrowConnections] = []
 
 
-func _init(game_: Game = null) -> void:
-	game = game_
+func _init(game: Game) -> void:
+	_game = game
 
 
 func _enter_tree() -> void:
@@ -25,10 +20,57 @@ func _enter_tree() -> void:
 	name = "AutoArrowSync"
 
 
+func _ready() -> void:
+	for country in _game.countries.list():
+		_on_country_added(country)
+	_game.countries.country_added.connect(_on_country_added)
+
+
+## Clients receive the info from the server.
+@rpc("authority", "call_remote", "reliable")
+func _receive_auto_arrow_added(
+		country_id: int, arrow_data: Dictionary
+) -> void:
+	var country: Country = _game.countries.country_from_id(country_id)
+	if country == null:
+		push_warning("Received an invalid country id from the server.")
+		return
+
+	var auto_arrow: AutoArrow = (
+			AutoArrowFromDict.new().result(_game, arrow_data)
+	)
+	if auto_arrow == null:
+		push_warning("Received an invalid AutoArrow from the server.")
+		return
+
+	country.auto_arrows.add(auto_arrow)
+
+
+## Clients receive the info from the server.
+@rpc("authority", "call_remote", "reliable")
+func _receive_auto_arrow_removed(
+		country_id: int, arrow_data: Dictionary
+) -> void:
+	var country: Country = _game.countries.country_from_id(country_id)
+	if country == null:
+		push_warning("Received an invalid country id from the server.")
+		return
+
+	var auto_arrow: AutoArrow = (
+			AutoArrowFromDict.new().result(_game, arrow_data)
+	)
+	if auto_arrow == null:
+		push_warning("Received an invalid AutoArrow from the server.")
+		return
+
+	country.auto_arrows.remove(auto_arrow)
+
+
 func _on_country_added(country: Country) -> void:
 	_connections.append(CountryAutoArrowConnections.new(country, self))
 
 
+## The server sends the info to clients.
 func _on_auto_arrow_added(country: Country, auto_arrow: AutoArrow) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
@@ -38,14 +80,7 @@ func _on_auto_arrow_added(country: Country, auto_arrow: AutoArrow) -> void:
 	)
 
 
-## The client receives the info from the server.
-@rpc("authority", "call_remote", "reliable")
-func _receive_auto_arrow_added(country_id: int, arrow_data: Dictionary) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
-	country.auto_arrows.add(auto_arrow)
-
-
+## The server sends the info to clients.
 func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
@@ -53,16 +88,6 @@ func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
 	_receive_auto_arrow_removed.rpc(
 			country.id, AutoArrowToDict.new().result(auto_arrow)
 	)
-
-
-## The client receives the info from the server.
-@rpc("authority", "call_remote", "reliable")
-func _receive_auto_arrow_removed(
-		country_id: int, arrow_data: Dictionary
-) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
-	country.auto_arrows.remove(auto_arrow)
 
 
 class CountryAutoArrowConnections:

@@ -43,7 +43,6 @@ const PLAYER_ID_KEY: String = "id"
 const PLAYER_COUNTRY_ID_KEY: String = "playing_country_id"
 const PLAYER_IS_HUMAN_KEY: String = "is_human"
 const PLAYER_USERNAME_KEY: String = "username"
-const PLAYER_HUMAN_ID_KEY: String = "human_id"
 const PLAYER_AI_TYPE_KEY: String = "ai_type"
 const PLAYER_AI_PERSONALITY_KEY: String = "ai_personality_type"
 
@@ -503,8 +502,6 @@ func _load_player(json_data: Dictionary, game: Game) -> void:
 			error_message = "Player's username property is not a string."
 			return
 		player.username = json_data[PLAYER_USERNAME_KEY]
-	if json_data.has(PLAYER_HUMAN_ID_KEY):
-		player.player_human_id = json_data[PLAYER_HUMAN_ID_KEY]
 	player.player_ai = PlayerAI.from_type(ai_type)
 
 	var ai_personality_type: int = (

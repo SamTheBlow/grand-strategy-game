@@ -27,7 +27,7 @@ var chat_data := ChatData.new()
 
 func _ready() -> void:
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
-	
+
 	if players:
 		players.player_kicked.connect(_on_players_player_kicked)
 		players.player_group_added.connect(_on_players_player_group_added)
@@ -49,7 +49,7 @@ func _send_all_data() -> void:
 				+ "but you are not the server!"
 		)
 		return
-	
+
 	_receive_all_data.rpc_id(
 			multiplayer.get_remote_sender_id(),
 			ChatDataToDict.new().parse(chat_data)
@@ -72,7 +72,7 @@ func send_global_message(text: String) -> void:
 				+ "but you do not have authority!"
 		)
 		return
-	
+
 	if MultiplayerUtils.is_online(multiplayer):
 		_receive_global_message.rpc(text)
 	else:
@@ -92,7 +92,7 @@ func _receive_global_message(text: String) -> void:
 				+ "who does not have authority!"
 		)
 		return
-	
+
 	chat_data.add_raw_message("[i][color=#404040]" + text + "[/color][/i]")
 #endregion
 
@@ -101,7 +101,7 @@ func _receive_global_message(text: String) -> void:
 ## Sends to all users a message written by the local user.
 func send_human_message(text: String) -> void:
 	var username: String = players.you().username()
-	
+
 	if MultiplayerUtils.is_online(multiplayer):
 		_receive_human_message.rpc(username, text)
 	else:
@@ -113,7 +113,7 @@ func _receive_human_message(username: String, text: String) -> void:
 	var stripped_text: String = text.strip_edges()
 	if stripped_text == "":
 		return
-	
+
 	chat_data.add_human_message(username, stripped_text)
 #endregion
 
@@ -143,7 +143,8 @@ func _on_players_player_kicked(player: Player) -> void:
 	send_global_message(player.username() + " was kicked from the server.")
 
 
-func _on_players_player_group_added(leader: Player) -> void:
+func _on_players_player_group_added(player_list: Array[Player]) -> void:
+	var leader: Player = player_list[0]
 	send_global_message(leader.username() + " joined the server.")
 
 

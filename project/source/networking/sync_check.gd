@@ -14,7 +14,7 @@ signal sync_finished()
 var _number_of_things_to_check: int = 0
 
 
-func _init(things_to_check: Array[Object]) -> void:
+func _init(things_to_check: Array[Object] = []) -> void:
 	for object in things_to_check:
 		if object.has_signal("sync_finished"):
 			_number_of_things_to_check += 1
@@ -30,5 +30,5 @@ func is_sync_finished() -> bool:
 func _on_sync_finished(object: Object) -> void:
 	object.disconnect("sync_finished", _on_sync_finished)
 	_number_of_things_to_check -= 1
-	if _number_of_things_to_check == 0:
+	if is_sync_finished():
 		sync_finished.emit()

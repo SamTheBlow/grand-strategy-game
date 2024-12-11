@@ -34,7 +34,7 @@ var players: GamePlayers:
 			players.player_added.disconnect(_on_player_added)
 			players.player_removed.disconnect(_on_player_removed)
 			_clear_elements()
-		
+
 		players = value
 		_create_elements()
 		players.player_added.connect(_on_player_added)
@@ -45,7 +45,7 @@ var players: GamePlayers:
 var game_turn: GameTurn = null:
 	set(value):
 		game_turn = value
-		
+
 		for element in _visual_players:
 			element.turn = game_turn
 
@@ -76,7 +76,7 @@ func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
 	if player and player.is_human and player.player_human:
 		player.player_human.sync_finished.connect(_on_player_sync_finished)
-	
+
 	var element := turn_order_element.instantiate() as TurnOrderElement
 	element.delete_pressed.connect(_on_element_delete_pressed)
 	element.new_player_requested.connect(_on_new_player_requested)
@@ -124,17 +124,17 @@ func _update_margin_offsets() -> void:
 func _update_size() -> void:
 	if not is_node_ready() or not is_shrunk:
 		return
-	
+
 	var new_size: int = 0
 	for element in _visual_players:
 		new_size += roundi(element.size.y)
-		
+
 		# Godot adds 4 pixels of spacing between each node
 		new_size += 4
-	
+
 	if new_size > 0:
 		new_size -= 4
-	
+
 	anchors_preset = PRESET_TOP_WIDE
 	offset_bottom = new_size + margin_pixels * 2
 	if get_parent_control():
@@ -180,7 +180,18 @@ func _on_player_sync_finished(_player: Player) -> void:
 
 ## When a player is turned into a human,
 ## we want the remove button to start appearing again on humans
-func _on_human_status_changed(_player: GamePlayer) -> void:
+func _on_human_status_changed(game_player: GamePlayer) -> void:
+	# We are possibly dealing with a new [Player] instance,
+	# so we need to connect signals.
+	if (
+			game_player.is_human
+			and game_player.player_human != null
+			and not game_player.player_human.sync_finished.is_connected(
+					_on_player_sync_finished
+			)
+	):
+		game_player.player_human.sync_finished.connect(_on_player_sync_finished)
+
 	_update_elements()
 
 

@@ -16,7 +16,6 @@ extends Node
 ## in which case this signal will pass a reference to the user's local state.
 signal state_changed(new_state: MapMenuState)
 
-
 ## This is the state that's being used by the UI.
 ## Changing something in this object will affect the visuals.
 var active_state: MapMenuState:
@@ -84,8 +83,7 @@ func _disconnect_signals() -> void:
 		active_state.metadata_changed.disconnect(_on_metadata_changed)
 
 
-## Sends the active state to all clients.
-## Only works when you're the server.
+## On the server, sends the active state to all clients.
 func _send_active_state_to_clients() -> void:
 	if active_state == null or not is_node_ready():
 		return
