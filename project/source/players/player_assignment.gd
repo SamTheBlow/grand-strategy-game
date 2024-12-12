@@ -20,7 +20,10 @@ var _game_players: GamePlayers
 func _init(players: Players, game_players: GamePlayers) -> void:
 	_game_players = game_players
 
-	assign_players(players.list())
+	# Initialize the list. Make sure all players are a valid key.
+	for player in players.list():
+		list[player] = null
+
 	players.player_added.connect(_on_player_added)
 	players.player_removed.connect(_on_player_removed)
 	players.player_group_added.connect(_on_player_group_added)
@@ -105,10 +108,11 @@ func assign_players(players: Array[Player]) -> void:
 	# We want to ignore players that were already assigned beforehand.
 	var unassigned_players: Array[Player] = []
 	for player in players:
-		if list.has(player) and list[player] != null:
-			continue
-		list[player] = null
-		unassigned_players.append(player)
+		if not list.has(player):
+			push_error("Tried to assign a player that isn't on the list.")
+			return
+		if list[player] == null:
+			unassigned_players.append(player)
 	if unassigned_players.size() == 0:
 		return
 

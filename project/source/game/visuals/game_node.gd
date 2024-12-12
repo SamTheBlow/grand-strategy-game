@@ -116,6 +116,7 @@ func _ready() -> void:
 	add_child(game_sync)
 
 	if MultiplayerUtils.has_authority(multiplayer):
+		_player_assignment.assign_players(players.list())
 		game.start()
 	else:
 		player_assignment_sync.sync_finished.connect(
