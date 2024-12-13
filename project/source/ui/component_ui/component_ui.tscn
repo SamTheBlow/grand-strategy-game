@@ -1,6 +1,7 @@
-[gd_scene load_steps=11 format=3 uid="uid://btp4jcvpp4jg2"]
+[gd_scene load_steps=12 format=3 uid="uid://btp4jcvpp4jg2"]
 
 [ext_resource type="Script" path="res://source/ui/component_ui/component_ui.gd" id="1_p8xv2"]
+[ext_resource type="Script" path="res://source/ui/component_ui/component_ui_frame.gd" id="2_8ijx1"]
 [ext_resource type="Script" path="res://source/ui/component_ui/build_fortress_button.gd" id="2_bi4y4"]
 [ext_resource type="Script" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="2_gn6af"]
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="2_inqyn"]
@@ -20,7 +21,18 @@ line_top = -128.0
 line_bottom = 96.0
 line_length_x = 192.0
 
+[node name="Frame" type="Control" parent="."]
+unique_name_in_owner = true
+anchors_preset = 0
+offset_left = -195.0
+offset_top = -131.0
+offset_right = 195.0
+offset_bottom = 99.0
+mouse_filter = 2
+script = ExtResource("2_8ijx1")
+
 [node name="Control1" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_left = -256.0
 offset_top = -64.0
@@ -67,6 +79,7 @@ text = "Build Fortress"
 script = ExtResource("2_bi4y4")
 
 [node name="Control2" type="Control" parent="."]
+visible = false
 anchors_preset = 0
 offset_left = -256.0
 offset_right = -128.0
