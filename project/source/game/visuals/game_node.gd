@@ -124,6 +124,12 @@ func _ready() -> void:
 		)
 
 
+func _exit_tree() -> void:
+	# Prevent the game from running forever in the background
+	if game != null:
+		game.turn.stop()
+
+
 ## Creates the popup that appears when you want to move an [Army].
 func _add_army_movement_popup(army: Army, destination: Province) -> void:
 	var army_movement_popup := (
@@ -380,9 +386,6 @@ func _on_exit_to_main_menu_requested() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		chat.send_system_message("Only the server can exit to main menu!")
 		return
-
-	# Prevent the game from running forever in the background
-	game.turn.stop()
 
 	exited.emit()
 
