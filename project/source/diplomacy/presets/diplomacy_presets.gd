@@ -1,7 +1,6 @@
 class_name DiplomacyPresets
 ## A list of [DiplomacyPreset]s.
 
-
 var _list: Array[DiplomacyPreset] = []
 
 
@@ -22,10 +21,10 @@ func is_id_valid(id: int) -> bool:
 func preset_from_id(id: int) -> DiplomacyPreset:
 	if id < 0:
 		return DiplomacyPreset.new()
-	
+
 	for preset in _list:
 		if preset.id == id:
 			return preset
-	
+
 	push_error("Failed to find diplomacy preset with id: " + str(id))
 	return DiplomacyPreset.new()

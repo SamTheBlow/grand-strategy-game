@@ -2,7 +2,6 @@ class_name PopulatedSaveFile
 ## Populates given game file (in JSON format)
 ## according to given generation settings (see [GameRules]).
 
-
 ## The result is a new game file in JSON format.
 var result: Variant
 

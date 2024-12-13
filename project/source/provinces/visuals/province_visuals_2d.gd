@@ -1,7 +1,6 @@
 class_name ProvinceVisuals2D
 extends Node2D
 
-
 signal mouse_entered()
 signal mouse_exited()
 
@@ -48,7 +47,7 @@ func _ready() -> void:
 func add_army(army_visuals: ArmyVisuals2D) -> void:
 	if not is_node_ready():
 		await ready
-	
+
 	if army_visuals.get_parent():
 		army_visuals.get_parent().remove_child(army_visuals)
 	_army_stack.add_child(army_visuals)
@@ -90,14 +89,14 @@ func highlight_debug(
 ) -> void:
 	if has_node("DebugHighlight"):
 		remove_child(get_node("DebugHighlight"))
-	
+
 	if not show_highlight:
 		return
-	
+
 	var outline_settings := OutlineSettings.new()
 	outline_settings.outline_color = outline_color
 	outline_settings.outline_width = 8.0
-	
+
 	var debug_highlight := OutlinedPolygon2D.new()
 	debug_highlight.name = "DebugHighlight"
 	debug_highlight.color = Color(0.0, 0.0, 0.0, 0.0)
@@ -109,22 +108,22 @@ func highlight_debug(
 func _update_province() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if province == null:
 		push_error("Province is null.")
 		name = "NullProvince"
 		return
-	
+
 	name = str(province.id)
 	position = province.position
-	
+
 	_buildings_setup.buildings = province.buildings
 	_buildings_setup.spawn_position = province.position_fortress
-	
+
 	_update_shape_polygon()
 	_update_shape_color()
 	remove_highlight()
-	
+
 	_army_stack.position = province.position_army_host
 
 
@@ -143,7 +142,7 @@ func _update_shape_color() -> void:
 func _connect_signals() -> void:
 	if province == null:
 		return
-	
+
 	if not province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.connect(_on_owner_changed)
 
@@ -151,7 +150,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if province == null:
 		return
-	
+
 	if province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.disconnect(_on_owner_changed)
 

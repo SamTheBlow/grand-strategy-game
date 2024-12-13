@@ -4,7 +4,6 @@ extends Node
 ## Provides useful functions and signals.
 ## Synchronizes the list when playing online.
 
-
 signal player_added(player: Player)
 signal player_removed(player: Player)
 ## Emitted by the server when a client's last player is removed.

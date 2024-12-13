@@ -4,7 +4,6 @@ extends GameGeneration
 ## Populates it with province data,
 ## adds in some countries and places those countries on the map.
 
-
 var grid_width: int = 1
 var grid_height: int = 1
 var number_of_countries: int = 2

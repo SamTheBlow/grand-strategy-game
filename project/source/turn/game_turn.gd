@@ -3,7 +3,6 @@ class_name GameTurn
 ## Each [GamePlayer] plays one at a time in order.
 ## After everyone is done playing, a new turn begins.
 
-
 ## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
 ## Emitted after a player ends their turn, but before the next player's turn.

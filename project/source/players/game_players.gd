@@ -2,7 +2,6 @@ class_name GamePlayers
 ## An encapsulated list of [GamePlayer] nodes.
 ## Provides useful functions and signals.
 
-
 signal player_added(game_player: GamePlayer, position_index: int)
 signal player_removed(game_player: GamePlayer)
 signal username_changed(game_player: GamePlayer)

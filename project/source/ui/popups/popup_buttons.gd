@@ -7,7 +7,6 @@ extends HBoxContainer
 ##
 ## To use, call "setup_buttons" with a list of button names as the argument.
 
-
 signal pressed(button_id: int)
 
 
@@ -21,7 +20,7 @@ func setup_buttons(button_names: Array[String]) -> void:
 			control.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			add_child(control)
-		
+
 		var button := IdButton.new()
 		button.name = "Button" + str(i + 1)
 		button.id = i

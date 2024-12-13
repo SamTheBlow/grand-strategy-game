@@ -5,7 +5,6 @@ extends AuthBase
 ## Once they have joined the game, adds their players to the game.
 # TODO This class has bunch lot of copy/paste in it :/
 
-
 @export var players: Players
 
 ## Dictionary[int, ClientData]

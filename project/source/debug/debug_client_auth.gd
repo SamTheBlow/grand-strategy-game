@@ -6,8 +6,8 @@ extends Node
 ## Also make sure the scene's multiplayer API
 ## exists and is a [SceneMultiplayer].
 
-
 @onready var _auth_node := %NetworkAuthentication as AuthBase
+
 
 func _ready() -> void:
 	var scene_multiplayer := multiplayer as SceneMultiplayer

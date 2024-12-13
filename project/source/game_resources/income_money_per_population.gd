@@ -1,7 +1,6 @@
 class_name IncomeMoneyPerPopulation
 extends IncomeMoney
 
-
 var _population: Population
 var _income_per_person: float
 

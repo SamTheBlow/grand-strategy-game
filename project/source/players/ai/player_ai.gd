@@ -7,7 +7,6 @@ class_name PlayerAI
 ## If you want to make your own AI, create a subclass of this class
 ## and add it to the Type enum, and the from_type() and type() functions.
 
-
 enum Type {
 	NONE = 0,
 	TESTAI1 = 1,

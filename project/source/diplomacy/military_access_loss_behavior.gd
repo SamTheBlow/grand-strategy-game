@@ -3,7 +3,6 @@ class_name MilitaryAccessLossBehavior
 ##
 ## No setup needed.
 
-
 var _game: Game
 
 

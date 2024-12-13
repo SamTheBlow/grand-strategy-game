@@ -2,7 +2,6 @@ class_name GameGeneration
 ## Base class for generating a game's data.
 ## Applies changes directly to given dictionary.
 
-
 var error: bool = false
 var error_message: String = ""
 

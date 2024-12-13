@@ -8,7 +8,6 @@ extends MainLoop
 ## root folder (where the project.godot is), and run this command:
 ## [the path to your godot executable] --headless -s [the path to this file]
 
-
 const ARG_TURN_LIMIT: String = "turnlimit"
 const ARG_SAVE: String = "savegame"
 const ARG_AUTOSAVE: String = "autosave"

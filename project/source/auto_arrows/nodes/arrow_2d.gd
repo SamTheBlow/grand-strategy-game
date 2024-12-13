@@ -3,7 +3,6 @@ class_name Arrow2D
 extends Node2D
 ## Draws an arrow with given properties.
 
-
 @export var arrow_tip_angle: float = deg_to_rad(30.0):
 	set(value):
 		arrow_tip_angle = value

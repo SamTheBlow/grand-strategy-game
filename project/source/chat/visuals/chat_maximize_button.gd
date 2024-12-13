@@ -3,7 +3,6 @@ extends Control
 ## Appears when the chat is minimized.
 ## When its button is pressed, hides itself and shows the chat contents.
 
-
 @export var chat_contents: Control
 
 

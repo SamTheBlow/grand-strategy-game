@@ -3,7 +3,6 @@ class_name AutoArrowFromDict
 ##
 ## See also: [AutoArrowToDict]
 
-
 const SOURCE_PROVINCE_ID_KEY = "source_province_id"
 const DEST_PROVINCE_ID_KEY = "destination_province_id"
 
@@ -15,7 +14,7 @@ func result(game: Game, data: Dictionary) -> AutoArrow:
 			and ParseUtils.dictionary_has_number(data, DEST_PROVINCE_ID_KEY)
 	):
 		return null
-	
+
 	var source_province_id: int = (
 			ParseUtils.dictionary_int(data, SOURCE_PROVINCE_ID_KEY)
 	)
@@ -24,7 +23,7 @@ func result(game: Game, data: Dictionary) -> AutoArrow:
 	)
 	if source_province == null:
 		return null
-	
+
 	var destination_province_id: int = (
 			ParseUtils.dictionary_int(data, DEST_PROVINCE_ID_KEY)
 	)
@@ -33,5 +32,5 @@ func result(game: Game, data: Dictionary) -> AutoArrow:
 	)
 	if destination_province == null:
 		return null
-	
+
 	return AutoArrow.new(source_province, destination_province)

@@ -1,7 +1,6 @@
 class_name RuleBoolNode
 extends RuleInterface
 
-
 @export var rule: RuleBool
 
 var _sub_rule_nodes_on: Array[Control] = []
@@ -15,13 +14,13 @@ func _ready() -> void:
 	if not rule:
 		push_error("Rule interface was not given a rule item.")
 		return
-	
+
 	_label.text = rule.text
 	_check_box.button_pressed = rule.value
 	_check_box.toggled.connect(_on_check_box_toggled)
-	
+
 	_add_sub_rules(rule.sub_rules)
-	
+
 	for i in range(1, _container.get_children().size()):
 		if rule.sub_rules_on.has(i - 1):
 			_sub_rule_nodes_on.append(_container.get_child(i))
@@ -29,7 +28,7 @@ func _ready() -> void:
 		if rule.sub_rules_off.has(i - 1):
 			_sub_rule_nodes_off.append(_container.get_child(i))
 	_update_sub_rule_visibility()
-	
+
 	rule.value_changed.connect(_on_rule_value_changed)
 
 

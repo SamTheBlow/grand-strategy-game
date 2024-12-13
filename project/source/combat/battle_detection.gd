@@ -1,7 +1,6 @@
 class_name BattleDetection
 ## Detects when a [Battle] should occur and starts the battles when applicable.
 
-
 var _battle: Battle
 var _armies_in_each_province: ArmiesInEachProvince
 

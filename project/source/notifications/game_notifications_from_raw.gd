@@ -1,7 +1,6 @@
 class_name GameNotificationsFromRaw
 ## Converts given raw data into a [GameNotifications] object.
 
-
 const ID_KEY: String = "id"
 const CREATION_TURN_KEY: String = "creation_turn"
 const TURNS_BEFORE_DISMISS_KEY: String = "turns_before_dismiss"

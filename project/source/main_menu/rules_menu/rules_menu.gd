@@ -1,7 +1,6 @@
 class_name RulesMenu
 extends RuleInterface
 
-
 var game_rules: GameRules:
 	set = set_game_rules
 
@@ -20,12 +19,12 @@ func set_game_rules(value: GameRules) -> void:
 func _update() -> void:
 	if game_rules == null or not is_node_ready():
 		return
-	
+
 	_sync.active_state = game_rules
 	# Only set the current state as the local state
 	# the first time this function is called.
 	if _sync.local_state == null:
 		_sync.local_state = game_rules
-	
+
 	_clear()
 	_add_sub_rules(game_rules.root_rules, true, false)

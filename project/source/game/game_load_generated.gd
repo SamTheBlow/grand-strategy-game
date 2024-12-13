@@ -4,7 +4,6 @@ class_name GameLoadGenerated
 ## Then, populates the game data using given generation settings
 ## (see [PopulatedSaveFile]).
 
-
 var error: bool = true
 var error_message: String = ""
 var result: Game

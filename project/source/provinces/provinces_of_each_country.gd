@@ -2,7 +2,6 @@ class_name ProvincesOfEachCountry
 ## Provides a dictionary where each [Country]
 ## is assigned a list of all provinces controlled by that country.
 
-
 ## Dictionary[Country, ProvincesOfCountry]
 ## All countries in the game are guaranteed to be in this dictionary,
 ## so no need to check if the dictionary has some country.

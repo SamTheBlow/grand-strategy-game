@@ -4,7 +4,6 @@ extends Button
 ## Useful for being able to know which button
 ## was pressed among some group of buttons.
 
-
 signal id_pressed(id: int)
 
 @export var id: int = 0

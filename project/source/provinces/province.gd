@@ -9,7 +9,6 @@ class_name Province
 ## See [method GameFromRawDict._load_province]
 ## to see how to initialize a new province.
 
-
 signal owner_changed(this: Province)
 
 ## The unique id assigned to this province.

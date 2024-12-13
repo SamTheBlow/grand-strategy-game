@@ -5,7 +5,6 @@ extends Node2D
 ## The first child is at the bottom of the stack,
 ## and the last child is at the top.
 
-
 @export var distance_between_armies := Vector2(12.0, -20.0):
 	set(value):
 		distance_between_armies = value

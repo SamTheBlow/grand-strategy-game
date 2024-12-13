@@ -6,7 +6,6 @@ extends Control
 ## Hides itself when either country_1 or country_2 is null.
 ## Also hides itself when both given countries are the same.
 
-
 signal diplomacy_action_pressed(
 		diplomacy_action: DiplomacyAction, recipient_country: Country
 )
@@ -54,7 +53,7 @@ func _refresh() -> void:
 	if country_1 == null or country_2 == null or country_1 == country_2:
 		hide()
 		return
-	
+
 	_refresh_info()
 	_refresh_available_actions()
 	show()
@@ -97,7 +96,7 @@ func _connect_relationship_signals(
 func _update_minimum_height() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_update_minimum_height_of(_data_container)
 	_update_minimum_height_of(_available_actions)
 	_update_minimum_height_of(_actions_container)
@@ -107,7 +106,7 @@ func _update_minimum_height() -> void:
 
 func _update_minimum_height_of(control: Control, spacing_px: int = 4) -> void:
 	var minimum_height: float = 0
-	
+
 	var number_of_controls: int = 0
 	for child in control.get_children():
 		if not child is Control:
@@ -117,11 +116,11 @@ func _update_minimum_height_of(control: Control, spacing_px: int = 4) -> void:
 			continue
 		number_of_controls += 1
 		minimum_height += child_control.custom_minimum_size.y
-	
+
 	# Take node spacing into account
 	if number_of_controls > 1:
 		minimum_height += (number_of_controls - 1) * spacing_px
-	
+
 	control.custom_minimum_size.y = minimum_height
 
 
@@ -139,17 +138,17 @@ func _populate_relationship_info_bool(
 func _refresh_info() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if country_1 == null or country_2 == null:
 		return
-	
+
 	var relationship: DiplomacyRelationship = (
 			country_1.relationships.with_country(country_2)
 	)
 	var reverse_relationship: DiplomacyRelationship = (
 			country_2.relationships.with_country(country_1)
 	)
-	
+
 	if game != null and game.rules.is_diplomacy_presets_enabled():
 		_preset.country_1 = country_1
 		_preset.country_2 = country_2
@@ -160,7 +159,7 @@ func _refresh_info() -> void:
 		_preset.show()
 	else:
 		_preset.hide()
-	
+
 	_populate_relationship_info_bool(
 			_grants_military_access_info,
 			relationship.grants_military_access(),
@@ -176,7 +175,7 @@ func _refresh_info() -> void:
 			relationship.is_fighting(),
 			reverse_relationship.is_fighting()
 	)
-	
+
 	_connect_relationship_signals(relationship)
 	_connect_relationship_signals(reverse_relationship)
 
@@ -186,14 +185,14 @@ func _refresh_info() -> void:
 func _refresh_available_actions() -> void:
 	if not is_node_ready():
 		return
-	
+
 	NodeUtils.delete_all_children(_available_actions)
 	_actions_container.hide()
-	
+
 	if country_1 == null or country_2 == null or game == null:
 		_update_minimum_height()
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
 	if not (
 			playing_country in [country_1, country_2]
@@ -203,13 +202,13 @@ func _refresh_available_actions() -> void:
 	):
 		_update_minimum_height()
 		return
-	
+
 	var relationship: DiplomacyRelationship = (
 			country_1.relationships.with_country(country_2)
 			if playing_country == country_1 else
 			country_2.relationships.with_country(country_1)
 	)
-	
+
 	for action in relationship.available_actions():
 		var diplomacy_action_button := (
 				diplomacy_action_button_scene.instantiate()
@@ -222,7 +221,7 @@ func _refresh_available_actions() -> void:
 		)
 		_available_actions.add_child(diplomacy_action_button)
 		_actions_container.show()
-	
+
 	_update_minimum_height()
 
 
@@ -231,7 +230,7 @@ func _on_diplomacy_action_button_pressed(
 ) -> void:
 	if country_1 == null or country_2 == null or game == null:
 		return
-	
+
 	var playing_country: Country = game.turn.playing_player().playing_country
 	if playing_country == country_1:
 		diplomacy_action_pressed.emit(diplomacy_action, country_2)

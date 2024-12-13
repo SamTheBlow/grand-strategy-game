@@ -4,7 +4,6 @@ extends Node2D
 # In the future, you will be able to add a background image
 # to a 2D world map, and maybe other things too.
 
-
 signal clicked()
 
 

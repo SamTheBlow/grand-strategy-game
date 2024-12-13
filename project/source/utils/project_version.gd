@@ -11,7 +11,6 @@ class_name ProjectVersion
 ##
 ## See the unit tests for examples of valid and invalid strings.
 
-
 var _is_valid: bool = true
 var _major: int
 var _minor: int = 0

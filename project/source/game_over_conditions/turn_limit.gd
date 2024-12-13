@@ -7,7 +7,6 @@ class_name TurnLimit
 ## The game_over signal is only emitted at the start of a new turn.
 ## It's okay to edit the final_turn property at any time.
 
-
 signal game_over()
 
 var final_turn: int = 1

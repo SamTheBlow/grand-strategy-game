@@ -2,12 +2,11 @@ class_name OutlineSettings
 extends Resource
 ## Defines the settings for an outline (a visible outline around some shape).
 
-
 @export var is_outline_enabled: bool = true:
 	set(value):
 		if is_outline_enabled == value:
 			return
-		
+
 		is_outline_enabled = value
 		changed.emit()
 
@@ -15,7 +14,7 @@ extends Resource
 	set(value):
 		if outline_color == value:
 			return
-		
+
 		outline_color = value
 		changed.emit()
 
@@ -23,6 +22,6 @@ extends Resource
 	set(value):
 		if outline_width == value:
 			return
-		
+
 		outline_width = value
 		changed.emit()

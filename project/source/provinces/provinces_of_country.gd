@@ -1,6 +1,5 @@
 class_name ProvincesOfCountry
 
-
 ## Do not directly manipulate this list! Use add() instead.
 var list: Array[Province] = []
 

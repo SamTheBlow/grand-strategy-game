@@ -3,7 +3,6 @@ class_name RuleOptions
 extends RuleItem
 ## A game rule that is a choice between some options.
 
-
 signal value_changed(this_rule: RuleItem)
 
 ## The index of the selection option in the options array.
@@ -12,14 +11,14 @@ signal value_changed(this_rule: RuleItem)
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		if new_index == selected_index:
 			return
-		
+
 		if new_index < 0 or new_index >= options.size():
 			push_warning("Tried to set the selected index to an invalid value.")
 			return
-		
+
 		selected_index = new_index
 		value_changed.emit(self)
 
@@ -47,7 +46,7 @@ func selected_value() -> int:
 			or selected_index >= option_value_map.size()
 	):
 		return selected_index
-	
+
 	return option_value_map[selected_index]
 
 

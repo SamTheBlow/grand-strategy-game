@@ -3,7 +3,6 @@ extends Node
 ## Applies a given [Action] to given [Game].
 ## If you're an online client, sends the action to the server instead.
 
-
 var game: Game
 
 
@@ -21,8 +20,8 @@ func _receive_action_request(action_data: Dictionary) -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
-	
+
 	# TODO refuse if the client is not the playing player
-	
+
 	# Request accepted
 	apply_action(Action.from_raw_data(action_data))

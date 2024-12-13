@@ -13,7 +13,7 @@ func _game_notification_to_dict(
 		game_notification: GameNotification
 ) -> Dictionary:
 	var output: Dictionary = _super_to_dict(game_notification)
-	
+
 	var subclass_data: Dictionary = {}
 	if game_notification is GameNotificationOffer:
 		subclass_data = _offer_to_dict(
@@ -27,7 +27,7 @@ func _game_notification_to_dict(
 		subclass_data = _performed_action_to_dict(
 				game_notification as GameNotificationPerformedAction
 		)
-	
+
 	output.merge(subclass_data)
 	return output
 
@@ -36,7 +36,7 @@ func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 	var output: Dictionary = {
 		GameNotificationsFromRaw.ID_KEY: game_notification.id
 	}
-	
+
 	if (
 			game_notification.creation_turn()
 			!= game_notification._game.turn.current_turn()
@@ -45,7 +45,7 @@ func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 			GameNotificationsFromRaw.CREATION_TURN_KEY:
 				game_notification.creation_turn(),
 		})
-	
+
 	if (
 			game_notification._turns_before_dismiss
 			!= GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
@@ -54,10 +54,10 @@ func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 			GameNotificationsFromRaw.TURNS_BEFORE_DISMISS_KEY:
 				game_notification._turns_before_dismiss,
 		})
-	
+
 	if game_notification._was_seen_this_turn:
 		output.merge({GameNotificationsFromRaw.WAS_SEEN_THIS_TURN_KEY: true})
-	
+
 	return output
 
 

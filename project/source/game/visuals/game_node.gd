@@ -3,7 +3,6 @@ extends Node
 ## Visuals for a given [Game].
 # TODO bloated class
 
-
 signal exited()
 
 @export_group("Scenes")

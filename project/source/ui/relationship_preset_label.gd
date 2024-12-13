@@ -4,7 +4,6 @@ extends Label
 ## the [DiplomacyPreset] of given [DiplomacyRelationship].
 ## Hides itself if no relationship is given.
 
-
 var relationship: DiplomacyRelationship:
 	set(value):
 		if value == relationship:
@@ -22,7 +21,7 @@ var relationship: DiplomacyRelationship:
 				relationship.preset_changed.is_connected(_on_preset_changed)
 		):
 				relationship.preset_changed.connect(_on_preset_changed)
-		
+
 		_refresh()
 
 
@@ -33,11 +32,11 @@ func _ready() -> void:
 func _refresh() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if relationship == null:
 		hide()
 		return
-	
+
 	_update_label(relationship.preset())
 	show()
 

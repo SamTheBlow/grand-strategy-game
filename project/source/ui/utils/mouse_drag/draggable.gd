@@ -8,7 +8,6 @@ extends Control
 ## You only need to check for when the mouse button is first pressed:
 ## this node will take care of checking if the button is held or released.
 
-
 var _is_being_dragged: bool = false
 var _relative_starting_position := Vector2.ZERO
 var _relative_mouse_origin := Vector2.ZERO

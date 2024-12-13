@@ -7,7 +7,6 @@ class_name GameNotification
 ## This is a base class, so it doesn't do anything.
 ## Extend this class to give it functionality, outcome options, etc.
 
-
 signal handled(this: GameNotification)
 
 const DEFAULT_TURNS_BEFORE_DISMISS: int = 3

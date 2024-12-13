@@ -9,7 +9,6 @@ class_name GameLoad
 ## This class is useful in the case where you want to
 ## load a game and you already know what the data type is.
 
-
 ## False if loading was successful, otherwise true.
 var error: bool = true
 
@@ -28,7 +27,7 @@ func load_game(file_path: String) -> void:
 		error = true
 		error_message = file_json.error_message
 		return
-	
+
 	# Load the game using the file data
 	var game_from_raw := GameFromRawDict.new()
 	game_from_raw.load_game(file_json.result)
@@ -36,6 +35,6 @@ func load_game(file_path: String) -> void:
 		error = true
 		error_message = game_from_raw.error_message
 		return
-	
+
 	error = false
 	result = game_from_raw.result

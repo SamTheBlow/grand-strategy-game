@@ -2,7 +2,6 @@ class_name ProvinceHighlight
 extends Node
 ## Adds or removes highlight on given [Province] and its links.
 
-
 @export var provinces_container: ProvinceVisualsContainer2D
 
 var armies: Armies

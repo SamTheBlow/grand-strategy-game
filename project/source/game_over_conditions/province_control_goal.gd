@@ -2,7 +2,6 @@ class_name ProvinceControlGoal
 ## Emits the game_over signal when any [Country] meets the [Game]'s
 ## game over condition for number of [Province]s controlled.
 
-
 signal game_over()
 
 var _game: Game
@@ -20,10 +19,10 @@ func _init(game: Game) -> void:
 func _check_percentage_winner(percentage_to_win: float) -> void:
 	var provinces_list: Array[Province] = _game.world.provinces.list()
 	var number_of_provinces: int = provinces_list.size()
-	
+
 	var pcpc := ProvinceCountPerCountry.new()
 	pcpc.calculate(provinces_list)
-	
+
 	for i in pcpc.countries.size():
 		if (
 				float(pcpc.number_of_provinces[i]) / number_of_provinces
@@ -38,7 +37,7 @@ func _check_percentage_winner(percentage_to_win: float) -> void:
 func _check_number_winner(number_to_win: int) -> void:
 	var pcpc := ProvinceCountPerCountry.new()
 	pcpc.calculate(_game.world.provinces.list())
-	
+
 	for i in pcpc.countries.size():
 		if pcpc.number_of_provinces[i] >= number_to_win:
 			game_over.emit()

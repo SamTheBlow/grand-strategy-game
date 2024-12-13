@@ -4,7 +4,6 @@ class_name Game
 ## dedicated to loading the game (see [LoadGame], [GameFromRawDict]...).
 ## Doing the setup manually yourself is not recommended.
 
-
 signal game_started()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)

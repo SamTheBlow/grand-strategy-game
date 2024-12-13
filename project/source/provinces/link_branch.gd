@@ -3,7 +3,6 @@ class_name LinkBranch
 ## The first province in the array is a link of the original province,
 ## the second element is a link of the first element, and so on.
 
-
 var link_chain: Array[Province] = []
 
 

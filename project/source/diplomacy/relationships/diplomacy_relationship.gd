@@ -3,7 +3,6 @@ class_name DiplomacyRelationship
 # TODO the setup is confusing. document and simplify it
 # (this class is ugly and bloated)
 
-
 signal preset_changed(this: DiplomacyRelationship)
 signal military_access_changed(this: DiplomacyRelationship)
 signal trespassing_changed(this: DiplomacyRelationship)

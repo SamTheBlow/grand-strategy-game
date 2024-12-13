@@ -3,7 +3,6 @@ class_name ResourceCost
 ## is required for given amount of something.
 ## For example, it could calculate the money cost to recruit 69 armies.
 
-
 var _cost_for_one: float
 
 

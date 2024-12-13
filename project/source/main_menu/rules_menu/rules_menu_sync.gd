@@ -5,13 +5,11 @@ extends Node
 ##
 ## See also: [MapMenuSync]
 
-
 ## Emitted on clients when the client receives a new state from the server,
 ## in which case this signal will pass a new instance of [GameRules].
 ## Also emitted on clients when the client disconnects from a server,
 ## in which case this signal will pass a reference to the user's local state.
 signal state_changed(new_state: GameRules)
-
 
 ## This is the state that's being used by the UI.
 ## Changing something in this object will affect the visuals.

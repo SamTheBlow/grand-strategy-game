@@ -5,7 +5,6 @@ extends VBoxContainer
 ##
 ## See also: [GamePopup]
 
-
 signal confirmed(province: Province, troop_count: int)
 
 ## This will be passed as an argument for the confirmed signal.

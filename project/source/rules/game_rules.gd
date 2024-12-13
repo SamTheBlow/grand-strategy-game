@@ -7,7 +7,6 @@ class_name GameRules
 ## This class is also responsible for defining the rule layout
 ## for visual representation of the rules in a menu.
 
-
 signal rule_changed(rule_name: String, rule_item: RuleItem)
 
 enum ReinforcementsOption {
@@ -245,17 +244,17 @@ func _init() -> void:
 	_category_diplomacy_fighting = RuleItem.new()
 	reinforcements_random_range = RuleRangeInt.new()
 	province_income_random_range = RuleRangeInt.new()
-	
+
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
 	turn_limit_enabled.sub_rules = [turn_limit]
 	turn_limit_enabled.sub_rules_on = [0]
-	
+
 	turn_limit.text = "Final turn"
 	turn_limit.minimum = 1
 	turn_limit.has_minimum = true
 	turn_limit.value = 50
-	
+
 	game_over_provinces_owned_option.text = "Number of controlled provinces"
 	game_over_provinces_owned_option.options = [
 		"Disabled",
@@ -268,12 +267,12 @@ func _init() -> void:
 		game_over_provinces_owned_percentage,
 	]
 	game_over_provinces_owned_option.option_filters = [[], [0], [1]]
-	
+
 	game_over_provinces_owned_constant.text = "Amount"
 	game_over_provinces_owned_constant.minimum = 0
 	game_over_provinces_owned_constant.has_minimum = true
 	game_over_provinces_owned_constant.value = 40
-	
+
 	game_over_provinces_owned_percentage.text = "Percentage"
 	game_over_provinces_owned_percentage.is_percentage = true
 	game_over_provinces_owned_percentage.minimum = 0.0
@@ -281,14 +280,14 @@ func _init() -> void:
 	game_over_provinces_owned_percentage.maximum = 1.0
 	game_over_provinces_owned_percentage.has_maximum = true
 	game_over_provinces_owned_percentage.value = 0.7
-	
+
 	reinforcements_enabled.text = "Reinforcements at the start of each turn"
 	reinforcements_enabled.value = true
 	reinforcements_enabled.sub_rules = [
 		reinforcements_option,
 	]
 	reinforcements_enabled.sub_rules_on = [0]
-	
+
 	reinforcements_option.text = "Reinforcements size"
 	reinforcements_option.options = [
 		"Random", "Constant", "Proportional to population size"
@@ -300,27 +299,27 @@ func _init() -> void:
 		reinforcements_per_person,
 	]
 	reinforcements_option.option_filters = [[0], [1], [2]]
-	
+
 	reinforcements_random_min.text = "Minimum"
 	reinforcements_random_min.minimum = 0
 	reinforcements_random_min.has_minimum = true
 	reinforcements_random_min.value = 10
-	
+
 	reinforcements_random_max.text = "Maximum"
 	reinforcements_random_max.minimum = 0
 	reinforcements_random_max.has_minimum = true
 	reinforcements_random_max.value = 40
-	
+
 	reinforcements_constant.text = "Amount"
 	reinforcements_constant.minimum = 0
 	reinforcements_constant.has_minimum = true
 	reinforcements_constant.value = 20
-	
+
 	reinforcements_per_person.text = "Amount per person"
 	reinforcements_per_person.minimum = 0
 	reinforcements_per_person.has_minimum = true
 	reinforcements_per_person.value = 0.4
-	
+
 	recruitment_enabled.text = "Can recruit new armies"
 	recruitment_enabled.value = true
 	recruitment_enabled.sub_rules = [
@@ -328,54 +327,54 @@ func _init() -> void:
 		recruitment_population_per_unit,
 	]
 	recruitment_enabled.sub_rules_on = [0, 1]
-	
+
 	recruitment_money_per_unit.text = "Money cost per unit"
 	recruitment_money_per_unit.minimum = 0
 	recruitment_money_per_unit.has_minimum = true
 	recruitment_money_per_unit.value = 0.1
-	
+
 	recruitment_population_per_unit.text = "Population cost per unit"
 	recruitment_population_per_unit.minimum = 0
 	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.value = 1.0
-	
+
 	population_growth_enabled.text = "Population growth"
 	population_growth_enabled.value = true
 	population_growth_enabled.sub_rules = [
 		population_growth_rate,
 	]
 	population_growth_enabled.sub_rules_on = [0]
-	
+
 	population_growth_rate.text = "Growth rate"
 	population_growth_rate.minimum = 0
 	population_growth_rate.has_minimum = true
 	population_growth_rate.value = 0.48
-	
+
 	extra_starting_population.text = "Extra population in starting province"
 	extra_starting_population.minimum = 0
 	extra_starting_population.has_minimum = true
 	extra_starting_population.value = 0
-	
+
 	start_with_fortress.text = "Start with a fortress"
 	start_with_fortress.value = true
-	
+
 	build_fortress_enabled.text = "Can be built"
 	build_fortress_enabled.value = true
 	build_fortress_enabled.sub_rules = [
 		fortress_price,
 	]
 	build_fortress_enabled.sub_rules_on = [0]
-	
+
 	fortress_price.text = "Money cost"
 	fortress_price.minimum = 0
 	fortress_price.has_minimum = true
 	fortress_price.value = 1000
-	
+
 	starting_money.text = "Starting money"
 	starting_money.minimum = 0
 	starting_money.has_minimum = true
 	starting_money.value = 1000
-	
+
 	province_income_option.text = "Income from provinces"
 	province_income_option.options = [
 		"Random", "Constant", "Proportional to population size"
@@ -387,58 +386,58 @@ func _init() -> void:
 		province_income_per_person,
 	]
 	province_income_option.option_filters = [[0], [1], [2]]
-	
+
 	province_income_random_min.text = "Minimum"
 	province_income_random_min.minimum = 0
 	province_income_random_min.has_minimum = true
 	province_income_random_min.value = 10
-	
+
 	province_income_random_max.text = "Maximum"
 	province_income_random_max.minimum = 0
 	province_income_random_max.has_minimum = true
 	province_income_random_max.value = 100
-	
+
 	province_income_constant.text = "Amount"
 	province_income_constant.minimum = 0
 	province_income_constant.has_minimum = true
 	province_income_constant.value = 100
-	
+
 	province_income_per_person.text = "Income per person"
 	province_income_per_person.minimum = 0
 	province_income_per_person.has_minimum = true
 	province_income_per_person.value = 0.075
-	
+
 	minimum_army_size.text = "Minimum army size"
 	minimum_army_size.minimum = 1
 	minimum_army_size.has_minimum = true
 	minimum_army_size.value = 1
-	
+
 	global_attacker_efficiency.text = "Global attacker efficiency"
 	global_attacker_efficiency.minimum = 0
 	global_attacker_efficiency.has_minimum = true
 	global_attacker_efficiency.value = 0.9
-	
+
 	global_defender_efficiency.text = "Global defender efficiency"
 	global_defender_efficiency.minimum = 0
 	global_defender_efficiency.has_minimum = true
 	global_defender_efficiency.value = 1.0
-	
+
 	battle_algorithm_option.text = "Algorithm"
 	battle_algorithm_option.options = [
 		"Standard", "Algorithm 2"
 	]
 	battle_algorithm_option.selected_index = 0
-	
+
 	default_ai_type.text = "Default AI type"
 	default_ai_type.minimum = 0
 	default_ai_type.has_minimum = true
 	default_ai_type.maximum = 2
 	default_ai_type.has_maximum = true
 	default_ai_type.value = 2
-	
+
 	start_with_random_ai_type.text = "Players start with a random AI type"
 	start_with_random_ai_type.value = false
-	
+
 	default_ai_personality_option.text = "Default AI personality"
 	default_ai_personality_option.options = AIPersonality.type_names()
 	default_ai_personality_option.option_value_map = AIPersonality.type_values()
@@ -446,12 +445,12 @@ func _init() -> void:
 			default_ai_personality_option
 			.index_of_value(AIPersonality.DEFAULT_TYPE)
 	)
-	
+
 	start_with_random_ai_personality.text = (
 			"Players start with a random AI personality"
 	)
 	start_with_random_ai_personality.value = true
-	
+
 	diplomacy_presets_option.text = "Default preset"
 	diplomacy_presets_option.options = [
 		"Don't use presets", "Allied", "Neutral", "At war"
@@ -463,35 +462,35 @@ func _init() -> void:
 		starts_with_random_relationship_preset,
 	]
 	diplomacy_presets_option.option_filters = [[], [0], [1], [2]]
-	
+
 	starts_with_random_relationship_preset.text = (
 			"Countries start with a random relationship preset"
 	)
 	starts_with_random_relationship_preset.value = false
-	
+
 	grants_military_access_default.text = "Grant military access by default"
 	grants_military_access_default.value = false
-	
+
 	can_grant_military_access.text = "Can manually grant military access"
 	can_grant_military_access.value = false
-	
+
 	can_revoke_military_access.text = "Can manually revoke military access"
 	can_revoke_military_access.value = false
-	
+
 	can_ask_for_military_access.text = "Can ask for military access"
 	can_ask_for_military_access.value = false
-	
+
 	is_military_access_mutual.text = (
 			"Countries automatically grant military access"
 			+ " to whoever grants it to them"
 	)
 	is_military_access_mutual.value = false
-	
+
 	is_military_access_revoked_when_fighting.text = (
 			"Automatically revoke military access when fighting"
 	)
 	is_military_access_revoked_when_fighting.value = true
-	
+
 	military_access_loss_behavior_option.text = (
 			"What to do to armies that no longer have military access"
 	)
@@ -501,84 +500,84 @@ func _init() -> void:
 		"Teleport the armies to the nearest valid location",
 	]
 	military_access_loss_behavior_option.selected_index = 0
-	
+
 	is_trespassing_default.text = "Trespass in other countries by default"
 	is_trespassing_default.value = true
-	
+
 	can_enable_trespassing.text = "Can manually start trespassing"
 	can_enable_trespassing.value = false
-	
+
 	can_disable_trespassing.text = "Can manually stop trespassing"
 	can_disable_trespassing.value = false
-	
+
 	can_ask_to_stop_trespassing.text = "Can ask to stop trespassing"
 	can_ask_to_stop_trespassing.value = false
-	
+
 	automatically_fight_trespassers.text = (
 			"Automatically start fighting trespassers"
 	)
 	automatically_fight_trespassers.value = true
-	
+
 	is_fighting_default.text = "Fight other countries by default"
 	is_fighting_default.value = true
-	
+
 	can_enable_fighting.text = "Can manually start fighting"
 	can_enable_fighting.value = false
-	
+
 	can_disable_fighting.text = "Can manually stop fighting"
 	can_disable_fighting.value = false
-	
+
 	can_ask_to_stop_fighting.text = "Can ask to stop fighting"
 	can_ask_to_stop_fighting.value = false
-	
+
 	automatically_fight_back.text = (
 			"Countries automatically start fighting with whoever fights them"
 	)
 	automatically_fight_back.value = true
-	
+
 	_category_game_over.text = "Game Over conditions"
 	_category_game_over.sub_rules = [
 		turn_limit_enabled,
 		game_over_provinces_owned_option,
 	]
-	
+
 	_category_recruitment.text = "Recruitment"
 	_category_recruitment.sub_rules = [
 		reinforcements_enabled,
 		recruitment_enabled,
 	]
-	
+
 	_category_population.text = "Population"
 	_category_population.sub_rules = [
 		population_growth_enabled,
 		extra_starting_population,
 	]
-	
+
 	_category_fortresses.text = "Fortresses"
 	_category_fortresses.sub_rules = [
 		start_with_fortress,
 		build_fortress_enabled,
 	]
-	
+
 	_category_battle.text = "Battle"
 	_category_battle.sub_rules = [
 		global_attacker_efficiency,
 		global_defender_efficiency,
 		battle_algorithm_option,
 	]
-	
+
 	_category_ai.text = "AI"
 	_category_ai.sub_rules = [
 		_category_ai_type,
 		_category_ai_personality,
 	]
-	
+
 	_category_ai_type.text = "AI type (the way it plays)"
 	_category_ai_type.sub_rules = [
 		default_ai_type,
 		start_with_random_ai_type,
 	]
-	
+
 	_category_ai_personality.text = (
 			"AI personality (the way it behaves diplomatically)"
 	)
@@ -586,13 +585,13 @@ func _init() -> void:
 		default_ai_personality_option,
 		start_with_random_ai_personality,
 	]
-	
+
 	_category_diplomacy.text = "Diplomacy"
 	_category_diplomacy.sub_rules = [
 		diplomacy_presets_option,
 		_category_diplomacy_data,
 	]
-	
+
 	_category_diplomacy_data.text = (
 			"Relationship data (these may be overridden by presets)"
 	)
@@ -601,7 +600,7 @@ func _init() -> void:
 		_category_diplomacy_trespassing,
 		_category_diplomacy_fighting,
 	]
-	
+
 	_category_diplomacy_military_access.text = "Military access"
 	_category_diplomacy_military_access.sub_rules = [
 		grants_military_access_default,
@@ -612,7 +611,7 @@ func _init() -> void:
 		is_military_access_revoked_when_fighting,
 		military_access_loss_behavior_option,
 	]
-	
+
 	_category_diplomacy_trespassing.text = "Trespassing"
 	_category_diplomacy_trespassing.sub_rules = [
 		is_trespassing_default,
@@ -621,7 +620,7 @@ func _init() -> void:
 		can_ask_to_stop_trespassing,
 		automatically_fight_trespassers,
 	]
-	
+
 	_category_diplomacy_fighting.text = "Fighting"
 	_category_diplomacy_fighting.sub_rules = [
 		is_fighting_default,
@@ -630,21 +629,21 @@ func _init() -> void:
 		can_ask_to_stop_fighting,
 		automatically_fight_back,
 	]
-	
+
 	reinforcements_random_range.min_rule = reinforcements_random_min
 	reinforcements_random_range.max_rule = reinforcements_random_max
 	reinforcements_random_range.minimum = 0
 	reinforcements_random_range.has_minimum = true
 	reinforcements_random_range.min_value = 10
 	reinforcements_random_range.max_value = 40
-	
+
 	province_income_random_range.min_rule = province_income_random_min
 	province_income_random_range.max_rule = province_income_random_max
 	province_income_random_range.minimum = 0
 	province_income_random_range.has_minimum = true
 	province_income_random_range.min_value = 10
 	province_income_random_range.max_value = 100
-	
+
 	root_rules = [
 		_category_game_over,
 		_category_recruitment,
@@ -657,9 +656,9 @@ func _init() -> void:
 		_category_ai,
 		_category_diplomacy,
 	]
-	
+
 	_connect_signals()
-	
+
 	# TODO temporary. remove later
 	diplomatic_presets = DiplomacyPresets.new([
 		load("res://resources/diplomacy/presets/allied.tres"),

@@ -3,7 +3,6 @@ class_name Armies
 ## Provides utility functions for manipulating the list and
 ## for accessing a specific [Army] or a specific subset of the list.
 
-
 signal army_added(army: Army)
 signal army_removed(army: Army)
 

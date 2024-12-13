@@ -12,7 +12,6 @@ extends Control
 ## in the scene's Control nodes is set to "Pass".
 # TODO DRY: a LOT of code here is copy/pasted from [TurnOrderElement]
 
-
 signal delete_pressed(player: Player)
 
 @export var username_color_human: Color

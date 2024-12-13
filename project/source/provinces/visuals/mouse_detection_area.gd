@@ -1,7 +1,6 @@
 extends Area2D
 ## Provides extra signals for mouse detection.
 
-
 ## Emitted when a mouse event occurs and the mouse cursor is inside this area.
 ## This one is only emitted when the event is unhandled.
 signal unhandled_mouse_event_occured(event: InputEventMouse)

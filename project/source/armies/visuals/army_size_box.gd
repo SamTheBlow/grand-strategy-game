@@ -7,7 +7,6 @@ extends Control
 ##
 ## Note that this node updates its own anchor points.
 
-
 const PARENT_SIZE_X: float = 64.0
 const BOX_LEFT_RIGHT_MARGIN: float = 4.0
 const BOX_OUTLINE_THICKNESS: float = 4.0

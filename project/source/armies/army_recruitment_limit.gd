@@ -9,7 +9,6 @@ class_name ArmyRecruitmentLimits
 ## When the maximum number is 0, which means armies cannot be recruited,
 ## a human-friendly error message is stored in the "error_message" property.
 
-
 #signal minimum_changed(new_minimum: int)
 signal maximum_changed(new_maximum: int)
 

@@ -2,7 +2,6 @@ class_name ArmyMovementAnimation2D
 extends Node
 ## Responsible for animating 2D visuals for an [Army] when it moves.
 
-
 signal is_playing_changed(is_playing: bool)
 
 @export var _army_visuals: Node2D
@@ -30,7 +29,7 @@ var target_global_position: Vector2
 func _process(delta: float) -> void:
 	if not _is_playing:
 		return
-	
+
 	var new_position: Vector2 = (
 			_army_visuals.global_position
 			+ (target_global_position - original_global_position)

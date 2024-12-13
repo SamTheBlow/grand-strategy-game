@@ -5,7 +5,6 @@ extends Node
 ##
 ## See also: [IncomeMoneyLabelUpdate], [ComponentUI]
 
-
 @export var label: Label
 
 var province: Province:
@@ -25,7 +24,7 @@ func _refresh() -> void:
 func _connect_signals() -> void:
 	if province == null:
 		return
-	
+
 	if not (
 			province.population.size_changed
 			.is_connected(_on_population_size_changed)
@@ -36,7 +35,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if province == null:
 		return
-	
+
 	if (
 			province.population.size_changed
 			.is_connected(_on_population_size_changed)

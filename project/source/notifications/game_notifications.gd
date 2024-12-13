@@ -1,7 +1,6 @@
 class_name GameNotifications
 ## A list of [GameNotification]s.
 
-
 signal notification_added(game_notification: GameNotification)
 signal notification_removed(game_notification: GameNotification)
 

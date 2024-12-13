@@ -6,7 +6,6 @@ class_name ArmiesInProvince
 # It's for performance reasons. Those things are handled by a separate class.
 # See [ArmiesInProvinceSystem].
 
-
 # TODO figure out how to expose the list without creating a new copy
 # and while also preventing array manipulation from the outside.
 # Creating copies of very large arrays is slow.

@@ -2,7 +2,6 @@ class_name UniqueIdSystem
 ## Provides unique ids.
 ## When creating a new unique id, always uses the smallest number available.
 
-
 ## The smallest available number for new ids.
 ## Negative values are not allowed.
 ## You can assume that any number smaller than this was already claimed.

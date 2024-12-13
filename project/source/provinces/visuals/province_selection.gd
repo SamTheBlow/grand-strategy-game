@@ -1,7 +1,6 @@
 class_name ProvinceSelection
 extends Node
 
-
 ## Emitted when a province is deselected. The given province is never null.
 signal province_deselected(province: Province)
 ## Emitted when a province is selected. The given province is never null.
@@ -15,15 +14,15 @@ var selected_province: Province:
 	set(value):
 		if selected_province == value:
 			return
-		
+
 		if selected_province != null:
 			province_deselected.emit(selected_province)
-		
+
 		selected_province = value
-		
+
 		if selected_province != null:
 			province_selected.emit(selected_province)
-		
+
 		selected_province_changed.emit(selected_province)
 
 

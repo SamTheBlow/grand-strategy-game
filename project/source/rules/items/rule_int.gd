@@ -2,7 +2,6 @@ class_name RuleInt
 extends RuleItem
 ## A game rule that is an integer value.
 
-
 signal value_changed(this_rule: RuleItem)
 
 ## Set this property in the inspector to set the default value.
@@ -11,7 +10,7 @@ var value: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		var old_value: int = value
 		value = new_value
 		if has_minimum:
@@ -26,7 +25,7 @@ var has_minimum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_minimum = new_bool
 		if has_minimum:
 			value = maxi(value, minimum)
@@ -37,7 +36,7 @@ var minimum: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		minimum = new_min
 		if has_minimum:
 			value = maxi(value, minimum)
@@ -50,7 +49,7 @@ var has_maximum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_maximum = new_bool
 		if has_maximum:
 			value = mini(value, maximum)
@@ -61,7 +60,7 @@ var maximum: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		maximum = new_max
 		if has_maximum:
 			value = mini(value, maximum)
@@ -70,17 +69,17 @@ var maximum: int = 0:
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties: Array[Dictionary] = []
-	
+
 	properties.append({
 		"name": "value",
 		"type": TYPE_INT,
 	})
-	
+
 	properties.append({
 		"name": "has_minimum",
 		"type": TYPE_BOOL,
 	})
-	
+
 	var minimum_usage := PROPERTY_USAGE_NO_EDITOR
 	if has_minimum:
 		minimum_usage = PROPERTY_USAGE_DEFAULT
@@ -89,12 +88,12 @@ func _get_property_list() -> Array[Dictionary]:
 		"type": TYPE_INT,
 		"usage": minimum_usage,
 	})
-	
+
 	properties.append({
 		"name": "has_maximum",
 		"type": TYPE_BOOL,
 	})
-	
+
 	var maximum_usage := PROPERTY_USAGE_NO_EDITOR
 	if has_maximum:
 		maximum_usage = PROPERTY_USAGE_DEFAULT
@@ -103,7 +102,7 @@ func _get_property_list() -> Array[Dictionary]:
 		"type": TYPE_INT,
 		"usage": maximum_usage,
 	})
-	
+
 	return properties
 
 

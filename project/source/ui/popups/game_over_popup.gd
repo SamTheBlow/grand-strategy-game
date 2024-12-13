@@ -4,7 +4,6 @@ extends VBoxContainer
 ##
 ## See also: [GamePopup]
 
-
 @export var winner_label: Label
 
 

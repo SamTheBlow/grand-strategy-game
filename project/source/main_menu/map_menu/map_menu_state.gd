@@ -1,7 +1,6 @@
 class_name MapMenuState
 ## Data structure. Contains all the data related to the map selection menu.
 
-
 ## This is not emitted when updating the entire state at once.
 signal selected_map_changed()
 ## This is not emitted when updating the entire state at once.
@@ -82,11 +81,11 @@ func get_raw_state(include_file_paths: bool = true) -> Dictionary:
 	var _raw_builtin_maps: Array = []
 	for builtin_map in _builtin_maps:
 		_raw_builtin_maps.append(builtin_map.to_dict(include_file_paths))
-	
+
 	var _raw_custom_maps: Array = []
 	for custom_map in _custom_maps:
 		_raw_custom_maps.append(custom_map.to_dict(include_file_paths))
-	
+
 	return {
 		KEY_SELECTED_MAP: _selected_map_id,
 		KEY_BUILTIN_MAP_LIST: _raw_builtin_maps,
@@ -100,16 +99,16 @@ func set_raw_state(data: Dictionary) -> void:
 	if ParseUtils.dictionary_has_array(data, KEY_BUILTIN_MAP_LIST):
 		var map_list: Array = data[KEY_BUILTIN_MAP_LIST]
 		_populate_map_list(_builtin_maps, map_list)
-	
+
 	_custom_maps = []
 	if ParseUtils.dictionary_has_array(data, KEY_CUSTOM_MAP_LIST):
 		var map_list: Array = data[KEY_CUSTOM_MAP_LIST]
 		_populate_map_list(_custom_maps, map_list)
-	
+
 	_selected_map_id = -1
 	if ParseUtils.dictionary_has_number(data, KEY_SELECTED_MAP):
 		_selected_map_id = ParseUtils.dictionary_int(data, KEY_SELECTED_MAP)
-	
+
 	state_changed.emit(self)
 
 
@@ -118,10 +117,10 @@ func _populate_map_list(map_list: Array[MapMetadata], list_data: Array) -> void:
 		if element is not Dictionary:
 			continue
 		var map_data := element as Dictionary
-		
+
 		var map_metadata: MapMetadata = MapMetadata.from_dict(map_data)
 		map_metadata.setting_changed.connect(_on_metadata_changed)
-		
+
 		map_list.append(map_metadata)
 
 

@@ -8,7 +8,6 @@ class_name SyncCheck
 ## of all the things you want to check for. The given objects must all
 ## have a signal named "sync_finished" with one parameter: the object itself.
 
-
 signal sync_finished()
 
 var _number_of_things_to_check: int = 0

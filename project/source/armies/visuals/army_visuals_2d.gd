@@ -4,7 +4,6 @@ extends Node2D
 ##
 ## To use, just set the "army" and "playing_country" properties.
 
-
 signal province_changed(this: ArmyVisuals2D)
 
 ## This is meant to be set only once.

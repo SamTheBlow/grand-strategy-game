@@ -1,6 +1,6 @@
 class_name AutoArrowsToRaw
 ## Converts an [AutoArrows] object into raw data.
-## 
+##
 ## See also: [AutoArrowsFromRaw], [AutoArrow]
 
 

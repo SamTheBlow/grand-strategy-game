@@ -5,7 +5,6 @@ extends MarginContainer
 ##
 ## See also: [GameRules]
 
-
 ## The number of pixels between each rule node.
 @export var spacing_px: int = 8
 ## The number of pixels for each tab.
@@ -20,7 +19,7 @@ extends MarginContainer
 func _clear() -> void:
 	if _container == null:
 		return
-	
+
 	NodeUtils.remove_all_children(_container)
 
 
@@ -32,7 +31,7 @@ func _add_sub_rules(
 	if not scenes:
 		push_error("Rule interface was not given scenes.")
 		return
-	
+
 	for sub_rule in sub_rules:
 		if sub_rule is RuleInt:
 			var rule_node := (
@@ -100,14 +99,14 @@ func _add_rule(
 			spacing.name = "Spacing" + str(number_of_children)
 			spacing.custom_minimum_size.y = spacing_px
 			_container.add_child(spacing)
-	
+
 	var h_box_container := HBoxContainer.new()
 	_container.add_child(h_box_container)
-	
+
 	if with_tabbing:
 		var tabbing := Control.new()
 		tabbing.name = "Tabbing"
 		tabbing.custom_minimum_size.x = tabbing_px
 		h_box_container.add_child(tabbing)
-	
+
 	h_box_container.add_child(rule_node)

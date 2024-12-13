@@ -3,7 +3,6 @@ extends Control
 ## Displays all [GameNotification]s of given [GamePlayer]'s playing country.
 ## Updates itself when new notifications are received.
 
-
 signal pressed(game_notification: GameNotification)
 signal dismissed(game_notification: GameNotification)
 
@@ -12,11 +11,11 @@ signal dismissed(game_notification: GameNotification)
 var game_player: GamePlayer:
 	set(value):
 		game_player = value
-		
+
 		if game_player == null:
 			_game_notifications = null
 			return
-		
+
 		_game_notifications = game_player.playing_country.notifications
 
 var _game_notifications: GameNotifications:
@@ -38,12 +37,12 @@ func _ready() -> void:
 func _refresh() -> void:
 	if not is_node_ready():
 		return
-	
+
 	NodeUtils.delete_all_children(_container)
-	
+
 	if _game_notifications == null:
 		return
-	
+
 	for game_notification in _game_notifications.list():
 		_add_notification_node(game_notification)
 
@@ -61,7 +60,7 @@ func _add_notification_node(game_notification: GameNotification) -> void:
 func _connect_signals() -> void:
 	if _game_notifications == null:
 		return
-	
+
 	if not _game_notifications.notification_added.is_connected(
 			_on_notification_added
 	):
@@ -73,7 +72,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if _game_notifications == null:
 		return
-	
+
 	if _game_notifications.notification_added.is_connected(
 			_on_notification_added
 	):

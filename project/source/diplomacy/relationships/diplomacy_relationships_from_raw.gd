@@ -3,7 +3,6 @@ class_name DiplomacyRelationshipsFromRaw
 ##
 ## See also: [DiplomacyRelationshipsToRaw]
 
-
 const RECIPIENT_COUNTRY_ID_KEY: String = "recipient_country_id"
 const BASE_DATA_KEY: String = "base_data"
 const PERFORMED_ACTIONS_KEY: String = "actions_performed_this_turn"

@@ -5,7 +5,6 @@ extends VBoxContainer
 ## See also: [GamePopup]
 # TODO DRY. This code is very similar to that of [RecruitmentPopup].
 
-
 signal confirmed(army: Army, troop_count: int, destination: Province)
 
 @export var troop_slider: Slider
@@ -44,7 +43,7 @@ func _on_troop_slider_value_changed(value: float) -> void:
 		# triggers the signal that calls this function
 		troop_slider.value = troop_slider.max_value
 		return
-	
+
 	_new_slider_value()
 
 

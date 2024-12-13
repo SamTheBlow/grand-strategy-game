@@ -5,7 +5,6 @@ extends Node
 # TODO If a username is changed before this node is ready on a client,
 # the client will never receive the new username.
 
-
 var _game_players: GamePlayers
 
 

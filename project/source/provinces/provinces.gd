@@ -4,7 +4,6 @@ class_name Provinces
 ##
 ## Note that you are currently not meant to remove provinces from this list.
 
-
 signal added(province: Province)
 signal province_owner_changed(province: Province)
 

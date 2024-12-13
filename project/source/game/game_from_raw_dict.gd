@@ -5,7 +5,6 @@ class_name GameFromRawDict
 # TODO tons of stuff in here needs to verify & return errors
 # TODO separate into smaller classes
 
-
 const VERSION_KEY: String = "version"
 const RULES_KEY: String = "rules"
 const RNG_KEY: String = "rng"

@@ -5,7 +5,6 @@ extends Node
 # TODO If arrows are added/removed before this node is ready on a client,
 # the client will never receive the info.
 
-
 var _game: Game
 var _connections: Array[CountryAutoArrowConnections] = []
 

@@ -1,7 +1,6 @@
 class_name SettingIntNode
 extends MarginContainer
 
-
 signal value_changed(key: String, value: int)
 
 var key: String
@@ -15,7 +14,7 @@ var text: String
 func _ready() -> void:
 	_spin_box.value = value
 	_label.text = text
-	
+
 	_spin_box.value_changed.connect(_on_spin_box_value_changed)
 
 

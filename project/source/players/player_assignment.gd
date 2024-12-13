@@ -4,7 +4,6 @@ class_name PlayerAssignment
 ## in given [Players] list, even those who are not assigned.
 ## When a client joins, the server automatically assigns its new players.
 
-
 ## Emitted when a player is assigned either to a GamePlayer or to null.
 signal player_assigned(player: Player)
 

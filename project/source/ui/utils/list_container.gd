@@ -5,7 +5,6 @@ extends Control
 ## its children such that they are aligned horizontally.
 ## It's similar to the [HBoxContainer].
 
-
 ## If true, uses node_width_absolute and ignores node_width_ratio.
 ## Otherwise, uses node_width_ratio and ignores node_width_absolute.
 @export var is_width_absolute: bool = false:
@@ -49,31 +48,31 @@ func _ready() -> void:
 func _update_layout() -> void:
 	if not is_node_ready():
 		return
-	
+
 	var node_width: float = (
 			node_width_absolute
 			if is_width_absolute else
 			size.y * node_width_ratio
 	)
-	
+
 	var offset_x: float = (size.x - node_width) if is_right_to_left else 0.0
 	for child in get_children():
 		if not child is Control:
 			continue
 		var control := child as Control
-		
+
 		if not control.visibility_changed.is_connected(_update_layout):
 			control.visibility_changed.connect(_update_layout)
-		
+
 		if not control.visible:
 			continue
-		
+
 		# Prevent an editor warning
 		control.set_anchors_and_offsets_preset(Control.PRESET_TOP_LEFT)
-		
+
 		control.size = Vector2(node_width, size.y)
 		control.position.x = position.x + offset_x
-		
+
 		offset_x += (
 				(node_width + spacing) * (-1.0 if is_right_to_left else 1.0)
 		)

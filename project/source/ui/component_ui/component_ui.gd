@@ -5,7 +5,6 @@ extends Control
 ## Provides information about the province
 ## and has buttons with different functionalities.
 
-
 signal button_pressed(button_id: int)
 
 @export_group("Line")

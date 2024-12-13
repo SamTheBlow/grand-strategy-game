@@ -1,7 +1,6 @@
 class_name ProvinceVisualsContainer2D
 extends Node2D
 
-
 signal province_selected(province_visuals: ProvinceVisuals2D)
 
 signal province_mouse_entered(province_visuals: ProvinceVisuals2D)

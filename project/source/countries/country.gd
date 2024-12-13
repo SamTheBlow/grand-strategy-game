@@ -4,7 +4,6 @@ extends Resource
 ## this can represent any political entity, even those who do not
 ## have control over any land.
 
-
 signal money_changed(new_amount: int)
 
 @export var country_name: String = ""

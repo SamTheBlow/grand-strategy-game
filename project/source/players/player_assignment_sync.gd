@@ -9,7 +9,6 @@ extends Node
 ##
 ## See also: [PlayerAssignment]
 
-
 ## Emitted on clients after they first received and applied all assignations.
 signal sync_finished()
 

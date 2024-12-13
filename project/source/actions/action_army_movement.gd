@@ -2,7 +2,6 @@ class_name ActionArmyMovement
 extends Action
 ## Moves a given [Army] to a given [Province].
 
-
 const ARMY_ID_KEY: String = "army_id"
 const DEST_PROVINCE_ID_KEY: String = "destination_province_id"
 

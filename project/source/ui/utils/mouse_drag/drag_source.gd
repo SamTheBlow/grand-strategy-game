@@ -5,7 +5,6 @@ extends ColorRect
 ## Emits a signal if there is a mouse click inside of this node's rectangle.
 # TODO be able to check for a mouse click on things other than a rectangle
 
-
 signal dragged()
 
 

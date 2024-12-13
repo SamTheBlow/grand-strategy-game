@@ -3,7 +3,6 @@ class_name RuleFloat
 extends RuleItem
 ## A game rule that is a float value.
 
-
 signal value_changed(this_rule: RuleItem)
 
 ## Set this property in the inspector to set the default value.
@@ -12,7 +11,7 @@ var value: float = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		var old_value: float = value
 		value = new_value
 		if has_minimum:
@@ -27,7 +26,7 @@ var has_minimum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_minimum = new_bool
 		if has_minimum:
 			value = maxf(value, minimum)
@@ -38,7 +37,7 @@ var minimum: float = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		minimum = new_min
 		if has_minimum:
 			value = maxf(value, minimum)
@@ -51,7 +50,7 @@ var has_maximum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_maximum = new_bool
 		if has_maximum:
 			value = minf(value, maximum)
@@ -62,7 +61,7 @@ var maximum: float = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		maximum = new_max
 		if has_maximum:
 			value = minf(value, maximum)
@@ -74,17 +73,17 @@ var is_percentage: bool = false
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties: Array[Dictionary] = []
-	
+
 	properties.append({
 		"name": "value",
 		"type": TYPE_FLOAT,
 	})
-	
+
 	properties.append({
 		"name": "has_minimum",
 		"type": TYPE_BOOL,
 	})
-	
+
 	var minimum_usage := PROPERTY_USAGE_NO_EDITOR
 	if has_minimum:
 		minimum_usage = PROPERTY_USAGE_DEFAULT
@@ -93,12 +92,12 @@ func _get_property_list() -> Array[Dictionary]:
 		"type": TYPE_FLOAT,
 		"usage": minimum_usage,
 	})
-	
+
 	properties.append({
 		"name": "has_maximum",
 		"type": TYPE_BOOL,
 	})
-	
+
 	var maximum_usage := PROPERTY_USAGE_NO_EDITOR
 	if has_maximum:
 		maximum_usage = PROPERTY_USAGE_DEFAULT
@@ -107,7 +106,7 @@ func _get_property_list() -> Array[Dictionary]:
 		"type": TYPE_FLOAT,
 		"usage": maximum_usage,
 	})
-	
+
 	return properties
 
 

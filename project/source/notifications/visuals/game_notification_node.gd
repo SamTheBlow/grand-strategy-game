@@ -4,7 +4,6 @@ extends Control
 ##
 ## Hides itself when game_notification is null.
 
-
 signal pressed(game_notification: GameNotification)
 signal dismissed(game_notification: GameNotification)
 
@@ -26,25 +25,25 @@ func _ready() -> void:
 func _refresh() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if game_notification == null:
 		hide()
 		return
-	
+
 	if game_notification.has_method("sender_country"):
 		_color_rect.color = game_notification.sender_country().color
 	else:
 		_color_rect.color = Color.WHITE
-	
+
 	_icon.texture = game_notification.icon()
-	
+
 	show()
 
 
 func _disconnect_signals() -> void:
 	if game_notification == null:
 		return
-	
+
 	if game_notification.handled.is_connected(_on_notification_handled):
 		game_notification.handled.disconnect(_on_notification_handled)
 
@@ -52,7 +51,7 @@ func _disconnect_signals() -> void:
 func _connect_signals() -> void:
 	if game_notification == null:
 		return
-	
+
 	if not game_notification.handled.is_connected(_on_notification_handled):
 		game_notification.handled.connect(_on_notification_handled)
 

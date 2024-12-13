@@ -6,7 +6,6 @@ extends Node
 ## A player can be either local or remote.
 ## You have no control over remote players unless you are the server.
 
-
 ## Emitted, for example, when a client disconnects from a server,
 ## in which case all local players change their multiplayer id to 1.
 signal multiplayer_id_changed(player: Player)

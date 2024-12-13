@@ -3,7 +3,6 @@ extends Action
 ## Recruits a new [Army] of given size in given [Province].
 ## You must provide a new unique id for the new army.
 
-
 const PROVINCE_ID_KEY: String = "province_id"
 const NUMBER_OF_TROOPS_KEY: String = "number_of_troops"
 const NEW_ARMY_ID_KEY: String = "new_army_id"

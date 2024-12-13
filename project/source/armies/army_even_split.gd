@@ -3,7 +3,6 @@ class_name ArmyEvenSplit
 ## such that the given [Army] is evenly split and moved to
 ## all given destination [Province]s.
 
-
 ## If there are more targets than available troops,
 ## then no split will occur, and this property will stay null.
 var action_army_split: ActionArmySplit

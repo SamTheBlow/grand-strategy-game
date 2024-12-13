@@ -3,7 +3,6 @@ class_name NearestProvinces
 ## that pass a given filter. For example, you can search for the
 ## nearest provinces that a certain country doesn't control.
 
-
 ## The number of nearest provinces.
 ## It's the same as both first_links.size() and furthest_links.size().
 var size: int = 0

@@ -6,7 +6,6 @@ extends Resource
 ##
 ## See also: [GameRules]
 
-
 @export var text: String = ""
 
 var sub_rules: Array[RuleItem] = []

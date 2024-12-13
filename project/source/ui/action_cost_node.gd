@@ -5,7 +5,6 @@ extends Control
 ## To use, make sure to set the population_cost and money_cost
 ## properties manually with code.
 
-
 @export var number_to_buy: int = 1:
 	set(value):
 		number_to_buy = value
@@ -33,7 +32,7 @@ func _ready() -> void:
 		push_error("Population cost is null.")
 	if money_cost == null:
 		push_error("Money cost is null.")
-	
+
 	_update_costs()
 
 
@@ -61,7 +60,7 @@ func _update_container_visibility(
 ) -> void:
 	if container == null:
 		return
-	
+
 	container.visible = resource_cost != null and _cost(resource_cost) > 0
 	_update_no_costs()
 
@@ -69,14 +68,14 @@ func _update_container_visibility(
 func _update_resource_cost(label: Label, resource_cost: ResourceCost) -> void:
 	if label == null or resource_cost == null:
 		return
-	
+
 	label.text = str(_cost(resource_cost))
 
 
 func _update_no_costs() -> void:
 	if _population_container == null or _money_container == null:
 		return
-	
+
 	_no_costs.visible = (
 			not (_population_container.visible or _money_container.visible)
 	)

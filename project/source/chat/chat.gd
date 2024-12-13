@@ -14,7 +14,6 @@ extends Node
 ## in online multiplayer, you have to use the functions provided in this
 ## class, not the functions from [ChatData].
 
-
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()

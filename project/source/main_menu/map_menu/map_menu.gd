@@ -6,7 +6,6 @@ extends MarginContainer
 ## Clicking on a map selects it and emits a signal.
 ## There must be a map selected, and only one map can be selected at a time.
 
-
 var map_menu_state: MapMenuState:
 	set = set_map_menu_state
 
@@ -53,15 +52,15 @@ func _map_node_with_id(map_id: int) -> MapOptionNode:
 func _update_map_menu_state() -> void:
 	if map_menu_state == null or not is_node_ready():
 		return
-	
+
 	_sync.active_state = map_menu_state
 	# Only set the current state as the local state
 	# the first time this function is called.
 	if _sync.local_state == null:
 		_sync.local_state = map_menu_state
-	
+
 	(%CustomMapImport as CustomMapImport).map_menu_state = map_menu_state
-	
+
 	# Load the built-in maps if they aren't loaded already
 	if map_menu_state.builtin_maps().size() == 0:
 		for builtin_map_file_path in _map_list_builtin.builtin_maps:
@@ -71,23 +70,23 @@ func _update_map_menu_state() -> void:
 			if builtin_map == null:
 				continue
 			map_menu_state.add_builtin_map(builtin_map)
-	
+
 	# Remove any existing [MapOptionNode]
 	_map_list_builtin.clear()
 	_map_list_custom.clear()
-	
+
 	# Load the [MapOptionNode]s
 	var builtin_maps: Array[MapMetadata] = map_menu_state.builtin_maps()
 	_map_list_builtin.add_maps(builtin_maps, 0)
 	_map_list_custom.add_maps(map_menu_state.custom_maps(), builtin_maps.size())
-	
+
 	# If no map is selected, select the first map on the list by default
 	if map_menu_state.selected_map_id() == -1:
 		map_menu_state.set_selected_map_id(0)
-	
+
 	# Highlight the selected map
 	_on_map_selected()
-	
+
 	# Scroll down so that the selected map is visible on screen
 	_scroll_to_selected_map()
 
@@ -95,17 +94,17 @@ func _update_map_menu_state() -> void:
 func _scroll_to_selected_map() -> void:
 	if _selected_map_node == null:
 		return
-	
+
 	var scroll_container: ScrollContainer
 	var map_list: MapListNode
-	
+
 	if map_menu_state.is_selected_map_builtin():
 		scroll_container = _scroll_builtin
 		map_list = _map_list_builtin
 	else:
 		scroll_container = _scroll_custom
 		map_list = _map_list_custom
-	
+
 	# Calculate the amount of vertical scroll to be done
 	var scroll_vertical: int = 0
 	var separation: int = map_list.get_theme_constant("separation")
@@ -116,14 +115,14 @@ func _scroll_to_selected_map() -> void:
 			continue
 		var control := node as Control
 		scroll_vertical += floori(control.size.y) + separation
-	
+
 	scroll_container.set_v_scroll.call_deferred(scroll_vertical)
 
 
 func _connect_signals() -> void:
 	if map_menu_state == null:
 		return
-	
+
 	if not map_menu_state.selected_map_changed.is_connected(_on_map_selected):
 		map_menu_state.selected_map_changed.connect(_on_map_selected)
 	if not map_menu_state.custom_map_added.is_connected(_on_custom_map_added):
@@ -135,7 +134,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if map_menu_state == null:
 		return
-	
+
 	if map_menu_state.selected_map_changed.is_connected(_on_map_selected):
 		map_menu_state.selected_map_changed.disconnect(_on_map_selected)
 	if map_menu_state.custom_map_added.is_connected(_on_custom_map_added):

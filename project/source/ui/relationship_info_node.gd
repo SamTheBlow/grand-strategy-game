@@ -4,7 +4,6 @@ extends Control
 ## the relationship between two given countries.
 ## Shows the first country's stance towards the second country, and vice versa.
 
-
 var country_1: Country:
 	set(value):
 		country_1 = value
@@ -56,21 +55,21 @@ func _ready() -> void:
 func _refresh() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if country_1 == null or country_2 == null:
 		hide()
 		return
-	
+
 	_country_1_node.country = country_1
 	_country_2_node.country = country_2
-	
+
 	show()
 
 
 func _refresh_label_1_to_2() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_label_1_to_2.add_theme_color_override("font_color", info_color_1_to_2)
 	_label_1_to_2.text = info_text_1_to_2
 
@@ -78,6 +77,6 @@ func _refresh_label_1_to_2() -> void:
 func _refresh_label_2_to_1() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_label_2_to_1.add_theme_color_override("font_color", info_color_2_to_1)
 	_label_2_to_1.text = info_text_2_to_1

@@ -5,7 +5,6 @@ extends Node
 ## then toggle the flags to make the tests run.
 ## The tests will run automatically every time the game is run.
 
-
 const RUN_IN_DEBUG_BUILDS_ONLY: bool = true
 const RUN_PERFORMANCE_TESTS: bool = false
 const RUN_UNIT_TESTS: bool = true

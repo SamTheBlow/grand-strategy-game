@@ -3,7 +3,6 @@ class_name GameToRawDict
 ##
 ## See also: [GameFromRawDict]
 
-
 var error: bool = true
 var error_message: String = ""
 var result: Variant

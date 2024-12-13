@@ -4,7 +4,6 @@ extends Node
 ## When you're a network client, sends requests to the server instead.
 ## Emits a signal when a new preview arrow is created.
 
-
 signal preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D)
 
 var game: Game

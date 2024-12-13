@@ -3,7 +3,6 @@ class_name ChatMessageFromDict
 ##
 ## See also: [ChatMessageToDict]
 
-
 const USER_ID_KEY: String = "user_id"
 const TEXT_KEY: String = "text"
 
@@ -16,9 +15,9 @@ func parse(dict: Dictionary) -> void:
 	error = false
 	error_message = ""
 	result = null
-	
+
 	var chat_message := ChatMessage.new()
-	
+
 	if dict.has(USER_ID_KEY):
 		if dict[USER_ID_KEY] is int:
 			var id := dict[USER_ID_KEY] as int
@@ -31,12 +30,12 @@ func parse(dict: Dictionary) -> void:
 			chat_message.user_id = id
 		else:
 			push_warning("Chat message player id is not an int.")
-	
+
 	if dict.has(TEXT_KEY):
 		if dict[TEXT_KEY] is String:
 			var text := dict[TEXT_KEY] as String
 			chat_message.text = text
 		else:
 			push_warning("Chat message text data is not a string.")
-	
+
 	result = chat_message

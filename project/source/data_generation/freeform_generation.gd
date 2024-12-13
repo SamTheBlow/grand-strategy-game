@@ -2,7 +2,6 @@ class_name FreeformGeneration
 ## Populates given JSON data with a randomly generated world.
 ## Generates the province data and the world limits.
 
-
 var world_limits_margin: float = 300.0
 var square_length: float = 200.0
 var square_spacing: float = 16.0

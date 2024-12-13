@@ -2,7 +2,6 @@ class_name ArmyReinforcements
 ## Adds troops in given [Province] according to the [GameRules]
 ## at the start of each turn. Creates a new [Army] if needed.
 
-
 var _game: Game
 var _province: Province
 

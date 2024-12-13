@@ -4,7 +4,6 @@ extends Control
 ## Draws a black outline around the button when enabled.
 ## Clicking on it emits a signal with the country as argument.
 
-
 signal pressed(country: Country)
 
 @export var has_black_outline: bool = false:
@@ -34,9 +33,9 @@ func _ready() -> void:
 func _draw() -> void:
 	if not has_black_outline:
 		return
-	
+
 	var outline_width: int = 1
-	
+
 	draw_rect(
 			Rect2(
 					position
@@ -50,14 +49,14 @@ func _draw() -> void:
 func _refresh() -> void:
 	if country == null or not is_node_ready():
 		return
-	
+
 	_country_icon.color = country.color
 
 
 func _update_button_enabled() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_button.disabled = not is_button_enabled
 	_button.visible = is_button_enabled
 

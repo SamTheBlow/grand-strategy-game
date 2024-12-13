@@ -2,7 +2,6 @@ class_name AIDecisionUtils
 ## Utility class. Performs commonly used decisions
 ## and ensures the decisions are valid.
 
-
 ## Some functions may have no effect if this is kept null.
 var game: Game
 

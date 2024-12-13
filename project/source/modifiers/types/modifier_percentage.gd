@@ -3,7 +3,6 @@ extends Modifier
 ## This has the same effect as a [ModifierMultiplier],
 ## but the effect is shown as a percentage instead.
 
-
 var _multiplier: float = 1.0
 
 

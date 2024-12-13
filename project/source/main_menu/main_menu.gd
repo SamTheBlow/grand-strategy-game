@@ -3,7 +3,6 @@ extends Node
 ## The main menu.
 ## Currently only contains the [Lobby] and a [ChatInterface].
 
-
 signal game_started(game: Game)
 
 @export var networking_interface_scene: PackedScene

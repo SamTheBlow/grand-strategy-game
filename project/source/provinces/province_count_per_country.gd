@@ -1,7 +1,6 @@
 class_name ProvinceCountPerCountry
 ## Tells how many [Province]s each [Country] controls.
 
-
 ## These two arrays always have the same size.
 ## The n-th element in "number_of_provinces" is the number of provinces
 ## controlled by the n-th country in "countries".
@@ -14,15 +13,15 @@ var number_of_provinces: Array[int] = []
 func calculate(province_list: Array[Province]) -> void:
 	countries = []
 	number_of_provinces = []
-	
+
 	for province in province_list:
 		var country: Country = province.owner_country
-		
+
 		if country == null:
 			continue
-		
+
 		var index: int = countries.find(country)
-		
+
 		if index == -1:
 			# The country isn't on our list. Add it
 			countries.append(country)

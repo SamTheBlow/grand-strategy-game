@@ -3,7 +3,6 @@ extends Resource
 ## Describes a state for a relationship between two countries
 ## and the actions that can be performed to change it.
 
-
 ## This preset's unique id. All presets must have their own unique id.
 @export var id: int = -1
 

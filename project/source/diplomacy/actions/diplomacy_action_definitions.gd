@@ -1,7 +1,6 @@
 class_name DiplomacyActionDefinitions
 ## A list of [DiplomacyActionDefinition]s.
 
-
 var _empty := DiplomacyActionDefinition.new()
 var _list: Array[DiplomacyActionDefinition] = []
 

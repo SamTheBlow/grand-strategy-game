@@ -3,7 +3,6 @@ extends Control
 ## Displays button of given [Country] along with
 ## its relationship preset with other given country, if applicable.
 
-
 @export var is_button_enabled: bool = true:
 	set(value):
 		is_button_enabled = value
@@ -49,14 +48,14 @@ func _ready() -> void:
 func _update_button_press_outcome() -> void:
 	if button_press_outcome.is_null() or not is_node_ready():
 		return
-	
+
 	_country_button.pressed.connect(button_press_outcome)
 
 
 func _refresh_country_info() -> void:
 	if country == null or not is_node_ready():
 		return
-	
+
 	_country_button.country = country
 	_country_name_label.text = country.country_name
 
@@ -64,7 +63,7 @@ func _refresh_country_info() -> void:
 func _update_is_button_enabled() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_country_button.is_button_enabled = is_button_enabled
 
 
@@ -76,7 +75,7 @@ func _update_is_button_enabled() -> void:
 func _refresh_preset_label(thing_to_refresh: int = -1) -> void:
 	if not is_node_ready():
 		return
-	
+
 	if thing_to_refresh == -1 or thing_to_refresh == 0:
 		_label_update.is_disabled = is_relationship_presets_disabled
 	if thing_to_refresh == -1 or thing_to_refresh == 1:

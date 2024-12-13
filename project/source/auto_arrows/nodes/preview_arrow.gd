@@ -1,7 +1,6 @@
 class_name AutoArrowPreviewNode2D
 extends AutoArrowNode2D
 
-
 ## Emitted when the mouse click is released on a valid destination province.
 signal released(this: AutoArrowPreviewNode2D)
 
@@ -22,7 +21,7 @@ func _input(event: InputEvent) -> void:
 func _release() -> void:
 	if destination_province != null:
 		released.emit(self)
-	
+
 	queue_free()
 
 

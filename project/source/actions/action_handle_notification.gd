@@ -2,7 +2,6 @@ class_name ActionHandleNotification
 extends Action
 ## Handles given [GameNotification] index with given outcome index.
 
-
 const NOTIFICATION_ID_KEY: String = "notification_id"
 const OUTCOME_INDEX_KEY: String = "outcome_index"
 
@@ -17,7 +16,7 @@ func _init(notification_id: int, outcome_index: int) -> void:
 
 func apply_to(game: Game, _player: GamePlayer) -> void:
 	var game_notification_: GameNotification = game_notification(game)
-	
+
 	if game_notification_ == null:
 		push_error(
 				"Tried to handle a game notification, but "
@@ -25,7 +24,7 @@ func apply_to(game: Game, _player: GamePlayer) -> void:
 				+ " (Id: " + str(_notification_id) + ")"
 		)
 		return
-	
+
 	game_notification_.select_outcome(_outcome_index)
 
 
@@ -43,7 +42,7 @@ func handles_the_same_notification_as(
 	return (
 			action_handle_notification._notification_id == _notification_id
 			if action_handle_notification != null else false
-	) 
+	)
 
 
 func raw_data() -> Dictionary:
@@ -60,7 +59,7 @@ static func from_raw_data(data: Dictionary) -> ActionHandleNotification:
 			and ParseUtils.dictionary_has_number(data, OUTCOME_INDEX_KEY)
 	):
 		return null
-	
+
 	return ActionHandleNotification.new(
 			ParseUtils.dictionary_int(data, NOTIFICATION_ID_KEY),
 			ParseUtils.dictionary_int(data, OUTCOME_INDEX_KEY)

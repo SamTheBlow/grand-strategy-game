@@ -2,7 +2,6 @@ class_name GameNotificationOfferAccepted
 extends GameNotification
 ## Informs of a diplomatic offer accepted by another country.
 
-
 var _country_that_accepted: Country
 var _diplomacy_action_definition: DiplomacyActionDefinition
 

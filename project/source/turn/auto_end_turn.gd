@@ -3,7 +3,6 @@ class_name AutoEndTurn
 ##
 ## See also: [GameTurn]
 
-
 var _turn: GameTurn
 
 var _human_status_changed: Signal:

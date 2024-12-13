@@ -2,7 +2,6 @@ class_name Population
 ## Represents a population size as a number.
 ## Applies [PopulationGrowth] at the start of each [GameTurn].
 
-
 signal size_changed(new_value: int)
 
 ## External reference

@@ -3,7 +3,6 @@ extends Node
 ## Takes care of scene transitions and makes data persist across scenes.
 # TODO move code to their own classes (scene transition, sync, etc)
 
-
 # TODO move this to some new user settings class
 ## The default file path for the game's save file.
 const SAVE_FILE_PATH: String = "user://gamesave.json"

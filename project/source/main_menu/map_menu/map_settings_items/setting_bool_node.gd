@@ -1,7 +1,6 @@
 class_name SettingBoolNode
 extends MarginContainer
 
-
 signal value_changed(key: String, value: bool)
 
 var key: String

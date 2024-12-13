@@ -2,7 +2,6 @@ class_name ArmiesInEachProvince
 ## Provides a dictionary where each [Province]
 ## is assigned a list of all armies in that province ([ArmiesInProvince]).
 
-
 ## Dictionary[Province, ArmiesInProvince]
 ## All provinces in the game are guaranteed to be in this dictionary,
 ## so no need to check if the dictionary has some province.

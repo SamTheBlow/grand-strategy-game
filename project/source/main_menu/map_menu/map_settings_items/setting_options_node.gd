@@ -1,7 +1,6 @@
 class_name SettingOptionsNode
 extends MarginContainer
 
-
 signal value_changed(key: String, value: int)
 
 var key: String
@@ -17,7 +16,7 @@ func _ready() -> void:
 	_label.text = text
 	for option_name in options:
 		_option_button.add_item(option_name)
-	
+
 	_option_button.select_item(value)
 	_option_button.item_selected.connect(_on_item_selected)
 

@@ -14,7 +14,6 @@ extends Control
 ## For this to work, you need to make sure that the mouse filter
 ## in the scene's Control nodes is set to "Pass".
 
-
 signal new_player_requested(game_player: GamePlayer)
 signal delete_pressed(game_player: GamePlayer)
 

@@ -5,7 +5,6 @@ class_name AIPersonality
 ## If you want to add a new personality, create a subclass
 ## and add the relevant information in this class's enum and functions.
 
-
 enum Type {
 	NONE = 0,
 	INTERVENTIONIST = 1,

@@ -2,7 +2,6 @@ extends Control
 ## When one of the given buttons is pressed,
 ## shows their corresponding node and hides all the other ones.
 
-
 ## The buttons to listen to. The buttons will be automatically
 ## assigned an id and their signals will be automatically connected.
 @export var buttons: Array[IdButton]
@@ -18,7 +17,7 @@ func _ready() -> void:
 	for i in buttons.size():
 		buttons[i].id = i
 		buttons[i].id_pressed.connect(_on_button_pressed)
-	
+
 	_on_button_pressed(default_option)
 
 

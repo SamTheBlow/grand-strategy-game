@@ -2,7 +2,6 @@ class_name ArmySize
 ## Represents the size of an [Army].
 ## It may have a minimum and/or a maximum, which this class takes care of.
 
-
 ## Emits whenever the army's size changes.
 signal size_changed(new_size: int)
 ## Emits whenever some piece of code tries to set the army size to a value
@@ -19,14 +18,14 @@ var _size: int:
 	set(value):
 		if value == _size:
 			return
-		
+
 		# Respect maximum size
 		if _has_maximum_size and value > _maximum_size:
 			_size = _maximum_size
 			became_too_large.emit()
 			size_changed.emit(_size)
 			return
-		
+
 		# Respect minimum size
 		elif value < _minimum_size:
 			_size = _minimum_size
@@ -35,7 +34,7 @@ var _size: int:
 			became_too_small.emit()
 			size_changed.emit(_size)
 			return
-		
+
 		_size = value
 		size_changed.emit(_size)
 
@@ -45,7 +44,7 @@ var _maximum_size: int
 
 
 ## If the maximum size is less than 1, then there is no maximum size.
-## 
+##
 ## Conditions for each input:
 ## - The starting size must be greater or equal to 1.
 ## - The starting size must be within the minimum and maximum size.
@@ -88,7 +87,7 @@ static func _unit_test() -> void:
 	assert(army_size_1.current_size() == 1)
 	army_size_1.add(69)
 	assert(army_size_1.current_size() == 70)
-	
+
 	var army_size_2 := ArmySize.new(14, 10, 100)
 	assert(army_size_2.current_size() == 14)
 	army_size_2.remove(2)

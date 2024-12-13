@@ -3,7 +3,6 @@ class_name RuleBool
 extends RuleItem
 ## A game rule that is a boolean.
 
-
 signal value_changed(this_rule: RuleItem)
 
 ## Set this property in the inspector to set the default value.
@@ -12,7 +11,7 @@ signal value_changed(this_rule: RuleItem)
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		var old_value: bool = value
 		value = new_value
 		if value != old_value:

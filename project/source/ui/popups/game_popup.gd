@@ -21,7 +21,6 @@ extends Control
 ## give your node a method "_on_button_pressed" that takes one int argument.
 ## That argument is the button's index in the list of buttons that you gave.
 
-
 var contents_node: Node
 
 @onready var _contents_root := %Contents as Control
@@ -31,27 +30,27 @@ var contents_node: Node
 func _ready() -> void:
 	if contents_node == null:
 		return
-	
+
 	_contents_root.add_child(contents_node)
 	_add_content_buttons()
 
 
 func _add_content_buttons() -> void:
 	var button_names: Array[String] = ["OK"]
-	
+
 	if contents_node != null and contents_node.has_method("buttons"):
 		button_names = contents_node.call("buttons")
-	
+
 	_popup_buttons.setup_buttons(button_names)
 	_popup_buttons.pressed.connect(_on_button_pressed)
-	
+
 	_connect_content_to_buttons()
 
 
 func _connect_content_to_buttons() -> void:
 	if not contents_node.has_method("_on_button_pressed"):
 		return
-	
+
 	_popup_buttons.pressed.connect(
 			Callable(contents_node, "_on_button_pressed")
 	)

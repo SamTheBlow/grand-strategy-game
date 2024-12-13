@@ -6,7 +6,6 @@ extends Control
 ## The user, when allowed, can add, remove and rename players.
 ## Optionally, this list can also include a [NetworkingInterface] at the bottom.
 
-
 ## Emitted on the server when a new player is added
 ## as a result of pressing "Add Player".
 signal player_added(player: Player)

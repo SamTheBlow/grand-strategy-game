@@ -2,7 +2,6 @@ extends Node
 ## Initializes and updates given [GameNotificationsNode]
 ## to always use the playing player in given [Game].
 
-
 @export var _game_notifications_node: GameNotificationsNode
 @export var _game: GameNode
 

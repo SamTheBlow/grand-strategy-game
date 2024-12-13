@@ -6,7 +6,6 @@ extends Node
 ## Please make sure this node's "multiplayer" property
 ## is a [SceneMultiplayer] and doesn't change.
 
-
 signal auth_data_received(peer_id: int, data: PackedByteArray)
 
 

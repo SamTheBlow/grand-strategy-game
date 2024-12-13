@@ -1,7 +1,6 @@
 class_name DiplomacyRelationships
 ## A list of a country's [DiplomacyRelationship]s.
 
-
 signal relationship_created(relationship: DiplomacyRelationship)
 
 var _game: Game

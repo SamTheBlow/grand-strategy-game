@@ -2,7 +2,6 @@ class_name ActionBuild
 extends Action
 ## Builds a [Building] of given type in given [Province].
 
-
 const PROVINCE_ID_KEY: String = "province_id"
 const BUILDING_TYPE_KEY: String = "building_type"
 
@@ -23,13 +22,13 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	var province: Province = (
 			game.world.provinces.province_from_id(_province_id)
 	)
-	
+
 	if not province:
 		push_warning(
 				"Tried to build a fortress in a province that doesn't exist!"
 		)
 		return
-	
+
 	var build_conditions := (
 			FortressBuildConditions.new(your_country, province, game)
 	)
@@ -39,9 +38,9 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 				+ build_conditions.error_message
 		)
 		return
-	
+
 	province.buildings.add(Fortress.new_fortress(game, province))
-	
+
 	your_country.money -= game.rules.fortress_price.value
 
 
@@ -62,7 +61,7 @@ static func from_raw_data(data: Dictionary) -> ActionBuild:
 			and ParseUtils.dictionary_has_number(data, BUILDING_TYPE_KEY)
 	):
 		return null
-	
+
 	return ActionBuild.new(
 			ParseUtils.dictionary_int(data, PROVINCE_ID_KEY),
 			ParseUtils.dictionary_int(data, BUILDING_TYPE_KEY),

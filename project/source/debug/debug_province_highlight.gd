@@ -3,7 +3,6 @@ extends Node
 ## Highlights some specific set of provinces, for debugging purposes.
 ## Left click or right click to toggle between two different sets.
 
-
 @export var is_enabled: bool = true
 @export var _game: GameNode
 

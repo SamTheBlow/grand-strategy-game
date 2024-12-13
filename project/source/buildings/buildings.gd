@@ -1,7 +1,6 @@
 class_name Buildings
 ## A list of [Building] objects.
 
-
 signal added(building: Building)
 signal changed()
 

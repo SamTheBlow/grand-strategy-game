@@ -2,7 +2,6 @@ class_name GameNotificationOffer
 extends GameNotification
 ## Informs of a diplomatic offer sent by another country.
 
-
 var _sender_country: Country
 var _diplomacy_action_definition: DiplomacyActionDefinition
 

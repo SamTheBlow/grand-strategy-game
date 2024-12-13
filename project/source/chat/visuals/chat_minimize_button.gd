@@ -3,7 +3,6 @@ extends Control
 ## This button is visible whenever the chat itself is visible.
 ## When its button is pressed, hides the chat and shows the maximize button.
 
-
 @export var chat_contents: Control
 @export var maximize_button: Control
 

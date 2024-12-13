@@ -6,7 +6,6 @@ class_name Building
 ## It may or may not have effects on the gameplay,
 ## and it may or may not be visible on the world map.
 
-
 enum Type {
 	NONE = 0,
 	FORTRESS = 1,

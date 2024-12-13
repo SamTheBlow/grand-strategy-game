@@ -7,7 +7,6 @@ extends Control
 ## The user, when allowed, can add, remove and rename players.
 ## Spectators are also shown, at the end of the list.
 
-
 signal new_human_player_requested(game_player: GamePlayer)
 signal player_removal_requested(player: Player)
 

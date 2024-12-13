@@ -2,7 +2,6 @@ class_name HexGridGeneration
 ## Populates given JSON data with a hex grid world.
 ## Generates the province data and the world limits.
 
-
 var world_limits_margin: float = 300.0
 var hexagon_width: float = 200.0
 var hexagon_height: float = 200.0

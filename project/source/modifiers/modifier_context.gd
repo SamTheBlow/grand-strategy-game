@@ -8,7 +8,6 @@ extends Resource
 ## This class is a bit ugly, so it might change or get removed in the future.
 ## @experimental
 
-
 @export var _context: String
 
 var _defending_army: Army

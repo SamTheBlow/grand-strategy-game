@@ -6,7 +6,6 @@ extends VBoxContainer
 ## See also: [GamePopup]
 # TODO a lot of copy/paste from [RecruitmentPopup]
 
-
 signal confirmed(province: Province)
 
 ## This will be passed as an argument for the confirmed signal.

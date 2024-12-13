@@ -3,7 +3,6 @@ class_name GamePlayer
 ## This player can be either a human or an AI.
 ## The player may either control a [Country] or spectate.
 
-
 signal human_status_changed(this: GamePlayer)
 signal username_changed(this: GamePlayer)
 

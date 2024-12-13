@@ -4,7 +4,6 @@ extends OptionButton
 ## Control nodes associated with that item, and hides all the other ones.
 ## Hides all of the option nodes when this node is hidden.
 
-
 ## Effectively an Array[Array[Control]].
 ## Associates an array of Control nodes to each OptionButton option.
 ## Make sure to put the filters in the same order as the OptionButton options!
@@ -17,7 +16,7 @@ extends OptionButton
 
 func _ready() -> void:
 	item_selected.connect(_on_item_selected)
-	
+
 	_on_item_selected(selected)
 	visibility_changed.connect(_on_visibility_changed)
 
@@ -39,7 +38,7 @@ func _on_visibility_changed() -> void:
 	if is_visible_in_tree():
 		_on_item_selected(selected)
 		return
-	
+
 	for i in option_filters.size():
 		for control: Control in (option_filters[i] as Array):
 			control.hide()

@@ -4,7 +4,6 @@ extends Node2D
 ## Shows an arrow going from source province to any given position.
 ## If a destination province is provided, points at it instead.
 
-
 var source_province: ProvinceVisuals2D:
 	set(value):
 		if source_province == value:

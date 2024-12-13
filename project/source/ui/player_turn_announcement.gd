@@ -3,7 +3,6 @@ extends Control
 ## Displays a message when it becomes a player's turn to play, if applicable.
 ## Automatically fades out after some time.
 
-
 @export var _game: GameNode
 
 @onready var _animation_player := $AnimationPlayer as AnimationPlayer

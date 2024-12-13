@@ -5,7 +5,6 @@ extends Resource
 ##
 ## See also: [DiplomacyRelationship]
 
-
 ## This action's unique id. All diplomacy actions must have a unique id,
 ## for the purposes of saving/loading/syncing.
 @export var id: int = -1

@@ -2,7 +2,6 @@ class_name ProvinceVisualsSetup
 extends Node
 ## Spawns province visuals to match given [Provinces].
 
-
 var provinces: Provinces:
 	set(value):
 		provinces = value

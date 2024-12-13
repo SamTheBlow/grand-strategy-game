@@ -2,7 +2,6 @@ class_name SquareGridGeneration
 ## Populates given JSON data with a square grid world.
 ## Generates the province data and the world limits.
 
-
 var world_limits_margin: float = 300.0
 var square_length: float = 200.0
 var square_spacing: float = 16.0

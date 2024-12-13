@@ -3,7 +3,6 @@ extends Label
 ## Scales its text by given amount.
 ## Updates itself when the viewport size changes.
 
-
 ## The node to use as reference for scaling the text.[br]
 ## The text will be scaled to a given percentage of this node's height.
 @export var anchor_node: Control:
@@ -27,7 +26,7 @@ func _ready() -> void:
 func _refresh() -> void:
 	if not is_node_ready() or anchor_node == null:
 		return
-	
+
 	var new_font_size: int = floori(anchor_node.size.y * text_scale * 0.01)
 	set("theme_override_font_sizes/font_size", new_font_size)
 

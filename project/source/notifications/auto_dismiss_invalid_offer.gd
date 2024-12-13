@@ -3,7 +3,6 @@ class_name AutoDismissInvalidOffer
 ## the moment it becomes invalid. That is, when
 ## the [DiplomacyAction] it represents is no longer available.
 
-
 var _offer: GameNotificationOffer
 
 

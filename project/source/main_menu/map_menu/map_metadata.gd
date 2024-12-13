@@ -1,7 +1,6 @@
 class_name MapMetadata
 ## Data structure. Contains a game map's metadata.
 
-
 signal setting_changed(this: MapMetadata)
 signal state_updated(this: MapMetadata)
 

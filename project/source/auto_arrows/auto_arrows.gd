@@ -2,7 +2,6 @@ class_name AutoArrows
 ## List of [AutoArrow] objects.
 ## Provides useful functions and signals.
 
-
 signal arrow_added(auto_arrow: AutoArrow)
 signal arrow_removed(auto_arrow: AutoArrow)
 

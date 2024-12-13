@@ -8,9 +8,7 @@ class_name FortressBuildConditions
 ## If you can't build one, the property "error_message" will contain
 ## a human-readable explanation as to why.
 
-
 signal can_build_changed(can_build: bool)
-
 
 var error_message: String = ""
 
@@ -24,11 +22,11 @@ func _init(country: Country, province: Province, game: Game) -> void:
 	_country = country
 	_province = province
 	_game = game
-	
+
 	_province.owner_changed.connect(_on_province_owner_changed)
 	_country.money_changed.connect(_on_money_changed)
 	_province.buildings.changed.connect(_on_buildings_changed)
-	
+
 	_can_build = _all_conditions_are_met()
 
 
@@ -40,11 +38,11 @@ func _all_conditions_are_met() -> bool:
 	if not _game.rules.build_fortress_enabled.value:
 		error_message = "The game's rules don't allow it!"
 		return false
-	
+
 	if _province.owner_country != _country:
 		error_message = "The province is not under the country's control!"
 		return false
-	
+
 	var fortress_price: int = _game.rules.fortress_price.value
 	if _country.money < fortress_price:
 		error_message = (
@@ -53,11 +51,11 @@ func _all_conditions_are_met() -> bool:
 				+ ", but only has " + str(_country.money) + "."
 		)
 		return false
-	
+
 	if _province.buildings.number_of_type(Building.Type.FORTRESS) > 0:
 		error_message = "There is already a fortress in the province."
 		return false
-	
+
 	error_message = ""
 	return true
 
@@ -74,7 +72,7 @@ func _check_condition(condition: bool) -> void:
 		_can_build = _all_conditions_are_met()
 		if not _can_build:
 			return
-	
+
 	can_build_changed.emit(_can_build)
 
 

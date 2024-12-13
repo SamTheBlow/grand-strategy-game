@@ -2,7 +2,6 @@ class_name Countries
 ## A list of [Country] objects.
 ## Provides utility functions and signals.
 
-
 signal country_added(country: Country)
 
 var _list: Array[Country] = []

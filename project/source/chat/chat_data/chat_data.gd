@@ -2,7 +2,6 @@ class_name ChatData
 ## Class responsible for the data found inside a chat box.
 ## It is separate from [ChatInterface] so that it can persist between scenes.
 
-
 signal new_content_added(new_content: String)
 signal content_cleared()
 signal loaded()
@@ -18,11 +17,11 @@ var _players: Array[String] = []
 ## It is a String formatted to be displayed in a RichTextLabel.
 func all_content() -> String:
 	var text: String = ""
-	
+
 	for chat_message in _content:
 		if text != "":
 			text += "\n"
-		
+
 		match chat_message.user_id:
 			-2:
 				text += chat_message.text
@@ -38,7 +37,7 @@ func all_content() -> String:
 						+ ": [/color][color=#404040]"
 						+ chat_message.text + "[/color]"
 				)
-	
+
 	return text
 
 
@@ -47,11 +46,11 @@ func all_content() -> String:
 func load_data(data: Dictionary) -> void:
 	var parser := ChatDataFromDict.new()
 	parser.parse(data)
-	
+
 	if parser.error:
 		push_error("Error while loading chat data: " + parser.error_message)
 		return
-	
+
 	_content = parser.result_content
 	_players = parser.result_players
 	loaded.emit()
@@ -77,7 +76,7 @@ func add_human_message(username: String, text: String) -> void:
 	if player_id == -1:
 		player_id = _players.size()
 		_players.append(username)
-	
+
 	_add_message(player_id, text)
 
 
@@ -86,7 +85,7 @@ func _add_message(user_id: int, text: String) -> void:
 	new_chat_message.user_id = user_id
 	new_chat_message.text = text
 	_content.append(new_chat_message)
-	
+
 	new_content_added.emit(text)
 
 

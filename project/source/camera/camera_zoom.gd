@@ -6,7 +6,6 @@ extends Node
 ## See this video for more information about some of the code:
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
 
-
 @export var camera: CustomCamera2D
 
 ## The camera will do its best to reach this amount of zoom.
@@ -33,17 +32,17 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	var weight: float = _zoom_rate * delta
-	
+
 	# Apply the zoom
 	camera.zoom = camera.zoom.lerp(_target_zoom * Vector2.ONE, weight)
-	
+
 	# Move the camera in the direction of the cursor
 	var camera_position: Vector2 = camera.position_in_bounds(camera.position)
 	var camera_to: Vector2 = camera_position + _camera_movement
 	var lerped_position: Vector2 = camera.position.lerp(camera_to, weight)
 	camera.position = camera.position_in_bounds(lerped_position)
 	_camera_movement = camera_to - camera.position
-	
+
 	set_physics_process(not is_equal_approx(camera.zoom.x, _target_zoom))
 
 
@@ -67,14 +66,14 @@ func _zoom_in(mouse_position: Vector2) -> void:
 func _zoom_out(mouse_position: Vector2) -> void:
 	_previous_target = _target_zoom
 	_target_zoom = maxf(_target_zoom - _zoom_increment, _minimum_zoom())
-	
+
 	if _zoom_away_from_center:
 		# Assuming the camera's anchor mode is Drag Center,
 		# there is nothing we need to do
 		pass
 	else:
 		_zoom_to_cursor(mouse_position)
-	
+
 	set_physics_process(true)
 
 

@@ -6,7 +6,6 @@ extends Button
 ##
 ## Source: https://stackoverflow.com/questions/66090893/how-can-i-extend-godots-button-to-distinguish-left-click-vs-right-click-events
 
-
 signal left_click_just_pressed()
 signal right_click_just_pressed()
 signal left_click_just_released()
@@ -23,10 +22,10 @@ func _ready() -> void:
 func _on_gui_input(event: InputEvent) -> void:
 	if event is not InputEventMouseButton:
 		return
-	
+
 	if not get_global_rect().has_point(get_global_mouse_position()):
 		return
-	
+
 	var event_mouse_button := event as InputEventMouseButton
 	match event_mouse_button.button_index:
 		MOUSE_BUTTON_LEFT:
@@ -38,7 +37,7 @@ func _on_gui_input(event: InputEvent) -> void:
 			if event_mouse_button.pressed:
 				if grab_focus_on_right_click:
 					grab_focus()
-				
+
 				right_click_just_pressed.emit()
 			else:
 				right_click_just_released.emit()

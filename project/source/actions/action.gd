@@ -4,7 +4,6 @@ class_name Action
 ##
 ## Actions are the things players do that affect the game state.
 
-
 ## Each action has its own identifier.
 ## This is necessary for sending info between clients in online multiplayer.
 enum {
@@ -39,7 +38,7 @@ static func from_raw_data(data: Dictionary) -> Action:
 	if not data.has(ID_KEY):
 		push_error("Action data does not have an id.")
 		return null
-	
+
 	match data[ID_KEY]:
 		END_TURN:
 			return ActionEndTurn.from_raw_data(data)

@@ -6,7 +6,6 @@ extends Button
 ##
 ## See also: [BuildFortressButton], [ComponentUI]
 
-
 var province: Province:
 	set(value):
 		if province == value:
@@ -48,7 +47,7 @@ func _setup_recruitment_limits() -> void:
 	if province == null or player == null or game == null:
 		_army_recruit_limits = null
 		return
-	
+
 	_army_recruit_limits = (
 			ArmyRecruitmentLimits.new(player.playing_country, province, game)
 	)
@@ -57,11 +56,11 @@ func _setup_recruitment_limits() -> void:
 func _refresh_is_disabled() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if province == null or player == null or _army_recruit_limits == null:
 		disabled = true
 		return
-	
+
 	disabled = not (
 			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
 			and _army_recruit_limits.maximum()
@@ -72,7 +71,7 @@ func _refresh_is_disabled() -> void:
 func _connect_signals() -> void:
 	if _army_recruit_limits == null:
 		return
-	
+
 	if not (
 			_army_recruit_limits.maximum_changed
 			.is_connected(_on_army_maximum_changed)
@@ -83,7 +82,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if _army_recruit_limits == null:
 		return
-	
+
 	if (
 			_army_recruit_limits.maximum_changed
 			.is_connected(_on_army_maximum_changed)

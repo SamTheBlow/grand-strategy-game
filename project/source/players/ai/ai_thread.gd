@@ -5,7 +5,6 @@ class_name AIThread
 # the game state never changes while it's the AI's turn.
 # If it did, then we'd likely have to use [Mutex] and [Semaphore].
 
-
 signal finished(actions: Array[Action])
 
 var _thread := Thread.new()

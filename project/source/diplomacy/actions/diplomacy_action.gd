@@ -3,7 +3,6 @@ class_name DiplomacyAction
 ## a given [DiplomacyActionDefinition] can be performed.
 ## This is also the starting point for performing the action.
 
-
 signal performed(this: DiplomacyAction)
 
 var _definition: DiplomacyActionDefinition

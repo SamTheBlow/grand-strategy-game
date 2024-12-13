@@ -3,7 +3,6 @@ extends Action
 ## Splits a given [Army] into two or more armies with given troop size
 ## proportions. You must provide a new unique id for each of the new armies.
 
-
 const ARMY_ID_KEY: String = "army_id"
 const TROOP_PARTITION_KEY: String = "troop_partition"
 const NEW_ARMY_IDS_KEY: String = "new_army_ids"

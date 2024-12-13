@@ -9,7 +9,6 @@ extends Node
 ##
 ## See also: [RulesMenuSync]
 
-
 ## Emitted on clients when the client receives a new state from the server,
 ## in which case this signal will pass a new instance of [MapMenuState].
 ## Also emitted on clients when the client disconnects from a server,

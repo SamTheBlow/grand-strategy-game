@@ -10,7 +10,6 @@ class_name ModifierRequest
 ## their modifiers to the array. The signal also passes a ModifierContext
 ## object that gives information about why modifiers are being requested.
 
-
 signal modifiers_requested(array: Array[Modifier], context: ModifierContext)
 
 
@@ -24,12 +23,12 @@ func modifiers(context: ModifierContext) -> ModifierList:
 ## The object must have the method that provides modifiers.
 func add_provider(object: Object) -> void:
 	const method_name: String = "_on_modifiers_requested"
-	
+
 	if not object.has_method(method_name):
 		push_warning(
 				"Tried to add a modifier provider that "
 				+ "doesn't have method \"" + method_name + "\"."
 		)
 		return
-	
+
 	modifiers_requested.connect(Callable(object, method_name))

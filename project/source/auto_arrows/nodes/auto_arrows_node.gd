@@ -5,7 +5,6 @@ extends Node2D
 ##
 ## See also: [AutoArrow]
 
-
 ## May be null.
 var country: Country:
 	set(value):

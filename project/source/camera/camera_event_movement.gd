@@ -3,7 +3,6 @@ extends Node
 ## Responsible for moving the camera under certain events.
 ## These events can be enabled or disabled individually.
 
-
 @export var _game: GameNode
 @export var _camera: CustomCamera2D
 

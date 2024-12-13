@@ -2,7 +2,6 @@ class_name ProvinceOwnershipUpdate
 ## Updates given [Province]'s owner country at the end of each player's turn.
 ## Once it is determined, it is applied immediately.
 
-
 var _armies_in_province: ArmiesInProvince
 var _province: Province
 

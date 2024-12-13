@@ -2,7 +2,6 @@ class_name MapListNode
 extends VBoxContainer
 ## Shows a list of game maps for the user to select.
 
-
 signal map_selected(map_id: int)
 
 ## The scene's root node must extend [MapOptionNode].
@@ -18,10 +17,10 @@ func add_map(map_metadata: MapMetadata, map_id: int) -> void:
 	new_map.map_metadata = map_metadata
 	new_map.id = map_id
 	new_map.selected.connect(_on_map_selected)
-	
+
 	var map_settings := map_settings_scene.instantiate() as MapSettings
 	new_map.map_settings = map_settings
-	
+
 	add_child(new_map)
 	add_child(map_settings)
 	_list.append(new_map)

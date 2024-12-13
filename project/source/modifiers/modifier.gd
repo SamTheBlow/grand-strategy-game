@@ -3,7 +3,6 @@ class_name Modifier
 ##
 ## A modifier is simply an effect that is applied onto some number.
 
-
 var _description: String
 var _hint: String
 

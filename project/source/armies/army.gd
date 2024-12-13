@@ -8,7 +8,6 @@ class_name Army
 ##
 ## See also: [ArmyVisuals2D]
 
-
 signal size_changed(size: int)
 signal allegiance_changed(country: Country)
 ## Always emitted when the province changes.

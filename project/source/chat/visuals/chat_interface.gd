@@ -8,7 +8,6 @@ extends Control
 ## - A RichTextLabel with the unique name "ChatText"
 ## - A LineEdit with the unique name "ChatInput"
 
-
 signal input_submitted(input_text: String)
 
 ## The data to be displayed in the chat box.
@@ -20,15 +19,15 @@ var chat_data: ChatData:
 			)
 			chat_data.content_cleared.disconnect(_on_chat_data_content_cleared)
 			chat_data.loaded.disconnect(_on_chat_data_loaded)
-		
+
 		chat_data = value
-		
+
 		chat_data.new_content_added.connect(
 				_on_chat_data_new_content_added
 		)
 		chat_data.content_cleared.connect(_on_chat_data_content_cleared)
 		chat_data.loaded.connect(_on_chat_data_loaded)
-		
+
 		_update_chat_log()
 
 @onready var _chat_log := %ChatText as RichTextLabel
@@ -44,7 +43,7 @@ func _ready() -> void:
 	# Automatically connect the signal, in case it wasn't already done
 	if not _chat_input.text_submitted.is_connected(_on_input_text_submitted):
 		_chat_input.text_submitted.connect(_on_input_text_submitted)
-	
+
 	_update_chat_log()
 
 
@@ -55,7 +54,7 @@ func _update_chat_log() -> void:
 
 func _on_input_text_submitted(input_text: String) -> void:
 	input_submitted.emit(input_text)
-	
+
 	# Clear the input field
 	_chat_input.text = ""
 

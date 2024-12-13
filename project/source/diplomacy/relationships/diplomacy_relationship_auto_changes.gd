@@ -5,7 +5,6 @@ class_name DiplomacyRelationshipAutoChanges
 ##
 ## No setup needed.
 
-
 var _game: Game
 
 

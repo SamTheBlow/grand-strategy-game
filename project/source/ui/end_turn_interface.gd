@@ -5,7 +5,6 @@ extends Control
 ## (Even though the class is named and intended for the "End Turn" button,
 ## this script has no functionality specific to it.)
 
-
 @export var _game: GameNode
 
 

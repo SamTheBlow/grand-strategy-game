@@ -4,13 +4,12 @@ class_name AutoArrow
 ## should be considered the same autoarrow.
 ## Also, the properties are not meant to be changed, ever. (See [AutoArrows])
 
-
 var source_province: Province:
 	set(value):
 		if source_province != null:
 			push_warning("Tried to change an AutoArrow's source province.")
 			return
-		
+
 		source_province = value
 
 var destination_province: Province:
@@ -18,7 +17,7 @@ var destination_province: Province:
 		if destination_province != null:
 			push_warning("Tried to change an AutoArrow's destination province.")
 			return
-		
+
 		destination_province = value
 
 

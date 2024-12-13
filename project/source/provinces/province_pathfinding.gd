@@ -1,7 +1,6 @@
 class_name ProvincePathfinding
 ## Generates the shortest paths from any province to some given destinations.
 
-
 ## Dictionary[Province, Array[LinkBranch]]
 ## An empty array means there is no valid path.
 ## There may be more than one shortest path.

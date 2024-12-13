@@ -3,7 +3,6 @@ class_name ColoredBox
 extends Control
 ## Draws a box with a colored outline, with given properties.
 
-
 @export var box_global_position := Vector2.ZERO
 @export var box_size := Vector2.ZERO
 

@@ -7,7 +7,6 @@ extends Button
 ## See also: [RecruitButton], [ComponentUI]
 # TODO this code looks a lot like the code for [RecruitButton]
 
-
 var province: Province:
 	set(value):
 		if province == value:
@@ -49,7 +48,7 @@ func _setup_build_conditions() -> void:
 	if province == null or player == null or game == null:
 		_fortress_build_conditions = null
 		return
-	
+
 	_fortress_build_conditions = (
 			FortressBuildConditions.new(player.playing_country, province, game)
 	)
@@ -58,11 +57,11 @@ func _setup_build_conditions() -> void:
 func _refresh_is_disabled() -> void:
 	if not is_node_ready():
 		return
-	
+
 	if player == null or _fortress_build_conditions == null:
 		disabled = true
 		return
-	
+
 	disabled = not (
 			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
 			and _fortress_build_conditions.can_build()
@@ -72,7 +71,7 @@ func _refresh_is_disabled() -> void:
 func _connect_signals() -> void:
 	if _fortress_build_conditions == null:
 		return
-	
+
 	if not (
 			_fortress_build_conditions.can_build_changed
 			.is_connected(_on_fortress_can_build_changed)
@@ -85,7 +84,7 @@ func _connect_signals() -> void:
 func _disconnect_signals() -> void:
 	if _fortress_build_conditions == null:
 		return
-	
+
 	if (
 			_fortress_build_conditions.can_build_changed
 			.is_connected(_on_fortress_can_build_changed)

@@ -1,7 +1,6 @@
 class_name WorldVisuals2D
 extends Node2D
 
-
 var world: GameWorld2D:
 	set(value):
 		world = value

@@ -2,7 +2,6 @@ class_name ComponentUIFrame
 extends Control
 ## Draws the frame of a [ComponentUI].
 
-
 var line_top: float
 var line_bottom: float
 var line_length_x: float

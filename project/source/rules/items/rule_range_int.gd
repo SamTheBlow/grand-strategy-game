@@ -2,7 +2,6 @@ class_name RuleRangeInt
 extends RuleItem
 ## A game rule that is a range of integer values.
 
-
 signal value_changed(this_rule: RuleItem)
 
 var min_value: int = 0:
@@ -10,7 +9,7 @@ var min_value: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		var old_value: int = min_value
 		min_value = value
 		if min_rule:
@@ -25,7 +24,7 @@ var max_value: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		var old_value: int = max_value
 		max_value = value
 		if max_rule:
@@ -40,7 +39,7 @@ var has_minimum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_minimum = new_bool
 		if has_minimum:
 			min_value = maxi(min_value, minimum)
@@ -51,7 +50,7 @@ var minimum: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		minimum = new_min
 		if has_minimum:
 			min_value = maxi(min_value, minimum)
@@ -64,7 +63,7 @@ var has_maximum: bool = false:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		has_maximum = new_bool
 		if has_maximum:
 			max_value = mini(max_value, maximum)
@@ -75,7 +74,7 @@ var maximum: int = 0:
 		if _is_locked:
 			push_warning("Tried to set property of a locked rule.")
 			return
-		
+
 		maximum = new_max
 		if has_maximum:
 			max_value = mini(max_value, maximum)
@@ -108,14 +107,14 @@ func set_data(data: Variant) -> void:
 		push_warning("Rule received incorrect type of value.")
 		return
 	var data_array := data as Array
-	
+
 	if data_array.size() != 2:
 		push_warning("Range rule received array of incorrect size.")
 		return
-	
+
 	var data_minimum: Variant = data_array[0]
 	var final_minimum: int = 0
-	
+
 	if data_minimum is int:
 		final_minimum = data_minimum
 	elif data_minimum is float:
@@ -123,10 +122,10 @@ func set_data(data: Variant) -> void:
 	else:
 		push_warning("Range rule minimum is incorrect type of value.")
 		return
-	
+
 	var data_maximum: Variant = data_array[1]
 	var final_maximum: int = 0
-	
+
 	if data_maximum is int:
 		final_maximum = data_maximum
 	elif data_maximum is float:
@@ -134,7 +133,7 @@ func set_data(data: Variant) -> void:
 	else:
 		push_warning("Range rule maximum is incorrect type of value.")
 		return
-	
+
 	min_value = final_minimum
 	max_value = final_maximum
 

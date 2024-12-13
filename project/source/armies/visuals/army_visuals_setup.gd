@@ -1,7 +1,6 @@
 class_name ArmyVisualsSetup
 extends Node
 
-
 ## Make sure to set this before setting armies...
 var playing_country: PlayingCountry
 

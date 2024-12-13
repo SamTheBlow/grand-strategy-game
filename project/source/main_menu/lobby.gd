@@ -8,7 +8,6 @@ extends Control
 ## Don't forget to inject the [Players] and the [GameRules] into their
 ## respective properties before adding this node to the scene tree.
 
-
 signal start_game_requested(map_metadata: MapMetadata, game_rules: GameRules)
 
 var players: Players:
@@ -43,7 +42,7 @@ func _ready() -> void:
 	_setup_map_menu_state()
 	_setup_game_rules()
 	_setup_networking_interface()
-	
+
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 	_update_rules_disabled()
@@ -53,28 +52,28 @@ func _ready() -> void:
 func _setup_players() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_player_list.players = players
 
 
 func _setup_map_menu_state() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_map_interface.map_menu_state = map_menu_state
 
 
 func _setup_game_rules() -> void:
 	if not is_node_ready() or game_rules == null:
 		return
-	
+
 	_rules_interface.game_rules = game_rules
 
 
 func _setup_networking_interface() -> void:
 	if not is_node_ready():
 		return
-	
+
 	_player_list.networking_interface = networking_interface
 
 

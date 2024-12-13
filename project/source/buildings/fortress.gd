@@ -6,7 +6,6 @@ extends Building
 ## There may only be one fortress per province,
 ## although, this currently isn't enforced.
 
-
 var _province: Province
 
 

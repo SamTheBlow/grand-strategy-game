@@ -2,7 +2,6 @@ class_name GameNotificationPerformedAction
 extends GameNotification
 ## Informs of a diplomatic action performed by another country.
 
-
 var _sender_country: Country
 var _diplomacy_action_definition: DiplomacyActionDefinition
 

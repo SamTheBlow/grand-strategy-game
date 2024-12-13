@@ -9,7 +9,6 @@ extends Camera2D
 ## it will not automatically stay in bounds. Because of this,
 ## please use [method CustomCamera2D.move_to] to move the camera.
 
-
 ## How far away from the world the camera can go,
 ## measured in window size (e.g. 0.5 is half a window size).
 @export var world_margin := Vector2(0.5, 0.5)
@@ -34,7 +33,7 @@ func move_to(new_position: Vector2) -> void:
 func _reposition_in_bounds() -> void:
 	if not is_inside_tree():
 		return
-	
+
 	position = position_in_bounds(position)
 
 
@@ -47,7 +46,7 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 				+ "but the camera is not in the scene tree."
 		)
 		return Vector2.ZERO
-	
+
 	# NOTE: all of this assumes the camera's anchor mode is Drag Center
 	var margin_x: float = (
 			(0.5 - world_margin.x) * get_viewport_rect().size.x / zoom.x

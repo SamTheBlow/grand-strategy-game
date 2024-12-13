@@ -2,7 +2,6 @@ class_name ArmiesOfCountry
 ## Contains a list of all armies controlled by some [Country].
 ## Removes armies from the list when they change allegiance.
 
-
 ## Do not manipulate this list directly! Use add() and remove() instead.
 var list: Array[Army] = []
 

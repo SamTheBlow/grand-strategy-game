@@ -5,7 +5,6 @@ extends Node
 # TODO If a new action occurs before this node is ready on a client,
 # the client will never receive the action.
 
-
 var _game: Game
 
 
