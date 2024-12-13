@@ -40,6 +40,18 @@ func _relationship_to_dict(
 				actions_performed_this_turn,
 		})
 
+	var available_actions_dict: Dictionary = {}
+	for action in relationship.available_actions():
+		available_actions_dict[action.id()] = {
+			DiplomacyRelationshipsFromRaw.TURN_IT_BECAME_AVAILABLE_KEY:
+				action._turn_it_became_available,
+		}
+	if not available_actions_dict.is_empty():
+		output.merge({
+			DiplomacyRelationshipsFromRaw.AVAILABLE_ACTIONS_KEY:
+				available_actions_dict,
+		})
+
 	if not output.is_empty():
 		output.merge({
 			DiplomacyRelationshipsFromRaw.RECIPIENT_COUNTRY_ID_KEY:

@@ -107,12 +107,16 @@ func is_fighting() -> bool:
 ## Call this once after loading to initialize the list of available actions.
 func initialize_actions(
 		current_turn: int,
-		actions_already_performed: Array[int] = []
+		actions_already_performed: Array[int] = [],
+		starting_available_actions: Array[DiplomacyAction] = []
 ) -> void:
+	_available_actions = starting_available_actions
 	_update_available_actions(current_turn)
+
+	# Backwards compatibility: 4.1
+	# The list of already performed actions still needs to be dealt with.
 	for action in _available_actions:
 		if action.id() in actions_already_performed:
-			# TODO bad code: private member access
 			action._was_performed_this_turn = true
 
 
