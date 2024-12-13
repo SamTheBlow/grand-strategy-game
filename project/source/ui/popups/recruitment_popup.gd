@@ -27,8 +27,12 @@ var _troop_slider: Range:
 
 
 func _ready() -> void:
-	_troop_slider.value_changed.connect(_on_troop_slider_value_changed)
+	# Have the slider maxed out by default
 	_troop_slider.value = _troop_slider.max_value
+
+	_update_troop_label()
+	_update_number_to_buy()
+	_troop_slider.value_changed.connect(_on_troop_slider_value_changed)
 
 
 func buttons() -> Array[String]:
@@ -58,13 +62,13 @@ func _update_number_to_buy() -> void:
 func _update_troop_label() -> void:
 	var value: int = roundi(_troop_slider.value)
 	var max_value: float = _troop_slider.max_value
-	
+
 	# Prevent a division by zero, just in case
 	# this slider's maximum value is zero for some reason.
 	var percentage: int = 100
 	if max_value != 0.0:
 		percentage = floori(100.0 * value / max_value)
-	
+
 	_troop_label.text = str(value) + " (" + str(percentage) + "%)"
 
 
