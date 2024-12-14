@@ -35,9 +35,9 @@ var local_state: MapMenuState
 
 
 func _ready() -> void:
-	multiplayer.peer_connected.connect(_on_peer_connected)
+	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	_send_active_state_to_clients()
+	_request_active_state()
 
 
 func _connect_signals() -> void:
@@ -82,13 +82,35 @@ func _disconnect_signals() -> void:
 		active_state.metadata_changed.disconnect(_on_metadata_changed)
 
 
-## On the server, sends the active state to all clients.
-func _send_active_state_to_clients() -> void:
-	if active_state == null or not is_node_ready():
+## Clients ask the server for the active state.
+## No effect if you're not a client.
+func _request_active_state() -> void:
+	if MultiplayerUtils.has_authority(multiplayer):
 		return
 
-	if MultiplayerUtils.is_server(multiplayer):
+	_receive_request_active_state.rpc_id(1)
+
+
+## On the server, sends the active state to all clients,
+## or to one given client.
+func _send_active_state_to_clients(multiplayer_id: int = -1) -> void:
+	if (
+			not is_node_ready()
+			or not MultiplayerUtils.is_server(multiplayer)
+			or active_state == null
+	):
+		return
+
+	if multiplayer_id == -1:
 		_receive_state.rpc(active_state.get_raw_state(false))
+	else:
+		_receive_state.rpc_id(multiplayer_id, active_state.get_raw_state(false))
+
+
+## The server receives a client's request to receive the active state.
+@rpc("any_peer", "call_remote", "reliable")
+func _receive_request_active_state() -> void:
+	_send_active_state_to_clients(multiplayer.get_remote_sender_id())
 
 
 ## Updates the entire state on clients.
@@ -102,6 +124,10 @@ func _receive_state(data: Dictionary) -> void:
 ## Updates the selected map on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_selected_map_id(map_id: int) -> void:
+	if active_state.map_with_id(map_id) == null:
+		push_error("Received invalid map id: ", map_id)
+		return
+
 	active_state.set_selected_map_id(map_id)
 
 
@@ -142,10 +168,9 @@ func _on_metadata_changed(map_id: int, map_metadata: MapMetadata) -> void:
 		_receive_metadata_change.rpc(map_id, map_metadata.to_dict(false))
 
 
-## On the server, sends the current state to the new client.
-func _on_peer_connected(peer_id: int) -> void:
-	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc_id(peer_id, active_state.get_raw_state(false))
+## Clients ask the server for the active state when they first join.
+func _on_connected_to_server() -> void:
+	_request_active_state()
 
 
 ## Resets the menu's state on disconnected clients.

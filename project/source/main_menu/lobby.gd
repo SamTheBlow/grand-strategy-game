@@ -33,7 +33,7 @@ var networking_interface: NetworkingInterface:
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _map_interface := %Map as MapMenu
 @onready var _rules_interface := %Rules as RulesMenu
-@onready var _rules_disabled_node := %RulesDisabled as Control
+@onready var _menu_disabled_node := %MenuDisabled as Control
 @onready var _start_button := %StartButton as Button
 
 
@@ -45,7 +45,7 @@ func _ready() -> void:
 
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	_update_rules_disabled()
+	_update_menu_disabled()
 	_update_start_button_disabled()
 
 
@@ -79,11 +79,10 @@ func _setup_networking_interface() -> void:
 
 ## When connected to an online game,
 ## only the server is allowed to make changes to the rules.
-func _update_rules_disabled() -> void:
-	if MultiplayerUtils.is_online(multiplayer):
-		_rules_disabled_node.visible = not multiplayer.is_server()
-	else:
-		_rules_disabled_node.visible = false
+func _update_menu_disabled() -> void:
+	_menu_disabled_node.visible = (
+			not MultiplayerUtils.has_authority(multiplayer)
+	)
 
 
 ## When connected to an online game,
@@ -101,10 +100,10 @@ func _on_start_button_pressed() -> void:
 
 
 func _on_connected_to_server() -> void:
-	_update_rules_disabled()
+	_update_menu_disabled()
 	_update_start_button_disabled()
 
 
 func _on_server_disconnected() -> void:
-	_update_rules_disabled()
+	_update_menu_disabled()
 	_update_start_button_disabled()

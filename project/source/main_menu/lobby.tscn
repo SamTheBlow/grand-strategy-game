@@ -135,7 +135,7 @@ layout_mode = 2
 custom_minimum_size = Vector2(12, 0)
 layout_mode = 2
 
-[node name="RulesDisabled" type="ColorRect" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer"]
+[node name="MenuDisabled" type="ColorRect" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 color = Color(0.25098, 0.25098, 0.25098, 0.25098)

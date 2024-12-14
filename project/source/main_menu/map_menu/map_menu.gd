@@ -37,15 +37,12 @@ func selected_map() -> MapMetadata:
 	return _selected_map_node.map_metadata
 
 
+## May return null if there is no map node with given id.
 func _map_node_with_id(map_id: int) -> MapOptionNode:
 	for map_list: MapListNode in [_map_list_builtin, _map_list_custom]:
 		var map_option_node: MapOptionNode = map_list.map_with_id(map_id)
 		if map_option_node != null:
 			return map_option_node
-	push_error(
-			"Cannot find map node in map selection menu (id: "
-			+ str(map_id) + ")"
-	)
 	return null
 
 
@@ -71,7 +68,7 @@ func _update_map_menu_state() -> void:
 				continue
 			map_menu_state.add_builtin_map(builtin_map)
 
-	# Remove any existing [MapOptionNode]
+	# Clear existing nodes
 	_map_list_builtin.clear()
 	_map_list_custom.clear()
 
@@ -95,28 +92,15 @@ func _scroll_to_selected_map() -> void:
 	if _selected_map_node == null:
 		return
 
-	var scroll_container: ScrollContainer
-	var map_list: MapListNode
+	# This needs to wait two frames, otherwise the scroll bar
+	# will not update on clients. I don't know why.
+	await get_tree().process_frame
+	await get_tree().process_frame
 
 	if map_menu_state.is_selected_map_builtin():
-		scroll_container = _scroll_builtin
-		map_list = _map_list_builtin
+		_scroll_builtin.ensure_control_visible(_selected_map_node)
 	else:
-		scroll_container = _scroll_custom
-		map_list = _map_list_custom
-
-	# Calculate the amount of vertical scroll to be done
-	var scroll_vertical: int = 0
-	var separation: int = map_list.get_theme_constant("separation")
-	for node in map_list.get_children():
-		if node == _selected_map_node:
-			break
-		if node is not Control:
-			continue
-		var control := node as Control
-		scroll_vertical += floori(control.size.y) + separation
-
-	scroll_container.set_v_scroll.call_deferred(scroll_vertical)
+		_scroll_custom.ensure_control_visible(_selected_map_node)
 
 
 func _connect_signals() -> void:
@@ -152,7 +136,18 @@ func _on_map_clicked(map_id: int) -> void:
 func _on_map_selected() -> void:
 	if _selected_map_node != null:
 		_selected_map_node.deselect()
-	_selected_map_node = _map_node_with_id(map_menu_state.selected_map_id())
+
+	var map_node: MapOptionNode = (
+			_map_node_with_id(map_menu_state.selected_map_id())
+	)
+	if map_node == null:
+		push_error(
+				"Cannot find map node in map selection menu (id: "
+				+ str(map_menu_state.selected_map_id()) + ")"
+		)
+		return
+
+	_selected_map_node = map_node
 	_selected_map_node.select()
 
 

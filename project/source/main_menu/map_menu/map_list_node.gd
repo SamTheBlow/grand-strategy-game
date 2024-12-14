@@ -35,8 +35,7 @@ func add_maps(map_data_array: Array[MapMetadata], starting_map_id: int) -> void:
 
 
 func clear() -> void:
-	for map_option_node in _list:
-		remove_child(map_option_node)
+	NodeUtils.remove_all_children(self)
 	_list.clear()
 
 
