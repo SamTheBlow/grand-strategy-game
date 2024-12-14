@@ -1,5 +1,7 @@
 class_name RulesMenu
 extends RuleInterface
+## Root node for all the settings that let you change the game's rules.
+## Generates all the settings nodes, and initializes a [RulesMenuSync].
 
 var game_rules: GameRules:
 	set = set_game_rules

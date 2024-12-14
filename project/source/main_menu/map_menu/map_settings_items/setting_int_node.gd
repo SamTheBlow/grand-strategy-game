@@ -1,5 +1,7 @@
 class_name SettingIntNode
 extends MarginContainer
+## Shows an int setting.
+## Emits a signal when the value changes.
 
 signal value_changed(key: String, value: int)
 

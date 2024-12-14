@@ -1,5 +1,7 @@
 class_name SettingOptionsNode
 extends MarginContainer
+## Shows an enum setting.
+## Emits a signal when the value changes.
 
 signal value_changed(key: String, value: int)
 

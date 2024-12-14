@@ -1,5 +1,9 @@
 class_name AutoArrowPreviewNode2D
 extends AutoArrowNode2D
+## The arrow that appears when creating a new AutoArrow.
+## Points at the mouse cursor's location, or, when applicable,
+## points at the province the mouse cursor is on.
+## When right click is released, emits a signal and deletes itself.
 
 ## Emitted when the mouse click is released on a valid destination province.
 signal released(this: AutoArrowPreviewNode2D)

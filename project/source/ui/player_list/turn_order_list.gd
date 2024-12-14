@@ -5,7 +5,6 @@ extends Control
 ## turn order that they play. It shows all players by their username.
 ## It also shows with an arrow whose turn it is to play.
 ## The user, when allowed, can add, remove and rename players.
-## Spectators are also shown, at the end of the list.
 
 signal new_human_player_requested(game_player: GamePlayer)
 signal player_removal_requested(player: Player)

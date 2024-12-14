@@ -44,7 +44,7 @@ func _client_send_auth_data(id: int) -> void:
 
 	var raw_player_data: Array = []
 	for player in players.list():
-		raw_player_data.append(player._raw_data())
+		raw_player_data.append(player.raw_data())
 
 	var stream_peer_buffer := StreamPeerBuffer.new()
 	stream_peer_buffer.put_var(project_version)

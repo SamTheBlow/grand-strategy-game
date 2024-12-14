@@ -1,5 +1,7 @@
 class_name ProvinceVisualsContainer2D
 extends Node2D
+## Parent node for all of a game's [ProvinceVisuals2D].
+# TODO this class is ugly and confusing
 
 signal province_selected(province_visuals: ProvinceVisuals2D)
 

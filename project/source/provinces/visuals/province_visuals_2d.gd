@@ -1,5 +1,6 @@
 class_name ProvinceVisuals2D
 extends Node2D
+## Visual representation of a [Province].
 
 signal mouse_entered()
 signal mouse_exited()

@@ -1,10 +1,11 @@
 class_name ArmiesInProvince
 ## Stores a list of armies.
 ## Automatically removes an [Army] from the list when it changes province.
-# This doesn't automatically add armies when they enter the province, and it
-# doesn't automatically remove armies when they are removed from the game.
-# It's for performance reasons. Those things are handled by a separate class.
-# See [ArmiesInProvinceSystem].
+##
+## This doesn't automatically add armies when they enter the province, and it
+## doesn't automatically remove armies when they are removed from the game.
+## It's for performance reasons. Those things are handled by a separate class.
+## See [ArmiesInProvinceSystem].
 
 # TODO figure out how to expose the list without creating a new copy
 # and while also preventing array manipulation from the outside.

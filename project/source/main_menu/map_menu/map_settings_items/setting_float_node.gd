@@ -1,5 +1,7 @@
 class_name SettingFloatNode
 extends MarginContainer
+## Shows a float setting.
+## Emits a signal when the value changes.
 
 signal value_changed(key: String, value: float)
 

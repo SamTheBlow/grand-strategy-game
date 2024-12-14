@@ -1,5 +1,7 @@
 class_name ProvinceSelection
 extends Node
+## Keeps track of which [Province] is currently selected.
+## Emits relevant signals.
 
 ## Emitted when a province is deselected. The given province is never null.
 signal province_deselected(province: Province)

@@ -1,5 +1,7 @@
 class_name SettingBoolNode
 extends MarginContainer
+## Shows a boolean setting.
+## Emits a signal when the value changes.
 
 signal value_changed(key: String, value: bool)
 

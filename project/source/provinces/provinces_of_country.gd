@@ -1,4 +1,10 @@
 class_name ProvincesOfCountry
+## Provides a list of which provinces are under control of
+## one specific [Country].
+## Removes provinces from the list when their owner changes,
+## but does not add provinces on its own.
+##
+## See also: [ProvincesOfEachCountry]
 
 ## Do not directly manipulate this list! Use add() instead.
 var list: Array[Province] = []

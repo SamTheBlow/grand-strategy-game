@@ -72,20 +72,18 @@ func set_username(new_username: String) -> void:
 	_username = new_username
 
 
-func _calculated_is_remote() -> bool:
-	if MultiplayerUtils.is_online(multiplayer):
-		return multiplayer_id != multiplayer.get_unique_id()
-	else:
-		return multiplayer_id != 1
-
-
-# region Convert from/to raw data
 ## Returns all of the player's properties as raw data, for synchronizing.
-func _raw_data() -> Dictionary:
+func raw_data() -> Dictionary:
 	return {
 		DATA_MULTIPLAYER_ID: multiplayer_id,
 		DATA_USERNAME: _username,
 	}
+
+
+static func from_raw_data(raw_dict: Dictionary) -> Player:
+	var player := Player.new()
+	player._load_data(raw_dict)
+	return player
 
 
 ## Loads all of this player's properties based on given raw data.
@@ -95,7 +93,13 @@ func _load_data(data: Dictionary) -> void:
 		multiplayer_id = ParseUtils.dictionary_int(data, DATA_MULTIPLAYER_ID)
 	if ParseUtils.dictionary_has_string(data, DATA_USERNAME):
 		_username = data[DATA_USERNAME]
-#endregion
+
+
+func _calculated_is_remote() -> bool:
+	if MultiplayerUtils.is_online(multiplayer):
+		return multiplayer_id != multiplayer.get_unique_id()
+	else:
+		return multiplayer_id != 1
 
 
 #region Synchronize everything
@@ -115,7 +119,7 @@ func _send_all_data() -> void:
 		push_warning("Received server request, but you're not the server.")
 		return
 
-	_receive_all_data.rpc_id(multiplayer.get_remote_sender_id(), _raw_data())
+	_receive_all_data.rpc_id(multiplayer.get_remote_sender_id(), raw_data())
 
 
 ## Clients receive the player's data from the server.

@@ -1,5 +1,7 @@
 class_name ArmyVisualsSetup
 extends Node
+## Creates an [ArmyVisuals2D] for each army in given [Armies].
+## Assigns those army visuals to the correct [ProvinceVisuals2D].
 
 ## Make sure to set this before setting armies...
 var playing_country: PlayingCountry
