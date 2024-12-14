@@ -81,7 +81,7 @@ static func _map_icon_from_path(
 		base_path: String, icon_file_path: String
 ) -> Texture2D:
 	if icon_file_path.is_absolute_path():
-		#push_error(
+		#print_debug(
 		#	"Metadata for map icon uses an absolute file path. ",
 		#	"Only relative file paths are allowed. ",
 		#	"Please make sure the icon's file path is relative to the map's."
@@ -89,15 +89,15 @@ static func _map_icon_from_path(
 		return null
 
 	var map_dir: DirAccess = DirAccess.open(base_path.get_base_dir())
-	if not map_dir.file_exists(icon_file_path):
-		#push_error("File for map icon does not exist.")
-		return null
-
 	map_dir.change_dir(icon_file_path.get_base_dir())
 	var true_icon_path: String = (
 			map_dir.get_current_dir().path_join(icon_file_path.get_file())
 	)
 	#print_debug("Loading icon: ", true_icon_path)
+
+	if not ResourceLoader.exists(true_icon_path):
+		#print_debug("File for map icon does not exist.")
+		return null
 
 	# I'm not sure if this works in 100% of cases but it seems good enough
 	if true_icon_path.begins_with("res://"):
