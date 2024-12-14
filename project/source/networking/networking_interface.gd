@@ -18,7 +18,7 @@ signal message_sent(text: String, color: Color)
 ## It will be visible again if the user disconnects from the server.
 @export var autohide: bool = true
 
-var _port: int = 31401
+var _port: int = 31402
 
 ## Red
 var _color_error := Color(1, 0.5, 0.5, 1)
