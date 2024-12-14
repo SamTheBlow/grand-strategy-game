@@ -16,7 +16,7 @@ const KEY_STATE_FILE_PATH: String = "file_path"
 const KEY_STATE_ICON: String = "icon"
 const KEY_STATE_SETTINGS: String = "settings"
 
-var map_name: String = ""
+var map_name: String = "(No name)"
 var file_path: String = ""
 ## The map may have no icon, in which case this will be null.
 var icon: Texture2D
@@ -47,17 +47,16 @@ static func from_file_path(base_path: String) -> MapMetadata:
 		#print_debug("Can't load map metadata: JSON data is not a Dictionary")
 		return null
 	var json_dict := json_data as Dictionary
-	if not ParseUtils.dictionary_has_dictionary(json_dict, KEY_METADATA):
-		return null
-	var meta_dict := json_dict[KEY_METADATA] as Dictionary
 
 	var result := MapMetadata.new()
 	result.file_path = base_path
 
+	if not ParseUtils.dictionary_has_dictionary(json_dict, KEY_METADATA):
+		return result
+	var meta_dict := json_dict[KEY_METADATA] as Dictionary
+
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_NAME):
 		result.map_name = meta_dict[KEY_META_NAME]
-	else:
-		result.map_name = "(No name)"
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
 		var map_icon_file_path: String = meta_dict[KEY_META_ICON]
