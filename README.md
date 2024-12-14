@@ -11,8 +11,13 @@ Other noteworthy features: local & online multiplayer; custom map support; chat 
 
 It's already fun to play, so feel free to give it a try!
 
-![Gameplay screenshot](/screenshot-gameplay.png)
+<div>
+  <img style="width: 40%" src="/screenshot-gameplay1.png" alt="Gameplay Screenshot">
+  <img style="width: 40%" src="/screenshot-gameplay2.png" alt="Gameplay Screenshot">
+</div>
 
+\
 This is a community project that anyone can contribute to. If you want to contribute in any way, please do!\
 This project is specifically designed to be easy to work on. Check out the [wiki](https://github.com/SamTheBlow/grand-strategy-game/wiki) to get started!
+
 
