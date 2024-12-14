@@ -72,6 +72,7 @@ func set_username(new_username: String) -> void:
 	_username = new_username
 
 
+#region Convert from/to raw data
 ## Returns all of the player's properties as raw data, for synchronizing.
 func raw_data() -> Dictionary:
 	return {
@@ -80,19 +81,14 @@ func raw_data() -> Dictionary:
 	}
 
 
-static func from_raw_data(raw_dict: Dictionary) -> Player:
-	var player := Player.new()
-	player._load_data(raw_dict)
-	return player
-
-
-## Loads all of this player's properties based on given raw data.
+## Sets all of this player's properties based on given raw data.
 ## Passing an empty Dictionary has no effect.
-func _load_data(data: Dictionary) -> void:
+func load_data(data: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(data, DATA_MULTIPLAYER_ID):
 		multiplayer_id = ParseUtils.dictionary_int(data, DATA_MULTIPLAYER_ID)
 	if ParseUtils.dictionary_has_string(data, DATA_USERNAME):
 		_username = data[DATA_USERNAME]
+#endregion
 
 
 func _calculated_is_remote() -> bool:
@@ -129,7 +125,7 @@ func _receive_all_data(data: Dictionary) -> void:
 		push_warning("The server received player data. Ignoring.")
 		return
 
-	_load_data(data)
+	load_data(data)
 	sync_finished.emit(self)
 #endregion
 

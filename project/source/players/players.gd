@@ -132,8 +132,10 @@ func server_add_client_players(
 
 	var player_list: Array[Player] = []
 	for player_data in players_data:
-		var player: Player = Player.from_raw_data(player_data)
+		var player := Player.new()
+		# The order is important here.
 		player.set_username(_default_username())
+		player.load_data(player_data)
 		player.multiplayer_id = multiplayer_id
 		add_player(player)
 		player_list.append(player)
