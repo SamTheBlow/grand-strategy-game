@@ -38,16 +38,14 @@ var game: Game:
 		game.game_over.connect(_on_game_over)
 		game.offer_accepted_icon = offer_accepted_icon
 
-## Reference to external node
+## Reference to external node.
+## May be null. If null, the players list will not be fully initialized.
+## Please do not leave this null unless you're going to hide the UI.
 var players: Players
 
-## Reference to external node
+## Reference to external node.
+## May be null. If null, the chat interface is hidden.
 var chat: Chat:
-	get:
-		if chat == null:
-			push_error("Chat is null. Setting it to a new instance.")
-			chat = Chat.new()
-		return chat
 	set(value):
 		chat = value
 
@@ -58,10 +56,17 @@ var chat: Chat:
 		)
 		chat.rules_requested.connect(_on_chat_rules_requested)
 
+## If false, the entire UI is hidden.
+var is_ui_visible: bool = true:
+	set(value):
+		is_ui_visible = value
+		_update_ui_visibility()
+
 var _player_assignment: PlayerAssignment
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
+@onready var _ui_layer := %UILayer as CanvasLayer
 @onready var _action_input := %ActionInput as ActionInput
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
@@ -69,6 +74,8 @@ var _player_assignment: PlayerAssignment
 
 
 func _ready() -> void:
+	_update_ui_visibility()
+
 	if game.world is not GameWorld2D:
 		return
 	var world_2d := game.world as GameWorld2D
@@ -89,44 +96,64 @@ func _ready() -> void:
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
 	)
-	# TODO bad code: private function
-	networking_interface.message_sent.connect(
-			chat._on_networking_interface_message_sent
-	)
-	_player_list.players = players
-	_player_list.networking_interface = networking_interface
-	_player_list.player_added.connect(_on_player_list_player_added)
+	var game_sync := GameSync.new(game)
 
-	_chat_interface.chat_data = chat.chat_data
-	chat.connect_chat_interface(_chat_interface)
+	if chat != null:
+		# TODO bad code: private function
+		networking_interface.message_sent.connect(
+				chat._on_networking_interface_message_sent
+		)
+		_chat_interface.chat_data = chat.chat_data
+		chat.connect_chat_interface(_chat_interface)
+	else:
+		_chat_interface.visible = false
 
-	_player_assignment = PlayerAssignment.new(players, game.game_players)
+	if players != null:
+		_player_list.players = players
+		_player_list.networking_interface = networking_interface
+		_player_list.player_added.connect(_on_player_list_player_added)
+
+		_turn_order_list.player_removal_requested.connect(players.remove_player)
+
+		_player_assignment = PlayerAssignment.new(players, game.game_players)
+		var player_assignment_sync := (
+				PlayerAssignmentSync.new(_player_assignment)
+		)
+		game_sync.add_child(player_assignment_sync)
+
+		if not MultiplayerUtils.has_authority(multiplayer):
+			player_assignment_sync.sync_finished.connect(
+					_on_player_assignment_sync_finished
+			)
+	else:
+		_player_list.visible = false
 
 	_turn_order_list.players = game.game_players
 	_turn_order_list.game_turn = game.turn
-	_turn_order_list.player_removal_requested.connect(players.remove_player)
 	_turn_order_list.new_human_player_requested.connect(
 			_on_new_human_player_requested
 	)
 
-	var game_sync := GameSync.new(game)
-	var player_assignment_sync := PlayerAssignmentSync.new(_player_assignment)
-	game_sync.add_child(player_assignment_sync)
 	add_child(game_sync)
 
 	if MultiplayerUtils.has_authority(multiplayer):
-		_player_assignment.assign_players(players.list())
+		if players != null:
+			_player_assignment.assign_players(players.list())
+
 		game.start()
-	else:
-		player_assignment_sync.sync_finished.connect(
-				_on_player_assignment_sync_finished
-		)
 
 
 func _exit_tree() -> void:
 	# Prevent the game from running forever in the background
 	if game != null:
 		game.turn.stop()
+
+
+func _update_ui_visibility() -> void:
+	if not is_node_ready():
+		return
+
+	_ui_layer.visible = is_ui_visible
 
 
 ## Creates the popup that appears when you want to move an [Army].
@@ -187,6 +214,8 @@ func _on_game_over(winning_country: Country) -> void:
 	game_over_popup.init(winning_country)
 	_add_popup(game_over_popup)
 
+	if chat == null:
+		return
 	chat.send_global_message(
 			"The game is over! The winner is "
 			+ str(winning_country.country_name) + "."
@@ -354,16 +383,19 @@ func _on_army_movement_closed() -> void:
 # Temporary feature
 func _on_load_requested() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
-		chat.send_system_message("Only the server can load a game!")
+		if chat != null:
+			chat.send_system_message("Only the server can load a game!")
 		return
 
-	chat.send_system_message("Loading the save file...")
+	if chat != null:
+		chat.send_system_message("Loading the save file...")
 
 	get_parent().load_game()
 
 
 func _on_save_requested() -> void:
-	chat.send_system_message("Saving the game...")
+	if chat != null:
+		chat.send_system_message("Saving the game...")
 
 	# TODO bad code (don't use get_parent like that)
 	# The player should be able to change the file path for save files
@@ -375,15 +407,18 @@ func _on_save_requested() -> void:
 	if game_save.error:
 		var error_message: String = "Saving failed: " + game_save.error_message
 		push_error(error_message)
-		chat.send_system_message(error_message)
+		if chat != null:
+			chat.send_system_message(error_message)
 		return
 
-	chat.send_system_message("[b]Game saved[/b]")
+	if chat != null:
+		chat.send_system_message("[b]Game saved[/b]")
 
 
 func _on_exit_to_main_menu_requested() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
-		chat.send_system_message("Only the server can exit to main menu!")
+		if chat != null:
+			chat.send_system_message("Only the server can exit to main menu!")
 		return
 
 	exited.emit()

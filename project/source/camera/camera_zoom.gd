@@ -8,6 +8,10 @@ extends Node
 
 @export var camera: CustomCamera2D
 
+## Try a value in-between 0 and 1.[br] If the value is too low or too high,
+## the camera will use the minimum or maximum zoom.
+@export var default_zoom: float = 1.0
+
 ## The camera will do its best to reach this amount of zoom.
 var _target_zoom: float = 1.0
 ## The previous zoom target is used to correctly zoom at the cursor's location.
@@ -27,6 +31,15 @@ var _zoom_away_from_center: bool = true
 
 
 func _ready() -> void:
+	# We have to wait one frame,
+	# otherwise the minimum zoom is calculated incorrectly.
+	await get_tree().process_frame
+
+	# Zoom the camera to the default value
+	_target_zoom = clampf(default_zoom, _minimum_zoom(), _maximum_zoom)
+	_previous_target = _target_zoom
+	camera.zoom = Vector2.ONE * _target_zoom
+
 	get_tree().get_root().size_changed.connect(_on_screen_size_changed)
 
 

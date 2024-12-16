@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3 uid="uid://7dfhary26tgm"]
+
+[ext_resource type="Script" path="res://source/main_menu/play_menu/map_menu/map_settings.gd" id="1_i64g8"]
+[ext_resource type="PackedScene" uid="uid://bcid4i3ekmb1a" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_bool.tscn" id="2_7m5nw"]
+[ext_resource type="PackedScene" uid="uid://d0wqk3b2jekmb" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_int.tscn" id="3_vyqnj"]
+[ext_resource type="PackedScene" uid="uid://ydwe327bb446" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_float.tscn" id="4_tqycf"]
+[ext_resource type="PackedScene" uid="uid://cr1d6miyjjx51" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_options.tscn" id="5_0v0ck"]
+
+[node name="MapSettings" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_i64g8")
+bool_scene = ExtResource("2_7m5nw")
+int_scene = ExtResource("3_vyqnj")
+float_scene = ExtResource("4_tqycf")
+options_scene = ExtResource("5_0v0ck")
+
+[node name="SettingsContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.05
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 8

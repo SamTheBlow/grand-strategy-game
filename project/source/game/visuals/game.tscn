@@ -77,6 +77,7 @@ camera = NodePath("..")
 [node name="CameraZoom" type="Node" parent="Camera" node_paths=PackedStringArray("camera")]
 script = ExtResource("4_331yk")
 camera = NodePath("..")
+default_zoom = 0.5
 
 [node name="CameraEventMovement" type="Node" parent="Camera" node_paths=PackedStringArray("_game", "_camera")]
 script = ExtResource("20_qrqmv")
@@ -85,6 +86,7 @@ _camera = NodePath("..")
 _start_in_center_of_map = true
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
 layer = 2
 
 [node name="GameUI" type="Control" parent="UILayer"]

@@ -10,9 +10,12 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 ## The scene to jump to when entering the main menu.
 ## Its root node must be a [MainMenu].
 @export var main_menu_scene: PackedScene
+## The scene to jump to when entering the play menu.
+## Its root node must be a [PlayMenu].
+@export var play_menu_scene: PackedScene
 ## The scene to jump to when entering a game.
 ## Its root node must be a [GameNode].
-@export var _game_scene: PackedScene
+@export var game_scene: PackedScene
 
 ## Setting this automatically removes the previous scene
 ## from the scene tree and adds the new scene to the scene tree.
@@ -54,9 +57,18 @@ func enter_main_menu() -> void:
 		return
 
 	var main_menu := main_menu_scene.instantiate() as MainMenu
-	main_menu.inject(players, map_menu_state, rule_menu_state, chat)
-	main_menu.game_started.connect(_on_game_start_requested)
+	main_menu.play_clicked.connect(enter_play_menu)
 	current_scene = main_menu
+
+
+func enter_play_menu() -> void:
+	if current_scene is PlayMenu:
+		return
+
+	var play_menu := play_menu_scene.instantiate() as PlayMenu
+	play_menu.inject(players, map_menu_state, rule_menu_state, chat)
+	play_menu.game_started.connect(_on_game_start_requested)
+	current_scene = play_menu
 
 
 ## Assigns [Player]s to the game's [GamePlayer]s.
@@ -66,11 +78,11 @@ func play_game(game: Game) -> void:
 	game.game_started.connect(_on_game_started)
 	players.player_removed.connect(game.game_players._on_player_removed)
 
-	var game_node := _game_scene.instantiate() as GameNode
+	var game_node := game_scene.instantiate() as GameNode
 	game_node.game = game
 	game_node.players = players
 	game_node.chat = chat
-	game_node.exited.connect(_on_main_menu_requested)
+	game_node.exited.connect(enter_play_menu)
 	current_scene = game_node
 
 
@@ -95,7 +107,7 @@ func _send_scene_change_to_clients() -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	if current_scene is MainMenu:
+	if current_scene is PlayMenu:
 		_send_enter_main_menu_to_clients()
 	elif current_scene is GameNode:
 		_send_game_to_clients((current_scene as GameNode).game)
@@ -186,7 +198,7 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 
 	if current_scene is GameNode:
 		_send_game_to_clients((current_scene as GameNode).game, multiplayer_id)
-	elif current_scene is MainMenu:
+	elif current_scene is PlayMenu:
 		_send_enter_main_menu_to_clients(multiplayer_id)
 	else:
 		push_error("Unrecognized scene. Cannot sync scene with new client.")
@@ -196,10 +208,6 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 func _on_sync_finished(game: Game) -> void:
 	sync_check.sync_finished.disconnect(_on_sync_finished)
 	play_game(game)
-
-
-func _on_main_menu_requested() -> void:
-	enter_main_menu()
 
 
 ## Called when the "Start Game" button is pressed in the main menu,
