@@ -16,6 +16,9 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 ## The scene to jump to when entering a game.
 ## Its root node must be a [GameNode].
 @export var game_scene: PackedScene
+## The scene to jump to when entering the editor.
+## Its root node must be an [Editor].
+@export var editor_scene: PackedScene
 
 ## Setting this automatically removes the previous scene
 ## from the scene tree and adds the new scene to the scene tree.
@@ -58,6 +61,7 @@ func enter_main_menu() -> void:
 
 	var main_menu := main_menu_scene.instantiate() as MainMenu
 	main_menu.play_clicked.connect(enter_play_menu)
+	main_menu.make_clicked.connect(enter_editor)
 	current_scene = main_menu
 
 
@@ -101,6 +105,15 @@ func load_game() -> void:
 
 	chat.send_global_message("[color=#60ff60]Game loaded[/color]")
 	play_game(game_from_path.result)
+
+
+func enter_editor() -> void:
+	if current_scene is Editor:
+		return
+
+	var editor := editor_scene.instantiate() as Editor
+	editor.exited.connect(enter_main_menu)
+	current_scene = editor
 
 
 func _send_scene_change_to_clients() -> void:

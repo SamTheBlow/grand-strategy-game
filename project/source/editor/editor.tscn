@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://be0pqxrjfpukm"]
+
+[ext_resource type="Script" path="res://source/editor/editor.gd" id="1_ae8ev"]
+
+[node name="Editor" type="Node"]
+script = ExtResource("1_ae8ev")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="Control" parent="Control"]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.075
+
+[node name="ColorRect" type="ColorRect" parent="Control/TopBar"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.2, 0.2, 0.2, 1)
+
+[node name="MenuBar" type="MenuBar" parent="Control/TopBar"]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.5
+anchor_right = 0.25
+anchor_bottom = 0.5
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Menu" type="PopupMenu" parent="Control/TopBar/MenuBar"]
+item_count = 1
+item_0/text = "Quit"
+
+[connection signal="id_pressed" from="Control/TopBar/MenuBar/Menu" to="." method="_on_menu_id_pressed"]

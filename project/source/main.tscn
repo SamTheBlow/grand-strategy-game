@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ba1s3jpg48raf"]
+[gd_scene load_steps=9 format=3 uid="uid://ba1s3jpg48raf"]
 
 [ext_resource type="Script" path="res://source/main.gd" id="1_32ieg"]
 [ext_resource type="PackedScene" uid="uid://c74o2ubgawogb" path="res://source/game/visuals/game.tscn" id="3_hbhxv"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://ci55oykyoyme1" path="res://source/main_menu/main_menu.tscn" id="4_sn8ov"]
 [ext_resource type="Script" path="res://source/players/players.gd" id="4_w8utn"]
 [ext_resource type="Script" path="res://source/chat/chat.gd" id="5_66lrq"]
+[ext_resource type="PackedScene" uid="uid://be0pqxrjfpukm" path="res://source/editor/editor.tscn" id="5_c0r5p"]
 [ext_resource type="Script" path="res://source/networking/client_auth.gd" id="6_414lx"]
 
 [node name="Main" type="Node"]
@@ -13,6 +14,7 @@ script = ExtResource("1_32ieg")
 main_menu_scene = ExtResource("4_sn8ov")
 play_menu_scene = ExtResource("3_sb5ma")
 game_scene = ExtResource("3_hbhxv")
+editor_scene = ExtResource("5_c0r5p")
 
 [node name="Players" type="Node" parent="."]
 script = ExtResource("4_w8utn")
