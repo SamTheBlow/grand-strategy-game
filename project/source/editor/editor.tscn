@@ -1,9 +1,13 @@
-[gd_scene load_steps=2 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=4 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" path="res://source/editor/editor.gd" id="1_ae8ev"]
+[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
+[ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/editor/project_load_popup.tscn" id="3_kcuw7"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
+_popup_scene = ExtResource("2_isggd")
+_project_load_popup_scene = ExtResource("3_kcuw7")
 
 [node name="Control" type="Control" parent="."]
 layout_mode = 3
@@ -41,7 +45,9 @@ grow_horizontal = 2
 grow_vertical = 2
 
 [node name="Menu" type="PopupMenu" parent="Control/TopBar/MenuBar"]
-item_count = 1
-item_0/text = "Quit"
+item_count = 2
+item_0/text = "Open..."
+item_1/text = "Quit"
+item_1/id = 1
 
 [connection signal="id_pressed" from="Control/TopBar/MenuBar/Menu" to="." method="_on_menu_id_pressed"]

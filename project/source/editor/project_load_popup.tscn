@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://df5yjnsebj5np"]
+
+[ext_resource type="Script" path="res://source/editor/project_load_popup.gd" id="1_ol0qo"]
+
+[node name="LoadInterface" type="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_ol0qo")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ImportButton" type="Button" parent="Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.8
+anchor_right = 1.0
+anchor_bottom = 0.2
+grow_horizontal = 0
+text = "Import"
