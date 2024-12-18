@@ -2,7 +2,7 @@ class_name MapOptionNode
 extends Control
 ## Shows a map for the user to select in the map selection menu.
 
-signal selected(id: int)
+signal selected(this: MapOptionNode)
 
 @export var color_normal: Color
 @export var color_selected: Color
@@ -19,7 +19,7 @@ var map_metadata := MapMetadata.new():
 		_update_info()
 		_update_file_path_visibility()
 
-var map_settings: MapSettings
+var map_settings := MapSettings.new()
 
 var id: int = -1
 var _is_selected: bool = false
@@ -86,4 +86,4 @@ func _update_info() -> void:
 
 
 func _on_button_pressed() -> void:
-	selected.emit(id)
+	selected.emit(self)

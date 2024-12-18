@@ -47,5 +47,5 @@ func map_with_id(map_id: int) -> MapOptionNode:
 	return null
 
 
-func _on_map_selected(id: int) -> void:
-	map_selected.emit(id)
+func _on_map_selected(map_option_node: MapOptionNode) -> void:
+	map_selected.emit(map_option_node.id)

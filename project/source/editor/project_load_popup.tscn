@@ -1,26 +1,71 @@
-[gd_scene load_steps=2 format=3 uid="uid://df5yjnsebj5np"]
+[gd_scene load_steps=4 format=3 uid="uid://df5yjnsebj5np"]
 
 [ext_resource type="Script" path="res://source/editor/project_load_popup.gd" id="1_ol0qo"]
+[ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/play_menu/map_menu/map_option.tscn" id="2_hhh78"]
+[ext_resource type="PackedScene" uid="uid://dlp6yucuudqcs" path="res://source/ui/utils/collapsible/collapsible.tscn" id="2_rqmfa"]
 
-[node name="LoadInterface" type="MarginContainer"]
+[node name="LoadInterface" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+size_flags_vertical = 3
 script = ExtResource("1_ol0qo")
+_built_in_map_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
+_map_option_node_scene = ExtResource("2_hhh78")
 
 [node name="Control" type="Control" parent="."]
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-size_flags_vertical = 3
+mouse_filter = 1
 
 [node name="ImportButton" type="Button" parent="Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.8
+anchor_left = 0.7
 anchor_right = 1.0
-anchor_bottom = 0.2
-grow_horizontal = 0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
 text = "Import"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="SpacingLeft" type="Control" parent="ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SpacingTop" type="Control" parent="ScrollContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 4)
+layout_mode = 2
+
+[node name="BuiltInMaps" parent="ScrollContainer/HBoxContainer/VBoxContainer" instance=ExtResource("2_rqmfa")]
+unique_name_in_owner = true
+layout_mode = 2
+title = "Built-in Maps"
+
+[node name="SpacingRight" type="Control" parent="ScrollContainer/HBoxContainer"]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
