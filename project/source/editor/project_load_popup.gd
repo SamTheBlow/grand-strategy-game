@@ -32,11 +32,11 @@ func _ready() -> void:
 
 
 func buttons() -> Array[String]:
-	return ["Load", "Cancel"]
+	return ["Cancel", "Load"]
 
 
 func _on_button_pressed(button_id: int) -> void:
-	if button_id == 0:
+	if button_id == 1:
 		var test := EditorProject.new()
 		test.name = "Amogus"
 		project_loaded.emit(test)

@@ -44,10 +44,37 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Menu" type="PopupMenu" parent="Control/TopBar/MenuBar"]
-item_count = 2
-item_0/text = "Open..."
-item_1/text = "Quit"
+[node name="Project" type="PopupMenu" parent="Control/TopBar/MenuBar"]
+unique_name_in_owner = true
+theme_override_constants/v_separation = 12
+item_count = 10
+item_0/text = "New Project"
+item_1/text = "Open..."
 item_1/id = 1
+item_2/text = "Open Recent"
+item_2/id = 2
+item_3/id = 3
+item_3/separator = true
+item_4/text = "Save"
+item_4/id = 4
+item_5/text = "Save As..."
+item_5/id = 5
+item_6/id = 6
+item_6/separator = true
+item_7/text = "Show in File Manager"
+item_7/id = 7
+item_8/id = 8
+item_8/separator = true
+item_9/text = "Quit"
+item_9/id = 9
 
-[connection signal="id_pressed" from="Control/TopBar/MenuBar/Menu" to="." method="_on_menu_id_pressed"]
+[node name="SaveDialog" type="FileDialog" parent="."]
+unique_name_in_owner = true
+initial_position = 2
+size = Vector2i(931, 500)
+dialog_hide_on_ok = true
+access = 2
+use_native_dialog = true
+
+[connection signal="id_pressed" from="Control/TopBar/MenuBar/Project" to="." method="_on_menu_id_pressed"]
+[connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]
