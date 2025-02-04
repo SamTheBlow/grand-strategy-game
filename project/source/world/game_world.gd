@@ -9,3 +9,10 @@ var provinces := Provinces.new()
 var armies_in_each_province := ArmiesInEachProvince.new(provinces, armies)
 var armies_of_each_country: ArmiesOfEachCountry
 var provinces_of_each_country: ProvincesOfEachCountry
+
+
+func _init(game: Game) -> void:
+	armies_of_each_country = ArmiesOfEachCountry.new(game.countries, armies)
+	provinces_of_each_country = (
+			ProvincesOfEachCountry.new(game.countries, provinces)
+	)

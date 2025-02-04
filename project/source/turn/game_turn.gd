@@ -27,7 +27,11 @@ var _ai_thread := AIThread.new()
 var _is_gameplay_loop_interrupted: bool = false
 
 
-func _init(game: Game, starting_turn: int, playing_player_index: int) -> void:
+func _init(
+		game: Game,
+		starting_turn: int = 1,
+		playing_player_index: int = 0
+) -> void:
 	_game = game
 	_turn = starting_turn
 	_playing_player_index = playing_player_index

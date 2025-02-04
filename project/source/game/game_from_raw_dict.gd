@@ -113,10 +113,8 @@ func load_game(json_data: Variant) -> void:
 	var game := Game.new()
 
 	# Rules
-	var rules_dict: Dictionary = {}
 	if ParseUtils.dictionary_has_dictionary(json_dict, RULES_KEY):
-		rules_dict = json_dict[RULES_KEY]
-	game.rules = RulesFromRawDict.new().result(rules_dict)
+		game.rules = RulesFromRawDict.new().result(json_dict[RULES_KEY])
 
 	# RNG
 	# 4.0 Backwards compatibility: can't require RNG to be in the save data.
@@ -153,9 +151,7 @@ func load_game(json_data: Variant) -> void:
 				turn_dict[TURN_PLAYER_INDEX_KEY]
 		)
 
-		game.setup_turn(turn, playing_player_index)
-	else:
-		game.setup_turn()
+		game.turn = GameTurn.new(game, turn, playing_player_index)
 
 	# Countries
 	for country in _loaded_countries(json_dict):
@@ -181,14 +177,8 @@ func load_game(json_data: Variant) -> void:
 		return
 
 	# World
-	var world := GameWorld2D.new()
+	var world := GameWorld2D.new(game)
 	game.world = world
-	world.armies_of_each_country = (
-			ArmiesOfEachCountry.new(game.countries, game.world.armies)
-	)
-	world.provinces_of_each_country = (
-			ProvincesOfEachCountry.new(game.countries, game.world.provinces)
-	)
 	# TASK verify & return errors
 	if not (
 			json_dict.has(WORLD_KEY)
@@ -429,8 +419,6 @@ func _load_auto_arrows(json_dict: Dictionary, game: Game) -> void:
 
 
 func _load_players(json_data: Dictionary, game: Game) -> void:
-	game.game_players = GamePlayers.new()
-
 	if not json_data.has(PLAYERS_KEY):
 		error = true
 		error_message = "No players found in file."

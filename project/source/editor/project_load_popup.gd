@@ -37,9 +37,18 @@ func buttons() -> Array[String]:
 
 func _on_button_pressed(button_id: int) -> void:
 	if button_id == 1:
-		var test := EditorProject.new()
-		test.name = "Amogus"
-		project_loaded.emit(test)
+		var project_parse_result := (
+				ProjectFromPath.loaded_from(_selected_map.map_metadata.file_path)
+		)
+		if project_parse_result.error:
+			# TODO show error to user
+			push_warning(
+					"Failed to load project: ",
+					project_parse_result.error_message
+			)
+			return
+
+		project_loaded.emit(project_parse_result.result_project)
 
 
 func _on_map_selected(map_option_node: MapOptionNode) -> void:

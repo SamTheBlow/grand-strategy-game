@@ -13,10 +13,15 @@ var _game: Game
 var _meta: MapMetadata
 
 
-func _init() -> void:
-	_game = Game.new()
-	_meta = MapMetadata.new()
-	_meta.map_name = DEFAULT_PROJECT_NAME
+func _init(game: Game = null, metadata: MapMetadata = null) -> void:
+	if game == null or metadata == null:
+		_game = Game.new()
+		_meta = MapMetadata.new()
+		_meta.map_name = DEFAULT_PROJECT_NAME
+		return
+
+	_game = game
+	_meta = metadata
 
 
 ## Saves the project to its assigned file path.
