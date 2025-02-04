@@ -159,13 +159,6 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 
 	var game_to_raw := GameToRawDict.new()
 	game_to_raw.convert_game(game)
-	if game_to_raw.error:
-		push_error(
-				"Failed to convert game into raw data: ",
-				game_to_raw.error_message
-		)
-		chat.send_system_message("Failed to send the game to other players.")
-		return
 
 	if multiplayer_id == -1:
 		_receive_new_game.rpc(game_to_raw.result)

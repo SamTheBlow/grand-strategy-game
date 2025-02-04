@@ -25,11 +25,6 @@ func save_game(game: Game, file_path: String) -> void:
 
 	var game_to_raw := GameToRawDict.new()
 	game_to_raw.convert_game(game)
-	if game_to_raw.error:
-		error = true
-		error_message = game_to_raw.error_message
-		return
-
 	file_access.store_string(JSON.stringify(game_to_raw.result, "\t"))
 	file_access.close()
 	error = false

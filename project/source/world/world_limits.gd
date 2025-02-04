@@ -2,11 +2,18 @@ class_name WorldLimits
 ## The limits of a 2D world map.
 ##
 ## See also: [GameWorld2D]
-# Pretty much just a Rect2i.
-# Currently, this class does not do anything that Rect2i can't do.
-# But maybe it will in the future.
 
-var _limits: Rect2i = Rect2i(0, 0, 10_000_000, 10_000_000)
+const DEFAULT_TOP: int = 0
+const DEFAULT_BOTTOM: int = 10_000
+const DEFAULT_LEFT: int = 0
+const DEFAULT_RIGHT: int = 10_000
+
+var _limits := Rect2i(
+		DEFAULT_LEFT,
+		DEFAULT_TOP,
+		DEFAULT_RIGHT - DEFAULT_LEFT,
+		DEFAULT_BOTTOM - DEFAULT_TOP
+)
 
 
 func limit_top() -> int:
