@@ -6,8 +6,10 @@ extends Resource
 
 signal money_changed(new_amount: int)
 
+const DEFAULT_COLOR := Color.WHITE
+
 @export var country_name: String = ""
-@export var color: Color = Color.WHITE
+@export var color: Color = DEFAULT_COLOR
 
 ## The unique id assigned to this country.
 ## Each country has its own id. Useful for saving/loading, networking, etc.

@@ -2,7 +2,7 @@ class_name ProjectFromPath
 ## Loads a project from given file path. This includes a game and its metadata.
 
 
-static func loaded_from(file_path: String) -> ProjectParseResult:
+static func loaded_from(file_path: String) -> ParseResult:
 	# Load the file
 	var file_json := FileJSON.new()
 	file_json.load_json(file_path)
@@ -13,29 +13,30 @@ static func loaded_from(file_path: String) -> ProjectParseResult:
 		return ResultError.new("JSON data is not a dictionary.")
 
 	# Load the game using the file data
-	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(file_json.result)
+	var game_from_raw: GameFromRaw.ParseResult = (
+			GameFromRaw.parsed_from(file_json.result)
+	)
 	if game_from_raw.error:
 		return ResultError.new(game_from_raw.error_message)
 
 	# Load the metadata using the file data
 	var metadata := MapMetadata.from_dict(file_json.result)
 
-	return ResultSuccess.new(game_from_raw.result, metadata)
+	return ResultSuccess.new(game_from_raw.result_game, metadata)
 
 
-class ProjectParseResult:
+class ParseResult:
 	var error: bool
 	var error_message: String
 	var result_project: EditorProject
 
 
-class ResultError extends ProjectParseResult:
+class ResultError extends ParseResult:
 	func _init(error_message_: String) -> void:
 		error = true
 		error_message = error_message_
 
 
-class ResultSuccess extends ProjectParseResult:
+class ResultSuccess extends ParseResult:
 	func _init(game: Game, metadata: MapMetadata) -> void:
 		result_project = EditorProject.new(game, metadata)

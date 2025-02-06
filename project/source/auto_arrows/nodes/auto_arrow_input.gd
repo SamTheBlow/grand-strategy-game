@@ -35,7 +35,10 @@ func _receive_add_auto_arrow(country_id: int, arrow_data: Dictionary) -> void:
 
 	# Requested accepted
 	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
+	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, game)
+	if auto_arrow == null:
+		push_warning("Received invalid autoarrow data.")
+		return
 	_add_auto_arrow(country, auto_arrow)
 #endregion
 
@@ -68,7 +71,10 @@ func _receive_remove_auto_arrow(
 
 	# Requested accepted
 	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromDict.new().result(game, arrow_data)
+	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, game)
+	if auto_arrow == null:
+		push_warning("Received invalid autoarrow data.")
+		return
 	_remove_auto_arrow(country, auto_arrow)
 #endregion
 

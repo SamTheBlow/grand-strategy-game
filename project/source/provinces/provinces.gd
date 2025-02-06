@@ -40,6 +40,12 @@ func list() -> Array[Province]:
 	return _list.duplicate()
 
 
+## Resets all internal data.
+func reset() -> void:
+	_list = []
+	_unique_id_system = UniqueIdSystem.new()
+
+
 ## Returns the list of all provinces representing given [Country]'s frontline.
 ## Provinces in the list are not necessarily under control of given country.
 func provinces_on_frontline(country: Country) -> Array[Province]:

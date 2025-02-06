@@ -71,7 +71,6 @@ static func from_type(personality_type: int) -> AIPersonality:
 		Type.ACCEPTS_EVERYTHING:
 			return AIAcceptsEverything.new()
 		_:
-			push_error("Unrecognized AI personality type.")
 			return null
 
 

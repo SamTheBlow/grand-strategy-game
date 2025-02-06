@@ -39,13 +39,7 @@ func apply(input_json: Variant, generation_settings: GameRules) -> void:
 	# Rules
 	# For now, let's just replace them with the given game rules.
 	# This might be a bad idea but right now I can't think of a reason why.
-	output_json["rules"] = RulesToRawDict.new().result(generation_settings)
-	#if ParseUtils.dictionary_has_dictionary(
-	#		input_json_dict, GameFromRawDict.RULES_KEY
-	#):
-	#	output_json["rules"] = (
-	#			input_json_dict[GameFromRawDict.RULES_KEY].duplicate()
-	#	)
+	output_json["rules"] = RulesToRawDict.parsed_from(generation_settings)
 
 	# Players and countries
 	var players_data: Array = []
@@ -373,34 +367,34 @@ func _add_starting_armies(
 
 	var already_supplied_country_ids: Array[int] = []
 	var provinces_array := (
-			world_data[GameFromRawDict.WORLD_PROVINCES_KEY] as Array
+			world_data[WorldFromRaw.WORLD_PROVINCES_KEY] as Array
 	)
 	for province_data: Variant in provinces_array:
 		var province_dict := province_data as Dictionary
 		if not ParseUtils.dictionary_has_number(
-				province_dict, GameFromRawDict.PROVINCE_OWNER_ID_KEY
+				province_dict, ProvincesFromRaw.PROVINCE_OWNER_ID_KEY
 		):
 			continue
 		var owner_id: int = ParseUtils.dictionary_int(
-				province_dict, GameFromRawDict.PROVINCE_OWNER_ID_KEY
+				province_dict, ProvincesFromRaw.PROVINCE_OWNER_ID_KEY
 		)
 		if owner_id == -1 or owner_id in already_supplied_country_ids:
 			continue
 
 		var army_id: int = already_supplied_country_ids.size() + 1
 		var province_id: int = ParseUtils.dictionary_int(
-				province_dict, GameFromRawDict.PROVINCE_ID_KEY
+				province_dict, ProvincesFromRaw.PROVINCE_ID_KEY
 		)
 
 		army_array.append({
-			GameFromRawDict.ARMY_ID_KEY: army_id,
-			GameFromRawDict.ARMY_SIZE_KEY: army_size,
-			GameFromRawDict.ARMY_OWNER_ID_KEY: owner_id,
-			GameFromRawDict.ARMY_PROVINCE_ID_KEY: province_id,
+			ArmiesFromRaw.ARMY_ID_KEY: army_id,
+			ArmiesFromRaw.ARMY_SIZE_KEY: army_size,
+			ArmiesFromRaw.ARMY_OWNER_ID_KEY: owner_id,
+			ArmiesFromRaw.ARMY_PROVINCE_ID_KEY: province_id,
 		})
 		already_supplied_country_ids.append(owner_id)
 
-	world_data.merge({GameFromRawDict.WORLD_ARMIES_KEY: army_array}, true)
+	world_data.merge({ WorldFromRaw.WORLD_ARMIES_KEY: army_array }, true)
 
 
 func _add_fortress(province_data: Dictionary) -> void:

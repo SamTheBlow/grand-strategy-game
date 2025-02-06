@@ -3,7 +3,9 @@ class_name GameWorld
 ##
 ## Extend this class to provide more features, i.e. a 2D map, a 3D map, etc.
 
+## Do not overwrite!
 var armies := Armies.new()
+## Do not overwrite!
 var provinces := Provinces.new()
 
 var armies_in_each_province := ArmiesInEachProvince.new(provinces, armies)

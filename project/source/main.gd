@@ -171,8 +171,9 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 ## until we've received everything else before we start the game.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_game(game_data: Dictionary) -> void:
-	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(game_data)
+	var game_from_raw: GameFromRaw.ParseResult = (
+			GameFromRaw.parsed_from(game_data)
+	)
 
 	if game_from_raw.error:
 		push_warning(
@@ -184,10 +185,10 @@ func _receive_new_game(game_data: Dictionary) -> void:
 
 	# Make sure everything is done synchronizing (e.g. players, chat).
 	if sync_check.is_sync_finished():
-		play_game(game_from_raw.result)
+		play_game(game_from_raw.result_game)
 	else:
 		sync_check.sync_finished.connect(
-				_on_sync_finished.bind(game_from_raw.result)
+				_on_sync_finished.bind(game_from_raw.result_game)
 		)
 #endregion
 

@@ -29,12 +29,13 @@ func load_game(file_path: String) -> void:
 		return
 
 	# Load the game using the file data
-	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(file_json.result)
+	var game_from_raw: GameFromRaw.ParseResult = (
+			GameFromRaw.parsed_from(file_json.result)
+	)
 	if game_from_raw.error:
 		error = true
 		error_message = game_from_raw.error_message
 		return
 
 	error = false
-	result = game_from_raw.result
+	result = game_from_raw.result_game

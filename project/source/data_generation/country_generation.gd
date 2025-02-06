@@ -14,13 +14,11 @@ func apply(raw_data: Variant, number_of_countries: int) -> void:
 		random_color.b = randf()
 
 		var country_dict: Dictionary = {
-			GameFromRawDict.COUNTRY_ID_KEY: i,
-			GameFromRawDict.COUNTRY_NAME_KEY: "Country " + str(i + 1),
-			GameFromRawDict.COUNTRY_COLOR_KEY: random_color.to_html(false),
+			CountriesFromRaw.COUNTRY_ID_KEY: i,
+			CountriesFromRaw.COUNTRY_NAME_KEY: "Country " + str(i + 1),
+			CountriesFromRaw.COUNTRY_COLOR_KEY: random_color.to_html(false),
 		}
 		countries_array.append(country_dict)
 
-	var merge_dict: Dictionary = {
-		GameFromRawDict.COUNTRIES_KEY: countries_array
-	}
+	var merge_dict: Dictionary = { GameFromRaw.COUNTRIES_KEY: countries_array }
 	(raw_data as Dictionary).merge(merge_dict, true)

@@ -1,5 +1,11 @@
 class_name GameNotificationsFromRaw
-## Converts given raw data into a [GameNotifications] object.
+## Converts raw data into a [GameNotifications].
+##
+## This operation always succeeds.
+## Ignores unrecognized data.
+## When data is invalid, uses the default value instead.
+##
+## See also: [GameNotificationsToRaw]
 
 const ID_KEY: String = "id"
 const CREATION_TURN_KEY: String = "creation_turn"
@@ -14,90 +20,67 @@ const TYPE_PERFORMED_ACTION: String = "ACTION PERFORMED"
 const SENDER_COUNTRY_ID_KEY: String = "sender_country_id"
 const DIPLOMACY_ACTION_ID_KEY: String = "diplomacy_action_id"
 
-var error: bool = false
-var error_message: String = ""
-var result: GameNotifications
 
-
-func apply(game: Game, country: Country, data: Variant) -> void:
-	error = false
-	error_message = ""
-
-	if not data is Array:
-		error = true
-		error_message = "Notification list is not an array."
-		return
-	var data_array := data as Array
-
-	result = GameNotifications.new()
-
-	for data_element: Variant in data_array:
-		if not data_element is Dictionary:
-			error = true
-			error_message = "Notification data is not a dictionary."
-			result = null
-			return
-		var data_dict := data_element as Dictionary
-
-		_game_notification_from_dict(game, country, data_dict)
-		if error:
-			result = null
-			return
-
-
-func _game_notification_from_dict(
-		game: Game, recipient_country: Country, data: Dictionary
+static func parse_using(
+		raw_data: Variant, game: Game, country: Country
 ) -> void:
-	# Notification ID (mandatory)
-	if not ParseUtils.dictionary_has_number(data, ID_KEY):
-		error = true
-		error_message = "Game notification data doesn't have an id."
-		return
-	var id: int = ParseUtils.dictionary_int(data, ID_KEY)
+	country.notifications = GameNotifications.new()
 
-	# Verify that the id is valid and available.
-	# If not, then the entire data is invalid.
-	if not result.id_system().is_id_available(id):
-		error = true
-		error_message = (
-				"Found an invalid GameNotification id."
-				+ " Perhaps another notification has the same id?"
-				+ " (id: " + str(id) + ")"
-		)
+	if raw_data is not Array:
+		return
+	var raw_array: Array = raw_data
+
+	for notification_data: Variant in raw_array:
+		_parse_game_notification(notification_data, game, country)
+
+
+## This operation may fail, in which case it has no effect.
+static func _parse_game_notification(
+		raw_data: Variant, game: Game, recipient_country: Country
+) -> void:
+	# Fails if the raw data isn't a dictionary
+	if raw_data is not Dictionary:
+		return
+	var raw_dict: Dictionary = raw_data
+
+	# Notification id (mandatory)
+	if not ParseUtils.dictionary_has_number(raw_dict, ID_KEY):
+		return
+	var id: int = ParseUtils.dictionary_int(raw_dict, ID_KEY)
+
+	# The id must be valid and available.
+	if not recipient_country.notifications.id_system().is_id_available(id):
 		return
 
+	# Creation turn
 	var creation_turn: int = game.turn.current_turn()
-	if ParseUtils.dictionary_has_number(data, CREATION_TURN_KEY):
-		creation_turn = ParseUtils.dictionary_int(data, CREATION_TURN_KEY)
+	if ParseUtils.dictionary_has_number(raw_dict, CREATION_TURN_KEY):
+		creation_turn = ParseUtils.dictionary_int(raw_dict, CREATION_TURN_KEY)
 
-	var turns_before_dismiss: int = (
-			GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
-	)
-	if ParseUtils.dictionary_has_number(data, TURNS_BEFORE_DISMISS_KEY):
+	# Turns before dismiss
+	var turns_before_dismiss: int = GameNotification.DEFAULT_TURNS_BEFORE_DISMISS
+	if ParseUtils.dictionary_has_number(raw_dict, TURNS_BEFORE_DISMISS_KEY):
 		turns_before_dismiss = (
-				ParseUtils.dictionary_int(data, TURNS_BEFORE_DISMISS_KEY)
+				ParseUtils.dictionary_int(raw_dict, TURNS_BEFORE_DISMISS_KEY)
 		)
 
+	# Was seen this turn
 	var was_seen_this_turn: bool = false
-	if ParseUtils.dictionary_has_bool(data, WAS_SEEN_THIS_TURN_KEY):
-		was_seen_this_turn = data[WAS_SEEN_THIS_TURN_KEY]
+	if ParseUtils.dictionary_has_bool(raw_dict, WAS_SEEN_THIS_TURN_KEY):
+		was_seen_this_turn = raw_dict[WAS_SEEN_THIS_TURN_KEY]
 
 	var new_notification: GameNotification
-	var type: Variant = data[TYPE_KEY] if data.has(TYPE_KEY) else null
+	var type: Variant = raw_dict[TYPE_KEY] if raw_dict.has(TYPE_KEY) else null
 	match type:
 		TYPE_OFFER:
 			var action_definition: DiplomacyActionDefinition = (
-					_action_definition(game, data)
+					_action_definition(raw_dict, game)
 			)
 			if action_definition == null:
-				error = true
-				error_message = "Action definition is null."
 				return
 
-			var sender_country: Country = _sender_country(game, data)
+			var sender_country: Country = _sender_country(raw_dict, game)
 			if sender_country == null:
-				error = true
-				error_message = "Sender country is null."
 				return
 
 			new_notification = GameNotificationOffer.new(
@@ -110,19 +93,14 @@ func _game_notification_from_dict(
 					was_seen_this_turn,
 			)
 		TYPE_OFFER_ACCEPTED:
-			# TODO DRY. Too much copy/paste here
 			var action_definition: DiplomacyActionDefinition = (
-					_action_definition(game, data)
+					_action_definition(raw_dict, game)
 			)
 			if action_definition == null:
-				error = true
-				error_message = "Action definition is null."
 				return
 
-			var sender_country: Country = _sender_country(game, data)
+			var sender_country: Country = _sender_country(raw_dict, game)
 			if sender_country == null:
-				error = true
-				error_message = "Sender country is null."
 				return
 
 			new_notification = GameNotificationOfferAccepted.new(
@@ -136,17 +114,13 @@ func _game_notification_from_dict(
 			)
 		TYPE_PERFORMED_ACTION:
 			var action_definition: DiplomacyActionDefinition = (
-					_action_definition(game, data)
+					_action_definition(raw_dict, game)
 			)
 			if action_definition == null:
-				error = true
-				error_message = "Action definition is null."
 				return
 
-			var sender_country: Country = _sender_country(game, data)
+			var sender_country: Country = _sender_country(raw_dict, game)
 			if sender_country == null:
-				error = true
-				error_message = "Sender country is null."
 				return
 
 			new_notification = GameNotificationPerformedAction.new(
@@ -167,50 +141,30 @@ func _game_notification_from_dict(
 					was_seen_this_turn,
 			)
 
-	result.add(new_notification, id)
+	recipient_country.notifications.add(new_notification, id)
 
 
-func _action_definition(
-		game: Game, data: Dictionary
+## May fail and return null.
+static func _action_definition(
+		raw_dict: Dictionary, game: Game
 ) -> DiplomacyActionDefinition:
 	var output: DiplomacyActionDefinition
 
-	if ParseUtils.dictionary_has_number(data, DIPLOMACY_ACTION_ID_KEY):
+	if ParseUtils.dictionary_has_number(raw_dict, DIPLOMACY_ACTION_ID_KEY):
 		var action_id: int = (
-				ParseUtils.dictionary_int(data, DIPLOMACY_ACTION_ID_KEY)
+				ParseUtils.dictionary_int(raw_dict, DIPLOMACY_ACTION_ID_KEY)
 		)
 		output = game.rules.diplomatic_actions.action_from_id(action_id)
 
-	if output == null:
-		error = true
-		error_message = (
-				"Game notification data doesn't have a valid"
-				+ " diplomacy action definition."
-		)
 	return output
 
 
-func _sender_country(game: Game, data: Dictionary) -> Country:
-	if not ParseUtils.dictionary_has_number(data, SENDER_COUNTRY_ID_KEY):
-		error = true
-		error_message = (
-				"Game notification data doesn't contain a sender country id."
-		)
+## May fail and return null.
+static func _sender_country(raw_dict: Dictionary, game: Game) -> Country:
+	if not ParseUtils.dictionary_has_number(raw_dict, SENDER_COUNTRY_ID_KEY):
 		return null
 	var sender_country_id: int = (
-			ParseUtils.dictionary_int(data, SENDER_COUNTRY_ID_KEY)
+			ParseUtils.dictionary_int(raw_dict, SENDER_COUNTRY_ID_KEY)
 	)
 
-	var sender_country: Country = (
-			game.countries.country_from_id(sender_country_id)
-	)
-	if sender_country == null or sender_country_id < 0:
-		error = true
-		error_message = (
-				"Game notification data has an invalid sender country id. "
-				+ "(Id: " + str(sender_country_id)
-				+ ") Perhaps there isn't a country with that id."
-		)
-		return null
-
-	return sender_country
+	return game.countries.country_from_id(sender_country_id)

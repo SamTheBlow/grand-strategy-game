@@ -1,10 +1,12 @@
 class_name RulesToRawDict
-## Converts a [GameRules] resource into raw data.
+## Converts a [GameRules] into a raw [Dictionary].
 ##
-## See also: [RulesFromRawDict]
+## This operation always succeeds.
+##
+## See also: [RulesFromRaw]
 
 
-func result(game_rules: GameRules) -> Dictionary:
+static func parsed_from(game_rules: GameRules) -> Dictionary:
 	var default_rules := GameRules.new()
 
 	var rules_dict: Dictionary = {}

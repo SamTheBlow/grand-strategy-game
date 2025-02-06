@@ -5,9 +5,6 @@ class_name Province
 ##
 ## This class has many responsibilities, as many game mechanics involve
 ## their presence on a province: [Population], [Building], [IncomeMoney].
-##
-## See [method GameFromRawDict._load_province]
-## to see how to initialize a new province.
 
 signal owner_changed(this: Province)
 

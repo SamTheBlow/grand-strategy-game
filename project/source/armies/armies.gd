@@ -53,6 +53,12 @@ func list() -> Array[Army]:
 	return _list.duplicate()
 
 
+## Resets all internal data.
+func reset() -> void:
+	_list = []
+	_unique_id_system = UniqueIdSystem.new()
+
+
 ## Merges given armies when applicable.
 ##
 ## When more than one [Army] is controlled by the same [Country]

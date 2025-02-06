@@ -29,24 +29,24 @@ func apply(
 		)
 
 	var world_dict: Dictionary = {
-		GameFromRawDict.WORLD_LIMITS_KEY: {
-			GameFromRawDict.WORLD_LIMIT_BOTTOM_KEY: roundi(
+		WorldFromRaw.WORLD_LIMITS_KEY: {
+			WorldLimitsFromRaw.WORLD_LIMIT_BOTTOM_KEY: roundi(
 					world_limits_margin * 2.0
 					+ square_length * grid_height
 					+ square_spacing * (grid_height - 1)
 			),
-			GameFromRawDict.WORLD_LIMIT_LEFT_KEY: 0,
-			GameFromRawDict.WORLD_LIMIT_RIGHT_KEY: roundi(
+			WorldLimitsFromRaw.WORLD_LIMIT_LEFT_KEY: 0,
+			WorldLimitsFromRaw.WORLD_LIMIT_RIGHT_KEY: roundi(
 					world_limits_margin * 2.0
 					+ square_length * grid_width
 					+ square_spacing * (grid_width - 1)
 			),
-			GameFromRawDict.WORLD_LIMIT_TOP_KEY: 0,
+			WorldLimitsFromRaw.WORLD_LIMIT_TOP_KEY: 0,
 		},
-		GameFromRawDict.WORLD_PROVINCES_KEY: provinces_array,
+		WorldFromRaw.WORLD_PROVINCES_KEY: provinces_array,
 	}
 
-	var merge_dict: Dictionary = {GameFromRawDict.WORLD_KEY: world_dict}
+	var merge_dict: Dictionary = { GameFromRaw.WORLD_KEY: world_dict }
 	(raw_data as Dictionary).merge(merge_dict, true)
 
 
@@ -107,21 +107,21 @@ func _provinces_array_with_noise(
 			]
 
 			var province_dict: Dictionary = {
-				GameFromRawDict.PROVINCE_ID_KEY: province_id,
-				GameFromRawDict.PROVINCE_LINKS_KEY: province_links,
-				GameFromRawDict.PROVINCE_POSITION_KEY: {
-					GameFromRawDict.PROVINCE_POS_X_KEY: province_pos_x,
-					GameFromRawDict.PROVINCE_POS_Y_KEY: province_pos_y,
+				ProvincesFromRaw.PROVINCE_ID_KEY: province_id,
+				ProvincesFromRaw.PROVINCE_LINKS_KEY: province_links,
+				ProvincesFromRaw.PROVINCE_POSITION_KEY: {
+					ProvincesFromRaw.PROVINCE_POS_X_KEY: province_pos_x,
+					ProvincesFromRaw.PROVINCE_POS_Y_KEY: province_pos_y,
 				},
-				GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_X_KEY: (
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_X_KEY: (
 						province_pos_x + square_length * 0.5
 				),
-				GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_Y_KEY: (
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_Y_KEY: (
 						province_pos_y + square_length * 0.5
 				),
-				GameFromRawDict.PROVINCE_SHAPE_KEY: {
-					GameFromRawDict.PROVINCE_SHAPE_X_KEY: province_shape_x,
-					GameFromRawDict.PROVINCE_SHAPE_Y_KEY: province_shape_y,
+				ProvincesFromRaw.PROVINCE_SHAPE_KEY: {
+					ProvincesFromRaw.PROVINCE_SHAPE_X_KEY: province_shape_x,
+					ProvincesFromRaw.PROVINCE_SHAPE_Y_KEY: province_shape_y,
 				},
 			}
 
@@ -169,21 +169,21 @@ func _provinces_array_without_noise(
 			]
 
 			var province_dict: Dictionary = {
-				GameFromRawDict.PROVINCE_ID_KEY: province_id,
-				GameFromRawDict.PROVINCE_LINKS_KEY: province_links,
-				GameFromRawDict.PROVINCE_POSITION_KEY: {
-					GameFromRawDict.PROVINCE_POS_X_KEY: province_pos_x,
-					GameFromRawDict.PROVINCE_POS_Y_KEY: province_pos_y,
+				ProvincesFromRaw.PROVINCE_ID_KEY: province_id,
+				ProvincesFromRaw.PROVINCE_LINKS_KEY: province_links,
+				ProvincesFromRaw.PROVINCE_POSITION_KEY: {
+					ProvincesFromRaw.PROVINCE_POS_X_KEY: province_pos_x,
+					ProvincesFromRaw.PROVINCE_POS_Y_KEY: province_pos_y,
 				},
-				GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_X_KEY: (
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_X_KEY: (
 						province_pos_x + square_length * 0.5
 				),
-				GameFromRawDict.PROVINCE_POSITION_ARMY_HOST_Y_KEY: (
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_Y_KEY: (
 						province_pos_y + square_length * 0.5
 				),
-				GameFromRawDict.PROVINCE_SHAPE_KEY: {
-					GameFromRawDict.PROVINCE_SHAPE_X_KEY: province_shape_x,
-					GameFromRawDict.PROVINCE_SHAPE_Y_KEY: province_shape_y,
+				ProvincesFromRaw.PROVINCE_SHAPE_KEY: {
+					ProvincesFromRaw.PROVINCE_SHAPE_X_KEY: province_shape_x,
+					ProvincesFromRaw.PROVINCE_SHAPE_Y_KEY: province_shape_y,
 				},
 			}
 

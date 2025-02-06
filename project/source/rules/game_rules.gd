@@ -699,7 +699,7 @@ func rule_with_name(rule_name: String) -> RuleItem:
 
 ## Returns a new deep copy of the game rules.
 func copy() -> GameRules:
-	return RulesFromRawDict.new().result(RulesToRawDict.new().result(self))
+	return RulesFromRaw.parsed_from(RulesToRawDict.parsed_from(self))
 
 
 ## Permanently prevents any of the rules from changing.

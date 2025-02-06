@@ -42,8 +42,9 @@ func load_game(
 		return
 
 	# Load the game using the modified JSON data
-	var game_from_raw := GameFromRawDict.new()
-	game_from_raw.load_game(populated_save_file.result)
+	var game_from_raw: GameFromRaw.ParseResult = (
+			GameFromRaw.parsed_from(populated_save_file.result)
+	)
 	if game_from_raw.error:
 		error = true
 		error_message = game_from_raw.error_message
@@ -51,4 +52,4 @@ func load_game(
 
 	# Success!
 	error = false
-	result = game_from_raw.result
+	result = game_from_raw.result_game

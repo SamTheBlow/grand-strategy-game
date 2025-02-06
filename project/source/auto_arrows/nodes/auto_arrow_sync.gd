@@ -35,9 +35,7 @@ func _receive_auto_arrow_added(
 		push_warning("Received an invalid country id from the server.")
 		return
 
-	var auto_arrow: AutoArrow = (
-			AutoArrowFromDict.new().result(_game, arrow_data)
-	)
+	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, _game)
 	if auto_arrow == null:
 		push_warning("Received an invalid AutoArrow from the server.")
 		return
@@ -55,9 +53,7 @@ func _receive_auto_arrow_removed(
 		push_warning("Received an invalid country id from the server.")
 		return
 
-	var auto_arrow: AutoArrow = (
-			AutoArrowFromDict.new().result(_game, arrow_data)
-	)
+	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, _game)
 	if auto_arrow == null:
 		push_warning("Received an invalid AutoArrow from the server.")
 		return

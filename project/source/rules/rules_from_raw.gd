@@ -1,18 +1,24 @@
-class_name RulesFromRawDict
-## Converts raw data into a new [GameRules] resource.
+class_name RulesFromRaw
+## Converts raw data into a [GameRules].
+##
+## This operation always succeeds.
+## Ignores unrecognized data.
+## When data is invalid, uses the default value instead.
 ##
 ## See also: [RulesToRawDict]
 
 
-## Note that calling this function with an empty dictionary
-## is equivalent to creating a new instance of [GameRules].
-func result(data_dict: Dictionary) -> GameRules:
+static func parsed_from(raw_data: Variant) -> GameRules:
 	var game_rules := GameRules.new()
 
-	for variant_key: Variant in data_dict.keys():
+	if raw_data is not Dictionary:
+		return game_rules
+	var raw_dict: Dictionary = raw_data
+
+	for variant_key: Variant in raw_dict.keys():
 		if variant_key is not String:
 			continue
-		var key := variant_key as String
+		var key: String = variant_key
 
 		if not key in GameRules.RULE_NAMES:
 			continue
@@ -23,12 +29,12 @@ func result(data_dict: Dictionary) -> GameRules:
 		var rule_type: int = typeof(game_rules.rule_with_name(key).get_data())
 		if rule_type == TYPE_INT:
 			rule_type = TYPE_FLOAT
-		var data_type: int = typeof(data_dict[key])
+		var data_type: int = typeof(raw_dict[key])
 		if data_type == TYPE_INT:
 			data_type = TYPE_FLOAT
 		if data_type != rule_type:
 			continue
 
-		game_rules.rule_with_name(key).set_data(data_dict[key])
+		game_rules.rule_with_name(key).set_data(raw_dict[key])
 
 	return game_rules

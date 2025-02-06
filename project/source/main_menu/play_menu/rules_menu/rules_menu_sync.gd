@@ -65,13 +65,13 @@ func _send_active_state_to_clients() -> void:
 		return
 
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc(RulesToRawDict.new().result(active_state))
+		_receive_state.rpc(RulesToRawDict.parsed_from(active_state))
 
 
 ## Updates the entire state on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_state(data: Dictionary) -> void:
-	state_changed.emit(RulesFromRawDict.new().result(data))
+	state_changed.emit(RulesFromRaw.parsed_from(data))
 
 
 ## Updates a rule on clients.
@@ -93,7 +93,7 @@ func _on_rule_changed(rule_name: String, rule_item: RuleItem) -> void:
 func _on_peer_connected(peer_id: int) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_state.rpc_id(
-				peer_id, RulesToRawDict.new().result(active_state)
+				peer_id, RulesToRawDict.parsed_from(active_state)
 		)
 
 

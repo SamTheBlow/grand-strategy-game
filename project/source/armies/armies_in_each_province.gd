@@ -8,7 +8,7 @@ class_name ArmiesInEachProvince
 ## Also, null is a valid key. It will give you the list of
 ## all armies that are not in any province.
 ## Do not manipulate this dictionary directly!
-var dictionary: Dictionary = {null: ArmiesInProvince.new()}
+var dictionary: Dictionary = { null: ArmiesInProvince.new() }
 
 
 func _init(provinces: Provinces, armies: Armies) -> void:

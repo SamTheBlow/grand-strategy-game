@@ -1,7 +1,5 @@
 class_name Game
 ## The internal state of a game.
-##
-## See also: [GameFromRawDict]
 
 signal game_started()
 signal game_over(winning_country: Country)

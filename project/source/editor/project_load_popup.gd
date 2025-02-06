@@ -37,9 +37,10 @@ func buttons() -> Array[String]:
 
 func _on_button_pressed(button_id: int) -> void:
 	if button_id == 1:
-		var project_parse_result := (
+		var project_parse_result: ProjectFromPath.ParseResult = (
 				ProjectFromPath.loaded_from(_selected_map.map_metadata.file_path)
 		)
+
 		if project_parse_result.error:
 			# TODO show error to user
 			push_warning(

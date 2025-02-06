@@ -9,24 +9,24 @@ func apply(raw_data: Variant) -> void:
 	var raw_dict := raw_data as Dictionary
 
 	if not ParseUtils.dictionary_has_array(
-			raw_dict, GameFromRawDict.COUNTRIES_KEY
+			raw_dict, GameFromRaw.COUNTRIES_KEY
 	):
-		raw_dict[GameFromRawDict.COUNTRIES_KEY] = []
-	var countries_data: Array = raw_dict[GameFromRawDict.COUNTRIES_KEY]
+		raw_dict[GameFromRaw.COUNTRIES_KEY] = []
+	var countries_data: Array = raw_dict[GameFromRaw.COUNTRIES_KEY]
 
 	if not ParseUtils.dictionary_has_dictionary(
-			raw_dict, GameFromRawDict.WORLD_KEY
+			raw_dict, GameFromRaw.WORLD_KEY
 	):
 		push_error("Country placement failed: there is no world.")
 		return
-	var world_dict: Dictionary = raw_dict[GameFromRawDict.WORLD_KEY]
+	var world_dict: Dictionary = raw_dict[GameFromRaw.WORLD_KEY]
 
 	if not ParseUtils.dictionary_has_array(
-			world_dict, GameFromRawDict.WORLD_PROVINCES_KEY
+			world_dict, WorldFromRaw.WORLD_PROVINCES_KEY
 	):
 		push_error("Country placement failed: world doesn't have provinces.")
 		return
-	var provinces_array: Array = world_dict[GameFromRawDict.WORLD_PROVINCES_KEY]
+	var provinces_array: Array = world_dict[WorldFromRaw.WORLD_PROVINCES_KEY]
 
 	# Keep track of unassigned provinces.
 	var unassigned_provinces: Array = provinces_array.duplicate()
@@ -39,7 +39,7 @@ func apply(raw_data: Variant) -> void:
 			continue
 
 		var province_dict := province_data as Dictionary
-		province_dict.erase(GameFromRawDict.PROVINCE_OWNER_ID_KEY)
+		province_dict.erase(ProvincesFromRaw.PROVINCE_OWNER_ID_KEY)
 
 	# Go through all the countries and assign
 	# each of them to an unassigned province.
@@ -52,18 +52,18 @@ func apply(raw_data: Variant) -> void:
 		var country_dict := country_data as Dictionary
 
 		if not ParseUtils.dictionary_has_number(
-				country_dict, GameFromRawDict.COUNTRY_ID_KEY
+				country_dict, CountriesFromRaw.COUNTRY_ID_KEY
 		):
 			continue
 		var country_id: int = ParseUtils.dictionary_int(
-				country_dict, GameFromRawDict.COUNTRY_ID_KEY
+				country_dict, CountriesFromRaw.COUNTRY_ID_KEY
 		)
 
 		var random_index: int = randi() % unassigned_provinces.size()
 		var random_province_dict: Dictionary = (
 				unassigned_provinces[random_index]
 		)
-		random_province_dict[GameFromRawDict.PROVINCE_OWNER_ID_KEY] = (
+		random_province_dict[ProvincesFromRaw.PROVINCE_OWNER_ID_KEY] = (
 				country_id
 		)
 		unassigned_provinces.remove_at(random_index)

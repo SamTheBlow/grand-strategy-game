@@ -6,6 +6,6 @@ func result(rng: RandomNumberGenerator) -> Dictionary:
 	# Saves the values as strings, to avoid precision loss.
 	# See [ParseUtils] for explanation.
 	return {
-		RNGFromRawDict.KEY_SEED: str(rng.seed),
-		RNGFromRawDict.KEY_STATE: str(rng.state),
+		RNGFromRaw.KEY_SEED: str(rng.seed),
+		RNGFromRaw.KEY_STATE: str(rng.state),
 	}
