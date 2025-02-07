@@ -312,6 +312,13 @@ func _preset_id() -> int:
 	return _get_data_recursive(PRESET_ID_KEY, PRESET_ID_DEFAULT, [_base_data])
 
 
+func _set_preset_id(preset_id: int) -> void:
+	if _base_data.has(PRESET_ID_KEY) and _base_data[PRESET_ID_KEY] == preset_id:
+		return
+	_base_data[PRESET_ID_KEY] = preset_id
+	preset_changed.emit(self)
+
+
 ## Returns the base data, but if a value in the base data
 ## matches a given default value, it's not included in the output.
 func _base_data_no_defaults(default_data: Dictionary) -> Dictionary:

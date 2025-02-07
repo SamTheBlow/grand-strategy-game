@@ -1,17 +1,15 @@
 class_name GameLoadGenerated
 ## Loads a [Game] from given [MapMetadata].
 ## When applicable, generates the world, countries, etc.
-## Then, populates the game data using given generation settings
-## (see [PopulatedSaveFile]).
+## Then, populates the game (see [PopulatedSaveFile]).
 
 var error: bool = true
 var error_message: String = ""
 var result: Game
 
 
-func load_game(
-		map_metadata: MapMetadata, generation_settings: GameRules
-) -> void:
+## Upon loading, overwrites the game's rules with given rules.
+func load_game(map_metadata: MapMetadata, game_rules: GameRules) -> void:
 	# Load the file
 	var file_json := FileJSON.new()
 	file_json.load_json(map_metadata.file_path)
@@ -33,23 +31,22 @@ func load_game(
 			return
 		game_generation.apply(file_json.result)
 
-	# Modify the JSON data
-	var populated_save_file := PopulatedSaveFile.new()
-	populated_save_file.apply(file_json.result, generation_settings)
-	if populated_save_file.error:
-		error = true
-		error_message = populated_save_file.error_message
-		return
-
-	# Load the game using the modified JSON data
+	# Load the game
 	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(populated_save_file.result)
+			GameFromRaw.parsed_from(file_json.result)
 	)
 	if game_from_raw.error:
 		error = true
 		error_message = game_from_raw.error_message
 		return
+	var game: Game = game_from_raw.result_game
+
+	# Overwrite the rules
+	game.rules = game_rules
+
+	# Populate the game
+	PopulatedSaveFile.apply(game)
 
 	# Success!
 	error = false
-	result = game_from_raw.result_game
+	result = game

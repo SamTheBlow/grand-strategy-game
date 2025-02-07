@@ -44,6 +44,9 @@ static func _parse_player(raw_data: Variant, game: Game) -> void:
 		return
 
 	# AI type
+	# 4.0 Backwards compatibility:
+	# When the save data doesn't contain the AI type,
+	# it must be assumed to be 0.
 	var ai_type: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, PLAYER_AI_TYPE_KEY):
 		var loaded_ai_type: int = (
