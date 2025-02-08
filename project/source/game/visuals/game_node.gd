@@ -35,6 +35,7 @@ signal exited()
 var game: Game:
 	set(value):
 		game = value
+		game.error_triggered.connect(_on_game_error)
 		game.game_over.connect(_on_game_over)
 		game.offer_accepted_icon = offer_accepted_icon
 
@@ -206,6 +207,15 @@ func _receive_add_player_and_assign(game_player_id: int) -> void:
 	_add_player_and_assign(
 			game.game_players.player_from_id(game_player_id),
 			multiplayer.get_remote_sender_id()
+	)
+
+
+func _on_game_error(error_message: String) -> void:
+	if chat == null:
+		return
+	chat.send_global_message(
+			"[color=dark_red]Fatal error: \"" + error_message + "\"\n"
+			+ "The game has stopped and cannot continue.[/color]"
 	)
 
 

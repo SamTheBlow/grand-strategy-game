@@ -15,23 +15,30 @@ var _money_changed_signal: Signal
 
 
 func _ready() -> void:
-	if not _game:
+	if _game == null:
 		push_error("No game was provided to top bar.")
 		return
 
+	_update_visibility(_game.game.turn.is_running())
+	_game.game.turn.is_running_changed.connect(_on_is_running_changed)
 	_game.game.turn.turn_changed.connect(_on_turn_changed)
-	_update_turn_label(_game.game.turn.current_turn())
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
-	_update_country(_game.game.turn.playing_player().playing_country)
 
 	# TODO bad code: private function
 	_country_button.pressed.connect(_game._on_country_button_pressed)
 
 
-func _update_country(country: Country) -> void:
-	if not country:
-		push_error("Tried to update top bar info, but country is null.")
-		return
+## Hides the top bar when the game is not running.
+func _update_visibility(is_game_running: bool) -> void:
+	visible = is_game_running
+
+	if is_game_running:
+		_update_turn_label(_game.game.turn.current_turn())
+		_update_country(_game.game.turn.playing_player())
+
+
+func _update_country(player: GamePlayer) -> void:
+	var country: Country = player.playing_country
 
 	_country_button.country = country
 	_country_name_label.text = country.country_name
@@ -51,6 +58,10 @@ func _update_turn_label(turn: int) -> void:
 	_game_turn_label.text = "Turn " + str(turn)
 
 
+func _on_is_running_changed(is_game_running: bool) -> void:
+	_update_visibility(is_game_running)
+
+
 func _on_money_changed(new_amount: int) -> void:
 	_update_money_label(new_amount)
 
@@ -60,4 +71,4 @@ func _on_turn_changed(new_turn: int) -> void:
 
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
-	_update_country(player.playing_country)
+	_update_country(player)

@@ -3,6 +3,7 @@ class_name GameTurn
 ## Each [GamePlayer] plays one at a time in order.
 ## After everyone is done playing, a new turn begins.
 
+signal is_running_changed(is_running: bool)
 ## This signal is only called once all players have played their turn.
 signal turn_changed(new_turn: int)
 ## Emitted after a player ends their turn, but before the next player's turn.
@@ -11,6 +12,14 @@ signal player_turn_ended(playing_player: GamePlayer)
 signal player_changed(new_player: GamePlayer)
 
 var _game: Game
+
+var _is_running: bool = false:
+	set(value):
+		if _is_running == value:
+			return
+		_is_running = value
+		is_running_changed.emit(_is_running)
+
 var _turn: int = 1
 
 # TODO It's probably not impossible to create a save file that
@@ -35,8 +44,12 @@ func _init(
 	_game = game
 	_turn = starting_turn
 	_playing_player_index = playing_player_index
-
 	_ai_thread.finished.connect(_on_ai_finished)
+
+
+## Returns true if the gameplay loop is currently running.
+func is_running() -> bool:
+	return _is_running
 
 
 func current_turn() -> int:
@@ -44,6 +57,7 @@ func current_turn() -> int:
 
 
 ## Returns a player: it's currently that player's turn to play.
+## Only use this while the gameplay loop is running.
 func playing_player() -> GamePlayer:
 	return _game.game_players.player_from_index(_playing_player_index)
 
@@ -56,12 +70,20 @@ func end_turn() -> void:
 	_end_player_turn()
 
 
-## Starts the gameplay loop.
+## Starts the gameplay loop, if possible.
 ## Skips spectators. When it's an AI's turn, creates a new thread for the AI
 ## and waits for the thread to be finished.
 func start() -> void:
 	if _is_gameplay_loop_interrupted:
 		return
+
+	# Cannot start with 0 players.
+	# Please verify this before calling this function.
+	if _game.game_players.size() == 0:
+		push_error("Cannot start with 0 players.")
+		return
+
+	_is_running = true
 
 	var player: GamePlayer = playing_player()
 
@@ -81,6 +103,7 @@ func start() -> void:
 # Stops the gameplay loop.
 # Useful when it's an AI only game and you want the game loop to end.
 func stop() -> void:
+	_is_running = false
 	_is_gameplay_loop_interrupted = true
 
 

@@ -1,6 +1,7 @@
 class_name Game
 ## The internal state of a game.
 
+signal error_triggered(error_message: String)
 signal game_started()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)
@@ -62,6 +63,11 @@ func _init() -> void:
 
 ## Call this when you're ready to start the game loop.
 func start() -> void:
+	# Can't start a game with 0 players.
+	if game_players.size() == 0:
+		error_triggered.emit("Cannot start a game with 0 players.")
+		return
+
 	rules.lock()
 	_setup_global_modifiers()
 
@@ -86,7 +92,7 @@ func start() -> void:
 		),
 	])
 
-	game_started.emit()
+	turn.is_running_changed.connect(_on_is_running_changed)
 	turn.start()
 
 
@@ -133,6 +139,11 @@ func _winning_country() -> Country:
 			winning_player_index = i
 
 	return pcpc.countries[winning_player_index]
+
+
+func _on_is_running_changed(is_running: bool) -> void:
+	if is_running:
+		game_started.emit()
 
 
 func _on_game_over() -> void:

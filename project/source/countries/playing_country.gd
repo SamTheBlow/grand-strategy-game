@@ -4,14 +4,20 @@ class_name PlayingCountry
 
 signal changed(country: Country)
 
-var _country: Country
+var _turn: GameTurn
+
+var _country: Country:
+	set(value):
+		if _country == value:
+			return
+		_country = value
+		changed.emit(_country)
 
 
-func _init(turn: GameTurn = null) -> void:
-	if turn == null:
-		return
-
-	_country = turn.playing_player().playing_country
+func _init(turn: GameTurn) -> void:
+	_turn = turn
+	_update_country()
+	turn.is_running_changed.connect(_on_is_running_changed)
 	turn.player_changed.connect(_on_player_changed)
 
 
@@ -20,7 +26,16 @@ func country() -> Country:
 	return _country
 
 
+func _update_country() -> void:
+	if _turn.is_running():
+		_country = _turn.playing_player().playing_country
+	else:
+		_country = null
+
+
+func _on_is_running_changed(_is_running: bool) -> void:
+	_update_country()
+
+
 func _on_player_changed(player: GamePlayer) -> void:
-	if player.playing_country != _country:
-		_country = player.playing_country
-		changed.emit(_country)
+	_country = player.playing_country
