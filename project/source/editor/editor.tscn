@@ -44,6 +44,16 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
+[node name="Editor" type="PopupMenu" parent="Control/TopBar/MenuBar"]
+unique_name_in_owner = true
+theme_override_constants/v_separation = 12
+item_count = 3
+item_0/text = "Editor Settings..."
+item_1/id = 1
+item_1/separator = true
+item_2/text = "Quit"
+item_2/id = 2
+
 [node name="Project" type="PopupMenu" parent="Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
@@ -65,7 +75,7 @@ item_7/text = "Show in File Manager"
 item_7/id = 7
 item_8/id = 8
 item_8/separator = true
-item_9/text = "Quit"
+item_9/text = "Play"
 item_9/id = 9
 
 [node name="SaveDialog" type="FileDialog" parent="."]
@@ -76,5 +86,6 @@ dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[connection signal="id_pressed" from="Control/TopBar/MenuBar/Project" to="." method="_on_menu_id_pressed"]
+[connection signal="id_pressed" from="Control/TopBar/MenuBar/Editor" to="." method="_on_editor_tab_id_pressed"]
+[connection signal="id_pressed" from="Control/TopBar/MenuBar/Project" to="." method="_on_project_tab_id_pressed"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]

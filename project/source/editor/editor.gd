@@ -4,11 +4,12 @@ extends Node
 
 signal exited()
 
+const INPUT_ACTION_QUIT_EDITOR: String = "quit_editor"
 const INPUT_ACTION_NEW_PROJECT: String = "new_project"
 const INPUT_ACTION_OPEN_PROJECT: String = "open_project"
 const INPUT_ACTION_SAVE: String = "save"
 const INPUT_ACTION_SAVE_AS: String = "save_as"
-const INPUT_ACTION_QUIT_EDITOR: String = "quit_editor"
+const INPUT_ACTION_PLAY_PROJECT: String = "play_project"
 
 ## The scene's root node must be a [GamePopup].
 @export var _popup_scene: PackedScene
@@ -24,6 +25,7 @@ var _current_project: EditorProject:
 ## An array of file paths
 var _recently_opened_projects: Array[String] = []
 
+@onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
 @onready var _save_dialog := %SaveDialog as FileDialog
 
@@ -65,6 +67,9 @@ func _update_menu_visibility() -> void:
 	# "Save As..."
 	_project_tab.set_item_disabled(5, _current_project == null)
 
+	# "Play"
+	_project_tab.set_item_disabled(9, _current_project == null)
+
 	_update_menu_visibility_after_save()
 
 
@@ -82,6 +87,10 @@ func _set_menu_shortcuts() -> void:
 	if not is_node_ready():
 		return
 
+	var shortcut_quit := Shortcut.new()
+	shortcut_quit.events = InputMap.action_get_events(INPUT_ACTION_QUIT_EDITOR)
+	_editor_tab.set_item_shortcut(2, shortcut_quit)
+
 	var shortcut_new := Shortcut.new()
 	shortcut_new.events = InputMap.action_get_events(INPUT_ACTION_NEW_PROJECT)
 	_project_tab.set_item_shortcut(0, shortcut_new)
@@ -98,9 +107,14 @@ func _set_menu_shortcuts() -> void:
 	shortcut_save_as.events = InputMap.action_get_events(INPUT_ACTION_SAVE_AS)
 	_project_tab.set_item_shortcut(5, shortcut_save_as)
 
-	var shortcut_quit := Shortcut.new()
-	shortcut_quit.events = InputMap.action_get_events(INPUT_ACTION_QUIT_EDITOR)
-	_project_tab.set_item_shortcut(9, shortcut_quit)
+	var shortcut_play := Shortcut.new()
+	shortcut_play.events = InputMap.action_get_events(INPUT_ACTION_PLAY_PROJECT)
+	_project_tab.set_item_shortcut(9, shortcut_play)
+
+
+func _open_editor_settings() -> void:
+	# TODO implement
+	pass
 
 
 func _open_new_project() -> void:
@@ -126,8 +140,31 @@ func _save_project() -> void:
 		_save_dialog.show()
 
 
-## Called when the user clicks on one of the options in the menu bar.
-func _on_menu_id_pressed(id: int) -> void:
+func _play() -> void:
+	# TODO implement
+	pass
+
+
+## Called when the user clicks on one of the options
+## in the menu bar's "Editor" tab.
+func _on_editor_tab_id_pressed(id: int) -> void:
+	match id:
+		0:
+			# "Editor Settings..."
+			_open_editor_settings()
+		2:
+			# "Quit"
+			exited.emit()
+		1:
+			# Separators & sub menus
+			pass
+		_:
+			push_error("Unrecognized menu id.")
+
+
+## Called when the user clicks on one of the options
+## in the menu bar's "Project" tab.
+func _on_project_tab_id_pressed(id: int) -> void:
 	match id:
 		0:
 			# "New Project"
@@ -145,8 +182,8 @@ func _on_menu_id_pressed(id: int) -> void:
 			# "Show in File Manager"
 			_current_project.show_in_file_manager()
 		9:
-			# "Quit"
-			exited.emit()
+			# "Play"
+			_play()
 		2, 3, 6, 8:
 			# Separators & sub menus
 			pass
