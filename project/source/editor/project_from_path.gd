@@ -19,8 +19,11 @@ static func loaded_from(file_path: String) -> ParseResult:
 	if game_from_raw.error:
 		return ResultError.new(game_from_raw.error_message)
 
-	# Load the metadata using the file data
-	var metadata := MapMetadata.from_dict(file_json.result)
+	# Load the metadata
+	var metadata: MapMetadata = MapMetadata.from_file_path(file_path)
+	if metadata == null:
+		metadata = MapMetadata.new()
+		metadata.file_path = file_path
 
 	return ResultSuccess.new(game_from_raw.result_game, metadata)
 

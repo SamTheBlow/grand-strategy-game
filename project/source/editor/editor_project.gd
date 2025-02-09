@@ -39,11 +39,16 @@ func save_as(file_path: String) -> void:
 	save()
 
 
+## In exported projects, file paths that start with "res://" are not valid.
 func has_valid_file_path() -> bool:
+	if (not OS.has_feature("editor")) and _meta.file_path.begins_with("res://"):
+		return false
 	return FileAccess.file_exists(_meta.file_path)
 
 
 ## No effect if the project doesn't have a valid file path.
 func show_in_file_manager() -> void:
 	if has_valid_file_path():
-		OS.shell_show_in_file_manager(_meta.file_path)
+		OS.shell_show_in_file_manager(
+				ProjectSettings.globalize_path(_meta.file_path)
+		)

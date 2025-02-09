@@ -75,7 +75,7 @@ func _update_menu_visibility() -> void:
 
 ## Only updates the visibility of menu options that involve saving
 func _update_menu_visibility_after_save() -> void:
-	# "Show in file manager"
+	# "Show in File Manager"
 	_project_tab.set_item_disabled(
 			7,
 			_current_project == null
