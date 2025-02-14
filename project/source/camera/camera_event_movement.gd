@@ -23,8 +23,7 @@ func _ready() -> void:
 		if not _game.is_node_ready():
 			await _game.ready
 
-		# TODO bad code: private member access
-		_camera.move_to(_camera.world_limits._limits.get_center())
+		_camera.move_to_world_center()
 
 	_game.game.turn.player_changed.connect(_on_turn_player_changed)
 	_on_turn_player_changed(_game.game.turn.playing_player())

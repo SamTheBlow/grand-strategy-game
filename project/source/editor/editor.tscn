@@ -1,28 +1,62 @@
-[gd_scene load_steps=4 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=7 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
 [ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/editor/project_load_popup.tscn" id="3_kcuw7"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_gofj8"]
+[ext_resource type="Script" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
+[ext_resource type="PackedScene" uid="uid://clxlw7vsp2qgj" path="res://source/camera/camera.tscn" id="5_abwba"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
 _popup_scene = ExtResource("2_isggd")
 _project_load_popup_scene = ExtResource("3_kcuw7")
 
-[node name="Control" type="Control" parent="."]
+[node name="WorldLayer" type="CanvasLayer" parent="."]
+follow_viewport_enabled = true
+
+[node name="WorldSetup" type="Node" parent="WorldLayer" node_paths=PackedStringArray("_container", "_camera")]
+unique_name_in_owner = true
+script = ExtResource("4_l7l2i")
+_container = NodePath("../WorldContainer")
+_camera = NodePath("../../Camera")
+_world_scene = ExtResource("4_gofj8")
+
+[node name="WorldContainer" type="Node2D" parent="WorldLayer"]
+
+[node name="Camera" parent="." instance=ExtResource("5_abwba")]
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="TopBarContainer" type="SubViewportContainer" parent="UILayer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="UILayer/TopBarContainer"]
+transparent_bg = true
+size = Vector2i(1152, 648)
+
+[node name="Control" type="Control" parent="UILayer/TopBarContainer/SubViewport"]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 
-[node name="TopBar" type="Control" parent="Control"]
+[node name="TopBar" type="Control" parent="UILayer/TopBarContainer/SubViewport/Control"]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.075
+mouse_filter = 1
 
-[node name="ColorRect" type="ColorRect" parent="Control/TopBar"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,20 +65,16 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="MenuBar" type="MenuBar" parent="Control/TopBar"]
+[node name="MenuBar" type="MenuBar" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar"]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
 anchor_right = 0.25
 anchor_bottom = 0.5
 offset_left = 8.0
-offset_top = 8.0
-offset_right = -8.0
-offset_bottom = -8.0
-grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Editor" type="PopupMenu" parent="Control/TopBar/MenuBar"]
+[node name="Editor" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 3
@@ -54,7 +84,7 @@ item_1/separator = true
 item_2/text = "Quit"
 item_2/id = 2
 
-[node name="Project" type="PopupMenu" parent="Control/TopBar/MenuBar"]
+[node name="Project" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 10
@@ -78,6 +108,16 @@ item_8/separator = true
 item_9/text = "Play"
 item_9/id = 9
 
+[node name="PopupContainer" type="Control" parent="UILayer"]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
 [node name="SaveDialog" type="FileDialog" parent="."]
 unique_name_in_owner = true
 initial_position = 2
@@ -86,6 +126,6 @@ dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[connection signal="id_pressed" from="Control/TopBar/MenuBar/Editor" to="." method="_on_editor_tab_id_pressed"]
-[connection signal="id_pressed" from="Control/TopBar/MenuBar/Project" to="." method="_on_project_tab_id_pressed"]
+[connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="." method="_on_editor_tab_id_pressed"]
+[connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="." method="_on_project_tab_id_pressed"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]

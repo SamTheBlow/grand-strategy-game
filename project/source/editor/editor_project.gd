@@ -9,25 +9,25 @@ var name: String:
 	set(value):
 		_meta.map_name = value
 
-var _game: Game
+var game: Game
 var _meta: MapMetadata
 
 
-func _init(game: Game = null, metadata: MapMetadata = null) -> void:
-	if game == null or metadata == null:
-		_game = Game.new()
+func _init(game_: Game = null, metadata: MapMetadata = null) -> void:
+	if game_ == null or metadata == null:
+		game = Game.new()
 		_meta = MapMetadata.new()
 		_meta.map_name = DEFAULT_PROJECT_NAME
 		return
 
-	_game = game
+	game = game_
 	_meta = metadata
 
 
 ## Saves the project to its assigned file path.
 func save() -> void:
 	var game_save := GameSave.new()
-	game_save.save_game(_game, _meta.file_path)
+	game_save.save_game(game, _meta.file_path)
 	
 	if game_save.error:
 		push_warning(game_save.error_message)

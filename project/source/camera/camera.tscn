@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://clxlw7vsp2qgj"]
+
+[ext_resource type="Script" path="res://source/camera/camera.gd" id="1_3yyl7"]
+[ext_resource type="Script" path="res://source/camera/camera_drag.gd" id="2_3na71"]
+[ext_resource type="Script" path="res://source/camera/camera_zoom.gd" id="3_1qsc8"]
+
+[node name="Camera" type="Camera2D"]
+script = ExtResource("1_3yyl7")
+world_margin = Vector2(0.25, 0.25)
+
+[node name="CameraDrag" type="Node" parent="." node_paths=PackedStringArray("camera")]
+script = ExtResource("2_3na71")
+camera = NodePath("..")
+
+[node name="CameraZoom" type="Node" parent="." node_paths=PackedStringArray("camera")]
+script = ExtResource("3_1qsc8")
+camera = NodePath("..")
+default_zoom = 0.5

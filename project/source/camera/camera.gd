@@ -28,6 +28,10 @@ func move_to(new_position: Vector2) -> void:
 	_reposition_in_bounds()
 
 
+func move_to_world_center() -> void:
+	move_to(world_limits.center())
+
+
 ## Puts the camera back in bounds.
 ## Has no effect if the camera is not in the scene tree.
 func _reposition_in_bounds() -> void:

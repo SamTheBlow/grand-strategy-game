@@ -21,11 +21,6 @@ signal exited()
 @export var country_info_scene: PackedScene
 @export var notification_info_scene: PackedScene
 
-@export_group("Children")
-@export var camera: CustomCamera2D
-@export var component_ui_root: Control
-@export var popups: Control
-
 @export_group("Resources")
 ## Defines the outcome of a [Battle].
 @export var battle: Battle
@@ -67,11 +62,14 @@ var _player_assignment: PlayerAssignment
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
+@onready var _camera := %Camera as CustomCamera2D
 @onready var _ui_layer := %UILayer as CanvasLayer
+@onready var _component_ui_root := %ComponentUI as Control
 @onready var _action_input := %ActionInput as ActionInput
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
+@onready var _popups := %Popups as Control
 
 
 func _ready() -> void:
@@ -92,7 +90,7 @@ func _ready() -> void:
 			_on_province_unhandled_mouse_event
 	)
 
-	camera.world_limits = world_2d.limits
+	_camera.world_limits = world_2d.limits
 
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface
@@ -172,7 +170,7 @@ func _add_army_movement_popup(army: Army, destination: Province) -> void:
 func _add_popup(contents: Node) -> void:
 	var popup := popup_scene.instantiate() as GamePopup
 	popup.contents_node = contents
-	popups.add_child(popup)
+	_popups.add_child(popup)
 
 
 ## Adds a new Player and assigns it to a specific GamePlayer.
@@ -220,6 +218,10 @@ func _on_game_error(error_message: String) -> void:
 
 
 func _on_game_over(winning_country: Country) -> void:
+	# Prevent crash
+	if not is_node_ready():
+		await ready
+
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
 	game_over_popup.init(winning_country)
 	_add_popup(game_over_popup)
@@ -290,7 +292,7 @@ func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
 	component_ui.province_visuals = province_visuals
 	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
 	component_ui.connect_country_button_pressed(_on_country_button_pressed)
-	component_ui_root.add_child(component_ui)
+	_component_ui_root.add_child(component_ui)
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:

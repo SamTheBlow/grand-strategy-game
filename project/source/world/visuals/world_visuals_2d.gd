@@ -19,9 +19,13 @@ var game: Game
 @onready var _auto_arrows := %AutoArrows as AutoArrowContainer
 
 
+func _ready() -> void:
+	_initialize()
+
+
 func _initialize() -> void:
-	if not is_node_ready():
-		await ready
+	if not is_node_ready() or world == null:
+		return
 
 	var playing_country := PlayingCountry.new(game.turn)
 

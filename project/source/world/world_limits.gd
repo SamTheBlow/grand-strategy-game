@@ -40,6 +40,10 @@ func height() -> int:
 	return _limits.end.y - _limits.position.y
 
 
+func center() -> Vector2i:
+	return _limits.get_center()
+
+
 static func from_rect2i(rect2i: Rect2i) -> WorldLimits:
 	var world_limits := WorldLimits.new()
 	world_limits._limits = rect2i

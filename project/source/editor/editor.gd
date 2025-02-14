@@ -19,14 +19,17 @@ const INPUT_ACTION_PLAY_PROJECT: String = "play_project"
 var _current_project: EditorProject:
 	set(value):
 		_current_project = value
+		_setup_project()
 		_update_window_title()
 		_update_menu_visibility()
 
 ## An array of file paths
 var _recently_opened_projects: Array[String] = []
 
+@onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
+@onready var _popup_container := %PopupContainer as Control
 @onready var _save_dialog := %SaveDialog as FileDialog
 
 
@@ -38,6 +41,18 @@ func _ready() -> void:
 func _exit_tree() -> void:
 	# Reset the window title
 	_current_project = null
+
+
+func _setup_project() -> void:
+	if not is_node_ready():
+		return
+
+	_world_setup.clear()
+
+	if _current_project == null:
+		return
+
+	_world_setup.load_world(_current_project.game)
 
 
 func _update_window_title() -> void:
@@ -128,7 +143,7 @@ func _open_project() -> void:
 	)
 	project_load_popup.project_loaded.connect(_on_project_loaded)
 	popup.contents_node = project_load_popup
-	add_child(popup)
+	_popup_container.add_child(popup)
 
 
 ## If the project doesn't have a file path assigned, opens the file dialog.
