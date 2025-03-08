@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://dmt38oflf2sjf"]
 
-[ext_resource type="Script" path="res://source/ui/player_turn_announcement.gd" id="1_3hekc"]
+[ext_resource type="Script" uid="uid://c0ej17go5ouys" path="res://source/ui/player_turn_announcement.gd" id="1_3hekc"]
 
 [sub_resource type="Animation" id="Animation_vqjli"]
 resource_name = "new_animation"
@@ -19,7 +19,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_2ybpj"]
 _data = {
-"new_animation": SubResource("Animation_vqjli")
+&"new_animation": SubResource("Animation_vqjli")
 }
 
 [node name="PlayerTurnAnnouncement" type="Control"]

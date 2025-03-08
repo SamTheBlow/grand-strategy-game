@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bh8aukwuigg4e"]
 
-[ext_resource type="Script" path="res://source/rules/interface/items/rule_options_node.gd" id="1_daaum"]
-[ext_resource type="Script" path="res://source/ui/utils/custom_option_button.gd" id="2_d7kpj"]
+[ext_resource type="Script" uid="uid://bk17ten2kcxt6" path="res://source/rules/interface/items/rule_options_node.gd" id="1_daaum"]
+[ext_resource type="Script" uid="uid://ck2uwtmi58882" path="res://source/ui/utils/custom_option_button.gd" id="2_d7kpj"]
 
 [node name="RuleOptions" type="MarginContainer"]
 anchors_preset = 15

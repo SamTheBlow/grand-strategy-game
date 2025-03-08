@@ -1,9 +1,9 @@
 [gd_scene load_steps=5 format=3 uid="uid://by865efl4iwy"]
 
-[ext_resource type="Script" path="res://source/ui/popups/game_popup.gd" id="1_q2ltp"]
-[ext_resource type="Script" path="res://source/ui/utils/mouse_drag/draggable.gd" id="2_mftdt"]
-[ext_resource type="Script" path="res://source/ui/utils/mouse_drag/drag_source.gd" id="3_lu5dx"]
-[ext_resource type="Script" path="res://source/ui/popups/popup_buttons.gd" id="4_t04kf"]
+[ext_resource type="Script" uid="uid://dmweerfs3325e" path="res://source/ui/popups/game_popup.gd" id="1_q2ltp"]
+[ext_resource type="Script" uid="uid://mfprhpak4prx" path="res://source/ui/utils/mouse_drag/draggable.gd" id="2_mftdt"]
+[ext_resource type="Script" uid="uid://defe5t4ynioa4" path="res://source/ui/utils/mouse_drag/drag_source.gd" id="3_lu5dx"]
+[ext_resource type="Script" uid="uid://bhmnv1p8rs2xg" path="res://source/ui/popups/popup_buttons.gd" id="4_t04kf"]
 
 [node name="GamePopup" type="Control"]
 layout_mode = 3

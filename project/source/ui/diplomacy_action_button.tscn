@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://s68xdpyt6mng"]
 
-[ext_resource type="Script" path="res://source/ui/diplomacy_action_button.gd" id="1_be54w"]
+[ext_resource type="Script" uid="uid://dhhpl1b37g1kd" path="res://source/ui/diplomacy_action_button.gd" id="1_be54w"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3dtd"]
 bg_color = Color(0, 0, 0, 0)

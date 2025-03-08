@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bo8oke3mld227"]
 
-[ext_resource type="Script" path="res://source/rules/interface/items/rule_bool_node.gd" id="1_w45yo"]
+[ext_resource type="Script" uid="uid://ykvoi1u1n10n" path="res://source/rules/interface/items/rule_bool_node.gd" id="1_w45yo"]
 
 [node name="RuleBool" type="MarginContainer"]
 anchors_preset = 15

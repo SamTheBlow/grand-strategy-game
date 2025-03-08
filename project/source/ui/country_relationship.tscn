@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://de5dhmkfqssk0"]
 
-[ext_resource type="Script" path="res://source/ui/country_relationship_node.gd" id="1_5nc17"]
+[ext_resource type="Script" uid="uid://c6qajqieppk4" path="res://source/ui/country_relationship_node.gd" id="1_5nc17"]
 [ext_resource type="PackedScene" uid="uid://s68xdpyt6mng" path="res://source/ui/diplomacy_action_button.tscn" id="2_6n4bc"]
 [ext_resource type="PackedScene" uid="uid://cvxd6jpgibm68" path="res://source/ui/relationship_info.tscn" id="2_h1qdk"]
 

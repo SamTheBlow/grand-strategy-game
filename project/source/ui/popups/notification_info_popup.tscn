@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://crnnhfnswkmub"]
 
-[ext_resource type="Script" path="res://source/ui/popups/notification_info_popup.gd" id="1_h5sym"]
+[ext_resource type="Script" uid="uid://baxu1y2feub1x" path="res://source/ui/popups/notification_info_popup.gd" id="1_h5sym"]
 
 [node name="NotificationInfoPopup" type="Control"]
 layout_mode = 3

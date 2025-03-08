@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="ModifierContext" load_steps=2 format=3 uid="uid://btapffeow8frm"]
 
-[ext_resource type="Script" path="res://source/modifiers/modifier_context.gd" id="1_d0nm2"]
+[ext_resource type="Script" uid="uid://2evm4s3pfq0m" path="res://source/modifiers/modifier_context.gd" id="1_d0nm2"]
 
 [resource]
 script = ExtResource("1_d0nm2")

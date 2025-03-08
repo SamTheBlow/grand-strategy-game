@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dlp6yucuudqcs"]
 
-[ext_resource type="Script" path="res://source/ui/utils/collapsible/collapsible_container/collapsible_container.gd" id="1_qk8va"]
-[ext_resource type="Script" path="res://source/ui/utils/collapsible/collapsible.gd" id="1_wv4vw"]
+[ext_resource type="Script" uid="uid://dtsa5m8551kjb" path="res://source/ui/utils/collapsible/collapsible_container/collapsible_container.gd" id="1_qk8va"]
+[ext_resource type="Script" uid="uid://drlunlnducleq" path="res://source/ui/utils/collapsible/collapsible.gd" id="1_wv4vw"]
 
 [node name="Collapsible" type="VBoxContainer"]
 theme_override_constants/separation = 0

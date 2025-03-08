@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://c3kj2ppbkeuk6"]
 
 [ext_resource type="Texture2D" uid="uid://cyuj3d1q6iep5" path="res://assets/openmoji/1F525.svg" id="1_8cjlj"]
-[ext_resource type="Script" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_mx1p1"]
+[ext_resource type="Script" uid="uid://juaxjlpyefo7" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_mx1p1"]
 
 [resource]
 script = ExtResource("1_mx1p1")

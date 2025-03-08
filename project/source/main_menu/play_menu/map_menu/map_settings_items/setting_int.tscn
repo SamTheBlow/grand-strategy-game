@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://d0wqk3b2jekmb"]
 
-[ext_resource type="Script" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_int_node.gd" id="1_3hx26"]
+[ext_resource type="Script" uid="uid://bhuo7dhh7k1u4" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_int_node.gd" id="1_3hx26"]
 
 [node name="SettingInt" type="MarginContainer"]
 anchors_preset = 15

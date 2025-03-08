@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="DiplomacyPreset" load_steps=2 format=3 uid="uid://drsaelw08l4l5"]
 
-[ext_resource type="Script" path="res://source/diplomacy/presets/diplomacy_preset.gd" id="1_iehcb"]
+[ext_resource type="Script" uid="uid://ot7srhn20gck" path="res://source/diplomacy/presets/diplomacy_preset.gd" id="1_iehcb"]
 
 [resource]
 script = ExtResource("1_iehcb")

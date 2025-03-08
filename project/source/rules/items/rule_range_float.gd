@@ -1,3 +1,4 @@
+@tool
 class_name RuleRangeFloat
 extends RuleItem
 ## A game rule that is a range of float values.

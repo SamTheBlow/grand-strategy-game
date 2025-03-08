@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://0xwvup7qe5f"]
 
-[ext_resource type="Script" path="res://source/ui/action_cost_node.gd" id="1_e00nu"]
+[ext_resource type="Script" uid="uid://bojumkg7endtj" path="res://source/ui/action_cost_node.gd" id="1_e00nu"]
 
 [node name="ActionCost" type="Control"]
 custom_minimum_size = Vector2(0, 64)

@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://df5yjnsebj5np"]
 
-[ext_resource type="Script" path="res://source/editor/project_load_popup.gd" id="1_ol0qo"]
+[ext_resource type="Script" uid="uid://wirop5ecqfqx" path="res://source/editor/project_load_popup.gd" id="1_ol0qo"]
 [ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/play_menu/map_menu/map_option.tscn" id="2_hhh78"]
 [ext_resource type="PackedScene" uid="uid://dlp6yucuudqcs" path="res://source/ui/utils/collapsible/collapsible.tscn" id="2_rqmfa"]
 

@@ -1,13 +1,13 @@
 [gd_scene load_steps=9 format=3 uid="uid://ba1s3jpg48raf"]
 
-[ext_resource type="Script" path="res://source/main.gd" id="1_32ieg"]
+[ext_resource type="Script" uid="uid://dhbrcnpyw2r83" path="res://source/main.gd" id="1_32ieg"]
 [ext_resource type="PackedScene" uid="uid://c74o2ubgawogb" path="res://source/game/visuals/game.tscn" id="3_hbhxv"]
 [ext_resource type="PackedScene" uid="uid://dm18hv6wm8moi" path="res://source/main_menu/play_menu/play_menu.tscn" id="3_sb5ma"]
 [ext_resource type="PackedScene" uid="uid://ci55oykyoyme1" path="res://source/main_menu/main_menu.tscn" id="4_sn8ov"]
-[ext_resource type="Script" path="res://source/players/players.gd" id="4_w8utn"]
-[ext_resource type="Script" path="res://source/chat/chat.gd" id="5_66lrq"]
+[ext_resource type="Script" uid="uid://wmwj5t4cgjbe" path="res://source/players/players.gd" id="4_w8utn"]
+[ext_resource type="Script" uid="uid://crnrdp1o8i2g6" path="res://source/chat/chat.gd" id="5_66lrq"]
 [ext_resource type="PackedScene" uid="uid://be0pqxrjfpukm" path="res://source/editor/editor.tscn" id="5_c0r5p"]
-[ext_resource type="Script" path="res://source/networking/client_auth.gd" id="6_414lx"]
+[ext_resource type="Script" uid="uid://f5af8xum3u0l" path="res://source/networking/client_auth.gd" id="6_414lx"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_32ieg")

@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://djneieh5i0c1"]
 
-[ext_resource type="Script" path="res://source/main_menu/play_menu/rules_menu/rules_menu.gd" id="1_tyquk"]
-[ext_resource type="Script" path="res://source/main_menu/play_menu/rules_menu/rules_menu_sync.gd" id="2_lcsf6"]
+[ext_resource type="Script" uid="uid://dvnsquasguhad" path="res://source/main_menu/play_menu/rules_menu/rules_menu.gd" id="1_tyquk"]
+[ext_resource type="Script" uid="uid://m6hy5bq274rq" path="res://source/main_menu/play_menu/rules_menu/rules_menu_sync.gd" id="2_lcsf6"]
 
 [node name="Rules" type="MarginContainer"]
 anchors_preset = 15

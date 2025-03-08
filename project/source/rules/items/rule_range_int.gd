@@ -1,3 +1,4 @@
+@tool
 class_name RuleRangeInt
 extends RuleItem
 ## A game rule that is a range of integer values.

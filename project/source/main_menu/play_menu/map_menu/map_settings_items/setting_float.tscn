@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://ydwe327bb446"]
 
-[ext_resource type="Script" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_float_node.gd" id="1_p2ldh"]
+[ext_resource type="Script" uid="uid://dwm6qt12pfdsy" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_float_node.gd" id="1_p2ldh"]
 
 [node name="SettingFloat" type="MarginContainer"]
 anchors_preset = 15

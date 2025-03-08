@@ -1,10 +1,10 @@
 [gd_scene load_steps=8 format=3 uid="uid://ci55oykyoyme1"]
 
-[ext_resource type="Script" path="res://source/main_menu/main_menu.gd" id="1_kwhjp"]
+[ext_resource type="Script" uid="uid://bll085f7neukv" path="res://source/main_menu/main_menu.gd" id="1_kwhjp"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_5ja20"]
-[ext_resource type="Script" path="res://source/main_menu/background_game.gd" id="2_b84tg"]
+[ext_resource type="Script" uid="uid://cdmbhrqu52xy" path="res://source/main_menu/background_game.gd" id="2_b84tg"]
 [ext_resource type="PackedScene" uid="uid://c74o2ubgawogb" path="res://source/game/visuals/game.tscn" id="3_6uenx"]
-[ext_resource type="Shader" path="res://assets/shaders/blur.gdshader" id="3_ep5m7"]
+[ext_resource type="Shader" uid="uid://colqmg20r7fwi" path="res://assets/shaders/blur.gdshader" id="3_ep5m7"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_r7heh"]
 shader = ExtResource("3_ep5m7")

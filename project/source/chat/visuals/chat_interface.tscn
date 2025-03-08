@@ -1,8 +1,8 @@
 [gd_scene load_steps=7 format=3 uid="uid://bmtb3thxlc0ms"]
 
-[ext_resource type="Script" path="res://source/chat/visuals/chat_interface.gd" id="1_1pqug"]
-[ext_resource type="Script" path="res://source/chat/visuals/chat_minimize_button.gd" id="2_c1jfd"]
-[ext_resource type="Script" path="res://source/chat/visuals/chat_maximize_button.gd" id="3_qakug"]
+[ext_resource type="Script" uid="uid://dsd6sai02r5ij" path="res://source/chat/visuals/chat_interface.gd" id="1_1pqug"]
+[ext_resource type="Script" uid="uid://bj8f4gdptluj0" path="res://source/chat/visuals/chat_minimize_button.gd" id="2_c1jfd"]
+[ext_resource type="Script" uid="uid://dscibmkunu8o" path="res://source/chat/visuals/chat_maximize_button.gd" id="3_qakug"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgfag"]
 bg_color = Color(0.4, 0.4, 0.4, 1)

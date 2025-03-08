@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://dd0mqtbyhpwcg" path="res://source/rules/interface/items/rule_float.tscn" id="3_k6ecs"]
 [ext_resource type="PackedScene" uid="uid://cummjubuua6yk" path="res://source/rules/interface/items/rule_int.tscn" id="4_1megp"]
 [ext_resource type="PackedScene" uid="uid://bh8aukwuigg4e" path="res://source/rules/interface/items/rule_options.tscn" id="5_b1egf"]
-[ext_resource type="Script" path="res://source/rules/interface/rule_scenes.gd" id="6_md2xy"]
+[ext_resource type="Script" uid="uid://c6x5o7h5ked06" path="res://source/rules/interface/rule_scenes.gd" id="6_md2xy"]
 [ext_resource type="PackedScene" uid="uid://diptsnmuse4kn" path="res://source/rules/interface/items/rule_range_float.tscn" id="6_uswbb"]
 [ext_resource type="PackedScene" uid="uid://liwg6fdq6hr5" path="res://source/rules/interface/items/rule_range_int.tscn" id="7_ha12x"]
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://db07kg52gllnd"]
 
-[ext_resource type="Script" path="res://source/ui/popups/army_movement_popup.gd" id="1_hrsh1"]
+[ext_resource type="Script" uid="uid://dgcq338o8meg" path="res://source/ui/popups/army_movement_popup.gd" id="1_hrsh1"]
 
 [node name="ArmyMovementPopup" type="VBoxContainer" node_paths=PackedStringArray("troop_slider", "troop_label")]
 anchors_preset = 15

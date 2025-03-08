@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://diptsnmuse4kn"]
 
-[ext_resource type="Script" path="res://source/rules/interface/items/rule_range_float_node.gd" id="1_qshcb"]
+[ext_resource type="Script" uid="uid://tcrbiah3ugn5" path="res://source/rules/interface/items/rule_range_float_node.gd" id="1_qshcb"]
 
 [node name="RuleRangeFloat" type="MarginContainer"]
 anchors_preset = 15

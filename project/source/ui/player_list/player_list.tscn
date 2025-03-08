@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://t615nfcmdn14"]
 
-[ext_resource type="Script" path="res://source/ui/player_list/player_list.gd" id="1_2x7vk"]
+[ext_resource type="Script" uid="uid://b3mrt3hvnempw" path="res://source/ui/player_list/player_list.gd" id="1_2x7vk"]
 [ext_resource type="PackedScene" uid="uid://75dgexs1e3no" path="res://source/ui/player_list/player_list_element.tscn" id="2_vdcoh"]
 
 [node name="PlayerList" type="Control"]

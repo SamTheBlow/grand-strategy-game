@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cm37jqeqg77g7"]
 
-[ext_resource type="Script" path="res://source/networking/networking_interface.gd" id="1_4vo7k"]
+[ext_resource type="Script" uid="uid://3t0ph17sfyc0" path="res://source/networking/networking_interface.gd" id="1_4vo7k"]
 
 [node name="ServerSetup" type="Control"]
 layout_mode = 3

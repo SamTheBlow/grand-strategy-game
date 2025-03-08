@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://bsk11sxt73iy4"]
 
-[ext_resource type="Script" path="res://source/ui/player_list/turn_order_list.gd" id="1_l0g4s"]
+[ext_resource type="Script" uid="uid://dytxdug3piwwu" path="res://source/ui/player_list/turn_order_list.gd" id="1_l0g4s"]
 [ext_resource type="PackedScene" uid="uid://p440ahx3w70n" path="res://source/ui/player_list/turn_order_element.tscn" id="2_lgnwa"]
 
 [node name="TurnOrderList" type="Control"]

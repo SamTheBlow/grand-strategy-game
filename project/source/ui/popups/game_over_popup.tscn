@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cfhpg688geojo"]
 
-[ext_resource type="Script" path="res://source/ui/popups/game_over_popup.gd" id="1_1w4ix"]
+[ext_resource type="Script" uid="uid://bn0ea55rrwl5s" path="res://source/ui/popups/game_over_popup.gd" id="1_1w4ix"]
 
 [node name="GameOverPopup" type="VBoxContainer" node_paths=PackedStringArray("winner_label")]
 anchors_preset = 15
