@@ -29,6 +29,7 @@ var _recently_opened_projects: Array[String] = []
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
+@onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 @onready var _save_dialog := %SaveDialog as FileDialog
 
@@ -160,6 +161,10 @@ func _play() -> void:
 	pass
 
 
+func _open_interface(type: EditingInterface.InterfaceType) -> void:
+	_editing_interface.open_interface(type)
+
+
 ## Called when the user clicks on one of the options
 ## in the menu bar's "Editor" tab.
 func _on_editor_tab_id_pressed(id: int) -> void:
@@ -200,6 +205,24 @@ func _on_project_tab_id_pressed(id: int) -> void:
 			# "Play"
 			_play()
 		2, 3, 6, 8:
+			# Separators & sub menus
+			pass
+		_:
+			push_error("Unrecognized menu id.")
+
+
+func _on_edit_tab_id_pressed(id: int) -> void:
+	match id:
+		1:
+			# "World Limits"
+			_open_interface(EditingInterface.InterfaceType.WORLD_LIMITS)
+		2:
+			# "Background Color"
+			_open_interface(EditingInterface.InterfaceType.BACKGROUND_COLOR)
+		3:
+			# "Decoration"
+			_open_interface(EditingInterface.InterfaceType.DECORATION)
+		0:
 			# Separators & sub menus
 			pass
 		_:

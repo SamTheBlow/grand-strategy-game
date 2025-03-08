@@ -1,0 +1,48 @@
+[gd_scene load_steps=2 format=3 uid="uid://0uiaabpgiqs"]
+
+[ext_resource type="Script" uid="uid://71nrlclp5ovx" path="res://source/editor/editing_interface.gd" id="1_qje5o"]
+
+[node name="EditingInterface" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+script = ExtResource("1_qje5o")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Contents" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 40.0
+offset_right = -16.0
+offset_bottom = -16.0
+mouse_filter = 1
+
+[node name="CloseButton" type="Button" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_top = 4.0
+offset_right = -4.0
+grow_horizontal = 0
+focus_mode = 0
+theme_override_font_sizes/font_size = 12
+text = "X"
+
+[connection signal="pressed" from="CloseButton" to="." method="close_interface"]

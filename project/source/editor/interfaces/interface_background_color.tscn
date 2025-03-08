@@ -1,0 +1,49 @@
+[gd_scene load_steps=7 format=3 uid="uid://bb53mhx3u8ho8"]
+
+[ext_resource type="Script" uid="uid://chtpvlfchuvbo" path="res://source/editor/interfaces/interface_background_color.gd" id="1_n4mvh"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/rules/interface/items/rule_category.tscn" id="2_0l2xs"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/rules/items/rule_item.gd" id="3_vpw2j"]
+[ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="4_abv36"]
+
+[sub_resource type="Resource" id="Resource_g0giq"]
+script = ExtResource("3_vpw2j")
+text = "Editor settings:"
+
+[sub_resource type="Resource" id="Resource_ffyu2"]
+script = ExtResource("3_vpw2j")
+text = "Game settings:"
+
+[node name="InterfaceBackgroundColor" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_n4mvh")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer"]
+layout_mode = 2
+text = "The color used for the background."
+fit_content = true
+
+[node name="EditorSettingsCategory" parent="VBoxContainer" instance=ExtResource("2_0l2xs")]
+unique_name_in_owner = true
+layout_mode = 2
+rule = SubResource("Resource_g0giq")
+scenes = ExtResource("4_abv36")
+
+[node name="GameSettingsCategory" parent="VBoxContainer" instance=ExtResource("2_0l2xs")]
+unique_name_in_owner = true
+layout_mode = 2
+rule = SubResource("Resource_ffyu2")
+scenes = ExtResource("4_abv36")
