@@ -15,7 +15,7 @@ static func parsed_from(raw_data: Variant) -> GameRules:
 		return game_rules
 	var raw_dict: Dictionary = raw_data
 
-	for variant_key: Variant in raw_dict.keys():
+	for variant_key: Variant in raw_dict:
 		if variant_key is not String:
 			continue
 		var key: String = variant_key

@@ -37,7 +37,7 @@ func _ready() -> void:
 func _send_all_assignations() -> void:
 	var player_node_names: Array = []
 	var game_player_ids: Array = []
-	for assigned_player: Player in _player_assignment.list.keys():
+	for assigned_player in _player_assignment.list:
 		if assigned_player == null:
 			continue
 

@@ -65,7 +65,7 @@ static func from_file_path(base_path: String) -> MapMetadata:
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
 		# Only load settings whose key is of type String.
 		var settings_dict: Dictionary = meta_dict[KEY_META_SETTINGS]
-		for key: Variant in settings_dict.keys():
+		for key: Variant in settings_dict:
 			if key is not String:
 				continue
 			var key_string := key as String

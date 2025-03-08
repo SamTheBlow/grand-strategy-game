@@ -87,7 +87,7 @@ static func _parsed_diplomacy_relationship(
 	var available_actions: Array[DiplomacyAction] = []
 	if ParseUtils.dictionary_has_dictionary(raw_dict, AVAILABLE_ACTIONS_KEY):
 		var available_actions_dict: Dictionary = raw_dict[AVAILABLE_ACTIONS_KEY]
-		for available_action_key: Variant in available_actions_dict.keys():
+		for available_action_key: Variant in available_actions_dict:
 			if not ParseUtils.is_number(available_action_key):
 				continue
 			var action_id: int = ParseUtils.number_as_int(available_action_key)

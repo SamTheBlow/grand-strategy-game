@@ -323,7 +323,7 @@ func _set_preset_id(preset_id: int) -> void:
 ## matches a given default value, it's not included in the output.
 func _base_data_no_defaults(default_data: Dictionary) -> Dictionary:
 	var output: Dictionary = {}
-	for key: Variant in _base_data.keys():
+	for key: Variant in _base_data:
 		if not (
 				default_data.has(key)
 				and _base_data[key] == default_data[key]

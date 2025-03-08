@@ -48,7 +48,7 @@ func _update_settings_list() -> void:
 
 	var minimum_height: float = 0.0
 
-	for key: Variant in map_metadata.settings.keys():
+	for key: Variant in map_metadata.settings:
 		if key is not String:
 			continue
 		var key_string := key as String
