@@ -72,8 +72,9 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 	):
 		var my_province: Province = my_army.province()
 		var provinces_to_move_to: Array[Province] = [my_province]
-		var link_branches: Array = province_pathfinding.paths[my_province]
-		for link_branch: LinkBranch in link_branches:
+		for link_branch: LinkBranch in (
+				province_pathfinding.paths[my_province].list
+		):
 			provinces_to_move_to.append(link_branch.furthest_link())
 
 		result.append_array(_new_movement_actions(

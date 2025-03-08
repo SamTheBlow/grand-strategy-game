@@ -1,11 +1,10 @@
 class_name ProvincePathfinding
 ## Generates the shortest paths from any province to some given destinations.
 
-## Dictionary[Province, Array[LinkBranch]]
 ## An empty array means there is no valid path.
 ## There may be more than one shortest path.
 ## Every province is guaranteed to be in this dictionary, and null too.
-var paths: Dictionary = {null: []}
+var paths: Dictionary[Province, LinkBranches] = { null: LinkBranches.new() }
 
 var _provinces: Provinces
 
@@ -17,20 +16,20 @@ func _init(provinces: Provinces) -> void:
 ## Generates the shortest paths to any of given provinces.
 ## Generates a new dictionary each time it's used.
 func generate(destinations: Array[Province]) -> void:
-	paths = {null: []}
+	paths = { null: LinkBranches.new() }
 
 	var province_list: Array[Province] = _provinces.list()
 	# Make sure all provinces are in the dictionary,
 	# even those that don't have a valid path.
 	for province in province_list:
-		paths[province] = []
+		paths[province] = LinkBranches.new()
 
 	var is_not_stuck: bool = true
 
 	# Keep track of which provinces have already been pathed.
 	# We use dictionaries for performance.
-	var already_pathed_provinces: Dictionary = {}
-	var found_provinces: Dictionary = {}
+	var already_pathed_provinces: Dictionary[Province, int] = {}
+	var found_provinces: Dictionary[Province, int] = {}
 
 	var link_branches: Array[LinkBranch] = []
 	for destination in destinations:
@@ -55,7 +54,7 @@ func generate(destinations: Array[Province]) -> void:
 				if already_pathed_provinces.has(next_link):
 					continue
 
-				paths[next_link].append(link_branch)
+				paths[next_link].list.append(link_branch)
 
 				if found_provinces.has(next_link):
 					continue
@@ -66,3 +65,8 @@ func generate(destinations: Array[Province]) -> void:
 
 		# Only keep branches that are still finding new provinces.
 		link_branches = new_link_branches
+
+
+## Just an array of [LinkBranch].
+class LinkBranches:
+	var list: Array[LinkBranch] = []

@@ -15,10 +15,9 @@ signal unhandled_mouse_event_occured(
 ## Do not manipulate the array directly!
 var list: Array[ProvinceVisuals2D] = []
 
-## Dictionary[Province, ProvinceVisuals2D]
 ## Maps a province to its visuals, for performance reasons.
 ## Do not manipulate the dictionary directly!
-var visuals_of_province: Dictionary = {}
+var visuals_of_province: Dictionary[Province, ProvinceVisuals2D] = {}
 
 
 func _ready() -> void:

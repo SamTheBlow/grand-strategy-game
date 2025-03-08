@@ -7,9 +7,8 @@ extends AuthBase
 
 @export var players: Players
 
-## Dictionary[int, ClientData]
 ## Each key is a multiplayer id; each value is the client's data.
-var _client_data_list: Dictionary = {}
+var _client_data_list: Dictionary[int, ClientData] = {}
 
 
 func _ready() -> void:

@@ -8,10 +8,9 @@ var _source_country: Country
 var _default_relationship_data: Dictionary
 var _base_actions: Array[int] = []
 
-## Dictionary[Country, DiplomacyRelationship]
 ## This is a dictionary for performance reasons.
 ## Do not manipulate the dictionary directly!
-var list: Dictionary = {}
+var list: Dictionary[Country, DiplomacyRelationship] = {}
 
 
 func _init(

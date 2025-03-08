@@ -10,7 +10,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = super(game, player)
 
 	var provinces: Array[Province] = game.world.provinces.list()
-	var armies_in_province: Dictionary = (
+	var armies_in_province: Dictionary[Province, ArmiesInProvince] = (
 			game.world.armies_in_each_province.dictionary
 	)
 	var frontline_provinces: Array[Province] = (
@@ -34,9 +34,8 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	# Give a danger level to each frontline province
 	# based on how well defended it is.
 	#
-	# danger_levels is a Dictionary[Province, float].
 	# Each frontline province is guaranteed to be in this dictionary.
-	var danger_levels: Dictionary = {}
+	var danger_levels: Dictionary[Province, float] = {}
 	for province in frontline_provinces:
 		var danger_level: float = 0.0
 
@@ -214,7 +213,7 @@ func _is_province_pathfinding_worth_it(my_armies: Array[Army]) -> bool:
 func _move_towards_frontlines(
 		result: Array[Action],
 		army: Army,
-		danger_levels: Dictionary,
+		danger_levels: Dictionary[Province, float],
 		playing_country: Country
 ) -> void:
 	var province_filter: Callable = (
@@ -245,10 +244,12 @@ func _move_towards_frontlines(
 func _move_towards_frontlines_pathfinding(
 		result: Array[Action],
 		army: Army,
-		danger_levels: Dictionary,
+		danger_levels: Dictionary[Province, float],
 		pathfinding: ProvincePathfinding
 ) -> void:
-	var link_branches: Array = pathfinding.paths[army.province()]
+	var link_branches: Array[LinkBranch] = (
+			pathfinding.paths[army.province()].list
+	)
 
 	if link_branches.size() == 0:
 		return
@@ -256,8 +257,7 @@ func _move_towards_frontlines_pathfinding(
 	# Take the most endangered province as the target to reach.
 	var target_province: Province
 	var target_danger: float = 0.0
-	for i in link_branches.size():
-		var link_branch := link_branches[i] as LinkBranch
+	for link_branch in link_branches:
 		var frontline_province: Province = link_branch.first_link()
 		if danger_levels[frontline_province] >= target_danger:
 			target_province = link_branch.furthest_link()
@@ -300,7 +300,7 @@ func _try_build_fortresses(
 		game: Game,
 		playing_country: Country,
 		frontline_provinces: Array[Province],
-		danger_levels: Dictionary
+		danger_levels: Dictionary[Province, float]
 ) -> Array[Action]:
 	if not game.rules.build_fortress_enabled.value:
 		return []

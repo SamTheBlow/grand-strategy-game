@@ -2,13 +2,14 @@ class_name ArmiesInEachProvince
 ## Provides a dictionary where each [Province]
 ## is assigned a list of all armies in that province ([ArmiesInProvince]).
 
-## Dictionary[Province, ArmiesInProvince]
 ## All provinces in the game are guaranteed to be in this dictionary,
 ## so no need to check if the dictionary has some province.
 ## Also, null is a valid key. It will give you the list of
 ## all armies that are not in any province.
 ## Do not manipulate this dictionary directly!
-var dictionary: Dictionary = { null: ArmiesInProvince.new() }
+var dictionary: Dictionary[Province, ArmiesInProvince] = {
+	null: ArmiesInProvince.new()
+}
 
 
 func _init(provinces: Provinces, armies: Armies) -> void:

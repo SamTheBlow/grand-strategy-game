@@ -7,11 +7,10 @@ class_name PlayerAssignment
 ## Emitted when a player is assigned either to a GamePlayer or to null.
 signal player_assigned(player: Player)
 
-## Dictionary[Player, GamePlayer]
 ## Each [Player] is assigned zero or one [GamePlayer].
 ## All players are guaranteed to be a valid key.
 ## If a player does not have a [GamePlayer] assigned, its value is null.
-var list: Dictionary = {}
+var list: Dictionary[Player, GamePlayer] = {}
 
 var _game_players: GamePlayers
 
@@ -31,7 +30,7 @@ func _init(players: Players, game_players: GamePlayers) -> void:
 ## Unassigns all players.
 ## Sets the value of all keys in the list to null.
 func reset() -> void:
-	for player: Player in list.keys():
+	for player in list:
 		assign_player_to(player, null)
 
 
@@ -71,7 +70,7 @@ func raw_assign_player_to(
 		player_node_name: String, game_player_id: int
 ) -> void:
 	var player: Player = null
-	for list_player: Player in list.keys():
+	for list_player in list:
 		if list_player.name == player_node_name:
 			player = list_player
 			break

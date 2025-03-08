@@ -1,14 +1,15 @@
 class_name ProvincesOfEachCountry
-## Provides a dictionary where each [Country]
-## is assigned a list of all provinces controlled by that country.
+## Provides a dictionary where each [Country] is assigned
+## a list of all provinces controlled by that country ([ProvincesOfCountry]).
 
-## Dictionary[Country, ProvincesOfCountry]
 ## All countries in the game are guaranteed to be in this dictionary,
 ## so no need to check if the dictionary has some country.
 ## Also, null is a valid key. It will give you the list of
 ## all provinces that don't have an owner country.
 ## Do not manipulate this dictionary directly!
-var dictionary: Dictionary = {null: ProvincesOfCountry.new()}
+var dictionary: Dictionary[Country, ProvincesOfCountry] = {
+	null: ProvincesOfCountry.new()
+}
 
 
 func _init(countries: Countries, provinces: Provinces) -> void:
