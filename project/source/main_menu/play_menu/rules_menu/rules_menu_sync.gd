@@ -77,14 +77,14 @@ func _receive_state(data: Dictionary) -> void:
 ## Updates a rule on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_rule_changed(rule_name: String, rule_value: Variant) -> void:
-	var rule_item: RuleItem = active_state.rule_with_name(rule_name)
+	var rule_item: PropertyTreeItem = active_state.rule_with_name(rule_name)
 	if rule_item == null:
 		return
 	rule_item.set_data(rule_value)
 
 
 ## On the server, sends the rule change to all clients.
-func _on_rule_changed(rule_name: String, rule_item: RuleItem) -> void:
+func _on_rule_changed(rule_name: String, rule_item: PropertyTreeItem) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_rule_changed.rpc(rule_name, rule_item.get_data())
 

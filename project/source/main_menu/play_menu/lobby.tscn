@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b735rxfcexqks"]
+[gd_scene load_steps=9 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" uid="uid://u0jmot6xn8fc" path="res://source/main_menu/play_menu/lobby.gd" id="1_hty1g"]
 [ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/ui/utils/interface_tabs.gd" id="2_vjg4m"]
@@ -7,7 +7,6 @@
 [ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/ui/utils/id_button.gd" id="3_w00gd"]
 [ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/map_menu/map_menu.tscn" id="5_0x7ha"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
-[ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="5_wcm5s"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gme8j"]
 
@@ -125,7 +124,6 @@ layout_mode = 2
 [node name="Rules" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("3_hb7ro")]
 unique_name_in_owner = true
 layout_mode = 2
-scenes = ExtResource("5_wcm5s")
 
 [node name="MarginBottom" type="Control" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 12)

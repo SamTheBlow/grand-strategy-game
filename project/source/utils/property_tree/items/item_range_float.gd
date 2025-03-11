@@ -1,20 +1,20 @@
 @tool
-class_name RuleRangeFloat
-extends RuleItem
-## A game rule that is a range of float values.
+class_name ItemRangeFloat
+extends PropertyTreeItem
+## A [PropertyTreeItem] that contains a range of float values.
 
-signal value_changed(this_rule: RuleItem)
+signal value_changed(this: PropertyTreeItem)
 
 var min_value: float = 0:
 	set(value):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		var old_value: float = min_value
 		min_value = value
-		if min_rule:
-			min_rule.value = value
+		if min_item:
+			min_item.value = value
 		if max_value < min_value:
 			max_value = min_value
 		elif min_value != old_value:
@@ -23,13 +23,13 @@ var min_value: float = 0:
 var max_value: float = 0:
 	set(value):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		var old_value: float = max_value
 		max_value = value
-		if max_rule:
-			max_rule.value = value
+		if max_item:
+			max_item.value = value
 		if max_value < min_value:
 			min_value = max_value
 		elif max_value != old_value:
@@ -38,7 +38,7 @@ var max_value: float = 0:
 var has_minimum: bool = false:
 	set(new_bool):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		has_minimum = new_bool
@@ -49,20 +49,20 @@ var has_minimum: bool = false:
 var minimum: float = 0:
 	set(new_min):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		minimum = new_min
 		if has_minimum:
 			min_value = maxf(min_value, minimum)
-		# Can't use maxi here because it would cause infinite recursion
+		# Can't use maxf here because it would cause infinite recursion
 		if maximum < minimum:
 			maximum = minimum
 
 var has_maximum: bool = false:
 	set(new_bool):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		has_maximum = new_bool
@@ -73,7 +73,7 @@ var has_maximum: bool = false:
 var maximum: float = 0:
 	set(new_max):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		maximum = new_max
@@ -82,14 +82,14 @@ var maximum: float = 0:
 		minimum = minf(minimum, maximum)
 
 # 4.0 backwards compatibility
-var min_rule: RuleFloat:
+var min_item: ItemFloat:
 	set(value):
-		min_rule = value
-		min_rule.value_changed.connect(_on_rule_min_value_changed)
-var max_rule: RuleFloat:
+		min_item = value
+		min_item.value_changed.connect(_on_min_value_changed)
+var max_item: ItemFloat:
 	set(value):
-		max_rule = value
-		max_rule.value_changed.connect(_on_rule_max_value_changed)
+		max_item = value
+		max_item.value_changed.connect(_on_max_value_changed)
 
 
 func get_data() -> Array:
@@ -99,13 +99,13 @@ func get_data() -> Array:
 ## Must pass an array containing exactly two float values,
 ## otherwise nothing will happen.
 func set_data(data: Variant) -> void:
-	if not (data is Array):
-		push_warning("Rule received incorrect type of value.")
+	if data is not Array:
+		push_warning(_INVALID_TYPE_MESSAGE)
 		return
-	var data_array := data as Array
+	var data_array: Array = data
 
 	if data_array.size() != 2:
-		push_warning("Range rule received array of incorrect size.")
+		push_warning("Received array of incorrect size.")
 		return
 
 	var data_minimum: Variant = data_array[0]
@@ -116,7 +116,7 @@ func set_data(data: Variant) -> void:
 	elif data_minimum is float:
 		final_minimum = data_minimum
 	else:
-		push_warning("Range rule minimum is incorrect type of value.")
+		push_warning("Range minimum is incorrect type of value.")
 		return
 
 	var data_maximum: Variant = data_array[1]
@@ -127,16 +127,16 @@ func set_data(data: Variant) -> void:
 	elif data_maximum is float:
 		final_maximum = data_maximum
 	else:
-		push_warning("Range rule maximum is incorrect type of value.")
+		push_warning("Range maximum is incorrect type of value.")
 		return
 
 	min_value = final_minimum
 	max_value = final_maximum
 
 
-func _on_rule_min_value_changed(_rule: RuleItem) -> void:
-	min_value = min_rule.value
+func _on_min_value_changed(_item: PropertyTreeItem) -> void:
+	min_value = min_item.value
 
 
-func _on_rule_max_value_changed(_rule: RuleItem) -> void:
-	max_value = max_rule.value
+func _on_max_value_changed(_item: PropertyTreeItem) -> void:
+	max_value = max_item.value

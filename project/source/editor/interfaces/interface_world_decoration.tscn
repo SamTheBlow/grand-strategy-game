@@ -1,17 +1,20 @@
-[gd_scene load_steps=7 format=3 uid="uid://bql3bs1c3rgo3"]
+[gd_scene load_steps=6 format=3 uid="uid://bql3bs1c3rgo3"]
 
 [ext_resource type="Script" uid="uid://c0hd8pydnyn2l" path="res://source/editor/interfaces/interface_world_decoration.gd" id="1_aqui8"]
-[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/rules/interface/items/rule_category.tscn" id="2_ewdit"]
-[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/rules/items/rule_item.gd" id="3_dc5hh"]
-[ext_resource type="Resource" uid="uid://bx0utsk51dmvw" path="res://resources/rule_scenes.tres" id="4_w3tya"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_ewdit"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_dc5hh"]
 
-[sub_resource type="Resource" id="Resource_g0giq"]
+[sub_resource type="Resource" id="Resource_ub84e"]
 script = ExtResource("3_dc5hh")
 text = "Editor settings:"
+child_items = Array[ExtResource("3_dc5hh")]([])
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
-[sub_resource type="Resource" id="Resource_ffyu2"]
+[sub_resource type="Resource" id="Resource_aqui8"]
 script = ExtResource("3_dc5hh")
 text = "Game settings:"
+child_items = Array[ExtResource("3_dc5hh")]([])
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceWorldDecoration" type="Control"]
 layout_mode = 3
@@ -39,11 +42,9 @@ fit_content = true
 [node name="EditorSettingsCategory" parent="VBoxContainer" instance=ExtResource("2_ewdit")]
 unique_name_in_owner = true
 layout_mode = 2
-rule = SubResource("Resource_g0giq")
-scenes = ExtResource("4_w3tya")
+item = SubResource("Resource_ub84e")
 
 [node name="GameSettingsCategory" parent="VBoxContainer" instance=ExtResource("2_ewdit")]
 unique_name_in_owner = true
 layout_mode = 2
-rule = SubResource("Resource_ffyu2")
-scenes = ExtResource("4_w3tya")
+item = SubResource("Resource_aqui8")

@@ -1,27 +1,33 @@
 @tool
-class_name RuleOptions
-extends RuleItem
-## A game rule that is a choice between some options.
+class_name ItemOptions
+extends PropertyTreeItem
+## A [PropertyTreeItem] that contains a choice between some options.
 
-signal value_changed(this_rule: RuleItem)
+signal value_changed(this: PropertyTreeItem)
 
 ## The index of the selection option in the options array.
 @export var selected_index: int = 0:
 	set(new_index):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		if new_index == selected_index:
 			return
 
-		if new_index < 0 or new_index >= options.size():
-			push_warning("Tried to set the selected index to an invalid value.")
+		if (
+				options.size() > 0
+				and (new_index < 0 or new_index >= options.size())
+		):
+			push_warning(
+					"Tried to set the selected index to an invalid value."
+			)
 			return
 
 		selected_index = new_index
 		value_changed.emit(self)
 
+## The different options available to the user.
 @export var options: Array[String] = []
 
 ## Maps each option to a number. Useful when working with enums.
@@ -30,7 +36,7 @@ signal value_changed(this_rule: RuleItem)
 ## Has no effect if the array's size is not the same as the number of options.
 @export var option_value_map: Array[int] = []
 
-## Add to this list's arrays the index of the rules that
+## Add to this list's arrays the index of items that
 ## you want to only show when that specific option is selected.
 ## The 1st array in this list is for the 1st option,
 ## the 2nd array is for the 2nd option, and so on.
@@ -67,4 +73,4 @@ func set_data(data: Variant) -> void:
 	elif data is float:
 		selected_index = roundi(data)
 	else:
-		push_warning("Rule received incorrect type of value.")
+		push_warning(_INVALID_TYPE_MESSAGE)

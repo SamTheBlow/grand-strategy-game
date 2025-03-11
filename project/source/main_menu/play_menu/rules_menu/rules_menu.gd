@@ -1,5 +1,6 @@
+@tool
 class_name RulesMenu
-extends RuleInterface
+extends PropertyTreeNode
 ## Root node for all the settings that let you change the game's rules.
 ## Generates all the settings nodes, and initializes a [RulesMenuSync].
 
@@ -10,16 +11,16 @@ var game_rules: GameRules:
 
 
 func _ready() -> void:
-	_update()
+	refresh()
 
 
 func set_game_rules(value: GameRules) -> void:
 	game_rules = value
-	_update()
+	refresh()
 
 
-func _update() -> void:
-	if game_rules == null or not is_node_ready():
+func refresh() -> void:
+	if not is_node_ready() or game_rules == null:
 		return
 
 	_sync.active_state = game_rules
@@ -29,4 +30,4 @@ func _update() -> void:
 		_sync.local_state = game_rules
 
 	_clear()
-	_add_sub_rules(game_rules.root_rules, true, false)
+	_add_child_items(game_rules.root_rules, true, false)

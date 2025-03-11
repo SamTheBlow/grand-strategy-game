@@ -1,15 +1,15 @@
 @tool
-class_name RuleInt
-extends RuleItem
-## A game rule that is an integer value.
+class_name ItemInt
+extends PropertyTreeItem
+## A [PropertyTreeItem] that contains an integer value.
 
-signal value_changed(this_rule: RuleItem)
+signal value_changed(this: PropertyTreeItem)
 
 ## Set this property in the inspector to set the default value.
 var value: int = 0:
 	set(new_value):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		var old_value: int = value
@@ -24,7 +24,7 @@ var value: int = 0:
 var has_minimum: bool = false:
 	set(new_bool):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		has_minimum = new_bool
@@ -35,7 +35,7 @@ var has_minimum: bool = false:
 var minimum: int = 0:
 	set(new_min):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		minimum = new_min
@@ -48,7 +48,7 @@ var minimum: int = 0:
 var has_maximum: bool = false:
 	set(new_bool):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		has_maximum = new_bool
@@ -59,7 +59,7 @@ var has_maximum: bool = false:
 var maximum: int = 0:
 	set(new_max):
 		if _is_locked:
-			push_warning("Tried to set property of a locked rule.")
+			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
 		maximum = new_max
@@ -117,4 +117,4 @@ func set_data(data: Variant) -> void:
 	elif data is float:
 		value = roundi(data)
 	else:
-		push_warning("Rule received incorrect type of value.")
+		push_warning(_INVALID_TYPE_MESSAGE)

@@ -1,3 +1,4 @@
+@tool
 class_name CustomOptionButton
 extends OptionButton
 ## When the user selects an item from this button's options, shows the

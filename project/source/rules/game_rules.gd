@@ -7,7 +7,7 @@ class_name GameRules
 ## This class is also responsible for defining the rule layout
 ## for visual representation of the rules in a menu.
 
-signal rule_changed(rule_name: String, rule_item: RuleItem)
+signal rule_changed(rule_name: String, rule_item: PropertyTreeItem)
 
 enum ReinforcementsOption {
 	RANDOM = 0,
@@ -28,10 +28,10 @@ enum GameOverProvincesOwnedOption {
 }
 
 ## All of the individual rules.
-## They must all point to a property in this class of type [RuleItem],
-## and all of these [RuleItem]s must have a "value" property
+## They must all point to a property in this class of type [PropertyTreeItem],
+## and all of these [PropertyTreeItem]s must have a "value" property
 ## as well as a "value_changed" signal. This signal must
-## pass itself (a [RuleItem]) as the only argument.
+## pass itself (a [PropertyTreeItem]) as the only argument.
 const RULE_NAMES: Array[String] = [
 	"turn_limit_enabled",
 	"turn_limit",
@@ -93,162 +93,162 @@ var diplomatic_actions: DiplomacyActionDefinitions
 var battle: Battle
 
 # Individual rules
-var turn_limit_enabled: RuleBool
-var turn_limit: RuleInt
-var game_over_provinces_owned_option: RuleOptions
-var game_over_provinces_owned_constant: RuleInt
-var game_over_provinces_owned_percentage: RuleFloat
-var reinforcements_enabled: RuleBool
-var reinforcements_option: RuleOptions
-var reinforcements_random_min: RuleInt
-var reinforcements_random_max: RuleInt
-var reinforcements_constant: RuleInt
-var reinforcements_per_person: RuleFloat
-var recruitment_enabled: RuleBool
-var recruitment_money_per_unit: RuleFloat
-var recruitment_population_per_unit: RuleFloat
-var population_growth_enabled: RuleBool
-var population_growth_rate: RuleFloat
-var extra_starting_population: RuleInt
-var start_with_fortress: RuleBool
-var build_fortress_enabled: RuleBool
-var fortress_price: RuleInt
-var starting_money: RuleInt
-var province_income_option: RuleOptions
-var province_income_random_min: RuleInt
-var province_income_random_max: RuleInt
-var province_income_constant: RuleInt
-var province_income_per_person: RuleFloat
-var minimum_army_size: RuleInt
-var global_attacker_efficiency: RuleFloat
-var global_defender_efficiency: RuleFloat
-var battle_algorithm_option: RuleOptions
-var default_ai_type: RuleInt
-var start_with_random_ai_type: RuleBool
-var default_ai_personality_option: RuleOptions
-var start_with_random_ai_personality: RuleBool
-var diplomacy_presets_option: RuleOptions
-var starts_with_random_relationship_preset: RuleBool
-var grants_military_access_default: RuleBool
-var can_grant_military_access: RuleBool
-var can_revoke_military_access: RuleBool
-var can_ask_for_military_access: RuleBool
-var is_military_access_mutual: RuleBool
-var is_military_access_revoked_when_fighting: RuleBool
-var military_access_loss_behavior_option: RuleOptions
-var is_trespassing_default: RuleBool
-var can_enable_trespassing: RuleBool
-var can_disable_trespassing: RuleBool
-var can_ask_to_stop_trespassing: RuleBool
-var automatically_fight_trespassers: RuleBool
-var is_fighting_default: RuleBool
-var can_enable_fighting: RuleBool
-var can_disable_fighting: RuleBool
-var can_ask_to_stop_fighting: RuleBool
-var automatically_fight_back: RuleBool
+var turn_limit_enabled: ItemBool
+var turn_limit: ItemInt
+var game_over_provinces_owned_option: ItemOptions
+var game_over_provinces_owned_constant: ItemInt
+var game_over_provinces_owned_percentage: ItemFloat
+var reinforcements_enabled: ItemBool
+var reinforcements_option: ItemOptions
+var reinforcements_random_min: ItemInt
+var reinforcements_random_max: ItemInt
+var reinforcements_constant: ItemInt
+var reinforcements_per_person: ItemFloat
+var recruitment_enabled: ItemBool
+var recruitment_money_per_unit: ItemFloat
+var recruitment_population_per_unit: ItemFloat
+var population_growth_enabled: ItemBool
+var population_growth_rate: ItemFloat
+var extra_starting_population: ItemInt
+var start_with_fortress: ItemBool
+var build_fortress_enabled: ItemBool
+var fortress_price: ItemInt
+var starting_money: ItemInt
+var province_income_option: ItemOptions
+var province_income_random_min: ItemInt
+var province_income_random_max: ItemInt
+var province_income_constant: ItemInt
+var province_income_per_person: ItemFloat
+var minimum_army_size: ItemInt
+var global_attacker_efficiency: ItemFloat
+var global_defender_efficiency: ItemFloat
+var battle_algorithm_option: ItemOptions
+var default_ai_type: ItemInt
+var start_with_random_ai_type: ItemBool
+var default_ai_personality_option: ItemOptions
+var start_with_random_ai_personality: ItemBool
+var diplomacy_presets_option: ItemOptions
+var starts_with_random_relationship_preset: ItemBool
+var grants_military_access_default: ItemBool
+var can_grant_military_access: ItemBool
+var can_revoke_military_access: ItemBool
+var can_ask_for_military_access: ItemBool
+var is_military_access_mutual: ItemBool
+var is_military_access_revoked_when_fighting: ItemBool
+var military_access_loss_behavior_option: ItemOptions
+var is_trespassing_default: ItemBool
+var can_enable_trespassing: ItemBool
+var can_disable_trespassing: ItemBool
+var can_ask_to_stop_trespassing: ItemBool
+var automatically_fight_trespassers: ItemBool
+var is_fighting_default: ItemBool
+var can_enable_fighting: ItemBool
+var can_disable_fighting: ItemBool
+var can_ask_to_stop_fighting: ItemBool
+var automatically_fight_back: ItemBool
 
 # Categories
-var _category_game_over: RuleItem
-var _category_recruitment: RuleItem
-var _category_population: RuleItem
-var _category_fortresses: RuleItem
-var _category_battle: RuleItem
-var _category_ai: RuleItem
-var _category_ai_type: RuleItem
-var _category_ai_personality: RuleItem
-var _category_diplomacy: RuleItem
-var _category_diplomacy_data: RuleItem
-var _category_diplomacy_military_access: RuleItem
-var _category_diplomacy_trespassing: RuleItem
-var _category_diplomacy_fighting: RuleItem
+var _category_game_over: PropertyTreeItem
+var _category_recruitment: PropertyTreeItem
+var _category_population: PropertyTreeItem
+var _category_fortresses: PropertyTreeItem
+var _category_battle: PropertyTreeItem
+var _category_ai: PropertyTreeItem
+var _category_ai_type: PropertyTreeItem
+var _category_ai_personality: PropertyTreeItem
+var _category_diplomacy: PropertyTreeItem
+var _category_diplomacy_data: PropertyTreeItem
+var _category_diplomacy_military_access: PropertyTreeItem
+var _category_diplomacy_trespassing: PropertyTreeItem
+var _category_diplomacy_fighting: PropertyTreeItem
 
 # 4.0 Backwards compatibility
-var reinforcements_random_range: RuleRangeInt
-var province_income_random_range: RuleRangeInt
+var reinforcements_random_range: ItemRangeInt
+var province_income_random_range: ItemRangeInt
 
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
 ## This is used to define the layout of the rule interface.
 ## See also: [RulesMenu]
-var root_rules: Array[RuleItem] = []
+var root_rules: Array[PropertyTreeItem] = []
 
 
 func _init() -> void:
 	# Define the default rules & rule layout here
 	# TODO this is kinda cursed I guess
-	turn_limit_enabled = RuleBool.new()
-	turn_limit = RuleInt.new()
-	game_over_provinces_owned_option = RuleOptions.new()
-	game_over_provinces_owned_constant = RuleInt.new()
-	game_over_provinces_owned_percentage = RuleFloat.new()
-	reinforcements_enabled = RuleBool.new()
-	reinforcements_option = RuleOptions.new()
-	reinforcements_random_min = RuleInt.new()
-	reinforcements_random_max = RuleInt.new()
-	reinforcements_constant = RuleInt.new()
-	reinforcements_per_person = RuleFloat.new()
-	recruitment_enabled = RuleBool.new()
-	recruitment_money_per_unit = RuleFloat.new()
-	recruitment_population_per_unit = RuleFloat.new()
-	population_growth_enabled = RuleBool.new()
-	population_growth_rate = RuleFloat.new()
-	extra_starting_population = RuleInt.new()
-	start_with_fortress = RuleBool.new()
-	build_fortress_enabled = RuleBool.new()
-	fortress_price = RuleInt.new()
-	starting_money = RuleInt.new()
-	province_income_option = RuleOptions.new()
-	province_income_random_min = RuleInt.new()
-	province_income_random_max = RuleInt.new()
-	province_income_constant = RuleInt.new()
-	province_income_per_person = RuleFloat.new()
-	minimum_army_size = RuleInt.new()
-	global_attacker_efficiency = RuleFloat.new()
-	global_defender_efficiency = RuleFloat.new()
-	battle_algorithm_option = RuleOptions.new()
-	default_ai_type = RuleInt.new()
-	start_with_random_ai_type = RuleBool.new()
-	default_ai_personality_option = RuleOptions.new()
-	start_with_random_ai_personality = RuleBool.new()
-	diplomacy_presets_option = RuleOptions.new()
-	starts_with_random_relationship_preset = RuleBool.new()
-	grants_military_access_default = RuleBool.new()
-	can_grant_military_access = RuleBool.new()
-	can_revoke_military_access = RuleBool.new()
-	can_ask_for_military_access = RuleBool.new()
-	is_military_access_mutual = RuleBool.new()
-	is_military_access_revoked_when_fighting = RuleBool.new()
-	military_access_loss_behavior_option = RuleOptions.new()
-	is_trespassing_default = RuleBool.new()
-	can_enable_trespassing = RuleBool.new()
-	can_disable_trespassing = RuleBool.new()
-	can_ask_to_stop_trespassing = RuleBool.new()
-	automatically_fight_trespassers = RuleBool.new()
-	is_fighting_default = RuleBool.new()
-	can_enable_fighting = RuleBool.new()
-	can_disable_fighting = RuleBool.new()
-	can_ask_to_stop_fighting = RuleBool.new()
-	automatically_fight_back = RuleBool.new()
-	_category_game_over = RuleItem.new()
-	_category_recruitment = RuleItem.new()
-	_category_population = RuleItem.new()
-	_category_fortresses = RuleItem.new()
-	_category_battle = RuleItem.new()
-	_category_ai = RuleItem.new()
-	_category_ai_type = RuleItem.new()
-	_category_ai_personality = RuleItem.new()
-	_category_diplomacy = RuleItem.new()
-	_category_diplomacy_data = RuleItem.new()
-	_category_diplomacy_military_access = RuleItem.new()
-	_category_diplomacy_trespassing = RuleItem.new()
-	_category_diplomacy_fighting = RuleItem.new()
-	reinforcements_random_range = RuleRangeInt.new()
-	province_income_random_range = RuleRangeInt.new()
+	turn_limit_enabled = ItemBool.new()
+	turn_limit = ItemInt.new()
+	game_over_provinces_owned_option = ItemOptions.new()
+	game_over_provinces_owned_constant = ItemInt.new()
+	game_over_provinces_owned_percentage = ItemFloat.new()
+	reinforcements_enabled = ItemBool.new()
+	reinforcements_option = ItemOptions.new()
+	reinforcements_random_min = ItemInt.new()
+	reinforcements_random_max = ItemInt.new()
+	reinforcements_constant = ItemInt.new()
+	reinforcements_per_person = ItemFloat.new()
+	recruitment_enabled = ItemBool.new()
+	recruitment_money_per_unit = ItemFloat.new()
+	recruitment_population_per_unit = ItemFloat.new()
+	population_growth_enabled = ItemBool.new()
+	population_growth_rate = ItemFloat.new()
+	extra_starting_population = ItemInt.new()
+	start_with_fortress = ItemBool.new()
+	build_fortress_enabled = ItemBool.new()
+	fortress_price = ItemInt.new()
+	starting_money = ItemInt.new()
+	province_income_option = ItemOptions.new()
+	province_income_random_min = ItemInt.new()
+	province_income_random_max = ItemInt.new()
+	province_income_constant = ItemInt.new()
+	province_income_per_person = ItemFloat.new()
+	minimum_army_size = ItemInt.new()
+	global_attacker_efficiency = ItemFloat.new()
+	global_defender_efficiency = ItemFloat.new()
+	battle_algorithm_option = ItemOptions.new()
+	default_ai_type = ItemInt.new()
+	start_with_random_ai_type = ItemBool.new()
+	default_ai_personality_option = ItemOptions.new()
+	start_with_random_ai_personality = ItemBool.new()
+	diplomacy_presets_option = ItemOptions.new()
+	starts_with_random_relationship_preset = ItemBool.new()
+	grants_military_access_default = ItemBool.new()
+	can_grant_military_access = ItemBool.new()
+	can_revoke_military_access = ItemBool.new()
+	can_ask_for_military_access = ItemBool.new()
+	is_military_access_mutual = ItemBool.new()
+	is_military_access_revoked_when_fighting = ItemBool.new()
+	military_access_loss_behavior_option = ItemOptions.new()
+	is_trespassing_default = ItemBool.new()
+	can_enable_trespassing = ItemBool.new()
+	can_disable_trespassing = ItemBool.new()
+	can_ask_to_stop_trespassing = ItemBool.new()
+	automatically_fight_trespassers = ItemBool.new()
+	is_fighting_default = ItemBool.new()
+	can_enable_fighting = ItemBool.new()
+	can_disable_fighting = ItemBool.new()
+	can_ask_to_stop_fighting = ItemBool.new()
+	automatically_fight_back = ItemBool.new()
+	_category_game_over = PropertyTreeItem.new()
+	_category_recruitment = PropertyTreeItem.new()
+	_category_population = PropertyTreeItem.new()
+	_category_fortresses = PropertyTreeItem.new()
+	_category_battle = PropertyTreeItem.new()
+	_category_ai = PropertyTreeItem.new()
+	_category_ai_type = PropertyTreeItem.new()
+	_category_ai_personality = PropertyTreeItem.new()
+	_category_diplomacy = PropertyTreeItem.new()
+	_category_diplomacy_data = PropertyTreeItem.new()
+	_category_diplomacy_military_access = PropertyTreeItem.new()
+	_category_diplomacy_trespassing = PropertyTreeItem.new()
+	_category_diplomacy_fighting = PropertyTreeItem.new()
+	reinforcements_random_range = ItemRangeInt.new()
+	province_income_random_range = ItemRangeInt.new()
 
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
-	turn_limit_enabled.sub_rules = [turn_limit]
-	turn_limit_enabled.sub_rules_on = [0]
+	turn_limit_enabled.child_items = [turn_limit]
+	turn_limit_enabled.child_items_on = [0]
 
 	turn_limit.text = "Final turn"
 	turn_limit.minimum = 1
@@ -262,7 +262,7 @@ func _init() -> void:
 		"Percentage of world",
 	]
 	game_over_provinces_owned_option.selected_index = 2
-	game_over_provinces_owned_option.sub_rules = [
+	game_over_provinces_owned_option.child_items = [
 		game_over_provinces_owned_constant,
 		game_over_provinces_owned_percentage,
 	]
@@ -283,17 +283,17 @@ func _init() -> void:
 
 	reinforcements_enabled.text = "Reinforcements at the start of each turn"
 	reinforcements_enabled.value = true
-	reinforcements_enabled.sub_rules = [
+	reinforcements_enabled.child_items = [
 		reinforcements_option,
 	]
-	reinforcements_enabled.sub_rules_on = [0]
+	reinforcements_enabled.child_items_on = [0]
 
 	reinforcements_option.text = "Reinforcements size"
 	reinforcements_option.options = [
 		"Random", "Constant", "Proportional to population size"
 	]
 	reinforcements_option.selected_index = 2
-	reinforcements_option.sub_rules = [
+	reinforcements_option.child_items = [
 		reinforcements_random_range,
 		reinforcements_constant,
 		reinforcements_per_person,
@@ -322,11 +322,11 @@ func _init() -> void:
 
 	recruitment_enabled.text = "Can recruit new armies"
 	recruitment_enabled.value = true
-	recruitment_enabled.sub_rules = [
+	recruitment_enabled.child_items = [
 		recruitment_money_per_unit,
 		recruitment_population_per_unit,
 	]
-	recruitment_enabled.sub_rules_on = [0, 1]
+	recruitment_enabled.child_items_on = [0, 1]
 
 	recruitment_money_per_unit.text = "Money cost per unit"
 	recruitment_money_per_unit.minimum = 0
@@ -340,10 +340,10 @@ func _init() -> void:
 
 	population_growth_enabled.text = "Population growth"
 	population_growth_enabled.value = true
-	population_growth_enabled.sub_rules = [
+	population_growth_enabled.child_items = [
 		population_growth_rate,
 	]
-	population_growth_enabled.sub_rules_on = [0]
+	population_growth_enabled.child_items_on = [0]
 
 	population_growth_rate.text = "Growth rate"
 	population_growth_rate.minimum = 0
@@ -360,10 +360,10 @@ func _init() -> void:
 
 	build_fortress_enabled.text = "Can be built"
 	build_fortress_enabled.value = true
-	build_fortress_enabled.sub_rules = [
+	build_fortress_enabled.child_items = [
 		fortress_price,
 	]
-	build_fortress_enabled.sub_rules_on = [0]
+	build_fortress_enabled.child_items_on = [0]
 
 	fortress_price.text = "Money cost"
 	fortress_price.minimum = 0
@@ -380,7 +380,7 @@ func _init() -> void:
 		"Random", "Constant", "Proportional to population size"
 	]
 	province_income_option.selected_index = 2
-	province_income_option.sub_rules = [
+	province_income_option.child_items = [
 		province_income_random_range,
 		province_income_constant,
 		province_income_per_person,
@@ -456,7 +456,7 @@ func _init() -> void:
 		"Don't use presets", "Allied", "Neutral", "At war"
 	]
 	diplomacy_presets_option.selected_index = 2
-	diplomacy_presets_option.sub_rules = [
+	diplomacy_presets_option.child_items = [
 		starts_with_random_relationship_preset,
 		starts_with_random_relationship_preset,
 		starts_with_random_relationship_preset,
@@ -536,44 +536,44 @@ func _init() -> void:
 	automatically_fight_back.value = true
 
 	_category_game_over.text = "Game Over conditions"
-	_category_game_over.sub_rules = [
+	_category_game_over.child_items = [
 		turn_limit_enabled,
 		game_over_provinces_owned_option,
 	]
 
 	_category_recruitment.text = "Recruitment"
-	_category_recruitment.sub_rules = [
+	_category_recruitment.child_items = [
 		reinforcements_enabled,
 		recruitment_enabled,
 	]
 
 	_category_population.text = "Population"
-	_category_population.sub_rules = [
+	_category_population.child_items = [
 		population_growth_enabled,
 		extra_starting_population,
 	]
 
 	_category_fortresses.text = "Fortresses"
-	_category_fortresses.sub_rules = [
+	_category_fortresses.child_items = [
 		start_with_fortress,
 		build_fortress_enabled,
 	]
 
 	_category_battle.text = "Battle"
-	_category_battle.sub_rules = [
+	_category_battle.child_items = [
 		global_attacker_efficiency,
 		global_defender_efficiency,
 		battle_algorithm_option,
 	]
 
 	_category_ai.text = "AI"
-	_category_ai.sub_rules = [
+	_category_ai.child_items = [
 		_category_ai_type,
 		_category_ai_personality,
 	]
 
 	_category_ai_type.text = "AI type (the way it plays)"
-	_category_ai_type.sub_rules = [
+	_category_ai_type.child_items = [
 		default_ai_type,
 		start_with_random_ai_type,
 	]
@@ -581,13 +581,13 @@ func _init() -> void:
 	_category_ai_personality.text = (
 			"AI personality (the way it behaves diplomatically)"
 	)
-	_category_ai_personality.sub_rules = [
+	_category_ai_personality.child_items = [
 		default_ai_personality_option,
 		start_with_random_ai_personality,
 	]
 
 	_category_diplomacy.text = "Diplomacy"
-	_category_diplomacy.sub_rules = [
+	_category_diplomacy.child_items = [
 		diplomacy_presets_option,
 		_category_diplomacy_data,
 	]
@@ -595,14 +595,14 @@ func _init() -> void:
 	_category_diplomacy_data.text = (
 			"Relationship data (these may be overridden by presets)"
 	)
-	_category_diplomacy_data.sub_rules = [
+	_category_diplomacy_data.child_items = [
 		_category_diplomacy_military_access,
 		_category_diplomacy_trespassing,
 		_category_diplomacy_fighting,
 	]
 
 	_category_diplomacy_military_access.text = "Military access"
-	_category_diplomacy_military_access.sub_rules = [
+	_category_diplomacy_military_access.child_items = [
 		grants_military_access_default,
 		can_grant_military_access,
 		can_revoke_military_access,
@@ -613,7 +613,7 @@ func _init() -> void:
 	]
 
 	_category_diplomacy_trespassing.text = "Trespassing"
-	_category_diplomacy_trespassing.sub_rules = [
+	_category_diplomacy_trespassing.child_items = [
 		is_trespassing_default,
 		can_enable_trespassing,
 		can_disable_trespassing,
@@ -622,7 +622,7 @@ func _init() -> void:
 	]
 
 	_category_diplomacy_fighting.text = "Fighting"
-	_category_diplomacy_fighting.sub_rules = [
+	_category_diplomacy_fighting.child_items = [
 		is_fighting_default,
 		can_enable_fighting,
 		can_disable_fighting,
@@ -630,15 +630,15 @@ func _init() -> void:
 		automatically_fight_back,
 	]
 
-	reinforcements_random_range.min_rule = reinforcements_random_min
-	reinforcements_random_range.max_rule = reinforcements_random_max
+	reinforcements_random_range.min_item = reinforcements_random_min
+	reinforcements_random_range.max_item = reinforcements_random_max
 	reinforcements_random_range.minimum = 0
 	reinforcements_random_range.has_minimum = true
 	reinforcements_random_range.min_value = 10
 	reinforcements_random_range.max_value = 40
 
-	province_income_random_range.min_rule = province_income_random_min
-	province_income_random_range.max_rule = province_income_random_max
+	province_income_random_range.min_item = province_income_random_min
+	province_income_random_range.max_item = province_income_random_max
 	province_income_random_range.minimum = 0
 	province_income_random_range.has_minimum = true
 	province_income_random_range.min_value = 10
@@ -683,18 +683,18 @@ func _init() -> void:
 	battle = load("res://resources/battle.tres") as Battle
 
 
-func all_rules() -> Array[RuleItem]:
-	var output: Array[RuleItem] = []
+func all_rules() -> Array[PropertyTreeItem]:
+	var output: Array[PropertyTreeItem] = []
 	for rule_name in RULE_NAMES:
 		output.append(rule_with_name(rule_name))
 	return output
 
 
-func rule_with_name(rule_name: String) -> RuleItem:
+func rule_with_name(rule_name: String) -> PropertyTreeItem:
 	if not RULE_NAMES.has(rule_name):
 		push_warning('No rule with name "' + rule_name + '".')
 		return null
-	return get(rule_name) as RuleItem
+	return get(rule_name) as PropertyTreeItem
 
 
 ## Returns a new deep copy of the game rules.
@@ -714,7 +714,7 @@ func is_diplomacy_presets_enabled() -> bool:
 
 func _connect_signals() -> void:
 	for rule_name in RULE_NAMES:
-		var rule: RuleItem = rule_with_name(rule_name)
+		var rule: PropertyTreeItem = rule_with_name(rule_name)
 		if rule == null:
 			continue
 		if rule.has_signal("value_changed"):
@@ -723,7 +723,7 @@ func _connect_signals() -> void:
 			push_error('Rule does not have a "value_changed" signal')
 
 
-func _name_of_rule(rule_item: RuleItem) -> String:
+func _name_of_rule(rule_item: PropertyTreeItem) -> String:
 	for rule_name in RULE_NAMES:
 		if rule_with_name(rule_name) == rule_item:
 			return rule_name
@@ -734,11 +734,11 @@ func _name_of_rule(rule_item: RuleItem) -> String:
 ## Sets the value of a given rule by its string name,
 ## for the purpose of network synchronization.
 func _set_rule(rule_name: String, value: Variant) -> void:
-	var rule_item: RuleItem = rule_with_name(rule_name)
+	var rule_item: PropertyTreeItem = rule_with_name(rule_name)
 	if rule_item == null:
 		return
 	rule_item.set_data(value)
 
 
-func _on_rule_value_changed(rule_item: RuleItem) -> void:
+func _on_rule_value_changed(rule_item: PropertyTreeItem) -> void:
 	rule_changed.emit(_name_of_rule(rule_item), rule_item)
