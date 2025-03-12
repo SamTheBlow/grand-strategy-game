@@ -95,6 +95,13 @@ func _add_child_items(
 			)
 			item_node.item = child_item as ItemRangeFloat
 			_add_item(item_node, with_spacing, with_tabbing)
+		elif child_item is ItemColor:
+			var item_node := (
+					preload("uid://bm83m86biyiv2").instantiate()
+					as ItemColorNode
+			)
+			item_node.item = child_item as ItemColor
+			_add_item(item_node, with_spacing, with_tabbing)
 		else:
 			var item_node := (
 					preload("uid://cintikjibl1vr").instantiate()

@@ -1,19 +1,92 @@
-[gd_scene load_steps=6 format=3 uid="uid://cyspbdausxgwr"]
+[gd_scene load_steps=16 format=3 uid="uid://cyspbdausxgwr"]
 
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="1_2hi7y"]
 [ext_resource type="Script" uid="uid://cryqgojuc1031" path="res://source/editor/interfaces/interface_world_limits.gd" id="1_dr3ch"]
+[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="4_pqn0e"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="4_uxdl1"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_6ocqx"]
+[ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="5_un0oj"]
+
+[sub_resource type="Resource" id="Resource_ajah8"]
+script = ExtResource("4_pqn0e")
+value = Color(1, 0, 0, 1)
+is_transparency_enabled = true
+text = "Rectangle color"
+child_items = Array[ExtResource("5_6ocqx")]([])
+metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
+
+[sub_resource type="Resource" id="Resource_pqn0e"]
+script = ExtResource("4_uxdl1")
+value = true
+child_items_on = Array[int]([0])
+child_items_off = Array[int]([])
+text = "Show world limits in editor"
+child_items = Array[ExtResource("5_6ocqx")]([SubResource("Resource_ajah8")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_l27iq"]
 script = ExtResource("5_6ocqx")
 text = "Editor settings:"
-child_items = Array[ExtResource("5_6ocqx")]([])
+child_items = Array[ExtResource("5_6ocqx")]([SubResource("Resource_pqn0e")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[sub_resource type="Resource" id="Resource_nvnsl"]
+script = ExtResource("5_un0oj")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Left"
+child_items = Array[ExtResource("5_6ocqx")]([])
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_cydj4"]
+script = ExtResource("5_un0oj")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Right"
+child_items = Array[ExtResource("5_6ocqx")]([])
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_6p6bj"]
+script = ExtResource("5_un0oj")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Top"
+child_items = Array[ExtResource("5_6ocqx")]([])
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_848kf"]
+script = ExtResource("5_un0oj")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Bottom"
+child_items = Array[ExtResource("5_6ocqx")]([])
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_7gwlk"]
+script = ExtResource("4_uxdl1")
+value = true
+child_items_on = Array[int]([0, 1, 2, 3])
+child_items_off = Array[int]([])
+text = "Use custom world limits"
+child_items = Array[ExtResource("5_6ocqx")]([SubResource("Resource_nvnsl"), SubResource("Resource_cydj4"), SubResource("Resource_6p6bj"), SubResource("Resource_848kf")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_uxdl1"]
 script = ExtResource("5_6ocqx")
 text = "Game settings:"
-child_items = Array[ExtResource("5_6ocqx")]([])
+child_items = Array[ExtResource("5_6ocqx")]([SubResource("Resource_7gwlk")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceWorldLimits" type="Control"]
