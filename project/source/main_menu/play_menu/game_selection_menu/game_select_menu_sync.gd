@@ -1,23 +1,23 @@
-class_name MapMenuSync
+class_name GameSelectMenuSync
 extends Node
-## Synchronizes the contents of a map selection menu between network clients.
+## Synchronizes the contents of a [GameSelectionMenu] between network clients.
 ## When online, syncs...
-## - The list of built-in maps (including all of their metadata)
-## - The list of custom maps (idem)
-## - The currently selected map
+## - The list of built-in games (including all of their metadata)
+## - The list of imported games (idem)
+## - The currently selected game
 ## When leaving a server, resets the entire state to what it was before joining.
 ##
 ## See also: [RulesMenuSync]
 
 ## Emitted on clients when the client receives a new state from the server,
-## in which case this signal will pass a new instance of [MapMenuState].
+## in which case this signal will pass a new instance of [GameSelectMenuState].
 ## Also emitted on clients when the client disconnects from a server,
 ## in which case this signal will pass a reference to the user's local state.
-signal state_changed(new_state: MapMenuState)
+signal state_changed(new_state: GameSelectMenuState)
 
 ## This is the state that's being used by the UI.
 ## Changing something in this object will affect the visuals.
-var active_state: MapMenuState:
+var active_state: GameSelectMenuState:
 	set(value):
 		if active_state == value:
 			return
@@ -31,7 +31,7 @@ var active_state: MapMenuState:
 ## This is the user's personal state.
 ## It stops being the active state when joining a server.
 ## It becomes the active state again when leaving a server.
-var local_state: MapMenuState
+var local_state: GameSelectMenuState
 
 
 func _ready() -> void:
@@ -45,15 +45,15 @@ func _connect_signals() -> void:
 		return
 
 	if (
-			not active_state.selected_map_changed
-			.is_connected(_on_selected_map_changed)
+			not active_state.selected_game_changed
+			.is_connected(_on_selected_game_changed)
 	):
-		active_state.selected_map_changed.connect(_on_selected_map_changed)
+		active_state.selected_game_changed.connect(_on_selected_game_changed)
 	if (
-			not active_state.custom_map_added
-			.is_connected(_on_custom_map_added)
+			not active_state.imported_game_added
+			.is_connected(_on_imported_game_added)
 	):
-		active_state.custom_map_added.connect(_on_custom_map_added)
+		active_state.imported_game_added.connect(_on_imported_game_added)
 	if (
 			not active_state.metadata_changed
 			.is_connected(_on_metadata_changed)
@@ -66,15 +66,15 @@ func _disconnect_signals() -> void:
 		return
 
 	if (
-			active_state.selected_map_changed
-			.is_connected(_on_selected_map_changed)
+			active_state.selected_game_changed
+			.is_connected(_on_selected_game_changed)
 	):
-		active_state.selected_map_changed.disconnect(_on_selected_map_changed)
+		active_state.selected_game_changed.disconnect(_on_selected_game_changed)
 	if (
-			active_state.custom_map_added
-			.is_connected(_on_custom_map_added)
+			active_state.imported_game_added
+			.is_connected(_on_imported_game_added)
 	):
-		active_state.custom_map_added.disconnect(_on_custom_map_added)
+		active_state.imported_game_added.disconnect(_on_imported_game_added)
 	if (
 			active_state.metadata_changed
 			.is_connected(_on_metadata_changed)
@@ -116,56 +116,56 @@ func _receive_request_active_state() -> void:
 ## Updates the entire state on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_state(data: Dictionary) -> void:
-	var new_state := MapMenuState.new()
+	var new_state := GameSelectMenuState.new()
 	new_state.set_raw_state(data)
 	state_changed.emit(new_state)
 
 
-## Updates the selected map on clients.
+## Updates the selected game on clients.
 @rpc("authority", "call_remote", "reliable")
-func _receive_selected_map_id(map_id: int) -> void:
-	if active_state.map_with_id(map_id) == null:
-		push_error("Received invalid map id: ", map_id)
+func _receive_selected_game_id(game_id: int) -> void:
+	if active_state.game_with_id(game_id) == null:
+		push_error("Received invalid game id: ", game_id)
 		return
 
-	active_state.set_selected_map_id(map_id)
+	active_state.set_selected_game_id(game_id)
 
 
-## Adds a new custom map to the list on clients.
+## Adds a new imported game to the list on clients.
 @rpc("authority", "call_remote", "reliable")
-func _receive_new_custom_map(raw_map_metadata: Dictionary) -> void:
-	active_state.add_custom_map(MapMetadata.from_dict(raw_map_metadata))
+func _receive_new_imported_game(raw_metadata: Dictionary) -> void:
+	active_state.add_imported_game(GameMetadata.from_dict(raw_metadata))
 
 
-## Updates a map's metadata on clients.
+## Updates a game's metadata on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_metadata_change(
-		map_id: int, raw_map_metadata: Dictionary
+		game_id: int, raw_metadata: Dictionary
 ) -> void:
-	var metadata_to_change: MapMetadata = active_state.map_with_id(map_id)
+	var metadata_to_change: GameMetadata = active_state.game_with_id(game_id)
 	if metadata_to_change == null:
-		push_error("Received an invalid map metadata id when trying to sync.")
+		push_error("Received an invalid game id when trying to sync.")
 		return
 
-	metadata_to_change.copy_state_of(MapMetadata.from_dict(raw_map_metadata))
+	metadata_to_change.copy_state_of(GameMetadata.from_dict(raw_metadata))
 
 
-## On the server, sends the newly selected map to all clients.
-func _on_selected_map_changed() -> void:
+## On the server, sends the newly selected game to all clients.
+func _on_selected_game_changed() -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_selected_map_id.rpc(active_state.selected_map_id())
+		_receive_selected_game_id.rpc(active_state.selected_game_id())
 
 
-## On the server, sends the newly added custom map to all clients.
-func _on_custom_map_added(map_metadata: MapMetadata) -> void:
+## On the server, sends the new imported game to all clients.
+func _on_imported_game_added(metadata: GameMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_new_custom_map.rpc(map_metadata.to_dict(false))
+		_receive_new_imported_game.rpc(metadata.to_dict(false))
 
 
 ## On the server, sends the changed metadata to all clients.
-func _on_metadata_changed(map_id: int, map_metadata: MapMetadata) -> void:
+func _on_metadata_changed(game_id: int, metadata: GameMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_metadata_change.rpc(map_id, map_metadata.to_dict(false))
+		_receive_metadata_change.rpc(game_id, metadata.to_dict(false))
 
 
 ## Clients ask the server for the active state when they first join.

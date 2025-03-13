@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://bcid4i3ekmb1a"]
 
-[ext_resource type="Script" uid="uid://c6h8qv2ejmngq" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_bool_node.gd" id="1_bei66"]
+[ext_resource type="Script" uid="uid://c6h8qv2ejmngq" path="res://source/main_menu/play_menu/game_selection_menu/project_settings/items/setting_bool_node.gd" id="1_bei66"]
 
 [node name="SettingBool" type="MarginContainer"]
 anchors_preset = 15

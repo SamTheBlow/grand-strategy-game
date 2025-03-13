@@ -1,8 +1,9 @@
-class_name MapMetadata
-## Data structure. Contains a game map's metadata.
+class_name GameMetadata
+## Data structure.
+## Contains a game's metadata, such as its name and its file path.
 
-signal setting_changed(this: MapMetadata)
-signal state_updated(this: MapMetadata)
+signal setting_changed(this: GameMetadata)
+signal state_updated(this: GameMetadata)
 
 # The keys used in save files
 const KEY_METADATA: String = "meta"
@@ -11,14 +12,15 @@ const KEY_META_ICON: String = "icon"
 const KEY_META_SETTINGS: String = "settings"
 
 # The keys used internally for the properties in this class
-const KEY_STATE_MAP_NAME: String = "map_name"
+# TODO 4.2 backwards compatibility: "map_name" will become "project_name"
+const KEY_STATE_PROJECT_NAME: String = "map_name"
 const KEY_STATE_FILE_PATH: String = "file_path"
 const KEY_STATE_ICON: String = "icon"
 const KEY_STATE_SETTINGS: String = "settings"
 
-var map_name: String = "(No name)"
 var file_path: String = ""
-## The map may have no icon, in which case this will be null.
+var project_name: String = "(No name)"
+## The project may have no icon, in which case this will be null.
 var icon: Texture2D
 ## Keys must be of type String, values may be any "raw" type.
 var settings: Dictionary = {}
@@ -30,25 +32,25 @@ func set_setting(key: String, value: Variant) -> void:
 	if not ParseUtils.dictionary_has_dictionary(settings, key):
 		return
 	var setting_dict: Dictionary = settings[key]
-	setting_dict[MapSettings.KEY_VALUE] = value
+	setting_dict[ProjectSettingsNode.KEY_VALUE] = value
 	setting_changed.emit(self)
 
 
-## Returns a new MapMetadata instance with data loaded from given file path.
+## Returns a new [GameMetadata] instance with data loaded from given file path.
 ## Returns null if an error occurs, e.g. the file's contents are invalid.
-static func from_file_path(base_path: String) -> MapMetadata:
+static func from_file_path(base_path: String) -> GameMetadata:
 	var file_json := FileJSON.new()
 	file_json.load_json(base_path)
 	if file_json.error:
-		#print_debug("Failed to load map JSON: ", file_json.error_message)
+		#print_debug("Failed to load metadata JSON: ", file_json.error_message)
 		return null
 	var json_data: Variant = file_json.result
 	if json_data is not Dictionary:
-		#print_debug("Can't load map metadata: JSON data is not a Dictionary")
+		#print_debug("Can't load metadata: JSON data is not a Dictionary")
 		return null
 	var json_dict := json_data as Dictionary
 
-	var result := MapMetadata.new()
+	var result := GameMetadata.new()
 	result.file_path = base_path
 
 	if not ParseUtils.dictionary_has_dictionary(json_dict, KEY_METADATA):
@@ -56,11 +58,11 @@ static func from_file_path(base_path: String) -> MapMetadata:
 	var meta_dict := json_dict[KEY_METADATA] as Dictionary
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_NAME):
-		result.map_name = meta_dict[KEY_META_NAME]
+		result.project_name = meta_dict[KEY_META_NAME]
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
-		var map_icon_file_path: String = meta_dict[KEY_META_ICON]
-		result.icon = _map_icon_from_path(base_path, map_icon_file_path)
+		var icon_file_path: String = meta_dict[KEY_META_ICON]
+		result.icon = _icon_from_path(base_path, icon_file_path)
 
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
 		# Only load settings whose key is of type String.
@@ -75,28 +77,28 @@ static func from_file_path(base_path: String) -> MapMetadata:
 
 
 ## Returns null if an error occurs.
-## The base path is the path in which the map data's file is located.
+## The base path is the path in which the project data's file is located.
 ## The icon's file path is relative to that file path.
-static func _map_icon_from_path(
+static func _icon_from_path(
 		base_path: String, icon_file_path: String
 ) -> Texture2D:
 	if icon_file_path.is_absolute_path():
 		#print_debug(
-		#	"Metadata for map icon uses an absolute file path. ",
-		#	"Only relative file paths are allowed. ",
-		#	"Please make sure the icon's file path is relative to the map's."
+		#	"Metadata for project icon uses an absolute file path. ",
+		#	"Only relative file paths are allowed. Please make sure ",
+		#	"the icon's file path is relative to the project's."
 		#)
 		return null
 
-	var map_dir: DirAccess = DirAccess.open(base_path.get_base_dir())
-	map_dir.change_dir(icon_file_path.get_base_dir())
+	var project_dir: DirAccess = DirAccess.open(base_path.get_base_dir())
+	project_dir.change_dir(icon_file_path.get_base_dir())
 	var true_icon_path: String = (
-			map_dir.get_current_dir().path_join(icon_file_path.get_file())
+			project_dir.get_current_dir().path_join(icon_file_path.get_file())
 	)
 	#print_debug("Loading icon: ", true_icon_path)
 
 	if not ResourceLoader.exists(true_icon_path):
-		#print_debug("File for map icon does not exist.")
+		#print_debug("File for project icon does not exist.")
 		return null
 
 	# I'm not sure if this works in 100% of cases but it seems good enough
@@ -114,7 +116,7 @@ static func _map_icon_from_path(
 ## If include_file_path is set to false, the file path will not be included.
 func to_dict(include_file_path: bool = true) -> Dictionary:
 	var output := {
-		KEY_STATE_MAP_NAME: map_name,
+		KEY_STATE_PROJECT_NAME: project_name,
 		KEY_STATE_SETTINGS: settings,
 	}
 
@@ -127,22 +129,22 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 
 
 ## Returns a new instance of this object built using given raw Dictionary.
-static func from_dict(dict: Dictionary) -> MapMetadata:
-	var new_map_data := MapMetadata.new()
+static func from_dict(dict: Dictionary) -> GameMetadata:
+	var metadata := GameMetadata.new()
 
-	if ParseUtils.dictionary_has_string(dict, KEY_STATE_MAP_NAME):
-		new_map_data.map_name = dict[KEY_STATE_MAP_NAME]
+	if ParseUtils.dictionary_has_string(dict, KEY_STATE_PROJECT_NAME):
+		metadata.project_name = dict[KEY_STATE_PROJECT_NAME]
 	if ParseUtils.dictionary_has_string(dict, KEY_STATE_FILE_PATH):
-		new_map_data.file_path = dict[KEY_STATE_FILE_PATH]
+		metadata.file_path = dict[KEY_STATE_FILE_PATH]
 	if ParseUtils.dictionary_has_dictionary(dict, KEY_STATE_SETTINGS):
-		new_map_data.settings = dict[KEY_STATE_SETTINGS]
+		metadata.settings = dict[KEY_STATE_SETTINGS]
 
-	return new_map_data
+	return metadata
 
 
 ## Copies the state of this metadata to match the given one.
-func copy_state_of(map_metadata: MapMetadata) -> void:
-	map_name = map_metadata.map_name
-	file_path = map_metadata.file_path
-	settings = map_metadata.settings
+func copy_state_of(metadata: GameMetadata) -> void:
+	project_name = metadata.project_name
+	file_path = metadata.file_path
+	settings = metadata.settings
 	state_updated.emit(self)

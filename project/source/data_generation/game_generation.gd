@@ -13,6 +13,6 @@ func apply(_raw_data: Dictionary) -> void:
 
 
 ## Updates the error and error_message properties according to the outcome.
-func load_settings(_map_settings: Dictionary) -> void:
+func load_settings(_settings: Dictionary) -> void:
 	error = false
 	error_message = ""

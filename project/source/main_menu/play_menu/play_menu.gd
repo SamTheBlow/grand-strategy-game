@@ -8,7 +8,7 @@ signal game_started(game: Game)
 @export var networking_interface_scene: PackedScene
 
 var _players: Players
-var _map_menu_state: MapMenuState
+var _game_menu_state: GameSelectMenuState
 var _game_rules: GameRules
 var _chat: Chat
 
@@ -35,7 +35,7 @@ func _ready() -> void:
 	_chat.connect_chat_interface(_chat_interface)
 
 	_lobby.players = _players
-	_lobby.map_menu_state = _map_menu_state
+	_lobby.game_menu_state = _game_menu_state
 	_lobby.game_rules = _game_rules
 	_lobby.networking_interface = networking_interface
 
@@ -48,12 +48,12 @@ func _exit_tree() -> void:
 ## Dependency injection
 func inject(
 		players: Players,
-		map_menu_state: MapMenuState,
+		game_menu_state: GameSelectMenuState,
 		game_rules: GameRules,
 		chat: Chat,
 ) -> void:
 	_players = players
-	_map_menu_state = map_menu_state
+	_game_menu_state = game_menu_state
 	_game_rules = game_rules
 	_chat = chat
 
@@ -61,9 +61,9 @@ func inject(
 ## Called in a separate thread.
 ## Loads a new game, generates data if applicable and
 ## populates the data with given generation settings.
-func _setup_game(map_metadata: MapMetadata, game_rules: GameRules) -> void:
+func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(map_metadata, game_rules)
+	generated_game.load_game(metadata, game_rules)
 
 	_mutex.lock()
 	if not _is_loading:
@@ -100,7 +100,7 @@ func _on_start_game_error(error_message: String) -> void:
 
 
 func _on_start_game_requested(
-		map_metadata: MapMetadata, generation_settings: GameRules
+		metadata: GameMetadata, generation_settings: GameRules
 ) -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
@@ -110,7 +110,7 @@ func _on_start_game_requested(
 	_mutex.unlock()
 	_loading_screen.visible = true
 
-	_load_thread.start(_setup_game.bind(map_metadata, generation_settings))
+	_load_thread.start(_setup_game.bind(metadata, generation_settings))
 
 
 ## Called on the main thread when user presses the "Cancel" button.

@@ -1,6 +1,6 @@
 class_name Lobby
 extends Control
-## The menu from which you choose the game's rules,
+## The menu from which you choose a game and its rules,
 ## add/join players, and start the game.
 ##
 ## Emits a signal when the user requests to start the game.
@@ -8,17 +8,17 @@ extends Control
 ## Don't forget to inject the [Players] and the [GameRules] into their
 ## respective properties before adding this node to the scene tree.
 
-signal start_game_requested(map_metadata: MapMetadata, game_rules: GameRules)
+signal start_game_requested(metadata: GameMetadata, game_rules: GameRules)
 
 var players: Players:
 	set(value):
 		players = value
 		_setup_players()
 
-var map_menu_state: MapMenuState:
+var game_menu_state: GameSelectMenuState:
 	set(value):
-		map_menu_state = value
-		_setup_map_menu_state()
+		game_menu_state = value
+		_setup_game_menu_state()
 
 var game_rules: GameRules:
 	set(value):
@@ -31,7 +31,7 @@ var networking_interface: NetworkingInterface:
 		_setup_networking_interface()
 
 @onready var _player_list := %PlayerList as PlayerList
-@onready var _map_interface := %Map as MapMenu
+@onready var _games_interface := %Games as GameSelectionMenu
 @onready var _rules_interface := %Rules as RulesMenu
 @onready var _menu_disabled_node := %MenuDisabled as Control
 @onready var _start_button := %StartButton as Button
@@ -39,7 +39,7 @@ var networking_interface: NetworkingInterface:
 
 func _ready() -> void:
 	_setup_players()
-	_setup_map_menu_state()
+	_setup_game_menu_state()
 	_setup_game_rules()
 	_setup_networking_interface()
 
@@ -56,11 +56,11 @@ func _setup_players() -> void:
 	_player_list.players = players
 
 
-func _setup_map_menu_state() -> void:
+func _setup_game_menu_state() -> void:
 	if not is_node_ready():
 		return
 
-	_map_interface.map_menu_state = map_menu_state
+	_games_interface.game_menu_state = game_menu_state
 
 
 func _setup_game_rules() -> void:
@@ -95,8 +95,8 @@ func _update_start_button_disabled() -> void:
 
 
 func _on_start_button_pressed() -> void:
-	var map_metadata: MapMetadata = _map_interface.selected_map()
-	start_game_requested.emit(map_metadata, game_rules)
+	var metadata: GameMetadata = _games_interface.selected_game()
+	start_game_requested.emit(metadata, game_rules)
 
 
 func _on_connected_to_server() -> void:

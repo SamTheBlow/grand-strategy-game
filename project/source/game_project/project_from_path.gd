@@ -1,5 +1,5 @@
 class_name ProjectFromPath
-## Loads a project from given file path. This includes a game and its metadata.
+## Loads a [GameProject] from given file path.
 
 
 static func loaded_from(file_path: String) -> ParseResult:
@@ -20,9 +20,9 @@ static func loaded_from(file_path: String) -> ParseResult:
 		return ResultError.new(game_from_raw.error_message)
 
 	# Load the metadata
-	var metadata: MapMetadata = MapMetadata.from_file_path(file_path)
+	var metadata: GameMetadata = GameMetadata.from_file_path(file_path)
 	if metadata == null:
-		metadata = MapMetadata.new()
+		metadata = GameMetadata.new()
 		metadata.file_path = file_path
 
 	return ResultSuccess.new(game_from_raw.result_game, metadata)
@@ -31,7 +31,7 @@ static func loaded_from(file_path: String) -> ParseResult:
 class ParseResult:
 	var error: bool
 	var error_message: String
-	var result_project: EditorProject
+	var result_project: GameProject
 
 
 class ResultError extends ParseResult:
@@ -41,5 +41,7 @@ class ResultError extends ParseResult:
 
 
 class ResultSuccess extends ParseResult:
-	func _init(game: Game, metadata: MapMetadata) -> void:
-		result_project = EditorProject.new(game, metadata)
+	func _init(game: Game, metadata: GameMetadata) -> void:
+		result_project = GameProject.new()
+		result_project.game = game
+		result_project.metadata = metadata

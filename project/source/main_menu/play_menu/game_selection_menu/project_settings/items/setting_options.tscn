@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://cr1d6miyjjx51"]
 
-[ext_resource type="Script" uid="uid://cagt0evisly5s" path="res://source/main_menu/play_menu/map_menu/map_settings_items/setting_options_node.gd" id="1_d4pie"]
+[ext_resource type="Script" uid="uid://cagt0evisly5s" path="res://source/main_menu/play_menu/game_selection_menu/project_settings/items/setting_options_node.gd" id="1_d4pie"]
 [ext_resource type="Script" uid="uid://ck2uwtmi58882" path="res://source/ui/utils/custom_option_button.gd" id="2_el5bp"]
 
 [node name="SettingOptions" type="MarginContainer"]

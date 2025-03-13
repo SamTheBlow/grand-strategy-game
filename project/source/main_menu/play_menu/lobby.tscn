@@ -5,7 +5,7 @@
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="3_ebbbm"]
 [ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/main_menu/play_menu/rules_menu/rules_menu.tscn" id="3_hb7ro"]
 [ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/ui/utils/id_button.gd" id="3_w00gd"]
-[ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/map_menu/map_menu.tscn" id="5_0x7ha"]
+[ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.tscn" id="5_0x7ha"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gme8j"]
@@ -59,8 +59,8 @@ layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 0.1
 script = ExtResource("2_vjg4m")
-buttons = [NodePath("HBoxContainer/Map"), NodePath("HBoxContainer/Rules")]
-corresponding_ui = [NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Map"), NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Rules")]
+buttons = [NodePath("HBoxContainer/Game"), NodePath("HBoxContainer/Rules")]
+corresponding_ui = [NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Games"), NodePath("../ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer/Rules")]
 
 [node name="HBoxContainer" type="HBoxContainer" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs"]
 layout_mode = 1
@@ -71,11 +71,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 8
 
-[node name="Map" type="Button" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
+[node name="Game" type="Button" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/normal = ExtResource("3_ebbbm")
-text = "Map"
+text = "Game"
 script = ExtResource("3_w00gd")
 
 [node name="Rules" type="Button" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/Tabs/HBoxContainer"]
@@ -117,7 +117,7 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 
-[node name="Map" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("5_0x7ha")]
+[node name="Games" parent="HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" instance=ExtResource("5_0x7ha")]
 unique_name_in_owner = true
 layout_mode = 2
 

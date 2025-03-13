@@ -33,7 +33,7 @@ var current_scene: Node:
 		_send_scene_change_to_clients()
 
 # Things that need to persist between scenes
-var map_menu_state := MapMenuState.new()
+var game_menu_state := GameSelectMenuState.new()
 var rule_menu_state := GameRules.new()
 @onready var network_authentication := %NetworkAuthentication as ClientAuth
 @onready var players := $Players as Players
@@ -70,7 +70,7 @@ func enter_play_menu() -> void:
 		return
 
 	var play_menu := play_menu_scene.instantiate() as PlayMenu
-	play_menu.inject(players, map_menu_state, rule_menu_state, chat)
+	play_menu.inject(players, game_menu_state, rule_menu_state, chat)
 	play_menu.game_started.connect(_on_game_start_requested)
 	current_scene = play_menu
 

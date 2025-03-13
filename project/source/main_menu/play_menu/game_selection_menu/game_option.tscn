@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://b65o5apaw32"]
 
-[ext_resource type="Script" uid="uid://dmh8u6kaliftf" path="res://source/main_menu/play_menu/map_menu/map_option_node.gd" id="1_dcoso"]
+[ext_resource type="Script" uid="uid://dmh8u6kaliftf" path="res://source/main_menu/play_menu/game_selection_menu/game_option_node.gd" id="1_dcoso"]
 
-[node name="MapOption" type="Control"]
+[node name="GameOption" type="Control"]
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 3
 anchors_preset = 15

@@ -1,5 +1,5 @@
 class_name GameLoadGenerated
-## Loads a [Game] from given [MapMetadata].
+## Loads a [Game] from given [GameMetadata].
 ## When applicable, generates the world, countries, etc.
 ## Then, populates the game (see [PopulatedSaveFile]).
 
@@ -9,10 +9,10 @@ var result: Game
 
 
 ## Upon loading, overwrites the game's rules with given rules.
-func load_game(map_metadata: MapMetadata, game_rules: GameRules) -> void:
+func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	# Load the file
 	var file_json := FileJSON.new()
-	file_json.load_json(map_metadata.file_path)
+	file_json.load_json(metadata.file_path)
 	if file_json.error:
 		error = true
 		error_message = file_json.error_message
@@ -20,11 +20,11 @@ func load_game(map_metadata: MapMetadata, game_rules: GameRules) -> void:
 
 	# Generate data, if applicable
 	var game_generation: GameGeneration = null
-	if map_metadata.map_name == "Random Grid World":
+	if metadata.project_name == "Random Grid World":
 		game_generation = RandomGridWorld.new()
 
 	if game_generation != null:
-		game_generation.load_settings(map_metadata.settings)
+		game_generation.load_settings(metadata.settings)
 		if game_generation.error:
 			error = true
 			error_message = game_generation.error_message

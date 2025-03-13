@@ -3,7 +3,7 @@ extends Node
 ## Synchronizes a given instance of [GameRules] between network clients.
 ## When leaving a server, resets the entire state to what it was before joining.
 ##
-## See also: [MapMenuSync]
+## See also: [GameSelectMenuSync]
 
 ## Emitted on clients when the client receives a new state from the server,
 ## in which case this signal will pass a new instance of [GameRules].

@@ -1,6 +1,6 @@
-class_name MapSettings
+class_name ProjectSettingsNode
 extends Control
-## Interface where the user can configure a map's individual settings.
+## Interface where the user can configure a project's individual settings.
 
 const KEY_TYPE: String = "type"
 const KEY_TEXT: String = "text"
@@ -15,13 +15,13 @@ const KEY_OPTIONS: String = "options"
 @export var float_scene: PackedScene
 @export var options_scene: PackedScene
 
-var map_metadata: MapMetadata:
+var metadata: GameMetadata:
 	set(value):
-		if map_metadata == value:
+		if metadata == value:
 			return
 
 		_disconnect_signals()
-		map_metadata = value
+		metadata = value
 		_connect_signals()
 		_update_settings_list()
 
@@ -40,7 +40,7 @@ func is_empty() -> bool:
 
 
 func _update_settings_list() -> void:
-	if map_metadata == null or not is_node_ready():
+	if metadata == null or not is_node_ready():
 		return
 
 	NodeUtils.remove_all_children(_settings_container)
@@ -48,11 +48,11 @@ func _update_settings_list() -> void:
 
 	var minimum_height: float = 0.0
 
-	for key: Variant in map_metadata.settings:
+	for key: Variant in metadata.settings:
 		if key is not String:
 			continue
 		var key_string := key as String
-		var value: Variant = map_metadata.settings[key]
+		var value: Variant = metadata.settings[key]
 		if value is not Dictionary:
 			continue
 		var value_dict := value as Dictionary
@@ -150,27 +150,27 @@ func _update_settings_list() -> void:
 
 
 func _connect_signals() -> void:
-	if map_metadata == null:
+	if metadata == null:
 		return
 
-	if not map_metadata.state_updated.is_connected(_on_state_updated):
-		map_metadata.state_updated.connect(_on_state_updated)
+	if not metadata.state_updated.is_connected(_on_state_updated):
+		metadata.state_updated.connect(_on_state_updated)
 
 
 func _disconnect_signals() -> void:
-	if map_metadata == null:
+	if metadata == null:
 		return
 
-	if map_metadata.state_updated.is_connected(_on_state_updated):
-		map_metadata.state_updated.disconnect(_on_state_updated)
+	if metadata.state_updated.is_connected(_on_state_updated):
+		metadata.state_updated.disconnect(_on_state_updated)
 
 
 func _on_setting_changed(key: String, value: Variant) -> void:
-	if map_metadata == null:
+	if metadata == null:
 		return
 
-	map_metadata.set_setting(key, value)
+	metadata.set_setting(key, value)
 
 
-func _on_state_updated(_map_metadata: MapMetadata) -> void:
+func _on_state_updated(_metadata: GameMetadata) -> void:
 	_update_settings_list()

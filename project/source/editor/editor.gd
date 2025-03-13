@@ -16,7 +16,7 @@ const INPUT_ACTION_PLAY_PROJECT: String = "play_project"
 ## The scene's root node must be a [ProjectLoadPopup].
 @export var _project_load_popup_scene: PackedScene
 
-var _current_project: EditorProject:
+var _current_project: GameProject:
 	set(value):
 		_current_project = value
 		_setup_project()
@@ -67,7 +67,7 @@ func _update_window_title() -> void:
 func _window_title_prefix() -> String:
 	if _current_project == null:
 		return ""
-	return _current_project.name + " - "
+	return _current_project.metadata.project_name + " - "
 
 
 ## Updates the visibility for all the menu options
@@ -134,7 +134,7 @@ func _open_editor_settings() -> void:
 
 
 func _open_new_project() -> void:
-	_current_project = EditorProject.new()
+	_current_project = GameProject.new()
 
 
 func _open_project() -> void:
@@ -229,7 +229,7 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 			push_error("Unrecognized menu id.")
 
 
-func _on_project_loaded(project: EditorProject) -> void:
+func _on_project_loaded(project: GameProject) -> void:
 	_current_project = project
 
 

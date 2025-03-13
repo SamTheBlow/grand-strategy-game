@@ -1,7 +1,6 @@
-[gd_scene load_steps=4 format=3 uid="uid://df5yjnsebj5np"]
+[gd_scene load_steps=3 format=3 uid="uid://df5yjnsebj5np"]
 
 [ext_resource type="Script" uid="uid://wirop5ecqfqx" path="res://source/editor/project_load_popup.gd" id="1_ol0qo"]
-[ext_resource type="PackedScene" uid="uid://b65o5apaw32" path="res://source/main_menu/play_menu/map_menu/map_option.tscn" id="2_hhh78"]
 [ext_resource type="PackedScene" uid="uid://dlp6yucuudqcs" path="res://source/ui/utils/collapsible/collapsible.tscn" id="2_rqmfa"]
 
 [node name="LoadInterface" type="VBoxContainer"]
@@ -13,8 +12,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_ol0qo")
-_built_in_map_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
-_map_option_node_scene = ExtResource("2_hhh78")
+_builtin_game_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
 
 [node name="Control" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 40)
@@ -61,10 +59,10 @@ size_flags_vertical = 3
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
 
-[node name="BuiltInMaps" parent="ScrollContainer/HBoxContainer/VBoxContainer" instance=ExtResource("2_rqmfa")]
+[node name="BuiltInGames" parent="ScrollContainer/HBoxContainer/VBoxContainer" instance=ExtResource("2_rqmfa")]
 unique_name_in_owner = true
 layout_mode = 2
-title = "Built-in Maps"
+title = "Built-in Games"
 
 [node name="SpacingRight" type="Control" parent="ScrollContainer/HBoxContainer"]
 custom_minimum_size = Vector2(4, 0)

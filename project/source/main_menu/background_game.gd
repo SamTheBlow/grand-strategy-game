@@ -5,8 +5,8 @@ extends SubViewportContainer
 ## The scene's root node must be a [GameNode].
 @export var _game_scene: PackedScene
 
-## The map to use for the game.
-@export var _map_file_path: String = "res://assets/save_files/test1.json"
+## The file path of the game to play.
+@export var _project_file_path: String = "res://assets/save_files/test1.json"
 
 var _load_thread := Thread.new()
 var _background_game_node: GameNode
@@ -27,18 +27,18 @@ func _load_new_game() -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
 
-	_load_thread.start(_setup_game.bind(_map_file_path))
+	_load_thread.start(_setup_game.bind(_project_file_path))
 
 
 ## Called in a separate thread.
-func _setup_game(map_file_path: String) -> void:
-	var map_metadata: MapMetadata = MapMetadata.from_file_path(map_file_path)
-	if map_metadata == null:
-		_on_game_load_error.call_deferred("Invalid map file path")
+func _setup_game(project_file_path: String) -> void:
+	var metadata: GameMetadata = GameMetadata.from_file_path(project_file_path)
+	if metadata == null:
+		_on_game_load_error.call_deferred("Invalid project file path")
 		return
 
 	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(map_metadata, GameRules.new())
+	generated_game.load_game(metadata, GameRules.new())
 
 	if generated_game.error:
 		_on_game_load_error.call_deferred(generated_game.error_message)
