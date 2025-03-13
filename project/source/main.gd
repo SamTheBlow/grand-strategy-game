@@ -76,35 +76,39 @@ func enter_play_menu() -> void:
 
 
 ## Assigns [Player]s to the game's [GamePlayer]s.
-## Sets up a new [GameNode] scene using given [Game].
+## Sets up a new [GameNode] scene using given [GameProject].
 ## Starts the game.
-func play_game(game: Game) -> void:
-	game.game_started.connect(_on_game_started)
-	players.player_removed.connect(game.game_players._on_player_removed)
+func play_game(project: GameProject) -> void:
+	project.game.game_started.connect(_on_game_started)
+	players.player_removed.connect(project.game.game_players._on_player_removed)
+	project.metadata.file_path = SAVE_FILE_PATH
 
 	var game_node := game_scene.instantiate() as GameNode
-	game_node.game = game
+	game_node.project = project
 	game_node.players = players
 	game_node.chat = chat
 	game_node.exited.connect(enter_play_menu)
 	current_scene = game_node
 
 
-## Tries to load a game at the default save file path.
+## Tries to load a [GameProject] at the default save file path.
 ## If it fails, sends a system message in the chat.
 ## If it succeeds, sends a global message in the chat
 ## and loads the new game scene.
 func load_game() -> void:
-	var game_from_path := GameFromPath.new()
-	game_from_path.load_game(SAVE_FILE_PATH)
+	var result: ProjectFromRaw.ParseResult = (
+			ProjectFromPath.loaded_from(SAVE_FILE_PATH)
+	)
 
-	if game_from_path.error:
-		push_warning("Failed to load the game: ", game_from_path.error_message)
+	if result.error:
+		push_warning(
+				"Failed to load the game: ", result.error_message
+		)
 		chat.send_system_message("Failed to load the game")
 		return
 
 	chat.send_global_message("[color=#60ff60]Game loaded[/color]")
-	play_game(game_from_path.result)
+	play_game(result.result_project)
 
 
 func enter_editor() -> void:
@@ -170,25 +174,25 @@ func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
 ## The game is built from the given raw data, then we wait
 ## until we've received everything else before we start the game.
 @rpc("authority", "call_remote", "reliable")
-func _receive_new_game(game_data: Dictionary) -> void:
-	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(game_data)
+func _receive_new_game(raw_data: Dictionary) -> void:
+	var project_from_raw: ProjectFromRaw.ParseResult = (
+			ProjectFromRaw.parsed_from(raw_data, "")
 	)
 
-	if game_from_raw.error:
+	if project_from_raw.error:
 		push_warning(
 				"Failed to load the received game: ",
-				game_from_raw.error_message
+				project_from_raw.error_message
 		)
 		chat.send_system_message("Failed to load the received game.")
 		return
 
 	# Make sure everything is done synchronizing (e.g. players, chat).
 	if sync_check.is_sync_finished():
-		play_game(game_from_raw.result_game)
+		play_game(project_from_raw.result_project)
 	else:
 		sync_check.sync_finished.connect(
-				_on_sync_finished.bind(game_from_raw.result_game)
+				_on_sync_finished.bind(project_from_raw.result_project)
 		)
 #endregion
 
@@ -212,15 +216,15 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 
 
 ## Clients start given game once they are done synchronizing with the server.
-func _on_sync_finished(game: Game) -> void:
+func _on_sync_finished(project: GameProject) -> void:
 	sync_check.sync_finished.disconnect(_on_sync_finished)
-	play_game(game)
+	play_game(project)
 
 
 ## Called when the "Start Game" button is pressed in the main menu,
 ## after it's done loading/generating the game.
-func _on_game_start_requested(game: Game) -> void:
-	play_game(game)
+func _on_game_start_requested(project: GameProject) -> void:
+	play_game(project)
 
 
 ## Sends a global chat message when the game starts.

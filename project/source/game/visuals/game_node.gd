@@ -1,6 +1,6 @@
 class_name GameNode
 extends Node
-## Visuals for a given [Game].
+## Visuals for a given [GameProject].
 # TODO bloated class
 
 signal exited()
@@ -27,6 +27,12 @@ signal exited()
 ## Icon to use for [GameNotificationOfferAccepted].
 @export var offer_accepted_icon: Texture2D
 
+var project: GameProject:
+	set(value):
+		project = value
+		game = project.game
+
+## A reference to the project's game, for convenience.
 var game: Game:
 	set(value):
 		game = value
@@ -409,15 +415,13 @@ func _on_save_requested() -> void:
 	if chat != null:
 		chat.send_system_message("Saving the game...")
 
-	# TODO bad code (don't use get_parent like that)
-	# The player should be able to change the file path for save files
-	var save_file_path: String = get_parent().SAVE_FILE_PATH
+	var project_save := ProjectSave.new()
+	project_save.save_project(project)
 
-	var game_save := GameSave.new()
-	game_save.save_game(game, save_file_path)
-
-	if game_save.error:
-		var error_message: String = "Saving failed: " + game_save.error_message
+	if project_save.error:
+		var error_message: String = (
+				"Saving failed: " + project_save.error_message
+		)
 		push_error(error_message)
 		if chat != null:
 			chat.send_system_message(error_message)

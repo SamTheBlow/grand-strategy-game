@@ -127,12 +127,17 @@ func _on_game_over(winner_country: Country) -> void:
 
 
 func _save_game() -> void:
-	var game_save := GameSave.new()
-	game_save.save_game(_game, save_file_path)
+	var project := GameProject.new()
+	project.game = _game
+	project.metadata.file_path = save_file_path
+	
+	var project_save := ProjectSave.new()
+	project_save.save_project(project)
 
-	if game_save.error:
+	if project_save.error:
 		_print_with_time(
-				"[ERROR] Failed to save the game: " + game_save.error_message
+				"[ERROR] Failed to save the game: "
+				+ project_save.error_message
 		)
 	else:
 		_print_with_time("Game saved!")

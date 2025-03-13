@@ -5,23 +5,24 @@ class_name GameProject
 const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
 
 var game: Game
-# TODO implement some new GameSettings object to put here
+var settings: GameSettings
 var metadata: GameMetadata
 
 
 func _init() -> void:
 	game = Game.new()
+	settings = GameSettings.new()
 	metadata = GameMetadata.new()
 	metadata.project_name = _DEFAULT_PROJECT_NAME
 
 
 ## Saves the project to its assigned file path.
 func save() -> void:
-	var game_save := GameSave.new()
-	game_save.save_game(game, metadata.file_path)
-	
-	if game_save.error:
-		push_warning(game_save.error_message)
+	var project_save := ProjectSave.new()
+	project_save.save_project(self)
+
+	if project_save.error:
+		push_warning(project_save.error_message)
 
 
 ## Updates this project's file path to use given path. Saves to the new path.

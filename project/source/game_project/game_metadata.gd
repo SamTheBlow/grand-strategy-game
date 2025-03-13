@@ -37,25 +37,29 @@ func set_setting(key: String, value: Variant) -> void:
 
 
 ## Returns a new [GameMetadata] instance with data loaded from given file path.
-## Returns null if an error occurs, e.g. the file's contents are invalid.
+## Returns null if the file could not be loaded.
 static func from_file_path(base_path: String) -> GameMetadata:
 	var file_json := FileJSON.new()
 	file_json.load_json(base_path)
 	if file_json.error:
-		#print_debug("Failed to load metadata JSON: ", file_json.error_message)
 		return null
-	var json_data: Variant = file_json.result
-	if json_data is not Dictionary:
-		#print_debug("Can't load metadata: JSON data is not a Dictionary")
-		return null
-	var json_dict := json_data as Dictionary
 
+	return from_raw(file_json.result, base_path)
+
+
+## Converts given raw data into a new [GameMetadata] instance.
+## You still need to provide the file path where the data was located.
+static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
 	var result := GameMetadata.new()
 	result.file_path = base_path
 
-	if not ParseUtils.dictionary_has_dictionary(json_dict, KEY_METADATA):
+	if raw_data is not Dictionary:
 		return result
-	var meta_dict := json_dict[KEY_METADATA] as Dictionary
+	var raw_dict := raw_data as Dictionary
+
+	if not ParseUtils.dictionary_has_dictionary(raw_dict, KEY_METADATA):
+		return result
+	var meta_dict := raw_dict[KEY_METADATA] as Dictionary
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_NAME):
 		result.project_name = meta_dict[KEY_META_NAME]
@@ -82,6 +86,9 @@ static func from_file_path(base_path: String) -> GameMetadata:
 static func _icon_from_path(
 		base_path: String, icon_file_path: String
 ) -> Texture2D:
+	if base_path == "" or icon_file_path == "":
+		return null
+
 	if icon_file_path.is_absolute_path():
 		#print_debug(
 		#	"Metadata for project icon uses an absolute file path. ",

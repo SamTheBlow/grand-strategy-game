@@ -1,5 +1,5 @@
-class_name GameSave
-## Class responsible for saving a game using any given file format.
+class_name ProjectSave
+## Class responsible for saving a [GameProject] using any given file format.
 ## (JSON is currently the only supported format)
 ##
 ## In the future, when more file formats are supported,
@@ -12,8 +12,10 @@ var error: bool = true
 var error_message: String = ""
 
 
-func save_game(game: Game, file_path: String) -> void:
-	var file_access := FileAccess.open(file_path, FileAccess.WRITE)
+func save_project(project: GameProject) -> void:
+	var file_access := FileAccess.open(
+			project.metadata.file_path, FileAccess.WRITE
+	)
 
 	if not file_access:
 		# Maybe use this to make more detailed error messages
@@ -23,8 +25,8 @@ func save_game(game: Game, file_path: String) -> void:
 		error_message = "Failed to open the file for writing."
 		return
 
-	var game_to_raw := GameToRawDict.new()
-	game_to_raw.convert_game(game)
-	file_access.store_string(JSON.stringify(game_to_raw.result, "\t"))
+	var project_to_raw := ProjectToRawDict.new()
+	project_to_raw.convert_project(project)
+	file_access.store_string(JSON.stringify(project_to_raw.result, "\t"))
 	file_access.close()
 	error = false

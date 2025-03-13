@@ -3,7 +3,7 @@ extends Node
 ## The menu that appears when clicking "Play" on the main menu.
 ## Contains the [Lobby] and a [ChatInterface].
 
-signal game_started(game: Game)
+signal game_started(project: GameProject)
 
 @export var networking_interface_scene: PackedScene
 
@@ -75,17 +75,21 @@ func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	if generated_game.error:
 		_on_start_game_error.call_deferred(generated_game.error_message)
 	else:
-		_on_start_game_ready.call_deferred(generated_game.result)
+		var project := GameProject.new()
+		project.game = generated_game.result
+		project.settings.custom_settings = metadata.settings
+		project.metadata = metadata
+		_on_start_game_ready.call_deferred(project)
 
 
 ## Called on the main thread when the other thread is done.
-func _on_start_game_ready(game: Game) -> void:
+func _on_start_game_ready(project: GameProject) -> void:
 	_mutex.lock()
 	_is_loading = false
 	_mutex.unlock()
 	_loading_screen.visible = false
 
-	game_started.emit(game)
+	game_started.emit(project)
 
 
 ## Called on the main thread when the other thread encounters an error.

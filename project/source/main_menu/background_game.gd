@@ -43,18 +43,22 @@ func _setup_game(project_file_path: String) -> void:
 	if generated_game.error:
 		_on_game_load_error.call_deferred(generated_game.error_message)
 	else:
-		_on_game_load_ready.call_deferred(generated_game.result)
+		var project := GameProject.new()
+		project.game = generated_game.result
+		project.settings.custom_settings = metadata.settings
+		project.metadata = metadata
+		_on_game_load_ready.call_deferred(project)
 
 
 ## Called on the main thread when the other thread is done.
-func _on_game_load_ready(game: Game) -> void:
+func _on_game_load_ready(project: GameProject) -> void:
 	if _background_game_node != null:
 		_background_viewport.remove_child(_background_game_node)
 		_background_game_node.queue_free()
 
-	game.game_over.connect(_on_game_over)
+	project.game.game_over.connect(_on_game_over)
 	_background_game_node = _game_scene.instantiate() as GameNode
-	_background_game_node.game = game
+	_background_game_node.project = project
 	_background_game_node.is_ui_visible = false
 	_background_viewport.add_child(_background_game_node)
 
