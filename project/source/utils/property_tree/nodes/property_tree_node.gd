@@ -18,6 +18,17 @@ extends MarginContainer
 ## Child item nodes are stored here for easy access.
 var _child_item_nodes: Array[PropertyTreeNode] = []
 
+# Preloading these would be nice, but, because the scene's
+# root node extends this very class, it leads to errors. (I think?)
+var _item_int_scene := load("uid://cummjubuua6yk") as PackedScene
+var _item_float_scene := load("uid://dd0mqtbyhpwcg") as PackedScene
+var _item_bool_scene := load("uid://bo8oke3mld227") as PackedScene
+var _item_options_scene := load("uid://bh8aukwuigg4e") as PackedScene
+var _item_range_int_scene := load("uid://liwg6fdq6hr5") as PackedScene
+var _item_range_float_scene := load("uid://diptsnmuse4kn") as PackedScene
+var _item_color_scene := load("uid://bm83m86biyiv2") as PackedScene
+var _item_void_scene := load("uid://cintikjibl1vr") as PackedScene
+
 @onready var _container := %Container as VBoxContainer
 
 
@@ -54,59 +65,41 @@ func _add_child_items(
 ) -> void:
 	for child_item in child_items:
 		if child_item is ItemInt:
-			var item_node := (
-					preload("uid://cummjubuua6yk").instantiate()
-					as ItemIntNode
-			)
+			var item_node := _item_int_scene.instantiate() as ItemIntNode
 			item_node.item = child_item as ItemInt
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemFloat:
-			var item_node := (
-					preload("uid://dd0mqtbyhpwcg").instantiate()
-					as ItemFloatNode
-			)
+			var item_node := _item_float_scene.instantiate() as ItemFloatNode
 			item_node.item = child_item as ItemFloat
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemBool:
-			var item_node := (
-					preload("uid://bo8oke3mld227").instantiate()
-					as ItemBoolNode
-			)
+			var item_node := _item_bool_scene.instantiate() as ItemBoolNode
 			item_node.item = child_item as ItemBool
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemOptions:
 			var item_node := (
-					preload("uid://bh8aukwuigg4e").instantiate()
-					as ItemOptionsNode
+					_item_options_scene.instantiate() as ItemOptionsNode
 			)
 			item_node.item = child_item as ItemOptions
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemRangeInt:
 			var item_node := (
-					preload("uid://liwg6fdq6hr5").instantiate()
-					as ItemRangeIntNode
+					_item_range_int_scene.instantiate() as ItemRangeIntNode
 			)
 			item_node.item = child_item as ItemRangeInt
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemRangeFloat:
 			var item_node := (
-					preload("uid://diptsnmuse4kn").instantiate()
-					as ItemRangeFloatNode
+					_item_range_float_scene.instantiate() as ItemRangeFloatNode
 			)
 			item_node.item = child_item as ItemRangeFloat
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemColor:
-			var item_node := (
-					preload("uid://bm83m86biyiv2").instantiate()
-					as ItemColorNode
-			)
+			var item_node := _item_color_scene.instantiate() as ItemColorNode
 			item_node.item = child_item as ItemColor
 			_add_item(item_node, with_spacing, with_tabbing)
 		else:
-			var item_node := (
-					preload("uid://cintikjibl1vr").instantiate()
-					as ItemVoidNode
-			)
+			var item_node := _item_void_scene.instantiate() as ItemVoidNode
 			item_node.item = child_item
 			_add_item(item_node, with_spacing, with_tabbing)
 
