@@ -1,7 +1,5 @@
 class_name WorldLimits
 ## The limits of a 2D world map.
-##
-## See also: [GameWorld2D]
 
 const DEFAULT_TOP: int = 0
 const DEFAULT_BOTTOM: int = 10_000

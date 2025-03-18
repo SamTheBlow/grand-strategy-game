@@ -17,6 +17,7 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 
 	var game_project := GameProject.new()
 	game_project.game = game_from_raw.result_game
+	game_project.settings = game_from_raw.result_settings
 	game_project.settings.custom_settings = metadata.settings
 	game_project.metadata = metadata
 	return ResultSuccess.new(game_project)

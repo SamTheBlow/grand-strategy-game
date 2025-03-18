@@ -53,7 +53,7 @@ func _setup_project() -> void:
 	if _current_project == null:
 		return
 
-	_world_setup.load_world(_current_project.game)
+	_world_setup.load_world(_current_project)
 
 
 func _update_window_title() -> void:

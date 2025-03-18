@@ -127,7 +127,7 @@ func _send_scene_change_to_clients() -> void:
 	if current_scene is PlayMenu:
 		_send_enter_main_menu_to_clients()
 	elif current_scene is GameNode:
-		_send_game_to_clients((current_scene as GameNode).game)
+		_send_game_to_clients((current_scene as GameNode).project)
 	else:
 		push_error("Unrecognized scene node.")
 
@@ -157,12 +157,14 @@ func _receive_enter_main_menu() -> void:
 ## The server calls this to inform clients that a game started.
 ## This function has no effect if you're not connected as a server.
 ## You may provide a multiplayer id to send the data to one specific client.
-func _send_game_to_clients(game: Game, multiplayer_id: int = -1) -> void:
+func _send_game_to_clients(
+		project: GameProject, multiplayer_id: int = -1
+) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
 	var game_to_raw := GameToRawDict.new()
-	game_to_raw.convert_game(game)
+	game_to_raw.convert_game(project.game, project.settings)
 
 	if multiplayer_id == -1:
 		_receive_new_game.rpc(game_to_raw.result)
@@ -208,7 +210,9 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 		return
 
 	if current_scene is GameNode:
-		_send_game_to_clients((current_scene as GameNode).game, multiplayer_id)
+		_send_game_to_clients(
+				(current_scene as GameNode).project, multiplayer_id
+		)
 	elif current_scene is PlayMenu:
 		_send_enter_main_menu_to_clients(multiplayer_id)
 	else:

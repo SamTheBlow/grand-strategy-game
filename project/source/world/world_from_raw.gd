@@ -1,5 +1,5 @@
 class_name WorldFromRaw
-## Converts raw data into a [GameWorld2D].
+## Converts raw data into a [GameWorld].
 ## Many things in the game must be loaded before using this.
 ## Please read the code carefully to know what to load first (sorry!)
 ## Overwrites the game's world property.
@@ -12,16 +12,19 @@ const WORLD_PROVINCES_KEY: String = "provinces"
 const WORLD_ARMIES_KEY: String = "armies"
 
 
-static func parse_using(raw_data: Variant, game: Game) -> void:
-	var world := GameWorld2D.new(game)
-	game.world = world
+static func parse_using(
+		raw_data: Variant, game: Game, game_settings: GameSettings
+) -> void:
+	game.world = GameWorld.new(game)
 
 	if raw_data is not Dictionary:
 		return
 	var raw_dict: Dictionary = raw_data
 
-	# Camera limits
-	world.limits = WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
+	# World limits
+	game_settings.world_limits = (
+			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
+	)
 
 	# Provinces
 	ProvincesFromRaw.parse_using(raw_dict.get(WORLD_PROVINCES_KEY), game)

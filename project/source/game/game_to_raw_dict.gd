@@ -6,7 +6,7 @@ class_name GameToRawDict
 var result: Variant
 
 
-func convert_game(game: Game) -> void:
+func convert_game(game: Game, game_settings: GameSettings) -> void:
 	var json_data: Dictionary = {
 		GameFromRaw.VERSION_KEY: GameFromRaw.SAVE_DATA_VERSION,
 	}
@@ -32,7 +32,7 @@ func convert_game(game: Game) -> void:
 		json_data.merge({ GameFromRaw.COUNTRIES_KEY: countries_data })
 
 	# World
-	var world_data: Dictionary = _world_to_raw_dict(game.world)
+	var world_data: Dictionary = _world_to_raw_dict(game.world, game_settings)
 	if not world_data.is_empty():
 		json_data.merge({ GameFromRaw.WORLD_KEY: world_data })
 
@@ -90,18 +90,17 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 	return output
 
 
-func _world_to_raw_dict(world: GameWorld) -> Dictionary:
+func _world_to_raw_dict(
+		world: GameWorld, game_settings: GameSettings
+) -> Dictionary:
 	var output: Dictionary = {}
 
 	# World limits
-	if world is GameWorld2D:
-		var limits_data: Dictionary = _world_limits_to_raw_dict(
-				(world as GameWorld2D).limits
-		)
-		if not limits_data.is_empty():
-			output.merge(
-					{ WorldFromRaw.WORLD_LIMITS_KEY: limits_data }
-			)
+	var limits_data: Dictionary = (
+			_world_limits_to_raw_dict(game_settings.world_limits)
+	)
+	if not limits_data.is_empty():
+		output.merge({ WorldFromRaw.WORLD_LIMITS_KEY: limits_data })
 
 	# Provinces
 	var provinces_data: Array = _provinces_to_raw_array(world.provinces.list())

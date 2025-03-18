@@ -6,6 +6,7 @@ class_name GameLoadGenerated
 var error: bool = true
 var error_message: String = ""
 var result: Game
+var result_settings: GameSettings
 
 
 ## Upon loading, overwrites the game's rules with given rules.
@@ -50,3 +51,4 @@ func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	# Success!
 	error = false
 	result = game
+	result_settings = game_from_raw.result_settings

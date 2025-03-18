@@ -81,14 +81,10 @@ var _player_assignment: PlayerAssignment
 func _ready() -> void:
 	_update_ui_visibility()
 
-	if game.world is not GameWorld2D:
-		return
-	var world_2d := game.world as GameWorld2D
-
 	_action_input.game = game
 
 	world_visuals.game = game
-	world_visuals.world = world_2d
+	world_visuals.world = game.world
 	world_visuals.province_visuals.province_selected.connect(
 			_on_province_selected
 	)
@@ -96,7 +92,7 @@ func _ready() -> void:
 			_on_province_unhandled_mouse_event
 	)
 
-	_camera.world_limits = world_2d.limits
+	_camera.world_limits = project.settings.world_limits
 
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface

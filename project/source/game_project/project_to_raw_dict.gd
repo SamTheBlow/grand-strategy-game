@@ -8,7 +8,7 @@ var result: Dictionary
 
 func convert_project(project: GameProject) -> void:
 	var game_to_raw_dict := GameToRawDict.new()
-	game_to_raw_dict.convert_game(project.game)
+	game_to_raw_dict.convert_game(project.game, project.settings)
 
 	var output: Dictionary = game_to_raw_dict.result
 	output[GameMetadata.KEY_METADATA] = project.metadata.to_dict(false)

@@ -77,6 +77,7 @@ func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	else:
 		var project := GameProject.new()
 		project.game = generated_game.result
+		project.settings = generated_game.result_settings
 		project.settings.custom_settings = metadata.settings
 		project.metadata = metadata
 		_on_start_game_ready.call_deferred(project)

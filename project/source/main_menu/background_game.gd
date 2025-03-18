@@ -45,6 +45,7 @@ func _setup_game(project_file_path: String) -> void:
 	else:
 		var project := GameProject.new()
 		project.game = generated_game.result
+		project.settings = generated_game.result_settings
 		project.settings.custom_settings = metadata.settings
 		project.metadata = metadata
 		_on_game_load_ready.call_deferred(project)

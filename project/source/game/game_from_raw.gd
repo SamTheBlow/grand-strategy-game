@@ -41,6 +41,7 @@ static func parsed_from(raw_data: Variant) -> ParseResult:
 
 	# Loading begins!
 	var game := Game.new()
+	var game_settings := GameSettings.new()
 
 	# Rules
 	game.rules = RulesFromRaw.parsed_from(raw_dict.get(RULES_KEY))
@@ -65,19 +66,19 @@ static func parsed_from(raw_data: Variant) -> ParseResult:
 	CountryNotificationsFromRaw.parse_using(country_data, game)
 
 	# World
-	game.world = GameWorld2D.new(game)
-	WorldFromRaw.parse_using(raw_dict.get(WORLD_KEY), game)
+	WorldFromRaw.parse_using(raw_dict.get(WORLD_KEY), game, game_settings)
 
 	# [AutoArrow]s
 	AutoArrowsFromRaw.parse_using(country_data, game)
 
-	return ResultSuccess.new(game)
+	return ResultSuccess.new(game, game_settings)
 
 
 class ParseResult:
 	var error: bool
 	var error_message: String
 	var result_game: Game
+	var result_settings: GameSettings
 
 
 class ResultError extends ParseResult:
@@ -87,5 +88,6 @@ class ResultError extends ParseResult:
 
 
 class ResultSuccess extends ParseResult:
-	func _init(game: Game) -> void:
+	func _init(game: Game, game_settings: GameSettings) -> void:
 		result_game = game
+		result_settings = game_settings
