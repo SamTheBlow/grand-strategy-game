@@ -15,8 +15,10 @@ extends Camera2D
 
 var world_limits := WorldLimits.new():
 	set(value):
+		_disconnect_world_limits()
 		world_limits = value
 		_reposition_in_bounds()
+		_connect_world_limits()
 
 
 func _ready() -> void:
@@ -30,15 +32,6 @@ func move_to(new_position: Vector2) -> void:
 
 func move_to_world_center() -> void:
 	move_to(world_limits.center())
-
-
-## Puts the camera back in bounds.
-## Has no effect if the camera is not in the scene tree.
-func _reposition_in_bounds() -> void:
-	if not is_inside_tree():
-		return
-
-	position = position_in_bounds(position)
 
 
 ## Returns the given position contained within the camera limits.
@@ -58,10 +51,41 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 	var margin_y: float = (
 			(0.5 - world_margin.y) * get_viewport_rect().size.y / zoom.y
 	)
-	var min_x: float = world_limits.limit_left() + margin_x
-	var min_y: float = world_limits.limit_top() + margin_y
-	var max_x: float = world_limits.limit_right() - margin_x
-	var max_y: float = world_limits.limit_bottom() - margin_y
+	var min_x: float = world_limits.limit_left + margin_x
+	var min_y: float = world_limits.limit_top + margin_y
+	var max_x: float = world_limits.limit_right - margin_x
+	var max_y: float = world_limits.limit_bottom - margin_y
 	var output_x: float = clampf(input_position.x, min_x, max_x)
 	var output_y: float = clampf(input_position.y, min_y, max_y)
 	return Vector2(output_x, output_y)
+
+
+## Puts the camera back in bounds.
+## Has no effect if the camera is not in the scene tree.
+func _reposition_in_bounds() -> void:
+	if not is_inside_tree():
+		return
+
+	position = position_in_bounds(position)
+
+
+func _connect_world_limits() -> void:
+	if world_limits == null:
+		push_error("World limits is null.")
+		return
+
+	if not world_limits.changed.is_connected(_on_world_limits_changed):
+		world_limits.changed.connect(_on_world_limits_changed)
+
+
+func _disconnect_world_limits() -> void:
+	if world_limits == null:
+		push_error("World limits is null.")
+		return
+
+	if world_limits.changed.is_connected(_on_world_limits_changed):
+		world_limits.changed.disconnect(_on_world_limits_changed)
+
+
+func _on_world_limits_changed(_world_limits: WorldLimits) -> void:
+	_reposition_in_bounds()

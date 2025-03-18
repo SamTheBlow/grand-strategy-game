@@ -16,6 +16,8 @@ const INPUT_ACTION_PLAY_PROJECT: String = "play_project"
 ## The scene's root node must be a [ProjectLoadPopup].
 @export var _project_load_popup_scene: PackedScene
 
+var editor_settings := AppEditorSettings.new()
+
 var _current_project: GameProject:
 	set(value):
 		_current_project = value
@@ -49,6 +51,9 @@ func _setup_project() -> void:
 		return
 
 	_world_setup.clear()
+	# We close the interface
+	# because it may be using data from the previous project.
+	_editing_interface.close_interface()
 
 	if _current_project == null:
 		return
@@ -162,7 +167,9 @@ func _play() -> void:
 
 
 func _open_interface(type: EditingInterface.InterfaceType) -> void:
-	_editing_interface.open_interface(type)
+	if _current_project == null or editor_settings == null:
+		return
+	_editing_interface.open_interface(type, _current_project, editor_settings)
 
 
 ## Called when the user clicks on one of the options

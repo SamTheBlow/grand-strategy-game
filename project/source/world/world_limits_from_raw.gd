@@ -13,23 +13,23 @@ const WORLD_LIMIT_BOTTOM_KEY: String = "bottom"
 
 static func parsed_from(raw_data: Variant) -> WorldLimits:
 	if raw_data is not Dictionary:
-		return WorldLimits.new()
+		return
 	var raw_dict: Dictionary = raw_data
 
-	var x1: int = WorldLimits.DEFAULT_LEFT
+	var left: int = WorldLimits.DEFAULT_LEFT
 	if ParseUtils.dictionary_has_number(raw_dict, WORLD_LIMIT_LEFT_KEY):
-		x1 = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_LEFT_KEY)
+		left = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_LEFT_KEY)
 
-	var y1: int = WorldLimits.DEFAULT_TOP
+	var top: int = WorldLimits.DEFAULT_TOP
 	if ParseUtils.dictionary_has_number(raw_dict, WORLD_LIMIT_TOP_KEY):
-		y1 = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_TOP_KEY)
+		top = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_TOP_KEY)
 
-	var x2: int = WorldLimits.DEFAULT_RIGHT
+	var right: int = WorldLimits.DEFAULT_RIGHT
 	if ParseUtils.dictionary_has_number(raw_dict, WORLD_LIMIT_RIGHT_KEY):
-		x2 = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_RIGHT_KEY)
+		right = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_RIGHT_KEY)
 
-	var y2: int = WorldLimits.DEFAULT_BOTTOM
+	var bottom: int = WorldLimits.DEFAULT_BOTTOM
 	if ParseUtils.dictionary_has_number(raw_dict, WORLD_LIMIT_BOTTOM_KEY):
-		y2 = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_BOTTOM_KEY)
+		bottom = ParseUtils.dictionary_int(raw_dict, WORLD_LIMIT_BOTTOM_KEY)
 
-	return WorldLimits.from_rect2i(Rect2i(x1, y1, x2 - x1, y2 - y1))
+	return WorldLimits.new().with_values(left, top, right, bottom)

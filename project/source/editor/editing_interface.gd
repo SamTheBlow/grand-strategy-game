@@ -30,7 +30,11 @@ func _ready() -> void:
 
 ## Opens interface with given type.
 ## Closes the already open interface if applicable.
-func open_interface(type: InterfaceType) -> void:
+func open_interface(
+		type: InterfaceType,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
 	if not _INTERFACE_SCENES.has(type):
 		push_error("Can't find the scene for this interface type.")
 		return
@@ -40,6 +44,8 @@ func open_interface(type: InterfaceType) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[type].instantiate() as AppEditorInterface
 	)
+	new_interface.editor_settings = editor_settings
+	new_interface.game_settings = project.settings
 	_contents_container.add_child(new_interface)
 	_current_interface = new_interface
 

@@ -121,19 +121,19 @@ func _world_to_raw_dict(
 
 func _world_limits_to_raw_dict(world_limits: WorldLimits) -> Dictionary:
 	var raw_world_limits: Dictionary = {
-		WorldLimitsFromRaw.WORLD_LIMIT_TOP_KEY: world_limits.limit_top(),
-		WorldLimitsFromRaw.WORLD_LIMIT_BOTTOM_KEY: world_limits.limit_bottom(),
-		WorldLimitsFromRaw.WORLD_LIMIT_LEFT_KEY: world_limits.limit_left(),
-		WorldLimitsFromRaw.WORLD_LIMIT_RIGHT_KEY: world_limits.limit_right(),
+		WorldLimitsFromRaw.WORLD_LIMIT_TOP_KEY: world_limits.limit_top,
+		WorldLimitsFromRaw.WORLD_LIMIT_BOTTOM_KEY: world_limits.limit_bottom,
+		WorldLimitsFromRaw.WORLD_LIMIT_LEFT_KEY: world_limits.limit_left,
+		WorldLimitsFromRaw.WORLD_LIMIT_RIGHT_KEY: world_limits.limit_right,
 	}
 
-	if world_limits.limit_top() == WorldLimits.DEFAULT_TOP:
+	if world_limits.limit_top == WorldLimits.DEFAULT_TOP:
 		raw_world_limits.erase(WorldLimitsFromRaw.WORLD_LIMIT_TOP_KEY)
-	if world_limits.limit_bottom() == WorldLimits.DEFAULT_BOTTOM:
+	if world_limits.limit_bottom == WorldLimits.DEFAULT_BOTTOM:
 		raw_world_limits.erase(WorldLimitsFromRaw.WORLD_LIMIT_BOTTOM_KEY)
-	if world_limits.limit_left() == WorldLimits.DEFAULT_LEFT:
+	if world_limits.limit_left == WorldLimits.DEFAULT_LEFT:
 		raw_world_limits.erase(WorldLimitsFromRaw.WORLD_LIMIT_LEFT_KEY)
-	if world_limits.limit_right() == WorldLimits.DEFAULT_RIGHT:
+	if world_limits.limit_right == WorldLimits.DEFAULT_RIGHT:
 		raw_world_limits.erase(WorldLimitsFromRaw.WORLD_LIMIT_RIGHT_KEY)
 
 	return raw_world_limits

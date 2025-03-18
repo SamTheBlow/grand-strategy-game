@@ -22,7 +22,7 @@ static func parse_using(
 	var raw_dict: Dictionary = raw_data
 
 	# World limits
-	game_settings.world_limits = (
+	game_settings.load_world_limits(
 			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
 	)
 
