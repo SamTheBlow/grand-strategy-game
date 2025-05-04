@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=9 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_gofj8"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
 [ext_resource type="PackedScene" uid="uid://clxlw7vsp2qgj" path="res://source/camera/camera.tscn" id="5_abwba"]
+[ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/editing_interface.tscn" id="7_um8he"]
 
 [node name="Editor" type="Node"]
@@ -24,6 +25,10 @@ _camera = NodePath("../../Camera")
 _world_scene = ExtResource("4_gofj8")
 
 [node name="WorldContainer" type="Node2D" parent="WorldLayer"]
+
+[node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer"]
+unique_name_in_owner = true
+script = ExtResource("6_uwkq8")
 
 [node name="Camera" parent="." instance=ExtResource("5_abwba")]
 

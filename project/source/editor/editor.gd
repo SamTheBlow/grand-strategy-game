@@ -29,6 +29,7 @@ var _current_project: GameProject:
 var _recently_opened_projects: Array[String] = []
 
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
+@onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
 @onready var _editing_interface := %EditingInterface as EditingInterface
@@ -38,6 +39,7 @@ var _recently_opened_projects: Array[String] = []
 
 func _ready() -> void:
 	_set_menu_shortcuts()
+	_world_limits_rect.editor_settings = editor_settings
 	_open_new_project()
 
 
@@ -51,6 +53,7 @@ func _setup_project() -> void:
 		return
 
 	_world_setup.clear()
+	_world_limits_rect.game_settings = null
 	# We close the interface
 	# because it may be using data from the previous project.
 	_editing_interface.close_interface()
@@ -59,6 +62,7 @@ func _setup_project() -> void:
 		return
 
 	_world_setup.load_world(_current_project)
+	_world_limits_rect.game_settings = _current_project.settings
 
 
 func _update_window_title() -> void:
