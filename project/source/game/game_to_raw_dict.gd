@@ -50,11 +50,24 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 	for country in country_list:
 		var country_data: Dictionary = {
 			CountriesFromRaw.COUNTRY_ID_KEY: country.id,
-			CountriesFromRaw.COUNTRY_NAME_KEY: country.country_name,
-			# Intentionally don't include transparency for the country color
-			CountriesFromRaw.COUNTRY_COLOR_KEY: country.color.to_html(false),
-			CountriesFromRaw.COUNTRY_MONEY_KEY: country.money,
 		}
+
+		if country.country_name != "":
+			country_data.merge({
+				CountriesFromRaw.COUNTRY_NAME_KEY: country.country_name
+			})
+
+		if country.color != Country.DEFAULT_COLOR:
+			country_data.merge({
+				# Don't include transparency
+				CountriesFromRaw.COUNTRY_COLOR_KEY:
+					country.color.to_html(false)
+			})
+
+		if country.money != 0:
+			country_data.merge({
+				CountriesFromRaw.COUNTRY_MONEY_KEY: country.money
+			})
 
 		# Relationships
 		var raw_relationships: Array = (
@@ -199,12 +212,13 @@ func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 			})
 
 		# Population
-		province_data.merge({
-			ProvincesFromRaw.PROVINCE_POPULATION_KEY: {
-				ProvincesFromRaw.POPULATION_SIZE_KEY:
-					province.population.population_size,
-			}
-		})
+		if province.population.population_size != 0:
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_POPULATION_KEY: {
+					ProvincesFromRaw.POPULATION_SIZE_KEY:
+						province.population.population_size,
+				}
+			})
 
 		# Buildings
 		var buildings_data: Array = []

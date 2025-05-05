@@ -66,86 +66,73 @@
 			{
 				"army_size": 1000,
 				"id": 1,
-				"number_of_movements_made": 0,
 				"owner_country_id": 1,
 				"province_id": 3
 			},
 			{
 				"army_size": 1000,
 				"id": 6,
-				"number_of_movements_made": 0,
 				"owner_country_id": 6,
 				"province_id": 7
 			},
 			{
 				"army_size": 1000,
 				"id": 3,
-				"number_of_movements_made": 0,
 				"owner_country_id": 3,
 				"province_id": 28
 			},
 			{
 				"army_size": 1000,
 				"id": 0,
-				"number_of_movements_made": 0,
 				"owner_country_id": 0,
 				"province_id": 34
 			},
 			{
 				"army_size": 1000,
 				"id": 7,
-				"number_of_movements_made": 0,
 				"owner_country_id": 7,
 				"province_id": 45
 			},
 			{
 				"army_size": 1000,
 				"id": 10,
-				"number_of_movements_made": 0,
 				"owner_country_id": 10,
 				"province_id": 47
 			},
 			{
 				"army_size": 1000,
 				"id": 9,
-				"number_of_movements_made": 0,
 				"owner_country_id": 9,
 				"province_id": 48
 			},
 			{
 				"army_size": 1000,
 				"id": 5,
-				"number_of_movements_made": 0,
 				"owner_country_id": 5,
 				"province_id": 49
 			},
 			{
 				"army_size": 1000,
 				"id": 2,
-				"number_of_movements_made": 0,
 				"owner_country_id": 2,
 				"province_id": 58
 			},
 			{
 				"army_size": 1000,
 				"id": 8,
-				"number_of_movements_made": 0,
 				"owner_country_id": 8,
 				"province_id": 60
 			},
 			{
 				"army_size": 1000,
 				"id": 4,
-				"number_of_movements_made": 0,
 				"owner_country_id": 4,
 				"province_id": 67
 			}
 		],
 		"limits": {
 			"bottom": 2000,
-			"left": 0,
-			"right": 4000,
-			"top": 0
+			"right": 4000
 		},
 		"provinces": [
 			{

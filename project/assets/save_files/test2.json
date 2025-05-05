@@ -26,30 +26,25 @@
 			{
 				"army_size": 1000,
 				"id": 1,
-				"number_of_movements_made": 0,
 				"owner_country_id": 1,
 				"province_id": 3
 			},
 			{
 				"army_size": 1000,
 				"id": 2,
-				"number_of_movements_made": 0,
 				"owner_country_id": 2,
 				"province_id": 28
 			},
 			{
 				"army_size": 1000,
 				"id": 0,
-				"number_of_movements_made": 0,
 				"owner_country_id": 0,
 				"province_id": 34
 			}
 		],
 		"limits": {
 			"bottom": 2000,
-			"left": 0,
-			"right": 4000,
-			"top": 0
+			"right": 4000
 		},
 		"provinces": [
 			{

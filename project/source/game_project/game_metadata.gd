@@ -25,6 +25,9 @@ var icon: Texture2D
 ## Keys must be of type String, values may be any "raw" type.
 var settings: Dictionary = {}
 
+# We keep this information to store it in save files
+var _icon_file_path: String = ""
+
 
 ## Emits a signal.
 ## Please use this rather than manually editing the settings property.
@@ -65,8 +68,8 @@ static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
 		result.project_name = meta_dict[KEY_META_NAME]
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
-		var icon_file_path: String = meta_dict[KEY_META_ICON]
-		result.icon = _icon_from_path(base_path, icon_file_path)
+		result._icon_file_path = meta_dict[KEY_META_ICON]
+		result.icon = _icon_from_path(base_path, result._icon_file_path)
 
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
 		# Only load settings whose key is of type String.
@@ -117,6 +120,22 @@ static func _icon_from_path(
 		return ImageTexture.create_from_image(
 				Image.load_from_file(true_icon_path)
 		)
+
+
+## Returns a dictionary representation of this object meant for save files.
+func to_dict_save_file() -> Dictionary:
+	var output: Dictionary = {}
+
+	if project_name != "":
+		output.merge({ KEY_META_NAME: project_name })
+
+	if _icon_file_path != "":
+		output.merge({ KEY_META_ICON: _icon_file_path })
+
+	if not settings.is_empty():
+		output.merge({ KEY_META_SETTINGS: settings })
+
+	return output
 
 
 ## Returns the entire state as a raw Dictionary.
