@@ -25,7 +25,6 @@ const SAVE_FILE_PATH: String = "user://gamesave.json"
 var current_scene: Node:
 	set(value):
 		if current_scene != null:
-			remove_child(current_scene)
 			current_scene.queue_free()
 
 		current_scene = value
