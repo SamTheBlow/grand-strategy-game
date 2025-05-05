@@ -56,20 +56,36 @@ func _init() -> void:
 			custom_world_limit_bottom.value
 	)
 	custom_world_limit_left.value_changed.connect(
-		func(property: ItemInt) -> void:
-			world_limits.limit_left = property.value
+		func(_item: ItemInt) -> void:
+			if custom_world_limit_left.value >= custom_world_limit_right.value:
+				custom_world_limit_left.value = (
+						custom_world_limit_right.value - 1
+				)
+			world_limits.limit_left = custom_world_limit_left.value
 	)
 	custom_world_limit_top.value_changed.connect(
-		func(property: ItemInt) -> void:
-			world_limits.limit_top = property.value
+		func(_item: ItemInt) -> void:
+			if custom_world_limit_top.value >= custom_world_limit_bottom.value:
+				custom_world_limit_top.value = (
+						custom_world_limit_bottom.value - 1
+				)
+			world_limits.limit_top = custom_world_limit_top.value
 	)
 	custom_world_limit_right.value_changed.connect(
-		func(property: ItemInt) -> void:
-			world_limits.limit_right = property.value
+		func(_item: ItemInt) -> void:
+			if custom_world_limit_left.value >= custom_world_limit_right.value:
+				custom_world_limit_right.value = (
+						custom_world_limit_left.value + 1
+				)
+			world_limits.limit_right = custom_world_limit_right.value
 	)
 	custom_world_limit_bottom.value_changed.connect(
-		func(property: ItemInt) -> void:
-			world_limits.limit_bottom = property.value
+		func(_item: ItemInt) -> void:
+			if custom_world_limit_top.value >= custom_world_limit_bottom.value:
+				custom_world_limit_bottom.value = (
+						custom_world_limit_top.value + 1
+				)
+			world_limits.limit_bottom = custom_world_limit_bottom.value
 	)
 
 	background_color = ItemColor.new()

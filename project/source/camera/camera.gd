@@ -15,10 +15,10 @@ extends Camera2D
 
 var world_limits := WorldLimits.new():
 	set(value):
-		_disconnect_world_limits()
+		propagate_call(&"_disconnect_world_limits", [world_limits])
 		world_limits = value
 		_reposition_in_bounds()
-		_connect_world_limits()
+		propagate_call(&"_connect_world_limits", [world_limits])
 
 
 func _ready() -> void:
@@ -69,7 +69,7 @@ func _reposition_in_bounds() -> void:
 	position = position_in_bounds(position)
 
 
-func _connect_world_limits() -> void:
+func _connect_world_limits(_world_limits: WorldLimits) -> void:
 	if world_limits == null:
 		push_error("World limits is null.")
 		return
@@ -78,7 +78,7 @@ func _connect_world_limits() -> void:
 		world_limits.changed.connect(_on_world_limits_changed)
 
 
-func _disconnect_world_limits() -> void:
+func _disconnect_world_limits(_world_limits: WorldLimits) -> void:
 	if world_limits == null:
 		push_error("World limits is null.")
 		return

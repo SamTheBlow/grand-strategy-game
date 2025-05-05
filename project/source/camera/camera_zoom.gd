@@ -20,7 +20,7 @@ var _previous_target: float = 1.0
 var _camera_movement: Vector2 = Vector2.ZERO
 
 ## The limit on how close the camera can zoom in.
-var _maximum_zoom: float = 1.0
+var _maximum_zoom_limit: float = 1.0
 ## How close/far the camera will zoom in/out each time.
 var _zoom_increment: float = 0.075
 ## How fast the camera zooms in/out.
@@ -36,11 +36,12 @@ func _ready() -> void:
 	await get_tree().process_frame
 
 	# Zoom the camera to the default value
-	_target_zoom = clampf(default_zoom, _minimum_zoom(), _maximum_zoom)
+	_target_zoom = clampf(default_zoom, _minimum_zoom(), _maximum_zoom())
 	_previous_target = _target_zoom
 	camera.zoom = Vector2.ONE * _target_zoom
 
 	get_tree().get_root().size_changed.connect(_on_screen_size_changed)
+	_connect_world_limits(camera.world_limits)
 
 
 func _physics_process(delta: float) -> void:
@@ -71,7 +72,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _zoom_in(mouse_position: Vector2) -> void:
 	_previous_target = _target_zoom
-	_target_zoom = minf(_target_zoom + _zoom_increment, _maximum_zoom)
+	_target_zoom = minf(_target_zoom + _zoom_increment, _maximum_zoom())
 	_zoom_to_cursor(mouse_position)
 	set_physics_process(true)
 
@@ -99,6 +100,13 @@ func _zoom_to_cursor(mouse_position: Vector2) -> void:
 	_camera_movement += offset_pixels * (current_zoom - new_zoom)
 
 
+func _maximum_zoom() -> float:
+	# Prevents glitches for the edge case where the minimum zoom is
+	# larger than the maximum zoom. When this happens, we ignore
+	# the maximum zoom and stay at the minimum zoom.
+	return maxf(_maximum_zoom_limit, _minimum_zoom())
+
+
 ## Returns the minimum zoom amount such that the camera remains in bounds.
 func _minimum_zoom() -> float:
 	var viewport_size_x: float = camera.get_viewport_rect().size.x
@@ -108,9 +116,42 @@ func _minimum_zoom() -> float:
 	return maxf(min_zoom_x, min_zoom_y)
 
 
-## Ensures the camera stays in bounds when the screen size changes.
-func _on_screen_size_changed() -> void:
+func _keep_camera_in_bounds() -> void:
 	var minimum_zoom: float = _minimum_zoom()
 	if camera.zoom.x < minimum_zoom or camera.zoom.y < minimum_zoom:
 		camera.zoom = minimum_zoom * Vector2.ONE
 		_target_zoom = minimum_zoom
+		return
+
+	var maximum_zoom: float = _maximum_zoom()
+	if camera.zoom.x > maximum_zoom or camera.zoom.y > maximum_zoom:
+		camera.zoom = maximum_zoom * Vector2.ONE
+		_target_zoom = maximum_zoom
+
+
+func _connect_world_limits(world_limits: WorldLimits) -> void:
+	if world_limits == null:
+		push_error("World limits is null.")
+		return
+
+	if not world_limits.changed.is_connected(_on_world_limits_changed):
+		world_limits.changed.connect(_on_world_limits_changed)
+
+
+func _disconnect_world_limits(world_limits: WorldLimits) -> void:
+	if world_limits == null:
+		push_error("World limits is null.")
+		return
+
+	if world_limits.changed.is_connected(_on_world_limits_changed):
+		world_limits.changed.disconnect(_on_world_limits_changed)
+
+
+## Ensures the camera stays in bounds when the screen size changes.
+func _on_screen_size_changed() -> void:
+	_keep_camera_in_bounds()
+
+
+## Idem for when the world limits change.
+func _on_world_limits_changed(_world_limits: WorldLimits) -> void:
+	_keep_camera_in_bounds()
