@@ -41,6 +41,7 @@ fit_content = true
 
 [node name="EditorSettingsCategory" parent="VBoxContainer" instance=ExtResource("2_0l2xs")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 item = SubResource("Resource_1w6l7")
 

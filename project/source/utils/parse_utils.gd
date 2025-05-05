@@ -125,3 +125,16 @@ static func number_as_float(variant: Variant) -> float:
 
 	push_error("That's not a valid number!")
 	return 0.0
+
+
+## Converts given [Variant] into a [Color], if possible.
+## If it fails, returns given fallback color instead.
+static func color_from_raw(raw_data: Variant, fallback_color: Color) -> Color:
+	if raw_data is not String:
+		return fallback_color
+	var data_string: String = raw_data
+
+	if not Color.html_is_valid(data_string):
+		return fallback_color
+
+	return Color.html(data_string)

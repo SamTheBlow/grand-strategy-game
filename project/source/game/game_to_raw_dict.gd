@@ -41,6 +41,16 @@ func convert_game(game: Game, game_settings: GameSettings) -> void:
 	if not turn_data.is_empty():
 		json_data.merge({ GameFromRaw.TURN_KEY: turn_data })
 
+	# Background color
+	if (
+			game_settings.background_color.value
+			!= GameSettings.DEFAULT_BACKGROUND_COLOR
+	):
+		json_data.merge({
+			GameFromRaw.BACKGROUND_COLOR_KEY:
+				game_settings.background_color.value.to_html(false)
+		})
+
 	result = json_data
 
 

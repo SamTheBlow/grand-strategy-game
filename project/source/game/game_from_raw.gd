@@ -15,6 +15,7 @@ const TURN_KEY: String = "turn"
 const WORLD_KEY: String = "world"
 const COUNTRIES_KEY: String = "countries"
 const PLAYERS_KEY: String = "players"
+const BACKGROUND_COLOR_KEY: String = "background_color"
 
 ## The format version. If changes need to be made in the future
 ## to how the game is saved and loaded, this will allow us to tell
@@ -70,6 +71,14 @@ static func parsed_from(raw_data: Variant) -> ParseResult:
 
 	# [AutoArrow]s
 	AutoArrowsFromRaw.parse_using(country_data, game)
+
+	# Background color
+	if raw_dict.has(BACKGROUND_COLOR_KEY):
+		var background_color: Color = ParseUtils.color_from_raw(
+				raw_dict.get(BACKGROUND_COLOR_KEY),
+				GameSettings.DEFAULT_BACKGROUND_COLOR
+		)
+		game_settings.background_color.value = background_color
 
 	return ResultSuccess.new(game, game_settings)
 

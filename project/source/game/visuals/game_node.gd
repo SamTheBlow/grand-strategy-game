@@ -93,6 +93,9 @@ func _ready() -> void:
 	)
 
 	_camera.world_limits = project.settings.world_limits
+	(%BackgroundColor as BackgroundColor).background_color = (
+			project.settings.background_color
+	)
 
 	var networking_interface := (
 			networking_setup_scene.instantiate() as NetworkingInterface

@@ -4,6 +4,8 @@ class_name GameSettings
 ##
 ## These settings must not change while an ongoing game is using them.
 
+const DEFAULT_BACKGROUND_COLOR: Color = Color(0.3, 0.3, 0.3)
+
 var custom_world_limits_enabled: ItemBool
 var custom_world_limit_left: ItemInt
 var custom_world_limit_right: ItemInt
@@ -13,13 +15,15 @@ var custom_world_limit_bottom: ItemInt
 ## Do not overwrite! This is initialized automatically.
 var world_limits: WorldLimits
 
+var background_color: ItemColor
+
 var custom_settings: Dictionary
 
 
 func _init() -> void:
 	custom_world_limits_enabled = ItemBool.new()
-	custom_world_limits_enabled.value = false
 	custom_world_limits_enabled.text = "Custom world limits"
+	custom_world_limits_enabled.value = false
 
 	custom_world_limit_left = ItemInt.new()
 	custom_world_limit_left.text = "Left"
@@ -67,6 +71,10 @@ func _init() -> void:
 		func(property: ItemInt) -> void:
 			world_limits.limit_bottom = property.value
 	)
+
+	background_color = ItemColor.new()
+	background_color.text = "Background color"
+	background_color.value = DEFAULT_BACKGROUND_COLOR
 
 
 ## Adjusts settings to match given world limits.

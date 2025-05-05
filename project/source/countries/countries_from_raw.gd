@@ -67,16 +67,8 @@ static func _parsed_country(raw_data: Variant, used_ids: Array[int]) -> Country:
 
 
 static func _parsed_country_color(raw_data: Variant) -> Color:
-	var color: Color = Country.DEFAULT_COLOR
-
-	if raw_data is not String:
-		return color
-	var color_string: String = raw_data
-
-	if not Color.html_is_valid(color_string):
-		return color
-
-	color = Color.html(color_string)
-	# Remove transparency
-	color.a = 1.0
-	return color
+	var parsed_color: Color = (
+			ParseUtils.color_from_raw(raw_data, Country.DEFAULT_COLOR)
+	)
+	parsed_color.a = 1.0
+	return parsed_color
