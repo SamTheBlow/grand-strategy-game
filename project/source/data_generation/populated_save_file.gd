@@ -191,6 +191,9 @@ static func _apply_random_ai_personality_type(
 
 ## Adds armies such that it only gives one army to each country.
 static func _add_starting_armies(game: Game) -> void:
+	if game.rules.starting_army_size.value == 0:
+		return
+
 	var already_supplied_countries: Array[Country] = []
 	for province in game.world.provinces.list():
 		if (
@@ -201,8 +204,7 @@ static func _add_starting_armies(game: Game) -> void:
 
 		Army.quick_setup(
 				game,
-				# TODO create a rule for this
-				1000,
+				game.rules.starting_army_size.value,
 				province.owner_country,
 				province
 		)

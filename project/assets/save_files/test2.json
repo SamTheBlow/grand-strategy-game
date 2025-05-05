@@ -22,26 +22,6 @@
 	},
 	"version": "1",
 	"world": {
-		"armies": [
-			{
-				"army_size": 1000,
-				"id": 1,
-				"owner_country_id": 1,
-				"province_id": 3
-			},
-			{
-				"army_size": 1000,
-				"id": 2,
-				"owner_country_id": 2,
-				"province_id": 28
-			},
-			{
-				"army_size": 1000,
-				"id": 0,
-				"owner_country_id": 0,
-				"province_id": 34
-			}
-		],
 		"limits": {
 			"bottom": 2000,
 			"right": 4000

@@ -60,6 +60,7 @@ const RULE_NAMES: Array[String] = [
 	"province_income_constant",
 	"province_income_per_person",
 	"minimum_army_size",
+	"starting_army_size",
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
 	"battle_algorithm_option",
@@ -120,6 +121,7 @@ var province_income_random_max: ItemInt
 var province_income_constant: ItemInt
 var province_income_per_person: ItemFloat
 var minimum_army_size: ItemInt
+var starting_army_size: ItemInt
 var global_attacker_efficiency: ItemFloat
 var global_defender_efficiency: ItemFloat
 var battle_algorithm_option: ItemOptions
@@ -203,6 +205,7 @@ func _init() -> void:
 	province_income_constant = ItemInt.new()
 	province_income_per_person = ItemFloat.new()
 	minimum_army_size = ItemInt.new()
+	starting_army_size = ItemInt.new()
 	global_attacker_efficiency = ItemFloat.new()
 	global_defender_efficiency = ItemFloat.new()
 	battle_algorithm_option = ItemOptions.new()
@@ -411,6 +414,11 @@ func _init() -> void:
 	minimum_army_size.minimum = 1
 	minimum_army_size.has_minimum = true
 	minimum_army_size.value = 1
+
+	starting_army_size.text = "Starting army size"
+	starting_army_size.minimum = 0
+	starting_army_size.has_minimum = true
+	starting_army_size.value = 1000
 
 	global_attacker_efficiency.text = "Global attacker efficiency"
 	global_attacker_efficiency.minimum = 0
@@ -652,6 +660,7 @@ func _init() -> void:
 		starting_money,
 		province_income_option,
 		minimum_army_size,
+		starting_army_size,
 		_category_battle,
 		_category_ai,
 		_category_diplomacy,
