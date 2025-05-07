@@ -21,13 +21,14 @@ static func parse_using(
 		return
 	var raw_dict: Dictionary = raw_data
 
-	# World limits
-	game_settings.load_world_limits(
-			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
-	)
-
 	# Provinces
 	ProvincesFromRaw.parse_using(raw_dict.get(WORLD_PROVINCES_KEY), game)
 
 	# Armies
 	ArmiesFromRaw.parse_using(raw_dict.get(WORLD_ARMIES_KEY), game)
+
+	# World limits (must be loaded after the provinces)
+	game_settings.load_world_limits(
+			game.world,
+			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
+	)

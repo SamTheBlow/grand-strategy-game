@@ -47,16 +47,10 @@ func _update_game_settings() -> void:
 	if game_settings == null:
 		return
 
-	_update_custom_limits_enabled(game_settings.custom_world_limits_enabled)
 	_update_custom_world_limits()
 
 
-func _update_custom_limits_enabled(_property: ItemBool) -> void:
-	# TODO implement
-	pass
-
-
-func _update_custom_world_limits(_property: ItemInt = null) -> void:
+func _update_custom_world_limits(_world_limits: WorldLimits = null) -> void:
 	rectangle = game_settings.world_limits.as_rect2i()
 	queue_redraw()
 
@@ -89,39 +83,11 @@ func _disconnect_game_settings() -> void:
 	if game_settings == null:
 		return
 
-	game_settings.custom_world_limits_enabled.value_changed.disconnect(
-			_update_custom_limits_enabled
-	)
-	game_settings.custom_world_limit_left.value_changed.disconnect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_right.value_changed.disconnect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_top.value_changed.disconnect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_bottom.value_changed.disconnect(
-			_update_custom_world_limits
-	)
+	game_settings.world_limits.changed.disconnect(_update_custom_world_limits)
 
 
 func _connect_game_settings() -> void:
 	if game_settings == null:
 		return
 
-	game_settings.custom_world_limits_enabled.value_changed.connect(
-			_update_custom_limits_enabled
-	)
-	game_settings.custom_world_limit_left.value_changed.connect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_right.value_changed.connect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_top.value_changed.connect(
-			_update_custom_world_limits
-	)
-	game_settings.custom_world_limit_bottom.value_changed.connect(
-			_update_custom_world_limits
-	)
+	game_settings.world_limits.changed.connect(_update_custom_world_limits)

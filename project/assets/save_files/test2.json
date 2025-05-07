@@ -22,10 +22,6 @@
 	},
 	"version": "1",
 	"world": {
-		"limits": {
-			"bottom": 2000,
-			"right": 4000
-		},
 		"provinces": [
 			{
 				"id": 0,

@@ -13,7 +13,7 @@ const WORLD_LIMIT_BOTTOM_KEY: String = "bottom"
 
 static func parsed_from(raw_data: Variant) -> WorldLimits:
 	if raw_data is not Dictionary:
-		return
+		return WorldLimits.new()
 	var raw_dict: Dictionary = raw_data
 
 	var left: int = WorldLimits.DEFAULT_LEFT

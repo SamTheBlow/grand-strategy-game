@@ -57,3 +57,11 @@ func center() -> Vector2i:
 
 func as_rect2i() -> Rect2i:
 	return Rect2i(limit_left, limit_top, width(), height())
+
+
+## Resets each limit to its default value.
+func reset() -> void:
+	limit_left = DEFAULT_LEFT
+	limit_top = DEFAULT_TOP
+	limit_right = DEFAULT_RIGHT
+	limit_bottom = DEFAULT_BOTTOM
