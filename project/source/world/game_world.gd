@@ -8,6 +8,8 @@ var armies := Armies.new()
 ## Do not overwrite!
 var provinces := Provinces.new()
 
+var decorations: Array[WorldDecoration] = []
+
 var armies_in_each_province := ArmiesInEachProvince.new(provinces, armies)
 var armies_of_each_country: ArmiesOfEachCountry
 var provinces_of_each_country: ProvincesOfEachCountry

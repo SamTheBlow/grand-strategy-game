@@ -7,13 +7,17 @@ class_name WorldFromRaw
 ## This operation always succeeds.
 ## Ignores unrecognized data.
 
+const WORLD_ARMIES_KEY: String = "armies"
+const WORLD_DECORATIONS_KEY: String = "decorations"
 const WORLD_LIMITS_KEY: String = "limits"
 const WORLD_PROVINCES_KEY: String = "provinces"
-const WORLD_ARMIES_KEY: String = "armies"
 
 
 static func parse_using(
-		raw_data: Variant, game: Game, game_settings: GameSettings
+		raw_data: Variant,
+		game: Game,
+		game_settings: GameSettings,
+		project_file_path: String
 ) -> void:
 	game.world = GameWorld.new(game)
 
@@ -32,3 +36,15 @@ static func parse_using(
 			game.world,
 			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
 	)
+
+	# Decorations
+	var parse_result := WorldDecorationsFromRaw.parsed_from(
+			raw_dict.get(WORLD_DECORATIONS_KEY), project_file_path
+	)
+	if not parse_result.invalid_file_paths.is_empty():
+		push_warning(
+				"Got "
+				+ str(parse_result.invalid_file_paths.size())
+				+ " invalid file path(s) while loading world decorations"
+		)
+	game.world.decorations = parse_result.decorations

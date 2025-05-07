@@ -23,7 +23,9 @@ const BACKGROUND_COLOR_KEY: String = "background_color"
 const SAVE_DATA_VERSION: String = "1"
 
 
-static func parsed_from(raw_data: Variant) -> ParseResult:
+static func parsed_from(
+		raw_data: Variant, project_file_path: String
+) -> ParseResult:
 	if raw_data is not Dictionary:
 		return ResultError.new("Data is not a dictionary.")
 	var raw_dict: Dictionary = raw_data
@@ -67,7 +69,9 @@ static func parsed_from(raw_data: Variant) -> ParseResult:
 	CountryNotificationsFromRaw.parse_using(country_data, game)
 
 	# World
-	WorldFromRaw.parse_using(raw_dict.get(WORLD_KEY), game, game_settings)
+	WorldFromRaw.parse_using(
+			raw_dict.get(WORLD_KEY), game, game_settings, project_file_path
+	)
 
 	# [AutoArrow]s
 	AutoArrowsFromRaw.parse_using(country_data, game)

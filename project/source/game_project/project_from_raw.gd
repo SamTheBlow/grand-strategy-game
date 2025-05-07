@@ -7,7 +7,7 @@ class_name ProjectFromRaw
 static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 	# Load the game
 	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(raw_data)
+			GameFromRaw.parsed_from(raw_data, file_path)
 	)
 	if game_from_raw.error:
 		return ResultError.new(game_from_raw.error_message)

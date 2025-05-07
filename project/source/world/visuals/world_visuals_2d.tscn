@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene load_steps=13 format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" uid="uid://ctu7j3g2p76du" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" uid="uid://yhhag4v6plx" path="res://source/world/visuals/world_background.gd" id="2_unrx0"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://uk0qme4tx0on" path="res://source/provinces/visuals/province_highlight.gd" id="5_bd3lk"]
 [ext_resource type="PackedScene" uid="uid://eso260jnknd4" path="res://source/armies/visuals/army_visuals_2d.tscn" id="6_toace"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
+[ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
 
 [node name="WorldVisuals2D" type="Node2D"]
 script = ExtResource("1_im3sb")
@@ -47,6 +48,10 @@ script = ExtResource("2_unrx0")
 [node name="Provinces" type="Node2D" parent="."]
 unique_name_in_owner = true
 script = ExtResource("5_4fqv4")
+
+[node name="Decorations" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("11_obqf8")
 
 [node name="AutoArrows" type="Node2D" parent="." node_paths=PackedStringArray("province_visuals_container", "province_selection")]
 unique_name_in_owner = true

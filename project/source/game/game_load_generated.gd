@@ -34,7 +34,7 @@ func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 
 	# Load the game
 	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(file_json.result)
+			GameFromRaw.parsed_from(file_json.result, metadata.file_path)
 	)
 	if game_from_raw.error:
 		error = true

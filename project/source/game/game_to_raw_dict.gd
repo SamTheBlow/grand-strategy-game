@@ -139,6 +139,13 @@ func _world_to_raw_dict(
 				{ WorldFromRaw.WORLD_ARMIES_KEY: armies_data }
 		)
 
+	# Decorations
+	var decoration_data: Array = (
+			WorldDecorationsToRaw.result(world.decorations)
+	)
+	if not decoration_data.is_empty():
+		output.merge({ WorldFromRaw.WORLD_DECORATIONS_KEY: decoration_data })
+
 	return output
 
 
