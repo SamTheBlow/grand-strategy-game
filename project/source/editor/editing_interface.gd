@@ -46,6 +46,12 @@ func open_interface(
 	)
 	new_interface.editor_settings = editor_settings
 	new_interface.game_settings = project.settings
+
+	if new_interface is InterfaceWorldDecoration:
+		(new_interface as InterfaceWorldDecoration).decorations = (
+				project.game.world.decorations
+		)
+
 	_contents_container.add_child(new_interface)
 	_current_interface = new_interface
 

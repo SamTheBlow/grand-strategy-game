@@ -26,3 +26,17 @@ func new_sprite() -> Sprite2D:
 	sprite.scale = _scale
 	sprite.modulate = _color
 	return sprite
+
+
+## Takes a [TextureRect] and changes its data to look like this decoration.
+func apply_preview(texture_rect: TextureRect) -> void:
+	# Position and scale are not applied.
+	texture_rect.texture = _texture
+	texture_rect.flip_h = _flip_h
+	texture_rect.flip_v = _flip_v
+	texture_rect.rotation_degrees = _rotation_degrees
+	texture_rect.modulate = _color
+
+
+func position() -> Vector2:
+	return _position
