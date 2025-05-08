@@ -7,7 +7,19 @@ extends Node
 ## The scene's root node must be a WorldVisuals2D.
 @export var _world_scene: PackedScene
 
-var _current_world: Node
+var editor_settings: AppEditorSettings:
+	set(value):
+		if editor_settings != null:
+			editor_settings.show_decorations.value_changed.disconnect(
+					_update_decoration_visibility
+			)
+		editor_settings = value
+		if editor_settings != null:
+			editor_settings.show_decorations.value_changed.connect(
+					_update_decoration_visibility
+			)
+
+var _current_world: WorldVisuals2D
 
 
 ## Discards the current [WorldVisuals2D] instance, if applicable.
@@ -27,3 +39,12 @@ func load_world(project: GameProject) -> void:
 	_camera.move_to_world_center()
 	_container.add_child(new_world)
 	_current_world = new_world
+	_update_decoration_visibility()
+
+
+func _update_decoration_visibility(_item: ItemBool = null) -> void:
+	if _current_world == null:
+		return
+	_current_world.set_decoration_visiblity(
+			editor_settings.show_decorations.value
+	)

@@ -6,6 +6,8 @@ class_name AppEditorSettings
 var show_world_limits: ItemBool
 var world_limits_color: ItemColor
 
+var show_decorations: ItemBool
+
 
 func _init() -> void:
 	show_world_limits = ItemBool.new()
@@ -18,3 +20,7 @@ func _init() -> void:
 
 	show_world_limits.child_items = [world_limits_color]
 	show_world_limits.child_items_on = [0]
+
+	show_decorations = ItemBool.new()
+	show_decorations.value = true
+	show_decorations.text = "Show on world map"

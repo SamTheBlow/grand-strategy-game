@@ -9,6 +9,8 @@ var world: GameWorld:
 # TODO Temporary... Figure out how to not need this
 var game: Game
 
+var _is_decorations_visible: bool = true
+
 @onready var province_selection := %ProvinceSelection as ProvinceSelection
 @onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
 
@@ -36,11 +38,24 @@ func _initialize() -> void:
 	_province_highlight.armies = world.armies
 	_province_highlight.playing_country = playing_country
 	_province_highlight.armies_in_each_province = (
-			game.world.armies_in_each_province
+			world.armies_in_each_province
 	)
 	_army_visuals_setup.playing_country = playing_country
 	_army_visuals_setup.armies = world.armies
 	_decorations_node.spawn_decorations(world.decorations)
+	_update_decoration_visibility()
 	_auto_arrow_input.game = game
 	_auto_arrows.playing_country = playing_country
 	_auto_arrows.countries = game.countries
+
+
+## Shows or hides the decorations.
+func set_decoration_visiblity(is_decorations_visible: bool) -> void:
+	_is_decorations_visible = is_decorations_visible
+	_update_decoration_visibility()
+
+
+func _update_decoration_visibility() -> void:
+	if _decorations_node == null:
+		return
+	_decorations_node.visible = _is_decorations_visible

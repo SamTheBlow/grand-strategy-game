@@ -40,6 +40,7 @@ var _recently_opened_projects: Array[String] = []
 
 func _ready() -> void:
 	_set_menu_shortcuts()
+	_world_setup.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
 	_open_new_project()
 
