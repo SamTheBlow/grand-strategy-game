@@ -37,6 +37,7 @@ func refresh() -> void:
 	_label.text = item.text
 	_spin_box.allow_lesser = not item.has_minimum
 	_spin_box.allow_greater = not item.has_maximum
+	_spin_box.suffix = item.suffix
 
 
 func _item() -> PropertyTreeItem:

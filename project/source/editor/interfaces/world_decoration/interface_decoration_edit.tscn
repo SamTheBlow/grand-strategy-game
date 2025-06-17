@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://bfpg282qeb0rx"]
+[gd_scene load_steps=18 format=3 uid="uid://bfpg282qeb0rx"]
 
 [ext_resource type="Script" uid="uid://dypql3u6krwys" path="res://source/editor/interfaces/world_decoration/interface_decoration_edit.gd" id="1_w5yw6"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_ga3my"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_04cbk"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_pnncu"]
 [ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="6_nwv8g"]
+[ext_resource type="Script" uid="uid://bhickbq71f38e" path="res://source/utils/property_tree/items/item_vector2.gd" id="7_cgriv"]
 [ext_resource type="Script" uid="uid://d356ooxo4eq1k" path="res://source/utils/property_tree/items/item_float.gd" id="7_nwv8g"]
 [ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="8_cgriv"]
 
@@ -34,10 +35,12 @@ child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_owm2d"]
-script = ExtResource("5_pnncu")
-text = "Position: (TODO vector2)"
+script = ExtResource("7_cgriv")
+_value = Vector2(0, 0)
+suffix = "px"
+text = "Position:"
 child_items = Array[ExtResource("5_pnncu")]([])
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
+metadata/_custom_type_script = "uid://bhickbq71f38e"
 
 [sub_resource type="Resource" id="Resource_j6prn"]
 script = ExtResource("7_nwv8g")
@@ -47,15 +50,18 @@ has_minimum = false
 minimum = -180.0
 has_maximum = false
 maximum = 180.0
-text = "Rotation (degrees):"
+suffix = "°"
+text = "Rotation:"
 child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://d356ooxo4eq1k"
 
 [sub_resource type="Resource" id="Resource_e5qcx"]
-script = ExtResource("5_pnncu")
-text = "Scale: (TODO vector2)"
+script = ExtResource("7_cgriv")
+_value = Vector2(0, 0)
+suffix = ""
+text = "Scale:"
 child_items = Array[ExtResource("5_pnncu")]([])
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
+metadata/_custom_type_script = "uid://bhickbq71f38e"
 
 [sub_resource type="Resource" id="Resource_240kv"]
 script = ExtResource("8_cgriv")

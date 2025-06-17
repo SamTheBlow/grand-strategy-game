@@ -15,6 +15,7 @@ func _ready() -> void:
 		push_error("World decoration is null, oops.")
 		return
 
+	_load_settings()
 	_update_preview()
 
 	# Texture
@@ -30,17 +31,17 @@ func _ready() -> void:
 			_on_flip_v_value_changed
 	)
 	# Position
-	#(_settings.item.child_items[3] as ItemVector2).value_changed.connect(
-	#		_on_position_value_changed
-	#)
+	(_settings.item.child_items[3] as ItemVector2).value_changed.connect(
+			_on_position_value_changed
+	)
 	# Rotation
 	(_settings.item.child_items[4] as ItemFloat).value_changed.connect(
 			_on_rotation_value_changed
 	)
 	# Scale
-	#(_settings.item.child_items[5] as ItemVector2).value_changed.connect(
-	#		_on_scale_value_changed
-	#)
+	(_settings.item.child_items[5] as ItemVector2).value_changed.connect(
+			_on_scale_value_changed
+	)
 	# Color
 	(_settings.item.child_items[6] as ItemColor).value_changed.connect(
 			_on_color_value_changed
@@ -50,6 +51,30 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"delete"):
 		delete_pressed.emit(world_decoration)
+
+
+func _load_settings() -> void:
+	#(_settings.item.child_items[0] as ItemTexture).value = (
+	#		world_decoration.texture
+	#)
+	(_settings.item.child_items[1] as ItemBool).value = (
+			world_decoration.flip_h
+	)
+	(_settings.item.child_items[2] as ItemBool).value = (
+			world_decoration.flip_v
+	)
+	(_settings.item.child_items[3] as ItemVector2).set_data(
+			world_decoration.position
+	)
+	(_settings.item.child_items[4] as ItemFloat).value = (
+			world_decoration.rotation_degrees
+	)
+	(_settings.item.child_items[5] as ItemVector2).set_data(
+			world_decoration.scale
+	)
+	(_settings.item.child_items[6] as ItemColor).value = (
+			world_decoration.color
+	)
 
 
 func _update_preview() -> void:
@@ -79,9 +104,9 @@ func _on_flip_v_value_changed(item: ItemBool) -> void:
 	_update_preview()
 
 
-#func _on_position_value_changed(item: ItemVector2) -> void:
-#	world_decoration.position = item.value
-#	_update_preview()
+func _on_position_value_changed(item: ItemVector2) -> void:
+	world_decoration.position = item.get_data()
+	_update_preview()
 
 
 func _on_rotation_value_changed(item: ItemFloat) -> void:
@@ -89,9 +114,9 @@ func _on_rotation_value_changed(item: ItemFloat) -> void:
 	_update_preview()
 
 
-#func _on_scale_value_changed(item: ItemVector2) -> void:
-#	world_decoration.scale = item.value
-#	_update_preview()
+func _on_scale_value_changed(item: ItemVector2) -> void:
+	world_decoration.scale = item.get_data()
+	_update_preview()
 
 
 func _on_color_value_changed(item: ItemColor) -> void:

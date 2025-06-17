@@ -77,6 +77,9 @@ var maximum: float = 0:
 			value = minf(value, maximum)
 		minimum = minf(minimum, maximum)
 
+## The suffix to add at the end (e.g. "10px", "10°").
+var suffix: String = ""
+
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties: Array[Dictionary] = []
@@ -117,6 +120,11 @@ func _get_property_list() -> Array[Dictionary]:
 		"name": "maximum",
 		"type": TYPE_FLOAT,
 		"usage": maximum_usage,
+	})
+
+	properties.append({
+		"name": "suffix",
+		"type": TYPE_STRING,
 	})
 
 	return properties

@@ -1,14 +1,14 @@
-[gd_scene load_steps=2 format=3 uid="uid://dd0mqtbyhpwcg"]
+[gd_scene load_steps=2 format=3 uid="uid://dp622gh87xpkt"]
 
-[ext_resource type="Script" uid="uid://duhu4rnfdg4j2" path="res://source/utils/property_tree/nodes/item_float_node.gd" id="1_dqhxd"]
+[ext_resource type="Script" uid="uid://gc0ku7baw0ll" path="res://source/utils/property_tree/nodes/item_vector2_node.gd" id="1_khsku"]
 
-[node name="ItemFloat" type="MarginContainer"]
+[node name="ItemVector2" type="MarginContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_dqhxd")
+script = ExtResource("1_khsku")
 
 [node name="Container" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
@@ -21,9 +21,18 @@ layout_mode = 2
 [node name="Label" type="Label" parent="Container/ItemContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Float"
+text = "Vector2"
 
-[node name="SpinBox" type="SpinBox" parent="Container/ItemContainer"]
+[node name="Value1" type="SpinBox" parent="Container/ItemContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.0
+allow_greater = true
+allow_lesser = true
+alignment = 1
+custom_arrow_step = 0.01
+
+[node name="Value2" type="SpinBox" parent="Container/ItemContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 step = 0.0

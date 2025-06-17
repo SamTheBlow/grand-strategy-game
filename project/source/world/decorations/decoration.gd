@@ -30,10 +30,19 @@ func new_sprite() -> Sprite2D:
 
 ## Takes a [TextureRect] and changes its data to look like this decoration.
 func apply_preview(texture_rect: TextureRect) -> void:
-	# Position is not applied. Scale is lowered but keeps aspect ratio.
+	# Position is not applied. Scale is changed but keeps aspect ratio.
 	texture_rect.texture = texture
 	texture_rect.flip_h = flip_h
 	texture_rect.flip_v = flip_v
 	texture_rect.rotation_degrees = rotation_degrees
-	texture_rect.scale = scale / maxf(scale.x, scale.y)
 	texture_rect.modulate = color
+
+	# The scale is increased or decreased such that it always appears
+	# the same size, while also keeping aspect ratio.
+	# Also handles negative and zero.
+	var absolute_scale: Vector2 = scale.abs()
+	var scale_divide_amount: float = maxf(absolute_scale.x, absolute_scale.y)
+	texture_rect.scale = (
+			absolute_scale / scale_divide_amount
+			if scale_divide_amount != 0.0 else Vector2.ONE
+	)
