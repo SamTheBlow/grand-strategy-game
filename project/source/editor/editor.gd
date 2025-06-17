@@ -194,7 +194,9 @@ func _play() -> void:
 func _open_interface(type: EditingInterface.InterfaceType) -> void:
 	if _current_project == null or editor_settings == null:
 		return
-	_editing_interface.open_interface(type, _current_project, editor_settings)
+	_editing_interface.open_new_interface(
+			type, _current_project, editor_settings
+	)
 
 
 ## Called when the user clicks on one of the options
@@ -253,7 +255,7 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 			_open_interface(EditingInterface.InterfaceType.BACKGROUND_COLOR)
 		3:
 			# "Decoration"
-			_open_interface(EditingInterface.InterfaceType.DECORATION)
+			_open_interface(EditingInterface.InterfaceType.DECORATION_LIST)
 		0:
 			# Separators & sub menus
 			pass

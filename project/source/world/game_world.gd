@@ -20,3 +20,10 @@ func _init(game: Game) -> void:
 	provinces_of_each_country = (
 			ProvincesOfEachCountry.new(game.countries, provinces)
 	)
+
+
+## Simply removes given decoration from the decorations array.
+func delete_decoration(world_decoration: WorldDecoration) -> void:
+	var index: int = decorations.find(world_decoration)
+	if index != -1:
+		decorations.remove_at(index)

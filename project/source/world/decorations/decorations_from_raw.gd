@@ -46,53 +46,53 @@ static func _decoration_from_raw(
 	var decoration := WorldDecoration.new()
 
 	if ParseUtils.dictionary_has_string(raw_dict, TEXTURE_FILE_PATH_KEY):
-		decoration._texture_file_path = raw_dict[TEXTURE_FILE_PATH_KEY]
-		decoration._texture = GameMetadata.project_texture(
-				project_file_path, decoration._texture_file_path
+		decoration.texture_file_path = raw_dict[TEXTURE_FILE_PATH_KEY]
+		decoration.texture = GameMetadata.project_texture(
+				project_file_path, decoration.texture_file_path
 		)
 
-	if decoration._texture == null:
-		output.invalid_file_paths = [decoration._texture_file_path]
+	if decoration.texture == null:
+		output.invalid_file_paths = [decoration.texture_file_path]
 		return output
 
 	if ParseUtils.dictionary_has_bool(raw_dict, FLIP_H_KEY):
-		decoration._flip_h = raw_dict[FLIP_H_KEY]
+		decoration.flip_h = raw_dict[FLIP_H_KEY]
 
 	if ParseUtils.dictionary_has_bool(raw_dict, FLIP_V_KEY):
-		decoration._flip_v = raw_dict[FLIP_V_KEY]
+		decoration.flip_v = raw_dict[FLIP_V_KEY]
 
 	if ParseUtils.dictionary_has_dictionary(raw_dict, POSITION_KEY):
 		var position_dict: Dictionary = raw_dict[POSITION_KEY]
 		if ParseUtils.dictionary_has_number(position_dict, "x"):
-			decoration._position.x = (
+			decoration.position.x = (
 					ParseUtils.number_as_float(position_dict["x"])
 			)
 		if ParseUtils.dictionary_has_number(position_dict, "y"):
-			decoration._position.y = (
+			decoration.position.y = (
 					ParseUtils.number_as_float(position_dict["y"])
 			)
 
 	# The rotation is in degrees.
 	if ParseUtils.dictionary_has_number(raw_dict, ROTATION_KEY):
-		decoration._rotation_degrees = (
+		decoration.rotation_degrees = (
 				ParseUtils.number_as_float(raw_dict[ROTATION_KEY])
 		)
 
 	# The scale can be either one number, or a set of x and y.
 	if ParseUtils.dictionary_has_number(raw_dict, SCALE_KEY):
-		decoration._scale = (
+		decoration.scale = (
 				Vector2.ONE * ParseUtils.number_as_float(raw_dict[SCALE_KEY])
 		)
 	elif ParseUtils.dictionary_has_dictionary(raw_dict, SCALE_KEY):
 		var scale_dict: Dictionary = raw_dict[SCALE_KEY]
 		if ParseUtils.dictionary_has_number(scale_dict, "x"):
-			decoration._scale.x = ParseUtils.number_as_float(scale_dict["x"])
+			decoration.scale.x = ParseUtils.number_as_float(scale_dict["x"])
 		if ParseUtils.dictionary_has_number(scale_dict, "y"):
-			decoration._scale.y = ParseUtils.number_as_float(scale_dict["y"])
+			decoration.scale.y = ParseUtils.number_as_float(scale_dict["y"])
 
 	if raw_dict.has(COLOR_KEY):
-		decoration._color = ParseUtils.color_from_raw(
-				raw_dict[COLOR_KEY], decoration._color
+		decoration.color = ParseUtils.color_from_raw(
+				raw_dict[COLOR_KEY], decoration.color
 		)
 
 	output.decorations = [decoration]

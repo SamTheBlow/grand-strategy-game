@@ -1,5 +1,9 @@
 class_name InterfaceWorldDecoration
 extends AppEditorInterface
+## Shows a list of all the world decorations.
+
+## Emitted when the user selects a [WorldDecoration] in the list.
+signal decoration_selected(decoration: WorldDecoration)
 
 const _DECORATION_ELEMENT := preload("uid://gwjmb35fowhg") as PackedScene
 
@@ -49,5 +53,5 @@ func _on_add_button_pressed() -> void:
 	_add_element(new_decoration)
 
 
-func _on_element_pressed(_element: WorldDecorationListElement) -> void:
-	print("It works")
+func _on_element_pressed(element: WorldDecorationListElement) -> void:
+	decoration_selected.emit(element.world_decoration)

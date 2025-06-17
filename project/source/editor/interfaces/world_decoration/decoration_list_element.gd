@@ -26,7 +26,7 @@ func _update() -> void:
 	if world_decoration == null or not is_node_ready():
 		return
 	world_decoration.apply_preview(_decoration_preview)
-	_position_label.text = str(world_decoration.position())
+	_position_label.text = str(world_decoration.position)
 
 
 func _on_button_pressed() -> void:

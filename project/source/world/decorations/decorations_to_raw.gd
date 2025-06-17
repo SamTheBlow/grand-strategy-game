@@ -18,51 +18,51 @@ static func result(world_decorations: Array[WorldDecoration]) -> Array:
 static func _decoration_raw_dict(decoration: WorldDecoration) -> Dictionary:
 	var output: Dictionary = {
 		WorldDecorationsFromRaw.TEXTURE_FILE_PATH_KEY:
-			decoration._texture_file_path
+			decoration.texture_file_path
 	}
 
 	# We use an empty decoration to check for default values
 	var default_decoration := WorldDecoration.new()
 
-	if decoration._flip_h != default_decoration._flip_h:
+	if decoration.flip_h != default_decoration.flip_h:
 		output.merge({
-			WorldDecorationsFromRaw.FLIP_H_KEY: decoration._flip_h
+			WorldDecorationsFromRaw.FLIP_H_KEY: decoration.flip_h
 		})
 
-	if decoration._flip_v != default_decoration._flip_v:
+	if decoration.flip_v != default_decoration.flip_v:
 		output.merge({
-			WorldDecorationsFromRaw.FLIP_V_KEY: decoration._flip_v
+			WorldDecorationsFromRaw.FLIP_V_KEY: decoration.flip_v
 		})
 
-	if decoration._position != default_decoration._position:
+	if decoration.position != default_decoration.position:
 		var position_dict: Dictionary = {}
-		if decoration._position.x != default_decoration._position.x:
-			position_dict.merge({ "x": decoration._position.x })
-		if decoration._position.y != default_decoration._position.y:
-			position_dict.merge({ "y": decoration._position.y })
+		if decoration.position.x != default_decoration.position.x:
+			position_dict.merge({ "x": decoration.position.x })
+		if decoration.position.y != default_decoration.position.y:
+			position_dict.merge({ "y": decoration.position.y })
 		output.merge({ WorldDecorationsFromRaw.POSITION_KEY: position_dict })
 
-	if decoration._rotation_degrees != default_decoration._rotation_degrees:
+	if decoration.rotation_degrees != default_decoration.rotation_degrees:
 		output.merge({
-			WorldDecorationsFromRaw.ROTATION_KEY: decoration._rotation_degrees
+			WorldDecorationsFromRaw.ROTATION_KEY: decoration.rotation_degrees
 		})
 
-	if decoration._scale != default_decoration._scale:
-		if decoration._scale.x == decoration._scale.y:
+	if decoration.scale != default_decoration.scale:
+		if decoration.scale.x == decoration.scale.y:
 			output.merge({
-				WorldDecorationsFromRaw.SCALE_KEY: decoration._scale.x
+				WorldDecorationsFromRaw.SCALE_KEY: decoration.scale.x
 			})
 		else:
 			var scale_dict: Dictionary = {}
-			if decoration._scale.x != default_decoration._scale.x:
-				scale_dict.merge({ "x": decoration._scale.x })
-			if decoration._scale.y != default_decoration._scale.y:
-				scale_dict.merge({ "y": decoration._scale.y })
+			if decoration.scale.x != default_decoration.scale.x:
+				scale_dict.merge({ "x": decoration.scale.x })
+			if decoration.scale.y != default_decoration.scale.y:
+				scale_dict.merge({ "y": decoration.scale.y })
 			output.merge({ WorldDecorationsFromRaw.SCALE_KEY: scale_dict })
 
-	if decoration._color != default_decoration._color:
+	if decoration.color != default_decoration.color:
 		output.merge({
-			WorldDecorationsFromRaw.COLOR_KEY: decoration._color.to_html()
+			WorldDecorationsFromRaw.COLOR_KEY: decoration.color.to_html()
 		})
 
 	return output
