@@ -28,6 +28,7 @@ var _item_range_int_scene := load("uid://liwg6fdq6hr5") as PackedScene
 var _item_range_float_scene := load("uid://diptsnmuse4kn") as PackedScene
 var _item_color_scene := load("uid://bm83m86biyiv2") as PackedScene
 var _item_vector2_scene := load("uid://dp622gh87xpkt") as PackedScene
+var _item_texture_scene := load("uid://ccq7n0x7mov6s") as PackedScene
 var _item_void_scene := load("uid://cintikjibl1vr") as PackedScene
 
 @onready var _container := %Container as VBoxContainer
@@ -105,6 +106,12 @@ func _add_child_items(
 			)
 			item_node.item = child_item as ItemVector2
 			_add_item(item_node, with_spacing, with_tabbing)
+		elif child_item is ItemTexture:
+			var item_node := (
+					_item_texture_scene.instantiate() as ItemTextureNode
+			)
+			item_node.item = child_item as ItemTexture
+			_add_item(item_node, with_spacing, with_tabbing)
 		else:
 			var item_node := _item_void_scene.instantiate() as ItemVoidNode
 			item_node.item = child_item
@@ -120,10 +127,10 @@ func _add_item(
 	item_node.tabbing_px = tabbing_px
 
 	_container.add_theme_constant_override(
-			"separation", spacing_px if with_spacing else 0
+			&"separation", spacing_px if with_spacing else 0
 	)
 	item_node.add_theme_constant_override(
-			"margin_left", tabbing_px if with_tabbing else 0
+			&"margin_left", tabbing_px if with_tabbing else 0
 	)
 
 	_container.add_child(item_node)

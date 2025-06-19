@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bfpg282qeb0rx"]
+[gd_scene load_steps=19 format=3 uid="uid://bfpg282qeb0rx"]
 
 [ext_resource type="Script" uid="uid://dypql3u6krwys" path="res://source/editor/interfaces/world_decoration/interface_decoration_edit.gd" id="1_w5yw6"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_ga3my"]
@@ -6,15 +6,16 @@
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_04cbk"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_pnncu"]
 [ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="6_nwv8g"]
+[ext_resource type="Script" uid="uid://bdskbghw7wjty" path="res://source/utils/property_tree/items/item_texture.gd" id="6_vljim"]
 [ext_resource type="Script" uid="uid://bhickbq71f38e" path="res://source/utils/property_tree/items/item_vector2.gd" id="7_cgriv"]
 [ext_resource type="Script" uid="uid://d356ooxo4eq1k" path="res://source/utils/property_tree/items/item_float.gd" id="7_nwv8g"]
 [ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="8_cgriv"]
 
-[sub_resource type="Resource" id="Resource_cgriv"]
-script = ExtResource("5_pnncu")
-text = "Texture: (TODO texture2d)"
+[sub_resource type="Resource" id="Resource_71d8v"]
+script = ExtResource("6_vljim")
+text = "Texture:"
 child_items = Array[ExtResource("5_pnncu")]([])
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
+metadata/_custom_type_script = "uid://bdskbghw7wjty"
 
 [sub_resource type="Resource" id="Resource_vljim"]
 script = ExtResource("6_nwv8g")
@@ -74,7 +75,7 @@ metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
 [sub_resource type="Resource" id="Resource_sdoex"]
 script = ExtResource("5_pnncu")
 text = "Settings:"
-child_items = Array[ExtResource("5_pnncu")]([SubResource("Resource_cgriv"), SubResource("Resource_vljim"), SubResource("Resource_ui7qy"), SubResource("Resource_owm2d"), SubResource("Resource_j6prn"), SubResource("Resource_e5qcx"), SubResource("Resource_240kv")])
+child_items = Array[ExtResource("5_pnncu")]([SubResource("Resource_71d8v"), SubResource("Resource_vljim"), SubResource("Resource_ui7qy"), SubResource("Resource_owm2d"), SubResource("Resource_j6prn"), SubResource("Resource_e5qcx"), SubResource("Resource_240kv")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceDecorationEdit" type="Control"]
