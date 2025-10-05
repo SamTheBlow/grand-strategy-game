@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=31 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://source/notifications/visuals/game_notifications.tscn" id="25_v7fg0"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="26_eobj4"]
 [ext_resource type="Script" uid="uid://dfio0wudtxr2h" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
+[ext_resource type="PackedScene" uid="uid://bgcpn52rk3b4e" path="res://source/ui/pause_menu.tscn" id="30_enc8l"]
 
 [node name="Game" type="Node"]
 script = ExtResource("1_g7hfo")
@@ -90,7 +91,6 @@ mouse_filter = 2
 
 [node name="ComponentUI" type="Control" parent="UILayer/GameUI"]
 unique_name_in_owner = true
-layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
@@ -288,6 +288,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="PauseMenu" parent="UILayer" instance=ExtResource("30_enc8l")]
+unique_name_in_owner = true
+
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]
+[connection signal="quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_quit_pressed"]
+[connection signal="resume_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_resume_pressed"]
+[connection signal="save_and_quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_and_quit_pressed"]
+[connection signal="save_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_pressed"]

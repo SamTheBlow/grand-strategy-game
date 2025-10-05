@@ -76,10 +76,12 @@ var _player_assignment: PlayerAssignment
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
 @onready var _popups := %Popups as Control
+@onready var _pause_menu := %PauseMenu as Control
 
 
 func _ready() -> void:
 	_update_ui_visibility()
+	_pause_menu.hide()
 
 	_action_input.game = game
 
@@ -145,6 +147,11 @@ func _ready() -> void:
 			_player_assignment.assign_players(players.list())
 
 		game.start()
+
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("pause"):
+		_pause_menu.visible = not _pause_menu.visible
 
 
 func _exit_tree() -> void:
@@ -521,3 +528,20 @@ func _on_notification_decision_made(
 	_action_input.apply_action(ActionHandleNotification.new(
 			game_notification.id, outcome_index
 	))
+
+
+func _on_pause_menu_resume_pressed() -> void:
+	_pause_menu.hide()
+
+
+func _on_pause_menu_save_pressed() -> void:
+	_on_save_requested()
+
+
+func _on_pause_menu_quit_pressed() -> void:
+	_on_exit_to_main_menu_requested()
+
+
+func _on_pause_menu_save_and_quit_pressed() -> void:
+	_on_save_requested()
+	_on_exit_to_main_menu_requested()
