@@ -14,33 +14,22 @@
 [sub_resource type="Resource" id="Resource_71d8v"]
 script = ExtResource("6_vljim")
 text = "Texture:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://bdskbghw7wjty"
 
 [sub_resource type="Resource" id="Resource_vljim"]
 script = ExtResource("6_nwv8g")
-value = false
-child_items_on = Array[int]([])
-child_items_off = Array[int]([])
 text = "Horizontal flip:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_ui7qy"]
 script = ExtResource("6_nwv8g")
-value = false
-child_items_on = Array[int]([])
-child_items_off = Array[int]([])
 text = "Vertical flip:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_owm2d"]
 script = ExtResource("7_cgriv")
-_value = Vector2(0, 0)
 suffix = "px"
 text = "Position:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://bhickbq71f38e"
 
 [sub_resource type="Resource" id="Resource_j6prn"]
@@ -53,23 +42,16 @@ has_maximum = false
 maximum = 180.0
 suffix = "°"
 text = "Rotation:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://d356ooxo4eq1k"
 
 [sub_resource type="Resource" id="Resource_e5qcx"]
 script = ExtResource("7_cgriv")
-_value = Vector2(0, 0)
-suffix = ""
 text = "Scale:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://bhickbq71f38e"
 
 [sub_resource type="Resource" id="Resource_240kv"]
 script = ExtResource("8_cgriv")
-value = Color(1, 1, 1, 1)
-is_transparency_enabled = true
 text = "Color tint:"
-child_items = Array[ExtResource("5_pnncu")]([])
 metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
 
 [sub_resource type="Resource" id="Resource_sdoex"]
@@ -142,7 +124,7 @@ layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.3
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.85
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -150,6 +132,18 @@ grow_vertical = 2
 unique_name_in_owner = true
 layout_mode = 2
 item = SubResource("Resource_sdoex")
+
+[node name="ShortcutsLabel" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.85
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_font_sizes/font_size = 12
+text = "Keyboard shortcuts:
+Del -> Delete
+Ctrl+D -> Duplicate"
+vertical_alignment = 2
 
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
 [connection signal="pressed" from="DeleteButton" to="." method="_on_delete_button_pressed"]
