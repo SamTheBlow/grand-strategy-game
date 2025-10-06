@@ -3,6 +3,7 @@ extends AppEditorInterface
 
 signal back_pressed()
 signal delete_pressed(world_decoration: WorldDecoration)
+signal duplicate_pressed(world_decoration: WorldDecoration)
 
 var world_decoration: WorldDecoration
 
@@ -14,6 +15,11 @@ func _ready() -> void:
 	if world_decoration == null:
 		push_error("World decoration is null, oops.")
 		return
+
+	# Create a deep copy of the settings resource,
+	# to avoid sharing it with another interface
+	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
+	_settings.refresh()
 
 	_load_settings()
 	_update_preview()
@@ -51,6 +57,8 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"delete"):
 		delete_pressed.emit(world_decoration)
+	if Input.is_action_just_pressed(&"duplicate"):
+		duplicate_pressed.emit(world_decoration)
 
 
 func _load_settings() -> void:

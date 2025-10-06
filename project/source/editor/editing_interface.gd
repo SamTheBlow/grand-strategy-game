@@ -105,6 +105,9 @@ func _open_new_decoration_edit_interface(
 	new_interface.delete_pressed.connect(
 			_on_world_decoration_deleted.bind(project, editor_settings)
 	)
+	new_interface.duplicate_pressed.connect(
+			_on_world_decoration_duplicated.bind(project, editor_settings)
+	)
 	new_interface.world_decoration = world_decoration
 	open_interface(new_interface)
 
@@ -120,3 +123,27 @@ func _on_world_decoration_deleted(
 ) -> void:
 	project.game.world.decorations.remove(world_decoration)
 	open_new_interface(InterfaceType.DECORATION_LIST, project, editor_settings)
+
+
+func _on_world_decoration_duplicated(
+		world_decoration: WorldDecoration,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	const _DUPLICATE_DECORATION_OFFSET = Vector2(64.0, 64.0)
+
+	var new_decoration := WorldDecoration.new()
+	new_decoration.texture = world_decoration.texture
+	new_decoration.flip_h = world_decoration.flip_h
+	new_decoration.flip_v = world_decoration.flip_v
+	new_decoration.position = (
+			world_decoration.position + _DUPLICATE_DECORATION_OFFSET
+	)
+	new_decoration.rotation_degrees = world_decoration.rotation_degrees
+	new_decoration.scale = world_decoration.scale
+	new_decoration.color = world_decoration.color
+
+	project.game.world.decorations.add(new_decoration)
+	_open_new_decoration_edit_interface(
+			new_decoration, project, editor_settings
+	)
