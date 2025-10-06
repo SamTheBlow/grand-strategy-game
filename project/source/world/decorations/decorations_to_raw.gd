@@ -5,10 +5,10 @@ class_name WorldDecorationsToRaw
 
 
 ## Always succeeds.
-static func result(world_decorations: Array[WorldDecoration]) -> Array:
+static func result(world_decorations: WorldDecorations) -> Array:
 	var output: Array = []
 
-	for world_decoration in world_decorations:
+	for world_decoration in world_decorations.list():
 		output.append(_decoration_raw_dict(world_decoration))
 
 	return output

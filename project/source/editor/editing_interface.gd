@@ -118,5 +118,5 @@ func _on_world_decoration_deleted(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	project.game.world.delete_decoration(world_decoration)
+	project.game.world.decorations.remove(world_decoration)
 	open_new_interface(InterfaceType.DECORATION_LIST, project, editor_settings)

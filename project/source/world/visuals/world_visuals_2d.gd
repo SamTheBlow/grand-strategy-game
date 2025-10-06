@@ -42,7 +42,7 @@ func _initialize() -> void:
 	)
 	_army_visuals_setup.playing_country = playing_country
 	_army_visuals_setup.armies = world.armies
-	_decorations_node.spawn_decorations(world.decorations)
+	_decorations_node.world_decorations = world.decorations
 	_update_decoration_visibility()
 	_auto_arrow_input.game = game
 	_auto_arrows.playing_country = playing_country

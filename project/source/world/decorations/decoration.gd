@@ -1,23 +1,51 @@
 class_name WorldDecoration
 ## A sprite that's displayed at some location on the world map.
 
+signal changed(this: WorldDecoration)
+
 const _DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
-var texture: Texture2D = _DEFAULT_TEXTURE
-var flip_h: bool = false
-var flip_v: bool = false
-var position := Vector2.ZERO
-var rotation_degrees: float = 0.0
-var scale := Vector2.ONE
-var color := Color.WHITE
+var texture: Texture2D = _DEFAULT_TEXTURE:
+	set(value):
+		texture = value
+		changed.emit(self)
+
+var flip_h: bool = false:
+	set(value):
+		flip_h = value
+		changed.emit(self)
+
+var flip_v: bool = false:
+	set(value):
+		flip_v = value
+		changed.emit(self)
+
+var position := Vector2.ZERO:
+	set(value):
+		position = value
+		changed.emit(self)
+
+var rotation_degrees: float = 0.0:
+	set(value):
+		rotation_degrees = value
+		changed.emit(self)
+
+var scale := Vector2.ONE:
+	set(value):
+		scale = value
+		changed.emit(self)
+
+var color := Color.WHITE:
+	set(value):
+		color = value
+		changed.emit(self)
 
 ## We keep the file path in memory to use it in save files
 var texture_file_path: String = ""
 
 
-## Returns a new [Sprite2D] initialized with this decoration's data.
-func new_sprite() -> Sprite2D:
-	var sprite := Sprite2D.new()
+## Takes a [Sprite2D] and applies this decoration's data to it.
+func apply_to_sprite(sprite: Sprite2D) -> void:
 	sprite.texture = texture
 	sprite.flip_h = flip_h
 	sprite.flip_v = flip_v
@@ -25,7 +53,6 @@ func new_sprite() -> Sprite2D:
 	sprite.rotation_degrees = rotation_degrees
 	sprite.scale = scale
 	sprite.modulate = color
-	return sprite
 
 
 ## Takes a [TextureRect] and changes its data to look like this decoration.

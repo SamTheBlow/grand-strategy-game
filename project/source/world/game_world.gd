@@ -8,7 +8,7 @@ var armies := Armies.new()
 ## Do not overwrite!
 var provinces := Provinces.new()
 
-var decorations: Array[WorldDecoration] = []
+var decorations := WorldDecorations.new()
 
 var armies_in_each_province := ArmiesInEachProvince.new(provinces, armies)
 var armies_of_each_country: ArmiesOfEachCountry
@@ -20,10 +20,3 @@ func _init(game: Game) -> void:
 	provinces_of_each_country = (
 			ProvincesOfEachCountry.new(game.countries, provinces)
 	)
-
-
-## Simply removes given decoration from the decorations array.
-func delete_decoration(world_decoration: WorldDecoration) -> void:
-	var index: int = decorations.find(world_decoration)
-	if index != -1:
-		decorations.remove_at(index)

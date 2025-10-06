@@ -7,7 +7,7 @@ signal decoration_selected(decoration: WorldDecoration)
 
 const _DECORATION_ELEMENT := preload("uid://gwjmb35fowhg") as PackedScene
 
-var decorations: Array[WorldDecoration] = []:
+var decorations := WorldDecorations.new():
 	set(value):
 		decorations = value
 		_refresh_list()
@@ -34,7 +34,7 @@ func _refresh_list() -> void:
 	if decorations == null or not is_node_ready():
 		return
 	NodeUtils.remove_all_children(_decoration_container)
-	for decoration in decorations:
+	for decoration in decorations.list():
 		_add_element(decoration)
 
 
@@ -49,7 +49,7 @@ func _add_element(decoration: WorldDecoration) -> void:
 
 func _on_add_button_pressed() -> void:
 	var new_decoration := WorldDecoration.new()
-	decorations.append(new_decoration)
+	decorations.add(new_decoration)
 	_add_element(new_decoration)
 
 

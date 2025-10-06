@@ -1,5 +1,5 @@
 class_name WorldDecorationsFromRaw
-## Converts raw data into [WorldDecoration]s.
+## Converts raw data into [WorldDecorations].
 ##
 ## See also: [WorldDecorationsToRaw]
 
@@ -21,13 +21,15 @@ static func parsed_from(
 		return output
 	var raw_array: Array = raw_data
 
+	var decoration_list: Array[WorldDecoration] = []
 	for raw_decoration: Variant in raw_array:
 		var parse_result: ParseResult = _decoration_from_raw(
 				raw_decoration, project_file_path
 		)
 		output.invalid_file_paths.append_array(parse_result.invalid_file_paths)
-		output.decorations.append_array(parse_result.decorations)
+		decoration_list.append_array(parse_result.decorations.list())
 
+	output.decorations = WorldDecorations.new(decoration_list)
 	return output
 
 
@@ -95,7 +97,7 @@ static func _decoration_from_raw(
 				raw_dict[COLOR_KEY], decoration.color
 		)
 
-	output.decorations = [decoration]
+	output.decorations = WorldDecorations.new([decoration])
 	return output
 
 
@@ -109,4 +111,4 @@ class ParseResult:
 	# The same file path may appear more than once.
 	var invalid_file_paths: Array[String] = []
 
-	var decorations: Array[WorldDecoration] = []
+	var decorations := WorldDecorations.new()
