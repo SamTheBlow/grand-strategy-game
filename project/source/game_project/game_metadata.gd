@@ -13,8 +13,8 @@ const KEY_META_SETTINGS: String = "settings"
 
 # The keys used internally for the properties in this class
 # TODO 4.2 backwards compatibility: "map_name" will become "project_name"
-const KEY_STATE_PROJECT_NAME: String = "map_name"
 const KEY_STATE_FILE_PATH: String = "file_path"
+const KEY_STATE_PROJECT_NAME: String = "map_name"
 const KEY_STATE_ICON: String = "icon"
 const KEY_STATE_SETTINGS: String = "settings"
 
@@ -78,7 +78,7 @@ static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
 			if key is not String:
 				continue
 			var key_string := key as String
-			result.settings.merge({key_string: settings_dict[key_string]})
+			result.settings.merge({ key_string: settings_dict[key_string] })
 
 	return result
 
@@ -160,10 +160,10 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 static func from_dict(dict: Dictionary) -> GameMetadata:
 	var metadata := GameMetadata.new()
 
-	if ParseUtils.dictionary_has_string(dict, KEY_STATE_PROJECT_NAME):
-		metadata.project_name = dict[KEY_STATE_PROJECT_NAME]
 	if ParseUtils.dictionary_has_string(dict, KEY_STATE_FILE_PATH):
 		metadata.file_path = dict[KEY_STATE_FILE_PATH]
+	if ParseUtils.dictionary_has_string(dict, KEY_STATE_PROJECT_NAME):
+		metadata.project_name = dict[KEY_STATE_PROJECT_NAME]
 	if ParseUtils.dictionary_has_dictionary(dict, KEY_STATE_SETTINGS):
 		metadata.settings = dict[KEY_STATE_SETTINGS]
 
@@ -172,7 +172,7 @@ static func from_dict(dict: Dictionary) -> GameMetadata:
 
 ## Copies the state of this metadata to match the given one.
 func copy_state_of(metadata: GameMetadata) -> void:
-	project_name = metadata.project_name
 	file_path = metadata.file_path
+	project_name = metadata.project_name
 	settings = metadata.settings
 	state_updated.emit(self)

@@ -68,9 +68,7 @@ func get_data() -> int:
 
 
 func set_data(data: Variant) -> void:
-	if data is int:
-		selected_index = data
-	elif data is float:
-		selected_index = roundi(data)
+	if ParseUtils.is_number(data):
+		selected_index = ParseUtils.number_as_int(data)
 	else:
 		push_warning(_INVALID_TYPE_MESSAGE)

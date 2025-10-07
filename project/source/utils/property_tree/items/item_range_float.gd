@@ -96,8 +96,7 @@ func get_data() -> Array:
 	return [min_value, max_value]
 
 
-## Must pass an array containing exactly two float values,
-## otherwise nothing will happen.
+## Input data should be an array containing exactly two numbers.
 func set_data(data: Variant) -> void:
 	if data is not Array:
 		push_warning(_INVALID_TYPE_MESSAGE)
@@ -107,31 +106,15 @@ func set_data(data: Variant) -> void:
 	if data_array.size() != 2:
 		push_warning("Received array of incorrect size.")
 		return
-
-	var data_minimum: Variant = data_array[0]
-	var final_minimum: float = 0
-
-	if data_minimum is int:
-		final_minimum = float(data_minimum)
-	elif data_minimum is float:
-		final_minimum = data_minimum
-	else:
-		push_warning("Range minimum is incorrect type of value.")
+	if not ParseUtils.is_number(data_array[0]):
+		push_warning("Range minimum is not a number.")
+		return
+	if not ParseUtils.is_number(data_array[1]):
+		push_warning("Range maximum is not a number.")
 		return
 
-	var data_maximum: Variant = data_array[1]
-	var final_maximum: float = 0
-
-	if data_maximum is int:
-		final_maximum = float(data_maximum)
-	elif data_maximum is float:
-		final_maximum = data_maximum
-	else:
-		push_warning("Range maximum is incorrect type of value.")
-		return
-
-	min_value = final_minimum
-	max_value = final_maximum
+	min_value = ParseUtils.number_as_float(data_array[0])
+	max_value = ParseUtils.number_as_float(data_array[1])
 
 
 func _on_min_value_changed(_item: PropertyTreeItem) -> void:
