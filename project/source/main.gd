@@ -162,13 +162,14 @@ func _send_game_to_clients(
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	var game_to_raw := GameToRawDict.new()
-	game_to_raw.convert_game(project.game, project.settings)
+	var game_raw_dict: Dictionary = (
+			GameToRawDict.result(project.game, project.settings)
+	)
 
 	if multiplayer_id == -1:
-		_receive_new_game.rpc(game_to_raw.result)
+		_receive_new_game.rpc(game_raw_dict)
 	else:
-		_receive_new_game.rpc_id(multiplayer_id, game_to_raw.result)
+		_receive_new_game.rpc_id(multiplayer_id, game_raw_dict)
 
 
 ## The client receives a new game from the server.

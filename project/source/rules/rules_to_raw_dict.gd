@@ -6,7 +6,7 @@ class_name RulesToRawDict
 ## See also: [RulesFromRaw]
 
 
-static func parsed_from(game_rules: GameRules) -> Dictionary:
+static func result(game_rules: GameRules) -> Dictionary:
 	var default_rules := GameRules.new()
 
 	var rules_dict: Dictionary = {}

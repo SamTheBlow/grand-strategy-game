@@ -3,58 +3,52 @@ class_name GameToRawDict
 ##
 ## See also: [GameFromRaw]
 
-var result: Variant
 
-
-func convert_game(game: Game, game_settings: GameSettings) -> void:
-	var json_data: Dictionary = {
-		GameFromRaw.VERSION_KEY: GameFromRaw.SAVE_DATA_VERSION,
-	}
+static func result(game: Game, game_settings: GameSettings) -> Dictionary:
+	var output: Dictionary = {}
 
 	# Rules
-	var rules_data: Dictionary = RulesToRawDict.parsed_from(game.rules)
+	var rules_data: Dictionary = RulesToRawDict.result(game.rules)
 	if not rules_data.is_empty():
-		json_data.merge({ GameFromRaw.RULES_KEY: rules_data })
+		output.merge({ GameFromRaw.RULES_KEY: rules_data })
 
 	# RNG
-	json_data.merge(
-			{ GameFromRaw.RNG_KEY: RNGToRawDict.new().result(game.rng) }
-	)
+	output.merge({ GameFromRaw.RNG_KEY: RNGToRawDict.result(game.rng) })
 
 	# Players
 	var players_data: Array = game.game_players.raw_data()
 	if not players_data.is_empty():
-		json_data.merge({ GameFromRaw.PLAYERS_KEY: players_data })
+		output.merge({ GameFromRaw.PLAYERS_KEY: players_data })
 
 	# Countries
 	var countries_data: Array = _countries_to_raw_array(game.countries.list())
 	if not countries_data.is_empty():
-		json_data.merge({ GameFromRaw.COUNTRIES_KEY: countries_data })
+		output.merge({ GameFromRaw.COUNTRIES_KEY: countries_data })
 
 	# World
 	var world_data: Dictionary = _world_to_raw_dict(game.world, game_settings)
 	if not world_data.is_empty():
-		json_data.merge({ GameFromRaw.WORLD_KEY: world_data })
+		output.merge({ GameFromRaw.WORLD_KEY: world_data })
 
 	# Turn
 	var turn_data: Dictionary = _turn_to_raw_dict(game.turn)
 	if not turn_data.is_empty():
-		json_data.merge({ GameFromRaw.TURN_KEY: turn_data })
+		output.merge({ GameFromRaw.TURN_KEY: turn_data })
 
 	# Background color
 	if (
 			game_settings.background_color.value
 			!= GameSettings.DEFAULT_BACKGROUND_COLOR
 	):
-		json_data.merge({
+		output.merge({
 			GameFromRaw.BACKGROUND_COLOR_KEY:
 				game_settings.background_color.value.to_html(false)
 		})
 
-	result = json_data
+	return output
 
 
-func _countries_to_raw_array(country_list: Array[Country]) -> Array:
+static func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 	var output: Array = []
 
 	for country in country_list:
@@ -81,7 +75,7 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 
 		# Relationships
 		var raw_relationships: Array = (
-				DiplomacyRelationshipsToRaw.new().result(country.relationships)
+				DiplomacyRelationshipsToRaw.result(country.relationships)
 		)
 		if not raw_relationships.is_empty():
 			country_data.merge({
@@ -91,7 +85,7 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 
 		# Notifications
 		var raw_notifications: Array = (
-				GameNotificationsToRaw.new().result(country.notifications)
+				GameNotificationsToRaw.result(country.notifications)
 		)
 		if not raw_notifications.is_empty():
 			country_data.merge({
@@ -101,7 +95,7 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 
 		# Autoarrows
 		var raw_auto_arrows: Array = (
-				AutoArrowsToRaw.new().result(country.auto_arrows)
+				AutoArrowsToRaw.result(country.auto_arrows)
 		)
 		if not raw_auto_arrows.is_empty():
 			country_data.merge({
@@ -113,7 +107,7 @@ func _countries_to_raw_array(country_list: Array[Country]) -> Array:
 	return output
 
 
-func _world_to_raw_dict(
+static func _world_to_raw_dict(
 		world: GameWorld, game_settings: GameSettings
 ) -> Dictionary:
 	var output: Dictionary = {}
@@ -149,7 +143,7 @@ func _world_to_raw_dict(
 	return output
 
 
-func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
+static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 	var output: Array = []
 
 	for province in province_list:
@@ -235,7 +229,7 @@ func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 	return output
 
 
-func _armies_to_raw_array(armies_list: Array[Army]) -> Array:
+static func _armies_to_raw_array(armies_list: Array[Army]) -> Array:
 	var output: Array = []
 
 	for army in armies_list:
@@ -257,7 +251,7 @@ func _armies_to_raw_array(armies_list: Array[Army]) -> Array:
 	return output
 
 
-func _turn_to_raw_dict(turn: GameTurn) -> Dictionary:
+static func _turn_to_raw_dict(turn: GameTurn) -> Dictionary:
 	var turn_data: Dictionary = {
 		TurnFromRaw.TURN_KEY: turn.current_turn(),
 		TurnFromRaw.PLAYER_INDEX_KEY: turn._playing_player_index,

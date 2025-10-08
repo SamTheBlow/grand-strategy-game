@@ -15,7 +15,7 @@ func _add_auto_arrow(country: Country, auto_arrow: AutoArrow) -> void:
 		country.auto_arrows.add(auto_arrow)
 		return
 
-	var data: Dictionary = AutoArrowToDict.new().result(auto_arrow)
+	var data: Dictionary = AutoArrowToDict.result(auto_arrow)
 	_receive_add_auto_arrow.rpc_id(1, country.id, data)
 
 
@@ -49,7 +49,7 @@ func _remove_auto_arrow(country: Country, auto_arrow: AutoArrow) -> void:
 		country.auto_arrows.remove(auto_arrow)
 		return
 
-	var data: Dictionary = AutoArrowToDict.new().result(auto_arrow)
+	var data: Dictionary = AutoArrowToDict.result(auto_arrow)
 	_receive_remove_auto_arrow.rpc_id(1, country.id, data)
 
 

@@ -3,14 +3,12 @@ class_name ProjectToRawDict
 ##
 ## See also: [ProjectFromRaw]
 
-var result: Dictionary
 
-
-func convert_project(project: GameProject) -> void:
-	var game_to_raw_dict := GameToRawDict.new()
-	game_to_raw_dict.convert_game(project.game, project.settings)
-
-	var output: Dictionary = game_to_raw_dict.result
+static func result(project: GameProject) -> Dictionary:
+	var output: Dictionary = (
+			GameToRawDict.result(project.game, project.settings)
+	)
+	output[ProjectFromRaw.VERSION_KEY] = ProjectFromRaw.SAVE_DATA_VERSION
 	output[GameMetadata.KEY_METADATA] = project.metadata.to_dict_save_file()
 
 	var custom_settings: Dictionary = project.settings.to_dict()
@@ -19,4 +17,4 @@ func convert_project(project: GameProject) -> void:
 				custom_settings
 		)
 
-	result = output
+	return output

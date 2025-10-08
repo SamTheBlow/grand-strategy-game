@@ -32,15 +32,11 @@ func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 			return
 		game_generation.apply(file_json.result)
 
-	# Load the game
-	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(file_json.result, metadata.file_path)
+	# Load the game & game settings
+	var game_settings := GameSettings.new()
+	var game: Game = GameFromRaw.parsed_from(
+			file_json.result, metadata.file_path, game_settings
 	)
-	if game_from_raw.error:
-		error = true
-		error_message = game_from_raw.error_message
-		return
-	var game: Game = game_from_raw.result_game
 
 	# Overwrite the rules
 	game.rules = game_rules
@@ -51,4 +47,4 @@ func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	# Success!
 	error = false
 	result = game
-	result_settings = game_from_raw.result_settings
+	result_settings = game_settings

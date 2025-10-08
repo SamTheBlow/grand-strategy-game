@@ -4,7 +4,7 @@ class_name AutoArrowToDict
 ## See also: [AutoArrowFromRaw]
 
 
-func result(auto_arrow: AutoArrow) -> Dictionary:
+static func result(auto_arrow: AutoArrow) -> Dictionary:
 	return {
 		AutoArrowFromRaw.SOURCE_PROVINCE_ID_KEY:
 			auto_arrow.source_province.id,

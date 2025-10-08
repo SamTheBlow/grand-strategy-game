@@ -2,14 +2,14 @@ class_name GameNotificationsToRaw
 ## Converts a [GameNotifications] object into raw data.
 
 
-func result(game_notifications: GameNotifications) -> Array:
+static func result(game_notifications: GameNotifications) -> Array:
 	var output_array: Array = []
 	for game_notification in game_notifications._list:
 		output_array.append(_game_notification_to_dict(game_notification))
 	return output_array
 
 
-func _game_notification_to_dict(
+static func _game_notification_to_dict(
 		game_notification: GameNotification
 ) -> Dictionary:
 	var output: Dictionary = _super_to_dict(game_notification)
@@ -32,7 +32,7 @@ func _game_notification_to_dict(
 	return output
 
 
-func _super_to_dict(game_notification: GameNotification) -> Dictionary:
+static func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 	var output: Dictionary = {
 		GameNotificationsFromRaw.ID_KEY: game_notification.id
 	}
@@ -61,7 +61,9 @@ func _super_to_dict(game_notification: GameNotification) -> Dictionary:
 	return output
 
 
-func _offer_to_dict(game_notification: GameNotificationOffer) -> Dictionary:
+static func _offer_to_dict(
+		game_notification: GameNotificationOffer
+) -> Dictionary:
 	return {
 		GameNotificationsFromRaw.TYPE_KEY:
 			GameNotificationsFromRaw.TYPE_OFFER,
@@ -72,7 +74,7 @@ func _offer_to_dict(game_notification: GameNotificationOffer) -> Dictionary:
 	}
 
 
-func _offer_accepted_to_dict(
+static func _offer_accepted_to_dict(
 		game_notification: GameNotificationOfferAccepted
 ) -> Dictionary:
 	return {
@@ -85,7 +87,7 @@ func _offer_accepted_to_dict(
 	}
 
 
-func _performed_action_to_dict(
+static func _performed_action_to_dict(
 		game_notification: GameNotificationPerformedAction
 ) -> Dictionary:
 	return {

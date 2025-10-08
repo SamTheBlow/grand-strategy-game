@@ -25,8 +25,8 @@ func save_project(project: GameProject) -> void:
 		error_message = "Failed to open the file for writing."
 		return
 
-	var project_to_raw := ProjectToRawDict.new()
-	project_to_raw.convert_project(project)
-	file_access.store_string(JSON.stringify(project_to_raw.result, "\t"))
+	file_access.store_string(
+			JSON.stringify(ProjectToRawDict.result(project), "\t")
+	)
 	file_access.close()
 	error = false

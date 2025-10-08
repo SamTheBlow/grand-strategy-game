@@ -1,29 +1,53 @@
 class_name ProjectFromRaw
 ## Converts raw data into a [GameProject].
 ##
+## The raw data must be a [Dictionary], and it must contain a valid version key.
+## Everything else is optional and defaults to something.
+##
+## When parsing fails, the parse result contains a human-friendly error message.
+##
 ## See also: [ProjectToRawDict]
+
+const VERSION_KEY: String = "version"
+
+## The format version. If changes need to be made in the future
+## to how the project is saved and loaded, this will allow us to tell
+## if a file was made in an older or a newer version.
+const SAVE_DATA_VERSION: String = "1"
 
 
 static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
-	# Load the game
-	var game_from_raw: GameFromRaw.ParseResult = (
-			GameFromRaw.parsed_from(raw_data, file_path)
-	)
-	if game_from_raw.error:
-		return ResultError.new(game_from_raw.error_message)
+	if raw_data is not Dictionary:
+		return ResultError.new("Data is not a dictionary.")
+	var raw_dict: Dictionary = raw_data
 
-	# Load the metadata
-	var metadata: GameMetadata = GameMetadata.from_raw(raw_data, file_path)
+	# Check version
+	if not raw_dict.has(VERSION_KEY):
+		return ResultError.new("Data doesn't have a \"version\" property.")
+	if raw_dict[VERSION_KEY] is not String:
+		return ResultError.new(
+				"Data is from an unsupported version."
+				+ " The version property needs to be a string, but it isn't."
+		)
+	var version: String = raw_dict[VERSION_KEY]
+	if version != SAVE_DATA_VERSION:
+		return ResultError.new("Data is from an unsupported version.")
 
 	var game_project := GameProject.new()
-	game_project.game = game_from_raw.result_game
-	game_project.settings = game_from_raw.result_settings
-	game_project.settings.custom_settings = metadata.settings
-	game_project.metadata = metadata
+
+	# Load the game & game settings
+	game_project.game = (
+			GameFromRaw.parsed_from(raw_dict, file_path, game_project.settings)
+	)
+
+	# Load the metadata
+	game_project.metadata = GameMetadata.from_raw(raw_data, file_path)
+	game_project.settings.custom_settings = game_project.metadata.settings
+
 	return ResultSuccess.new(game_project)
 
 
-class ParseResult:
+@abstract class ParseResult:
 	var error: bool
 	var error_message: String
 	var result_project: GameProject

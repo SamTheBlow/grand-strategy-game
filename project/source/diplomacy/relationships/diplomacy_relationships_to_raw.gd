@@ -4,7 +4,7 @@ class_name DiplomacyRelationshipsToRaw
 ## See also: [DiplomacyRelationshipsFromRaw]
 
 
-func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
+static func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
 	var output_array: Array = []
 	for country: Country in diplomacy_relationships.list:
 		var relationship_dict: Dictionary = _relationship_to_dict(
@@ -16,7 +16,7 @@ func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
 	return output_array
 
 
-func _relationship_to_dict(
+static func _relationship_to_dict(
 		relationship: DiplomacyRelationship,
 		default_relationship_data: Dictionary
 ) -> Dictionary:

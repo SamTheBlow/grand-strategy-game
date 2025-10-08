@@ -1,18 +1,15 @@
 class_name GameProject
-## Contains a game, its settings, and its metadata.
+## Contains a game, its metadata, and more.
 ## Also contains useful functions.
 
 const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
 
-var game: Game
-var settings: GameSettings
-var metadata: GameMetadata
+var game := Game.new()
+var settings := GameSettings.new()
+var metadata := GameMetadata.new()
 
 
 func _init() -> void:
-	game = Game.new()
-	settings = GameSettings.new()
-	metadata = GameMetadata.new()
 	metadata.project_name = _DEFAULT_PROJECT_NAME
 
 

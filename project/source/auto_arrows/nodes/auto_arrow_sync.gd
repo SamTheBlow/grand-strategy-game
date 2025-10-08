@@ -71,7 +71,7 @@ func _on_auto_arrow_added(country: Country, auto_arrow: AutoArrow) -> void:
 		return
 
 	_receive_auto_arrow_added.rpc(
-			country.id, AutoArrowToDict.new().result(auto_arrow)
+			country.id, AutoArrowToDict.result(auto_arrow)
 	)
 
 
@@ -81,7 +81,7 @@ func _on_auto_arrow_removed(country: Country, auto_arrow: AutoArrow) -> void:
 		return
 
 	_receive_auto_arrow_removed.rpc(
-			country.id, AutoArrowToDict.new().result(auto_arrow)
+			country.id, AutoArrowToDict.result(auto_arrow)
 	)
 
 

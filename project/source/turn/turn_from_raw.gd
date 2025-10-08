@@ -32,6 +32,6 @@ static func parsed_from(raw_data: Variant) -> ParseResult:
 class ParseResult:
 	var turn: int = 1
 	var playing_player_index: int = 0
-	
+
 	func game_turn(game: Game) -> GameTurn:
 		return GameTurn.new(game, turn, playing_player_index)
