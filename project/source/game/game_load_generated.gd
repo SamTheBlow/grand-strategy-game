@@ -1,23 +1,21 @@
 class_name GameLoadGenerated
-## Loads a [Game] from given [GameMetadata].
+## Loads a [GameProject] using given [GameMetadata] and [GameRules].
 ## When applicable, generates the world, countries, etc.
 ## Then, populates the game (see [PopulatedSaveFile]).
 
-var error: bool = true
-var error_message: String = ""
-var result: Game
-var result_settings: GameSettings
 
-
-## Upon loading, overwrites the game's rules with given rules.
-func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
-	# Load the file
+# TODO this is mostly a copy/paste from [ProjectFromRaw] and also it's ugly.
+static func result(
+		metadata: GameMetadata, game_rules: GameRules
+) -> ParseResult:
+	# Load the project raw data from its file path
 	var file_json := FileJSON.new()
 	file_json.load_json(metadata.file_path)
 	if file_json.error:
-		error = true
-		error_message = file_json.error_message
-		return
+		return ResultError.new(file_json.error_message)
+	if file_json.result is not Dictionary:
+		return ResultError.new("Data is not a dictionary.")
+	var raw_dict: Dictionary = file_json.result
 
 	# Generate data, if applicable
 	var game_generation: GameGeneration = null
@@ -27,24 +25,46 @@ func load_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	if game_generation != null:
 		game_generation.load_settings(metadata.settings)
 		if game_generation.error:
-			error = true
-			error_message = game_generation.error_message
-			return
-		game_generation.apply(file_json.result)
+			return ResultError.new(game_generation.error_message)
+		game_generation.apply(raw_dict)
 
-	# Load the game & game settings
-	var game_settings := GameSettings.new()
-	var game: Game = GameFromRaw.parsed_from(
-			file_json.result, metadata.file_path, game_settings
+	var game_project := GameProject.new()
+
+	# Load the textures
+	game_project.textures = ProjectTextureParsing.textures_from_raw_data(
+			raw_dict.get(ProjectFromRaw.TEXTURES_KEY)
 	)
 
+	# Load the game & game settings
+	game_project.game = GameFromRaw.parsed_from(
+			raw_dict, metadata.file_path, game_project.settings
+	)
+
+	# Load the metadata
+	game_project.metadata = metadata
+	game_project.settings.custom_settings = game_project.metadata.settings
+
 	# Overwrite the rules
-	game.rules = game_rules
+	game_project.game.rules = game_rules
 
 	# Populate the game
-	PopulatedSaveFile.apply(game)
+	PopulatedSaveFile.apply(game_project.game)
 
-	# Success!
-	error = false
-	result = game
-	result_settings = game_settings
+	return ResultSuccess.new(game_project)
+
+
+@abstract class ParseResult:
+	var error: bool
+	var error_message: String
+	var result_project: GameProject
+
+
+class ResultError extends ParseResult:
+	func _init(error_message_: String) -> void:
+		error = true
+		error_message = error_message_
+
+
+class ResultSuccess extends ParseResult:
+	func _init(game_project: GameProject) -> void:
+		result_project = game_project

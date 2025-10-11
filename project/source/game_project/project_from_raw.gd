@@ -36,14 +36,14 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 
 	var game_project := GameProject.new()
 
-	# Load the game & game settings
-	game_project.game = (
-			GameFromRaw.parsed_from(raw_dict, file_path, game_project.settings)
-	)
-
 	# Load the textures
 	game_project.textures = ProjectTextureParsing.textures_from_raw_data(
 			raw_dict.get(TEXTURES_KEY)
+	)
+
+	# Load the game & game settings
+	game_project.game = GameFromRaw.parsed_from(
+			raw_dict, file_path, game_project.settings
 	)
 
 	# Load the metadata

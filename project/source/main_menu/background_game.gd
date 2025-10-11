@@ -37,18 +37,13 @@ func _setup_game(project_file_path: String) -> void:
 		_on_game_load_error.call_deferred("Invalid project file path")
 		return
 
-	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(metadata, GameRules.new())
-
+	var generated_game: GameLoadGenerated.ParseResult = (
+			GameLoadGenerated.result(metadata, GameRules.new())
+	)
 	if generated_game.error:
 		_on_game_load_error.call_deferred(generated_game.error_message)
 	else:
-		var project := GameProject.new()
-		project.game = generated_game.result
-		project.settings = generated_game.result_settings
-		project.settings.custom_settings = metadata.settings
-		project.metadata = metadata
-		_on_game_load_ready.call_deferred(project)
+		_on_game_load_ready.call_deferred(generated_game.result_project)
 
 
 ## Called on the main thread when the other thread is done.

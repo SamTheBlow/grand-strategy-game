@@ -1,13 +1,13 @@
 class_name WorldVisuals2D
 extends Node2D
 
+# TODO Temporary... Figure out how to not need this
+var project: GameProject
+
 var world: GameWorld:
 	set(value):
 		world = value
 		_initialize()
-
-# TODO Temporary... Figure out how to not need this
-var game: Game
 
 var _is_decorations_visible: bool = true
 
@@ -29,10 +29,10 @@ func _ready() -> void:
 
 
 func _initialize() -> void:
-	if not is_node_ready() or world == null:
+	if not is_node_ready() or project == null or world == null:
 		return
 
-	var playing_country := PlayingCountry.new(game.turn)
+	var playing_country := PlayingCountry.new(project.game.turn)
 
 	_province_setup.provinces = world.provinces
 	_province_highlight.armies = world.armies
@@ -44,9 +44,9 @@ func _initialize() -> void:
 	_army_visuals_setup.armies = world.armies
 	_decorations_node.world_decorations = world.decorations
 	_update_decoration_visibility()
-	_auto_arrow_input.game = game
+	_auto_arrow_input.game = project.game
 	_auto_arrows.playing_country = playing_country
-	_auto_arrows.countries = game.countries
+	_auto_arrows.countries = project.game.countries
 
 
 ## Shows or hides the decorations.

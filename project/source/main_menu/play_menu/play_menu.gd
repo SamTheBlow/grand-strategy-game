@@ -62,8 +62,9 @@ func inject(
 ## Loads a new game, generates data if applicable and
 ## populates the data with given generation settings.
 func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
-	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(metadata, game_rules)
+	var generated_game: GameLoadGenerated.ParseResult = (
+			GameLoadGenerated.result(metadata, game_rules)
+	)
 
 	_mutex.lock()
 	if not _is_loading:
@@ -75,12 +76,7 @@ func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
 	if generated_game.error:
 		_on_start_game_error.call_deferred(generated_game.error_message)
 	else:
-		var project := GameProject.new()
-		project.game = generated_game.result
-		project.settings = generated_game.result_settings
-		project.settings.custom_settings = metadata.settings
-		project.metadata = metadata
-		_on_start_game_ready.call_deferred(project)
+		_on_start_game_ready.call_deferred(generated_game.result_project)
 
 
 ## Called on the main thread when the other thread is done.

@@ -31,7 +31,7 @@ var save_file_path: String = "user://gamesave.json"
 ## Command line argument: "++autosave=10" autosaves every 10 turns.
 var autosave_interval: int = 0
 
-var _game: Game
+var _project: GameProject
 var _is_finished: bool = false
 
 
@@ -45,16 +45,24 @@ func _initialize() -> void:
 
 	_print_with_time("Generating the game...")
 
-	var generated_game := GameLoadGenerated.new()
-	generated_game.load_game(
-			GameMetadata.from_file_path(load_file_path), game_rules
+	var generated_game: GameLoadGenerated.ParseResult = (
+			GameLoadGenerated.result(
+					GameMetadata.from_file_path(load_file_path), game_rules
+			)
 	)
-	_game = generated_game.result
+	if generated_game.error:
+		_print_with_time(
+				"[ERROR] Failed to generate the game: "
+				+ generated_game.error_message
+		)
+		_is_finished = true
+		return
+	_project = generated_game.result_project
 
 	_print_with_time("Running the game...")
-	_game.turn.turn_changed.connect(_on_turn_changed)
-	_game.game_over.connect(_on_game_over)
-	_game.start()
+	_project.game.turn.turn_changed.connect(_on_turn_changed)
+	_project.game.game_over.connect(_on_game_over)
+	_project.game.start()
 
 
 func _process(_delta: float) -> bool:
@@ -100,18 +108,18 @@ func _on_turn_changed(turn: int) -> void:
 
 
 func _on_game_over(winner_country: Country) -> void:
-	_game.turn.stop()
+	_project.game.turn.stop()
 
 	var debug_text: String = ""
 	debug_text += (
 			"The game is over! The winner is "
 			+ winner_country.country_name + ".\n"
-			+ "The game lasted " + str(_game.turn.current_turn() - 1)
+			+ "The game lasted " + str(_project.game.turn.current_turn() - 1)
 			+ " turn(s)."
 	)
 
 	var pcpc := ProvinceCountPerCountry.new()
-	pcpc.calculate(_game.world.provinces.list())
+	pcpc.calculate(_project.game.world.provinces.list())
 	for i in pcpc.countries.size():
 		debug_text += (
 				"\n- " + pcpc.countries[i].country_name + " controls "
@@ -127,12 +135,10 @@ func _on_game_over(winner_country: Country) -> void:
 
 
 func _save_game() -> void:
-	var project := GameProject.new()
-	project.game = _game
-	project.metadata.file_path = save_file_path
-	
+	_project.metadata.file_path = save_file_path
+
 	var project_save := ProjectSave.new()
-	project_save.save_project(project)
+	project_save.save_project(_project)
 
 	if project_save.error:
 		_print_with_time(

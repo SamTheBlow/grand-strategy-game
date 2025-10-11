@@ -32,7 +32,8 @@ var project: GameProject:
 		project = value
 		game = project.game
 
-## A reference to the project's game, for convenience.
+## A reference to the project's game, for convenience. No need to set this:
+## it's set automatically when setting the project variable.
 var game: Game:
 	set(value):
 		game = value
@@ -85,7 +86,7 @@ func _ready() -> void:
 
 	_action_input.game = game
 
-	world_visuals.game = game
+	world_visuals.project = project
 	world_visuals.world = game.world
 	world_visuals.province_visuals.province_selected.connect(
 			_on_province_selected
