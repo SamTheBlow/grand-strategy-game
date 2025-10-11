@@ -18,6 +18,7 @@ const KEY_STATE_PROJECT_NAME: String = "map_name"
 const KEY_STATE_ICON: String = "icon"
 const KEY_STATE_SETTINGS: String = "settings"
 
+## The project's absolute file path.
 var file_path: String = ""
 var project_name: String = "(No name)"
 ## The project may have no icon, in which case this will be null.
@@ -52,9 +53,11 @@ static func from_file_path(base_path: String) -> GameMetadata:
 
 ## Converts given raw data into a new [GameMetadata] instance.
 ## You still need to provide the file path where the data was located.
-static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
+static func from_raw(
+		raw_data: Variant, project_absolute_path: String
+) -> GameMetadata:
 	var result := GameMetadata.new()
-	result.file_path = base_path
+	result.file_path = project_absolute_path
 
 	if raw_data is not Dictionary:
 		return result
@@ -69,7 +72,9 @@ static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
 		result._icon_file_path = meta_dict[KEY_META_ICON]
-		result.icon = project_texture(base_path, result._icon_file_path)
+		result.icon = ProjectTexture.texture_from_relative_path(
+				project_absolute_path, result._icon_file_path
+		)
 
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
 		# Only load settings whose key is of type String.
@@ -81,47 +86,6 @@ static func from_raw(raw_data: Variant, base_path: String) -> GameMetadata:
 			result.settings.merge({ key_string: settings_dict[key_string] })
 
 	return result
-
-
-## Loads a texture from given file path relative to given base path.
-## Returns null if an error occurs.
-## The base path is the path in which the project is located.
-## The texture's file path is relative to that file path.
-static func project_texture(
-		base_path: String, texture_file_path: String
-) -> Texture2D:
-	if base_path == "" or texture_file_path == "":
-		return null
-
-	if texture_file_path.is_absolute_path():
-		#print_debug(
-		#	"Texture uses an absolute file path. ",
-		#	"Only relative file paths are allowed. Please make sure ",
-		#	"the texture's file path is relative to the project's."
-		#)
-		return null
-
-	var project_dir: DirAccess = DirAccess.open(base_path.get_base_dir())
-	project_dir.change_dir(texture_file_path.get_base_dir())
-	var true_texture_path: String = (
-			project_dir.get_current_dir()
-			.path_join(texture_file_path.get_file())
-	)
-	#print_debug("Loading texture: ", true_texture_path)
-
-	if not ResourceLoader.exists(true_texture_path):
-		#print_debug("File for texture does not exist.")
-		return null
-
-	# I'm not sure if this works in 100% of cases but it seems good enough
-	if true_texture_path.begins_with("res://"):
-		# This is most likely an already imported texture, so load it normally
-		return load(true_texture_path) as Texture2D
-	else:
-		# And here we use this method to load images that aren't yet imported
-		return ImageTexture.create_from_image(
-				Image.load_from_file(true_texture_path)
-		)
 
 
 ## Returns a dictionary representation of this object meant for save files.

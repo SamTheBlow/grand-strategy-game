@@ -37,7 +37,7 @@ static func parsed_from(
 ## Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func _decoration_from_raw(
-		raw_data: Variant, project_file_path: String
+		raw_data: Variant, project_absolute_path: String
 ) -> ParseResult:
 	var output := ParseResult.new()
 
@@ -49,8 +49,8 @@ static func _decoration_from_raw(
 
 	if ParseUtils.dictionary_has_string(raw_dict, TEXTURE_FILE_PATH_KEY):
 		decoration.texture_file_path = raw_dict[TEXTURE_FILE_PATH_KEY]
-		decoration.texture = GameMetadata.project_texture(
-				project_file_path, decoration.texture_file_path
+		decoration.texture = ProjectTexture.texture_from_relative_path(
+				project_absolute_path, decoration.texture_file_path
 		)
 
 	if decoration.texture == null:
