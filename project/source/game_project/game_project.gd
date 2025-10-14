@@ -7,7 +7,7 @@ const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
 var game := Game.new()
 var textures := ProjectTextures.new()
 var settings := GameSettings.new()
-var metadata := GameMetadata.new()
+var metadata := ProjectMetadata.new()
 
 
 func _init() -> void:

@@ -32,7 +32,9 @@ func _load_new_game() -> void:
 
 ## Called in a separate thread.
 func _setup_game(project_file_path: String) -> void:
-	var metadata: GameMetadata = GameMetadata.from_file_path(project_file_path)
+	var metadata: ProjectMetadata = (
+			ProjectMetadata.from_file_path(project_file_path)
+	)
 	if metadata == null:
 		_on_game_load_error.call_deferred("Invalid project file path")
 		return

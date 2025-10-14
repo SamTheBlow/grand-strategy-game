@@ -10,7 +10,7 @@ const KEY_OPTIONS: String = "options"
 ## The spacing to add at the bottom, in pixels.
 @export var spacing_bottom: float = 16.0
 
-var metadata: GameMetadata:
+var metadata: ProjectMetadata:
 	set(value):
 		if metadata == value:
 			return
@@ -190,5 +190,5 @@ func _on_setting_changed(item: PropertyTreeItem) -> void:
 	metadata.set_setting(key, value)
 
 
-func _on_state_updated(_metadata: GameMetadata) -> void:
+func _on_state_updated(_metadata: ProjectMetadata) -> void:
 	_update_settings_list()

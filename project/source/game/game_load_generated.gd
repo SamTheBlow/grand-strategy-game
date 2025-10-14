@@ -1,12 +1,12 @@
 class_name GameLoadGenerated
-## Loads a [GameProject] using given [GameMetadata] and [GameRules].
+## Loads a [GameProject] using given [ProjectMetadata] and [GameRules].
 ## When applicable, generates the world, countries, etc.
 ## Then, populates the game (see [PopulatedSaveFile]).
 
 
 # TODO this is mostly a copy/paste from [ProjectFromRaw] and also it's ugly.
 static func result(
-		metadata: GameMetadata, game_rules: GameRules
+		metadata: ProjectMetadata, game_rules: GameRules
 ) -> ParseResult:
 	# Load the project raw data from its file path
 	var file_json := FileJSON.new()

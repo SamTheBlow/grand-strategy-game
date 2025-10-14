@@ -26,13 +26,11 @@ static func result(project: GameProject) -> Dictionary:
 	# Metadata
 	var metadata_dict: Dictionary = project.metadata.to_dict_save_file()
 	if not metadata_dict.is_empty():
-		output.merge({ GameMetadata.KEY_METADATA: metadata_dict })
+		output.merge({ ProjectMetadata.KEY_METADATA: metadata_dict })
 
 	# Settings
 	var custom_settings: Dictionary = project.settings.to_dict()
 	if not custom_settings.is_empty():
-		output[GameMetadata.KEY_METADATA][GameMetadata.KEY_META_SETTINGS] = (
-				custom_settings
-		)
+		output[ProjectMetadata.KEY_METADATA][ProjectMetadata.KEY_META_SETTINGS] = custom_settings
 
 	return output

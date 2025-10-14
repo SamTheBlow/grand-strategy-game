@@ -4,12 +4,12 @@ class_name GameSelectMenuState
 ## This is not emitted when updating the entire state at once.
 signal selected_game_changed()
 ## This is not emitted when updating the entire state at once.
-signal builtin_game_added(metadata: GameMetadata)
+signal builtin_game_added(metadata: ProjectMetadata)
 ## This is not emitted when updating the entire state at once.
-signal imported_game_added(metadata: GameMetadata)
+signal imported_game_added(metadata: ProjectMetadata)
 ## Emitted when information inside a game's metadata is changed.
 ## This is not emitted when updating the entire state at once.
-signal metadata_changed(game_id: int, metadata: GameMetadata)
+signal metadata_changed(game_id: int, metadata: ProjectMetadata)
 ## Emitted after the entire state is updated.
 signal state_changed(this: GameSelectMenuState)
 
@@ -20,12 +20,12 @@ const KEY_BUILTIN_GAME_LIST: String = "builtin_map_list"
 const KEY_IMPORTED_GAME_LIST: String = "custom_map_list"
 
 var _selected_game_id: int = -1
-var _builtin_games: Array[GameMetadata] = []
-var _imported_games: Array[GameMetadata] = []
+var _builtin_games: Array[ProjectMetadata] = []
+var _imported_games: Array[ProjectMetadata] = []
 
 
 ## Returns null if there is no game with given id.
-func game_with_id(game_id: int) -> GameMetadata:
+func game_with_id(game_id: int) -> ProjectMetadata:
 	var counter: int = 0
 	for game in _builtin_games:
 		if counter == game_id:
@@ -53,21 +53,21 @@ func is_selected_game_builtin() -> bool:
 	return _selected_game_id >= 0 and _selected_game_id < _builtin_games.size()
 
 
-func builtin_games() -> Array[GameMetadata]:
+func builtin_games() -> Array[ProjectMetadata]:
 	return _builtin_games.duplicate()
 
 
-func add_builtin_game(metadata: GameMetadata) -> void:
+func add_builtin_game(metadata: ProjectMetadata) -> void:
 	metadata.setting_changed.connect(_on_metadata_changed)
 	_builtin_games.append(metadata)
 	builtin_game_added.emit(metadata)
 
 
-func imported_games() -> Array[GameMetadata]:
+func imported_games() -> Array[ProjectMetadata]:
 	return _imported_games.duplicate()
 
 
-func add_imported_game(metadata: GameMetadata) -> void:
+func add_imported_game(metadata: ProjectMetadata) -> void:
 	metadata.setting_changed.connect(_on_metadata_changed)
 	_imported_games.append(metadata)
 	imported_game_added.emit(metadata)
@@ -115,20 +115,20 @@ func set_raw_state(data: Dictionary) -> void:
 
 
 func _populate_game_list(
-		game_list: Array[GameMetadata], list_data: Array
+		game_list: Array[ProjectMetadata], list_data: Array
 ) -> void:
 	for element: Variant in list_data:
 		if element is not Dictionary:
 			continue
 		var game_data: Dictionary = element
 
-		var metadata: GameMetadata = GameMetadata.from_dict(game_data)
+		var metadata: ProjectMetadata = ProjectMetadata.from_dict(game_data)
 		metadata.setting_changed.connect(_on_metadata_changed)
 		game_list.append(metadata)
 
 
 ## Returns -1 if this metadata is not on one of the lists.
-func _id_of(metadata: GameMetadata) -> int:
+func _id_of(metadata: ProjectMetadata) -> int:
 	var output: int = 0
 	for game in _builtin_games:
 		if metadata == game:
@@ -141,5 +141,5 @@ func _id_of(metadata: GameMetadata) -> int:
 	return -1
 
 
-func _on_metadata_changed(metadata: GameMetadata) -> void:
+func _on_metadata_changed(metadata: ProjectMetadata) -> void:
 	metadata_changed.emit(_id_of(metadata), metadata)

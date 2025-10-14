@@ -134,7 +134,7 @@ func _receive_selected_game_id(game_id: int) -> void:
 ## Adds a new imported game to the list on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_imported_game(raw_metadata: Dictionary) -> void:
-	active_state.add_imported_game(GameMetadata.from_dict(raw_metadata))
+	active_state.add_imported_game(ProjectMetadata.from_dict(raw_metadata))
 
 
 ## Updates a game's metadata on clients.
@@ -142,12 +142,12 @@ func _receive_new_imported_game(raw_metadata: Dictionary) -> void:
 func _receive_metadata_change(
 		game_id: int, raw_metadata: Dictionary
 ) -> void:
-	var metadata_to_change: GameMetadata = active_state.game_with_id(game_id)
+	var metadata_to_change: ProjectMetadata = active_state.game_with_id(game_id)
 	if metadata_to_change == null:
 		push_error("Received an invalid game id when trying to sync.")
 		return
 
-	metadata_to_change.copy_state_of(GameMetadata.from_dict(raw_metadata))
+	metadata_to_change.copy_state_of(ProjectMetadata.from_dict(raw_metadata))
 
 
 ## On the server, sends the newly selected game to all clients.
@@ -157,13 +157,13 @@ func _on_selected_game_changed() -> void:
 
 
 ## On the server, sends the new imported game to all clients.
-func _on_imported_game_added(metadata: GameMetadata) -> void:
+func _on_imported_game_added(metadata: ProjectMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_new_imported_game.rpc(metadata.to_dict(false))
 
 
 ## On the server, sends the changed metadata to all clients.
-func _on_metadata_changed(game_id: int, metadata: GameMetadata) -> void:
+func _on_metadata_changed(game_id: int, metadata: ProjectMetadata) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_metadata_change.rpc(game_id, metadata.to_dict(false))
 

@@ -6,7 +6,7 @@ var game_menu_state: GameSelectMenuState
 
 
 func _add_project_from_path(path: String) -> void:
-	var metadata: GameMetadata = GameMetadata.from_file_path(path)
+	var metadata: ProjectMetadata = ProjectMetadata.from_file_path(path)
 	if metadata == null:
 		return
 

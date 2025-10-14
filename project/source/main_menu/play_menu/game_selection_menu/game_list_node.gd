@@ -7,7 +7,7 @@ signal project_selected(game_id: int)
 var _list: Array[GameOptionNode] = []
 
 
-func add_game(metadata: GameMetadata, game_id: int) -> void:
+func add_game(metadata: ProjectMetadata, game_id: int) -> void:
 	var new_option := (
 			preload("uid://b65o5apaw32").instantiate() as GameOptionNode
 	)
@@ -27,7 +27,7 @@ func add_game(metadata: GameMetadata, game_id: int) -> void:
 
 ## Calls add_game for each file path in given array.
 func add_games(
-		game_data_array: Array[GameMetadata], starting_game_id: int
+		game_data_array: Array[ProjectMetadata], starting_game_id: int
 ) -> void:
 	var game_id: int = starting_game_id
 	for game_data in game_data_array:

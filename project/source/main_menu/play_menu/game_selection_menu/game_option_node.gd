@@ -13,7 +13,7 @@ var is_file_path_visible: bool = true:
 		is_file_path_visible = value
 		_update_file_path_visibility()
 
-var metadata := GameMetadata.new():
+var metadata := ProjectMetadata.new():
 	set(value):
 		metadata = value
 		_update_info()

@@ -6,7 +6,7 @@ extends GameListNode
 @export var builtin_games: Array[String] = []
 
 
-func add_game(metadata: GameMetadata, game_id: int) -> void:
+func add_game(metadata: ProjectMetadata, game_id: int) -> void:
 	super(metadata, game_id)
 
 	# Hide the file path for built-in games

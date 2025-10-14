@@ -61,7 +61,7 @@ func inject(
 ## Called in a separate thread.
 ## Loads a new game, generates data if applicable and
 ## populates the data with given generation settings.
-func _setup_game(metadata: GameMetadata, game_rules: GameRules) -> void:
+func _setup_game(metadata: ProjectMetadata, game_rules: GameRules) -> void:
 	var generated_game: GameLoadGenerated.ParseResult = (
 			GameLoadGenerated.result(metadata, game_rules)
 	)
@@ -101,7 +101,7 @@ func _on_start_game_error(error_message: String) -> void:
 
 
 func _on_start_game_requested(
-		metadata: GameMetadata, generation_settings: GameRules
+		metadata: ProjectMetadata, generation_settings: GameRules
 ) -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()

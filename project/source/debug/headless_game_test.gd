@@ -47,7 +47,7 @@ func _initialize() -> void:
 
 	var generated_game: GameLoadGenerated.ParseResult = (
 			GameLoadGenerated.result(
-					GameMetadata.from_file_path(load_file_path), game_rules
+					ProjectMetadata.from_file_path(load_file_path), game_rules
 			)
 	)
 	if generated_game.error:

@@ -16,8 +16,8 @@ var _selected_project: GameOptionNode = null
 
 func _ready() -> void:
 	for project_file_path in _builtin_game_file_paths:
-		var metadata: GameMetadata = (
-				GameMetadata.from_file_path(project_file_path)
+		var metadata: ProjectMetadata = (
+				ProjectMetadata.from_file_path(project_file_path)
 		)
 		if metadata == null:
 			push_error("Built-in game file path is invalid.")
