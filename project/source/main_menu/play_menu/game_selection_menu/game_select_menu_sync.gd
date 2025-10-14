@@ -142,12 +142,14 @@ func _receive_new_imported_game(raw_metadata: Dictionary) -> void:
 func _receive_metadata_change(
 		game_id: int, raw_metadata: Dictionary
 ) -> void:
-	var metadata_to_change: ProjectMetadata = active_state.game_with_id(game_id)
+	var metadata_to_change: ProjectMetadata = (
+			active_state.game_with_id(game_id)
+	)
 	if metadata_to_change == null:
 		push_error("Received an invalid game id when trying to sync.")
 		return
 
-	metadata_to_change.copy_state_of(ProjectMetadata.from_dict(raw_metadata))
+	metadata_to_change.load_from_raw_dict(raw_metadata)
 
 
 ## On the server, sends the newly selected game to all clients.

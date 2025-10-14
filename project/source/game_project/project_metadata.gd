@@ -114,30 +114,40 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 	}
 
 	if include_file_path:
-		output.merge({
-			KEY_STATE_FILE_PATH: file_path,
-		})
+		output.merge({ KEY_STATE_FILE_PATH: file_path })
 
 	return output
 
 
 ## Returns a new instance of this object built using given raw Dictionary.
-static func from_dict(dict: Dictionary) -> ProjectMetadata:
-	var metadata := ProjectMetadata.new()
-
-	if ParseUtils.dictionary_has_string(dict, KEY_STATE_FILE_PATH):
-		metadata.file_path = dict[KEY_STATE_FILE_PATH]
-	if ParseUtils.dictionary_has_string(dict, KEY_STATE_PROJECT_NAME):
-		metadata.project_name = dict[KEY_STATE_PROJECT_NAME]
-	if ParseUtils.dictionary_has_dictionary(dict, KEY_STATE_SETTINGS):
-		metadata.settings = dict[KEY_STATE_SETTINGS]
-
-	return metadata
+static func from_dict(raw_dict: Dictionary) -> ProjectMetadata:
+	var output := ProjectMetadata.new()
+	output.load_from_raw_dict(raw_dict)
+	return output
 
 
-## Copies the state of this metadata to match the given one.
-func copy_state_of(metadata: ProjectMetadata) -> void:
-	file_path = metadata.file_path
-	project_name = metadata.project_name
-	settings = metadata.settings
+## Updates all internal values to match given raw data.
+func load_from_raw_dict(raw_dict: Dictionary) -> void:
+	# Use new instance to load default values
+	var default_metadata := ProjectMetadata.new()
+
+	if ParseUtils.dictionary_has_string(raw_dict, KEY_STATE_FILE_PATH):
+		file_path = raw_dict[KEY_STATE_FILE_PATH]
+	else:
+		file_path = default_metadata.file_path
+
+	if ParseUtils.dictionary_has_string(raw_dict, KEY_STATE_PROJECT_NAME):
+		project_name = raw_dict[KEY_STATE_PROJECT_NAME]
+	else:
+		project_name = default_metadata.project_name
+
+	if ParseUtils.dictionary_has_dictionary(raw_dict, KEY_STATE_SETTINGS):
+		settings = raw_dict[KEY_STATE_SETTINGS]
+	else:
+		settings = default_metadata.settings
+
+	# TODO parse icon
+	icon = null
+	_icon_file_path = ""
+
 	state_updated.emit(self)
