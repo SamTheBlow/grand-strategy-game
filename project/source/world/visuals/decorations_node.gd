@@ -1,14 +1,16 @@
 class_name WorldDecorationsNode
 extends Node2D
-## Generates and holds sprites for given [WorldDecorations].
+## Generates and holds sprites of given [WorldDecorations].
 
-var world_decorations: WorldDecorations:
+var world_decorations := WorldDecorations.new():
 	set(value):
 		if world_decorations == value:
 			return
 		if world_decorations != null:
-			world_decorations.added.disconnect(_on_decoration_added)
-			world_decorations.removed.disconnect(_on_decoration_removed)
+			if world_decorations.added.is_connected(_on_decoration_added):
+				world_decorations.added.disconnect(_on_decoration_added)
+			if world_decorations.removed.is_connected(_on_decoration_removed):
+				world_decorations.removed.disconnect(_on_decoration_removed)
 		world_decorations = value
 		if world_decorations != null:
 			world_decorations.added.connect(_on_decoration_added)
@@ -24,7 +26,7 @@ func _ready() -> void:
 
 
 func _update() -> void:
-	if world_decorations == null or not is_node_ready():
+	if not is_node_ready():
 		return
 	_clear()
 	for decoration in world_decorations.list():

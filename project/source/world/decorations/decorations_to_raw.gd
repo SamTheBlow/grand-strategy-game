@@ -17,8 +17,7 @@ static func result(world_decorations: WorldDecorations) -> Array:
 ## Always succeeds.
 static func _decoration_raw_dict(decoration: WorldDecoration) -> Dictionary:
 	var output: Dictionary = {
-		WorldDecorationsFromRaw.TEXTURE_FILE_PATH_KEY:
-			decoration.texture_file_path
+		WorldDecorationsFromRaw.TEXTURE_KEY: decoration.texture_file_path
 	}
 
 	# We use an empty decoration to check for default values

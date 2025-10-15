@@ -3,7 +3,7 @@ class_name WorldDecorationsFromRaw
 ##
 ## See also: [WorldDecorationsToRaw]
 
-const TEXTURE_FILE_PATH_KEY: String = "texture"
+const TEXTURE_KEY: String = "texture"
 const FLIP_H_KEY: String = "flip_h"
 const FLIP_V_KEY: String = "flip_v"
 const POSITION_KEY: String = "position"
@@ -47,8 +47,8 @@ static func _decoration_from_raw(
 
 	var decoration := WorldDecoration.new()
 
-	if ParseUtils.dictionary_has_string(raw_dict, TEXTURE_FILE_PATH_KEY):
-		decoration.texture_file_path = raw_dict[TEXTURE_FILE_PATH_KEY]
+	if ParseUtils.dictionary_has_string(raw_dict, TEXTURE_KEY):
+		decoration.texture_file_path = raw_dict[TEXTURE_KEY]
 		decoration.texture = ProjectTexture.texture_from_relative_path(
 				project_absolute_path, decoration.texture_file_path
 		)

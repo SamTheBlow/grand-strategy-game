@@ -4,7 +4,7 @@ extends Control
 
 signal pressed(this: WorldDecorationListElement)
 
-var world_decoration: WorldDecoration:
+var world_decoration := WorldDecoration.new():
 	set(value):
 		world_decoration = value
 		_update()
@@ -23,7 +23,7 @@ func _process(_delta: float) -> void:
 
 
 func _update() -> void:
-	if world_decoration == null or not is_node_ready():
+	if not is_node_ready():
 		return
 	world_decoration.apply_preview(_decoration_preview)
 	_position_label.text = str(world_decoration.position)

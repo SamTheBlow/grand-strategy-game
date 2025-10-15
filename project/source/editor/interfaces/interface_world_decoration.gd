@@ -24,14 +24,12 @@ func _ready() -> void:
 func _update_editor_settings() -> void:
 	if not is_node_ready():
 		return
-	_editor_settings_node.item.child_items = [
-		editor_settings.show_decorations
-	]
+	_editor_settings_node.item.child_items = [editor_settings.show_decorations]
 	_editor_settings_node.refresh()
 
 
 func _refresh_list() -> void:
-	if decorations == null or not is_node_ready():
+	if not is_node_ready():
 		return
 	NodeUtils.remove_all_children(_decoration_container)
 	for decoration in decorations.list():

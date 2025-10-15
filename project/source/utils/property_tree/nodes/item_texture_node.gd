@@ -5,7 +5,7 @@ extends PropertyTreeNode
 ## Also displays a button that when pressed,
 ## prompts the user to select an image on their device.
 
-@export var item: ItemTexture
+var item := ItemTexture.new()
 
 @onready var _label := %Label as Label
 @onready var _texture_rect := %TextureRect as TextureRect
@@ -13,18 +13,13 @@ extends PropertyTreeNode
 
 
 func _ready() -> void:
-	if item == null:
-		if not Engine.is_editor_hint():
-			push_error("Item is null.")
-		return
-
 	refresh()
 	_error_message.text = ""
 	item.value_changed.connect(_on_item_value_changed)
 
 
 func refresh() -> void:
-	if not is_node_ready() or _item() == null:
+	if not is_node_ready():
 		return
 	super()
 

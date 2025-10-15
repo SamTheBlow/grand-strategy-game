@@ -1,21 +1,18 @@
 class_name InterfaceWorldDecorationEdit
 extends AppEditorInterface
+## The interface in which the user can edit given [WorldDecoration].
 
 signal back_pressed()
 signal delete_pressed(world_decoration: WorldDecoration)
 signal duplicate_pressed(world_decoration: WorldDecoration)
 
-var world_decoration: WorldDecoration
+var world_decoration := WorldDecoration.new()
 
 @onready var _preview_rect := %PreviewRect as TextureRect
 @onready var _settings := %Settings as ItemVoidNode
 
 
 func _ready() -> void:
-	if world_decoration == null:
-		push_error("World decoration is null, oops.")
-		return
-
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
 	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem

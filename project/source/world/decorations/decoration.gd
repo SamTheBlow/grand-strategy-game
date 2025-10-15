@@ -1,5 +1,5 @@
 class_name WorldDecoration
-## A sprite that's displayed at some location on the world map.
+## Represents an image that's displayed at some location on the world map.
 
 signal changed(this: WorldDecoration)
 
