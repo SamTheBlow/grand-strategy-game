@@ -9,6 +9,9 @@ extends VBoxContainer
 		_update_title()
 
 @onready var _button := %Button as Button
+@onready var _collapsible_container := (
+		%CollapsibleContainer as CollapsibleContainer
+)
 @onready var _contents := %Contents as VBoxContainer
 
 
@@ -24,6 +27,11 @@ func clear() -> void:
 ## Adds given [Control] to the contents, at the bottom.
 func add_node(control: Control) -> void:
 	_contents.add_child(control)
+
+
+## Manually expand the contents. No effect if contents are already expanded.
+func expand() -> void:
+	_collapsible_container.open_tween()
 
 
 func _update_title() -> void:

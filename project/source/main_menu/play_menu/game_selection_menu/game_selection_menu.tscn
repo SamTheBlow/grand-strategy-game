@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://wepngtpwwv2f" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.gd" id="1_6utl8"]
 [ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="2_qnng7"]
-[ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/game_import.gd" id="3_dybr7"]
+[ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="3_dybr7"]
 [ext_resource type="Script" uid="uid://bmnjcs0d2w43v" path="res://source/main_menu/play_menu/game_selection_menu/game_list_builtin.gd" id="4_dld7m"]
 [ext_resource type="Script" uid="uid://vi2y5br3ui2a" path="res://source/main_menu/play_menu/game_selection_menu/game_list_node.gd" id="7_v8jf4"]
 
@@ -24,12 +24,10 @@ script = ExtResource("1_6utl8")
 unique_name_in_owner = true
 script = ExtResource("2_qnng7")
 
-[node name="GameImport" type="Node" parent="."]
-unique_name_in_owner = true
+[node name="ProjectImport" type="Node" parent="."]
 script = ExtResource("3_dybr7")
 
 [node name="ImportDialog" type="FileDialog" parent="."]
-unique_name_in_owner = true
 title = "Open a File or Directory"
 initial_position = 1
 size = Vector2i(931, 500)
@@ -141,9 +139,10 @@ theme_override_constants/separation = 8
 script = ExtResource("7_v8jf4")
 
 [connection signal="state_changed" from="MenuSync" to="." method="set_game_menu_state"]
-[connection signal="dir_selected" from="ImportDialog" to="GameImport" method="_on_import_dialog_dir_selected"]
-[connection signal="file_selected" from="ImportDialog" to="GameImport" method="_on_import_dialog_file_selected"]
-[connection signal="files_selected" from="ImportDialog" to="GameImport" method="_on_import_dialog_files_selected"]
+[connection signal="project_imported" from="ProjectImport" to="." method="_on_project_imported"]
+[connection signal="dir_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_dir_selected"]
+[connection signal="file_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_file_selected"]
+[connection signal="files_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_files_selected"]
 [connection signal="project_selected" from="HBoxContainer/BuiltInGames/ScrollBuiltin/Control/GameListBuiltin" to="." method="_on_game_clicked"]
-[connection signal="pressed" from="HBoxContainer/ImportedGames/Top/ImportButton" to="." method="_on_import_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/ImportedGames/Top/ImportButton" to="ImportDialog" method="show"]
 [connection signal="project_selected" from="HBoxContainer/ImportedGames/ScrollImported/Control/GameListImported" to="." method="_on_game_clicked"]

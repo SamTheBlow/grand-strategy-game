@@ -16,12 +16,15 @@ static func result(world_decorations: WorldDecorations) -> Array:
 
 ## Always succeeds.
 static func _decoration_raw_dict(decoration: WorldDecoration) -> Dictionary:
-	var output: Dictionary = {
-		WorldDecorationsFromRaw.TEXTURE_KEY: decoration.texture_file_path
-	}
+	var output: Dictionary = {}
 
 	# We use an empty decoration to check for default values
 	var default_decoration := WorldDecoration.new()
+
+	if decoration.texture_file_path != default_decoration.texture_file_path:
+		output.merge({
+			WorldDecorationsFromRaw.TEXTURE_KEY: decoration.texture_file_path
+		})
 
 	if decoration.flip_h != default_decoration.flip_h:
 		output.merge({

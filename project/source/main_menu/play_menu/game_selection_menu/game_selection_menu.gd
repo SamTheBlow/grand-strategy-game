@@ -12,7 +12,6 @@ var game_menu_state: GameSelectMenuState:
 var _selected_game_node: GameOptionNode
 
 @onready var _sync := %MenuSync as GameSelectMenuSync
-@onready var _import_dialog := %ImportDialog as FileDialog
 @onready var _game_list_builtin: GameListBuiltin = (
 		%GameListBuiltin as GameListBuiltin
 )
@@ -57,8 +56,6 @@ func _update_game_menu_state() -> void:
 	# the first time this function is called.
 	if _sync.local_state == null:
 		_sync.local_state = game_menu_state
-
-	(%GameImport as GameImport).game_menu_state = game_menu_state
 
 	# Load the built-in games if they aren't loaded already
 	if game_menu_state.builtin_games().size() == 0:
@@ -172,5 +169,5 @@ func _on_state_changed(_state: GameSelectMenuState) -> void:
 	_update_game_menu_state()
 
 
-func _on_import_button_pressed() -> void:
-	_import_dialog.show()
+func _on_project_imported(project_metadata: ProjectMetadata) -> void:
+	game_menu_state.add_imported_game(project_metadata)

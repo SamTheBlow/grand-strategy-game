@@ -7,7 +7,10 @@ const _DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
 var texture: Texture2D = _DEFAULT_TEXTURE:
 	set(value):
-		texture = value
+		if value == null:
+			texture = _DEFAULT_TEXTURE
+		else:
+			texture = value
 		changed.emit(self)
 
 var flip_h: bool = false:
