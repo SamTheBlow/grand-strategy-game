@@ -11,18 +11,17 @@ var _unique_id_system := UniqueIdSystem.new()
 ## Note that this overwrites the country's id.
 ## If you want the country to use a specific id, pass it as an argument.
 ##
-## An error will occur if given id is not available.
+## No effect if given id is already in use.
 ## Use is_id_available first to verify (see [UniqueIdSystem]).
 func add(new_country: Country, specific_id: int = -1) -> void:
 	var id: int = specific_id
 	if not _unique_id_system.is_id_valid(specific_id):
 		id = _unique_id_system.new_unique_id()
 	elif not _unique_id_system.is_id_available(specific_id):
-		push_error(
-				"Specified country id is not unique."
-				+ " (id: " + str(specific_id) + ")"
+		print_debug(
+				"Country id is already in use. (id: " + str(specific_id) + ")"
 		)
-		id = _unique_id_system.new_unique_id()
+		return
 	else:
 		_unique_id_system.claim_id(specific_id)
 
@@ -52,6 +51,14 @@ func list() -> Array[Country]:
 ## Returns the number of countries in this list.
 func size() -> int:
 	return _list.size()
+
+
+static func from_raw_data(raw_data: Variant) -> Countries:
+	return CountryParsing.countries_from_raw_data(raw_data)
+
+
+func to_raw_array() -> Array:
+	return CountryParsing.countries_to_raw_array(_list)
 
 
 ## Debug function that prints the status of all country relationships.

@@ -5,20 +5,14 @@ class_name CountryGeneration
 func apply(raw_data: Variant, number_of_countries: int) -> void:
 	if raw_data is not Dictionary:
 		return
+	var raw_dict: Dictionary = raw_data
 
 	var countries_array: Array = []
 	for i in number_of_countries:
-		var random_color := Color.WHITE
-		random_color.r = randf()
-		random_color.g = randf()
-		random_color.b = randf()
+		var new_country := Country.new()
+		new_country.id = i
+		new_country.country_name = "Country " + str(i + 1)
+		new_country.color = Color(randf(), randf(), randf(), 1.0)
+		countries_array.append(new_country.to_raw_dict())
 
-		var country_dict: Dictionary = {
-			CountriesFromRaw.COUNTRY_ID_KEY: i,
-			CountriesFromRaw.COUNTRY_NAME_KEY: "Country " + str(i + 1),
-			CountriesFromRaw.COUNTRY_COLOR_KEY: random_color.to_html(false),
-		}
-		countries_array.append(country_dict)
-
-	var merge_dict: Dictionary = { GameFromRaw.COUNTRIES_KEY: countries_array }
-	(raw_data as Dictionary).merge(merge_dict, true)
+	raw_dict.merge({ GameFromRaw.COUNTRIES_KEY: countries_array }, true)

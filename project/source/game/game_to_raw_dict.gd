@@ -21,7 +21,7 @@ static func result(game: Game, game_settings: GameSettings) -> Dictionary:
 		output.merge({ GameFromRaw.PLAYERS_KEY: players_data })
 
 	# Countries
-	var countries_data: Array = _countries_to_raw_array(game.countries.list())
+	var countries_data: Array = game.countries.to_raw_array()
 	if not countries_data.is_empty():
 		output.merge({ GameFromRaw.COUNTRIES_KEY: countries_data })
 
@@ -44,65 +44,6 @@ static func result(game: Game, game_settings: GameSettings) -> Dictionary:
 			GameFromRaw.BACKGROUND_COLOR_KEY:
 				game_settings.background_color.value.to_html(false)
 		})
-
-	return output
-
-
-static func _countries_to_raw_array(country_list: Array[Country]) -> Array:
-	var output: Array = []
-
-	for country in country_list:
-		var country_data: Dictionary = {
-			CountriesFromRaw.COUNTRY_ID_KEY: country.id,
-		}
-
-		if country.country_name != "":
-			country_data.merge({
-				CountriesFromRaw.COUNTRY_NAME_KEY: country.country_name
-			})
-
-		if country.color != Country.DEFAULT_COLOR:
-			country_data.merge({
-				# Don't include transparency
-				CountriesFromRaw.COUNTRY_COLOR_KEY:
-					country.color.to_html(false)
-			})
-
-		if country.money != 0:
-			country_data.merge({
-				CountriesFromRaw.COUNTRY_MONEY_KEY: country.money
-			})
-
-		# Relationships
-		var raw_relationships: Array = (
-				DiplomacyRelationshipsToRaw.result(country.relationships)
-		)
-		if not raw_relationships.is_empty():
-			country_data.merge({
-				CountryRelationshipsFromRaw.COUNTRY_RELATIONSHIPS_KEY:
-					raw_relationships
-			})
-
-		# Notifications
-		var raw_notifications: Array = (
-				GameNotificationsToRaw.result(country.notifications)
-		)
-		if not raw_notifications.is_empty():
-			country_data.merge({
-				CountryNotificationsFromRaw.COUNTRY_NOTIFICATIONS_KEY:
-					raw_notifications
-			})
-
-		# Autoarrows
-		var raw_auto_arrows: Array = (
-				AutoArrowsToRaw.result(country.auto_arrows)
-		)
-		if not raw_auto_arrows.is_empty():
-			country_data.merge({
-				AutoArrowsFromRaw.COUNTRY_AUTOARROWS_KEY: raw_auto_arrows
-			})
-
-		output.append(country_data)
 
 	return output
 

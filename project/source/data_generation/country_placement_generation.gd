@@ -43,27 +43,16 @@ func apply(raw_data: Variant) -> void:
 
 	# Go through all the countries and assign
 	# each of them to an unassigned province.
-	for country_data: Variant in countries_data:
+	var countries: Countries = Countries.from_raw_data(countries_data)
+	for country: Country in countries.list():
 		if unassigned_provinces.size() == 0:
 			break
-
-		if country_data is not Dictionary:
-			continue
-		var country_dict := country_data as Dictionary
-
-		if not ParseUtils.dictionary_has_number(
-				country_dict, CountriesFromRaw.COUNTRY_ID_KEY
-		):
-			continue
-		var country_id: int = ParseUtils.dictionary_int(
-				country_dict, CountriesFromRaw.COUNTRY_ID_KEY
-		)
 
 		var random_index: int = randi() % unassigned_provinces.size()
 		var random_province_dict: Dictionary = (
 				unassigned_provinces[random_index]
 		)
 		random_province_dict[ProvincesFromRaw.PROVINCE_OWNER_ID_KEY] = (
-				country_id
+				country.id
 		)
 		unassigned_provinces.remove_at(random_index)

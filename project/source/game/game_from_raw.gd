@@ -32,7 +32,7 @@ static func parsed_from(
 
 	# Countries
 	var country_data: Variant = raw_dict.get(COUNTRIES_KEY)
-	game.countries = CountriesFromRaw.parsed_from(country_data)
+	game.countries = Countries.from_raw_data(country_data)
 
 	# Relationships
 	CountryRelationshipsFromRaw.parse_using(country_data, game)

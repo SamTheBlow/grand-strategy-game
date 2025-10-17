@@ -103,3 +103,7 @@ func reachable_countries(
 			reachable_countries_list.append(neighbor)
 
 	return reachable_countries_list
+
+
+func to_raw_dict() -> Dictionary:
+	return CountryParsing.country_to_raw_dict(self)

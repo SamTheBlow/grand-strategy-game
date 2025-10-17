@@ -12,7 +12,7 @@ const COUNTRY_RELATIONSHIPS_KEY: String = "relationships"
 
 # WARNING: this implementation assumes that the game's countries and
 # the data's countries are in the same order.
-# If you're going to use this class right after using [CountriesFromRaw],
+# If you're going to use this class right after using [CountryParsing],
 # then this won't be a problem.
 static func parse_using(raw_countries_data: Variant, game: Game) -> void:
 	var default_relationship_data: Dictionary = (
