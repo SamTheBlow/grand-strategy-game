@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=14 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
@@ -6,9 +6,13 @@
 [ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="4_e62kg"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_gofj8"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
-[ext_resource type="PackedScene" uid="uid://clxlw7vsp2qgj" path="res://source/camera/camera.tscn" id="5_abwba"]
+[ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/editing_interface.tscn" id="7_um8he"]
+[ext_resource type="Script" uid="uid://p83m0qu8m7ad" path="res://source/camera/camera.gd" id="8_nha6u"]
+[ext_resource type="Script" uid="uid://kwgfyilqkc06" path="res://source/camera/camera_drag.gd" id="9_b8gba"]
+[ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="10_byi3d"]
+[ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="12_byi3d"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
@@ -18,6 +22,10 @@ _project_load_popup_scene = ExtResource("3_kcuw7")
 [node name="BackgroundColor" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("4_e62kg")
+
+[node name="ProvinceSelectConditions" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("5_b8gba")
 
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
@@ -35,7 +43,22 @@ _world_scene = ExtResource("4_gofj8")
 unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
 
-[node name="Camera" parent="." instance=ExtResource("5_abwba")]
+[node name="Camera" type="Camera2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_nha6u")
+world_margin = Vector2(0.25, 0.25)
+
+[node name="CameraDrag" type="Node" parent="Camera"]
+unique_name_in_owner = true
+script = ExtResource("9_b8gba")
+
+[node name="CameraZoom" type="Node" parent="Camera"]
+script = ExtResource("10_byi3d")
+default_zoom = 0.5
+
+[node name="CameraDragMeasurement" type="Node" parent="Camera"]
+unique_name_in_owner = true
+script = ExtResource("12_byi3d")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 layer = 2
@@ -168,4 +191,6 @@ use_native_dialog = true
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="." method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="." method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="." method="_on_edit_tab_id_pressed"]
+[connection signal="province_interface_closed" from="UILayer/EditingInterface" to="." method="_on_province_interface_closed"]
+[connection signal="province_interface_opened" from="UILayer/EditingInterface" to="." method="_on_province_interface_opened"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]

@@ -7,13 +7,16 @@ extends Node2D
 signal clicked()
 
 
+## Handles any left click event on the background
 func _unhandled_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		var event_typed := event as InputEventMouseButton
-		if (
-				event_typed.pressed
-				and not event_typed.is_echo()
-				and event_typed.button_index == MOUSE_BUTTON_LEFT
-		):
-			get_viewport().set_input_as_handled()
-			clicked.emit()
+	if event is not InputEventMouseButton:
+		return
+	var event_mouse_button := event as InputEventMouseButton
+
+	if not event_mouse_button.button_index == MOUSE_BUTTON_LEFT:
+		return
+
+	get_viewport().set_input_as_handled()
+
+	if not event_mouse_button.pressed:
+		clicked.emit()

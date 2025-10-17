@@ -11,6 +11,8 @@ var world: GameWorld:
 
 var _is_decorations_visible: bool = true
 
+@onready var background := %Background as WorldBackground
+
 @onready var province_selection := %ProvinceSelection as ProvinceSelection
 @onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
 

@@ -83,6 +83,9 @@ func _setup_project() -> void:
 	)
 
 	_world_setup.load_world(_current_project)
+	_world_setup.world().province_selection.selected_province_changed.connect(
+			_on_selected_province_changed
+	)
 	_world_limits_rect.game_settings = _current_project.settings
 
 
@@ -194,6 +197,11 @@ func _play() -> void:
 func _open_interface(type: EditingInterface.InterfaceType) -> void:
 	if _current_project == null or editor_settings == null:
 		return
+
+	# Deselect province
+	if _world_setup.world() != null:
+		_world_setup.world().province_selection.deselect_province()
+
 	_editing_interface.open_new_interface(
 			type, _current_project, editor_settings
 	)
@@ -274,3 +282,24 @@ func _on_save_dialog_file_selected(path: String) -> void:
 	if _current_project != null:
 		_current_project.save_as(path)
 		_update_menu_visibility_after_save()
+
+
+func _on_selected_province_changed(province: Province) -> void:
+	if province == null:
+		_editing_interface.close_interface()
+		return
+	_editing_interface.open_province_edit_interface(
+			province, _current_project, editor_settings
+	)
+
+
+func _on_province_interface_opened(province: Province) -> void:
+	# Select province
+	if _world_setup.world() != null:
+		_world_setup.world().province_selection.selected_province = province
+
+
+func _on_province_interface_closed() -> void:
+	# Deselect province
+	if _world_setup.world() != null:
+		_world_setup.world().province_selection.deselect_province()

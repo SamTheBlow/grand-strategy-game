@@ -6,8 +6,6 @@ extends Node
 ## See this video for more information about some of the code:
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
 
-@export var camera: CustomCamera2D
-
 ## Try a value in-between 0 and 1.[br] If the value is too low or too high,
 ## the camera will use the minimum or maximum zoom.
 @export var default_zoom: float = 1.0
@@ -29,6 +27,8 @@ var _zoom_rate: float = 8.0
 ## center of the viewport instead of zooming away from the cursor's position.
 var _zoom_away_from_center: bool = true
 
+@onready var _camera := %Camera as CustomCamera2D
+
 
 func _ready() -> void:
 	# We have to wait one frame,
@@ -38,26 +38,26 @@ func _ready() -> void:
 	# Zoom the camera to the default value
 	_target_zoom = clampf(default_zoom, _minimum_zoom(), _maximum_zoom())
 	_previous_target = _target_zoom
-	camera.zoom = Vector2.ONE * _target_zoom
+	_camera.zoom = Vector2.ONE * _target_zoom
 
 	get_tree().get_root().size_changed.connect(_on_screen_size_changed)
-	_connect_world_limits(camera.world_limits)
+	_connect_world_limits(_camera.world_limits)
 
 
 func _physics_process(delta: float) -> void:
 	var weight: float = _zoom_rate * delta
 
 	# Apply the zoom
-	camera.zoom = camera.zoom.lerp(_target_zoom * Vector2.ONE, weight)
+	_camera.zoom = _camera.zoom.lerp(_target_zoom * Vector2.ONE, weight)
 
 	# Move the camera in the direction of the cursor
-	var camera_position: Vector2 = camera.position_in_bounds(camera.position)
+	var camera_position: Vector2 = _camera.position_in_bounds(_camera.position)
 	var camera_to: Vector2 = camera_position + _camera_movement
-	var lerped_position: Vector2 = camera.position.lerp(camera_to, weight)
-	camera.position = camera.position_in_bounds(lerped_position)
-	_camera_movement = camera_to - camera.position
+	var lerped_position: Vector2 = _camera.position.lerp(camera_to, weight)
+	_camera.position = _camera.position_in_bounds(lerped_position)
+	_camera_movement = camera_to - _camera.position
 
-	set_physics_process(not is_equal_approx(camera.zoom.x, _target_zoom))
+	set_physics_process(not is_equal_approx(_camera.zoom.x, _target_zoom))
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -93,7 +93,7 @@ func _zoom_out(mouse_position: Vector2) -> void:
 
 ## Makes the camera zoom to the cursor's position.
 func _zoom_to_cursor(mouse_position: Vector2) -> void:
-	var viewport_size: Vector2 = camera.get_viewport_rect().size
+	var viewport_size: Vector2 = _camera.get_viewport_rect().size
 	var offset_pixels: Vector2 = mouse_position - viewport_size * 0.5
 	var current_zoom: Vector2 = Vector2.ONE / _previous_target
 	var new_zoom: Vector2 = Vector2.ONE / _target_zoom
@@ -109,23 +109,23 @@ func _maximum_zoom() -> float:
 
 ## Returns the minimum zoom amount such that the camera remains in bounds.
 func _minimum_zoom() -> float:
-	var viewport_size_x: float = camera.get_viewport_rect().size.x
-	var viewport_size_y: float = camera.get_viewport_rect().size.y
-	var min_zoom_x: float = viewport_size_x / camera.world_limits.width()
-	var min_zoom_y: float = viewport_size_y / camera.world_limits.height()
+	var viewport_size_x: float = _camera.get_viewport_rect().size.x
+	var viewport_size_y: float = _camera.get_viewport_rect().size.y
+	var min_zoom_x: float = viewport_size_x / _camera.world_limits.width()
+	var min_zoom_y: float = viewport_size_y / _camera.world_limits.height()
 	return maxf(min_zoom_x, min_zoom_y)
 
 
 func _keep_camera_in_bounds() -> void:
 	var minimum_zoom: float = _minimum_zoom()
-	if camera.zoom.x < minimum_zoom or camera.zoom.y < minimum_zoom:
-		camera.zoom = minimum_zoom * Vector2.ONE
+	if _camera.zoom.x < minimum_zoom or _camera.zoom.y < minimum_zoom:
+		_camera.zoom = minimum_zoom * Vector2.ONE
 		_target_zoom = minimum_zoom
 		return
 
 	var maximum_zoom: float = _maximum_zoom()
-	if camera.zoom.x > maximum_zoom or camera.zoom.y > maximum_zoom:
-		camera.zoom = maximum_zoom * Vector2.ONE
+	if _camera.zoom.x > maximum_zoom or _camera.zoom.y > maximum_zoom:
+		_camera.zoom = maximum_zoom * Vector2.ONE
 		_target_zoom = maximum_zoom
 
 

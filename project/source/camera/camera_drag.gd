@@ -5,9 +5,12 @@ extends Node
 ## NOTICE: for this to work as intended, the camera node must be setup in the
 ## scene tree such that it is in-between the world layer and the UI layer.
 
-@export var camera: CustomCamera2D
+signal drag_started()
+signal drag_ended()
 
 var _is_being_dragged: bool = false
+
+@onready var _camera := %Camera as CustomCamera2D
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -32,6 +35,7 @@ func _detect_start_of_drag(event: InputEvent) -> void:
 
 	# You are now dragging the camera
 	_is_being_dragged = true
+	drag_started.emit()
 
 
 func _detect_end_of_drag(event: InputEvent) -> void:
@@ -47,6 +51,7 @@ func _detect_end_of_drag(event: InputEvent) -> void:
 
 	# You are no longer dragging the camera
 	_is_being_dragged = false
+	drag_ended.emit()
 
 
 func _drag_camera(event: InputEvent) -> void:
@@ -55,6 +60,6 @@ func _drag_camera(event: InputEvent) -> void:
 	var event_mouse_motion := event as InputEventMouseMotion
 
 	# Move the camera
-	var camera_position: Vector2 = camera.position_in_bounds(camera.position)
-	var movement: Vector2 = -event_mouse_motion.relative / camera.zoom
-	camera.position = camera.position_in_bounds(camera_position + movement)
+	var camera_position: Vector2 = _camera.position_in_bounds(_camera.position)
+	var movement: Vector2 = -event_mouse_motion.relative / _camera.zoom
+	_camera.position = _camera.position_in_bounds(camera_position + movement)

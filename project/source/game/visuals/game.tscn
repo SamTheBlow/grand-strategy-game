@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=35 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -16,15 +16,19 @@
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://source/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="17_a3u80"]
-[ext_resource type="PackedScene" uid="uid://clxlw7vsp2qgj" path="res://source/camera/camera.tscn" id="18_o1v44"]
 [ext_resource type="Script" uid="uid://3hqfpevmvw0f" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
+[ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="18_pfqno"]
 [ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
+[ext_resource type="Script" uid="uid://p83m0qu8m7ad" path="res://source/camera/camera.gd" id="19_oyfu3"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/ui/utils/interface_tabs.gd" id="20_no4y5"]
+[ext_resource type="Script" uid="uid://kwgfyilqkc06" path="res://source/camera/camera_drag.gd" id="20_pfqno"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://source/ui/top_bar.tscn" id="20_qfiqr"]
 [ext_resource type="Script" uid="uid://c4k3kk4hyavu5" path="res://source/camera/camera_event_movement.gd" id="20_qrqmv"]
 [ext_resource type="Script" uid="uid://dfornk34clbo2" path="res://source/ui/end_turn_interface.gd" id="21_fxgwm"]
+[ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="21_hk7jl"]
 [ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/ui/utils/id_button.gd" id="21_l7714"]
+[ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="21_oq116"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://source/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
 [ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://source/notifications/visuals/game_notifications.tscn" id="25_v7fg0"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="26_eobj4"]
@@ -61,20 +65,38 @@ script = ExtResource("16_724ii")
 unique_name_in_owner = true
 script = ExtResource("17_a3u80")
 
+[node name="ProvinceSelectConditions" type="Node" parent="."]
+unique_name_in_owner = true
+script = ExtResource("18_pfqno")
+
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
 [node name="WorldVisuals2D" parent="WorldLayer" instance=ExtResource("6_5jo7e")]
 unique_name_in_owner = true
 
-[node name="Camera" parent="." instance=ExtResource("18_o1v44")]
+[node name="Camera" type="Camera2D" parent="."]
 unique_name_in_owner = true
+script = ExtResource("19_oyfu3")
+world_margin = Vector2(0.25, 0.25)
+
+[node name="CameraDrag" type="Node" parent="Camera"]
+unique_name_in_owner = true
+script = ExtResource("20_pfqno")
+
+[node name="CameraZoom" type="Node" parent="Camera"]
+script = ExtResource("21_oq116")
+default_zoom = 0.5
 
 [node name="CameraEventMovement" type="Node" parent="Camera" node_paths=PackedStringArray("_game", "_camera")]
 script = ExtResource("20_qrqmv")
 _game = NodePath("../..")
 _camera = NodePath("..")
 _start_in_center_of_map = true
+
+[node name="CameraDragMeasurement" type="Node" parent="Camera"]
+unique_name_in_owner = true
+script = ExtResource("21_hk7jl")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true
@@ -291,6 +313,7 @@ mouse_filter = 2
 [node name="PauseMenu" parent="UILayer" instance=ExtResource("30_enc8l")]
 unique_name_in_owner = true
 
+[connection signal="province_select_attempted" from="ProvinceSelectConditions" to="." method="_on_province_select_attempted"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

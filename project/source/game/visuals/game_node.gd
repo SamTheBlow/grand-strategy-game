@@ -91,8 +91,8 @@ func _ready() -> void:
 	world_visuals.province_visuals.province_selected.connect(
 			_on_province_selected
 	)
-	world_visuals.province_visuals.unhandled_mouse_event_occured.connect(
-			_on_province_unhandled_mouse_event
+	(%ProvinceSelectConditions as ProvinceSelectConditions).world_visuals = (
+			world_visuals
 	)
 
 	_camera.world_limits = project.settings.world_limits
@@ -248,31 +248,17 @@ func _on_game_over(winning_country: Country) -> void:
 	chat.send_global_message("You can continue playing if you want.")
 
 
-## When left clicking on a province, selects the province
-## or opens an army movement popup when applicable
-func _on_province_unhandled_mouse_event(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
+## When attempting to select a province,
+## instead opens the army movement popup (when applicable)
+func _on_province_select_attempted(
+		province: Province,
+		outcome: ProvinceSelectConditions.ProvinceSelectionOutcome
 ) -> void:
-	# Only proceed when the input is a left click
-	if not (event is InputEventMouseButton):
-		return
-	var event_button := event as InputEventMouseButton
-	if not (
-			event_button.pressed
-			and event_button.button_index == MOUSE_BUTTON_LEFT
-	):
-		return
-	get_viewport().set_input_as_handled()
-
-	var province: Province = province_visuals.province
+	# Only open the popup if it's your turn
 	var you: GamePlayer = game.turn.playing_player()
-
-	# You're not the one playing? Select province and return
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
-		world_visuals.province_selection.selected_province = province
 		return
 
-	# If applicable, open the army movement popup
 	var selected_province: Province = (
 			world_visuals.province_selection.selected_province
 	)
@@ -294,9 +280,7 @@ func _on_province_unhandled_mouse_event(
 			var army: Army = my_active_armies_in_province[0]
 			if army.can_move_to(province):
 				_add_army_movement_popup(army, province)
-				return
-
-	world_visuals.province_selection.selected_province = province
+				outcome.is_selected = false
 
 
 func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:

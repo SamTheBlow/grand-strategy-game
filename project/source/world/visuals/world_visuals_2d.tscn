@@ -65,5 +65,4 @@ province_selection = NodePath("../ProvinceSelection")
 [connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="Provinces" method="_on_preview_arrow_created"]
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
-[connection signal="clicked" from="Background" to="ProvinceSelection" method="deselect_province"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]

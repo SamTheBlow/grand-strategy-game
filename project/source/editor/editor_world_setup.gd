@@ -7,6 +7,10 @@ extends Node
 ## The scene's root node must be a WorldVisuals2D.
 @export var _world_scene: PackedScene
 
+@onready var _province_select_conditions := (
+		%ProvinceSelectConditions as ProvinceSelectConditions
+)
+
 var editor_settings: AppEditorSettings:
 	set(value):
 		if editor_settings != null:
@@ -19,7 +23,10 @@ var editor_settings: AppEditorSettings:
 					_update_decoration_visibility
 			)
 
-var _current_world: WorldVisuals2D
+var _current_world: WorldVisuals2D:
+	set(value):
+		_current_world = value
+		_province_select_conditions.world_visuals = _current_world
 
 
 ## Discards the current [WorldVisuals2D] instance, if applicable.
@@ -27,6 +34,7 @@ func clear() -> void:
 	if _current_world != null:
 		_current_world.get_parent().remove_child(_current_world)
 		_current_world.queue_free()
+		_current_world = null
 
 
 ## Creates a new [WorldVisuals2D] instance.
@@ -40,6 +48,11 @@ func load_world(project: GameProject) -> void:
 	_container.add_child(new_world)
 	_current_world = new_world
 	_update_decoration_visibility()
+
+
+## Returns null if the world is not loaded.
+func world() -> WorldVisuals2D:
+	return _current_world
 
 
 func _update_decoration_visibility(_item: ItemBool = null) -> void:

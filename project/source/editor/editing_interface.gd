@@ -3,6 +3,9 @@ extends Control
 ## Hides itself when the interface is closed,
 ## shows itself when the interface is open.
 
+signal province_interface_opened(province: Province)
+signal province_interface_closed()
+
 enum InterfaceType {
 	WORLD_LIMITS = 0,
 	BACKGROUND_COLOR = 1,
@@ -45,13 +48,23 @@ func open_new_interface(
 func open_interface(new_interface: AppEditorInterface) -> void:
 	if new_interface == null:
 		return
-	close_interface()
+	_remove_existing_interface()
 	_contents_container.add_child(new_interface)
 	_current_interface = new_interface
 
 
 ## Has no effect if there is no interface open.
 func close_interface() -> void:
+	if _current_interface == null:
+		return
+	elif _current_interface is InterfaceProvinceEdit:
+		_remove_existing_interface()
+		province_interface_closed.emit()
+	else:
+		_remove_existing_interface()
+
+
+func _remove_existing_interface() -> void:
 	if _current_interface == null:
 		return
 	_current_interface.get_parent().remove_child(_current_interface)
@@ -92,9 +105,7 @@ func _new_interface(
 		var list_interface := new_interface as InterfaceProvinceList
 		list_interface.provinces = project.game.world.provinces
 		list_interface.item_selected.connect(
-				_open_new_province_edit_interface.bind(
-						project, editor_settings
-				)
+				open_province_edit_interface.bind(project, editor_settings)
 		)
 
 	return new_interface
@@ -121,11 +132,15 @@ func _open_new_decoration_edit_interface(
 	open_interface(new_interface)
 
 
-func _open_new_province_edit_interface(
+## Opens the interface for editing given [Province].
+func open_province_edit_interface(
 		province: Province,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
+	if province == null:
+		return
+
 	var new_interface := _new_interface(
 			preload("uid://bafpj3jqosje7"), project, editor_settings
 	) as InterfaceProvinceEdit
@@ -133,13 +148,14 @@ func _open_new_province_edit_interface(
 			InterfaceType.PROVINCE_LIST, project, editor_settings
 	))
 	#new_interface.delete_pressed.connect(
-	#		_on_world_decoration_deleted.bind(project, editor_settings)
+	#		_on_province_deleted.bind(project, editor_settings)
 	#)
 	#new_interface.duplicate_pressed.connect(
-	#		_on_world_decoration_duplicated.bind(project, editor_settings)
+	#		_on_province_duplicated.bind(project, editor_settings)
 	#)
 	new_interface.province = province
 	open_interface(new_interface)
+	province_interface_opened.emit(province)
 
 
 func _update_visibility() -> void:
