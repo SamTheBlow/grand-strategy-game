@@ -31,6 +31,7 @@ func refresh() -> void:
 	_spin_box.allow_lesser = not item.has_minimum
 	_spin_box.max_value = item.maximum
 	_spin_box.allow_greater = not item.has_maximum
+	_spin_box.editable = not item.is_disabled
 
 
 func _item() -> PropertyTreeItem:

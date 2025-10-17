@@ -7,13 +7,11 @@
 [sub_resource type="Resource" id="Resource_l27iq"]
 script = ExtResource("5_6ocqx")
 text = "Editor settings:"
-child_items = Array[ExtResource("5_6ocqx")]([])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [sub_resource type="Resource" id="Resource_uxdl1"]
 script = ExtResource("5_6ocqx")
 text = "Game settings:"
-child_items = Array[ExtResource("5_6ocqx")]([])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceWorldLimits" type="Control"]

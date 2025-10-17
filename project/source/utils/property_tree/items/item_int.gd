@@ -67,6 +67,11 @@ var maximum: int = 0:
 			value = mini(value, maximum)
 		minimum = mini(minimum, maximum)
 
+## If true, any node displaying this item should make it impossible for
+## the user to edit the value. However, the value can still be edited:
+## this variable has no effect by itself.
+var is_disabled: bool = false
+
 
 func _get_property_list() -> Array[Dictionary]:
 	var properties: Array[Dictionary] = []

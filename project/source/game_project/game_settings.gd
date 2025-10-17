@@ -41,14 +41,6 @@ func _init() -> void:
 	custom_world_limit_bottom.text = "Bottom"
 	custom_world_limit_bottom.value = WorldLimits.DEFAULT_BOTTOM
 
-	custom_world_limits_enabled.child_items = [
-		custom_world_limit_left,
-		custom_world_limit_right,
-		custom_world_limit_top,
-		custom_world_limit_bottom,
-	]
-	custom_world_limits_enabled.child_items_on = [0, 1, 2, 3]
-
 	world_limits = WorldLimits.new().with_values(
 			custom_world_limit_left.value,
 			custom_world_limit_top.value,
