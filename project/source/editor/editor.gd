@@ -254,9 +254,12 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 			# "Background Color"
 			_open_interface(EditingInterface.InterfaceType.BACKGROUND_COLOR)
 		3:
-			# "Decoration"
+			# "Decorations"
 			_open_interface(EditingInterface.InterfaceType.DECORATION_LIST)
-		0:
+		5:
+			# "Provinces"
+			_open_interface(EditingInterface.InterfaceType.PROVINCE_LIST)
+		0, 4:
 			# Separators & sub menus
 			pass
 		_:

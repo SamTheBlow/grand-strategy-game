@@ -7,10 +7,14 @@ class_name Province
 ## their presence on a province: [Population], [Building], [IncomeMoney].
 
 signal owner_changed(this: Province)
+signal position_changed(this: Province)
 
 ## The unique id assigned to this province.
 ## Each province has its own id. Useful for saving/loading, networking, etc.
 var id: int = -1
+
+## This province's name.
+var name: String = ""
 
 ## A list of all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -33,7 +37,12 @@ var buildings := Buildings.new()
 var polygon: PackedVector2Array
 
 ## The position to give to the visuals.
-var position: Vector2
+var position: Vector2:
+	set(value):
+		if value == position:
+			return
+		position = value
+		position_changed.emit(self)
 
 ## Where this province's [ArmyStack2D] will be positioned,
 ## relative to this province's position.
@@ -54,6 +63,19 @@ var _income_money: IncomeMoney
 ## Add to this array any object that you want to keep in scope
 ## for as long as this province is in scope.
 var _components: Array = []
+
+
+## The default name this province would have if it didn't have a name.
+func default_name() -> String:
+	return "Province " + str(id)
+
+
+## This province's name, or its default name if the name is empty.
+func name_or_default() -> String:
+	if name != "":
+		return name
+	else:
+		return default_name()
 
 
 func add_component(object: Object) -> void:

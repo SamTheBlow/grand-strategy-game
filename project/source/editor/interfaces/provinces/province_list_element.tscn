@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://gwjmb35fowhg"]
+[gd_scene load_steps=4 format=3 uid="uid://dpv2or6jsyiwe"]
 
-[ext_resource type="Script" uid="uid://xkc6002fraap" path="res://source/editor/interfaces/world_decoration/decoration_list_element.gd" id="1_ao4ar"]
-[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="1_lorcr"]
-[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_lblit"]
+[ext_resource type="Script" uid="uid://coygfq4aif7oi" path="res://source/editor/interfaces/provinces/province_list_element.gd" id="1_lfp47"]
+[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_6uon8"]
+[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="3_pj0ym"]
 
-[node name="DecorationListElement" type="Control"]
+[node name="ProvinceListElement" type="Control"]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 3
 anchors_preset = 15
@@ -13,7 +13,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-script = ExtResource("1_ao4ar")
+script = ExtResource("1_lfp47")
 
 [node name="Button" type="Button" parent="."]
 clip_contents = true
@@ -24,9 +24,9 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
-theme_override_styles/normal = ExtResource("2_lblit")
+theme_override_styles/normal = ExtResource("2_6uon8")
 
-[node name="DecorationPreview" type="TextureRect" parent="Button"]
+[node name="ShapePreview" type="TextureRect" parent="Button"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -37,11 +37,11 @@ anchor_bottom = 0.85
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
-texture = ExtResource("1_lorcr")
+texture = ExtResource("3_pj0ym")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="PositionLabel" type="Label" parent="Button"]
+[node name="NameLabel" type="Label" parent="Button"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1

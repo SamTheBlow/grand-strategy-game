@@ -23,6 +23,7 @@ var _child_item_nodes: Array[PropertyTreeNode] = []
 var _item_int_scene := load("uid://cummjubuua6yk") as PackedScene
 var _item_float_scene := load("uid://dd0mqtbyhpwcg") as PackedScene
 var _item_bool_scene := load("uid://bo8oke3mld227") as PackedScene
+var _item_string_scene := load("uid://cemtdca5rfqlk") as PackedScene
 var _item_options_scene := load("uid://bh8aukwuigg4e") as PackedScene
 var _item_range_int_scene := load("uid://liwg6fdq6hr5") as PackedScene
 var _item_range_float_scene := load("uid://diptsnmuse4kn") as PackedScene
@@ -77,6 +78,10 @@ func _add_child_items(
 		elif child_item is ItemBool:
 			var item_node := _item_bool_scene.instantiate() as ItemBoolNode
 			item_node.item = child_item as ItemBool
+			_add_item(item_node, with_spacing, with_tabbing)
+		elif child_item is ItemString:
+			var item_node := _item_string_scene.instantiate() as ItemStringNode
+			item_node.item = child_item as ItemString
 			_add_item(item_node, with_spacing, with_tabbing)
 		elif child_item is ItemOptions:
 			var item_node := (

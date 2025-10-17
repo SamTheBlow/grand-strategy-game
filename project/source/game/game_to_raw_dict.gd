@@ -170,6 +170,12 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 				global_position_army_host.y,
 		})
 
+		# Name
+		if province.name != "":
+			province_data.merge(
+					{ ProvincesFromRaw.PROVINCE_NAME_KEY: province.name }
+			)
+
 		# 4.0 backwards compatibility:
 		# Data must always have a province owner id.
 		province_data.merge({

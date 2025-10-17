@@ -9,6 +9,7 @@ class_name ProvincesFromRaw
 ## Discards provinces with an already-in-use id.
 
 const PROVINCE_ID_KEY: String = "id"
+const PROVINCE_NAME_KEY: String = "name"
 const PROVINCE_LINKS_KEY: String = "links"
 const PROVINCE_POSITION_ARMY_HOST_X_KEY: String = "position_army_host_x"
 const PROVINCE_POSITION_ARMY_HOST_Y_KEY: String = "position_army_host_y"
@@ -92,6 +93,10 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 		return
 
 	var province := Province.new()
+
+	# Name
+	if ParseUtils.dictionary_has_string(raw_dict, PROVINCE_NAME_KEY):
+		province.name = raw_dict[PROVINCE_NAME_KEY]
 
 	# Shape
 	province.polygon = _parsed_province_shape(raw_dict.get(PROVINCE_SHAPE_KEY))

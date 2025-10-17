@@ -146,6 +146,8 @@ func _connect_signals() -> void:
 
 	if not province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.connect(_on_owner_changed)
+	if not province.position_changed.is_connected(_on_position_changed):
+		province.position_changed.connect(_on_position_changed)
 
 
 func _disconnect_signals() -> void:
@@ -154,10 +156,16 @@ func _disconnect_signals() -> void:
 
 	if province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.disconnect(_on_owner_changed)
+	if province.position_changed.is_connected(_on_position_changed):
+		province.position_changed.disconnect(_on_position_changed)
 
 
 func _on_owner_changed(_province: Province) -> void:
 	_update_shape_color()
+
+
+func _on_position_changed(_province: Province) -> void:
+	position = province.position
 
 
 func _on_shape_unhandled_mouse_event_occured(event: InputEventMouse) -> void:

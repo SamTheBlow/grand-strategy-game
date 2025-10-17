@@ -7,7 +7,7 @@ enum InterfaceType {
 	WORLD_LIMITS = 0,
 	BACKGROUND_COLOR = 1,
 	DECORATION_LIST = 2,
-	DECORATION_EDIT = 3,
+	PROVINCE_LIST = 3,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
@@ -15,7 +15,7 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
 	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
-	InterfaceType.DECORATION_EDIT: preload("uid://bfpg282qeb0rx"),
+	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
 }
 
 var _current_interface: Node:
@@ -30,17 +30,13 @@ func _ready() -> void:
 	_update_visibility()
 
 
-# TODO bad design: if an interface requires data,
-# you shouldn't be able to use this function to open that interface.
 ## Opens a new interface of given type.
-## Please note that some interface types shouldn't be created this way
-## because sometimes they require data being passed to them.
 func open_new_interface(
 		type: InterfaceType,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	open_interface(_new_interface(type, project, editor_settings))
+	open_interface(_new_interface_of_type(type, project, editor_settings))
 
 
 ## Opens given interface.
@@ -64,7 +60,7 @@ func close_interface() -> void:
 
 
 ## May return null if the interface scene could not be found.
-func _new_interface(
+func _new_interface_of_type(
 		type: InterfaceType,
 		project: GameProject,
 		editor_settings: AppEditorSettings
@@ -72,18 +68,31 @@ func _new_interface(
 	if not _INTERFACE_SCENES.has(type):
 		push_error("Can't find the scene for this interface type.")
 		return null
+	return _new_interface(_INTERFACE_SCENES[type], project, editor_settings)
 
-	var new_interface := (
-			_INTERFACE_SCENES[type].instantiate() as AppEditorInterface
-	)
+
+func _new_interface(
+		interface_scene: PackedScene,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> AppEditorInterface:
+	var new_interface := interface_scene.instantiate() as AppEditorInterface
 	new_interface.editor_settings = editor_settings
 	new_interface.game_settings = project.settings
 
-	if new_interface is InterfaceWorldDecoration:
-		var decoration_interface := new_interface as InterfaceWorldDecoration
-		decoration_interface.decorations = project.game.world.decorations
-		decoration_interface.decoration_selected.connect(
+	if new_interface is InterfaceDecorationList:
+		var list_interface := new_interface as InterfaceDecorationList
+		list_interface.decorations = project.game.world.decorations
+		list_interface.item_selected.connect(
 				_open_new_decoration_edit_interface.bind(
+						project, editor_settings
+				)
+		)
+	elif new_interface is InterfaceProvinceList:
+		var list_interface := new_interface as InterfaceProvinceList
+		list_interface.provinces = project.game.world.provinces
+		list_interface.item_selected.connect(
+				_open_new_province_edit_interface.bind(
 						project, editor_settings
 				)
 		)
@@ -97,7 +106,7 @@ func _open_new_decoration_edit_interface(
 		editor_settings: AppEditorSettings
 ) -> void:
 	var new_interface := _new_interface(
-			InterfaceType.DECORATION_EDIT, project, editor_settings
+			preload("uid://bfpg282qeb0rx"), project, editor_settings
 	) as InterfaceWorldDecorationEdit
 	new_interface.back_pressed.connect(open_new_interface.bind(
 			InterfaceType.DECORATION_LIST, project, editor_settings
@@ -109,6 +118,27 @@ func _open_new_decoration_edit_interface(
 			_on_world_decoration_duplicated.bind(project, editor_settings)
 	)
 	new_interface.world_decoration = world_decoration
+	open_interface(new_interface)
+
+
+func _open_new_province_edit_interface(
+		province: Province,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	var new_interface := _new_interface(
+			preload("uid://bafpj3jqosje7"), project, editor_settings
+	) as InterfaceProvinceEdit
+	new_interface.back_pressed.connect(open_new_interface.bind(
+			InterfaceType.PROVINCE_LIST, project, editor_settings
+	))
+	#new_interface.delete_pressed.connect(
+	#		_on_world_decoration_deleted.bind(project, editor_settings)
+	#)
+	#new_interface.duplicate_pressed.connect(
+	#		_on_world_decoration_duplicated.bind(project, editor_settings)
+	#)
+	new_interface.province = province
 	open_interface(new_interface)
 
 
