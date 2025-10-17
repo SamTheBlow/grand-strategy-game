@@ -95,6 +95,7 @@ static func _add_country_from_raw_data(
 	if not ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_ID_KEY):
 		return
 	var id: int = ParseUtils.dictionary_int(raw_dict, _COUNTRY_ID_KEY)
+	country.id = id
 
 	# Name
 	if ParseUtils.dictionary_has_string(raw_dict, _COUNTRY_NAME_KEY):
@@ -107,7 +108,7 @@ static func _add_country_from_raw_data(
 	if ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_MONEY_KEY):
 		country.money = ParseUtils.dictionary_int(raw_dict, _COUNTRY_MONEY_KEY)
 
-	countries.add(country, id)
+	countries.add(country)
 
 
 static func _country_color_from_raw(raw_data: Variant) -> Color:

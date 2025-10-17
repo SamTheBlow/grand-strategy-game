@@ -1,6 +1,5 @@
 class_name Countries
-## A list of [Country] objects.
-## Provides utility functions and signals.
+## An encapsulated list of [Country] objects.
 
 signal country_added(country: Country)
 
@@ -8,26 +7,27 @@ var _list: Array[Country] = []
 var _unique_id_system := UniqueIdSystem.new()
 
 
-## Note that this overwrites the country's id.
-## If you want the country to use a specific id, pass it as an argument.
+## If given country's id is invalid (i.e. a negative number),
+## automatically gives it a new unique id.
 ##
-## No effect if given id is already in use.
-## Use is_id_available first to verify (see [UniqueIdSystem]).
-func add(new_country: Country, specific_id: int = -1) -> void:
-	var id: int = specific_id
-	if not _unique_id_system.is_id_valid(specific_id):
-		id = _unique_id_system.new_unique_id()
-	elif not _unique_id_system.is_id_available(specific_id):
+## No effect if given country's id is already in use,
+## or if given country is already in the list.
+func add(country: Country) -> void:
+	if _list.has(country):
+		print_debug("Country is already in the list.")
+		return
+	if not _unique_id_system.is_id_valid(country.id):
+		country.id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(country.id):
 		print_debug(
-				"Country id is already in use. (id: " + str(specific_id) + ")"
+				"Country id is already in use. (id: " + str(country.id) + ")"
 		)
 		return
 	else:
-		_unique_id_system.claim_id(specific_id)
+		_unique_id_system.claim_id(country.id)
 
-	new_country.id = id
-	_list.append(new_country)
-	country_added.emit(new_country)
+	_list.append(country)
+	country_added.emit(country)
 
 
 ## Returns null if there is no country with given id.
@@ -35,12 +35,7 @@ func country_from_id(id: int) -> Country:
 	for country in _list:
 		if country.id == id:
 			return country
-
 	return null
-
-
-func id_system() -> UniqueIdSystem:
-	return _unique_id_system
 
 
 ## Returns a new copy of this list.
@@ -53,23 +48,11 @@ func size() -> int:
 	return _list.size()
 
 
+## Returns a new instance parsed from given raw data.
 static func from_raw_data(raw_data: Variant) -> Countries:
 	return CountryParsing.countries_from_raw_data(raw_data)
 
 
+## Returns this instance parsed to a raw array.
 func to_raw_array() -> Array:
 	return CountryParsing.countries_to_raw_array(_list)
-
-
-## Debug function that prints the status of all country relationships.
-func print_relationships() -> void:
-	for country_1 in _list:
-		print("Country: ", country_1.country_name)
-		for country_2 in _list:
-			if country_1 == country_2:
-				continue
-			print(
-					"	", country_2.country_name, ": ",
-					country_1.relationships
-					.with_country(country_2).preset().name
-			)

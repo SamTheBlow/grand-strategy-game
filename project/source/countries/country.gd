@@ -11,8 +11,7 @@ const DEFAULT_COLOR := Color.WHITE
 @export var country_name: String = ""
 @export var color: Color = DEFAULT_COLOR
 
-## The unique id assigned to this country.
-## Each country has its own id. Useful for saving/loading, networking, etc.
+## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
 var money: int = 0:
@@ -105,5 +104,6 @@ func reachable_countries(
 	return reachable_countries_list
 
 
+## Returns this instance parsed to a raw dictionary.
 func to_raw_dict() -> Dictionary:
 	return CountryParsing.country_to_raw_dict(self)
