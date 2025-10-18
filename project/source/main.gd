@@ -163,7 +163,7 @@ func _send_game_to_clients(
 		return
 
 	var game_raw_dict: Dictionary = (
-			GameToRawDict.result(project.game, project.settings)
+			GameParsing.game_to_raw_dict(project.game, project.settings)
 	)
 
 	if multiplayer_id == -1:

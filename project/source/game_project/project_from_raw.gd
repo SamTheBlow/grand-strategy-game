@@ -42,7 +42,7 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 	)
 
 	# Load the game & game settings
-	game_project.game = GameFromRaw.parsed_from(
+	game_project.game = GameParsing.game_from_raw_dict(
 			raw_dict, file_path, game_project.settings
 	)
 

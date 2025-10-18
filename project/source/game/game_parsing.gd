@@ -1,39 +1,55 @@
-class_name GameToRawDict
-## Converts a [Game] into raw data.
-##
-## See also: [GameFromRaw]
+class_name GameParsing
+## Parses [Game] data.
+
+const _RULES_KEY: String = "rules"
+const _RNG_KEY: String = "rng"
+const _TURN_KEY: String = "turn"
+const _WORLD_KEY: String = "world"
+const _COUNTRIES_KEY: String = "countries"
+const _PLAYERS_KEY: String = "players"
+const _BACKGROUND_COLOR_KEY: String = "background_color"
 
 
-static func result(game: Game, game_settings: GameSettings) -> Dictionary:
+static func game_from_raw_dict(
+		raw_dict: Dictionary,
+		project_file_path: String,
+		game_settings: GameSettings
+) -> Game:
+	return GameFromRawData.new(raw_dict, project_file_path, game_settings)
+
+
+static func game_to_raw_dict(
+		game: Game, game_settings: GameSettings
+) -> Dictionary:
 	var output: Dictionary = {}
 
 	# Rules
 	var rules_data: Dictionary = RulesToRawDict.result(game.rules)
 	if not rules_data.is_empty():
-		output.merge({ GameFromRaw.RULES_KEY: rules_data })
+		output.merge({ _RULES_KEY: rules_data })
 
 	# RNG
-	output.merge({ GameFromRaw.RNG_KEY: RNGToRawDict.result(game.rng) })
+	output.merge({ _RNG_KEY: RNGToRawDict.result(game.rng) })
 
 	# Players
 	var players_data: Array = game.game_players.raw_data()
 	if not players_data.is_empty():
-		output.merge({ GameFromRaw.PLAYERS_KEY: players_data })
+		output.merge({ _PLAYERS_KEY: players_data })
 
 	# Countries
 	var countries_data: Array = game.countries.to_raw_array()
 	if not countries_data.is_empty():
-		output.merge({ GameFromRaw.COUNTRIES_KEY: countries_data })
+		output.merge({ _COUNTRIES_KEY: countries_data })
 
 	# World
 	var world_data: Dictionary = _world_to_raw_dict(game.world, game_settings)
 	if not world_data.is_empty():
-		output.merge({ GameFromRaw.WORLD_KEY: world_data })
+		output.merge({ _WORLD_KEY: world_data })
 
 	# Turn
 	var turn_data: Dictionary = _turn_to_raw_dict(game.turn)
 	if not turn_data.is_empty():
-		output.merge({ GameFromRaw.TURN_KEY: turn_data })
+		output.merge({ _TURN_KEY: turn_data })
 
 	# Background color
 	if (
@@ -41,7 +57,7 @@ static func result(game: Game, game_settings: GameSettings) -> Dictionary:
 			!= GameSettings.DEFAULT_BACKGROUND_COLOR
 	):
 		output.merge({
-			GameFromRaw.BACKGROUND_COLOR_KEY:
+			_BACKGROUND_COLOR_KEY:
 				game_settings.background_color.value.to_html(false)
 		})
 
@@ -210,3 +226,50 @@ static func _turn_to_raw_dict(turn: GameTurn) -> Dictionary:
 		turn_data.erase(TurnFromRaw.PLAYER_INDEX_KEY)
 
 	return turn_data
+
+
+class GameFromRawData extends Game:
+	func _init(
+		raw_dict: Dictionary,
+		project_file_path: String,
+		game_settings: GameSettings
+) -> void:
+		# Rules
+		rules = RulesFromRaw.parsed_from(raw_dict.get(_RULES_KEY))
+
+		# RNG
+		rng = RNGFromRaw.parsed_from(raw_dict.get(_RNG_KEY))
+
+		# Turn
+		turn = TurnFromRaw.parsed_from(raw_dict.get(_TURN_KEY)).game_turn(self)
+
+		# Countries
+		var country_data: Variant = raw_dict.get(_COUNTRIES_KEY)
+		countries = Countries.from_raw_data(country_data)
+
+		# Relationships
+		CountryRelationshipsFromRaw.parse_using(country_data, self)
+
+		# Players
+		GamePlayersFromRaw.parse_using(raw_dict.get(_PLAYERS_KEY), self)
+
+		# Notifications
+		CountryNotificationsFromRaw.parse_using(country_data, self)
+
+		# World
+		WorldFromRaw.parse_using(
+				raw_dict.get(_WORLD_KEY),
+				self,
+				game_settings,
+				project_file_path
+		)
+
+		# Background color
+		if raw_dict.has(_BACKGROUND_COLOR_KEY):
+			var background_color: Color = ParseUtils.color_from_raw(
+					raw_dict.get(_BACKGROUND_COLOR_KEY),
+					GameSettings.DEFAULT_BACKGROUND_COLOR
+			)
+			game_settings.background_color.value = background_color
+
+		super()

@@ -15,4 +15,4 @@ func apply(raw_data: Variant, number_of_countries: int) -> void:
 		new_country.color = Color(randf(), randf(), randf(), 1.0)
 		countries_array.append(new_country.to_raw_dict())
 
-	raw_dict.merge({ GameFromRaw.COUNTRIES_KEY: countries_array }, true)
+	raw_dict.merge({ GameParsing._COUNTRIES_KEY: countries_array }, true)

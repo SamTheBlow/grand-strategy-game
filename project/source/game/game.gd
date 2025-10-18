@@ -19,6 +19,7 @@ var rules: GameRules:
 		rules.battle.modifier_request = modifier_request
 
 ## Be careful: you must include all of the game's countries on this list.
+## Do not overwrite!
 var countries := Countries.new()
 
 var game_players := GamePlayers.new()
@@ -26,6 +27,7 @@ var game_players := GamePlayers.new()
 ## You must initialize the "rules" property before you initialize this one.
 var turn: GameTurn
 
+## Do not overwrite!
 var world := GameWorld.new(self)
 
 ## The game's RNG.
@@ -53,12 +55,16 @@ var _components: Array = []
 
 func _init() -> void:
 	# We initialize it here so that it calls the setter function
-	rules = GameRules.new()
+	if rules == null:
+		rules = GameRules.new()
 
 	# We initialize it here because we need to initialize the rules first
-	turn = GameTurn.new(self)
+	if turn == null:
+		turn = GameTurn.new(self)
 
 	modifier_request.add_provider(self)
+
+	_components.append(AutoArrowProvinceReaction.new(self))
 
 
 ## Call this when you're ready to start the game loop.

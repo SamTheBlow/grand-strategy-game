@@ -36,7 +36,7 @@ static func result(
 	)
 
 	# Load the game & game settings
-	game_project.game = GameFromRaw.parsed_from(
+	game_project.game = GameParsing.game_from_raw_dict(
 			raw_dict, metadata.file_path, game_project.settings
 	)
 

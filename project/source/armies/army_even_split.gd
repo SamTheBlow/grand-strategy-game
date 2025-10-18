@@ -23,6 +23,8 @@ func _init(armies: Armies) -> void:
 
 func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	var number_of_targets: int = destination_provinces.size()
+	if number_of_targets == 0:
+		return
 	var troop_count: int = army.army_size.current_size()
 	@warning_ignore("integer_division")
 	var troops_per_army: int = troop_count / number_of_targets

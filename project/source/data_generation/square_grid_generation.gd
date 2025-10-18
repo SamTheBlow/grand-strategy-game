@@ -46,7 +46,7 @@ func apply(
 		WorldFromRaw.WORLD_PROVINCES_KEY: provinces_array,
 	}
 
-	var merge_dict: Dictionary = { GameFromRaw.WORLD_KEY: world_dict }
+	var merge_dict: Dictionary = { GameParsing._WORLD_KEY: world_dict }
 	(raw_data as Dictionary).merge(merge_dict, true)
 
 

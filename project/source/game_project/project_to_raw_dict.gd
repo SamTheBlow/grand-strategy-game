@@ -11,7 +11,7 @@ static func result(project: GameProject) -> Dictionary:
 
 	# Game
 	var game_dict: Dictionary = (
-			GameToRawDict.result(project.game, project.settings)
+			GameParsing.game_to_raw_dict(project.game, project.settings)
 	)
 	if not game_dict.is_empty():
 		output.merge(game_dict)

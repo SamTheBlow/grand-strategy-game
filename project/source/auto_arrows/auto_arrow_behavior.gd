@@ -40,6 +40,16 @@ static func apply(game: Game) -> void:
 			):
 				continue
 
+			# Remove the provinces that this army can't go to
+			for destination_province: Province in (
+					arrow_destinations[source_province].destinations
+					.duplicate()
+			):
+				if not army.can_move_to(destination_province):
+					arrow_destinations[source_province].destinations.erase(
+							destination_province
+					)
+
 			# Here we don't use [ActionSynchronizer] because this function
 			# is already going to be called on all clients anyway,
 			# and the clients already have the information they need

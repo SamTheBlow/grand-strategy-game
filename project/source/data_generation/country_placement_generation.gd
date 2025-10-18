@@ -9,17 +9,17 @@ func apply(raw_data: Variant) -> void:
 	var raw_dict := raw_data as Dictionary
 
 	if not ParseUtils.dictionary_has_array(
-			raw_dict, GameFromRaw.COUNTRIES_KEY
+			raw_dict, GameParsing._COUNTRIES_KEY
 	):
-		raw_dict[GameFromRaw.COUNTRIES_KEY] = []
-	var countries_data: Array = raw_dict[GameFromRaw.COUNTRIES_KEY]
+		raw_dict[GameParsing._COUNTRIES_KEY] = []
+	var countries_data: Array = raw_dict[GameParsing._COUNTRIES_KEY]
 
 	if not ParseUtils.dictionary_has_dictionary(
-			raw_dict, GameFromRaw.WORLD_KEY
+			raw_dict, GameParsing._WORLD_KEY
 	):
 		push_error("Country placement failed: there is no world.")
 		return
-	var world_dict: Dictionary = raw_dict[GameFromRaw.WORLD_KEY]
+	var world_dict: Dictionary = raw_dict[GameParsing._WORLD_KEY]
 
 	if not ParseUtils.dictionary_has_array(
 			world_dict, WorldFromRaw.WORLD_PROVINCES_KEY
