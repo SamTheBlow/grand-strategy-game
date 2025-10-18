@@ -112,7 +112,7 @@ func _end_player_turn() -> void:
 
 	# Make army movements according to [AutoArrow]s
 	if player.is_human:
-		AutoArrowBehavior.new().apply(_game)
+		AutoArrowBehavior.apply(_game)
 
 	# Merge armies
 	for province in _game.world.armies_in_each_province.dictionary:

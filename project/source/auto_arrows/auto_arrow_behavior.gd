@@ -2,27 +2,33 @@ class_name AutoArrowBehavior
 ## Applies army split and movement according to the game's [AutoArrow]s.
 
 
-func apply(game: Game) -> void:
+static func apply(game: Game) -> void:
 	var player: GamePlayer = game.turn.playing_player()
 
 	# Get the source provinces and the arrow destinations.
 	# Each source province has its own list of arrow destinations.
-	var source_provinces: Array[Province] = []
-	var arrow_destinations: Array[ArrowDestinations] = []
+	var arrow_destinations: Dictionary[Province, ArrowDestinations] = {}
 	for auto_arrow in player.playing_country.auto_arrows.list():
-		var source_province_index: int = (
-				source_provinces.find(auto_arrow.source_province)
+		var source_province: Province = game.world.provinces.province_from_id(
+				auto_arrow.source_province_id()
 		)
-		if source_province_index == -1:
-			source_province_index = source_provinces.size()
-			arrow_destinations.append(ArrowDestinations.new())
-			source_provinces.append(auto_arrow.source_province)
-		arrow_destinations[source_province_index].add(
-				auto_arrow.destination_province
+		if source_province == null:
+			continue
+		var destination_province: Province = (
+				game.world.provinces.province_from_id(
+						auto_arrow.destination_province_id()
+				)
 		)
+		if destination_province == null:
+			continue
+		if not source_province.is_linked_to(destination_province):
+			continue
 
-	for i in source_provinces.size():
-		var source_province: Province = source_provinces[i]
+		if not arrow_destinations.has(source_province):
+			arrow_destinations[source_province] = ArrowDestinations.new()
+		arrow_destinations[source_province].add(destination_province)
+
+	for source_province in arrow_destinations:
 		var armies_in_province: Array[Army] = (
 				game.world.armies_in_each_province
 				.dictionary[source_province].list
@@ -39,7 +45,9 @@ func apply(game: Game) -> void:
 			# and the clients already have the information they need
 			# (ATTENTION) assuming the [AutoArrowNode2D]s are correctly synced
 			var army_even_split := ArmyEvenSplit.new(game.world.armies)
-			army_even_split.apply(army, arrow_destinations[i].destinations)
+			army_even_split.apply(
+					army, arrow_destinations[source_province].destinations
+			)
 			if army_even_split.action_army_split != null:
 				army_even_split.action_army_split.apply_to(game, player)
 			for action in army_even_split.action_army_movements:
@@ -52,8 +60,7 @@ func apply(game: Game) -> void:
 class ArrowDestinations:
 	var destinations: Array[Province] = []
 
-	func add(destination_province: Province) -> void:
-		destinations.append(destination_province)
-
-	func number_of_destinations() -> int:
-		return destinations.size()
+	## No effect if destination is null or is already in the list.
+	func add(destination: Province) -> void:
+		if destination != null and not destinations.has(destination):
+			destinations.append(destination)

@@ -56,5 +56,6 @@ func _run_unit_test() -> void:
 	# Run unit tests here
 	ArmySize._unit_test()
 	ProjectVersion._unit_test()
+	AutoArrowUnitTest.run_tests()
 
 	print("[UNIT TEST] All tests passed!")

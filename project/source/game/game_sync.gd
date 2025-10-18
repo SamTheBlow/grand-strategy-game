@@ -6,7 +6,7 @@ extends Node
 
 func _init(game: Game) -> void:
 	add_child(GameUsernameSync.new(game.game_players))
-	add_child(AutoArrowSync.new(game))
+	add_child(AutoArrowSync.new(game.countries))
 	add_child(ActionSync.new(game))
 
 

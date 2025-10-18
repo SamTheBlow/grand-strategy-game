@@ -31,9 +31,8 @@ func _release() -> void:
 
 ## Moves the arrow's tip along with the cursor.
 func _update_pointing_position() -> void:
-	global_pointing_position = (
-			PositionScreenToWorld.new()
-			.result(get_viewport().get_mouse_position(), get_viewport())
+	global_pointing_position = PositionScreenToWorld.new().result(
+			get_viewport().get_mouse_position(), get_viewport()
 	)
 
 

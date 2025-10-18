@@ -46,5 +46,5 @@ func _ready() -> void:
 
 func auto_arrow() -> AutoArrow:
 	return AutoArrow.new(
-			source_province.province, destination_province.province
+			source_province.province.id, destination_province.province.id
 	)

@@ -48,9 +48,6 @@ static func parsed_from(
 			raw_dict.get(WORLD_KEY), game, game_settings, project_file_path
 	)
 
-	# [AutoArrow]s
-	AutoArrowsFromRaw.parse_using(country_data, game)
-
 	# Background color
 	if raw_dict.has(BACKGROUND_COLOR_KEY):
 		var background_color: Color = ParseUtils.color_from_raw(

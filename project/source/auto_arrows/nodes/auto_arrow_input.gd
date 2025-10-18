@@ -15,13 +15,12 @@ func _add_auto_arrow(country: Country, auto_arrow: AutoArrow) -> void:
 		country.auto_arrows.add(auto_arrow)
 		return
 
-	var data: Dictionary = AutoArrowToDict.result(auto_arrow)
-	_receive_add_auto_arrow.rpc_id(1, country.id, data)
+	_receive_add_auto_arrow.rpc_id(1, country.id, auto_arrow.to_raw_data())
 
 
 ## The server receives the request of adding a new [AutoArrow].
 @rpc("any_peer", "call_remote", "reliable")
-func _receive_add_auto_arrow(country_id: int, arrow_data: Dictionary) -> void:
+func _receive_add_auto_arrow(country_id: int, arrow_data: Variant) -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
@@ -35,10 +34,7 @@ func _receive_add_auto_arrow(country_id: int, arrow_data: Dictionary) -> void:
 
 	# Requested accepted
 	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, game)
-	if auto_arrow == null:
-		push_warning("Received invalid autoarrow data.")
-		return
+	var auto_arrow: AutoArrow = AutoArrow.from_raw_data(arrow_data)
 	_add_auto_arrow(country, auto_arrow)
 #endregion
 
@@ -49,15 +45,12 @@ func _remove_auto_arrow(country: Country, auto_arrow: AutoArrow) -> void:
 		country.auto_arrows.remove(auto_arrow)
 		return
 
-	var data: Dictionary = AutoArrowToDict.result(auto_arrow)
-	_receive_remove_auto_arrow.rpc_id(1, country.id, data)
+	_receive_remove_auto_arrow.rpc_id(1, country.id, auto_arrow.to_raw_data())
 
 
 ## The server receives the request of removing an [AutoArrow].
 @rpc("any_peer", "call_remote", "reliable")
-func _receive_remove_auto_arrow(
-		country_id: int, arrow_data: Dictionary
-) -> void:
+func _receive_remove_auto_arrow(country_id: int, arrow_data: Variant) -> void:
 	if not multiplayer.is_server():
 		push_warning("Received server request, but you're not the server.")
 		return
@@ -71,21 +64,18 @@ func _receive_remove_auto_arrow(
 
 	# Requested accepted
 	var country: Country = game.countries.country_from_id(country_id)
-	var auto_arrow: AutoArrow = AutoArrowFromRaw.parsed_from(arrow_data, game)
-	if auto_arrow == null:
-		push_warning("Received invalid autoarrow data.")
-		return
+	var auto_arrow: AutoArrow = AutoArrow.from_raw_data(arrow_data)
 	_remove_auto_arrow(country, auto_arrow)
 #endregion
 
 
 #region Clearing a province
-func _clear_province(country: Country, province: Province) -> void:
+func _clear_province(country: Country, province_id: int) -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
-		country.auto_arrows.remove_all_from_province(province)
+		country.auto_arrows.remove_all_from_province(province_id)
 		return
 
-	_receive_clear_province.rpc_id(1, country.id, province.id)
+	_receive_clear_province.rpc_id(1, country.id, province_id)
 
 
 ## The server receives the request of removing all [AutoArrow]s in a province.
@@ -104,8 +94,7 @@ func _receive_clear_province(country_id: int, province_id: int) -> void:
 
 	# Requested accepted
 	var country: Country = game.countries.country_from_id(country_id)
-	var province: Province = game.world.provinces.province_from_id(province_id)
-	_clear_province(country, province)
+	_clear_province(country, province_id)
 #endregion
 
 
@@ -134,10 +123,6 @@ func _client_can_apply_changes(multiplayer_id: int) -> bool:
 	)
 
 
-func _is_right_click_just_pressed(event: InputEventMouseButton) -> bool:
-	return event.pressed and event.button_index == MOUSE_BUTTON_RIGHT
-
-
 func _on_provinces_unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 ) -> void:
@@ -145,14 +130,18 @@ func _on_provinces_unhandled_mouse_event_occured(
 		return
 	var mouse_button_event := event as InputEventMouseButton
 
-	if not _is_right_click_just_pressed(mouse_button_event):
+	# Check if the right click was just pressed
+	if not (
+			mouse_button_event.pressed
+			and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT
+	):
 		return
 
 	if mouse_button_event.double_click:
 		var playing_country: Country = (
 				game.turn.playing_player().playing_country
 		)
-		_clear_province(playing_country, province_visuals.province)
+		_clear_province(playing_country, province_visuals.province.id)
 
 	_setup_new_preview_arrow(province_visuals)
 

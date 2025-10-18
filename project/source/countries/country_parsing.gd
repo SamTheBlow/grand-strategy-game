@@ -5,6 +5,7 @@ const _COUNTRY_ID_KEY: String = "id"
 const _COUNTRY_NAME_KEY: String = "country_name"
 const _COUNTRY_COLOR_KEY: String = "color"
 const _COUNTRY_MONEY_KEY: String = "money"
+const _COUNTRY_AUTOARROWS_KEY: String = "auto_arrows"
 
 
 ## Always succeeds.
@@ -70,13 +71,9 @@ static func country_to_raw_dict(country: Country) -> Dictionary:
 		})
 
 	# Autoarrows
-	var raw_auto_arrows: Array = (
-			AutoArrowsToRaw.result(country.auto_arrows)
-	)
-	if not raw_auto_arrows.is_empty():
-		output.merge({
-			AutoArrowsFromRaw.COUNTRY_AUTOARROWS_KEY: raw_auto_arrows
-		})
+	var auto_arrow_data: Variant = country.auto_arrows.to_raw_data()
+	if auto_arrow_data is not Array or not auto_arrow_data.is_empty():
+		output.merge({ _COUNTRY_AUTOARROWS_KEY: auto_arrow_data })
 
 	return output
 
@@ -89,13 +86,12 @@ static func _add_country_from_raw_data(
 		return
 	var raw_dict: Dictionary = raw_data
 
-	var country := Country.new()
-
 	# Id (mandatory)
 	if not ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_ID_KEY):
 		return
-	var id: int = ParseUtils.dictionary_int(raw_dict, _COUNTRY_ID_KEY)
-	country.id = id
+
+	var country := Country.new()
+	country.id = ParseUtils.dictionary_int(raw_dict, _COUNTRY_ID_KEY)
 
 	# Name
 	if ParseUtils.dictionary_has_string(raw_dict, _COUNTRY_NAME_KEY):
@@ -107,6 +103,12 @@ static func _add_country_from_raw_data(
 	# Money
 	if ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_MONEY_KEY):
 		country.money = ParseUtils.dictionary_int(raw_dict, _COUNTRY_MONEY_KEY)
+
+	# Autoarrows
+	if raw_dict.has(_COUNTRY_AUTOARROWS_KEY):
+		country.auto_arrows = (
+				AutoArrows.from_raw_data(raw_dict[_COUNTRY_AUTOARROWS_KEY])
+		)
 
 	countries.add(country)
 
