@@ -64,13 +64,13 @@ func init(
 
 func _add(auto_arrow: AutoArrow) -> void:
 	var auto_arrow_node := AutoArrowNode2D.new()
-	auto_arrow_node.source_province = (
-			province_visuals_container
-			.visuals_of_province[auto_arrow.source_province]
+	auto_arrow_node.source_province = province_visuals_container.visuals_of(
+			auto_arrow.source_province.id
 	)
 	auto_arrow_node.destination_province = (
-			province_visuals_container
-			.visuals_of_province[auto_arrow.destination_province]
+			province_visuals_container.visuals_of(
+					auto_arrow.destination_province.id
+			)
 	)
 	_add_node(auto_arrow_node)
 

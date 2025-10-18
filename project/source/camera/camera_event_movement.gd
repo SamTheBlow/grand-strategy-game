@@ -50,6 +50,6 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 
 		_camera.move_to(
 				_game.world_visuals.province_visuals
-				.visuals_of_province[target_province]
+				.visuals_of(target_province.id)
 				.global_position_army_host()
 		)

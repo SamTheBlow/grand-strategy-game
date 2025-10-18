@@ -12,23 +12,29 @@ signal unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 )
 
-## Do not manipulate the array directly!
-var list: Array[ProvinceVisuals2D] = []
+## A list of all the child nodes, for easy access.
+var _list: Array[ProvinceVisuals2D] = []
 
-## Maps a province to its visuals, for performance reasons.
-## Do not manipulate the dictionary directly!
-var visuals_of_province: Dictionary[Province, ProvinceVisuals2D] = {}
+## Maps a province id to its visuals, for performance reasons.
+var _province_map: Dictionary[int, ProvinceVisuals2D] = {}
 
 
 func _ready() -> void:
 	child_entered_tree.connect(_on_child_entered_tree)
 
 
+## Returns null if there are no visuals for given id.
+func visuals_of(province_id: int) -> ProvinceVisuals2D:
+	if _province_map.has(province_id):
+		return _province_map[province_id]
+	return null
+
+
 ## Returns the visuals for each of given [Province]'s linked provinces.
 func links_of(province: Province) -> Array[ProvinceVisuals2D]:
 	var output: Array[ProvinceVisuals2D] = []
 	for linked_province in province.links:
-		output.append(visuals_of_province[linked_province])
+		output.append(_province_map[linked_province.id])
 	return output
 
 
@@ -38,8 +44,8 @@ func _on_child_entered_tree(node: Node) -> void:
 
 	var province_visuals := node as ProvinceVisuals2D
 
-	list.append(province_visuals)
-	visuals_of_province[province_visuals.province] = province_visuals
+	_list.append(province_visuals)
+	_province_map[province_visuals.province.id] = province_visuals
 
 	province_visuals.unhandled_mouse_event_occured.connect(
 			_on_unhandled_province_mouse_event
@@ -59,13 +65,13 @@ func _on_unhandled_province_mouse_event(
 
 
 func _on_province_selected(province: Province) -> void:
-	var visuals: ProvinceVisuals2D = visuals_of_province[province]
+	var visuals: ProvinceVisuals2D = _province_map[province.id]
 	visuals.select()
 	province_selected.emit(visuals)
 
 
 func _on_province_deselected(province: Province) -> void:
-	var visuals: ProvinceVisuals2D = visuals_of_province[province]
+	var visuals: ProvinceVisuals2D = _province_map[province.id]
 	visuals.deselect()
 
 

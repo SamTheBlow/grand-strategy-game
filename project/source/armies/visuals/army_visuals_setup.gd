@@ -55,8 +55,7 @@ func _on_army_added(army: Army) -> void:
 
 func _on_province_changed(army_visuals: ArmyVisuals2D) -> void:
 	var province_visuals: ProvinceVisuals2D = (
-			_provinces_container
-			.visuals_of_province[army_visuals.army.province()]
+			_provinces_container.visuals_of(army_visuals.army.province().id)
 	)
 	if province_visuals == null:
 		push_error("Province has no visuals.")
