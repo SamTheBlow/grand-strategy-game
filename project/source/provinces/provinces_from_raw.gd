@@ -152,7 +152,7 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 	province.add_component(IncomeEachTurn.new(province, game.turn.turn_changed))
 	province.add_component(ProvinceOwnershipUpdate.new(
 			province,
-			game.world.armies_in_each_province.dictionary[province],
+			game.world.armies_in_each_province.in_province(province),
 			game.turn.player_turn_ended
 	))
 

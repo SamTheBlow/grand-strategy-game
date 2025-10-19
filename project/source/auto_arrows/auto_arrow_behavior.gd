@@ -31,7 +31,7 @@ static func apply(game: Game) -> void:
 	for source_province in arrow_destinations:
 		var armies_in_province: Array[Army] = (
 				game.world.armies_in_each_province
-				.dictionary[source_province].list
+				.in_province(source_province).list
 		)
 		for army in armies_in_province:
 			if not (

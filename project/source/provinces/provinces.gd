@@ -5,6 +5,9 @@ class_name Provinces
 ## Note that you are currently not meant to remove provinces from this list.
 
 signal added(province: Province)
+# TODO implement (work in progress)
+@warning_ignore("unused_signal")
+signal removed(province: Province)
 signal province_owner_changed(province: Province)
 
 var _list: Array[Province] = []

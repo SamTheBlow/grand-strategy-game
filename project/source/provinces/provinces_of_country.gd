@@ -6,15 +6,21 @@ class_name ProvincesOfCountry
 ##
 ## See also: [ProvincesOfEachCountry]
 
-## Do not directly manipulate this list! Use add() instead.
+## Do not directly manipulate this list! Use add() and remove() instead.
 var list: Array[Province] = []
 
 
 func add(province: Province) -> void:
+	if list.has(province):
+		push_warning("Province is already in the list.")
+		return
 	list.append(province)
-	province.owner_changed.connect(_on_province_owner_changed)
+	province.owner_changed.connect(remove)
 
 
-func _on_province_owner_changed(province: Province) -> void:
-	province.owner_changed.disconnect(_on_province_owner_changed)
+func remove(province: Province) -> void:
+	if not list.has(province):
+		push_warning("Province is not in the list.")
+		return
 	list.erase(province)
+	province.owner_changed.disconnect(remove)

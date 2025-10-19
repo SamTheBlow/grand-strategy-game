@@ -46,7 +46,8 @@ func remove_all_from_province(source_province_id: int) -> void:
 			remove(auto_arrow)
 
 
-## Removes from this list all autoarrows that go from or to given province.
+## Removes from this list all autoarrows that go from or to given province
+## (even if the province id is invalid.)
 func remove_all_with_province(province_id: int) -> void:
 	for auto_arrow in list():
 		if (

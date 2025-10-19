@@ -11,8 +11,7 @@ var armies_in_each_province: ArmiesInEachProvince
 
 func _on_province_selected(province: Province) -> void:
 	var active_armies: Array[Army] = (
-			armies_in_each_province
-			.dictionary[province].list.duplicate()
+			armies_in_each_province.in_province(province).list.duplicate()
 	)
 	for army: Army in active_armies.duplicate():
 		if not (

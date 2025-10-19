@@ -61,7 +61,7 @@ func strength_of_countries() -> Array[float]:
 	for country in game.countries.list():
 		var country_score: float = 0.0
 		var provinces_of_country: Array[Province] = (
-				game.world.provinces_of_each_country.dictionary[country].list
+				game.world.provinces_of_each_country.of_country(country).list
 		)
 
 		for province in provinces_of_country:
@@ -241,7 +241,7 @@ func fight_a_reachable_country(choice_filter: Callable) -> void:
 	var reachable_countries: Array[Country] = (
 			playing_country.reachable_countries(
 					game.world.provinces_of_each_country
-					.dictionary[playing_country],
+					.of_country(playing_country),
 					game.world.provinces
 			)
 	)

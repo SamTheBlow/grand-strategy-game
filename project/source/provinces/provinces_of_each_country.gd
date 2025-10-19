@@ -1,13 +1,12 @@
 class_name ProvincesOfEachCountry
-## Provides a dictionary where each [Country] is assigned
-## a list of all provinces controlled by that country ([ProvincesOfCountry]).
+## Provides a list of all provinces controlled by some given country.
+##
+## See also: [ProvincesOfCountry]
 
-## All countries in the game are guaranteed to be in this dictionary,
-## so no need to check if the dictionary has some country.
-## Also, null is a valid key. It will give you the list of
+## All countries in the game are guaranteed to be in this dictionary.
+## Also, null is a valid key. It gives the list of
 ## all provinces that don't have an owner country.
-## Do not manipulate this dictionary directly!
-var dictionary: Dictionary[Country, ProvincesOfCountry] = {
+var _map: Dictionary[Country, ProvincesOfCountry] = {
 	null: ProvincesOfCountry.new()
 }
 
@@ -20,16 +19,38 @@ func _init(countries: Countries, provinces: Provinces) -> void:
 	for province in provinces.list():
 		_on_province_added(province)
 	provinces.added.connect(_on_province_added)
+	provinces.removed.connect(_on_province_removed)
+
+
+## If input is null, returns the list of provinces with no owner.
+func of_country(country: Country) -> ProvincesOfCountry:
+	return _map[country]
 
 
 func _on_country_added(country: Country) -> void:
-	dictionary[country] = ProvincesOfCountry.new()
+	_map[country] = ProvincesOfCountry.new()
 
 
 func _on_province_added(province: Province) -> void:
-	dictionary[province.owner_country].add(province)
+	if province == null:
+		push_error("Province is null.")
+		return
+
+	_on_province_owner_changed(province)
 	province.owner_changed.connect(_on_province_owner_changed)
 
 
+func _on_province_removed(province: Province) -> void:
+	if not _map.has(province.owner_country):
+		push_error("Country is not on the list.")
+		return
+
+	_map[province.owner_country].remove(province)
+
+
 func _on_province_owner_changed(province: Province) -> void:
-	dictionary[province.owner_country].add(province)
+	if not _map.has(province.owner_country):
+		push_error("Country is not on the list.")
+		return
+
+	_map[province.owner_country].add(province)

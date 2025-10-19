@@ -115,10 +115,9 @@ func _end_player_turn() -> void:
 		AutoArrowBehavior.apply(_game)
 
 	# Merge armies
-	for province in _game.world.armies_in_each_province.dictionary:
+	for armies_in_province in _game.world.armies_in_each_province.values():
 		_game.world.armies.merge_armies(
-				_game.world.armies_in_each_province.dictionary[province],
-				player.playing_country
+				armies_in_province, player.playing_country
 		)
 
 	player_turn_ended.emit(player)

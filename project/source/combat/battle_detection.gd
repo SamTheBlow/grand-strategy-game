@@ -25,7 +25,7 @@ func _resolve_battles(army: Army) -> void:
 	# so it's important to duplicate the array.
 	var armies_in_province: Array[Army] = (
 			_armies_in_each_province
-			.dictionary[army.province()].list.duplicate()
+			.in_province(army.province()).list.duplicate()
 	)
 	for other_army in armies_in_province:
 		if Country.is_fighting(army.owner_country, other_army.owner_country):

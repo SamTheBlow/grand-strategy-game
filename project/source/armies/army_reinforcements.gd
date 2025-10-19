@@ -46,7 +46,7 @@ func _reinforce_province() -> void:
 	# Creating new armies is bad for performance.
 	# It's better to directly increase an existing army's size.
 	for army: Army in (
-			_game.world.armies_in_each_province.dictionary[_province].list
+			_game.world.armies_in_each_province.in_province(_province).list
 	):
 		if army.owner_country != _province.owner_country:
 			continue

@@ -47,7 +47,7 @@ func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 
 	var affected_provinces: Array[Province] = (
 			_game.world.provinces_of_each_country
-			.dictionary[relationship.source_country].list
+			.of_country(relationship.source_country).list
 	)
 	_apply([relationship.recipient_country], affected_provinces)
 
@@ -87,7 +87,7 @@ func _delete_armies(
 		for province in affected_provinces:
 			var armies_in_province: Array[Army] = (
 					_game.world.armies_in_each_province
-					.dictionary[province].list
+					.in_province(province).list
 			)
 			for army in armies_in_province:
 				if army.owner_country == affected_country:
@@ -102,7 +102,7 @@ func _teleport_armies_out(
 		for affected_province in affected_provinces:
 			var armies_in_province: Array[Army] = (
 					_game.world.armies_in_each_province
-					.dictionary[affected_province].list
+					.in_province(affected_province).list
 			)
 			if armies_in_province.size() == 0:
 				continue
@@ -139,6 +139,6 @@ func _teleport_armies_out(
 				# TODO merge armies automatically from outside this class
 				_game.world.armies.merge_armies(
 						_game.world.armies_in_each_province
-						.dictionary[province_to_move_to],
+						.in_province(province_to_move_to),
 						_game.turn.playing_player().playing_country
 				)

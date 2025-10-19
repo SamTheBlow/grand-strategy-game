@@ -10,9 +10,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = super(game, player)
 
 	var provinces: Array[Province] = game.world.provinces.list()
-	var armies_in_province: Dictionary[Province, ArmiesInProvince] = (
-			game.world.armies_in_each_province.dictionary
-	)
+	var armies: ArmiesInEachProvince = game.world.armies_in_each_province
 	var frontline_provinces: Array[Province] = (
 			game.world.provinces.provinces_on_frontline(player.playing_country)
 	)
@@ -40,13 +38,13 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		var danger_level: float = 0.0
 
 		var army_size: int = _army_size(
-				armies_in_province[province], true, player.playing_country
+				armies.in_province(province), true, player.playing_country
 		)
 		for link in province.links:
 			if link.owner_country == player.playing_country:
 				continue
 			var enemy_army_size: int = _army_size(
-					armies_in_province[link], false, player.playing_country
+					armies.in_province(link), false, player.playing_country
 			)
 
 			var danger: float = enemy_army_size / (army_size + 0.01)
@@ -96,7 +94,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				# Take the sum of all the hostile army sizes
 				var hostile_army_size: int = _hostile_army_size(
 						army.owner_country,
-						armies_in_province[hostile_links[0]].list
+						armies.in_province(hostile_links[0]).list
 				)
 
 				# If your army is relatively large enough, attack!
@@ -115,7 +113,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 					# Take the sum of all the hostile army sizes
 					var hostile_army_size: int = _hostile_army_size(
 							army.owner_country,
-							armies_in_province[hostile_link].list
+							armies.in_province(hostile_link).list
 					)
 
 					# If the province's army
