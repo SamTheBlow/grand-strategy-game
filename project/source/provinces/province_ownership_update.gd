@@ -47,7 +47,7 @@ func _update_ownership_of(province: Province) -> void:
 		# If this army is not trespassing,
 		# then it won't take control over the province.
 		# See [DiplomacyRelationship]
-		if not army.is_trespassing():
+		if not army.is_trespassing(_game.world.provinces):
 			continue
 
 		new_owner = army.owner_country

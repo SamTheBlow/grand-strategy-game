@@ -23,14 +23,19 @@ func _init(provinces: Provinces, armies: Armies) -> void:
 	armies.army_removed.connect(_on_army_removed)
 
 
+func in_province_id(province_id: int) -> ArmiesInProvince:
+	if not _map.has(province_id):
+		push_error("Province is not on the list.")
+		return _map[-1]
+	return _map[province_id]
+
+
+## If given province is null,
+## returns a list of all armies that are not in any province.
 func in_province(province: Province) -> ArmiesInProvince:
 	if province == null:
 		return _map[-1]
-	elif not _map.has(province.id):
-		push_error("Province is not on the list.")
-		return _map[-1]
-	else:
-		return _map[province.id]
+	return in_province_id(province.id)
 
 
 func values() -> Array[ArmiesInProvince]:
@@ -52,11 +57,17 @@ func _on_army_added(army: Army) -> void:
 
 func _on_army_removed(army: Army) -> void:
 	army.province_changed.disconnect(_on_army_province_changed)
-	in_province(army.province()).remove(army)
+	if not _map.has(army.province_id()):
+		push_warning("Province is not on the list.")
+		return
+	_map[army.province_id()].remove(army)
 
 
 ## Adds the army to the new province's list.
 ## As for removing the army from the previous province's list,
 ## the previous province's list does this by itself.
 func _on_army_province_changed(army: Army) -> void:
-	in_province(army.province()).add(army)
+	if not _map.has(army.province_id()):
+		push_warning("Province is not on the list.")
+		return
+	_map[army.province_id()].add(army)

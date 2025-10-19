@@ -22,8 +22,7 @@ signal movements_made_changed(movements_made: int)
 ## This is used to ask the game to remove the army from the game.
 signal destroyed(this_army: Army)
 
-## The unique id assigned to this army.
-## Each army has its own id. Useful for saving/loading, networking, etc.
+## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
 ## Provides information on this army's size. Currently must not be null.
@@ -50,15 +49,12 @@ var owner_country: Country:
 		owner_country = value
 		allegiance_changed.emit(owner_country)
 
-## The [Province] in which this army is located. Currently must not be null.
-## Must initialize when the army is created.
-var _province: Province:
+## The province in which this army is located.
+var _province_id: int = -1:
 	set(value):
-		if value == null:
-			push_warning("Tried to set an army's province to null!")
+		if _province_id == value:
 			return
-
-		_province = value
+		_province_id = value
 		province_changed.emit(self)
 
 ## The number of movements made by this army.
@@ -71,7 +67,7 @@ var _movements_made: int = 0:
 
 
 ## Utility function that does all the setup work.
-## Automatically adds the army to the game and moves it to given [Province].
+## Automatically adds the army to the game.
 ## It is recommended to use this when creating a new army.
 ## May return null if the army could not be created.
 ## Use -1 for the id if you don't want to provide a specific one.
@@ -79,7 +75,7 @@ static func quick_setup(
 		game: Game,
 		army_size_: int,
 		owner_country_: Country,
-		province_: Province,
+		province_id_: int,
 		id_: int = -1,
 		movements_made_: int = 0,
 ) -> Army:
@@ -92,13 +88,14 @@ static func quick_setup(
 		return null
 
 	var army := Army.new()
+	army.id = id_
 	army.army_size = ArmySize.new(army_size_, minimum_army_size)
 	army.owner_country = owner_country_
+	army._province_id = province_id_
 	army._movements_made = movements_made_
 
 	game.turn.player_changed.connect(army._on_player_turn_changed)
-	game.world.armies.add_army(army, id_)
-	army.teleport_to_province(province_)
+	game.world.armies.add(army)
 	return army
 
 
@@ -106,8 +103,13 @@ func destroy() -> void:
 	destroyed.emit(self)
 
 
-func province() -> Province:
-	return _province
+func province_id() -> int:
+	return _province_id
+
+
+## Returns null if there is no province with this army's province id.
+func province(provinces: Provinces) -> Province:
+	return provinces.province_from_id(_province_id)
 
 
 ## If true, the army can still make a movement.
@@ -122,7 +124,7 @@ func is_able_to_move() -> bool:
 ## This returns true regardless of if the army is able to move at all.
 func can_move_to(destination: Province) -> bool:
 	return (
-			destination.is_linked_to(_province.id)
+			destination.is_linked_to(_province_id)
 			and owner_country.can_move_into_country(destination.owner_country)
 	)
 
@@ -142,15 +144,14 @@ func move_to_province(destination: Province) -> void:
 		return
 
 	_movements_made += 1
-	_province = destination
+	_province_id = destination.id
 	moved_to_province.emit(destination)
 
 
-## Moves this army to the given destination province.
-## No animation will play, and the army's movement count will be unaffected.
-## The movement will be performed even if the army is unable to move.
-func teleport_to_province(destination: Province) -> void:
-	_province = destination
+## Moves this army to given destination province.
+## Always succeeds, with no side effects. Does not emit any signal.
+func teleport_to_province(destination_province_id: int) -> void:
+	_province_id = destination_province_id
 
 
 ## Returns the number of times this army has moved.
@@ -167,10 +168,13 @@ func exhaust() -> void:
 
 
 ## Returns true if this army is currently trespassing in a foreign province.
-func is_trespassing() -> bool:
+func is_trespassing(provinces: Provinces) -> bool:
+	var current_province: Province = province(provinces)
+	if current_province == null:
+		return false
 	return (
-			owner_country.relationships.with_country(_province.owner_country)
-			.is_trespassing()
+			owner_country.relationships
+			.with_country(current_province.owner_country).is_trespassing()
 	)
 
 

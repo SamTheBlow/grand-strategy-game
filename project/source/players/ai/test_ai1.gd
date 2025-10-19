@@ -70,7 +70,7 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 			game.world.armies_of_each_country
 			.dictionary[player.playing_country].list
 	):
-		var my_province: Province = my_army.province()
+		var my_province: Province = my_army.province(game.world.provinces)
 		var provinces_to_move_to: Array[Province] = [my_province]
 		for link_branch: LinkBranch in (
 				province_pathfinding.paths[my_province].list
@@ -162,6 +162,6 @@ func _destination_provinces(
 
 	var destination_provinces: Array[Province] = [source_province]
 	var calculation := NearestProvinces.new()
-	calculation.calculate(source_province, provinces, province_filter)
+	calculation.calculate(source_province.id, provinces, province_filter)
 	destination_provinces.append_array(calculation.first_links)
 	return destination_provinces

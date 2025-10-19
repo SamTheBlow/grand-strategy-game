@@ -14,10 +14,10 @@ var furthest_links: Array[Province] = []
 
 ## The filter must take one input of type Province and must return a boolean.
 func calculate(
-		province: Province, provinces: Provinces, province_filter: Callable
+		province_id: int, provinces: Provinces, province_filter: Callable
 ) -> void:
 	var link_branches: Array[LinkBranch] = (
-			_generated_link_branches(province, provinces, province_filter)
+			_generated_link_branches(province_id, provinces, province_filter)
 	)
 	size = link_branches.size()
 	first_links = []
@@ -28,7 +28,7 @@ func calculate(
 
 
 func _generated_link_branches(
-		province: Province, provinces: Provinces, filter: Callable,
+		province_id: int, provinces: Provinces, filter: Callable,
 ) -> Array[LinkBranch]:
 	var is_not_stuck: bool = true
 
@@ -37,7 +37,7 @@ func _generated_link_branches(
 	var already_searched_provinces: Dictionary[Province, int] = {}
 
 	var link_branches: Array[LinkBranch] = []
-	for linked_province in provinces.links_of(province.id):
+	for linked_province in provinces.links_of(province_id):
 		var link_branch := LinkBranch.new()
 		link_branch.link_chain = [linked_province]
 		link_branches.append(link_branch)

@@ -149,5 +149,5 @@ func nearest_provinces(
 		)
 ) -> Array[Province]:
 	var calculation := NearestProvinces.new()
-	calculation.calculate(self, provinces, province_filter)
+	calculation.calculate(id, provinces, province_filter)
 	return calculation.furthest_links

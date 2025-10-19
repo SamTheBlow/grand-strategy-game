@@ -71,7 +71,7 @@ func _reinforce_province(province: Province) -> void:
 			_game,
 			reinforcements_size,
 			province.owner_country,
-			province,
+			province.id,
 			-1,
 			1
 	)

@@ -198,7 +198,7 @@ static func _armies_to_raw_array(armies_list: Array[Army]) -> Array:
 			ArmiesFromRaw.ARMY_ID_KEY: army.id,
 			ArmiesFromRaw.ARMY_SIZE_KEY: army.army_size.current_size(),
 			ArmiesFromRaw.ARMY_OWNER_ID_KEY: army.owner_country.id,
-			ArmiesFromRaw.ARMY_PROVINCE_ID_KEY: army.province().id,
+			ArmiesFromRaw.ARMY_PROVINCE_ID_KEY: army.province_id(),
 		}
 
 		# Movements made (only include this when it's not the default 0)

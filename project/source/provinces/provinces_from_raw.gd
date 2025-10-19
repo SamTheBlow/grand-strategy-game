@@ -114,7 +114,9 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 			var building_dict: Dictionary = building_data
 
 			if building_dict.get(BUILDING_TYPE_KEY) == BUILDING_TYPE_FORTRESS:
-				province.buildings.add(Fortress.new_fortress(game, province))
+				province.buildings.add(
+						Fortress.new_fortress(game, province.id)
+				)
 
 	# Money income
 	if (

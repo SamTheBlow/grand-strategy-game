@@ -64,7 +64,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			game,
 			_number_of_troops,
 			province.owner_country,
-			province,
+			province.id,
 			_new_army_id
 	)
 

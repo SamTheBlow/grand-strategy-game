@@ -76,7 +76,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		if army.is_able_to_move() == false:
 			continue
 
-		var province: Province = army.province()
+		var province: Province = army.province(game.world.provinces)
 
 		# Is this army on the frontline?
 		if frontline_provinces.has(province):
@@ -198,7 +198,11 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		# Move the army towards the frontlines.
 		if _is_province_pathfinding_worth_it(my_armies):
 			_move_towards_frontlines_pathfinding(
-					result, army, danger_levels, pathfinding
+					result,
+					army.id,
+					army.province(game.world.provinces),
+					danger_levels,
+					pathfinding
 			)
 		else:
 			_move_towards_frontlines(
@@ -229,7 +233,9 @@ func _move_towards_frontlines(
 				return province.is_frontline(playing_country, provinces)
 	)
 	var frontline_calculation := NearestProvinces.new()
-	frontline_calculation.calculate(army.province(), provinces, province_filter)
+	frontline_calculation.calculate(
+			army.province_id(), provinces, province_filter
+	)
 
 	if frontline_calculation.size == 0:
 		return
@@ -251,12 +257,13 @@ func _move_towards_frontlines(
 ## Faster when you have many armies and the frontline is far away.
 func _move_towards_frontlines_pathfinding(
 		result: Array[Action],
-		army: Army,
+		army_id: int,
+		army_province: Province,
 		danger_levels: Dictionary[Province, float],
 		pathfinding: ProvincePathfinding
 ) -> void:
 	var link_branches: Array[LinkBranch] = (
-			pathfinding.paths[army.province()].list
+			pathfinding.paths[army_province].list
 	)
 
 	if link_branches.size() == 0:
@@ -271,7 +278,7 @@ func _move_towards_frontlines_pathfinding(
 			target_province = link_branch.furthest_link()
 			target_danger = danger_levels[frontline_province]
 
-	result.append(ActionArmyMovement.new(army.id, target_province.id))
+	result.append(ActionArmyMovement.new(army_id, target_province.id))
 
 
 func _army_size(

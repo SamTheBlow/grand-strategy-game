@@ -57,19 +57,21 @@ static func _parse_army(raw_data: Variant, game: Game) -> void:
 	if owner_country == null:
 		return
 
-	# Province (mandatory)
+	# Province (optional, defaults to no province)
+	var province_id: int = -1
 	if not ParseUtils.dictionary_has_number(raw_dict, ARMY_PROVINCE_ID_KEY):
-		return
-	var province_id: int = (
-			ParseUtils.dictionary_int(raw_dict, ARMY_PROVINCE_ID_KEY)
-	)
-	var province: Province = game.world.provinces.province_from_id(province_id)
-	if province == null:
-		return
+		province_id = ParseUtils.dictionary_int(raw_dict, ARMY_PROVINCE_ID_KEY)
 
 	# Movements made (optional, defaults to 0)
 	var movements_made: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, ARMY_MOVEMENTS_KEY):
 		movements_made = ParseUtils.dictionary_int(raw_dict, ARMY_MOVEMENTS_KEY)
 
-	Army.quick_setup(game, army_size, owner_country, province, id, movements_made)
+	Army.quick_setup(
+			game,
+			army_size,
+			owner_country,
+			province_id,
+			id,
+			movements_made
+	)

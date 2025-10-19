@@ -77,17 +77,12 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 				game,
 				_troop_partition[i + 1],
 				army.owner_country,
-				army.province(),
+				army.province_id(),
 				_new_army_ids[i]
 		)
 
 		# Reduce the original army's troop count
 		army.army_size.remove(_troop_partition[i + 1])
-
-	#print(
-	#		"Army ", army.id, " in province ", army.province().id,
-	#		" was split into ", _new_army_ids
-	#)
 
 
 func raw_data() -> Dictionary:

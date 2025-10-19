@@ -49,7 +49,7 @@ static func apply(game: Game) -> void:
 				and
 				province.buildings.number_of_type(Building.Type.FORTRESS) == 0
 		):
-			province.buildings.add(Fortress.new_fortress(game, province))
+			province.buildings.add(Fortress.new_fortress(game, province.id))
 
 	# Armies
 	_add_starting_armies(game)
@@ -206,6 +206,6 @@ static func _add_starting_armies(game: Game) -> void:
 				game,
 				game.rules.starting_army_size.value,
 				province.owner_country,
-				province
+				province.id
 		)
 		already_supplied_countries.append(province.owner_country)

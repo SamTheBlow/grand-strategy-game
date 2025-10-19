@@ -23,10 +23,8 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			game.world.provinces.province_from_id(_province_id)
 	)
 
-	if not province:
-		push_warning(
-				"Tried to build a fortress in a province that doesn't exist!"
-		)
+	if province == null:
+		push_warning("Province is null.")
 		return
 
 	var build_conditions := (
@@ -39,7 +37,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	province.buildings.add(Fortress.new_fortress(game, province))
+	province.buildings.add(Fortress.new_fortress(game, _province_id))
 
 	your_country.money -= game.rules.fortress_price.value
 

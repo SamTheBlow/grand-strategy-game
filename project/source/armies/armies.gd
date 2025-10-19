@@ -10,37 +10,32 @@ var _list: Array[Army] = []
 var _unique_id_system := UniqueIdSystem.new()
 
 
-## Note that this overwrites the army's id.
-## If you want the army to use a specific id, pass it as an argument.
+## If given army's id is invalid (i.e. a negative number),
+## automatically gives it a new unique id.
 ##
-## An error will occur if given id is not available.
-## Use is_id_available first to verify (see [UniqueIdSystem]).
-func add_army(army: Army, specific_id: int = -1) -> void:
+## No effect if given army's id is already in use,
+## or if given army is already in the list.
+func add(army: Army) -> void:
 	if _list.has(army):
-		push_warning("Tried adding an army, but it was already on the list.")
+		push_warning("Army is already in the list.")
 		return
-
-	var id: int = specific_id
-	if not _unique_id_system.is_id_valid(specific_id):
-		id = _unique_id_system.new_unique_id()
-	elif not _unique_id_system.is_id_available(specific_id):
-		push_error(
-				"Specified army id is not unique."
-				+ " (id: " + str(specific_id) + ")"
-		)
-		id = _unique_id_system.new_unique_id()
+	if not _unique_id_system.is_id_valid(army.id):
+		army.id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(army.id):
+		push_warning("Army id is already in use. (id: " + str(army.id) + ")")
+		return
 	else:
-		_unique_id_system.claim_id(specific_id)
+		_unique_id_system.claim_id(army.id)
 
-	army.id = id
 	army.destroyed.connect(remove_army)
 	_list.append(army)
 	army_added.emit(army)
 
 
+## No effect if given army is not in the list.
 func remove_army(army: Army) -> void:
 	if not _list.has(army):
-		push_warning("Tried removing an army, but it wasn't on the list.")
+		push_warning("Army is not in the list.")
 		return
 
 	army.destroyed.disconnect(remove_army)

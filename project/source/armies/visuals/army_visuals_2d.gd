@@ -1,10 +1,6 @@
 class_name ArmyVisuals2D
 extends Node2D
 ## An [Army]'s visuals for a 2D world map.
-##
-## To use, just set the "army" and "playing_country" properties.
-
-signal province_changed(this: ArmyVisuals2D)
 
 ## This is meant to be set only once.
 var army: Army:
@@ -68,22 +64,9 @@ func _refresh_brightness() -> void:
 	modulate = Color(brightness, brightness, brightness)
 
 
-# TODO This is called on every single army visuals whenever an army is removed...
-# Check how bad this is performance wise, and figure out a better way if needed
-func _on_army_removed(removed_army: Army) -> void:
-	if removed_army != army:
-		return
-
-	if get_parent() != null:
-		get_parent().remove_child(self)
-	queue_free()
-
-
 func _on_army_province_changed(_army: Army) -> void:
 	if _animation != null and get_parent() != null:
 		_animation.original_global_position = global_position
-
-	province_changed.emit(self)
 
 
 func _on_army_moved_to_province(_province: Province) -> void:

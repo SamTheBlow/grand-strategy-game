@@ -6,14 +6,14 @@ extends Building
 ## There may only be one fortress per province,
 ## although, this currently isn't enforced.
 
-var _province: Province
+var _province_id: int = -1
 
 
 ## Utility function that does all the setup work.
 ## It's recommended to use this when creating a new fortress.
-static func new_fortress(game: Game, province: Province) -> Fortress:
+static func new_fortress(game: Game, province_id: int) -> Fortress:
 	var fortress := Fortress.new()
-	fortress._province = province
+	fortress._province_id = province_id
 	game.modifier_request.add_provider(fortress)
 	return fortress
 
@@ -27,7 +27,7 @@ func _on_modifiers_requested(
 		"attacker_efficiency":
 			# Check if defender is on same province as this fortress
 			var defender: Army = context.info("defending_army")
-			if _province == defender.province():
+			if _province_id == defender.province_id():
 				# New modifier
 				modifiers.append(ModifierMultiplier.new(
 						"Fortress",
@@ -37,7 +37,7 @@ func _on_modifiers_requested(
 		"defender_efficiency":
 			# Check if defender is on same province as this fortress
 			var defender: Army = context.info("defending_army")
-			if _province == defender.province():
+			if _province_id == defender.province_id():
 				# New modifier
 				modifiers.append(ModifierMultiplier.new(
 						"Fortress",

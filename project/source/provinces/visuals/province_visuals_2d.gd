@@ -47,10 +47,11 @@ func _ready() -> void:
 
 func add_army(army_visuals: ArmyVisuals2D) -> void:
 	if not is_node_ready():
-		await ready
-
-	if army_visuals.get_parent():
-		army_visuals.get_parent().remove_child(army_visuals)
+		push_error("Node is not ready yet.")
+		return
+	if army_visuals.get_parent() != null:
+		push_error("Army visuals already have a parent node.")
+		return
 	_army_stack.add_child(army_visuals)
 
 

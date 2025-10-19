@@ -135,7 +135,7 @@ func _teleport_armies_out(
 				if army.owner_country != affected_country:
 					continue
 
-				army.teleport_to_province(province_to_move_to)
+				army.teleport_to_province(province_to_move_to.id)
 				army.exhaust()
 
 				# TODO merge armies automatically from outside this class
