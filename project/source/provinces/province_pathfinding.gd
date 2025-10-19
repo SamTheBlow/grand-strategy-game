@@ -49,16 +49,9 @@ func generate(destinations: Array[Province]) -> void:
 		# Extend the branches to look for provinces further away.
 		var new_link_branches: Array[LinkBranch] = []
 		for link_branch in link_branches:
-			for next_link_id in (
-					link_branch.furthest_link().linked_province_ids()
+			for next_linked_province in (
+					_provinces.links_of(link_branch.furthest_link().id)
 			):
-				var next_linked_province: Province = (
-						_provinces.province_from_id(next_link_id)
-				)
-				if next_linked_province == null:
-					push_error("Linked province is null.")
-					continue
-
 				if already_pathed_provinces.has(next_linked_province):
 					continue
 

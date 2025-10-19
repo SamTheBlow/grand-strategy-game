@@ -37,14 +37,7 @@ func _generated_link_branches(
 	var already_searched_provinces: Dictionary[Province, int] = {}
 
 	var link_branches: Array[LinkBranch] = []
-	for linked_province_id in province.linked_province_ids():
-		var linked_province: Province = (
-				provinces.province_from_id(linked_province_id)
-		)
-		if linked_province == null:
-			push_error("Linked province is null.")
-			continue
-
+	for linked_province in provinces.links_of(province.id):
 		var link_branch := LinkBranch.new()
 		link_branch.link_chain = [linked_province]
 		link_branches.append(link_branch)
@@ -69,16 +62,9 @@ func _generated_link_branches(
 		# Extend the branches to look for provinces further away.
 		var new_link_branches: Array[LinkBranch] = []
 		for link_branch in link_branches:
-			for next_link_id in (
-					link_branch.furthest_link().linked_province_ids()
+			for next_linked_province in (
+					provinces.links_of(link_branch.furthest_link().id)
 			):
-				var next_linked_province: Province = (
-						provinces.province_from_id(next_link_id)
-				)
-				if next_linked_province == null:
-					push_error("Linked province is null.")
-					continue
-
 				if already_searched_provinces.has(next_linked_province):
 					continue
 

@@ -1,16 +1,13 @@
 class_name Provinces
-## An encapsulated list of [Province] objects.
-## Provides useful functions and signals.
-##
-## Note that you are currently not meant to remove provinces from this list.
+## An encapsulated list of [Province]s. Provides useful functions and signals.
 
 signal added(province: Province)
-# TODO implement (work in progress)
-@warning_ignore("unused_signal")
 signal removed(province: Province)
 signal province_owner_changed(province: Province)
 
-var _list: Array[Province] = []
+## Maps a province id to a province.
+var _list: Dictionary[int, Province] = {}
+
 var _unique_id_system := UniqueIdSystem.new()
 
 
@@ -20,7 +17,7 @@ var _unique_id_system := UniqueIdSystem.new()
 ## No effect if given province's id is already in use,
 ## or if given province is already in the list.
 func add(province: Province) -> void:
-	if _list.has(province):
+	if _list.has(province.id):
 		print_debug("Province is already in the list.")
 		return
 	if not _unique_id_system.is_id_valid(province.id):
@@ -33,29 +30,54 @@ func add(province: Province) -> void:
 	else:
 		_unique_id_system.claim_id(province.id)
 
-	_list.append(province)
+	_list[province.id] = province
 	province.owner_changed.connect(province_owner_changed.emit)
 	added.emit(province)
 
 
+## DANGER Don't call this, the game will crash. (WIP)
+func remove(province_id: int) -> void:
+	if not _list.has(province_id):
+		return
+	var province: Province = _list[province_id]
+
+	province.owner_changed.disconnect(province_owner_changed.emit)
+	_list.erase(province_id)
+
+	# Remove any link to this province
+	for list_province_id in _list:
+		_list[list_province_id].linked_province_ids().erase(province_id)
+
+	removed.emit(province)
+
+
 ## Returns a new copy of the list.
 func list() -> Array[Province]:
-	return _list.duplicate()
+	return _list.values()
+
+
+## Returns a list of every province that's linked to given province.
+## Returns an empty list if there is no province with given id.
+func links_of(province_id: int) -> Array[Province]:
+	var output: Array[Province] = []
+	if not _list.has(province_id):
+		return output
+	for linked_province_id in _list[province_id].linked_province_ids():
+		if _list.has(linked_province_id):
+			output.append(_list[linked_province_id])
+	return output
 
 
 ## Returns the list of all provinces representing given [Country]'s frontline.
 ## Provinces in the list are not necessarily under control of given country.
 func provinces_on_frontline(country: Country) -> Array[Province]:
 	var output: Array[Province] = []
-	for province in _list:
-		if province.is_frontline(country, self):
-			output.append(province)
+	for province_id in _list:
+		if _list[province_id].is_frontline(country, self):
+			output.append(_list[province_id])
 	return output
 
 
 ## Returns null if no province has the given id.
 func province_from_id(id: int) -> Province:
-	for province in _list:
-		if province.id == id:
-			return province
-	return null
+	return _list[id] if _list.has(id) else null

@@ -40,14 +40,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		var army_size: int = _army_size(
 				armies.in_province(province), true, player.playing_country
 		)
-		for link_id in province.linked_province_ids():
-			var linked_province: Province = (
-					game.world.provinces.province_from_id(link_id)
-			)
-			if linked_province == null:
-				push_error("Linked province is null.")
-				continue
-
+		for linked_province in game.world.provinces.links_of(province.id):
 			if linked_province.owner_country == player.playing_country:
 				continue
 			var enemy_army_size: int = _army_size(
@@ -91,14 +84,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
-			for link_id in province.linked_province_ids():
-				var linked_province: Province = (
-						game.world.provinces.province_from_id(link_id)
-				)
-				if linked_province == null:
-					push_error("Linked province is null.")
-					continue
-
+			for linked_province in game.world.provinces.links_of(province.id):
 				if (
 						linked_province.owner_country != player.playing_country
 						and

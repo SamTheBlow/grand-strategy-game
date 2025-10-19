@@ -43,14 +43,15 @@ static func parse_using(raw_data: Variant, game: Game) -> void:
 		_parse_province(province_data, game)
 
 	# Validate province links (needs to be done after all provinces are loaded)
-	for province in game.world.provinces._list:
-		var link_list: Array[int] = province.linked_province_ids().duplicate()
-		for linked_province_id in link_list:
-			if (
-					game.world.provinces
-					.province_from_id(linked_province_id) == null
-			):
-				province.linked_province_ids().erase(linked_province_id)
+	for province_id in game.world.provinces._list:
+		var link_list: Array[int] = (
+				game.world.provinces._list[province_id]
+				.linked_province_ids()
+		)
+		for i in link_list.size():
+			if not game.world.provinces._list.has(link_list[i]):
+				link_list.remove_at(i)
+				i -= 1
 
 
 static func _parse_province(raw_data: Variant, game: Game) -> void:

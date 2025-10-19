@@ -107,14 +107,7 @@ func is_frontline(country: Country, provinces: Provinces) -> bool:
 	if owner_country == null:
 		return false
 
-	for linked_province_id in _linked_province_ids:
-		var linked_province: Province = (
-				provinces.province_from_id(linked_province_id)
-		)
-		if linked_province == null:
-			push_error("Linked province doesn't exist.")
-			continue
-
+	for linked_province in provinces.links_of(id):
 		if (
 				linked_province.owner_country == null
 				or not country.has_permission_to_move_into_country(
@@ -138,14 +131,7 @@ func is_war_frontline(country: Country, provinces: Provinces) -> bool:
 	if owner_country == null:
 		return false
 
-	for linked_province_id in _linked_province_ids:
-		var linked_province: Province = (
-				provinces.province_from_id(linked_province_id)
-		)
-		if linked_province == null:
-			push_error("Linked province doesn't exist.")
-			continue
-
+	for linked_province in provinces.links_of(id):
 		if (
 				linked_province.owner_country == null
 				or
