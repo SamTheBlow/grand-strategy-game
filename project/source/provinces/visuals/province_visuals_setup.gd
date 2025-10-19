@@ -1,27 +1,42 @@
 class_name ProvinceVisualsSetup
 extends Node
-## Spawns province visuals to match given [Provinces].
+## Adds and removes province visuals to match given [Provinces].
 
-var provinces: Provinces:
+var provinces := Provinces.new():
 	set(value):
+		_disconnect_signals()
 		provinces = value
-		_initialize()
+		_update()
 
-## The province visuals will become children of this node.
-@export var container: Node2D
-
-## The scene's root node must extend [ProvinceVisuals2D].
-@export var _province_visuals_scene: PackedScene
+@onready var _province_selection := %ProvinceSelection as ProvinceSelection
+@onready var _container := %Provinces as ProvinceVisualsContainer2D
 
 
-func _initialize() -> void:
+func _ready() -> void:
+	_update()
+
+
+func _update() -> void:
+	if not is_node_ready():
+		return
+
+	_container.clear()
 	for province in provinces.list():
-		_add_province(province)
+		_container.add_province(province)
+
+	_connect_signals()
 
 
-func _add_province(province: Province) -> void:
-	var new_province_visuals := (
-			_province_visuals_scene.instantiate() as ProvinceVisuals2D
-	)
-	new_province_visuals.province = province
-	container.add_child(new_province_visuals)
+func _connect_signals() -> void:
+	provinces.added.connect(_container.add_province)
+	provinces.removed.connect(_province_selection.deselect_province)
+	provinces.removed.connect(_container.remove_province)
+
+
+func _disconnect_signals() -> void:
+	if not is_node_ready():
+		return
+
+	provinces.added.disconnect(_container.add_province)
+	provinces.removed.disconnect(_province_selection.deselect_province)
+	provinces.removed.disconnect(_container.remove_province)

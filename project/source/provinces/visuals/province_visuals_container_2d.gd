@@ -1,16 +1,16 @@
 class_name ProvinceVisualsContainer2D
 extends Node2D
-## Parent node for all of a game's [ProvinceVisuals2D].
-# TODO this class is ugly and confusing
+## An encapsulated list of [ProvinceVisuals2D].
 
+# TODO these signals are ugly and confusing
 signal province_selected(province_visuals: ProvinceVisuals2D)
-
 signal province_mouse_entered(province_visuals: ProvinceVisuals2D)
 signal province_mouse_exited(province_visuals: ProvinceVisuals2D)
-
 signal unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 )
+
+const _PROVINCE_VISUALS_SCENE := preload("uid://cppfb8jwghnqt") as PackedScene
 
 ## A list of all the child nodes, for easy access.
 var _list: Array[ProvinceVisuals2D] = []
@@ -19,11 +19,51 @@ var _list: Array[ProvinceVisuals2D] = []
 var _province_map: Dictionary[int, ProvinceVisuals2D] = {}
 
 
-func _ready() -> void:
-	child_entered_tree.connect(_on_child_entered_tree)
+## No effect if the province already has visuals.
+func add_province(province: Province) -> void:
+	if _province_map.has(province.id):
+		return
+
+	var province_visuals := (
+			_PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
+	)
+	province_visuals.province = province
+
+	_list.append(province_visuals)
+	_province_map[province.id] = province_visuals
+
+	province_visuals.unhandled_mouse_event_occured.connect(
+			unhandled_mouse_event_occured.emit
+	)
+	province_visuals.mouse_entered.connect(
+			province_mouse_entered.emit.bind(province_visuals)
+	)
+	province_visuals.mouse_exited.connect(
+			province_mouse_exited.emit.bind(province_visuals)
+	)
+
+	add_child(province_visuals)
 
 
-## Returns null if there are no visuals for given id.
+## No effect if the province didn't have visuals.
+func remove_province(province: Province) -> void:
+	if not _province_map.has(province.id):
+		return
+	var province_visuals: ProvinceVisuals2D = _province_map[province.id]
+	_province_map.erase(province.id)
+	_list.erase(province_visuals)
+	remove_child(province_visuals)
+	province_visuals.queue_free()
+
+
+## Removes all province visuals.
+func clear() -> void:
+	NodeUtils.remove_all_children(self)
+	_list = []
+	_province_map = {}
+
+
+## Returns null if given province doesn't have visuals.
 func visuals_of(province_id: int) -> ProvinceVisuals2D:
 	if _province_map.has(province_id):
 		return _province_map[province_id]
@@ -38,39 +78,17 @@ func links_of(province: Province) -> Array[ProvinceVisuals2D]:
 	return output
 
 
-func _on_child_entered_tree(node: Node) -> void:
-	if node is not ProvinceVisuals2D:
-		return
-
-	var province_visuals := node as ProvinceVisuals2D
-
-	_list.append(province_visuals)
-	_province_map[province_visuals.province.id] = province_visuals
-
-	province_visuals.unhandled_mouse_event_occured.connect(
-			_on_unhandled_province_mouse_event
-	)
-	province_visuals.mouse_entered.connect(
-			func() -> void: province_mouse_entered.emit(province_visuals)
-	)
-	province_visuals.mouse_exited.connect(
-			func() -> void: province_mouse_exited.emit(province_visuals)
-	)
-
-
-func _on_unhandled_province_mouse_event(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-) -> void:
-	unhandled_mouse_event_occured.emit(event, province_visuals)
-
-
 func _on_province_selected(province: Province) -> void:
+	if not _province_map.has(province.id):
+		return
 	var visuals: ProvinceVisuals2D = _province_map[province.id]
 	visuals.select()
 	province_selected.emit(visuals)
 
 
 func _on_province_deselected(province: Province) -> void:
+	if not _province_map.has(province.id):
+		return
 	var visuals: ProvinceVisuals2D = _province_map[province.id]
 	visuals.deselect()
 

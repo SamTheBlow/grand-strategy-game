@@ -3,9 +3,6 @@ extends Node2D
 ## Creates new [AutoArrowsNode2D]s and adds them as children.
 ## Provides utility functions.
 
-@export var province_visuals_container: ProvinceVisualsContainer2D
-@export var province_selection: ProvinceSelection
-
 var playing_country := PlayingCountry.new(GameTurn.new(Game.new())):
 	set(value):
 		playing_country = value
@@ -20,6 +17,9 @@ var countries := Countries.new():
 
 ## Maps each country to its associated node.
 var _list: Dictionary[Country, AutoArrowsNode2D] = {}
+
+@onready var _province_selection := %ProvinceSelection as ProvinceSelection
+@onready var _provinces_container := %Provinces as ProvinceVisualsContainer2D
 
 
 func _ready() -> void:
@@ -49,9 +49,9 @@ func _update() -> void:
 
 func _create_arrows_node(country: Country) -> void:
 	var new_node := AutoArrowsNode2D.new()
-	new_node.province_visuals_container = province_visuals_container
+	new_node.province_visuals_container = _provinces_container
 	new_node.auto_arrows = country.auto_arrows
-	new_node.init(playing_country, province_selection)
+	new_node.init(playing_country, _province_selection)
 
 	add_child(new_node)
 	_list[country] = new_node

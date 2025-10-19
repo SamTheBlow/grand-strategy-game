@@ -3,39 +3,36 @@ extends Node
 ## Creates an [ArmyVisuals2D] for each army in given [Armies].
 ## Assigns those army visuals to the correct [ProvinceVisuals2D].
 
-## Make sure to set this before setting armies...
+## The scene's root node must extend [ArmyVisuals2D].
+const _ARMY_VISUALS_SCENE := preload("uid://eso260jnknd4") as PackedScene
+
 var playing_country: PlayingCountry
 
-var armies: Armies:
+var armies := Armies.new():
 	set(value):
 		_disconnect_signals()
 		armies = value
-		_initialize()
+		_update()
 
-@export var _provinces_container: ProvinceVisualsContainer2D
-
-## The scene's root node must extend [ArmyVisuals2D].
-@export var _army_visuals_scene: PackedScene
+@onready var _provinces_container := %Provinces as ProvinceVisualsContainer2D
 
 
-func _disconnect_signals() -> void:
-	if armies == null:
+func _ready() -> void:
+	_update()
+
+
+func _update() -> void:
+	if not is_node_ready():
 		return
 
-	if armies.army_added.is_connected(_on_army_added):
-		armies.army_added.disconnect(_on_army_added)
-
-
-func _initialize() -> void:
 	for army in armies.list():
 		_add_army(army)
 
-	if not armies.army_added.is_connected(_on_army_added):
-		armies.army_added.connect(_on_army_added)
+	_connect_signals()
 
 
 func _add_army(army: Army) -> void:
-	var new_army_visuals := _army_visuals_scene.instantiate() as ArmyVisuals2D
+	var new_army_visuals := _ARMY_VISUALS_SCENE.instantiate() as ArmyVisuals2D
 	new_army_visuals.army = army
 	new_army_visuals.playing_country = playing_country
 
@@ -47,6 +44,16 @@ func _add_army(army: Army) -> void:
 
 	# TODO bad code: private function
 	armies.army_removed.connect(new_army_visuals._on_army_removed)
+
+
+func _connect_signals() -> void:
+	armies.army_added.connect(_on_army_added)
+
+
+func _disconnect_signals() -> void:
+	if not is_node_ready():
+		return
+	armies.army_added.disconnect(_on_army_added)
 
 
 func _on_army_added(army: Army) -> void:

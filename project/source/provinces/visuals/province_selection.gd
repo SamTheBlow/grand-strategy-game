@@ -28,5 +28,12 @@ var selected_province: Province:
 		selected_province_changed.emit(selected_province)
 
 
-func deselect_province() -> void:
+## Optionally, you may provide a specific province to deselect.
+## No effect if that province is not selected.
+func deselect_province(province_to_deselect: Province = null) -> void:
+	if (
+			province_to_deselect != null
+			and selected_province != province_to_deselect
+	):
+		return
 	selected_province = null
