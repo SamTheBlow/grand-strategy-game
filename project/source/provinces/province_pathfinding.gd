@@ -49,18 +49,28 @@ func generate(destinations: Array[Province]) -> void:
 		# Extend the branches to look for provinces further away.
 		var new_link_branches: Array[LinkBranch] = []
 		for link_branch in link_branches:
-			var next_links: Array[Province] = link_branch.furthest_link().links
-			for next_link in next_links:
-				if already_pathed_provinces.has(next_link):
+			for next_link_id in (
+					link_branch.furthest_link().linked_province_ids()
+			):
+				var next_linked_province: Province = (
+						_provinces.province_from_id(next_link_id)
+				)
+				if next_linked_province == null:
+					push_error("Linked province is null.")
 					continue
 
-				paths[next_link].list.append(link_branch)
-
-				if found_provinces.has(next_link):
+				if already_pathed_provinces.has(next_linked_province):
 					continue
 
-				new_link_branches.append(link_branch.extended_with(next_link))
-				found_provinces[next_link] = 1
+				paths[next_linked_province].list.append(link_branch)
+
+				if found_provinces.has(next_linked_province):
+					continue
+
+				new_link_branches.append(
+						link_branch.extended_with(next_linked_province)
+				)
+				found_provinces[next_linked_province] = 1
 				is_not_stuck = true
 
 		# Only keep branches that are still finding new provinces.

@@ -9,16 +9,11 @@ class_name Province
 signal owner_changed(this: Province)
 signal position_changed(this: Province)
 
-## The unique id assigned to this province.
-## Each province has its own id. Useful for saving/loading, networking, etc.
+## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
 ## This province's name.
 var name: String = ""
-
-## A list of all the provinces that are
-## neighboring this province, e.g. when moving armies.
-var links: Array[Province] = []
 
 ## The [Country] in control of this province. This can be null.
 ## Must initialize when the province is created.
@@ -56,6 +51,10 @@ var position_army_host: Vector2:
 ## (This property is automatically determined when setting _position_army_host.)
 var position_fortress: Vector2
 
+## A list of IDs for all the provinces that are
+## neighboring this province, e.g. when moving armies.
+var _linked_province_ids: Array[int] = []
+
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
@@ -86,8 +85,14 @@ func income_money() -> IncomeMoney:
 	return _income_money
 
 
-func is_linked_to(province: Province) -> bool:
-	return links.has(province)
+## Returns a list of all the provinces linked to this province.
+## Feel free to edit the list.
+func linked_province_ids() -> Array[int]:
+	return _linked_province_ids
+
+
+func is_linked_to(province_id: int) -> bool:
+	return _linked_province_ids.has(province_id)
 
 
 ## Returns true if all the following conditions are met:
@@ -95,18 +100,26 @@ func is_linked_to(province: Province) -> bool:
 ## - This province is not unclaimed.
 ## - At least one of this province's links is either unclaimed or
 ##   under control of a country which given country cannot move into.
-func is_frontline(country: Country) -> bool:
+func is_frontline(country: Country, provinces: Provinces) -> bool:
 	if not country.has_permission_to_move_into_country(owner_country):
 		return false
 
 	if owner_country == null:
 		return false
 
-	for link in links:
+	for linked_province_id in _linked_province_ids:
+		var linked_province: Province = (
+				provinces.province_from_id(linked_province_id)
+		)
+		if linked_province == null:
+			push_error("Linked province doesn't exist.")
+			continue
+
 		if (
-				link.owner_country == null
-				or not country
-				.has_permission_to_move_into_country(link.owner_country)
+				linked_province.owner_country == null
+				or not country.has_permission_to_move_into_country(
+						linked_province.owner_country
+				)
 		):
 			return true
 
@@ -118,19 +131,26 @@ func is_frontline(country: Country) -> bool:
 ## - This province is not unclaimed.
 ## - At least one of this province's links is either unclaimed or
 ##   under control of a country which given country is currently fighting.
-func is_war_frontline(country: Country) -> bool:
+func is_war_frontline(country: Country, provinces: Provinces) -> bool:
 	if not country.has_permission_to_move_into_country(owner_country):
 		return false
 
 	if owner_country == null:
 		return false
 
-	for link in links:
+	for linked_province_id in _linked_province_ids:
+		var linked_province: Province = (
+				provinces.province_from_id(linked_province_id)
+		)
+		if linked_province == null:
+			push_error("Linked province doesn't exist.")
+			continue
+
 		if (
-				link.owner_country == null
+				linked_province.owner_country == null
 				or
 				country.relationships
-				.with_country(link.owner_country).is_fighting()
+				.with_country(linked_province.owner_country).is_fighting()
 		):
 			return true
 
@@ -145,10 +165,11 @@ func is_war_frontline(country: Country) -> bool:
 ## The filter lets you get the nearest province that fulfills
 ## specific conditions. (e.g. "the nearest province that you own")
 func nearest_provinces(
+		provinces: Provinces,
 		province_filter: Callable = (
 				func(_province: Province) -> bool: return true
 		)
 ) -> Array[Province]:
 	var calculation := NearestProvinces.new()
-	calculation.calculate(self, province_filter)
+	calculation.calculate(self, provinces, province_filter)
 	return calculation.furthest_links

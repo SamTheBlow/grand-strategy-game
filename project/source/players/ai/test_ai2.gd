@@ -40,16 +40,25 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		var army_size: int = _army_size(
 				armies.in_province(province), true, player.playing_country
 		)
-		for link in province.links:
-			if link.owner_country == player.playing_country:
+		for link_id in province.linked_province_ids():
+			var linked_province: Province = (
+					game.world.provinces.province_from_id(link_id)
+			)
+			if linked_province == null:
+				push_error("Linked province is null.")
+				continue
+
+			if linked_province.owner_country == player.playing_country:
 				continue
 			var enemy_army_size: int = _army_size(
-					armies.in_province(link), false, player.playing_country
+					armies.in_province(linked_province),
+					false,
+					player.playing_country
 			)
 
 			var danger: float = enemy_army_size / (army_size + 0.01)
 			# Reduce penalty when there's a fortress
-			if link.buildings.list().size() > 0:
+			if linked_province.buildings.list().size() > 0:
 				danger *= 0.5
 			# Amplify penalty in extreme cases
 			danger **= 2.0
@@ -57,7 +66,9 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			danger_level += minf(danger, 5.0)
 
 		# Give priority to the war frontline
-		if province.is_war_frontline(player.playing_country):
+		if province.is_war_frontline(
+				player.playing_country, game.world.provinces
+		):
 			danger_level *= 3.0
 
 		danger_levels[province] = danger_level
@@ -80,14 +91,22 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
-			for link in province.links:
+			for link_id in province.linked_province_ids():
+				var linked_province: Province = (
+						game.world.provinces.province_from_id(link_id)
+				)
+				if linked_province == null:
+					push_error("Linked province is null.")
+					continue
+
 				if (
-						link.owner_country != player.playing_country
+						linked_province.owner_country != player.playing_country
 						and
 						province.owner_country.relationships
-						.with_country(link.owner_country).is_trespassing()
+						.with_country(linked_province.owner_country)
+						.is_trespassing()
 				):
-					hostile_links.append(link)
+					hostile_links.append(linked_province)
 
 			# If there is only one, then it's safe to full send.
 			if hostile_links.size() == 1:
@@ -197,7 +216,11 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 			)
 		else:
 			_move_towards_frontlines(
-					result, army, danger_levels, player.playing_country
+					result,
+					army,
+					danger_levels,
+					player.playing_country,
+					game.world.provinces
 			)
 
 	return result
@@ -212,14 +235,15 @@ func _move_towards_frontlines(
 		result: Array[Action],
 		army: Army,
 		danger_levels: Dictionary[Province, float],
-		playing_country: Country
+		playing_country: Country,
+		provinces: Provinces
 ) -> void:
 	var province_filter: Callable = (
 			func(province: Province) -> bool:
-				return province.is_frontline(playing_country)
+				return province.is_frontline(playing_country, provinces)
 	)
 	var frontline_calculation := NearestProvinces.new()
-	frontline_calculation.calculate(army.province(), province_filter)
+	frontline_calculation.calculate(army.province(), provinces, province_filter)
 
 	if frontline_calculation.size == 0:
 		return

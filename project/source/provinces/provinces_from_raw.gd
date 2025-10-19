@@ -35,8 +35,6 @@ const BUILDING_TYPE_FORTRESS: String = "fortress"
 
 
 static func parse_using(raw_data: Variant, game: Game) -> void:
-	game.world.provinces.reset()
-
 	if raw_data is not Array:
 		return
 	var raw_array: Array = raw_data
@@ -44,38 +42,15 @@ static func parse_using(raw_data: Variant, game: Game) -> void:
 	for province_data: Variant in raw_array:
 		_parse_province(province_data, game)
 
-	# Province links (needs to be done in a 2nd loop)
-	for province_data: Variant in raw_array:
-		if province_data is not Dictionary:
-			continue
-		var province_dict: Dictionary = province_data
-
-		# Get the province
-		if not ParseUtils.dictionary_has_number(province_dict, PROVINCE_ID_KEY):
-			continue
-		var id: int = ParseUtils.dictionary_int(province_dict, PROVINCE_ID_KEY)
-		var province: Province = game.world.provinces.province_from_id(id)
-		if province == null:
-			continue
-
-		# Get the links data
-		var raw_links: Array = []
-		if ParseUtils.dictionary_has_array(province_dict, PROVINCE_LINKS_KEY):
-			raw_links = province_dict[PROVINCE_LINKS_KEY]
-
-		# Parse the links data
-		for link_data: Variant in raw_links:
-			if not ParseUtils.is_number(link_data):
-				continue
-			var link_id: int = ParseUtils.number_as_int(link_data)
-
-			var link_province: Province = (
-					game.world.provinces.province_from_id(link_id)
-			)
-			if link_province == null:
-				continue
-
-			province.links.append(link_province)
+	# Validate province links (needs to be done after all provinces are loaded)
+	for province in game.world.provinces._list:
+		var link_list: Array[int] = province.linked_province_ids().duplicate()
+		for linked_province_id in link_list:
+			if (
+					game.world.provinces
+					.province_from_id(linked_province_id) == null
+			):
+				province.linked_province_ids().erase(linked_province_id)
 
 
 static func _parse_province(raw_data: Variant, game: Game) -> void:
@@ -89,14 +64,24 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 	var id: int = ParseUtils.dictionary_int(raw_dict, PROVINCE_ID_KEY)
 
 	# The id must be valid and available.
-	if not game.world.provinces.id_system().is_id_available(id):
+	if not game.world.provinces._unique_id_system.is_id_available(id):
 		return
 
 	var province := Province.new()
+	province.id = id
 
 	# Name
 	if ParseUtils.dictionary_has_string(raw_dict, PROVINCE_NAME_KEY):
 		province.name = raw_dict[PROVINCE_NAME_KEY]
+
+	# Links
+	if ParseUtils.dictionary_has_array(raw_dict, PROVINCE_LINKS_KEY):
+		var links_array: Array = raw_dict[PROVINCE_LINKS_KEY]
+		for link_data: Variant in links_array:
+			if ParseUtils.is_number(link_data):
+				province.linked_province_ids().append(
+						ParseUtils.number_as_int(link_data)
+				)
 
 	# Shape
 	province.polygon = _parsed_province_shape(raw_dict.get(PROVINCE_SHAPE_KEY))
@@ -147,7 +132,7 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 			)
 		province._income_money = IncomeMoneyConstant.new(base_income)
 
-	game.world.provinces.add_province(province, id)
+	game.world.provinces.add(province)
 	province.add_component(ArmyReinforcements.new(game, province))
 	province.add_component(IncomeEachTurn.new(province, game.turn.turn_changed))
 	province.add_component(ProvinceOwnershipUpdate.new(

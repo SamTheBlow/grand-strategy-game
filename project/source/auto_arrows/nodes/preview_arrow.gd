@@ -42,7 +42,7 @@ func _is_right_click_just_released(event: InputEventMouseButton) -> bool:
 
 ## Snaps the arrow to the province when applicable.
 func _on_province_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
-	if province_visuals.province.is_linked_to(source_province.province):
+	if province_visuals.province.is_linked_to(source_province.province.id):
 		destination_province = province_visuals
 
 

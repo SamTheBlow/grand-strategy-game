@@ -39,7 +39,7 @@ func _add_element(province: Province) -> void:
 
 func _on_add_button_pressed() -> void:
 	var new_item := Province.new()
-	provinces.add_province(new_item)
+	provinces.add(new_item)
 	_add_element(new_item)
 
 

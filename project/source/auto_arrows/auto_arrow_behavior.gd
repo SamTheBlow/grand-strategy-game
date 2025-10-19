@@ -21,7 +21,7 @@ static func apply(game: Game) -> void:
 		)
 		if destination_province == null:
 			continue
-		if not source_province.is_linked_to(destination_province):
+		if not source_province.is_linked_to(destination_province.id):
 			continue
 
 		if not arrow_destinations.has(source_province):

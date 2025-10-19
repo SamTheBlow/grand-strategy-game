@@ -112,7 +112,9 @@ func _teleport_armies_out(
 						province.owner_country
 				)
 			var nearest_provinces: Array[Province] = (
-					affected_province.nearest_provinces(province_filter)
+					affected_province.nearest_provinces(
+							_game.world.provinces, province_filter
+					)
 			)
 
 			if nearest_provinces.size() == 0:

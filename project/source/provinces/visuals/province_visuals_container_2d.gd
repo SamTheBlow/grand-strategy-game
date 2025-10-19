@@ -33,8 +33,8 @@ func visuals_of(province_id: int) -> ProvinceVisuals2D:
 ## Returns the visuals for each of given [Province]'s linked provinces.
 func links_of(province: Province) -> Array[ProvinceVisuals2D]:
 	var output: Array[ProvinceVisuals2D] = []
-	for linked_province in province.links:
-		output.append(_province_map[linked_province.id])
+	for linked_province_id in province.linked_province_ids():
+		output.append(_province_map[linked_province_id])
 	return output
 
 

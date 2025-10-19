@@ -28,8 +28,8 @@ func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
 
 	for province in game.world.provinces.list():
-		var destination_provinces: Array[Province] = (
-				_destination_provinces(province, player.playing_country)
+		var destination_provinces: Array[Province] = _destination_provinces(
+				province, player.playing_country, game.world.provinces
 		)
 		var armies_in_province: Array[Army] = (
 				game.world.armies_in_each_province.in_province(province).list
@@ -145,7 +145,9 @@ func _new_movement_actions(
 
 
 func _destination_provinces(
-		source_province: Province, playing_country: Country
+		source_province: Province,
+		playing_country: Country,
+		provinces: Provinces
 ) -> Array[Province]:
 	var province_filter: Callable = (
 			func(province: Province) -> bool:
@@ -160,6 +162,6 @@ func _destination_provinces(
 
 	var destination_provinces: Array[Province] = [source_province]
 	var calculation := NearestProvinces.new()
-	calculation.calculate(source_province, province_filter)
+	calculation.calculate(source_province, provinces, province_filter)
 	destination_provinces.append_array(calculation.first_links)
 	return destination_provinces

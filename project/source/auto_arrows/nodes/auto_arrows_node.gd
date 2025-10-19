@@ -83,7 +83,7 @@ func _add(auto_arrow: AutoArrow) -> void:
 		return
 	if (
 			not source_province_visuals.province
-			.is_linked_to(destination_province_visuals.province)
+			.is_linked_to(destination_province_visuals.province.id)
 	):
 		return
 

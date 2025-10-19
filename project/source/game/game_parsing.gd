@@ -143,13 +143,11 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 		})
 
 		# Links
-		if not province.links.is_empty():
-			var links_json: Array = []
-			for link in province.links:
-				links_json.append(link.id)
-			province_data.merge(
-					{ ProvincesFromRaw.PROVINCE_LINKS_KEY: links_json }
-			)
+		if not province.linked_province_ids().is_empty():
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_LINKS_KEY:
+					Array(province.linked_province_ids().duplicate())
+			})
 
 		# Shape
 		if not province.polygon.is_empty():

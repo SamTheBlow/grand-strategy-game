@@ -122,7 +122,7 @@ func is_able_to_move() -> bool:
 ## This returns true regardless of if the army is able to move at all.
 func can_move_to(destination: Province) -> bool:
 	return (
-			destination.is_linked_to(_province)
+			destination.is_linked_to(_province.id)
 			and owner_country.can_move_into_country(destination.owner_country)
 	)
 

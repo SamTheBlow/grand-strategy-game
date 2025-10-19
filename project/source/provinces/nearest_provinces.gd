@@ -14,10 +14,10 @@ var furthest_links: Array[Province] = []
 
 ## The filter must take one input of type Province and must return a boolean.
 func calculate(
-		province: Province, province_filter: Callable
+		province: Province, provinces: Provinces, province_filter: Callable
 ) -> void:
 	var link_branches: Array[LinkBranch] = (
-			_generated_link_branches(province, province_filter)
+			_generated_link_branches(province, provinces, province_filter)
 	)
 	size = link_branches.size()
 	first_links = []
@@ -28,20 +28,27 @@ func calculate(
 
 
 func _generated_link_branches(
-		province: Province, filter: Callable,
+		province: Province, provinces: Provinces, filter: Callable,
 ) -> Array[LinkBranch]:
 	var is_not_stuck: bool = true
 
 	# Keep track of which provinces have already been searched.
 	# We use dictionaries for performance.
-	var already_searched_provinces: Dictionary = {}
+	var already_searched_provinces: Dictionary[Province, int] = {}
 
 	var link_branches: Array[LinkBranch] = []
-	for link in province.links:
+	for linked_province_id in province.linked_province_ids():
+		var linked_province: Province = (
+				provinces.province_from_id(linked_province_id)
+		)
+		if linked_province == null:
+			push_error("Linked province is null.")
+			continue
+
 		var link_branch := LinkBranch.new()
-		link_branch.link_chain = [link]
+		link_branch.link_chain = [linked_province]
 		link_branches.append(link_branch)
-		already_searched_provinces[link] = 1
+		already_searched_provinces[linked_province] = 1
 
 	while is_not_stuck:
 		# Get a list of all the branches that pass the filter.
@@ -62,13 +69,23 @@ func _generated_link_branches(
 		# Extend the branches to look for provinces further away.
 		var new_link_branches: Array[LinkBranch] = []
 		for link_branch in link_branches:
-			var next_links: Array[Province] = link_branch.furthest_link().links
-			for next_link in next_links:
-				if already_searched_provinces.has(next_link):
+			for next_link_id in (
+					link_branch.furthest_link().linked_province_ids()
+			):
+				var next_linked_province: Province = (
+						provinces.province_from_id(next_link_id)
+				)
+				if next_linked_province == null:
+					push_error("Linked province is null.")
 					continue
 
-				new_link_branches.append(link_branch.extended_with(next_link))
-				already_searched_provinces[next_link] = 1
+				if already_searched_provinces.has(next_linked_province):
+					continue
+
+				new_link_branches.append(
+						link_branch.extended_with(next_linked_province)
+				)
+				already_searched_provinces[next_linked_province] = 1
 				is_not_stuck = true
 
 		# Only keep branches that are still finding new provinces.
