@@ -59,10 +59,6 @@ var _linked_province_ids: Array[int] = []
 ## this province generates per [GameTurn].
 var _income_money: IncomeMoney
 
-## Add to this array any object that you want to keep in scope
-## for as long as this province is in scope.
-var _components: Array = []
-
 
 ## The default name this province would have if it didn't have a name.
 func default_name() -> String:
@@ -75,10 +71,6 @@ func name_or_default() -> String:
 		return name
 	else:
 		return default_name()
-
-
-func add_component(object: Object) -> void:
-	_components.append(object)
 
 
 func income_money() -> IncomeMoney:

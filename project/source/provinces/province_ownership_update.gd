@@ -1,26 +1,35 @@
 class_name ProvinceOwnershipUpdate
-## Updates given [Province]'s owner country at the end of each player's turn.
-## Once it is determined, it is applied immediately.
+## Updates the owner country of each province at the end of each player's turn.
 
-var _armies_in_province: ArmiesInProvince
-var _province: Province
+## Effect does not trigger while disabled.
+var is_enabled: bool = false:
+	set(value):
+		if value == is_enabled:
+			return
+		is_enabled = value
+		if is_enabled:
+			_game.turn.player_turn_ended.connect(_on_player_turn_ended)
+		else:
+			_game.turn.player_turn_ended.disconnect(_on_player_turn_ended)
+
+var _game: Game
 
 
-func _init(
-		province: Province,
-		armies_in_province: ArmiesInProvince,
-		player_turn_ended: Signal
-) -> void:
-	_province = province
-	_armies_in_province = armies_in_province
-	player_turn_ended.connect(_on_player_turn_ended)
+func _init(game: Game) -> void:
+	_game = game
+	is_enabled = true
 
 
 func _update_ownership() -> void:
-	var current_owner: Country = _province.owner_country
+	for province in _game.world.provinces.list():
+		_update_ownership_of(province)
+
+
+func _update_ownership_of(province: Province) -> void:
+	var current_owner: Country = province.owner_country
 	var new_owner: Country = current_owner
 
-	for army in _armies_in_province.list:
+	for army in _game.world.armies_in_each_province.in_province(province).list:
 		# If the current owner has an army here,
 		# then the province can't be taken by someone else.
 		if army.owner_country == current_owner:
@@ -43,7 +52,7 @@ func _update_ownership() -> void:
 
 		new_owner = army.owner_country
 
-	_province.owner_country = new_owner
+	province.owner_country = new_owner
 
 
 func _on_player_turn_ended(_player: GamePlayer) -> void:

@@ -134,13 +134,6 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 		province._income_money = IncomeMoneyConstant.new(base_income)
 
 	game.world.provinces.add(province)
-	province.add_component(ArmyReinforcements.new(game, province))
-	province.add_component(IncomeEachTurn.new(province, game.turn.turn_changed))
-	province.add_component(ProvinceOwnershipUpdate.new(
-			province,
-			game.world.armies_in_each_province.in_province(province),
-			game.turn.player_turn_ended
-	))
 
 
 static func _parsed_province_shape(raw_data: Variant) -> PackedVector2Array:

@@ -1,22 +1,34 @@
 class_name ArmyReinforcements
-## Adds troops in given [Province] according to the [GameRules]
+## Adds troops in each province according to the [GameRules]
 ## at the start of each turn. Creates a new [Army] if needed.
 
+## Effect does not trigger while disabled.
+var is_enabled: bool = false:
+	set(value):
+		if value == is_enabled:
+			return
+		is_enabled = value
+		if is_enabled:
+			_game.turn.turn_changed.connect(_on_turn_changed)
+		else:
+			_game.turn.turn_changed.disconnect(_on_turn_changed)
+
 var _game: Game
-var _province: Province
 
 
-func _init(game: Game, province: Province) -> void:
+func _init(game: Game) -> void:
 	_game = game
-	_province = province
-
-	_game.turn.turn_changed.connect(_on_new_turn)
+	is_enabled = true
 
 
-func _reinforce_province() -> void:
+func _reinforce_provinces() -> void:
+	for province in _game.world.provinces.list():
+		_reinforce_province(province)
+
+
+func _reinforce_province(province: Province) -> void:
 	if (
-			_province == null
-			or _province.owner_country == null
+			province.owner_country == null
 			or not _game.rules.reinforcements_enabled.value
 	):
 		return
@@ -34,7 +46,7 @@ func _reinforce_province() -> void:
 			)
 		GameRules.ReinforcementsOption.POPULATION:
 			reinforcements_size = floori(
-					_province.population.population_size
+					province.population.population_size
 					* _game.rules.reinforcements_per_person.value
 			)
 		_:
@@ -46,9 +58,9 @@ func _reinforce_province() -> void:
 	# Creating new armies is bad for performance.
 	# It's better to directly increase an existing army's size.
 	for army: Army in (
-			_game.world.armies_in_each_province.in_province(_province).list
+			_game.world.armies_in_each_province.in_province(province).list
 	):
-		if army.owner_country != _province.owner_country:
+		if army.owner_country != province.owner_country:
 			continue
 
 		army.army_size.add(reinforcements_size)
@@ -58,12 +70,12 @@ func _reinforce_province() -> void:
 	Army.quick_setup(
 			_game,
 			reinforcements_size,
-			_province.owner_country,
-			_province,
+			province.owner_country,
+			province,
 			-1,
 			1
 	)
 
 
-func _on_new_turn(_turn: int) -> void:
-	_reinforce_province()
+func _on_turn_changed(_turn: int) -> void:
+	_reinforce_provinces()

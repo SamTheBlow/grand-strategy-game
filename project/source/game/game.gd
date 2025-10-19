@@ -64,7 +64,12 @@ func _init() -> void:
 
 	modifier_request.add_provider(self)
 
-	_components.append(AutoArrowProvinceReaction.new(self))
+	_components.append_array([
+		AutoArrowProvinceReaction.new(self),
+		ArmyReinforcements.new(self),
+		IncomeEachTurn.new(self),
+		ProvinceOwnershipUpdate.new(self),
+	])
 
 
 ## Call this when you're ready to start the game loop.
