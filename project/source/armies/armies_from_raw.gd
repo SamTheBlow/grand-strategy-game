@@ -59,7 +59,7 @@ static func _parse_army(raw_data: Variant, game: Game) -> void:
 
 	# Province (optional, defaults to no province)
 	var province_id: int = -1
-	if not ParseUtils.dictionary_has_number(raw_dict, ARMY_PROVINCE_ID_KEY):
+	if ParseUtils.dictionary_has_number(raw_dict, ARMY_PROVINCE_ID_KEY):
 		province_id = ParseUtils.dictionary_int(raw_dict, ARMY_PROVINCE_ID_KEY)
 
 	# Movements made (optional, defaults to 0)
