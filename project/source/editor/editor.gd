@@ -200,7 +200,7 @@ func _open_interface(type: EditingInterface.InterfaceType) -> void:
 
 	# Deselect province
 	if _world_setup.world() != null:
-		_world_setup.world().province_selection.deselect_province()
+		_world_setup.world().province_selection.deselect()
 
 	_editing_interface.open_new_interface(
 			type, _current_project, editor_settings
@@ -296,10 +296,10 @@ func _on_selected_province_changed(province: Province) -> void:
 func _on_province_interface_opened(province: Province) -> void:
 	# Select province
 	if _world_setup.world() != null:
-		_world_setup.world().province_selection.selected_province = province
+		_world_setup.world().province_selection.select(province.id)
 
 
 func _on_province_interface_closed() -> void:
 	# Deselect province
 	if _world_setup.world() != null:
-		_world_setup.world().province_selection.deselect_province()
+		_world_setup.world().province_selection.deselect()

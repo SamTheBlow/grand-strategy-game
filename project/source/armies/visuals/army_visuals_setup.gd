@@ -6,13 +6,9 @@ extends Node
 ## The scene's root node must extend [ArmyVisuals2D].
 const _ARMY_VISUALS_SCENE := preload("uid://eso260jnknd4") as PackedScene
 
-var playing_country: PlayingCountry
-
-var armies := Armies.new():
-	set(value):
-		_disconnect_signals()
-		armies = value
-		_update()
+var _is_setup: bool = false
+var _armies: Armies
+var _playing_country: PlayingCountry
 
 ## Each army mapped to its visuals.
 var _map: Dictionary[Army, ArmyVisuals2D] = {}
@@ -22,17 +18,27 @@ var _armies_with_no_visuals: Array[Army] = []
 
 
 func _ready() -> void:
-	_update()
+	if _is_setup:
+		_update()
+
+
+func setup(armies: Armies, playing_country: PlayingCountry) -> void:
+	if _is_setup and is_node_ready():
+		_disconnect_signals()
+
+	_armies = armies
+	_playing_country = playing_country
+
+	_is_setup = true
+
+	if is_node_ready():
+		_update()
 
 
 func _update() -> void:
-	if not is_node_ready():
-		return
-
 	_remove_all_armies()
 
-	# Add new armies
-	for army in armies.list():
+	for army in _armies.list():
 		_add_army(army)
 
 	_connect_signals()
@@ -99,7 +105,7 @@ func _assign_to_province(army: Army) -> void:
 func _new_army_visuals(army: Army) -> ArmyVisuals2D:
 	var new_army_visuals := _ARMY_VISUALS_SCENE.instantiate() as ArmyVisuals2D
 	new_army_visuals.army = army
-	new_army_visuals.playing_country = playing_country
+	new_army_visuals.playing_country = _playing_country
 	new_army_visuals.tree_exited.connect(_on_visuals_tree_exited.bind(army))
 	return new_army_visuals
 
@@ -123,15 +129,13 @@ func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
 
 
 func _connect_signals() -> void:
-	armies.army_added.connect(_add_army)
-	armies.army_removed.connect(_remove_army)
+	_armies.army_added.connect(_add_army)
+	_armies.army_removed.connect(_remove_army)
 
 
 func _disconnect_signals() -> void:
-	if not is_node_ready():
-		return
-	armies.army_added.disconnect(_add_army)
-	armies.army_removed.disconnect(_remove_army)
+	_armies.army_added.disconnect(_add_army)
+	_armies.army_removed.disconnect(_remove_army)
 
 
 ## If the army visuals are deleted from elsewhere,

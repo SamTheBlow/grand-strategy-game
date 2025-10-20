@@ -9,9 +9,6 @@ signal unhandled_mouse_event_occured(
 		event: InputEventMouse, this: ProvinceVisuals2D
 )
 
-signal selected(this: ProvinceVisuals2D)
-signal deselected()
-
 @export_group("Outline types")
 ## Outline used when no other outline is used.
 @export var _outline_none: OutlineSettings
@@ -55,17 +52,7 @@ func add_army(army_visuals: ArmyVisuals2D) -> void:
 	_army_stack.add_child(army_visuals)
 
 
-func select() -> void:
-	_highlight_selected()
-	selected.emit(self)
-
-
-func deselect() -> void:
-	remove_highlight()
-	deselected.emit()
-
-
-func _highlight_selected() -> void:
+func highlight_selected() -> void:
 	_outlined_polygon.outline_settings = _outline_selected
 
 

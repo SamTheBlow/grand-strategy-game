@@ -4,18 +4,12 @@ extends Node2D
 
 var world_decorations := WorldDecorations.new():
 	set(value):
-		if world_decorations == value:
-			return
-		if world_decorations != null:
-			if world_decorations.added.is_connected(_on_decoration_added):
-				world_decorations.added.disconnect(_on_decoration_added)
-			if world_decorations.removed.is_connected(_on_decoration_removed):
-				world_decorations.removed.disconnect(_on_decoration_removed)
-		world_decorations = value
-		if world_decorations != null:
-			world_decorations.added.connect(_on_decoration_added)
-			world_decorations.removed.connect(_on_decoration_removed)
-		_update()
+		if is_node_ready():
+			_disconnect_signals()
+			world_decorations = value
+			_update()
+		else:
+			world_decorations = value
 
 ## Maps a world decoration to its corresponding sprite.
 var _map: Dictionary[WorldDecoration, Sprite2D] = {}
@@ -26,11 +20,12 @@ func _ready() -> void:
 
 
 func _update() -> void:
-	if not is_node_ready():
-		return
 	_clear()
+
 	for decoration in world_decorations.list():
 		_add(decoration)
+
+	_connect_signals()
 
 
 func _add(decoration: WorldDecoration) -> void:
@@ -47,6 +42,16 @@ func _clear() -> void:
 	for decoration in _map:
 		decoration.changed.disconnect(_on_decoration_changed)
 	_map = {}
+
+
+func _connect_signals() -> void:
+	world_decorations.added.connect(_on_decoration_added)
+	world_decorations.removed.connect(_on_decoration_removed)
+
+
+func _disconnect_signals() -> void:
+	world_decorations.added.disconnect(_on_decoration_added)
+	world_decorations.removed.disconnect(_on_decoration_removed)
 
 
 func _on_decoration_added(decoration: WorldDecoration) -> void:

@@ -34,7 +34,7 @@ func _ready() -> void:
 func init(
 		playing_country: PlayingCountry, province_selection: ProvinceSelection
 ) -> void:
-	_on_selected_province_changed(province_selection.selected_province)
+	_on_selected_province_changed(province_selection.selected_province())
 	province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)

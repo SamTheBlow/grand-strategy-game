@@ -10,7 +10,6 @@ signal exited()
 
 @export_group("UI scenes")
 @export var troop_ui_scene: PackedScene
-@export var component_ui_scene: PackedScene
 @export var player_turn_scene: PackedScene
 @export var player_list_scene: PackedScene
 @export var popup_scene: PackedScene
@@ -71,7 +70,7 @@ var _player_assignment: PlayerAssignment
 
 @onready var _camera := %Camera as CustomCamera2D
 @onready var _ui_layer := %UILayer as CanvasLayer
-@onready var _component_ui_root := %ComponentUI as Control
+@onready var _component_ui_container := %ComponentUI as ComponentUIContainer
 @onready var _action_input := %ActionInput as ActionInput
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
@@ -88,9 +87,7 @@ func _ready() -> void:
 
 	world_visuals.project = project
 	world_visuals.world = game.world
-	world_visuals.province_visuals.province_selected.connect(
-			_on_province_selected
-	)
+
 	(%ProvinceSelectConditions as ProvinceSelectConditions).world_visuals = (
 			world_visuals
 	)
@@ -98,6 +95,18 @@ func _ready() -> void:
 	_camera.world_limits = project.settings.world_limits
 	(%BackgroundColor as BackgroundColor).background_color = (
 			project.settings.background_color
+	)
+
+	_component_ui_container.setup(
+			game,
+			world_visuals.province_visuals,
+			world_visuals.province_selection
+	)
+	_component_ui_container.button_pressed.connect(
+			_on_component_ui_button_pressed
+	)
+	_component_ui_container.country_button_pressed.connect(
+			_on_country_button_pressed
 	)
 
 	var networking_interface := (
@@ -260,42 +269,37 @@ func _on_province_select_attempted(
 		return
 
 	var selected_province: Province = (
-			world_visuals.province_selection.selected_province
+			world_visuals.province_selection.selected_province()
 	)
-	if selected_province != null:
-		var my_active_armies_in_province: Array[Army] = (
-				game.world.armies_in_each_province
-				.in_province(selected_province).list.duplicate()
-		)
-		for army: Army in my_active_armies_in_province.duplicate():
-			if not (
-					army.owner_country == you.playing_country
-					and army.is_able_to_move()
-			):
-				my_active_armies_in_province.erase(army)
+	if selected_province == null:
+		return
 
-		if my_active_armies_in_province.size() > 0:
-			# NOTE: assumes that countries only have
-			# one active army per province
-			var army: Army = my_active_armies_in_province[0]
-			if army.can_move_to(province):
-				_add_army_movement_popup(army, province)
-				outcome.is_selected = false
+	var my_active_armies_in_province: Array[Army] = (
+			game.world.armies_in_each_province
+			.in_province(selected_province).list.duplicate()
+	)
+	for army: Army in my_active_armies_in_province.duplicate():
+		if not (
+				army.owner_country == you.playing_country
+				and army.is_able_to_move()
+		):
+			my_active_armies_in_province.erase(army)
 
-
-func _on_province_selected(province_visuals: ProvinceVisuals2D) -> void:
-	var component_ui := component_ui_scene.instantiate() as ComponentUI
-	component_ui.game = game
-	component_ui.province_visuals = province_visuals
-	component_ui.button_pressed.connect(_on_component_ui_button_pressed)
-	component_ui.connect_country_button_pressed(_on_country_button_pressed)
-	_component_ui_root.add_child(component_ui)
+	if my_active_armies_in_province.size() > 0:
+		# NOTE: assumes that countries only have
+		# one active army per province
+		var army: Army = my_active_armies_in_province[0]
+		if army.can_move_to(province):
+			_add_army_movement_popup(army, province)
+			outcome.is_selected = false
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:
 	var selected_province: Province = (
-			world_visuals.province_selection.selected_province
+			world_visuals.province_selection.selected_province()
 	)
+	if selected_province == null:
+		return
 
 	# TODO bad code: hard coded values
 	match button_id:
@@ -341,13 +345,13 @@ func _on_end_turn_pressed() -> void:
 
 
 func _on_build_fortress_confirmed(province: Province) -> void:
-	world_visuals.province_selection.deselect_province()
+	world_visuals.province_selection.deselect()
 	var action_build := ActionBuild.new(province.id)
 	_action_input.apply_action(action_build)
 
 
 func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	world_visuals.province_selection.deselect_province()
+	world_visuals.province_selection.deselect()
 	var action_recruitment := ActionRecruitment.new(
 			province.id,
 			troop_amount,
@@ -386,7 +390,7 @@ func _on_army_movement_confirmed(
 
 
 func _on_army_movement_closed() -> void:
-	world_visuals.province_selection.deselect_province()
+	world_visuals.province_selection.deselect()
 
 
 # Temporary feature

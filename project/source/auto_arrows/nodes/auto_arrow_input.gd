@@ -98,21 +98,17 @@ func _receive_clear_province(country_id: int, province_id: int) -> void:
 #endregion
 
 
-func _setup_new_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
-	if not _can_apply_changes():
+func _create_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
+	if (
+			MultiplayerUtils.is_online(multiplayer)
+			and not _client_can_apply_changes(multiplayer.get_unique_id())
+	):
 		return
 
 	var preview_arrow := AutoArrowPreviewNode2D.new()
 	preview_arrow.source_province = province_visuals
 	preview_arrow.released.connect(_on_preview_arrow_released)
 	preview_arrow_created.emit(preview_arrow)
-
-
-## Returns true if the user is currently allowed to add or remove autoarrows.
-func _can_apply_changes() -> bool:
-	if not MultiplayerUtils.is_online(multiplayer):
-		return true
-	return _client_can_apply_changes(multiplayer.get_unique_id())
 
 
 ## Returns true if given client is currently
@@ -130,20 +126,21 @@ func _on_provinces_unhandled_mouse_event_occured(
 		return
 	var mouse_button_event := event as InputEventMouseButton
 
-	# Check if the right click was just pressed
 	if not (
 			mouse_button_event.pressed
 			and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT
 	):
 		return
 
+	# Double right click to remove all autoarrows in the province
 	if mouse_button_event.double_click:
 		var playing_country: Country = (
 				game.turn.playing_player().playing_country
 		)
 		_clear_province(playing_country, province_visuals.province.id)
 
-	_setup_new_preview_arrow(province_visuals)
+	# Show a preview autoarrow during right click
+	_create_preview_arrow(province_visuals)
 
 	get_viewport().set_input_as_handled()
 

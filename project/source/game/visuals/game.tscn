@@ -4,7 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="6_5jo7e"]
 [ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://source/networking/networking_setup_game.tscn" id="6_b2bhm"]
-[ext_resource type="PackedScene" uid="uid://btp4jcvpp4jg2" path="res://source/ui/component_ui/component_ui.tscn" id="7_dxau2"]
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://source/ui/player_turn_announcement.tscn" id="8_e0v4f"]
 [ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://source/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="9_pkxqv"]
@@ -30,6 +29,7 @@
 [ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/ui/utils/id_button.gd" id="21_l7714"]
 [ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="21_oq116"]
 [ext_resource type="PackedScene" uid="uid://bsk11sxt73iy4" path="res://source/ui/player_list/turn_order_list.tscn" id="22_ufuwj"]
+[ext_resource type="Script" uid="uid://ceburwcki2ben" path="res://source/ui/component_ui/component_ui_container.gd" id="25_oq116"]
 [ext_resource type="PackedScene" uid="uid://c75xskthhgko2" path="res://source/notifications/visuals/game_notifications.tscn" id="25_v7fg0"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="26_eobj4"]
 [ext_resource type="Script" uid="uid://dfio0wudtxr2h" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
@@ -39,7 +39,6 @@
 script = ExtResource("1_g7hfo")
 networking_setup_scene = ExtResource("6_b2bhm")
 troop_ui_scene = ExtResource("2_dx3sp")
-component_ui_scene = ExtResource("7_dxau2")
 player_turn_scene = ExtResource("8_e0v4f")
 player_list_scene = ExtResource("9_pkxqv")
 popup_scene = ExtResource("2_dx3sp")
@@ -117,6 +116,7 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
+script = ExtResource("25_oq116")
 
 [node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1

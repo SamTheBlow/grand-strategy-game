@@ -30,6 +30,9 @@ offset_right = 195.0
 offset_bottom = 99.0
 mouse_filter = 2
 script = ExtResource("2_8ijx1")
+line_top = -128.0
+line_bottom = 96.0
+line_length_x = 192.0
 
 [node name="Control1" type="Control" parent="."]
 visible = false
@@ -171,9 +174,9 @@ mouse_filter = 2
 [node name="ColorRect" type="ColorRect" parent="Control3/MarginContainer/HBoxContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.229167
+anchor_top = 0.22916667
 anchor_right = 1.0
-anchor_bottom = 0.770833
+anchor_bottom = 0.7708333
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
@@ -263,9 +266,9 @@ mouse_filter = 2
 [node name="ColorRect" type="ColorRect" parent="Control4/MarginContainer/HBoxContainer/Control"]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.229167
+anchor_top = 0.22916667
 anchor_right = 1.0
-anchor_bottom = 0.770833
+anchor_bottom = 0.7708333
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2

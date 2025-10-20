@@ -57,15 +57,15 @@ func _on_province_unhandled_mouse_event(
 	var province: Province = province_visuals.province
 
 	# If the province is already selected, deselect it and return
-	if world_visuals.province_selection.selected_province == province:
-		world_visuals.province_selection.deselect_province()
+	if world_visuals.province_selection.selected_province() == province:
+		world_visuals.province_selection.deselect()
 		return
 
 	# Let others veto it
 	var outcome := ProvinceSelectionOutcome.new()
 	province_select_attempted.emit(province, outcome)
 	if outcome.is_selected:
-		world_visuals.province_selection.selected_province = province
+		world_visuals.province_selection.select(province.id)
 
 
 func _on_background_clicked() -> void:
@@ -76,7 +76,7 @@ func _on_background_clicked() -> void:
 	if _camera_dragged_too_much():
 		return
 
-	world_visuals.province_selection.deselect_province()
+	world_visuals.province_selection.deselect()
 
 
 class ProvinceSelectionOutcome:

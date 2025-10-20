@@ -7,23 +7,21 @@ var project: GameProject
 var world: GameWorld:
 	set(value):
 		world = value
+		province_selection = ProvinceSelection.new(world.provinces)
 		_initialize()
+
+## Automatically initialized when providing the [GameWorld].
+var province_selection: ProvinceSelection
 
 var _is_decorations_visible: bool = true
 
-@onready var background := %Background as WorldBackground
-
-@onready var province_selection := %ProvinceSelection as ProvinceSelection
-@onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
-
-@onready var _province_setup := %ProvinceVisualsSetup as ProvinceVisualsSetup
 @onready var _province_highlight := %ProvinceHighlight as ProvinceHighlight
 @onready var _army_visuals_setup := %ArmyVisualsSetup as ArmyVisualsSetup
-
-@onready var _decorations_node := %Decorations as WorldDecorationsNode
-
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
-@onready var _auto_arrows := %AutoArrows as AutoArrowContainer
+@onready var background := %Background as WorldBackground
+@onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
+@onready var _decorations_node := %Decorations as WorldDecorationsNode
+@onready var _auto_arrow_container := %AutoArrows as AutoArrowContainer
 
 
 func _ready() -> void:
@@ -36,19 +34,26 @@ func _initialize() -> void:
 
 	var playing_country := PlayingCountry.new(project.game.turn)
 
-	_province_setup.provinces = world.provinces
-	_province_highlight.armies = world.armies
-	_province_highlight.playing_country = playing_country
-	_province_highlight.armies_in_each_province = (
-			world.armies_in_each_province
+	# We need to setup the provinces first
+	province_visuals.setup(world.provinces)
+
+	_province_highlight.setup(
+			world.armies,
+			playing_country,
+			world.armies_in_each_province,
+			province_selection
 	)
-	_army_visuals_setup.playing_country = playing_country
-	_army_visuals_setup.armies = world.armies
+
+	_army_visuals_setup.setup(world.armies, playing_country)
+
+	_auto_arrow_input.game = project.game
+
 	_decorations_node.world_decorations = world.decorations
 	_update_decoration_visibility()
-	_auto_arrow_input.game = project.game
-	_auto_arrows.playing_country = playing_country
-	_auto_arrows.countries = project.game.countries
+
+	_auto_arrow_container.setup(
+			playing_country, project.game.countries, province_selection
+	)
 
 
 ## Shows or hides the decorations.

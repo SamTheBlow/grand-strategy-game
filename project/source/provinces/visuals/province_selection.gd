@@ -1,39 +1,65 @@
 class_name ProvinceSelection
-extends Node
-## Keeps track of which [Province] is currently selected.
-## Emits relevant signals.
+## Determines which [Province] is currently selected.
+## Allows getting or changing the currently selected province.
+## Provides useful signals.
 
-## Emitted when a province is deselected. The given province is never null.
+## Emitted when a province is deselected.
+## Province may be null if the province no longer exists.
 signal province_deselected(province: Province)
-## Emitted when a province is selected. The given province is never null.
+## Emitted when a province is selected.
 signal province_selected(province: Province)
-## Emitted when the selected_province property
-## is assigned a different value (may be null).
+## Emitted when the selected province is changed or deselected.
+## Province may be null if no province is selected.
 signal selected_province_changed(province: Province)
 
-## May be null, in which case no province is selected.
-var selected_province: Province:
+var _provinces: Provinces
+
+var _selected_province_id: int = -1:
 	set(value):
-		if selected_province == value:
+		value = maxi(value, -1)
+
+		if _selected_province_id == value:
 			return
 
-		if selected_province != null:
-			province_deselected.emit(selected_province)
+		if _selected_province_id != -1:
+			province_deselected.emit(selected_province())
 
-		selected_province = value
+		_selected_province_id = value
 
-		if selected_province != null:
-			province_selected.emit(selected_province)
+		if _selected_province_id != -1:
+			province_selected.emit(selected_province())
 
-		selected_province_changed.emit(selected_province)
+		selected_province_changed.emit(selected_province())
 
 
-## Optionally, you may provide a specific province to deselect.
-## No effect if that province is not selected.
-func deselect_province(province_to_deselect: Province = null) -> void:
-	if (
-			province_to_deselect != null
-			and selected_province != province_to_deselect
-	):
+func _init(provinces := Provinces.new()) -> void:
+	_provinces = provinces
+	_provinces.removed.connect(_on_province_removed)
+
+
+## Returns null if no province is selected.
+func selected_province() -> Province:
+	return _provinces.province_from_id(_selected_province_id)
+
+
+## No effect if there is no province with given id.
+func select(province_id: int) -> void:
+	if _provinces.province_from_id(province_id) == null:
 		return
-	selected_province = null
+	_selected_province_id = province_id
+
+
+## Makes it so that no province is selected.
+##
+## Optionally, you may provide a specific province to deselect.
+## In that case, only deselects given province.
+func deselect(province_id: int = -1) -> void:
+	if province_id > -1 and _selected_province_id != province_id:
+		return
+	_selected_province_id = -1
+
+
+## Automatically deselect a province when it's removed.
+func _on_province_removed(province: Province) -> void:
+	if _selected_province_id == province.id:
+		_selected_province_id = -1

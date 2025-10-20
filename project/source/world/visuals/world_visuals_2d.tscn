@@ -1,10 +1,8 @@
-[gd_scene load_steps=11 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene load_steps=9 format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" uid="uid://ctu7j3g2p76du" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" uid="uid://yhhag4v6plx" path="res://source/world/visuals/world_background.gd" id="2_unrx0"]
-[ext_resource type="Script" uid="uid://lbynirs5hyem" path="res://source/provinces/visuals/province_visuals_setup.gd" id="3_2lnh4"]
 [ext_resource type="Script" uid="uid://brcmtb3xah0nq" path="res://source/armies/visuals/army_visuals_setup.gd" id="4_0v0rh"]
-[ext_resource type="Script" uid="uid://ch1j2roj7kpgk" path="res://source/provinces/visuals/province_selection.gd" id="4_axwnt"]
 [ext_resource type="Script" uid="uid://ce455w5kb2t6a" path="res://source/auto_arrows/nodes/auto_arrow_container.gd" id="4_o61mm"]
 [ext_resource type="Script" uid="uid://dao8t8wckp433" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
 [ext_resource type="Script" uid="uid://uk0qme4tx0on" path="res://source/provinces/visuals/province_highlight.gd" id="5_bd3lk"]
@@ -14,18 +12,9 @@
 [node name="WorldVisuals2D" type="Node2D"]
 script = ExtResource("1_im3sb")
 
-[node name="ProvinceVisualsSetup" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("3_2lnh4")
-
-[node name="ProvinceSelection" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("4_axwnt")
-
-[node name="ProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("provinces_container")]
+[node name="ProvinceHighlight" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
-provinces_container = NodePath("../Provinces")
 
 [node name="ArmyVisualsSetup" type="Node" parent="."]
 unique_name_in_owner = true
@@ -51,10 +40,5 @@ script = ExtResource("11_obqf8")
 unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
-[connection signal="province_deselected" from="ProvinceSelection" to="ProvinceHighlight" method="_on_province_deselected"]
-[connection signal="province_deselected" from="ProvinceSelection" to="Provinces" method="_on_province_deselected"]
-[connection signal="province_selected" from="ProvinceSelection" to="ProvinceHighlight" method="_on_province_selected"]
-[connection signal="province_selected" from="ProvinceSelection" to="Provinces" method="_on_province_selected"]
-[connection signal="preview_arrow_created" from="AutoArrowInput" to="Provinces" method="_on_preview_arrow_created"]
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]

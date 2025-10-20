@@ -6,6 +6,7 @@ extends Control
 ## and has buttons with different functionalities.
 
 signal button_pressed(button_id: int)
+signal country_button_pressed(country: Country)
 
 @export_group("Line")
 
@@ -28,30 +29,9 @@ signal button_pressed(button_id: int)
 		_reposition_side_nodes()
 
 ## May be null, in which case some functionalities will be disabled.
-var game: Game:
-	set(value):
-		if game == value:
-			return
-
-		if game != null:
-			game.turn.player_changed.disconnect(_on_turn_player_changed)
-		game = value
-		if game != null:
-			game.turn.player_changed.connect(_on_turn_player_changed)
-		_update_nodes_game()
-
-## May be null, in which case some fuctionalities will be disabled.
-var province_visuals: ProvinceVisuals2D:
-	set(value):
-		if province_visuals == value:
-			return
-
-		if province_visuals != null:
-			province_visuals.deselected.disconnect(_on_province_deselected)
-		province_visuals = value
-		if province_visuals != null:
-			province_visuals.deselected.connect(_on_province_deselected)
-		_update_nodes_province()
+var _game: Game
+## May be null, in which case some functionalities will be disabled.
+var _province_visuals: ProvinceVisuals2D
 
 @onready var _frame := %Frame as ComponentUIFrame
 
@@ -86,42 +66,44 @@ var province_visuals: ProvinceVisuals2D:
 
 
 func _ready() -> void:
-	# Prevent error caused by Godot bug (see Godot engine issue #49428)
-	if Engine.is_editor_hint():
-		remove_child(_frame)
-		_frame.queue_free()
-		_frame = ComponentUIFrame.new()
-		add_child(_frame)
-		_frame.name = "Frame"
-		_frame.unique_name_in_owner = true
-		_frame.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		move_child(_frame, 0)
-		_frame.owner = self
-
 	_update_frame()
 	_reposition_side_nodes()
+
+	# Prevent error caused by Godot bug (see Godot engine issue #49428)
+	if Engine.is_editor_hint():
+		return
 
 	_update_nodes_game()
 	_update_nodes_province()
 
+	_country_button.pressed.connect(country_button_pressed.emit)
+
 
 func _process(_delta: float) -> void:
-	if province_visuals == null:
+	if _province_visuals == null:
 		return
 
 	# Follow the object's position
-	var world_position: Vector2 = province_visuals.global_position_army_host()
+	var world_position: Vector2 = _province_visuals.global_position_army_host()
 	var zoom: Vector2 = get_viewport().get_camera_2d().zoom
 	var cam_position: Vector2 = get_viewport().get_camera_2d().global_position
 	var half_viewport_size: Vector2 = get_viewport_rect().size * 0.5
 	position = zoom * (world_position - cam_position) + half_viewport_size
 
 
-func connect_country_button_pressed(callable: Callable) -> void:
-	if not is_node_ready():
-		await ready
+func setup(game: Game, province_visuals: ProvinceVisuals2D) -> void:
+	if _game != null:
+		_game.turn.player_changed.disconnect(_on_turn_player_changed)
 
-	_country_button.pressed.connect(callable)
+	_game = game
+	_province_visuals = province_visuals
+
+	if _game != null:
+		_game.turn.player_changed.connect(_on_turn_player_changed)
+
+	if is_node_ready():
+		_update_nodes_game()
+		_update_nodes_province()
 
 
 func _update_frame() -> void:
@@ -131,8 +113,7 @@ func _update_frame() -> void:
 	_frame.line_top = line_top
 	_frame.line_bottom = line_bottom
 	_frame.line_length_x = line_length_x
-	_frame.update_node_transform()
-	_frame.queue_redraw()
+	_frame.update()
 
 
 func _reposition_side_nodes() -> void:
@@ -159,24 +140,17 @@ func _update_side_node_positions(
 
 
 func _update_nodes_game() -> void:
-	if not is_node_ready():
-		return
+	if _game != null:
+		_left_side_nodes[0].visible = _game.rules.build_fortress_enabled.value
+		_left_side_nodes[1].visible = _game.rules.recruitment_enabled.value
 
-	# Prevent error caused by Godot bug (see Godot engine issue #49428)
-	if Engine.is_editor_hint():
-		return
-
-	if game != null:
-		_left_side_nodes[0].visible = game.rules.build_fortress_enabled.value
-		_left_side_nodes[1].visible = game.rules.recruitment_enabled.value
-
-		_build_fortress_button.game = game
-		_recruit_button.game = game
+		_build_fortress_button.game = _game
+		_recruit_button.game = _game
 		_relationship_preset_label_update.is_disabled = (
-				not game.rules.is_diplomacy_presets_enabled()
+				not _game.rules.is_diplomacy_presets_enabled()
 		)
 
-		_update_nodes_playing_player(game.turn.playing_player())
+		_update_nodes_playing_player(_game.turn.playing_player())
 	else:
 		_left_side_nodes[0].visible = false
 		_left_side_nodes[1].visible = false
@@ -189,10 +163,10 @@ func _update_nodes_game() -> void:
 
 
 func _update_nodes_province() -> void:
-	if not is_node_ready() or province_visuals == null:
+	if _province_visuals == null:
 		return
 
-	var province: Province = province_visuals.province
+	var province: Province = _province_visuals.province
 	if province == null:
 		return
 
@@ -231,9 +205,3 @@ func _on_recruit_button_pressed() -> void:
 
 func _on_turn_player_changed(player: GamePlayer) -> void:
 	_update_nodes_playing_player(player)
-
-
-func _on_province_deselected() -> void:
-	if get_parent():
-		get_parent().remove_child(self)
-	queue_free()
