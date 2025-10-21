@@ -70,10 +70,8 @@ static func _world_to_raw_dict(
 	var output: Dictionary = {}
 
 	# World limits
-	var limits_data: Dictionary = (
-			WorldLimitsToRaw.result(game_settings.world_limits)
-	)
-	if not limits_data.is_empty():
+	var limits_data: Variant = game_settings.world_limits.to_raw_data()
+	if not ParseUtils.is_empty_dict(limits_data):
 		output.merge({ WorldFromRaw.WORLD_LIMITS_KEY: limits_data })
 
 	# Provinces

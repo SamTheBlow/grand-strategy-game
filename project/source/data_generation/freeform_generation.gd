@@ -30,18 +30,18 @@ func apply(
 
 	var world_dict: Dictionary = {
 		WorldFromRaw.WORLD_LIMITS_KEY: {
-			WorldLimitsFromRaw.WORLD_LIMIT_BOTTOM_KEY: roundi(
+			WorldLimitsParsing._WORLD_LIMIT_BOTTOM_KEY: roundi(
 					world_limits_margin * 2.0
 					+ square_length * grid_height
 					+ square_spacing * (grid_height - 1)
 			),
-			WorldLimitsFromRaw.WORLD_LIMIT_LEFT_KEY: 0,
-			WorldLimitsFromRaw.WORLD_LIMIT_RIGHT_KEY: roundi(
+			WorldLimitsParsing._WORLD_LIMIT_LEFT_KEY: 0,
+			WorldLimitsParsing._WORLD_LIMIT_RIGHT_KEY: roundi(
 					world_limits_margin * 2.0
 					+ square_length * grid_width
 					+ square_spacing * (grid_width - 1)
 			),
-			WorldLimitsFromRaw.WORLD_LIMIT_TOP_KEY: 0,
+			WorldLimitsParsing._WORLD_LIMIT_TOP_KEY: 0,
 		},
 		WorldFromRaw.WORLD_PROVINCES_KEY: provinces_array,
 	}

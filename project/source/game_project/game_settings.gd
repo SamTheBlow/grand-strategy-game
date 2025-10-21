@@ -12,8 +12,8 @@ var custom_world_limit_right: ItemInt
 var custom_world_limit_top: ItemInt
 var custom_world_limit_bottom: ItemInt
 
-## Do not overwrite! This is initialized automatically.
-var world_limits: WorldLimits
+## Do not overwrite!
+var world_limits := WorldLimits.new()
 
 var background_color: ItemColor
 
@@ -41,19 +41,13 @@ func _init() -> void:
 	custom_world_limit_bottom.text = "Bottom"
 	custom_world_limit_bottom.value = WorldLimits.DEFAULT_BOTTOM
 
-	world_limits = WorldLimits.new().with_values(
-			custom_world_limit_left.value,
-			custom_world_limit_top.value,
-			custom_world_limit_right.value,
-			custom_world_limit_bottom.value
-	)
 	custom_world_limit_left.value_changed.connect(
 		func(_item: ItemInt) -> void:
 			if custom_world_limit_left.value >= custom_world_limit_right.value:
 				custom_world_limit_left.value = (
 						custom_world_limit_right.value - 1
 				)
-			world_limits.limit_left = custom_world_limit_left.value
+			world_limits.custom_limits.x = custom_world_limit_left.value
 	)
 	custom_world_limit_top.value_changed.connect(
 		func(_item: ItemInt) -> void:
@@ -61,7 +55,7 @@ func _init() -> void:
 				custom_world_limit_top.value = (
 						custom_world_limit_bottom.value - 1
 				)
-			world_limits.limit_top = custom_world_limit_top.value
+			world_limits.custom_limits.y = custom_world_limit_top.value
 	)
 	custom_world_limit_right.value_changed.connect(
 		func(_item: ItemInt) -> void:
@@ -69,7 +63,7 @@ func _init() -> void:
 				custom_world_limit_right.value = (
 						custom_world_limit_left.value + 1
 				)
-			world_limits.limit_right = custom_world_limit_right.value
+			world_limits.custom_limits.z = custom_world_limit_right.value
 	)
 	custom_world_limit_bottom.value_changed.connect(
 		func(_item: ItemInt) -> void:
@@ -77,39 +71,12 @@ func _init() -> void:
 				custom_world_limit_bottom.value = (
 						custom_world_limit_top.value + 1
 				)
-			world_limits.limit_bottom = custom_world_limit_bottom.value
-	)
-
-	custom_world_limits_enabled.value_changed.connect(
-		func(_item: ItemBool) -> void:
-			if custom_world_limits_enabled.value:
-				# Custom world limits just got enabled
-				# Apply the custom values to the world limits
-				world_limits.with_values(
-						custom_world_limit_left.value,
-						custom_world_limit_top.value,
-						custom_world_limit_right.value,
-						custom_world_limit_bottom.value
-				)
+			world_limits.custom_limits.w = custom_world_limit_bottom.value
 	)
 
 	background_color = ItemColor.new()
 	background_color.text = "Background color"
 	background_color.value = DEFAULT_BACKGROUND_COLOR
-
-
-## Adjusts settings to match given [WorldLimits].
-## If custom world limits are disabled, applies automatic world limits.
-func load_world_limits(
-		game_world: GameWorld, input_limits: WorldLimits
-) -> void:
-	custom_world_limit_left.value = input_limits.limit_left
-	custom_world_limit_right.value = input_limits.limit_right
-	custom_world_limit_top.value = input_limits.limit_top
-	custom_world_limit_bottom.value = input_limits.limit_bottom
-
-	if not custom_world_limits_enabled.value:
-		AutoWorldLimits.apply_to(game_world, world_limits)
 
 
 func to_dict() -> Dictionary:

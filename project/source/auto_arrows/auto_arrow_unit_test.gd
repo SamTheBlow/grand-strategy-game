@@ -7,11 +7,11 @@ static func run_tests() -> void:
 
 	# Default data
 	var output_data: Variant = AutoArrows.new().to_raw_data()
-	assert(_is_empty_array(output_data))
+	assert(ParseUtils.is_empty_array(output_data))
 
 	# No data
 	output_data = AutoArrows.from_raw_data([]).to_raw_data()
-	assert(_is_empty_array(output_data))
+	assert(ParseUtils.is_empty_array(output_data))
 
 	# Invalid data
 	output_data = AutoArrows.from_raw_data("bruh").to_raw_data()
@@ -158,11 +158,11 @@ static func run_tests() -> void:
 
 	# Tests for one AutoArrow
 	output_data = AutoArrow.new(-1, -1).to_raw_data()
-	assert(_is_empty_dict(output_data))
+	assert(ParseUtils.is_empty_dict(output_data))
 	output_data = AutoArrow.new(-6, -1).to_raw_data()
-	assert(_is_empty_dict(output_data))
+	assert(ParseUtils.is_empty_dict(output_data))
 	output_data = AutoArrow.new(-67, -420).to_raw_data()
-	assert(_is_empty_dict(output_data))
+	assert(ParseUtils.is_empty_dict(output_data))
 	output_data = AutoArrow.new(67, -4).to_raw_data()
 	assert(output_data is Dictionary and output_data == {
 		AutoArrow._SOURCE_PROVINCE_ID_KEY: 67
@@ -176,11 +176,3 @@ static func run_tests() -> void:
 		AutoArrow._SOURCE_PROVINCE_ID_KEY: 670,
 		AutoArrow._DEST_PROVINCE_ID_KEY: 6677
 	})
-
-
-static func _is_empty_array(variant: Variant) -> bool:
-	return variant is Array and variant.is_empty()
-
-
-static func _is_empty_dict(variant: Variant) -> bool:
-	return variant is Dictionary and variant.is_empty()

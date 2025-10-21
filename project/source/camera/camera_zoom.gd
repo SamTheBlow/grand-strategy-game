@@ -134,8 +134,8 @@ func _connect_world_limits(world_limits: WorldLimits) -> void:
 		push_error("World limits is null.")
 		return
 
-	if not world_limits.changed.is_connected(_on_world_limits_changed):
-		world_limits.changed.connect(_on_world_limits_changed)
+	if not world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
+		world_limits.current_limits_changed.connect(_on_world_limits_changed)
 
 
 func _disconnect_world_limits(world_limits: WorldLimits) -> void:
@@ -143,8 +143,8 @@ func _disconnect_world_limits(world_limits: WorldLimits) -> void:
 		push_error("World limits is null.")
 		return
 
-	if world_limits.changed.is_connected(_on_world_limits_changed):
-		world_limits.changed.disconnect(_on_world_limits_changed)
+	if world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
+		world_limits.current_limits_changed.disconnect(_on_world_limits_changed)
 
 
 ## Ensures the camera stays in bounds when the screen size changes.

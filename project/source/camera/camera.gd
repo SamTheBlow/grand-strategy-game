@@ -51,10 +51,10 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 	var margin_y: float = (
 			(0.5 - world_margin.y) * get_viewport_rect().size.y / zoom.y
 	)
-	var min_x: float = world_limits.limit_left + margin_x
-	var min_y: float = world_limits.limit_top + margin_y
-	var max_x: float = world_limits.limit_right - margin_x
-	var max_y: float = world_limits.limit_bottom - margin_y
+	var min_x: float = world_limits.limit_left() + margin_x
+	var min_y: float = world_limits.limit_top() + margin_y
+	var max_x: float = world_limits.limit_right() - margin_x
+	var max_y: float = world_limits.limit_bottom() - margin_y
 	var output_x: float = clampf(input_position.x, min_x, max_x)
 	var output_y: float = clampf(input_position.y, min_y, max_y)
 	return Vector2(output_x, output_y)
@@ -74,8 +74,8 @@ func _connect_world_limits(_world_limits: WorldLimits) -> void:
 		push_error("World limits is null.")
 		return
 
-	if not world_limits.changed.is_connected(_on_world_limits_changed):
-		world_limits.changed.connect(_on_world_limits_changed)
+	if not world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
+		world_limits.current_limits_changed.connect(_on_world_limits_changed)
 
 
 func _disconnect_world_limits(_world_limits: WorldLimits) -> void:
@@ -83,8 +83,8 @@ func _disconnect_world_limits(_world_limits: WorldLimits) -> void:
 		push_error("World limits is null.")
 		return
 
-	if world_limits.changed.is_connected(_on_world_limits_changed):
-		world_limits.changed.disconnect(_on_world_limits_changed)
+	if world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
+		world_limits.current_limits_changed.disconnect(_on_world_limits_changed)
 
 
 func _on_world_limits_changed(_world_limits: WorldLimits) -> void:

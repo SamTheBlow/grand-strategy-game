@@ -12,18 +12,18 @@ var _item_world_limit_bottom := ItemInt.new()
 
 func _ready() -> void:
 	_item_world_limit_left.text = game_settings.custom_world_limit_left.text
-	_item_world_limit_left.value = game_settings.world_limits.limit_left
 	_item_world_limit_left.is_disabled = true
 	_item_world_limit_right.text = game_settings.custom_world_limit_right.text
-	_item_world_limit_right.value = game_settings.world_limits.limit_right
 	_item_world_limit_right.is_disabled = true
 	_item_world_limit_top.text = game_settings.custom_world_limit_top.text
-	_item_world_limit_top.value = game_settings.world_limits.limit_top
 	_item_world_limit_top.is_disabled = true
 	_item_world_limit_bottom.text = game_settings.custom_world_limit_bottom.text
-	_item_world_limit_bottom.value = game_settings.world_limits.limit_bottom
 	_item_world_limit_bottom.is_disabled = true
+	_update_limit_items()
 	super()
+	game_settings.world_limits.current_limits_changed.connect(
+			_update_limit_items
+	)
 	game_settings.custom_world_limits_enabled.value_changed.connect(
 			_on_limits_toggled
 	)
@@ -60,6 +60,13 @@ func _update_game_settings() -> void:
 		]
 
 	_game_settings_node.refresh()
+
+
+func _update_limit_items(_world_limits: WorldLimits = null) -> void:
+	_item_world_limit_left.value = game_settings.world_limits.limit_left()
+	_item_world_limit_top.value = game_settings.world_limits.limit_top()
+	_item_world_limit_right.value = game_settings.world_limits.limit_right()
+	_item_world_limit_bottom.value = game_settings.world_limits.limit_bottom()
 
 
 func _on_limits_toggled(_item: PropertyTreeItem) -> void:

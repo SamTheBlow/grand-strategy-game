@@ -44,6 +44,8 @@ static func result(
 	game_project.metadata = metadata
 	game_project.settings.custom_settings = game_project.metadata.settings
 
+	game_project.connect_signals()
+
 	# Overwrite the rules
 	game_project.game.rules = game_rules
 

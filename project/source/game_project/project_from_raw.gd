@@ -50,6 +50,8 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 	game_project.metadata = ProjectMetadata.from_raw(raw_data, file_path)
 	game_project.settings.custom_settings = game_project.metadata.settings
 
+	game_project.connect_signals()
+
 	return ResultSuccess.new(game_project)
 
 

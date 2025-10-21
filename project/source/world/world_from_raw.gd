@@ -31,10 +31,11 @@ static func parse_using(
 	# Armies
 	ArmiesFromRaw.parse_using(raw_dict.get(WORLD_ARMIES_KEY), game)
 
-	# World limits (must be loaded after the provinces)
-	game_settings.load_world_limits(
-			game.world,
-			WorldLimitsFromRaw.parsed_from(raw_dict.get(WORLD_LIMITS_KEY))
+	# World limits
+	# (Must be loaded after provinces
+	# because it may use them for its calculations.)
+	game_settings.world_limits = WorldLimitsParsing.from_raw_data(
+			raw_dict.get(WORLD_LIMITS_KEY), game.world
 	)
 
 	# Decorations

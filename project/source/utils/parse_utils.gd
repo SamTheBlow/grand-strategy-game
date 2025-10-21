@@ -127,6 +127,16 @@ static func number_as_float(variant: Variant) -> float:
 	return 0.0
 
 
+## Returns true if given [Variant] is an empty [Array].
+static func is_empty_array(variant: Variant) -> bool:
+	return variant is Array and variant.is_empty()
+
+
+## Returns true if given [Variant] is an empty [Dictionary].
+static func is_empty_dict(variant: Variant) -> bool:
+	return variant is Dictionary and variant.is_empty()
+
+
 ## Converts given [Variant] into a [Color], if possible.
 ## If it fails, returns given fallback color instead.
 static func color_from_raw(raw_data: Variant, fallback_color: Color) -> Color:

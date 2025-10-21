@@ -15,15 +15,8 @@ var game_settings: GameSettings:
 	set(value):
 		_disconnect_game_settings()
 		game_settings = value
-
-		if game_settings != null:
-			rectangle = game_settings.world_limits.as_rect2i()
-		else:
-			rectangle = WorldLimits.new().as_rect2i()
-		queue_redraw()
-
+		_update_rectangle()
 		_connect_game_settings()
-		_update_game_settings()
 
 
 func _update_editor_settings() -> void:
@@ -43,15 +36,11 @@ func _update_world_limits_color(property: ItemColor) -> void:
 	queue_redraw()
 
 
-func _update_game_settings() -> void:
+func _update_rectangle(_world_limits: WorldLimits = null) -> void:
 	if game_settings == null:
-		return
-
-	_update_custom_world_limits()
-
-
-func _update_custom_world_limits(_world_limits: WorldLimits = null) -> void:
-	rectangle = game_settings.world_limits.as_rect2i()
+		rectangle = WorldLimits.new().as_rect2i()
+	else:
+		rectangle = game_settings.world_limits.as_rect2i()
 	queue_redraw()
 
 
@@ -83,11 +72,15 @@ func _disconnect_game_settings() -> void:
 	if game_settings == null:
 		return
 
-	game_settings.world_limits.changed.disconnect(_update_custom_world_limits)
+	game_settings.world_limits.current_limits_changed.disconnect(
+			_update_rectangle
+	)
 
 
 func _connect_game_settings() -> void:
 	if game_settings == null:
 		return
 
-	game_settings.world_limits.changed.connect(_update_custom_world_limits)
+	game_settings.world_limits.current_limits_changed.connect(
+			_update_rectangle
+	)

@@ -68,20 +68,6 @@ func _setup_project() -> void:
 	if _current_project == null:
 		return
 
-	# Apply automatic world limits when disabling custom world limits.
-	# TODO this is ugly, and it's not specific to the editor.
-	# this code should be somewhere else
-	_current_project.settings.custom_world_limits_enabled.value_changed.connect(
-		func(item: ItemBool) -> void:
-			if not item.value:
-				# Custom world limits just got disabled
-				# Calculate and apply automatic world limits
-				AutoWorldLimits.apply_to(
-						_current_project.game.world,
-						_current_project.settings.world_limits
-				)
-	)
-
 	_world_setup.load_world(_current_project)
 	_world_setup.world().province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
