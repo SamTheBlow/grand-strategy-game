@@ -67,8 +67,7 @@ func close_interface() -> void:
 func _remove_existing_interface() -> void:
 	if _current_interface == null:
 		return
-	_current_interface.get_parent().remove_child(_current_interface)
-	_current_interface.queue_free()
+	NodeUtils.delete_node(_current_interface)
 	_current_interface = null
 
 

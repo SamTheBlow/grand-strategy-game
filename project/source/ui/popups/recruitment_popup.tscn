@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://dmta7gru0kbr2"]
 
 [ext_resource type="Script" uid="uid://b7phel2sanbi8" path="res://source/ui/popups/recruitment_popup.gd" id="1_vaaa4"]
-[ext_resource type="PackedScene" uid="uid://0xwvup7qe5f" path="res://source/ui/action_cost.tscn" id="2_fgo8b"]
+[ext_resource type="PackedScene" uid="uid://0xwvup7qe5f" path="res://source/ui/action_cost/action_cost.tscn" id="2_fgo8b"]
 
 [node name="RecruitmentPopup" type="VBoxContainer"]
 anchors_preset = 15

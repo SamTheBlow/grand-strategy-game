@@ -177,14 +177,58 @@ func _update_ui_visibility() -> void:
 	_ui_layer.visible = is_ui_visible
 
 
-## Creates the popup that appears when you want to move an [Army].
-func _add_army_movement_popup(army: Army, destination: Province) -> void:
+## Opens the popup that appears when you want to build a fortress.
+func _open_build_fortress_popup(province: Province) -> void:
+	var build_fortress_popup := (
+			build_fortress_scene.instantiate() as BuildFortressPopup
+	)
+	build_fortress_popup.setup(
+			game.world.provinces,
+			province.id,
+			[ResourceCost.new("Money", game.rules.fortress_price.value)]
+	)
+	build_fortress_popup.confirmed.connect(_on_build_fortress_confirmed)
+	build_fortress_popup.tree_exited.connect(_deselect_province)
+	_add_popup(build_fortress_popup)
+
+
+## Opens the popup that appears when you want to recruit a new army.
+func _open_recruitment_popup(province: Province) -> void:
+	var recruitment_popup := (
+			recruitment_scene.instantiate() as RecruitmentPopup
+	)
+	var recruitment_limits := ArmyRecruitmentLimits.new(
+			game.turn.playing_player().playing_country, province, game
+	)
+	recruitment_popup.setup(
+			game.world.provinces,
+			province.id,
+			[
+				ResourceCost.new(
+						"Population",
+						game.rules.recruitment_population_per_unit.value
+				),
+				ResourceCost.new(
+						"Money",
+						game.rules.recruitment_money_per_unit.value
+				)
+			],
+			recruitment_limits.minimum(),
+			recruitment_limits.maximum()
+	)
+	recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
+	recruitment_popup.tree_exited.connect(_deselect_province)
+	_add_popup(recruitment_popup)
+
+
+## Opens the popup that appears when you want to move an army.
+func _open_army_movement_popup(army: Army, destination: Province) -> void:
 	var army_movement_popup := (
 			army_movement_scene.instantiate() as ArmyMovementPopup
 	)
-	army_movement_popup.init(army, destination)
+	army_movement_popup.setup(army, game.world.provinces, destination.id)
 	army_movement_popup.confirmed.connect(_on_army_movement_confirmed)
-	army_movement_popup.tree_exited.connect(_on_army_movement_closed)
+	army_movement_popup.tree_exited.connect(_deselect_province)
 	_add_popup(army_movement_popup)
 
 
@@ -219,6 +263,10 @@ func _add_player_and_assign(
 	var new_player: Player = players.new_player(multiplayer_id)
 	players.add_player(new_player)
 	_player_assignment.assign_player_to(new_player, game_player)
+
+
+func _deselect_province() -> void:
+	world_visuals.province_selection.deselect()
 
 
 ## The server receives a client's request to add and assign a new player.
@@ -290,7 +338,7 @@ func _on_province_select_attempted(
 		# one active army per province
 		var army: Army = my_active_armies_in_province[0]
 		if army.can_move_to(province):
-			_add_army_movement_popup(army, province)
+			_open_army_movement_popup(army, province)
 			outcome.is_selected = false
 
 
@@ -305,66 +353,33 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 	match button_id:
 		0:
 			# Build fortress
-			var build_popup := (
-					build_fortress_scene.instantiate() as BuildFortressPopup
-			)
-			build_popup.province = selected_province
-			build_popup.set_population_cost(ResourceCost.new(0))
-			build_popup.set_money_cost(ResourceCost.new(
-					game.rules.fortress_price.value
-			))
-			build_popup.confirmed.connect(_on_build_fortress_confirmed)
-			_add_popup(build_popup)
+			_open_build_fortress_popup(selected_province)
 		1:
 			# Recruitment
-			var recruitment_popup := (
-					recruitment_scene.instantiate() as RecruitmentPopup
-			)
-			recruitment_popup.province = selected_province
-
-			var recruitment_limits := ArmyRecruitmentLimits.new(
-					game.turn.playing_player().playing_country,
-					selected_province,
-					game
-			)
-			recruitment_popup.set_minimum_amount(recruitment_limits.minimum())
-			recruitment_popup.set_maximum_amount(recruitment_limits.maximum())
-
-			recruitment_popup.set_population_cost(ResourceCost.new(
-					game.rules.recruitment_population_per_unit.value
-			))
-			recruitment_popup.set_money_cost(ResourceCost.new(
-					game.rules.recruitment_money_per_unit.value
-			))
-			recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
-			_add_popup(recruitment_popup)
+			_open_recruitment_popup(selected_province)
 
 
 func _on_end_turn_pressed() -> void:
 	_action_input.apply_action(ActionEndTurn.new())
 
 
-func _on_build_fortress_confirmed(province: Province) -> void:
-	world_visuals.province_selection.deselect()
-	var action_build := ActionBuild.new(province.id)
-	_action_input.apply_action(action_build)
+func _on_build_fortress_confirmed(province_id: int) -> void:
+	_action_input.apply_action(ActionBuild.new(province_id))
 
 
-func _on_recruitment_confirmed(province: Province, troop_amount: int) -> void:
-	world_visuals.province_selection.deselect()
-	var action_recruitment := ActionRecruitment.new(
-			province.id,
+func _on_recruitment_confirmed(troop_amount: int, province_id: int) -> void:
+	_action_input.apply_action(ActionRecruitment.new(
+			province_id,
 			troop_amount,
 			game.world.armies.id_system().new_unique_id(false)
-	)
-	_action_input.apply_action(action_recruitment)
+	))
 
 
 ## Creates and applies army movement as a result of the user's actions.
 func _on_army_movement_confirmed(
 		army: Army,
 		number_of_troops: int,
-		destination_province: Province
+		destination_province_id: int
 ) -> void:
 	var moving_army_id: int = army.id
 
@@ -374,23 +389,16 @@ func _on_army_movement_confirmed(
 		var new_army_id: int = (
 				game.world.armies.id_system().new_unique_id(false)
 		)
-		var action_split := ActionArmySplit.new(
+		_action_input.apply_action(ActionArmySplit.new(
 				army.id,
 				[army_size - number_of_troops, number_of_troops],
 				[new_army_id]
-		)
-		_action_input.apply_action(action_split)
-
+		))
 		moving_army_id = new_army_id
 
-	var action_move := ActionArmyMovement.new(
-			moving_army_id, destination_province.id
+	_action_input.apply_action(
+			ActionArmyMovement.new(moving_army_id, destination_province_id)
 	)
-	_action_input.apply_action(action_move)
-
-
-func _on_army_movement_closed() -> void:
-	world_visuals.province_selection.deselect()
 
 
 # Temporary feature

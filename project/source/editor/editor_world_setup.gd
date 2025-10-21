@@ -32,8 +32,7 @@ var _current_world: WorldVisuals2D:
 ## Discards the current [WorldVisuals2D] instance, if applicable.
 func clear() -> void:
 	if _current_world != null:
-		_current_world.get_parent().remove_child(_current_world)
-		_current_world.queue_free()
+		NodeUtils.delete_node(_current_world)
 		_current_world = null
 
 

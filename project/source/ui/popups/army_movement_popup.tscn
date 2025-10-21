@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://dgcq338o8meg" path="res://source/ui/popups/army_movement_popup.gd" id="1_hrsh1"]
 
-[node name="ArmyMovementPopup" type="VBoxContainer" node_paths=PackedStringArray("troop_slider", "troop_label")]
+[node name="ArmyMovementPopup" type="VBoxContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,8 +11,6 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_hrsh1")
-troop_slider = NodePath("HSlider")
-troop_label = NodePath("Label")
 
 [node name="Spacing1" type="Control" parent="."]
 layout_mode = 2
@@ -20,11 +18,13 @@ size_flags_vertical = 3
 mouse_filter = 2
 
 [node name="HSlider" type="HSlider" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 value = 100.0
 scrollable = false
 
 [node name="Label" type="Label" parent="."]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Text"

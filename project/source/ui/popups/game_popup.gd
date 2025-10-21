@@ -20,6 +20,9 @@ extends Control
 ## To know when a button is pressed,
 ## give your node a method "_on_button_pressed" that takes one int argument.
 ## That argument is the button's index in the list of buttons that you gave.
+##
+## In your node, you may add a signal named "invalidated" with no arguments.
+## When emitted, the popup immediately closes with no effect.
 
 var contents_node: Node
 
@@ -32,29 +35,30 @@ func _ready() -> void:
 		return
 
 	_contents_root.add_child(contents_node)
-	_add_content_buttons()
 
-
-func _add_content_buttons() -> void:
 	var button_names: Array[String] = ["OK"]
 
-	if contents_node != null and contents_node.has_method("buttons"):
-		button_names = contents_node.call("buttons")
+	const BUTTONS_METHOD_NAME: StringName = &"buttons"
+	if contents_node.has_method(BUTTONS_METHOD_NAME):
+		button_names = contents_node.call(BUTTONS_METHOD_NAME)
 
 	_popup_buttons.setup_buttons(button_names)
 	_popup_buttons.pressed.connect(_on_button_pressed)
 
-	_connect_content_to_buttons()
+	const BUTTON_PRESSED_METHOD_NAME: StringName = &"_on_button_pressed"
+	if contents_node.has_method(BUTTON_PRESSED_METHOD_NAME):
+		_popup_buttons.pressed.connect(
+				Callable(contents_node, BUTTON_PRESSED_METHOD_NAME)
+		)
 
-
-func _connect_content_to_buttons() -> void:
-	if not contents_node.has_method("_on_button_pressed"):
-		return
-
-	_popup_buttons.pressed.connect(
-			Callable(contents_node, "_on_button_pressed")
-	)
+	const INVALIDATED_SIGNAL_NAME: StringName = &"invalidated"
+	if contents_node.has_signal(INVALIDATED_SIGNAL_NAME):
+		contents_node.connect(INVALIDATED_SIGNAL_NAME, _on_popup_invalidated)
 
 
 func _on_button_pressed(_button_id: int) -> void:
-	queue_free()
+	NodeUtils.delete_node(self)
+
+
+func _on_popup_invalidated() -> void:
+	NodeUtils.delete_node(self)

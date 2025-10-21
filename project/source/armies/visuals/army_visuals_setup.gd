@@ -123,9 +123,7 @@ func _remove_visuals_no_signal(army_visuals: ArmyVisuals2D) -> void:
 
 func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
 	army_visuals.tree_exited.disconnect(_on_visuals_tree_exited)
-	if army_visuals.get_parent() != null:
-		army_visuals.get_parent().remove_child(army_visuals)
-	army_visuals.queue_free()
+	NodeUtils.delete_node(army_visuals)
 
 
 func _connect_signals() -> void:

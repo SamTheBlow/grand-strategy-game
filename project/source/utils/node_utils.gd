@@ -30,3 +30,10 @@ static func delete_nodes(nodes: Array) -> void:
 		if node.get_parent() != null:
 			node.get_parent().remove_child(node)
 		node.queue_free()
+
+
+## Removes from the scene tree and deletes given node.
+static func delete_node(node: Node) -> void:
+	if node.get_parent() != null:
+		node.get_parent().remove_child(node)
+	node.queue_free()

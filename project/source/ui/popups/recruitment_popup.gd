@@ -5,53 +5,71 @@ extends VBoxContainer
 ##
 ## See also: [GamePopup]
 
-signal confirmed(province: Province, troop_count: int)
+signal invalidated()
+signal confirmed(troop_count: int, province_id: int)
 
-## This will be passed as an argument for the confirmed signal.
-var province: Province
+var _is_invalid: bool = false
 
-var _action_cost: ActionCostNode:
-	get:
-		if _action_cost == null:
-			_action_cost = %ActionCost as ActionCostNode
-		return _action_cost
+var _is_setup: bool = false
+var _provinces: Provinces
+var _province_id: int
+var _resource_costs: Array[ResourceCost]
+var _minimum_amount: int
+var _maximum_amount: int
 
-var _troop_slider: Range:
-	get:
-		if _troop_slider == null:
-			_troop_slider = %TroopSlider as Range
-		return _troop_slider
-
+@onready var _action_cost := %ActionCost as ActionCostNode
+@onready var _troop_slider := %TroopSlider as Range
 @onready var _troop_label := %TroopLabel as Label
 
 
 func _ready() -> void:
-	# Have the slider maxed out by default
-	_troop_slider.value = _troop_slider.max_value
-
-	_update_troop_label()
-	_update_number_to_buy()
-	_troop_slider.value_changed.connect(_on_troop_slider_value_changed)
+	if _is_setup:
+		_update()
 
 
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
 
-func set_population_cost(population_cost: ResourceCost) -> void:
-	_action_cost.population_cost = population_cost
+func setup(
+		provinces: Provinces,
+		province_id: int,
+		resource_costs: Array[ResourceCost],
+		minimum_amount: int,
+		maximum_amount: int
+) -> void:
+	if _is_setup:
+		_provinces.removed.disconnect(_on_province_removed)
+
+	_provinces = provinces
+	_province_id = province_id
+	_resource_costs = resource_costs
+	_minimum_amount = minimum_amount
+	_maximum_amount = maximum_amount
+	_is_setup = true
+
+	if is_node_ready():
+		_update()
 
 
-func set_money_cost(money_cost: ResourceCost) -> void:
-	_action_cost.money_cost = money_cost
+func _update() -> void:
+	if _provinces.province_from_id(_province_id) == null:
+		_is_invalid = true
+		invalidated.emit()
+		return
 
+	_provinces.removed.connect(_on_province_removed)
 
-func set_minimum_amount(min_amount: int) -> void:
-	_troop_slider.min_value = maxi(1, min_amount)
+	_action_cost.setup(_resource_costs)
+	_troop_slider.min_value = maxi(1, _minimum_amount)
+	_troop_slider.max_value = maxi(1, _maximum_amount)
 
+	# Have the slider maxed out by default
+	_troop_slider.value = _troop_slider.max_value
 
-func set_maximum_amount(max_amount: int) -> void:
-	_troop_slider.max_value = maxi(1, max_amount)
+	_update_troop_label()
+	_update_number_to_buy()
+	_troop_slider.value_changed.connect(_on_troop_slider_value_changed)
 
 
 func _update_number_to_buy() -> void:
@@ -78,4 +96,11 @@ func _on_troop_slider_value_changed(_value: float) -> void:
 
 func _on_button_pressed(button_index: int) -> void:
 	if button_index == 1:
-		confirmed.emit(province, roundi(_troop_slider.value))
+		confirmed.emit(roundi(_troop_slider.value), _province_id)
+
+
+func _on_province_removed(province: Province) -> void:
+	if province.id == _province_id:
+		_is_invalid = true
+		_provinces.removed.disconnect(_on_province_removed)
+		invalidated.emit()

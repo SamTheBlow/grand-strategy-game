@@ -3,51 +3,95 @@ extends VBoxContainer
 ## Contents for the popup that appears when the user wants to move an [Army].
 ##
 ## See also: [GamePopup]
-# TODO DRY. This code is very similar to that of [RecruitmentPopup].
 
-signal confirmed(army: Army, troop_count: int, destination: Province)
+signal invalidated()
+signal confirmed(army: Army, troop_count: int, destination_province_id: int)
 
-@export var troop_slider: Slider
-@export var troop_label: Label
+var _is_invalid: bool = false
 
+var _is_setup: bool = false
 var _army: Army
-var _destination: Province
+var _provinces: Provinces
+var _destination_province_id: int
+
+@onready var _troop_slider := %HSlider as Slider
+@onready var _troop_label := %Label as Label
 
 
-## To be called when this node is created.
-func init(army: Army, destination: Province) -> void:
-	_army = army
-	_destination = destination
-	troop_slider.min_value = _army.army_size.minimum()
-	troop_slider.max_value = _army.army_size.current_size()
-	troop_slider.value = troop_slider.max_value
-	_new_slider_value()
+func _ready() -> void:
+	if _is_setup:
+		_update()
 
 
 func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
 
-func _new_slider_value() -> void:
-	var value := int(troop_slider.value)
-	var max_value := int(troop_slider.max_value)
-	troop_label.text = str(value) + " | " + str(max_value - value)
+func setup(
+		army: Army, provinces: Provinces, destination_province_id: int
+) -> void:
+	if _is_setup:
+		_provinces.removed.disconnect(_on_province_removed)
+
+	_army = army
+	_provinces = provinces
+	_destination_province_id = destination_province_id
+	_is_setup = true
+
+	if is_node_ready():
+		_update()
+
+
+func _update() -> void:
+	if (
+			_army.province(_provinces) == null
+			or _provinces.province_from_id(_destination_province_id) == null
+	):
+		_is_invalid = true
+		invalidated.emit()
+		return
+
+	_provinces.removed.connect(_on_province_removed)
+
+	_troop_slider.min_value = _army.army_size.minimum()
+	_troop_slider.max_value = _army.army_size.current_size()
+
+	# Default to moving the entire army
+	_troop_slider.value = _troop_slider.max_value
+
+	_update_label()
+
+
+func _update_label() -> void:
+	var value := int(_troop_slider.value)
+	var max_value := int(_troop_slider.max_value)
+	_troop_label.text = str(value) + " | " + str(max_value - value)
 
 
 func _on_troop_slider_value_changed(value: float) -> void:
 	if (
-			value > troop_slider.max_value - _army.army_size.minimum()
-			and value < troop_slider.max_value
+			value > _troop_slider.max_value - _army.army_size.minimum()
+			and value < _troop_slider.max_value
 	):
 		# We return early, because setting the slider's value here
 		# triggers the signal that calls this function
-		troop_slider.value = troop_slider.max_value
+		_troop_slider.value = _troop_slider.max_value
 		return
 
-	_new_slider_value()
+	_update_label()
 
 
 func _on_button_pressed(button_id: int) -> void:
 	if button_id == 1:
-		var troop_count := int(troop_slider.value)
-		confirmed.emit(_army, troop_count, _destination)
+		var troop_count := int(_troop_slider.value)
+		confirmed.emit(_army, troop_count, _destination_province_id)
+
+
+func _on_province_removed(province: Province) -> void:
+	if (
+			province.id == _destination_province_id
+			or province.id == _army.province_id()
+	):
+		_is_invalid = true
+		_provinces.removed.disconnect(_on_province_removed)
+		invalidated.emit()
