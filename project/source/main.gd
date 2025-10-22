@@ -95,7 +95,7 @@ func play_game(project: GameProject) -> void:
 ## If it succeeds, sends a global message in the chat
 ## and loads the new game scene.
 func load_game() -> void:
-	var result: ProjectFromRaw.ParseResult = (
+	var result: ProjectParsing.ParseResult = (
 			ProjectFromPath.loaded_from(SAVE_FILE_PATH)
 	)
 
@@ -177,8 +177,8 @@ func _send_game_to_clients(
 ## until we've received everything else before we start the game.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_game(raw_data: Dictionary) -> void:
-	var project_from_raw: ProjectFromRaw.ParseResult = (
-			ProjectFromRaw.parsed_from(raw_data, "")
+	var project_from_raw: ProjectParsing.ParseResult = (
+			ProjectParsing.parsed_from(raw_data, "")
 	)
 
 	if project_from_raw.error:

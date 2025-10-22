@@ -26,7 +26,7 @@ func save_project(project: GameProject) -> void:
 		return
 
 	file_access.store_string(
-			JSON.stringify(ProjectToRawDict.result(project), "\t")
+			JSON.stringify(ProjectParsing.to_raw_data(project), "\t")
 	)
 	file_access.close()
 	error = false

@@ -45,8 +45,8 @@ func _initialize() -> void:
 
 	_print_with_time("Generating the game...")
 
-	var generated_game: GameLoadGenerated.ParseResult = (
-			GameLoadGenerated.result(
+	var generated_game: ProjectParsing.ParseResult = (
+			ProjectFromPath.generated_from(
 					ProjectMetadata.from_file_path(load_file_path), game_rules
 			)
 	)

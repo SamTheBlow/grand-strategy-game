@@ -62,8 +62,8 @@ func inject(
 ## Loads a new game, generates data if applicable and
 ## populates the data with given generation settings.
 func _setup_game(metadata: ProjectMetadata, game_rules: GameRules) -> void:
-	var generated_game: GameLoadGenerated.ParseResult = (
-			GameLoadGenerated.result(metadata, game_rules)
+	var generated_game: ProjectParsing.ParseResult = (
+			ProjectFromPath.generated_from(metadata, game_rules)
 	)
 
 	_mutex.lock()

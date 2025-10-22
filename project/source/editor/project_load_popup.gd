@@ -63,7 +63,7 @@ func _on_button_pressed(button_id: int) -> void:
 		if _selected_project == null:
 			return
 
-		var project_parse_result: ProjectFromRaw.ParseResult = (
+		var project_parse_result: ProjectParsing.ParseResult = (
 				ProjectFromPath.loaded_from(
 						_selected_project.metadata.file_path
 				)

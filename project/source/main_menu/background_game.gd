@@ -39,8 +39,8 @@ func _setup_game(project_file_path: String) -> void:
 		_on_game_load_error.call_deferred("Invalid project file path")
 		return
 
-	var generated_game: GameLoadGenerated.ParseResult = (
-			GameLoadGenerated.result(metadata, GameRules.new())
+	var generated_game: ProjectParsing.ParseResult = (
+			ProjectFromPath.generated_from(metadata, GameRules.new())
 	)
 	if generated_game.error:
 		_on_game_load_error.call_deferred(generated_game.error_message)
