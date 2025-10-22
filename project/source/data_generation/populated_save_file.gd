@@ -17,25 +17,6 @@ static func apply(game: Game) -> void:
 		# Determine if this is a "starting province"
 		var is_starting_province: bool = province.owner_country != null
 
-		# Set money income according to game rules
-		match game.rules.province_income_option.selected_value():
-			GameRules.ProvinceIncome.RANDOM:
-				province._income_money = IncomeMoneyConstant.new(
-						game.rng.randi_range(
-								game.rules.province_income_random_min.value,
-								game.rules.province_income_random_max.value
-						)
-				)
-			GameRules.ProvinceIncome.CONSTANT:
-				province._income_money = IncomeMoneyConstant.new(
-						game.rules.province_income_constant.value
-				)
-			GameRules.ProvinceIncome.POPULATION:
-				province._income_money = IncomeMoneyPerPopulation.new(
-						province.population,
-						game.rules.province_income_per_person.value
-				)
-
 		# Randomize population size
 		var exponential_rng: float = game.rng.randf() ** 2.0
 		var population_size: int = floori(exponential_rng * 1000.0)

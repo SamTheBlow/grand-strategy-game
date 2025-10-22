@@ -174,7 +174,7 @@ func _update_nodes_province() -> void:
 	_recruit_button.province = province
 
 	_population_size_label_update.province = province
-	_income_money_label_update.province = province
+	_income_money_label_update.income_money = province.income_money
 
 	_country_button_province_update.province = province
 

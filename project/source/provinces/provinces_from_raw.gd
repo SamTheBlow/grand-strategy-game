@@ -105,6 +105,18 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 	# Population
 	_parse_population(raw_dict.get(PROVINCE_POPULATION_KEY), game, province)
 
+	# Money income
+	var is_base_income_overwritten: bool = false
+	var base_income: int = 0
+	if ParseUtils.dictionary_has_number(raw_dict, PROVINCE_INCOME_MONEY_KEY):
+		is_base_income_overwritten = true
+		base_income = (
+				ParseUtils.dictionary_int(raw_dict, PROVINCE_INCOME_MONEY_KEY)
+		)
+	province.income_money = IncomeMoney.new(
+			game, province.population, is_base_income_overwritten, base_income
+	)
+
 	# Buildings
 	if ParseUtils.dictionary_has_array(raw_dict, PROVINCE_BUILDINGS_KEY):
 		var raw_buildings_array: Array = raw_dict[PROVINCE_BUILDINGS_KEY]
@@ -117,23 +129,6 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 				province.buildings.add(
 						Fortress.new_fortress(game, province.id)
 				)
-
-	# Money income
-	if (
-			game.rules.province_income_option.selected_value()
-			== GameRules.ProvinceIncome.POPULATION
-	):
-		province._income_money = IncomeMoneyPerPopulation.new(
-				province.population,
-				game.rules.province_income_per_person.value
-		)
-	else:
-		var base_income: int = 0
-		if ParseUtils.dictionary_has_number(raw_dict, PROVINCE_INCOME_MONEY_KEY):
-			base_income = ParseUtils.dictionary_int(
-					raw_dict, PROVINCE_INCOME_MONEY_KEY
-			)
-		province._income_money = IncomeMoneyConstant.new(base_income)
 
 	game.world.provinces.add(province)
 

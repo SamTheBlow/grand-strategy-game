@@ -275,7 +275,7 @@ func _on_selected_province_changed(province: Province) -> void:
 		_editing_interface.close_interface()
 		return
 	_editing_interface.open_province_edit_interface(
-			province, _current_project, editor_settings
+			province.id, _current_project, editor_settings
 	)
 
 

@@ -26,6 +26,10 @@ var owner_country: Country:
 
 var population: Population
 
+## How much money (the in-game resource)
+## this province generates per [GameTurn].
+var income_money: IncomeMoney
+
 var buildings := Buildings.new()
 
 ## The list of vertices forming this province's polygon shape.
@@ -55,10 +59,6 @@ var position_fortress: Vector2
 ## neighboring this province, e.g. when moving armies.
 var _linked_province_ids: Array[int] = []
 
-## How much money (the in-game resource)
-## this province generates per [GameTurn].
-var _income_money: IncomeMoney
-
 
 ## The default name this province would have if it didn't have a name.
 func default_name() -> String:
@@ -71,10 +71,6 @@ func name_or_default() -> String:
 		return name
 	else:
 		return default_name()
-
-
-func income_money() -> IncomeMoney:
-	return _income_money
 
 
 ## Returns a list of all the provinces linked to this province.

@@ -24,7 +24,7 @@ func _init(game: Game) -> void:
 func _give_money_income() -> void:
 	for province in _game.world.provinces.list():
 		if province.owner_country != null:
-			province.owner_country.money += province.income_money().total()
+			province.owner_country.money += province.income_money.amount()
 
 
 func _on_turn_changed(_turn: int) -> void:

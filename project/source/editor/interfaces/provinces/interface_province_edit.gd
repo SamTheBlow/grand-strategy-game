@@ -8,7 +8,7 @@ signal duplicate_pressed(province: Province)
 
 var province := Province.new()
 
-@onready var _preview_rect := %PreviewRect as TextureRect
+#@onready var _preview_rect := %PreviewRect as TextureRect
 @onready var _settings := %Settings as ItemVoidNode
 
 

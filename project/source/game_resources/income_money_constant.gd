@@ -1,6 +1,6 @@
 class_name IncomeMoneyConstant
-extends IncomeMoney
+extends IncomeMoney.IncomeMoneyAlgorithm
 
 
 func _init(constant_income: int) -> void:
-	_total = constant_income
+	_amount = constant_income

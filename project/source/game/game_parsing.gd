@@ -109,11 +109,10 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 				ProvincesFromRaw.PROVINCE_POS_Y_KEY: province.position.y,
 			},
 		}
-		if province.income_money() is IncomeMoneyConstant:
-			province_data.merge({
-				ProvincesFromRaw.PROVINCE_INCOME_MONEY_KEY:
-					province.income_money().total(),
-			})
+
+		var income_money_dict: Dictionary = province.income_money.to_raw_dict()
+		if not income_money_dict.is_empty():
+			province_data.merge(income_money_dict)
 
 		var global_position_army_host: Vector2 = (
 				province.position + province.position_army_host

@@ -102,7 +102,7 @@ func _new_interface(
 		)
 	elif new_interface is InterfaceProvinceList:
 		var list_interface := new_interface as InterfaceProvinceList
-		list_interface.provinces = project.game.world.provinces
+		list_interface.setup(project.game.world.provinces)
 		list_interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
 		)
@@ -131,13 +131,17 @@ func _open_new_decoration_edit_interface(
 	open_interface(new_interface)
 
 
-## Opens the interface for editing given [Province].
+## Opens the interface for editing given province.
 func open_province_edit_interface(
-		province: Province,
+		province_id: int,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
+	var province: Province = (
+			project.game.world.provinces.province_from_id(province_id)
+	)
 	if province == null:
+		push_warning("Province doesn't exist.")
 		return
 
 	var new_interface := _new_interface(
@@ -146,12 +150,12 @@ func open_province_edit_interface(
 	new_interface.back_pressed.connect(open_new_interface.bind(
 			InterfaceType.PROVINCE_LIST, project, editor_settings
 	))
-	#new_interface.delete_pressed.connect(
-	#		_on_province_deleted.bind(project, editor_settings)
-	#)
-	#new_interface.duplicate_pressed.connect(
-	#		_on_province_duplicated.bind(project, editor_settings)
-	#)
+	new_interface.delete_pressed.connect(
+			_on_province_deleted.bind(project, editor_settings)
+	)
+	new_interface.duplicate_pressed.connect(
+			_on_province_duplicated.bind(project, editor_settings)
+	)
 	new_interface.province = province
 	open_interface(new_interface)
 	province_interface_opened.emit(province)
@@ -192,3 +196,38 @@ func _on_world_decoration_duplicated(
 	_open_new_decoration_edit_interface(
 			new_decoration, project, editor_settings
 	)
+
+
+func _on_province_deleted(
+		province: Province,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	close_interface()
+	project.game.world.provinces.remove(province.id)
+	open_new_interface(InterfaceType.PROVINCE_LIST, project, editor_settings)
+
+
+func _on_province_duplicated(
+		province: Province,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
+
+	var new_province := Province.new()
+	new_province.polygon = province.polygon.duplicate()
+	new_province.position = province.position + _DUPLICATE_PROVINCE_OFFSET
+	new_province.position_army_host = province.position_army_host
+	new_province.owner_country = province.owner_country
+	new_province.population = Population.new(project.game)
+	new_province.population.population_size = (
+			province.population.population_size
+	)
+	new_province.income_money = (
+			IncomeMoney.new(project.game, new_province.population)
+	)
+	new_province.buildings._list = province.buildings.list()
+
+	project.game.world.provinces.add(new_province)
+	open_province_edit_interface(new_province.id, project, editor_settings)
