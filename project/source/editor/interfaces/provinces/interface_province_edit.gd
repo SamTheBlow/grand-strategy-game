@@ -8,7 +8,7 @@ signal duplicate_pressed(province: Province)
 
 var province := Province.new()
 
-#@onready var _preview_rect := %PreviewRect as TextureRect
+@onready var _preview := %ProvincePreview as ProvincePreviewNode
 @onready var _settings := %Settings as ItemVoidNode
 
 
@@ -19,7 +19,7 @@ func _ready() -> void:
 	_settings.refresh()
 
 	_load_settings()
-	_update_preview()
+	_preview.setup(province)
 
 	# Name
 	(_settings.item.child_items[0] as ItemString).value_changed.connect(
@@ -44,11 +44,6 @@ func _load_settings() -> void:
 			province.default_name()
 	)
 	(_settings.item.child_items[1] as ItemVector2).set_data(province.position)
-
-
-func _update_preview() -> void:
-	# TODO apply preview
-	pass
 
 
 func _on_back_button_pressed() -> void:

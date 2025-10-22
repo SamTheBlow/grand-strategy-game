@@ -26,6 +26,14 @@ var province: Province:
 		_connect_signals()
 		_update_province()
 
+## When true, changes the position and scale
+## such that the province fits inside given preview_rect.
+var is_preview: bool = false
+var preview_rect: Rect2
+
+var _preview_polygon: PackedVector2Array = []
+var _preview_position := Vector2.ZERO
+
 @onready var _buildings_setup := %BuildingVisualsSetup as BuildingVisualsSetup
 
 @onready var _outlined_polygon := %Polygon as OutlinedPolygon2D
@@ -89,7 +97,7 @@ func highlight_debug(
 	var debug_highlight := OutlinedPolygon2D.new()
 	debug_highlight.name = "DebugHighlight"
 	debug_highlight.color = Color(0.0, 0.0, 0.0, 0.0)
-	debug_highlight.polygon = province.polygon
+	debug_highlight.polygon = _polygon()
 	debug_highlight.outline_settings = outline_settings
 	add_child(debug_highlight)
 
@@ -103,8 +111,11 @@ func _update_province() -> void:
 		name = "NullProvince"
 		return
 
+	if is_preview:
+		_calculate_preview()
+
 	name = str(province.id)
-	position = province.position
+	position = _position()
 
 	_buildings_setup.buildings = province.buildings
 	_buildings_setup.spawn_position = province.position_fortress
@@ -117,8 +128,8 @@ func _update_province() -> void:
 
 
 func _update_shape_polygon() -> void:
-	_outlined_polygon.polygon = province.polygon
-	_collision_shape.polygon = province.polygon
+	_outlined_polygon.polygon = _polygon()
+	_collision_shape.polygon = _polygon()
 
 
 func _update_shape_color() -> void:
@@ -126,6 +137,82 @@ func _update_shape_color() -> void:
 			province.owner_country.color
 			if province.owner_country != null else _default_shape_color
 	)
+
+
+func _calculate_preview() -> void:
+	# Get the boundaries
+	var no_data: bool = true
+	var leftmost_point: float
+	var rightmost_point: float
+	var topmost_point: float
+	var bottommost_point: float
+
+	for vertex in province.polygon:
+		var point_x: float = vertex.x
+		var point_y: float = vertex.y
+
+		# Initialization
+		if no_data:
+			leftmost_point = point_x
+			rightmost_point = point_x
+			topmost_point = point_y
+			bottommost_point = point_y
+			no_data = false
+			continue
+
+		if point_x < leftmost_point:
+			leftmost_point = point_x
+		elif point_x > rightmost_point:
+			rightmost_point = point_x
+		if point_y < topmost_point:
+			topmost_point = point_y
+		elif point_y > bottommost_point:
+			bottommost_point = point_y
+
+	if no_data:
+		return
+
+	var width: float = rightmost_point - leftmost_point
+	var height: float = bottommost_point - topmost_point
+	var desired_width: float = preview_rect.size.x
+	var desired_height: float = preview_rect.size.y
+
+	# Prevent division by zero
+	if (
+			width == 0.0
+			or height == 0.0
+			or desired_width == 0.0
+			or desired_height == 0.0
+	):
+		return
+
+	# Multiply every vertex by the scale ratio
+	# (e.g. if the polygon is 3x bigger than it should be,
+	# then multiply every vertex by 1/3)
+	# To preserve the aspect ratio,
+	# we need to multilply by the smallest of the two ratios.
+	# Then offset every vertex to move the polygon to the desired position.
+	var scale_ratio: float = (
+			minf(desired_width / width, desired_height / height)
+	)
+	var offset := Vector2(
+			preview_rect.position.x - leftmost_point,
+			preview_rect.position.y - topmost_point
+	)
+	_preview_polygon = []
+	for i in province.polygon.size():
+		_preview_polygon.append((province.polygon[i] + offset) * scale_ratio)
+	_preview_position = (
+			0.5 * (preview_rect.size - Vector2(width, height) * scale_ratio)
+	)
+
+
+func _polygon() -> PackedVector2Array:
+	return _preview_polygon if is_preview else province.polygon
+
+
+func _position() -> Vector2:
+	return _preview_position if is_preview else province.position
 
 
 func _connect_signals() -> void:
@@ -153,6 +240,8 @@ func _on_owner_changed(_province: Province) -> void:
 
 
 func _on_position_changed(_province: Province) -> void:
+	if is_preview:
+		return
 	position = province.position
 
 
