@@ -107,6 +107,16 @@ func number_of_local_humans() -> int:
 	return output
 
 
+## Returns true if you control given country.
+## ("you" means not an AI and not controlled by a different client)
+func you_control_country(multiplayer: MultiplayerAPI, country: Country) -> bool:
+	return client_controls_country(
+			multiplayer.get_unique_id()
+			if MultiplayerUtils.is_online(multiplayer) else 1,
+			country
+	)
+
+
 ## Returns true if the client (given by its unique id) has one or more
 ## players playing as the given country, otherwise returns false.
 func client_controls_country(multiplayer_id: int, country: Country) -> bool:

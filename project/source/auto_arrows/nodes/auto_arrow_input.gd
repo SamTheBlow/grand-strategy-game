@@ -99,12 +99,6 @@ func _receive_clear_province(country_id: int, province_id: int) -> void:
 
 
 func _create_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
-	if (
-			MultiplayerUtils.is_online(multiplayer)
-			and not _client_can_apply_changes(multiplayer.get_unique_id())
-	):
-		return
-
 	var preview_arrow := AutoArrowPreviewNode2D.new()
 	preview_arrow.source_province = province_visuals
 	preview_arrow.released.connect(_on_preview_arrow_released)
@@ -129,6 +123,15 @@ func _on_provinces_unhandled_mouse_event_occured(
 	if not (
 			mouse_button_event.pressed
 			and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT
+	):
+		return
+
+	# Only when you control the playing country...
+	if (
+			not game.turn.is_running()
+			or not game.game_players.you_control_country(
+					multiplayer, game.turn.playing_player().playing_country
+			)
 	):
 		return
 
