@@ -122,10 +122,20 @@ func is_able_to_move() -> bool:
 ## An army can only move to an adjacent province. And when moving into
 ## foreign territory, the army's owner must be allowed to enter.
 ## This returns true regardless of if the army is able to move at all.
-func can_move_to(destination: Province) -> bool:
+func can_move_to(provinces: Provinces, destination_province_id: int) -> bool:
+	var source_province: Province = provinces.province_from_id(_province_id)
+	if source_province == null:
+		return false
+	var destination_province: Province = (
+			provinces.province_from_id(destination_province_id)
+	)
+	if destination_province == null:
+		return false
 	return (
-			destination.is_linked_to(_province_id)
-			and owner_country.can_move_into_country(destination.owner_country)
+			source_province.is_linked_to(destination_province_id)
+			and owner_country.can_move_into_country(
+					destination_province.owner_country
+			)
 	)
 
 
@@ -136,16 +146,19 @@ func can_move_to(destination: Province) -> bool:
 ## Once that limit is reached, this function has no effect.[br]
 ## If you want to move an army without affecting its movement count,
 ## consider using teleport_to_province() instead.
-func move_to_province(destination: Province) -> void:
+func move_to_province(
+		provinces: Provinces, destination_province_id: int
+) -> void:
 	if not is_able_to_move():
 		return
-	if not can_move_to(destination):
+	if not can_move_to(provinces, destination_province_id):
 		push_error("Tried to move an army to a province it can't move to.")
 		return
 
 	_movements_made += 1
-	_province_id = destination.id
-	moved_to_province.emit(destination)
+	_province_id = destination_province_id
+	# We don't check for null because it's already done in can_move_to
+	moved_to_province.emit(provinces.province_from_id(destination_province_id))
 
 
 ## Moves this army to given destination province.

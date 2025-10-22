@@ -16,10 +16,9 @@ func _init(army_id: int, destination_province_id: int) -> void:
 
 func apply_to(game: Game, player: GamePlayer) -> void:
 	var army: Army = game.world.armies.army_from_id(_army_id)
-	if not army:
+	if army == null:
 		# Note that this may sometimes be triggered by
 		# the AI making invalid moves. (See [AIDecisionUtils])
-
 		push_warning("Tried to move an army that doesn't exist!")
 		return
 
@@ -30,10 +29,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	var destination_province: Province = (
-			game.world.provinces.province_from_id(_destination_province_id)
-	)
-	if not destination_province:
+	if game.world.provinces.province_from_id(_destination_province_id) == null:
 		push_warning(
 				"Tried to move an army to a province that doesn't exist!"
 		)
@@ -46,14 +42,14 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	if not army.can_move_to(destination_province):
+	if not army.can_move_to(game.world.provinces, _destination_province_id):
 		# Note that this warning is disabled when the AI plays because
 		# the AI still makes many invalid moves. (See [AIDecisionUtils])
 		if player.is_human:
 			push_warning("Tried to move an army to an invalid destination!")
 		return
 
-	army.move_to_province(destination_province)
+	army.move_to_province(game.world.provinces, _destination_province_id)
 
 
 func raw_data() -> Dictionary:

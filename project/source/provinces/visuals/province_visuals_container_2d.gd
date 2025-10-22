@@ -45,6 +45,11 @@ func visuals_of(province_id: int) -> ProvinceVisuals2D:
 	return null
 
 
+func remove_all_highlights() -> void:
+	for province_id in _province_map:
+		_province_map[province_id].remove_highlight()
+
+
 func _update() -> void:
 	_clear()
 

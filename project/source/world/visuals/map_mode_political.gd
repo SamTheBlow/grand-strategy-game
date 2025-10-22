@@ -1,9 +1,23 @@
-class_name ProvinceHighlight
+class_name MapModePolitical
 extends Node
 ## Adds or removes highlight on the selected [Province] and its links.
+## This is the normal usual map mode.
+
+## This node has no effect when disabled.
+var is_enabled: bool = false:
+	set(value):
+		if is_enabled == value:
+			return
+		is_enabled = value
+		if _is_setup and is_node_ready():
+			if is_enabled:
+				_update()
+			else:
+				_disconnect_signals()
 
 var _is_setup: bool = false
 var _armies: Armies
+var _provinces: Provinces
 var _playing_country: PlayingCountry
 var _armies_in_each_province: ArmiesInEachProvince
 var _province_selection: ProvinceSelection
@@ -15,20 +29,22 @@ var _highlighted_province_link_ids: Array[int] = []
 
 
 func _ready() -> void:
-	if _is_setup:
+	if is_enabled and _is_setup:
 		_update()
 
 
 func setup(
 		armies: Armies,
+		provinces: Provinces,
 		playing_country: PlayingCountry,
 		armies_in_each_province: ArmiesInEachProvince,
 		province_selection: ProvinceSelection
 ) -> void:
-	if _is_setup and is_node_ready():
+	if is_enabled and _is_setup and is_node_ready():
 		_disconnect_signals()
 
 	_armies = armies
+	_provinces = provinces
 	_playing_country = playing_country
 	_armies_in_each_province = armies_in_each_province
 	_province_selection = province_selection
@@ -38,11 +54,12 @@ func setup(
 
 	_is_setup = true
 
-	if is_node_ready():
+	if is_enabled and is_node_ready():
 		_update()
 
 
 func _update() -> void:
+	_province_container.remove_all_highlights()
 	_highlight_province(_province_selection.selected_province())
 	_connect_signals()
 
@@ -81,7 +98,7 @@ func _highlight_province(province: Province) -> void:
 		if link_visuals == null:
 			continue
 		link_visuals.highlight_shape(
-				has_active_army and army.can_move_to(link_visuals.province)
+				has_active_army and army.can_move_to(_provinces, link_id)
 		)
 
 	_highlighted_province_id = province.id

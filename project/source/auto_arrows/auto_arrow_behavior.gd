@@ -45,7 +45,9 @@ static func apply(game: Game) -> void:
 					arrow_destinations[source_province].destinations
 					.duplicate()
 			):
-				if not army.can_move_to(destination_province):
+				if not army.can_move_to(
+						game.world.provinces, destination_province.id
+				):
 					arrow_destinations[source_province].destinations.erase(
 							destination_province
 					)

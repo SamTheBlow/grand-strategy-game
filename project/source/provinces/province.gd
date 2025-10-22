@@ -6,6 +6,9 @@ class_name Province
 ## This class has many responsibilities, as many game mechanics involve
 ## their presence on a province: [Population], [Building], [IncomeMoney].
 
+signal link_added(linked_province_id: int)
+signal link_removed(linked_province_id: int)
+signal links_reset()
 signal owner_changed(this: Province)
 signal position_changed(this: Province)
 
@@ -81,6 +84,35 @@ func linked_province_ids() -> Array[int]:
 
 func is_linked_to(province_id: int) -> bool:
 	return _linked_province_ids.has(province_id)
+
+
+## No effect if given province is already linked.
+## No effect if given province id is the same as this province's.
+func add_link(province_id: int) -> void:
+	if province_id == id or _linked_province_ids.has(province_id):
+		return
+	_linked_province_ids.append(province_id)
+	link_added.emit(province_id)
+
+
+## No effect if given province is already not linked.
+func remove_link(province_id: int) -> void:
+	if _linked_province_ids.has(province_id):
+		_linked_province_ids.erase(province_id)
+		link_removed.emit(province_id)
+
+
+## Adds given province to the links if it's not a link, otherwise removes it.
+func toggle_link(province_id: int) -> void:
+	if _linked_province_ids.has(province_id):
+		remove_link(province_id)
+	else:
+		add_link(province_id)
+
+
+func reset_links() -> void:
+	_linked_province_ids = []
+	links_reset.emit()
 
 
 ## Returns true if all the following conditions are met:

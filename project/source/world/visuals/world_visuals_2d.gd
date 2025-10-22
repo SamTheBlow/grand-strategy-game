@@ -15,7 +15,7 @@ var province_selection: ProvinceSelection
 
 var _is_decorations_visible: bool = true
 
-@onready var _province_highlight := %ProvinceHighlight as ProvinceHighlight
+@onready var map_mode_setup := %MapModeSetup as MapModeSetup
 @onready var _army_visuals_setup := %ArmyVisualsSetup as ArmyVisualsSetup
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
 @onready var background := %Background as WorldBackground
@@ -37,12 +37,7 @@ func _initialize() -> void:
 	# We need to setup the provinces first
 	province_visuals.setup(world.provinces)
 
-	_province_highlight.setup(
-			world.armies,
-			playing_country,
-			world.armies_in_each_province,
-			province_selection
-	)
+	map_mode_setup.setup(self)
 
 	_army_visuals_setup.setup(world.armies, playing_country)
 

@@ -337,7 +337,7 @@ func _on_province_select_attempted(
 		# NOTE: assumes that countries only have
 		# one active army per province
 		var army: Army = my_active_armies_in_province[0]
-		if army.can_move_to(province):
+		if army.can_move_to(game.world.provinces, province.id):
 			_open_army_movement_popup(army, province)
 			outcome.is_selected = false
 

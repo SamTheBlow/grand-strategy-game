@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bafpj3jqosje7"]
+[gd_scene load_steps=14 format=3 uid="uid://bafpj3jqosje7"]
 
 [ext_resource type="Script" uid="uid://ci7o42ib2j32x" path="res://source/editor/interfaces/provinces/interface_province_edit.gd" id="1_qx7cx"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_t401f"]
@@ -19,10 +19,26 @@ suffix = "px"
 text = "Position"
 metadata/_custom_type_script = "uid://bhickbq71f38e"
 
+[sub_resource type="Resource" id="Resource_rtye8"]
+script = ExtResource("5_u2f1k")
+text = "Right click on a province to toggle it"
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[sub_resource type="Resource" id="Resource_qx7cx"]
+script = ExtResource("5_u2f1k")
+text = "Double right click on this province to reset"
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[sub_resource type="Resource" id="Resource_vhvwt"]
+script = ExtResource("5_u2f1k")
+text = "Adjacencies:"
+child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_rtye8"), SubResource("Resource_qx7cx")])
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
 [sub_resource type="Resource" id="Resource_e7r6f"]
 script = ExtResource("5_u2f1k")
 text = "Settings:"
-child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_4jecb")])
+child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_4jecb"), SubResource("Resource_vhvwt")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceProvinceEdit" type="Control"]

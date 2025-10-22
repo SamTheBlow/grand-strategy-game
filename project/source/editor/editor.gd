@@ -284,8 +284,20 @@ func _on_province_interface_opened(province: Province) -> void:
 	if _world_setup.world() != null:
 		_world_setup.world().province_selection.select(province.id)
 
+	# Show adjacencies on world map
+	_world_setup.world().map_mode_setup.set_map_mode(
+			MapModeSetup.MapMode.EDITOR_ADJACENCY
+	)
+
 
 func _on_province_interface_closed() -> void:
+	if _world_setup.world() == null:
+		return
+
 	# Deselect province
-	if _world_setup.world() != null:
-		_world_setup.world().province_selection.deselect()
+	_world_setup.world().province_selection.deselect()
+
+	# Revert the map mode to normal
+	_world_setup.world().map_mode_setup.set_map_mode(
+			MapModeSetup.MapMode.POLITICAL
+	)
