@@ -1,12 +1,12 @@
 [gd_scene load_steps=10 format=3 uid="uid://cppfb8jwghnqt"]
 
 [ext_resource type="Script" uid="uid://b2km6s1d6i40l" path="res://source/provinces/visuals/province_visuals_2d.gd" id="1_n1pxo"]
-[ext_resource type="Script" uid="uid://caes2bq652o76" path="res://source/buildings/visuals/building_visuals_setup.gd" id="2_4f42i"]
 [ext_resource type="Resource" uid="uid://clsansdbiopc6" path="res://resources/outline_settings/outline_none.tres" id="6_1nbur"]
 [ext_resource type="Script" uid="uid://muhjmx7aufla" path="res://source/armies/visuals/army_stack.gd" id="6_ivxko"]
 [ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="7_43ksa"]
 [ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="8_csbql"]
 [ext_resource type="Resource" uid="uid://cpywpvw4iwvdg" path="res://resources/outline_settings/outline_highlight.tres" id="8_fmvgc"]
+[ext_resource type="Script" uid="uid://caes2bq652o76" path="res://source/buildings/visuals/building_visuals_2d.gd" id="8_sp6v6"]
 [ext_resource type="Resource" uid="uid://ccoex6g562wam" path="res://resources/outline_settings/outline_highlight_target.tres" id="9_r5b4e"]
 [ext_resource type="Script" uid="uid://b4bb81i26gc4q" path="res://source/provinces/visuals/mouse_detection_area.gd" id="10_1g1rb"]
 
@@ -16,11 +16,6 @@ _outline_none = ExtResource("6_1nbur")
 _outline_selected = ExtResource("7_43ksa")
 _outline_highlight = ExtResource("8_fmvgc")
 _outline_target = ExtResource("9_r5b4e")
-
-[node name="BuildingVisualsSetup" type="Node" parent="." node_paths=PackedStringArray("_visuals_parent")]
-unique_name_in_owner = true
-script = ExtResource("2_4f42i")
-_visuals_parent = NodePath("../Buildings")
 
 [node name="Shape" type="Node2D" parent="."]
 
@@ -35,6 +30,8 @@ script = ExtResource("10_1g1rb")
 unique_name_in_owner = true
 
 [node name="Buildings" type="Node2D" parent="."]
+unique_name_in_owner = true
+script = ExtResource("8_sp6v6")
 
 [node name="ArmyStack2D" type="Node2D" parent="."]
 unique_name_in_owner = true

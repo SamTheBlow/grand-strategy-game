@@ -40,14 +40,7 @@ var income_money: IncomeMoney
 var buildings := Buildings.new()
 
 ## Where this province's [ArmyStack2D] will be positioned.
-var position_army_host: Vector2:
-	set(value):
-		position_army_host = value
-		position_fortress = position_army_host + Vector2(80.0, 56.0)
-
-## Where this province's [Fortress] will be positioned.
-## (This property is automatically set when setting position_army_host.)
-var position_fortress: Vector2
+var position_army_host := Vector2.ZERO
 
 ## A list of IDs for all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -120,6 +113,12 @@ func polygon() -> PackedVector2ArrayWithSignals:
 ## Moves this province by given amount.
 func move_relative(movement_amount: Vector2) -> void:
 	_polygon.add_to_all(movement_amount)
+
+
+## Returns the position of this province's [Fortress].
+func fortress_position() -> Vector2:
+	const FORTRESS_POSITION_OFFSET := Vector2(80.0, 56.0)
+	return position_army_host + FORTRESS_POSITION_OFFSET
 
 
 ## Returns true if all the following conditions are met:

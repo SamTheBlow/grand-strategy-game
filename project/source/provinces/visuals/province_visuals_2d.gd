@@ -34,11 +34,9 @@ var preview_rect: Rect2
 var _preview_polygon: PackedVector2Array = []
 var _preview_position := Vector2.ZERO
 
-@onready var _buildings_setup := %BuildingVisualsSetup as BuildingVisualsSetup
-
 @onready var _outlined_polygon := %Polygon as OutlinedPolygon2D
 @onready var _collision_shape := %CollisionShape as CollisionPolygon2D
-
+@onready var _buildings := %Buildings as BuildingVisuals2D
 @onready var _army_stack := %ArmyStack2D as ArmyStack2D
 
 ## The color defined in the editor will be the default color
@@ -118,8 +116,7 @@ func _update_province() -> void:
 	position = _position()
 	_update_positions()
 
-	_buildings_setup.province = province
-	_buildings_setup.buildings = province.buildings
+	_buildings.setup(province)
 
 	_update_polygon()
 	_update_shape_color()
