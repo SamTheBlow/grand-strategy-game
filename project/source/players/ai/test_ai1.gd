@@ -108,8 +108,8 @@ func _try_build_fortresses(
 				most_populated = province
 				continue
 			if (
-					province.population.population_size
-					> most_populated.population.population_size
+					province.population().population_size
+					> most_populated.population().population_size
 			):
 				most_populated = province
 

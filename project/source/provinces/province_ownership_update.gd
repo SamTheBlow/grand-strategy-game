@@ -1,23 +1,12 @@
 class_name ProvinceOwnershipUpdate
 ## Updates the owner country of each province at the end of each player's turn.
 
-## Effect does not trigger while disabled.
-var is_enabled: bool = false:
-	set(value):
-		if value == is_enabled:
-			return
-		is_enabled = value
-		if is_enabled:
-			_game.turn.player_turn_ended.connect(_on_player_turn_ended)
-		else:
-			_game.turn.player_turn_ended.disconnect(_on_player_turn_ended)
-
 var _game: Game
 
 
 func _init(game: Game) -> void:
 	_game = game
-	is_enabled = true
+	_game.turn.player_turn_ended.connect(_on_player_turn_ended)
 
 
 func _update_ownership() -> void:

@@ -148,11 +148,11 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 			})
 
 		# Population
-		if province.population.population_size != 0:
+		if province.population().population_size != 0:
 			province_data.merge({
 				ProvincesFromRaw.PROVINCE_POPULATION_KEY: {
 					ProvincesFromRaw.POPULATION_SIZE_KEY:
-						province.population.population_size,
+						province.population().population_size,
 				}
 			})
 

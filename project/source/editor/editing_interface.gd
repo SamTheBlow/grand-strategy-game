@@ -219,12 +219,11 @@ func _on_province_duplicated(
 	new_province.polygon().array = province.polygon().array.duplicate()
 	new_province.position_army_host = province.position_army_host
 	new_province.owner_country = province.owner_country
-	new_province.population = Population.new(project.game)
-	new_province.population.population_size = (
-			province.population.population_size
+	new_province.population().population_size = (
+			province.population().population_size
 	)
 	new_province.income_money = (
-			IncomeMoney.new(project.game, new_province.population)
+			IncomeMoney.new(project.game, new_province.population())
 	)
 	new_province.buildings._list = province.buildings.list()
 	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)

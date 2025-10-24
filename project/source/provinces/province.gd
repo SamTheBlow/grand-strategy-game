@@ -31,8 +31,6 @@ var owner_country: Country:
 		owner_country = value
 		owner_changed.emit(self)
 
-var population: Population
-
 ## How much money (the in-game resource)
 ## this province generates per [GameTurn].
 var income_money: IncomeMoney
@@ -48,6 +46,8 @@ var _linked_province_ids: Array[int] = []
 
 ## The list of vertices forming this province's polygon shape.
 var _polygon := PackedVector2ArrayWithSignals.new()
+
+var _population := Population.new()
 
 
 func _init() -> void:
@@ -119,6 +119,10 @@ func move_relative(movement_amount: Vector2) -> void:
 func fortress_position() -> Vector2:
 	const FORTRESS_POSITION_OFFSET := Vector2(80.0, 56.0)
 	return position_army_host + FORTRESS_POSITION_OFFSET
+
+
+func population() -> Population:
+	return _population
 
 
 ## Returns true if all the following conditions are met:

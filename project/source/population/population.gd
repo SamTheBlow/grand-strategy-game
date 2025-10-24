@@ -1,25 +1,20 @@
 class_name Population
-## Represents a population size as a number.
-## Applies [PopulationGrowth] at the start of each [GameTurn].
+## Contains a population size as a number.
 
 signal size_changed(new_value: int)
 
-## External reference
-var _game: Game
-
-## Must be positive or zero
+## Must be positive or zero.
 var population_size: int = 0:
 	set(value):
+		if value < 0:
+			push_warning("Tried to set population to negative value.")
+			value = 0
+
 		var previous_value: int = population_size
 		population_size = value
 		if value != previous_value:
 			size_changed.emit(value)
 
 
-func _init(game: Game) -> void:
-	_game = game
-	_game.turn.turn_changed.connect(_on_new_turn)
-
-
-func _on_new_turn(_turn: int) -> void:
-	PopulationGrowth.new().apply(_game.rules, self)
+func _init(starting_size: int = 0) -> void:
+	population_size = starting_size

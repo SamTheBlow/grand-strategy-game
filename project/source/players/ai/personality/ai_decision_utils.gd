@@ -82,7 +82,7 @@ func strength_of_countries() -> Array[float]:
 				GameRules.ProvinceIncome.POPULATION:
 					province_score += (
 							SCORE_WEIGHT_MONEY_INCOME
-							* province.population.population_size
+							* province.population().population_size
 							* game.rules.province_income_per_person.value
 					)
 
@@ -103,7 +103,7 @@ func strength_of_countries() -> Array[float]:
 					GameRules.ReinforcementsOption.POPULATION:
 						province_score += (
 								SCORE_WEIGHT_REINFORCEMENTS
-								* province.population.population_size
+								* province.population().population_size
 								* game.rules.reinforcements_per_person.value
 						)
 

@@ -71,9 +71,8 @@ func _init() -> void:
 
 	_components.append_array([
 		AutoArrowProvinceReaction.new(self),
-		ArmyReinforcements.new(self),
-		IncomeEachTurn.new(self),
 		ProvinceOwnershipUpdate.new(self),
+		NewTurnEvents.new(self),
 	])
 
 

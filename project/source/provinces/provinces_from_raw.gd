@@ -100,7 +100,9 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 		province.owner_country = game.countries.country_from_id(country_id)
 
 	# Population
-	_parse_population(raw_dict.get(PROVINCE_POPULATION_KEY), game, province)
+	province.population().population_size = (
+			_parsed_population(raw_dict.get(PROVINCE_POPULATION_KEY))
+	)
 
 	# Money income
 	var is_base_income_overwritten: bool = false
@@ -111,7 +113,10 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 				ParseUtils.dictionary_int(raw_dict, PROVINCE_INCOME_MONEY_KEY)
 		)
 	province.income_money = IncomeMoney.new(
-			game, province.population, is_base_income_overwritten, base_income
+			game,
+			province.population(),
+			is_base_income_overwritten,
+			base_income
 	)
 
 	# Buildings
@@ -125,7 +130,7 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 			if building_dict.get(BUILDING_TYPE_KEY) == BUILDING_TYPE_FORTRESS:
 				province.buildings.add(Fortress.new(province.id))
 
-	# Position offset
+	# Position offset (DEPRECATED)
 	var offset: Vector2 = (
 			_parsed_province_position(raw_dict.get(PROVINCE_POSITION_KEY))
 	)
@@ -193,19 +198,14 @@ static func _parsed_position_army_host(raw_dict: Dictionary) -> Vector2:
 	return Vector2(position_x, position_y)
 
 
-static func _parse_population(
-		raw_data: Variant, game: Game, province: Province
-) -> void:
-	province.population = Population.new(game)
-
+static func _parsed_population(raw_data: Variant) -> int:
 	if raw_data is not Dictionary:
-		return
+		return 0
 	var raw_dict: Dictionary = raw_data
 
-	var population_size: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, POPULATION_SIZE_KEY):
-		population_size = (
-				ParseUtils.dictionary_int(raw_dict, POPULATION_SIZE_KEY)
+		return maxi(
+				0, ParseUtils.dictionary_int(raw_dict, POPULATION_SIZE_KEY)
 		)
 
-	province.population.population_size = population_size
+	return 0

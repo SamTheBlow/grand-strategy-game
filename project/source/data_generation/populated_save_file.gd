@@ -22,7 +22,7 @@ static func apply(game: Game) -> void:
 		var population_size: int = floori(exponential_rng * 1000.0)
 		if is_starting_province:
 			population_size += game.rules.extra_starting_population.value
-		province.population.population_size = population_size
+		province.population().population_size = population_size
 
 		# Add a fortress, if applicable
 		if (

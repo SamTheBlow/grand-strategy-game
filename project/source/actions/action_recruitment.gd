@@ -47,7 +47,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		return
 
 	your_country.money -= Army.money_cost(_number_of_troops, game.rules)
-	province.population.population_size -= (
+	province.population().population_size -= (
 			Army.population_cost(_number_of_troops, game.rules)
 	)
 

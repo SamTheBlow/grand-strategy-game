@@ -28,7 +28,7 @@ func _init(country: Country, province: Province, game: Game) -> void:
 
 	_province.owner_changed.connect(_on_province_owner_changed)
 	_country.money_changed.connect(_on_money_changed)
-	_province.population.size_changed.connect(_on_population_size_changed)
+	_province.population().size_changed.connect(_on_population_size_changed)
 
 	_minimum = _calculated_minimum()
 	_maximum = _calculated_maximum()
@@ -98,7 +98,7 @@ func _calculated_maximum() -> int:
 		maximums.append(max_troops_with_money)
 
 	# Population
-	var population_size: int = _province.population.population_size
+	var population_size: int = _province.population().population_size
 	var pop_per_unit: float = _game.rules.recruitment_population_per_unit.value
 	var pop_for_one_troop: int = ceili(pop_per_unit)
 	if population_size < pop_for_one_troop:
