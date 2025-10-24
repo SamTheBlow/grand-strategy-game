@@ -2,6 +2,8 @@ class_name MapModeSetup
 extends Node
 ## Applies a map mode to the world.
 
+signal overlay_created(node: Node)
+
 enum MapMode {
 	POLITICAL,
 	EDITOR_ADJACENCY,
@@ -17,6 +19,7 @@ var _current_map_mode := MapMode.POLITICAL
 
 
 func _ready() -> void:
+	_node_editor_adj.overlay_created.connect(overlay_created.emit)
 	if _is_setup:
 		_update()
 

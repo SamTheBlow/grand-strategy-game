@@ -85,15 +85,12 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 				)
 
 	# Shape
-	province.polygon = _parsed_province_shape(raw_dict.get(PROVINCE_SHAPE_KEY))
-
-	# Position
-	province.position = (
-			_parsed_province_position(raw_dict.get(PROVINCE_POSITION_KEY))
+	province.polygon().array = (
+			_parsed_province_shape(raw_dict.get(PROVINCE_SHAPE_KEY))
 	)
 
 	# Position of the host army
-	province.position_army_host = _parsed_position_army_host(raw_dict, province)
+	province.position_army_host = _parsed_position_army_host(raw_dict)
 
 	# Owner country
 	if ParseUtils.dictionary_has_number(raw_dict, PROVINCE_OWNER_ID_KEY):
@@ -130,12 +127,19 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 						Fortress.new_fortress(game, province.id)
 				)
 
+	# Position offset
+	var offset: Vector2 = (
+			_parsed_province_position(raw_dict.get(PROVINCE_POSITION_KEY))
+	)
+	province.position_army_host -= offset
+	province.move_relative(offset)
+
 	game.world.provinces.add(province)
 
 
 static func _parsed_province_shape(raw_data: Variant) -> PackedVector2Array:
 	if raw_data is not Dictionary:
-		return []
+		return Province.DEFAULT_POLYGON_SHAPE
 	var raw_dict: Dictionary = raw_data
 
 	var shape_x_array: Array = []
@@ -148,6 +152,9 @@ static func _parsed_province_shape(raw_data: Variant) -> PackedVector2Array:
 
 	# If one has more points than the other, ignore the extra points
 	var number_of_points: int = mini(shape_x_array.size(), shape_y_array.size())
+
+	if number_of_points < 3:
+		return Province.DEFAULT_POLYGON_SHAPE
 
 	var shape: PackedVector2Array = []
 	for i in number_of_points:
@@ -174,9 +181,7 @@ static func _parsed_province_position(raw_data: Variant) -> Vector2:
 	return Vector2(position_x, position_y)
 
 
-static func _parsed_position_army_host(
-		raw_dict: Dictionary, province: Province
-) -> Vector2:
+static func _parsed_position_army_host(raw_dict: Dictionary) -> Vector2:
 	var x_data: Variant = raw_dict.get(PROVINCE_POSITION_ARMY_HOST_X_KEY)
 	var position_x: float = 0.0
 	if ParseUtils.is_number(x_data):
@@ -187,10 +192,7 @@ static func _parsed_position_army_host(
 	if ParseUtils.is_number(y_data):
 		position_y = ParseUtils.number_as_float(y_data)
 
-	# 4.1 Backwards Compatibility:
-	# This must be saved as a global position
-	# (not relative to the province position).
-	return Vector2(position_x, position_y) - province.position
+	return Vector2(position_x, position_y)
 
 
 static func _parse_population(

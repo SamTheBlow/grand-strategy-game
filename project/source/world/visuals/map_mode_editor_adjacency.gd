@@ -4,6 +4,8 @@ extends Node
 ## Adds or removes a right clicked province from the selected province's links.
 ## Clears selected province's links when double right clicked.
 
+signal overlay_created(node: Node)
+
 ## This node has no effect when disabled.
 var is_enabled: bool = false:
 	set(value):
@@ -23,12 +25,26 @@ var _province_selection: ProvinceSelection
 var _highlighted_province: Province
 var _highlighted_province_link_ids: Array[int] = []
 
+## May be null.
+var _world_overlay: Node:
+	set(value):
+		if _world_overlay != null:
+			NodeUtils.delete_node(_world_overlay)
+		_world_overlay = value
+		if _world_overlay != null:
+			overlay_created.emit(_world_overlay)
+
 @onready var _province_container := %Provinces as ProvinceVisualsContainer2D
 
 
 func _ready() -> void:
 	if is_enabled and _is_setup:
 		_update()
+
+
+func _exit_tree() -> void:
+	# Destroy the overlay
+	_world_overlay = null
 
 
 func setup(
@@ -50,31 +66,37 @@ func setup(
 
 func _update() -> void:
 	_province_container.remove_all_highlights()
-	_highlight_province(_province_selection.selected_province())
+	_update_selected_province()
 	_connect_signals()
 
 
-func _highlight_province(province: Province) -> void:
-	if province == null:
+func _update_selected_province(_province: Province = null) -> void:
+	var selected_province: Province = _province_selection.selected_province()
+	if selected_province == null:
 		return
 
-	# Highlight the province
+	# Add the overlay for polygon editing
 	var province_visuals: ProvinceVisuals2D = (
-			_province_container.visuals_of(province.id)
+			_province_container.visuals_of(selected_province.id)
 	)
 	if province_visuals != null:
-		province_visuals.highlight_selected()
+		var polygon_edit := PolygonEdit.new()
+		polygon_edit.polygon = selected_province.polygon()
+		polygon_edit.is_draw_polygon_enabled = false
+		_world_overlay = polygon_edit
 
 	# Highlight all the linked provinces with the correct highlight type
-	for link_id in province.linked_province_ids():
+	for link_id in selected_province.linked_province_ids():
 		var link_visuals: ProvinceVisuals2D = (
 				_province_container.visuals_of(link_id)
 		)
 		if link_visuals != null:
 			link_visuals.highlight_shape(false)
 
-	_highlighted_province = province
-	_highlighted_province_link_ids = province.linked_province_ids().duplicate()
+	_highlighted_province = selected_province
+	_highlighted_province_link_ids = (
+			selected_province.linked_province_ids().duplicate()
+	)
 
 	_highlighted_province.link_added.connect(_on_link_added)
 	_highlighted_province.link_removed.connect(_on_link_removed)
@@ -82,7 +104,7 @@ func _highlight_province(province: Province) -> void:
 
 
 func _remove_highlights() -> void:
-	_remove_highlight(_highlighted_province.id)
+	_world_overlay = null
 	_highlighted_province.link_added.disconnect(_on_link_added)
 	_highlighted_province.link_removed.disconnect(_on_link_removed)
 	_highlighted_province.links_reset.disconnect(_on_links_reset)
@@ -105,12 +127,12 @@ func _remove_highlight(province_id: int) -> void:
 
 
 func _disconnect_signals() -> void:
-	_province_selection.province_selected.disconnect(_highlight_province)
+	_province_selection.province_selected.disconnect(_update_selected_province)
 	_province_selection.province_deselected.disconnect(_on_province_deselected)
 
 
 func _connect_signals() -> void:
-	_province_selection.province_selected.connect(_highlight_province)
+	_province_selection.province_selected.connect(_update_selected_province)
 	_province_selection.province_deselected.connect(_on_province_deselected)
 
 
@@ -139,7 +161,7 @@ func _on_links_reset() -> void:
 func _on_provinces_unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 ) -> void:
-	if not event is InputEventMouseButton:
+	if not (is_enabled and event is InputEventMouseButton):
 		return
 	var mouse_button_event := event as InputEventMouseButton
 

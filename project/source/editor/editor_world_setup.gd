@@ -7,10 +7,6 @@ extends Node
 ## The scene's root node must be a WorldVisuals2D.
 @export var _world_scene: PackedScene
 
-@onready var _province_select_conditions := (
-		%ProvinceSelectConditions as ProvinceSelectConditions
-)
-
 var editor_settings: AppEditorSettings:
 	set(value):
 		if editor_settings != null:
@@ -28,10 +24,17 @@ var _current_world: WorldVisuals2D:
 		_current_world = value
 		_province_select_conditions.world_visuals = _current_world
 
+@onready var _province_select_conditions := (
+		%ProvinceSelectConditions as ProvinceSelectConditions
+)
+
+@onready var _world_overlay := %WorldOverlay as Node
+
 
 ## Discards the current [WorldVisuals2D] instance, if applicable.
 func clear() -> void:
 	if _current_world != null:
+		_current_world.overlay_created.disconnect(_world_overlay.add_child)
 		NodeUtils.delete_node(_current_world)
 		_current_world = null
 
@@ -42,6 +45,7 @@ func load_world(project: GameProject) -> void:
 	var new_world := _world_scene.instantiate() as WorldVisuals2D
 	new_world.project = project
 	new_world.world = project.game.world
+	new_world.overlay_created.connect(_world_overlay.add_child)
 	_camera.world_limits = project.settings.world_limits
 	_camera.move_to_world_center()
 	_container.add_child(new_world)

@@ -116,18 +116,27 @@ func _update_province() -> void:
 
 	name = str(province.id)
 	position = _position()
+	_update_positions()
 
+	_buildings_setup.province = province
 	_buildings_setup.buildings = province.buildings
-	_buildings_setup.spawn_position = province.position_fortress
 
-	_update_shape_polygon()
+	_update_polygon()
 	_update_shape_color()
 	remove_highlight()
 
+	province.polygon().changed.connect(_update_polygon)
+
+
+func _update_positions() -> void:
 	_army_stack.position = province.position_army_host
 
 
-func _update_shape_polygon() -> void:
+func _update_polygon() -> void:
+	if is_preview:
+		_calculate_preview()
+		position = _preview_position
+
 	_outlined_polygon.polygon = _polygon()
 	_collision_shape.polygon = _polygon()
 
@@ -140,6 +149,8 @@ func _update_shape_color() -> void:
 
 
 func _calculate_preview() -> void:
+	var polygon: PackedVector2Array = province.polygon().array
+
 	# Get the boundaries
 	var no_data: bool = true
 	var leftmost_point: float
@@ -147,7 +158,7 @@ func _calculate_preview() -> void:
 	var topmost_point: float
 	var bottommost_point: float
 
-	for vertex in province.polygon:
+	for vertex in polygon:
 		var point_x: float = vertex.x
 		var point_y: float = vertex.y
 
@@ -200,19 +211,19 @@ func _calculate_preview() -> void:
 			preview_rect.position.y - topmost_point
 	)
 	_preview_polygon = []
-	for i in province.polygon.size():
-		_preview_polygon.append((province.polygon[i] + offset) * scale_ratio)
+	for i in polygon.size():
+		_preview_polygon.append((polygon[i] + offset) * scale_ratio)
 	_preview_position = (
 			0.5 * (preview_rect.size - Vector2(width, height) * scale_ratio)
 	)
 
 
 func _polygon() -> PackedVector2Array:
-	return _preview_polygon if is_preview else province.polygon
+	return _preview_polygon if is_preview else province.polygon().array
 
 
 func _position() -> Vector2:
-	return _preview_position if is_preview else province.position
+	return _preview_position if is_preview else Vector2.ZERO
 
 
 func _connect_signals() -> void:
@@ -239,10 +250,8 @@ func _on_owner_changed(_province: Province) -> void:
 	_update_shape_color()
 
 
-func _on_position_changed(_province: Province) -> void:
-	if is_preview:
-		return
-	position = province.position
+func _on_position_changed() -> void:
+	_update_positions()
 
 
 func _on_shape_unhandled_mouse_event_occured(event: InputEventMouse) -> void:

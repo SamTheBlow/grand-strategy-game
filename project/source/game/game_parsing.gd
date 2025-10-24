@@ -77,16 +77,12 @@ static func _world_to_raw_dict(
 	# Provinces
 	var provinces_data: Array = _provinces_to_raw_array(world.provinces.list())
 	if not provinces_data.is_empty():
-		output.merge(
-				{ WorldFromRaw.WORLD_PROVINCES_KEY: provinces_data }
-		)
+		output.merge({ WorldFromRaw.WORLD_PROVINCES_KEY: provinces_data })
 
 	# Armies
 	var armies_data: Array = _armies_to_raw_array(world.armies.list())
 	if not armies_data.is_empty():
-		output.merge(
-				{ WorldFromRaw.WORLD_ARMIES_KEY: armies_data }
-		)
+		output.merge({ WorldFromRaw.WORLD_ARMIES_KEY: armies_data })
 
 	# Decorations
 	var decoration_data: Array = (
@@ -103,25 +99,18 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 
 	for province in province_list:
 		var province_data: Dictionary = {
-			ProvincesFromRaw.PROVINCE_ID_KEY: province.id,
-			ProvincesFromRaw.PROVINCE_POSITION_KEY: {
-				ProvincesFromRaw.PROVINCE_POS_X_KEY: province.position.x,
-				ProvincesFromRaw.PROVINCE_POS_Y_KEY: province.position.y,
-			},
+			ProvincesFromRaw.PROVINCE_ID_KEY: province.id
 		}
 
 		var income_money_dict: Dictionary = province.income_money.to_raw_dict()
 		if not income_money_dict.is_empty():
 			province_data.merge(income_money_dict)
 
-		var global_position_army_host: Vector2 = (
-				province.position + province.position_army_host
-		)
 		province_data.merge({
 			ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_X_KEY:
-				global_position_army_host.x,
+				province.position_army_host.x,
 			ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_Y_KEY:
-				global_position_army_host.y,
+				province.position_army_host.y,
 		})
 
 		# Name
@@ -147,12 +136,12 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 			})
 
 		# Shape
-		if not province.polygon.is_empty():
+		if Array(province.polygon().array) != Province.DEFAULT_POLYGON_SHAPE:
 			var shape_vertices_x: Array = []
 			var shape_vertices_y: Array = []
-			for i in province.polygon.size():
-				shape_vertices_x.append(province.polygon[i].x)
-				shape_vertices_y.append(province.polygon[i].y)
+			for i in province.polygon().array.size():
+				shape_vertices_x.append(province.polygon().array[i].x)
+				shape_vertices_y.append(province.polygon().array[i].y)
 			province_data.merge({
 				ProvincesFromRaw.PROVINCE_SHAPE_KEY: {
 					ProvincesFromRaw.PROVINCE_SHAPE_X_KEY: shape_vertices_x,

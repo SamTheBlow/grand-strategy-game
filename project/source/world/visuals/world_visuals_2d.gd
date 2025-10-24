@@ -1,6 +1,8 @@
 class_name WorldVisuals2D
 extends Node2D
 
+signal overlay_created(node: Node)
+
 # TODO Temporary... Figure out how to not need this
 var project: GameProject
 
@@ -37,6 +39,7 @@ func _initialize() -> void:
 	# We need to setup the provinces first
 	province_visuals.setup(world.provinces)
 
+	map_mode_setup.overlay_created.connect(overlay_created.emit)
 	map_mode_setup.setup(self)
 
 	_army_visuals_setup.setup(world.armies, playing_country)

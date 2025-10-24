@@ -23,14 +23,3 @@ func _unhandled_input(event: InputEvent) -> void:
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouse and _mouse_is_inside_shape:
 		mouse_event_occured.emit(event as InputEventMouse)
-
-
-#func mouse_is_inside_shape() -> bool:
-	#var mouse_position_in_world: Vector2 = (
-			#PositionScreenToWorld.new()
-			#.result(get_viewport().get_mouse_position(), get_viewport())
-	#)
-	#var local_mouse_position: Vector2 = (
-			#mouse_position_in_world - global_position
-	#)
-	#return Geometry2D.is_point_in_polygon(local_mouse_position, polygon)

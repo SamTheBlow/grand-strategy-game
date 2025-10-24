@@ -216,8 +216,7 @@ func _on_province_duplicated(
 	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
 
 	var new_province := Province.new()
-	new_province.polygon = province.polygon.duplicate()
-	new_province.position = province.position + _DUPLICATE_PROVINCE_OFFSET
+	new_province.polygon().array = province.polygon().array.duplicate()
 	new_province.position_army_host = province.position_army_host
 	new_province.owner_country = province.owner_country
 	new_province.population = Population.new(project.game)
@@ -228,6 +227,7 @@ func _on_province_duplicated(
 			IncomeMoney.new(project.game, new_province.population)
 	)
 	new_province.buildings._list = province.buildings.list()
+	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)
 
 	project.game.world.provinces.add(new_province)
 	open_province_edit_interface(new_province.id, project, editor_settings)

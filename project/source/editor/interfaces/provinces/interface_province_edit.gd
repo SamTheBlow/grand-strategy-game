@@ -25,10 +25,6 @@ func _ready() -> void:
 	(_settings.item.child_items[0] as ItemString).value_changed.connect(
 			_on_name_value_changed
 	)
-	# Position
-	(_settings.item.child_items[1] as ItemVector2).value_changed.connect(
-			_on_position_value_changed
-	)
 
 
 func _process(_delta: float) -> void:
@@ -43,7 +39,6 @@ func _load_settings() -> void:
 	(_settings.item.child_items[0] as ItemString).placeholder_text = (
 			province.default_name()
 	)
-	(_settings.item.child_items[1] as ItemVector2).set_data(province.position)
 
 
 func _on_back_button_pressed() -> void:
@@ -56,7 +51,3 @@ func _on_delete_button_pressed() -> void:
 
 func _on_name_value_changed(item: ItemString) -> void:
 	province.name = item.value
-
-
-func _on_position_value_changed(item: ItemVector2) -> void:
-	province.position = item.get_data()

@@ -2,12 +2,11 @@ class_name BuildingVisualsSetup
 extends Node
 ## Adds and removes building visuals to match given [Buildings].
 
+const _FORTRESS_VISUALS_SCENE := preload("uid://cwi4tinm2f73x") as PackedScene
+
 ## The nodes will be added as children of this node.
 ## If left null, they will be added as children of this node.
 @export var _visuals_parent: Node
-
-## The scene's root node must extend [Node2D].
-@export var _fortress_visuals_2d_scene: PackedScene
 
 var buildings: Buildings:
 	set(value):
@@ -17,11 +16,13 @@ var buildings: Buildings:
 		# and it'll still spawn them at the new spawn position
 		_initialize.call_deferred()
 
-## Default spawn point of all new buildings, relative to the parent node.
-var spawn_position: Vector2
+var province: Province:
+	set(value):
+		province = value
+		province.position_changed.connect(_on_province_position_changed)
 
 # This list is for cleaning up the nodes when needed
-var _list: Array[Node] = []
+var _list: Array[Node2D] = []
 
 
 func _reset() -> void:
@@ -47,12 +48,15 @@ func _initialize() -> void:
 
 func _add_building(building: Building) -> void:
 	if building is not Fortress:
+		push_warning("Unrecognized building type.")
 		return
 
-	var new_fortress := _fortress_visuals_2d_scene.instantiate() as Node2D
-	new_fortress.position = spawn_position
+	var new_fortress := _FORTRESS_VISUALS_SCENE.instantiate() as Node2D
+	new_fortress.position = province.position_fortress
 
-	var parent_node: Node = _visuals_parent if _visuals_parent != null else self
+	var parent_node: Node = (
+			_visuals_parent if _visuals_parent != null else self
+	)
 	parent_node.add_child.call_deferred(new_fortress)
 
 	_list.append(new_fortress)
@@ -60,3 +64,8 @@ func _add_building(building: Building) -> void:
 
 func _on_building_added(building: Building) -> void:
 	_add_building(building)
+
+
+func _on_province_position_changed() -> void:
+	for node_2d in _list:
+		node_2d.position = province.position_fortress

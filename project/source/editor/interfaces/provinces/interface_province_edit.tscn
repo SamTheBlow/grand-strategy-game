@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bafpj3jqosje7"]
+[gd_scene load_steps=13 format=3 uid="uid://bafpj3jqosje7"]
 
 [ext_resource type="Script" uid="uid://ci7o42ib2j32x" path="res://source/editor/interfaces/provinces/interface_province_edit.gd" id="1_qx7cx"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_t401f"]
@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_rht4m"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_u2f1k"]
 [ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="6_e7r6f"]
-[ext_resource type="Script" uid="uid://bhickbq71f38e" path="res://source/utils/property_tree/items/item_vector2.gd" id="8_2uou1"]
 
 [sub_resource type="Resource" id="Resource_0k6te"]
 script = ExtResource("6_e7r6f")
@@ -14,10 +13,9 @@ text = "Name"
 metadata/_custom_type_script = "uid://bk5w8y642cp21"
 
 [sub_resource type="Resource" id="Resource_4jecb"]
-script = ExtResource("8_2uou1")
-suffix = "px"
-text = "Position"
-metadata/_custom_type_script = "uid://bhickbq71f38e"
+script = ExtResource("5_u2f1k")
+text = "Position: drag this province to move it"
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [sub_resource type="Resource" id="Resource_rtye8"]
 script = ExtResource("5_u2f1k")

@@ -60,8 +60,15 @@ default_zoom = 0.5
 unique_name_in_owner = true
 script = ExtResource("12_byi3d")
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="WorldOverlayLayer" type="CanvasLayer" parent="."]
 layer = 2
+follow_viewport_enabled = true
+
+[node name="WorldOverlay" type="Node2D" parent="WorldOverlayLayer"]
+unique_name_in_owner = true
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+layer = 3
 
 [node name="TopBarContainer" type="SubViewportContainer" parent="UILayer"]
 anchors_preset = 15

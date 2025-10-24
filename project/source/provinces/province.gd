@@ -10,7 +10,11 @@ signal link_added(linked_province_id: int)
 signal link_removed(linked_province_id: int)
 signal links_reset()
 signal owner_changed(this: Province)
-signal position_changed(this: Province)
+signal position_changed()
+
+const DEFAULT_POLYGON_SHAPE: Array[Vector2] = [
+	Vector2.ZERO, Vector2.RIGHT, Vector2.ONE
+]
 
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
@@ -35,32 +39,26 @@ var income_money: IncomeMoney
 
 var buildings := Buildings.new()
 
-## The list of vertices forming this province's polygon shape.
-var polygon: PackedVector2Array
-
-## The position to give to the visuals.
-var position: Vector2:
-	set(value):
-		if value == position:
-			return
-		position = value
-		position_changed.emit(self)
-
-## Where this province's [ArmyStack2D] will be positioned,
-## relative to this province's position.
+## Where this province's [ArmyStack2D] will be positioned.
 var position_army_host: Vector2:
 	set(value):
 		position_army_host = value
 		position_fortress = position_army_host + Vector2(80.0, 56.0)
 
-## Where this province's [Fortress] will be positioned,
-## relative to this province's position.
-## (This property is automatically determined when setting _position_army_host.)
+## Where this province's [Fortress] will be positioned.
+## (This property is automatically set when setting position_army_host.)
 var position_fortress: Vector2
 
 ## A list of IDs for all the provinces that are
 ## neighboring this province, e.g. when moving armies.
 var _linked_province_ids: Array[int] = []
+
+## The list of vertices forming this province's polygon shape.
+var _polygon := PackedVector2ArrayWithSignals.new()
+
+
+func _init() -> void:
+	_polygon.amount_added_to_all.connect(_on_polygon_moved)
 
 
 ## The default name this province would have if it didn't have a name.
@@ -113,6 +111,15 @@ func toggle_link(province_id: int) -> void:
 func reset_links() -> void:
 	_linked_province_ids = []
 	links_reset.emit()
+
+
+func polygon() -> PackedVector2ArrayWithSignals:
+	return _polygon
+
+
+## Moves this province by given amount.
+func move_relative(movement_amount: Vector2) -> void:
+	_polygon.add_to_all(movement_amount)
 
 
 ## Returns true if all the following conditions are met:
@@ -179,3 +186,8 @@ func nearest_provinces(
 	var calculation := NearestProvinces.new()
 	calculation.calculate(id, provinces, province_filter)
 	return calculation.furthest_links
+
+
+func _on_polygon_moved(movement_amount: Vector2) -> void:
+	position_army_host += movement_amount
+	position_changed.emit()
