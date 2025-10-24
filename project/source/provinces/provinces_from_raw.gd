@@ -1,12 +1,5 @@
 class_name ProvincesFromRaw
 ## Converts raw data into [Provinces].
-## Many things in the game must be loaded before using this.
-## Please read the code carefully to know what to load first (sorry!)
-##
-## This operation always succeeds.
-## Ignores unrecognized data.
-## When data is invalid, uses the default value instead.
-## Discards provinces with an already-in-use id.
 
 const PROVINCE_ID_KEY: String = "id"
 const PROVINCE_NAME_KEY: String = "name"
@@ -34,6 +27,12 @@ const BUILDING_TYPE_KEY: String = "type"
 const BUILDING_TYPE_FORTRESS: String = "fortress"
 
 
+## Always succeeds.
+## Ignores unrecognized data.
+## When data is invalid, uses the default value instead.
+## Discards provinces with an already-in-use id.
+##
+## NOTE: Countries must already be loaded before using this.
 static func parse_using(raw_data: Variant, game: Game) -> void:
 	if raw_data is not Array:
 		return
@@ -100,24 +99,15 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 		province.owner_country = game.countries.country_from_id(country_id)
 
 	# Population
-	province.population().population_size = (
+	province.population().value = (
 			_parsed_population(raw_dict.get(PROVINCE_POPULATION_KEY))
 	)
 
 	# Money income
-	var is_base_income_overwritten: bool = false
-	var base_income: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, PROVINCE_INCOME_MONEY_KEY):
-		is_base_income_overwritten = true
-		base_income = (
+		province.base_money_income().value = (
 				ParseUtils.dictionary_int(raw_dict, PROVINCE_INCOME_MONEY_KEY)
 		)
-	province.income_money = IncomeMoney.new(
-			game,
-			province.population(),
-			is_base_income_overwritten,
-			base_income
-	)
 
 	# Buildings
 	if ParseUtils.dictionary_has_array(raw_dict, PROVINCE_BUILDINGS_KEY):

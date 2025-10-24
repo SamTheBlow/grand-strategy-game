@@ -23,7 +23,7 @@ static func apply(game: Game, province: Province) -> void:
 			)
 		GameRules.ReinforcementsOption.POPULATION:
 			reinforcements_size = floori(
-					province.population().population_size
+					province.population().value
 					* game.rules.reinforcements_per_person.value
 			)
 		_:

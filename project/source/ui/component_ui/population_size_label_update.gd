@@ -18,7 +18,7 @@ var province: Province:
 
 
 func _refresh() -> void:
-	label.text = str(province.population().population_size) if province else ""
+	label.text = str(province.population().value) if province != null else ""
 
 
 func _connect_signals() -> void:
@@ -26,10 +26,12 @@ func _connect_signals() -> void:
 		return
 
 	if not (
-			province.population().size_changed
+			province.population().value_changed
 			.is_connected(_on_population_size_changed)
 	):
-		province.population().size_changed.connect(_on_population_size_changed)
+		province.population().value_changed.connect(
+				_on_population_size_changed
+		)
 
 
 func _disconnect_signals() -> void:
@@ -37,10 +39,10 @@ func _disconnect_signals() -> void:
 		return
 
 	if (
-			province.population().size_changed
+			province.population().value_changed
 			.is_connected(_on_population_size_changed)
 	):
-		province.population().size_changed.disconnect(
+		province.population().value_changed.disconnect(
 				_on_population_size_changed
 		)
 

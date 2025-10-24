@@ -22,7 +22,21 @@ static func apply(game: Game) -> void:
 		var population_size: int = floori(exponential_rng * 1000.0)
 		if is_starting_province:
 			population_size += game.rules.extra_starting_population.value
-		province.population().population_size = population_size
+		province.population().value = population_size
+
+		# Determine the money income
+		match game.rules.province_income_option.selected_value():
+			GameRules.ProvinceIncome.RANDOM:
+				province.base_money_income().value = game.rng.randi_range(
+						game.rules.province_income_random_min.value,
+						game.rules.province_income_random_max.value
+				)
+			GameRules.ProvinceIncome.CONSTANT:
+				province.base_money_income().value = (
+						game.rules.province_income_constant.value
+				)
+			_:
+				province.base_money_income().value = 0
 
 		# Add a fortress, if applicable
 		if (

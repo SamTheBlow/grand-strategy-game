@@ -7,15 +7,21 @@ extends Node
 
 @export var label: Label
 
-var income_money: IncomeMoney:
+## May be null.
+var income_money: IncomeMoney = null:
 	set(value):
 		_disconnect_signals()
 		income_money = value
 		_connect_signals()
-		_refresh()
+		if is_node_ready():
+			_update()
 
 
-func _refresh() -> void:
+func _ready() -> void:
+	_update()
+
+
+func _update() -> void:
 	label.text = str(income_money.amount()) if income_money != null else ""
 
 
@@ -36,4 +42,4 @@ func _disconnect_signals() -> void:
 
 
 func _on_income_money_changed(_new_value: int) -> void:
-	_refresh()
+	_update()

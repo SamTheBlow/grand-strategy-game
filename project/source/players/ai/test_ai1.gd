@@ -107,10 +107,7 @@ func _try_build_fortresses(
 			if not most_populated:
 				most_populated = province
 				continue
-			if (
-					province.population().population_size
-					> most_populated.population().population_size
-			):
+			if province.population().value > most_populated.population().value:
 				most_populated = province
 
 		# Build in that province, if possible

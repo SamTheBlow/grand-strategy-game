@@ -2,9 +2,6 @@ class_name Province
 ## In a game, a province represents a certain area on the world map.
 ## It may be of any size or shape, and
 ## it may or may not be under the control of a [Country].
-##
-## This class has many responsibilities, as many game mechanics involve
-## their presence on a province: [Population], [Building], [IncomeMoney].
 
 signal link_added(linked_province_id: int)
 signal link_removed(linked_province_id: int)
@@ -31,10 +28,6 @@ var owner_country: Country:
 		owner_country = value
 		owner_changed.emit(self)
 
-## How much money (the in-game resource)
-## this province generates per [GameTurn].
-var income_money: IncomeMoney
-
 var buildings := Buildings.new()
 
 ## Where this province's [ArmyStack2D] will be positioned.
@@ -47,7 +40,8 @@ var _linked_province_ids: Array[int] = []
 ## The list of vertices forming this province's polygon shape.
 var _polygon := PackedVector2ArrayWithSignals.new()
 
-var _population := Population.new()
+var _population := IntWithSignals.new(0, true)
+var _base_money_income := IntWithSignals.new()
 
 
 func _init() -> void:
@@ -121,8 +115,12 @@ func fortress_position() -> Vector2:
 	return position_army_host + FORTRESS_POSITION_OFFSET
 
 
-func population() -> Population:
+func population() -> IntWithSignals:
 	return _population
+
+
+func base_money_income() -> IntWithSignals:
+	return _base_money_income
 
 
 ## Returns true if all the following conditions are met:

@@ -102,17 +102,6 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 			ProvincesFromRaw.PROVINCE_ID_KEY: province.id
 		}
 
-		var income_money_dict: Dictionary = province.income_money.to_raw_dict()
-		if not income_money_dict.is_empty():
-			province_data.merge(income_money_dict)
-
-		province_data.merge({
-			ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_X_KEY:
-				province.position_army_host.x,
-			ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_Y_KEY:
-				province.position_army_host.y,
-		})
-
 		# Name
 		if province.name != "":
 			province_data.merge(
@@ -147,13 +136,32 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 				}
 			})
 
+		# Position army host
+		if province.position_army_host.x != 0.0:
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_X_KEY:
+					province.position_army_host.x
+			})
+		if province.position_army_host.y != 0.0:
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_POSITION_ARMY_HOST_Y_KEY:
+					province.position_army_host.y
+			})
+
 		# Population
-		if province.population().population_size != 0:
+		if province.population().value != 0:
 			province_data.merge({
 				ProvincesFromRaw.PROVINCE_POPULATION_KEY: {
 					ProvincesFromRaw.POPULATION_SIZE_KEY:
-						province.population().population_size,
+						province.population().value,
 				}
+			})
+
+		# Money income
+		if province.base_money_income().value != 0:
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_INCOME_MONEY_KEY:
+					province.base_money_income().value
 			})
 
 		# Buildings

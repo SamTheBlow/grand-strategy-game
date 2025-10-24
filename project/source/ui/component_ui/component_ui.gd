@@ -151,6 +151,7 @@ func _update_nodes_game() -> void:
 		)
 
 		_update_nodes_playing_player(_game.turn.playing_player())
+		_update_income_money()
 	else:
 		_left_side_nodes[0].visible = false
 		_left_side_nodes[1].visible = false
@@ -174,12 +175,20 @@ func _update_nodes_province() -> void:
 	_recruit_button.province = province
 
 	_population_size_label_update.province = province
-	_income_money_label_update.income_money = province.income_money
+	_update_income_money()
 
 	_country_button_province_update.province = province
 
 	_relationship_preset_label_update.country_to_relate_to = (
 			province.owner_country
+	)
+
+
+func _update_income_money() -> void:
+	if _game == null or _province_visuals == null:
+		return
+	_income_money_label_update.income_money = (
+			IncomeMoney.new(_game.rules, _province_visuals.province)
 	)
 
 
