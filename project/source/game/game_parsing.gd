@@ -119,14 +119,12 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 					{ ProvincesFromRaw.PROVINCE_NAME_KEY: province.name }
 			)
 
-		# 4.0 backwards compatibility:
-		# Data must always have a province owner id.
-		province_data.merge({
-			ProvincesFromRaw.PROVINCE_OWNER_ID_KEY: (
+		# Owner country
+		if province.owner_country != null:
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_OWNER_ID_KEY:
 					province.owner_country.id
-					if province.owner_country != null else -1
-			)
-		})
+			})
 
 		# Links
 		if not province.linked_province_ids().is_empty():
@@ -166,10 +164,10 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 				ProvincesFromRaw.BUILDING_TYPE_KEY:
 					ProvincesFromRaw.BUILDING_TYPE_FORTRESS
 			})
-		# 4.0 backwards compatibility: data must always have a buildings array.
-		province_data.merge({
-			ProvincesFromRaw.PROVINCE_BUILDINGS_KEY: buildings_data,
-		})
+		if not buildings_data.is_empty():
+			province_data.merge({
+				ProvincesFromRaw.PROVINCE_BUILDINGS_KEY: buildings_data
+			})
 
 		output.append(province_data)
 

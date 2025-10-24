@@ -31,8 +31,12 @@ static func textures_to_raw_array(
 		project_textures: ProjectTextures, use_file_paths: bool
 ) -> Array:
 	var output: Array = []
-	for texture: ProjectTexture in project_textures._id_map.values():
-		output.append(texture_to_raw_dictionary(texture, use_file_paths))
+	for texture_id in project_textures._id_map:
+		if texture_id < 0:
+			continue
+		output.append(texture_to_raw_dictionary(
+				project_textures._id_map[texture_id], use_file_paths
+		))
 	return output
 
 
