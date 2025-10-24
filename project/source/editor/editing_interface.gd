@@ -64,6 +64,36 @@ func close_interface() -> void:
 		_remove_existing_interface()
 
 
+## Opens the interface for editing given province.
+func open_province_edit_interface(
+		province_id: int,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	var province: Province = (
+			project.game.world.provinces.province_from_id(province_id)
+	)
+	if province == null:
+		push_warning("Province doesn't exist.")
+		return
+
+	var province_interface := _new_interface(
+			preload("uid://bafpj3jqosje7"), project, editor_settings
+	) as InterfaceProvinceEdit
+	province_interface.back_pressed.connect(open_new_interface.bind(
+			InterfaceType.PROVINCE_LIST, project, editor_settings
+	))
+	province_interface.delete_pressed.connect(
+			_on_province_deleted.bind(project, editor_settings)
+	)
+	province_interface.duplicate_pressed.connect(
+			_on_province_duplicated.bind(project, editor_settings)
+	)
+	province_interface.province = province
+	open_interface(province_interface)
+	province_interface_opened.emit(province)
+
+
 func _remove_existing_interface() -> void:
 	if _current_interface == null:
 		return
@@ -129,36 +159,6 @@ func _open_new_decoration_edit_interface(
 	)
 	new_interface.world_decoration = world_decoration
 	open_interface(new_interface)
-
-
-## Opens the interface for editing given province.
-func open_province_edit_interface(
-		province_id: int,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	var province: Province = (
-			project.game.world.provinces.province_from_id(province_id)
-	)
-	if province == null:
-		push_warning("Province doesn't exist.")
-		return
-
-	var new_interface := _new_interface(
-			preload("uid://bafpj3jqosje7"), project, editor_settings
-	) as InterfaceProvinceEdit
-	new_interface.back_pressed.connect(open_new_interface.bind(
-			InterfaceType.PROVINCE_LIST, project, editor_settings
-	))
-	new_interface.delete_pressed.connect(
-			_on_province_deleted.bind(project, editor_settings)
-	)
-	new_interface.duplicate_pressed.connect(
-			_on_province_duplicated.bind(project, editor_settings)
-	)
-	new_interface.province = province
-	open_interface(new_interface)
-	province_interface_opened.emit(province)
 
 
 func _update_visibility() -> void:

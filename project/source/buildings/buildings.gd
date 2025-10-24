@@ -2,14 +2,27 @@ class_name Buildings
 ## A list of [Building] objects.
 
 signal added(building: Building)
+signal removed(building: Building)
 signal changed()
 
 var _list: Array[Building]
 
 
+## No effect if given building is already in the list.
 func add(building: Building) -> void:
+	if building in _list:
+		return
 	_list.append(building)
 	added.emit(building)
+	changed.emit()
+
+
+## No effect if given building is not in the list.
+func remove(building: Building) -> void:
+	if building not in _list:
+		return
+	_list.erase(building)
+	removed.emit(building)
 	changed.emit()
 
 

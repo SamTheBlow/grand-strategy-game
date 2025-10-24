@@ -4,6 +4,7 @@ class_name Provinces
 signal added(province: Province)
 signal removed(province: Province)
 signal province_owner_changed(province: Province)
+signal building_added(building: Building)
 
 ## Maps a province id to a province.
 var _list: Dictionary[int, Province] = {}
@@ -32,16 +33,17 @@ func add(province: Province) -> void:
 
 	_list[province.id] = province
 	province.owner_changed.connect(province_owner_changed.emit)
+	province.buildings.added.connect(building_added.emit)
 	added.emit(province)
 
 
-## DANGER Don't call this, the game will crash. (WIP)
 func remove(province_id: int) -> void:
 	if not _list.has(province_id):
 		return
 	var province: Province = _list[province_id]
 
 	province.owner_changed.disconnect(province_owner_changed.emit)
+	province.buildings.added.disconnect(building_added.emit)
 	_list.erase(province_id)
 
 	# Remove any link to this province

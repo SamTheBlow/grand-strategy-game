@@ -26,6 +26,11 @@ func _ready() -> void:
 			_on_name_value_changed
 	)
 
+	# Has fortress
+	(_settings.item.child_items[3] as ItemBool).value_changed.connect(
+			_on_has_fortress_value_changed
+	)
+
 
 func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed(&"delete"):
@@ -39,7 +44,9 @@ func _load_settings() -> void:
 	(_settings.item.child_items[0] as ItemString).placeholder_text = (
 			province.default_name()
 	)
-
+	(_settings.item.child_items[3] as ItemBool).value = (
+			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
+	)
 
 func _on_back_button_pressed() -> void:
 	back_pressed.emit()
@@ -51,3 +58,10 @@ func _on_delete_button_pressed() -> void:
 
 func _on_name_value_changed(item: ItemString) -> void:
 	province.name = item.value
+
+
+func _on_has_fortress_value_changed(item: ItemBool) -> void:
+	if item.value:
+		province.buildings.add(Fortress.new(province.id))
+	else:
+		province.buildings.remove(province.buildings._list[0])

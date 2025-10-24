@@ -9,13 +9,8 @@ extends Building
 var _province_id: int = -1
 
 
-## Utility function that does all the setup work.
-## It's recommended to use this when creating a new fortress.
-static func new_fortress(game: Game, province_id: int) -> Fortress:
-	var fortress := Fortress.new()
-	fortress._province_id = province_id
-	game.modifier_request.add_provider(fortress)
-	return fortress
+func _init(province_id: int) -> void:
+	_province_id = province_id
 
 
 ## Provides the defense bonus to the defender when a battle occurs

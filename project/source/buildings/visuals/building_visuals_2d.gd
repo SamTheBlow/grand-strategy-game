@@ -20,6 +20,7 @@ func setup(province: Province) -> void:
 		_province.position_changed.disconnect(_on_province_position_changed)
 		if is_node_ready():
 			_province.buildings.added.disconnect(_add_building)
+			_province.buildings.removed.disconnect(_remove_building)
 
 	_province = province
 	_is_setup = true
@@ -38,6 +39,7 @@ func _update() -> void:
 		_add_building(building)
 
 	_province.buildings.added.connect(_add_building)
+	_province.buildings.removed.connect(_remove_building)
 
 
 func _add_building(building: Building) -> void:
@@ -49,6 +51,15 @@ func _add_building(building: Building) -> void:
 	new_fortress.position = _province.fortress_position()
 	add_child(new_fortress)
 	_building_nodes.append(new_fortress)
+
+
+func _remove_building(building: Building) -> void:
+	if building is not Fortress:
+		push_warning("Unrecognized building type.")
+		return
+
+	NodeUtils.delete_nodes(_building_nodes)
+	_building_nodes = []
 
 
 func _on_province_position_changed() -> void:

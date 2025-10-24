@@ -64,6 +64,11 @@ func _init() -> void:
 
 	modifier_request.add_provider(self)
 
+	for province in world.provinces.list():
+		for building in province.buildings.list():
+			modifier_request.add_provider(building)
+	world.provinces.building_added.connect(modifier_request.add_provider)
+
 	_components.append_array([
 		AutoArrowProvinceReaction.new(self),
 		ArmyReinforcements.new(self),

@@ -123,9 +123,7 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 			var building_dict: Dictionary = building_data
 
 			if building_dict.get(BUILDING_TYPE_KEY) == BUILDING_TYPE_FORTRESS:
-				province.buildings.add(
-						Fortress.new_fortress(game, province.id)
-				)
+				province.buildings.add(Fortress.new(province.id))
 
 	# Position offset
 	var offset: Vector2 = (
