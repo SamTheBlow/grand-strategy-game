@@ -114,7 +114,7 @@ func _update_province() -> void:
 
 	name = str(province.id)
 	position = _position()
-	_update_positions()
+	_army_stack.position = province.position_army_host
 
 	_buildings.setup(province)
 
@@ -123,10 +123,6 @@ func _update_province() -> void:
 	remove_highlight()
 
 	province.polygon().changed.connect(_update_polygon)
-
-
-func _update_positions() -> void:
-	_army_stack.position = province.position_army_host
 
 
 func _update_polygon() -> void:
@@ -229,8 +225,12 @@ func _connect_signals() -> void:
 
 	if not province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.connect(_on_owner_changed)
-	if not province.position_changed.is_connected(_on_position_changed):
-		province.position_changed.connect(_on_position_changed)
+	if not province.position_army_host_changed.is_connected(
+			_on_position_army_host_changed
+	):
+		province.position_army_host_changed.connect(
+				_on_position_army_host_changed
+		)
 
 
 func _disconnect_signals() -> void:
@@ -239,16 +239,20 @@ func _disconnect_signals() -> void:
 
 	if province.owner_changed.is_connected(_on_owner_changed):
 		province.owner_changed.disconnect(_on_owner_changed)
-	if province.position_changed.is_connected(_on_position_changed):
-		province.position_changed.disconnect(_on_position_changed)
+	if province.position_army_host_changed.is_connected(
+			_on_position_army_host_changed
+	):
+		province.position_army_host_changed.disconnect(
+				_on_position_army_host_changed
+		)
 
 
 func _on_owner_changed(_province: Province) -> void:
 	_update_shape_color()
 
 
-func _on_position_changed() -> void:
-	_update_positions()
+func _on_position_army_host_changed(new_position: Vector2) -> void:
+	_army_stack.position = new_position
 
 
 func _on_shape_unhandled_mouse_event_occured(event: InputEventMouse) -> void:

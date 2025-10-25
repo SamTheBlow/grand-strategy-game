@@ -8,6 +8,7 @@ signal link_removed(linked_province_id: int)
 signal links_reset()
 signal owner_changed(this: Province)
 signal position_changed()
+signal position_army_host_changed(new_position: Vector2)
 
 const DEFAULT_POLYGON_SHAPE: Array[Vector2] = [
 	Vector2.ZERO, Vector2.RIGHT, Vector2.ONE
@@ -31,7 +32,12 @@ var owner_country: Country:
 var buildings := Buildings.new()
 
 ## Where this province's [ArmyStack2D] will be positioned.
-var position_army_host := Vector2.ZERO
+var position_army_host := Vector2.ZERO:
+	set(value):
+		if position_army_host == value:
+			return
+		position_army_host = value
+		position_army_host_changed.emit(position_army_host)
 
 ## A list of IDs for all the provinces that are
 ## neighboring this province, e.g. when moving armies.

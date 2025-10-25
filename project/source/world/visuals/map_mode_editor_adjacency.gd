@@ -80,10 +80,23 @@ func _update_selected_province(_province: Province = null) -> void:
 			_province_container.visuals_of(selected_province.id)
 	)
 	if province_visuals != null:
+		var world_overlay := Node2D.new()
+
 		var polygon_edit := PolygonEdit.new()
 		polygon_edit.polygon = selected_province.polygon()
 		polygon_edit.is_draw_polygon_enabled = false
-		_world_overlay = polygon_edit
+		world_overlay.add_child(polygon_edit)
+
+		var army_position_edit := PositionEdit.new(
+				"Army position", PositionEdit.PointShape.SQUARE
+		)
+		army_position_edit.position = selected_province.position_army_host
+		world_overlay.add_child(army_position_edit)
+		army_position_edit.position_changed.connect(
+				_on_army_position_changed.bind(selected_province)
+		)
+
+		_world_overlay = world_overlay
 
 	# Highlight all the linked provinces with the correct highlight type
 	for link_id in selected_province.linked_province_ids():
@@ -156,6 +169,12 @@ func _on_link_removed(province_id: int) -> void:
 
 func _on_links_reset() -> void:
 	_remove_link_highlights()
+
+
+func _on_army_position_changed(
+		new_position: Vector2, province: Province
+) -> void:
+	province.position_army_host = new_position
 
 
 func _on_provinces_unhandled_mouse_event_occured(
