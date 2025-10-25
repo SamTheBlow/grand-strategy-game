@@ -5,6 +5,8 @@ class_name ProjectMetadata
 signal setting_changed(this: ProjectMetadata)
 signal state_updated(this: ProjectMetadata)
 
+const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
+
 # The keys used in save files
 const KEY_METADATA: String = "meta"
 const KEY_META_NAME: String = "name"
@@ -20,7 +22,7 @@ const KEY_STATE_SETTINGS: String = "settings"
 
 ## The project's absolute file path.
 var file_path: String = ""
-var project_name: String = "(No name)"
+var project_name: String = ""
 ## The project may have no icon, in which case this will be null.
 var icon: Texture2D
 ## Keys must be of type String, values may be any "raw" type.
@@ -28,6 +30,11 @@ var settings: Dictionary = {}
 
 # We keep this information to store it in save files
 var _icon_file_path: String = ""
+
+
+## Returns the default project name if the current project name is empty.
+func project_name_or_default() -> String:
+	return project_name if project_name != "" else _DEFAULT_PROJECT_NAME
 
 
 ## Emits a signal.

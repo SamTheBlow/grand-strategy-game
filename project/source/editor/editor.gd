@@ -86,7 +86,7 @@ func _update_window_title() -> void:
 func _window_title_prefix() -> String:
 	if _current_project == null:
 		return ""
-	return _current_project.metadata.project_name + " - "
+	return _current_project.metadata.project_name_or_default() + " - "
 
 
 ## Updates the visibility for all the menu options

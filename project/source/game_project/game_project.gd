@@ -2,16 +2,10 @@ class_name GameProject
 ## Contains a game, its metadata, and more.
 ## Also contains useful functions.
 
-const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
-
 var game := Game.new()
 var textures := ProjectTextures.new()
 var settings := GameSettings.new()
 var metadata := ProjectMetadata.new()
-
-
-func _init() -> void:
-	metadata.project_name = _DEFAULT_PROJECT_NAME
 
 
 # TODO bad code.

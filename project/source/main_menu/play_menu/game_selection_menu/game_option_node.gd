@@ -80,7 +80,7 @@ func _update_info() -> void:
 		return
 
 	_icon_texture.texture = metadata.icon
-	_name_label.text = metadata.project_name
+	_name_label.text = metadata.project_name_or_default()
 	_file_path_label.text = metadata.file_path
 	settings.metadata = metadata
 
