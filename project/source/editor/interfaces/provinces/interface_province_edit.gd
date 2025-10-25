@@ -26,8 +26,18 @@ func _ready() -> void:
 			_on_name_value_changed
 	)
 
+	# Population
+	(_settings.item.child_items[3] as ItemInt).value_changed.connect(
+			_on_population_value_changed
+	)
+
+	# Money income
+	(_settings.item.child_items[4] as ItemInt).value_changed.connect(
+			_on_income_value_changed
+	)
+
 	# Has fortress
-	(_settings.item.child_items[3] as ItemBool).value_changed.connect(
+	(_settings.item.child_items[5] as ItemBool).value_changed.connect(
 			_on_has_fortress_value_changed
 	)
 
@@ -44,9 +54,16 @@ func _load_settings() -> void:
 	(_settings.item.child_items[0] as ItemString).placeholder_text = (
 			province.default_name()
 	)
-	(_settings.item.child_items[3] as ItemBool).value = (
+	(_settings.item.child_items[3] as ItemInt).value = (
+			province.population().value
+	)
+	(_settings.item.child_items[4] as ItemInt).value = (
+			province.base_money_income().value
+	)
+	(_settings.item.child_items[5] as ItemBool).value = (
 			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
 	)
+
 
 func _on_back_button_pressed() -> void:
 	back_pressed.emit()
@@ -58,6 +75,14 @@ func _on_delete_button_pressed() -> void:
 
 func _on_name_value_changed(item: ItemString) -> void:
 	province.name = item.value
+
+
+func _on_population_value_changed(item: ItemInt) -> void:
+	province.population().value = item.value
+
+
+func _on_income_value_changed(item: ItemInt) -> void:
+	province.base_money_income().value = item.value
 
 
 func _on_has_fortress_value_changed(item: ItemBool) -> void:

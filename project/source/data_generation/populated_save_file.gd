@@ -18,25 +18,19 @@ static func apply(game: Game) -> void:
 		var is_starting_province: bool = province.owner_country != null
 
 		# Randomize population size
-		var exponential_rng: float = game.rng.randf() ** 2.0
-		var population_size: int = floori(exponential_rng * 1000.0)
-		if is_starting_province:
-			population_size += game.rules.extra_starting_population.value
-		province.population().value = population_size
+		if game.rules.random_population_enabled.value:
+			var exponential_rng: float = game.rng.randf() ** 2.0
+			province.population().value = floori(exponential_rng * 1000.0)
 
-		# Determine the money income
-		match game.rules.province_income_option.selected_value():
-			GameRules.ProvinceIncome.RANDOM:
-				province.base_money_income().value = game.rng.randi_range(
-						game.rules.province_income_random_min.value,
-						game.rules.province_income_random_max.value
-				)
-			GameRules.ProvinceIncome.CONSTANT:
-				province.base_money_income().value = (
-						game.rules.province_income_constant.value
-				)
-			_:
-				province.base_money_income().value = 0
+		# Add extra starting population
+		if is_starting_province:
+			province.population().value += (
+					game.rules.extra_starting_population.value
+			)
+
+		# Overwrite money income
+		if game.rules.province_income_override_enabled.value:
+			_overwrite_province_income(game, province)
 
 		# Add a fortress, if applicable
 		if (
@@ -182,6 +176,22 @@ static func _apply_random_ai_personality_type(
 	player.player_ai.personality = (
 			AIPersonality.from_type(random_personality_type)
 	)
+
+
+## Overwrites given province's money income according to the game rules.
+static func _overwrite_province_income(game: Game, province: Province) -> void:
+	match game.rules.province_income_option.selected_value():
+		GameRules.ProvinceIncome.RANDOM:
+			province.base_money_income().value = game.rng.randi_range(
+					game.rules.province_income_random_min.value,
+					game.rules.province_income_random_max.value
+			)
+		GameRules.ProvinceIncome.CONSTANT:
+			province.base_money_income().value = (
+					game.rules.province_income_constant.value
+			)
+		_:
+			province.base_money_income().value = 0
 
 
 ## Adds armies such that it only gives one army to each country.

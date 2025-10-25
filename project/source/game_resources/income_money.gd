@@ -7,14 +7,19 @@ var _algorithm: IncomeMoneyAlgorithm
 
 
 func _init(rules: GameRules, province: Province) -> void:
-	match rules.province_income_option.selected_value():
-		GameRules.ProvinceIncome.POPULATION:
-			_algorithm = IncomeMoneyPerPopulation.new(
-					province.population(),
-					rules.province_income_per_person.value
-			)
-		_:
-			_algorithm = IncomeMoneyConstant.new(province.base_money_income())
+	if rules.province_income_override_enabled.value:
+		match rules.province_income_option.selected_value():
+			GameRules.ProvinceIncome.POPULATION:
+				_algorithm = IncomeMoneyPerPopulation.new(
+						province.population(),
+						rules.province_income_per_person.value
+				)
+			_:
+				_algorithm = IncomeMoneyConstant.new(
+						province.base_money_income()
+				)
+	else:
+		_algorithm = IncomeMoneyConstant.new(province.base_money_income())
 
 	_algorithm.amount_changed.connect(amount_changed.emit)
 

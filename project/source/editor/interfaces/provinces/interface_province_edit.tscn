@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bafpj3jqosje7"]
+[gd_scene load_steps=18 format=3 uid="uid://bafpj3jqosje7"]
 
 [ext_resource type="Script" uid="uid://ci7o42ib2j32x" path="res://source/editor/interfaces/provinces/interface_province_edit.gd" id="1_qx7cx"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_t401f"]
@@ -6,11 +6,12 @@
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_rht4m"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_u2f1k"]
 [ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="6_e7r6f"]
+[ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="7_0k6te"]
 [ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="7_e7r6f"]
 
 [sub_resource type="Resource" id="Resource_0k6te"]
 script = ExtResource("6_e7r6f")
-text = "Name"
+text = "Name:"
 metadata/_custom_type_script = "uid://bk5w8y642cp21"
 
 [sub_resource type="Resource" id="Resource_4jecb"]
@@ -34,15 +35,35 @@ text = "Adjacencies:"
 child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_rtye8"), SubResource("Resource_qx7cx")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
+[sub_resource type="Resource" id="Resource_50ug6"]
+script = ExtResource("7_0k6te")
+value = 0
+has_minimum = true
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Population:"
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_6kqa5"]
+script = ExtResource("7_0k6te")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Money income per turn:"
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
 [sub_resource type="Resource" id="Resource_wrmpg"]
 script = ExtResource("7_e7r6f")
-text = "Has fortress"
+text = "Has fortress:"
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_e7r6f"]
 script = ExtResource("5_u2f1k")
 text = "Settings:"
-child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_4jecb"), SubResource("Resource_vhvwt"), SubResource("Resource_wrmpg")])
+child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_4jecb"), SubResource("Resource_vhvwt"), SubResource("Resource_50ug6"), SubResource("Resource_6kqa5"), SubResource("Resource_wrmpg")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceProvinceEdit" type="Control"]

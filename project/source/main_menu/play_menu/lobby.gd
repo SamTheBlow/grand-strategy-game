@@ -99,7 +99,7 @@ func _on_start_button_pressed() -> void:
 	var metadata: ProjectMetadata = ProjectMetadata.from_dict(
 			_games_interface.selected_game().to_dict()
 	)
-	start_game_requested.emit(metadata, game_rules)
+	start_game_requested.emit(metadata, game_rules.copy())
 
 
 func _on_connected_to_server() -> void:

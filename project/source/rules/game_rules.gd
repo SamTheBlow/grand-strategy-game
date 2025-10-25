@@ -47,6 +47,7 @@ const RULE_NAMES: Array[String] = [
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
+	"random_population_enabled",
 	"population_growth_enabled",
 	"population_growth_rate",
 	"extra_starting_population",
@@ -54,6 +55,7 @@ const RULE_NAMES: Array[String] = [
 	"build_fortress_enabled",
 	"fortress_price",
 	"starting_money",
+	"province_income_override_enabled",
 	"province_income_option",
 	"province_income_random_min",
 	"province_income_random_max",
@@ -108,6 +110,7 @@ var reinforcements_per_person: ItemFloat
 var recruitment_enabled: ItemBool
 var recruitment_money_per_unit: ItemFloat
 var recruitment_population_per_unit: ItemFloat
+var random_population_enabled: ItemBool
 var population_growth_enabled: ItemBool
 var population_growth_rate: ItemFloat
 var extra_starting_population: ItemInt
@@ -115,6 +118,7 @@ var start_with_fortress: ItemBool
 var build_fortress_enabled: ItemBool
 var fortress_price: ItemInt
 var starting_money: ItemInt
+var province_income_override_enabled: ItemBool
 var province_income_option: ItemOptions
 var province_income_random_min: ItemInt
 var province_income_random_max: ItemInt
@@ -192,6 +196,7 @@ func _init() -> void:
 	recruitment_enabled = ItemBool.new()
 	recruitment_money_per_unit = ItemFloat.new()
 	recruitment_population_per_unit = ItemFloat.new()
+	random_population_enabled = ItemBool.new()
 	population_growth_enabled = ItemBool.new()
 	population_growth_rate = ItemFloat.new()
 	extra_starting_population = ItemInt.new()
@@ -199,6 +204,7 @@ func _init() -> void:
 	build_fortress_enabled = ItemBool.new()
 	fortress_price = ItemInt.new()
 	starting_money = ItemInt.new()
+	province_income_override_enabled = ItemBool.new()
 	province_income_option = ItemOptions.new()
 	province_income_random_min = ItemInt.new()
 	province_income_random_max = ItemInt.new()
@@ -341,6 +347,9 @@ func _init() -> void:
 	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.value = 1.0
 
+	random_population_enabled.text = "Randomize populations at the start"
+	random_population_enabled.value = true
+
 	population_growth_enabled.text = "Population growth"
 	population_growth_enabled.value = true
 	population_growth_enabled.child_items = [
@@ -377,6 +386,13 @@ func _init() -> void:
 	starting_money.minimum = 0
 	starting_money.has_minimum = true
 	starting_money.value = 1000
+
+	province_income_override_enabled.text = "Enforce specific province income"
+	province_income_override_enabled.value = true
+	province_income_override_enabled.child_items = [
+		province_income_option,
+	]
+	province_income_override_enabled.child_items_on = [0]
 
 	province_income_option.text = "Income from provinces"
 	province_income_option.options = [
@@ -557,6 +573,7 @@ func _init() -> void:
 
 	_category_population.text = "Population"
 	_category_population.child_items = [
+		random_population_enabled,
 		population_growth_enabled,
 		extra_starting_population,
 	]
@@ -658,7 +675,7 @@ func _init() -> void:
 		_category_population,
 		_category_fortresses,
 		starting_money,
-		province_income_option,
+		province_income_override_enabled,
 		minimum_army_size,
 		starting_army_size,
 		_category_battle,
@@ -725,11 +742,12 @@ func _connect_signals() -> void:
 	for rule_name in RULE_NAMES:
 		var rule: PropertyTreeItem = rule_with_name(rule_name)
 		if rule == null:
+			push_error("Rule is null.")
 			continue
 		if rule.has_signal("value_changed"):
 			rule.connect("value_changed", _on_rule_value_changed)
 		else:
-			push_error('Rule does not have a "value_changed" signal')
+			push_error('Rule does not have a "value_changed" signal.')
 
 
 func _name_of_rule(rule_item: PropertyTreeItem) -> String:
