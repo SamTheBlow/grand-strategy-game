@@ -64,8 +64,6 @@ func _update_editor_settings() -> void:
 
 
 func _update_game_settings() -> void:
-	if not is_node_ready() or not _is_setup:
-		return
 	_game_settings_node.item.child_items = [
 		_item_custom_limits_enabled,
 		_item_world_limit_left,

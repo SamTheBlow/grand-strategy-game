@@ -18,7 +18,9 @@ func _ready() -> void:
 
 func setup(world: GameWorld) -> void:
 	if _is_setup:
-		_world.background_color_changed.disconnect(_on_background_color_changed)
+		_world.background_color_changed.disconnect(
+				_on_background_color_changed
+		)
 	else:
 		_item_background_color.value_changed.connect(_on_item_value_changed)
 
@@ -32,11 +34,7 @@ func setup(world: GameWorld) -> void:
 
 
 func _update_game_settings() -> void:
-	if not is_node_ready() or not _is_setup:
-		return
-	_game_settings_node.item.child_items = [
-		_item_background_color
-	]
+	_game_settings_node.item.child_items = [_item_background_color]
 	_game_settings_node.refresh()
 
 

@@ -4,7 +4,6 @@ class_name GameProject
 
 var game := Game.new()
 var textures := ProjectTextures.new()
-var settings := GameSettings.new()
 var metadata := ProjectMetadata.new()
 
 

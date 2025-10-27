@@ -101,11 +101,6 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 	if not metadata_dict.is_empty():
 		output.merge({ ProjectMetadata.KEY_METADATA: metadata_dict })
 
-	# Settings
-	var custom_settings: Dictionary = project.settings.to_dict()
-	if not custom_settings.is_empty():
-		output[ProjectMetadata.KEY_METADATA][ProjectMetadata.KEY_META_SETTINGS] = custom_settings
-
 	return output
 
 
@@ -124,7 +119,6 @@ static func _game_project(
 
 	# Load the metadata
 	game_project.metadata = ProjectMetadata.from_raw(raw_dict, file_path)
-	game_project.settings.custom_settings = game_project.metadata.settings
 
 	return game_project
 

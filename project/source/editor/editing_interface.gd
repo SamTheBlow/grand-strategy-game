@@ -120,7 +120,6 @@ func _new_interface(
 ) -> AppEditorInterface:
 	var new_interface := interface_scene.instantiate() as AppEditorInterface
 	new_interface.editor_settings = editor_settings
-	new_interface.game_settings = project.settings
 
 	if new_interface is InterfaceWorldLimits:
 		(new_interface as InterfaceWorldLimits).setup(
