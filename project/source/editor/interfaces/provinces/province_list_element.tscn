@@ -28,6 +28,7 @@ theme_override_styles/normal = ExtResource("2_6uon8")
 
 [node name="ProvincePreview" type="Control" parent="Button"]
 unique_name_in_owner = true
+clip_contents = true
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
 anchor_left = 0.2

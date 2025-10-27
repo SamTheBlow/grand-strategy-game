@@ -113,6 +113,7 @@ grow_vertical = 2
 
 [node name="ProvincePreview" type="Control" parent="Control"]
 unique_name_in_owner = true
+clip_contents = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
