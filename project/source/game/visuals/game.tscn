@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=34 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -14,7 +14,6 @@
 [ext_resource type="Script" uid="uid://ya0bvq0evpsq" path="res://source/actions/action_input.gd" id="16_724ii"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://source/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
-[ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="17_a3u80"]
 [ext_resource type="Script" uid="uid://3hqfpevmvw0f" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="18_pfqno"]
 [ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
@@ -59,10 +58,6 @@ _game = NodePath("..")
 [node name="ActionInput" type="Node" parent="."]
 unique_name_in_owner = true
 script = ExtResource("16_724ii")
-
-[node name="BackgroundColor" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("17_a3u80")
 
 [node name="ProvinceSelectConditions" type="Node" parent="."]
 unique_name_in_owner = true

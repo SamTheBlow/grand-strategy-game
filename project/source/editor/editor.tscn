@@ -1,9 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=13 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
 [ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/editor/project_load_popup.tscn" id="3_kcuw7"]
-[ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="4_e62kg"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_gofj8"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
@@ -18,10 +17,6 @@
 script = ExtResource("1_ae8ev")
 _popup_scene = ExtResource("2_isggd")
 _project_load_popup_scene = ExtResource("3_kcuw7")
-
-[node name="BackgroundColor" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("4_e62kg")
 
 [node name="ProvinceSelectConditions" type="Node" parent="."]
 unique_name_in_owner = true

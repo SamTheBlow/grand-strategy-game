@@ -3,10 +3,19 @@ class_name GameWorld
 ##
 ## Extend this class to provide more features, i.e. a 2D map, a 3D map, etc.
 
+signal background_color_changed(new_color: Color)
+
 ## Do not overwrite!
 var armies := Armies.new()
 ## Do not overwrite!
 var provinces := Provinces.new()
+
+var background_color: Color = BackgroundColor.default_clear_color():
+	set(value):
+		if background_color == value:
+			return
+		background_color = value
+		background_color_changed.emit(background_color)
 
 var decorations := WorldDecorations.new()
 

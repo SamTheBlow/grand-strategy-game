@@ -122,7 +122,9 @@ func _new_interface(
 	new_interface.editor_settings = editor_settings
 	new_interface.game_settings = project.settings
 
-	if new_interface is InterfaceDecorationList:
+	if new_interface is InterfaceBackgroundColor:
+		(new_interface as InterfaceBackgroundColor).setup(project.game.world)
+	elif new_interface is InterfaceDecorationList:
 		var list_interface := new_interface as InterfaceDecorationList
 		list_interface.decorations = project.game.world.decorations
 		list_interface.item_selected.connect(

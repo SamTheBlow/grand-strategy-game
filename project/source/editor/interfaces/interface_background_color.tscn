@@ -7,13 +7,11 @@
 [sub_resource type="Resource" id="Resource_1w6l7"]
 script = ExtResource("3_vpw2j")
 text = "Editor settings:"
-child_items = Array[ExtResource("3_vpw2j")]([])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [sub_resource type="Resource" id="Resource_n4mvh"]
 script = ExtResource("3_vpw2j")
 text = "Game settings:"
-child_items = Array[ExtResource("3_vpw2j")]([])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceBackgroundColor" type="Control"]

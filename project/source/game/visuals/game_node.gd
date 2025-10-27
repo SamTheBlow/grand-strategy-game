@@ -93,9 +93,6 @@ func _ready() -> void:
 	)
 
 	_camera.world_limits = project.settings.world_limits
-	(%BackgroundColor as BackgroundColor).background_color = (
-			project.settings.background_color
-	)
 
 	_component_ui_container.setup(
 			game,

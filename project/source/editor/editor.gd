@@ -28,7 +28,6 @@ var _current_project: GameProject:
 ## An array of file paths
 var _recently_opened_projects: Array[String] = []
 
-@onready var _background_color := %BackgroundColor as BackgroundColor
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editor_tab := %Editor as PopupMenu
@@ -53,11 +52,6 @@ func _exit_tree() -> void:
 func _setup_project() -> void:
 	if not is_node_ready():
 		return
-
-	_background_color.background_color = (
-			_current_project.settings.background_color
-			if _current_project != null else null
-	)
 
 	_world_setup.clear()
 	_world_limits_rect.game_settings = null

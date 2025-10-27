@@ -7,7 +7,6 @@ const _TURN_KEY: String = "turn"
 const _WORLD_KEY: String = "world"
 const _COUNTRIES_KEY: String = "countries"
 const _PLAYERS_KEY: String = "players"
-const _BACKGROUND_COLOR_KEY: String = "background_color"
 
 
 static func game_from_raw_dict(
@@ -51,16 +50,6 @@ static func game_to_raw_dict(
 	if not turn_data.is_empty():
 		output.merge({ _TURN_KEY: turn_data })
 
-	# Background color
-	if (
-			game_settings.background_color.value
-			!= GameSettings.DEFAULT_BACKGROUND_COLOR
-	):
-		output.merge({
-			_BACKGROUND_COLOR_KEY:
-				game_settings.background_color.value.to_html(false)
-		})
-
 	return output
 
 
@@ -69,20 +58,27 @@ static func _world_to_raw_dict(
 ) -> Dictionary:
 	var output: Dictionary = {}
 
-	# World limits
-	var limits_data: Variant = game_settings.world_limits.to_raw_data()
-	if not ParseUtils.is_empty_dict(limits_data):
-		output.merge({ WorldFromRaw.WORLD_LIMITS_KEY: limits_data })
+	# Armies
+	var armies_data: Array = _armies_to_raw_array(world.armies.list())
+	if not armies_data.is_empty():
+		output.merge({ WorldFromRaw.WORLD_ARMIES_KEY: armies_data })
 
 	# Provinces
 	var provinces_data: Array = _provinces_to_raw_array(world.provinces.list())
 	if not provinces_data.is_empty():
 		output.merge({ WorldFromRaw.WORLD_PROVINCES_KEY: provinces_data })
 
-	# Armies
-	var armies_data: Array = _armies_to_raw_array(world.armies.list())
-	if not armies_data.is_empty():
-		output.merge({ WorldFromRaw.WORLD_ARMIES_KEY: armies_data })
+	# World limits
+	var limits_data: Variant = game_settings.world_limits.to_raw_data()
+	if not ParseUtils.is_empty_dict(limits_data):
+		output.merge({ WorldFromRaw.WORLD_LIMITS_KEY: limits_data })
+
+	# Background color
+	if world.background_color != BackgroundColor.default_clear_color():
+		output.merge({
+			WorldFromRaw.WORLD_BACKGROUND_COLOR_KEY:
+				world.background_color.to_html(false)
+		})
 
 	# Decorations
 	var decoration_data: Array = (
@@ -253,13 +249,5 @@ class GameFromRawData extends Game:
 				game_settings,
 				project_file_path
 		)
-
-		# Background color
-		if raw_dict.has(_BACKGROUND_COLOR_KEY):
-			var background_color: Color = ParseUtils.color_from_raw(
-					raw_dict.get(_BACKGROUND_COLOR_KEY),
-					GameSettings.DEFAULT_BACKGROUND_COLOR
-			)
-			game_settings.background_color.value = background_color
 
 		super()

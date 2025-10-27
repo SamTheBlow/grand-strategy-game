@@ -8,9 +8,10 @@ class_name WorldFromRaw
 ## Ignores unrecognized data.
 
 const WORLD_ARMIES_KEY: String = "armies"
+const WORLD_PROVINCES_KEY: String = "provinces"
+const WORLD_BACKGROUND_COLOR_KEY: String = "background_color"
 const WORLD_DECORATIONS_KEY: String = "decorations"
 const WORLD_LIMITS_KEY: String = "limits"
-const WORLD_PROVINCES_KEY: String = "provinces"
 
 
 static func parse_using(
@@ -36,6 +37,12 @@ static func parse_using(
 	# because it may use them for its calculations.)
 	game_settings.world_limits = WorldLimitsParsing.from_raw_data(
 			raw_dict.get(WORLD_LIMITS_KEY), game.world
+	)
+
+	# Background color
+	game.world.background_color = ParseUtils.color_from_raw(
+			raw_dict.get(WORLD_BACKGROUND_COLOR_KEY),
+			BackgroundColor.default_clear_color()
 	)
 
 	# Decorations

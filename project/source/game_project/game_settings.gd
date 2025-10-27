@@ -1,10 +1,5 @@
 class_name GameSettings
-## Information about a [GameProject] that has no effect on the game's
-## internal logic, but still affects the user experience (e.g. visuals).
-##
-## These settings must not change while an ongoing game is using them.
-
-const DEFAULT_BACKGROUND_COLOR: Color = Color(0.3, 0.3, 0.3)
+## DEPRECATED
 
 var custom_world_limits_enabled: ItemBool
 var custom_world_limit_left: ItemInt
@@ -14,8 +9,6 @@ var custom_world_limit_bottom: ItemInt
 
 ## Do not overwrite!
 var world_limits := WorldLimits.new()
-
-var background_color: ItemColor
 
 var custom_settings: Dictionary
 
@@ -73,10 +66,6 @@ func _init() -> void:
 				)
 			world_limits.custom_limits.w = custom_world_limit_bottom.value
 	)
-
-	background_color = ItemColor.new()
-	background_color.text = "Background color"
-	background_color.value = DEFAULT_BACKGROUND_COLOR
 
 
 func to_dict() -> Dictionary:
