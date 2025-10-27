@@ -92,6 +92,10 @@ func _update_selected_province(_province: Province = null) -> void:
 		)
 		army_position_edit.position = selected_province.position_army_host
 		world_overlay.add_child(army_position_edit)
+
+		selected_province.position_army_host_changed.connect(
+				army_position_edit.set_position
+		)
 		army_position_edit.position_changed.connect(
 				_on_army_position_changed.bind(selected_province)
 		)
