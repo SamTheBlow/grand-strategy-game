@@ -13,10 +13,9 @@ const _WORLD_LIMIT_BOTTOM_KEY: String = "bottom"
 static func from_raw_data(
 		raw_data: Variant, game_world: GameWorld
 ) -> WorldLimits:
-	var output := WorldLimits.new()
-	
+	var output := WorldLimits.new(game_world)
+
 	if raw_data is not Dictionary:
-		output.disable_custom_limits(game_world)
 		return output
 	var raw_dict: Dictionary = raw_data
 
@@ -43,10 +42,10 @@ static func from_raw_data(
 		is_empty = false
 
 	if is_empty:
-		output.disable_custom_limits(game_world)
 		return output
 
 	output.custom_limits = Vector4i(left, top, right, bottom)
+	output.enable_custom_limits()
 	return output
 
 

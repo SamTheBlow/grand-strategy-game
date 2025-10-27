@@ -10,16 +10,12 @@ const _PLAYERS_KEY: String = "players"
 
 
 static func game_from_raw_dict(
-		raw_dict: Dictionary,
-		project_file_path: String,
-		game_settings: GameSettings
+		raw_dict: Dictionary, project_file_path: String
 ) -> Game:
-	return GameFromRawData.new(raw_dict, project_file_path, game_settings)
+	return GameFromRawData.new(raw_dict, project_file_path)
 
 
-static func game_to_raw_dict(
-		game: Game, game_settings: GameSettings
-) -> Dictionary:
+static func game_to_raw_dict(game: Game) -> Dictionary:
 	var output: Dictionary = {}
 
 	# Rules
@@ -41,7 +37,7 @@ static func game_to_raw_dict(
 		output.merge({ _COUNTRIES_KEY: countries_data })
 
 	# World
-	var world_data: Dictionary = _world_to_raw_dict(game.world, game_settings)
+	var world_data: Dictionary = _world_to_raw_dict(game.world)
 	if not world_data.is_empty():
 		output.merge({ _WORLD_KEY: world_data })
 
@@ -53,9 +49,7 @@ static func game_to_raw_dict(
 	return output
 
 
-static func _world_to_raw_dict(
-		world: GameWorld, game_settings: GameSettings
-) -> Dictionary:
+static func _world_to_raw_dict(world: GameWorld) -> Dictionary:
 	var output: Dictionary = {}
 
 	# Armies
@@ -69,7 +63,7 @@ static func _world_to_raw_dict(
 		output.merge({ WorldFromRaw.WORLD_PROVINCES_KEY: provinces_data })
 
 	# World limits
-	var limits_data: Variant = game_settings.world_limits.to_raw_data()
+	var limits_data: Variant = world.limits().to_raw_data()
 	if not ParseUtils.is_empty_dict(limits_data):
 		output.merge({ WorldFromRaw.WORLD_LIMITS_KEY: limits_data })
 
@@ -215,11 +209,7 @@ static func _turn_to_raw_dict(turn: GameTurn) -> Dictionary:
 
 
 class GameFromRawData extends Game:
-	func _init(
-		raw_dict: Dictionary,
-		project_file_path: String,
-		game_settings: GameSettings
-) -> void:
+	func _init(raw_dict: Dictionary, project_file_path: String) -> void:
 		# Rules
 		rules = RulesFromRaw.parsed_from(raw_dict.get(_RULES_KEY))
 
@@ -244,10 +234,7 @@ class GameFromRawData extends Game:
 
 		# World
 		WorldFromRaw.parse_using(
-				raw_dict.get(_WORLD_KEY),
-				self,
-				game_settings,
-				project_file_path
+				raw_dict.get(_WORLD_KEY), self, project_file_path
 		)
 
 		super()

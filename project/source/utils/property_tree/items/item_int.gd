@@ -4,6 +4,7 @@ extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains an integer value.
 
 signal value_changed(this: PropertyTreeItem)
+signal is_disabled_changed()
 
 ## Set this property in the inspector to set the default value.
 var value: int = 0:
@@ -70,7 +71,12 @@ var maximum: int = 0:
 ## If true, any node displaying this item should make it impossible for
 ## the user to edit the value. However, the value can still be edited:
 ## this variable has no effect by itself.
-var is_disabled: bool = false
+var is_disabled: bool = false:
+	set(value):
+		if is_disabled == value:
+			return
+		is_disabled = value
+		is_disabled_changed.emit()
 
 
 func _get_property_list() -> Array[Dictionary]:

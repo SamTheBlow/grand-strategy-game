@@ -15,10 +15,7 @@ const WORLD_LIMITS_KEY: String = "limits"
 
 
 static func parse_using(
-		raw_data: Variant,
-		game: Game,
-		game_settings: GameSettings,
-		project_file_path: String
+		raw_data: Variant, game: Game, project_file_path: String
 ) -> void:
 	game.world = GameWorld.new(game)
 
@@ -35,7 +32,7 @@ static func parse_using(
 	# World limits
 	# (Must be loaded after provinces
 	# because it may use them for its calculations.)
-	game_settings.world_limits = WorldLimitsParsing.from_raw_data(
+	game.world._limits = WorldLimitsParsing.from_raw_data(
 			raw_dict.get(WORLD_LIMITS_KEY), game.world
 	)
 

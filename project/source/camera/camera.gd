@@ -1,10 +1,7 @@
 class_name CustomCamera2D
 extends Camera2D
-## Keeps the camera's position inside given world limits.[br]
-## [br]
-## WARNING: Please do not use Godot's built-in camera limits!
-## This script uses custom code for camera limits.[br]
-## [br]
+## Keeps the camera's position inside given [WorldLimits].
+##
 ## WARNING: If you set this node's "position" property directly,
 ## it will not automatically stay in bounds. Because of this,
 ## please use [method CustomCamera2D.move_to] to move the camera.
@@ -13,12 +10,21 @@ extends Camera2D
 ## measured in window size (e.g. 0.5 is half a window size).
 @export var world_margin := Vector2(0.5, 0.5)
 
-var world_limits := WorldLimits.new():
+## May be null.
+var world_limits: WorldLimits:
 	set(value):
-		propagate_call(&"_disconnect_world_limits", [world_limits])
+		if world_limits != null:
+			world_limits.current_limits_changed.disconnect(
+					_on_world_limits_changed
+			)
+			propagate_call(&"_disconnect_world_limits", [world_limits])
 		world_limits = value
-		_reposition_in_bounds()
-		propagate_call(&"_connect_world_limits", [world_limits])
+		if world_limits != null:
+			_reposition_in_bounds()
+			propagate_call(&"_connect_world_limits", [world_limits])
+			world_limits.current_limits_changed.connect(
+					_on_world_limits_changed
+			)
 
 
 func _ready() -> void:
@@ -42,7 +48,10 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 				"Tried to get an in-bounds position, "
 				+ "but the camera is not in the scene tree."
 		)
-		return Vector2.ZERO
+		return input_position
+	if world_limits == null:
+		push_error("World limits is null.")
+		return input_position
 
 	# NOTE: all of this assumes the camera's anchor mode is Drag Center
 	var margin_x: float = (
@@ -63,28 +72,10 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 ## Puts the camera back in bounds.
 ## Has no effect if the camera is not in the scene tree.
 func _reposition_in_bounds() -> void:
-	if not is_inside_tree():
+	if not is_inside_tree() or world_limits == null:
 		return
 
 	position = position_in_bounds(position)
-
-
-func _connect_world_limits(_world_limits: WorldLimits) -> void:
-	if world_limits == null:
-		push_error("World limits is null.")
-		return
-
-	if not world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
-		world_limits.current_limits_changed.connect(_on_world_limits_changed)
-
-
-func _disconnect_world_limits(_world_limits: WorldLimits) -> void:
-	if world_limits == null:
-		push_error("World limits is null.")
-		return
-
-	if world_limits.current_limits_changed.is_connected(_on_world_limits_changed):
-		world_limits.current_limits_changed.disconnect(_on_world_limits_changed)
 
 
 func _on_world_limits_changed(_world_limits: WorldLimits) -> void:

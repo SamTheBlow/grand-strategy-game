@@ -54,7 +54,7 @@ func _setup_project() -> void:
 		return
 
 	_world_setup.clear()
-	_world_limits_rect.game_settings = null
+	_world_limits_rect.world_limits = null
 	# We close the interface
 	# because it may be using data from the previous project.
 	_editing_interface.close_interface()
@@ -66,7 +66,7 @@ func _setup_project() -> void:
 	_world_setup.world().province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)
-	_world_limits_rect.game_settings = _current_project.settings
+	_world_limits_rect.world_limits = _current_project.game.world.limits()
 
 
 func _update_window_title() -> void:

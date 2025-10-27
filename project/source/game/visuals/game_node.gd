@@ -92,7 +92,7 @@ func _ready() -> void:
 			world_visuals
 	)
 
-	_camera.world_limits = project.settings.world_limits
+	_camera.world_limits = project.game.world.limits()
 
 	_component_ui_container.setup(
 			game,

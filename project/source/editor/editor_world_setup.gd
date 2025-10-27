@@ -46,7 +46,7 @@ func load_world(project: GameProject) -> void:
 	new_world.project = project
 	new_world.world = project.game.world
 	new_world.overlay_created.connect(_world_overlay.add_child)
-	_camera.world_limits = project.settings.world_limits
+	_camera.world_limits = project.game.world.limits()
 	_camera.move_to_world_center()
 	_container.add_child(new_world)
 	_current_world = new_world

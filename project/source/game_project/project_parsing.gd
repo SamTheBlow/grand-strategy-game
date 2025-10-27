@@ -85,9 +85,7 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 	var output: Dictionary = { _VERSION_KEY: _SAVE_DATA_VERSION }
 
 	# Game
-	var game_dict: Dictionary = (
-			GameParsing.game_to_raw_dict(project.game, project.settings)
-	)
+	var game_dict: Dictionary = GameParsing.game_to_raw_dict(project.game)
 	if not game_dict.is_empty():
 		output.merge(game_dict)
 
@@ -122,15 +120,11 @@ static func _game_project(
 	)
 
 	# Load the game & game settings
-	game_project.game = GameParsing.game_from_raw_dict(
-			raw_dict, file_path, game_project.settings
-	)
+	game_project.game = GameParsing.game_from_raw_dict(raw_dict, file_path)
 
 	# Load the metadata
 	game_project.metadata = ProjectMetadata.from_raw(raw_dict, file_path)
 	game_project.settings.custom_settings = game_project.metadata.settings
-
-	game_project.connect_signals()
 
 	return game_project
 

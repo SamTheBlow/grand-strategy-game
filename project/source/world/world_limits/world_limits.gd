@@ -4,6 +4,8 @@ class_name WorldLimits
 
 signal current_limits_changed(this: WorldLimits)
 signal custom_limits_changed(this: WorldLimits)
+## Emitted when custom limits are enabled/disabled.
+signal mode_changed()
 
 const DEFAULT_LEFT: int = 0
 const DEFAULT_TOP: int = 0
@@ -13,8 +15,6 @@ const DEFAULT_LIMITS := Vector4i(
 		DEFAULT_LEFT, DEFAULT_TOP, DEFAULT_RIGHT, DEFAULT_BOTTOM
 )
 
-var _custom_limits_enabled: bool = true
-
 ## x = left, y = top, z = right, w = bottom
 var custom_limits: Vector4i = DEFAULT_LIMITS:
 	set(value):
@@ -22,6 +22,9 @@ var custom_limits: Vector4i = DEFAULT_LIMITS:
 			return
 		custom_limits = value
 		custom_limits_changed.emit(self)
+
+var _world: GameWorld
+var _custom_limits_enabled: bool = false
 
 var _current_limits: WorldLimitsBase:
 	set(value):
@@ -31,9 +34,9 @@ var _current_limits: WorldLimitsBase:
 		_current_limits.changed.connect(current_limits_changed.emit.bind(self))
 
 
-func _init() -> void:
-	# Trigger the setter
-	_current_limits = WorldLimitsCustom.new(self)
+func _init(world: GameWorld) -> void:
+	_world = world
+	_current_limits = WorldLimitsAutomatic.new(_world)
 
 
 func is_custom_limits_enabled() -> bool:
@@ -41,17 +44,23 @@ func is_custom_limits_enabled() -> bool:
 
 
 func enable_custom_limits() -> void:
+	if _custom_limits_enabled:
+		return
 	var _old_limits: Vector4i = _current_limits.value()
 	_current_limits = WorldLimitsCustom.new(self)
 	_custom_limits_enabled = true
+	mode_changed.emit()
 	if _old_limits != _current_limits.value():
 		current_limits_changed.emit(self)
 
 
-func disable_custom_limits(game_world: GameWorld) -> void:
+func disable_custom_limits() -> void:
+	if not _custom_limits_enabled:
+		return
 	var _old_limits: Vector4i = _current_limits.value()
-	_current_limits = WorldLimitsAutomatic.new(game_world)
+	_current_limits = WorldLimitsAutomatic.new(_world)
 	_custom_limits_enabled = false
+	mode_changed.emit()
 	if _old_limits != _current_limits.value():
 		current_limits_changed.emit(self)
 

@@ -18,6 +18,7 @@ func _ready() -> void:
 	refresh()
 	_spin_box.value_changed.connect(_on_spin_box_value_changed)
 	item.value_changed.connect(_on_item_value_changed)
+	item.is_disabled_changed.connect(_on_is_disabled_changed)
 
 
 func refresh() -> void:
@@ -44,3 +45,7 @@ func _on_spin_box_value_changed(value: float) -> void:
 
 func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
 	_spin_box.set_value_no_signal(item.value)
+
+
+func _on_is_disabled_changed() -> void:
+	_spin_box.editable = not item.is_disabled

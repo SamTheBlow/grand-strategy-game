@@ -8,18 +8,6 @@ var settings := GameSettings.new()
 var metadata := ProjectMetadata.new()
 
 
-# TODO bad code.
-## Please call this right after you load the project.
-func connect_signals() -> void:
-	settings.custom_world_limits_enabled.value_changed.connect(
-		func(item: ItemBool) -> void:
-			if item.value:
-				settings.world_limits.enable_custom_limits()
-			else:
-				settings.world_limits.disable_custom_limits(game.world)
-	)
-
-
 ## Saves the project to its assigned file path.
 func save() -> void:
 	var project_save := ProjectSave.new()
