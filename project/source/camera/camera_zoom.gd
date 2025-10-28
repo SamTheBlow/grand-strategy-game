@@ -107,13 +107,20 @@ func _maximum_zoom() -> float:
 	return maxf(_maximum_zoom_limit, _minimum_zoom())
 
 
-## Returns the minimum zoom amount such that the camera remains in bounds.
+## Returns the minimum zoom amount.
+## Currently, you can zoom out such that the world takes half the screen.
 func _minimum_zoom() -> float:
-	var viewport_size_x: float = _camera.get_viewport_rect().size.x
-	var viewport_size_y: float = _camera.get_viewport_rect().size.y
-	var min_zoom_x: float = viewport_size_x / _camera.world_limits.width()
-	var min_zoom_y: float = viewport_size_y / _camera.world_limits.height()
-	return maxf(min_zoom_x, min_zoom_y)
+	# Prevent division by zero
+	if (
+			_camera.world_limits.width() == 0.0
+			or _camera.world_limits.height() == 0.0
+	):
+		return 1.0
+
+	return 0.5 * minf(
+			_camera.get_viewport_rect().size.x / _camera.world_limits.width(),
+			_camera.get_viewport_rect().size.y / _camera.world_limits.height()
+	)
 
 
 func _keep_camera_in_bounds() -> void:
