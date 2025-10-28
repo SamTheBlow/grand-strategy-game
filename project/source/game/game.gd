@@ -7,16 +7,7 @@ signal game_over(winning_country: Country)
 signal action_applied(action: Action)
 
 ## Note: the game's rules must not change after the game started.
-var rules: GameRules:
-	set(value):
-		if rules == value:
-			return
-
-		rules = value
-		rules.battle.battle_algorithm_option = (
-				rules.battle_algorithm_option.selected_value()
-		)
-		rules.battle.modifier_request = modifier_request
+var rules := GameRules.new()
 
 ## Be careful: you must include all of the game's countries on this list.
 ## Do not overwrite!
@@ -25,7 +16,7 @@ var countries := Countries.new()
 var game_players := GamePlayers.new()
 
 ## You must initialize the "rules" property before you initialize this one.
-var turn: GameTurn
+var turn := GameTurn.new(self)
 
 ## Do not overwrite!
 var world := GameWorld.new(self)
@@ -54,19 +45,17 @@ var _components: Array = []
 
 
 func _init() -> void:
-	# We initialize it here so that it calls the setter function
-	if rules == null:
-		rules = GameRules.new()
-
-	# We initialize it here because we need to initialize the rules first
-	if turn == null:
-		turn = GameTurn.new(self)
-
 	modifier_request.add_provider(self)
 
 	for province in world.provinces.list():
 		for building in province.buildings.list():
 			modifier_request.add_provider(building)
+
+	rules.battle.battle_algorithm_option = (
+			rules.battle_algorithm_option.selected_value()
+	)
+	rules.battle.modifier_request = modifier_request
+
 	world.provinces.building_added.connect(modifier_request.add_provider)
 
 	_components.append_array([

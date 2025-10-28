@@ -10,10 +10,6 @@ signal owner_changed(this: Province)
 signal position_changed()
 signal position_army_host_changed(new_position: Vector2)
 
-const DEFAULT_POLYGON_SHAPE: Array[Vector2] = [
-	Vector2.ZERO, Vector2.RIGHT, Vector2.ONE
-]
-
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
@@ -44,7 +40,7 @@ var position_army_host := Vector2.ZERO:
 var _linked_province_ids: Array[int] = []
 
 ## The list of vertices forming this province's polygon shape.
-var _polygon := PackedVector2ArrayWithSignals.new()
+var _polygon := PackedVector2ArrayWithSignals.new(default_shape())
 
 var _population := IntWithSignals.new(0, true)
 var _base_money_income := IntWithSignals.new()
@@ -104,6 +100,19 @@ func toggle_link(province_id: int) -> void:
 func reset_links() -> void:
 	_linked_province_ids = []
 	links_reset.emit()
+
+
+# This has to be a static function instead of a constant property.
+# Arrays are passed by reference, so a constant array means
+# it's the reference that can't change, not the contents.
+# So confusingly, a constant array's contents actually are not constant.
+## Returns a new array containing the default province shape.
+static func default_shape() -> PackedVector2Array:
+	return [
+		300.0 * Vector2(-0.5, 0.288675135),
+		300.0 * Vector2(0.5, 0.288675135),
+		300.0 * Vector2(0.0, -0.577350269),
+	]
 
 
 func polygon() -> PackedVector2ArrayWithSignals:

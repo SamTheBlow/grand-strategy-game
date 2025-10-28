@@ -113,7 +113,7 @@ static func _provinces_to_raw_array(province_list: Array[Province]) -> Array:
 			})
 
 		# Shape
-		if Array(province.polygon().array) != Province.DEFAULT_POLYGON_SHAPE:
+		if province.polygon().array != Province.default_shape():
 			var shape_vertices_x: Array = []
 			var shape_vertices_y: Array = []
 			for i in province.polygon().array.size():

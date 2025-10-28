@@ -136,7 +136,7 @@ static func _parse_province(raw_data: Variant, game: Game) -> void:
 
 static func _parsed_province_shape(raw_data: Variant) -> PackedVector2Array:
 	if raw_data is not Dictionary:
-		return Province.DEFAULT_POLYGON_SHAPE
+		return Province.default_shape()
 	var raw_dict: Dictionary = raw_data
 
 	var shape_x_array: Array = []
@@ -151,7 +151,7 @@ static func _parsed_province_shape(raw_data: Variant) -> PackedVector2Array:
 	var number_of_points: int = mini(shape_x_array.size(), shape_y_array.size())
 
 	if number_of_points < 3:
-		return Province.DEFAULT_POLYGON_SHAPE
+		return Province.default_shape()
 
 	var shape: PackedVector2Array = []
 	for i in number_of_points:
