@@ -1,5 +1,4 @@
 class_name Country
-extends Resource
 ## Represents a political entity. It is called "country", but in truth,
 ## this can represent any political entity, even those who do not
 ## have control over any land.
@@ -8,11 +7,12 @@ signal money_changed(new_amount: int)
 
 const DEFAULT_COLOR := Color.WHITE
 
-@export var country_name: String = ""
-@export var color: Color = DEFAULT_COLOR
-
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
+
+var country_name: String = ""
+
+var color: Color = DEFAULT_COLOR
 
 var money: int = 0:
 	set(value):

@@ -34,45 +34,32 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 	return ResultSuccess.new(_game_project(raw_dict, file_path))
 
 
-## Similar to parsed_from(), but does a few more things.
+## Same thing as parsed_from(), but does a few more things.
 ## When applicable, generates the world, countries, etc.
 ## Overwrites the [GameRules] with given one.
 ## Populates the game (see [PopulatedSaveFile]).
 static func generated_from(
 		raw_data: Variant, metadata: ProjectMetadata, game_rules: GameRules
 ) -> ParseResult:
-	if raw_data is not Dictionary:
-		return ResultError.new("Data is not a dictionary.")
-	var raw_dict: Dictionary = raw_data
-
-	# Check version
-	if not raw_dict.has(_VERSION_KEY):
-		return ResultError.new("Data doesn't have a \"version\" property.")
-	if raw_dict[_VERSION_KEY] is not String:
-		return ResultError.new(
-				"Data is from an unsupported version."
-				+ " The version property needs to be a string, but it isn't."
-		)
-	var version: String = raw_dict[_VERSION_KEY]
-	if version != _SAVE_DATA_VERSION:
-		return ResultError.new("Data is from an unsupported version.")
-
-	# Generate data, if applicable
-	var game_generation: GameGeneration = null
-	if metadata.project_name == "Random Grid World":
-		game_generation = RandomGridWorld.new()
-
-	if game_generation != null:
-		game_generation.load_settings(metadata.settings)
-		if game_generation.error:
-			return ResultError.new(game_generation.error_message)
-		game_generation.apply(raw_dict)
-
 	# Load the project
-	var game_project: GameProject = _game_project(raw_dict, metadata.file_path)
+	var parse_result: ParseResult = parsed_from(raw_data, metadata.file_path)
+	if parse_result.error:
+		return parse_result
+	var game_project: GameProject = parse_result.result_project
+
+	# Overwrite the settings
+	game_project.metadata.settings = metadata.settings
 
 	# Overwrite the rules
 	game_project.game.rules = game_rules
+
+	# Generate data, if applicable
+	if game_project.metadata.project_name == "Random Grid World":
+		var game_generation := RandomGridWorld.new()
+		game_generation.load_settings(game_project.metadata.settings)
+		if game_generation.error:
+			return ResultError.new(game_generation.error_message)
+		game_generation.apply(game_project.game)
 
 	# Populate the game
 	PopulatedSaveFile.apply(game_project.game)
@@ -114,7 +101,7 @@ static func _game_project(
 			raw_dict.get(_TEXTURES_KEY)
 	)
 
-	# Load the game & game settings
+	# Load the game
 	game_project.game = GameParsing.game_from_raw_dict(raw_dict, file_path)
 
 	# Load the metadata

@@ -53,6 +53,14 @@ func remove(province_id: int) -> void:
 	removed.emit(province)
 
 
+## Removes all provinces in this list.
+## Also resets the id system so that all ids become valid again.
+func clear() -> void:
+	for province_id in _list:
+		remove(province_id)
+	_unique_id_system = UniqueIdSystem.new()
+
+
 ## Returns a new copy of the list.
 func list() -> Array[Province]:
 	return _list.values()

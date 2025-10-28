@@ -1,58 +1,25 @@
 class_name CountryPlacementGeneration
-## Using given JSON data, tries to give each of the game's countries
+## Tries to give each of given [Game]'s countries
 ## control over one province on the world map.
 
 
-func apply(raw_data: Variant) -> void:
-	if raw_data is not Dictionary:
-		return
-	var raw_dict := raw_data as Dictionary
-
-	if not ParseUtils.dictionary_has_array(
-			raw_dict, GameParsing._COUNTRIES_KEY
-	):
-		raw_dict[GameParsing._COUNTRIES_KEY] = []
-	var countries_data: Array = raw_dict[GameParsing._COUNTRIES_KEY]
-
-	if not ParseUtils.dictionary_has_dictionary(
-			raw_dict, GameParsing._WORLD_KEY
-	):
-		push_error("Country placement failed: there is no world.")
-		return
-	var world_dict: Dictionary = raw_dict[GameParsing._WORLD_KEY]
-
-	if not ParseUtils.dictionary_has_array(
-			world_dict, WorldFromRaw.WORLD_PROVINCES_KEY
-	):
-		push_error("Country placement failed: world doesn't have provinces.")
-		return
-	var provinces_array: Array = world_dict[WorldFromRaw.WORLD_PROVINCES_KEY]
-
+static func apply(game: Game) -> void:
 	# Keep track of unassigned provinces.
-	var unassigned_provinces: Array = provinces_array.duplicate()
+	var unassigned_provinces: Array[Province] = []
 
-	# If any country was already assigned to a province, unassign them.
-	# Also remove invalid province data from the list.
-	for province_data: Variant in unassigned_provinces.duplicate():
-		if province_data is not Dictionary:
-			unassigned_provinces.erase(province_data)
-			continue
+	# Remove all existing province ownership.
+	for province in game.world.provinces.list():
+		province.owner_country = null
+		unassigned_provinces.append(province)
 
-		var province_dict := province_data as Dictionary
-		province_dict.erase(ProvincesFromRaw.PROVINCE_OWNER_ID_KEY)
-
-	# Go through all the countries and assign
-	# each of them to an unassigned province.
-	var countries: Countries = Countries.from_raw_data(countries_data)
-	for country: Country in countries.list():
-		if unassigned_provinces.size() == 0:
+	# Go through all the countries
+	# and try to give to each of them one unassigned province.
+	for country: Country in game.countries.list():
+		# If we run out of provinces to give, then we're done.
+		# Some countries won't have a province.
+		if unassigned_provinces.is_empty():
 			break
 
 		var random_index: int = randi() % unassigned_provinces.size()
-		var random_province_dict: Dictionary = (
-				unassigned_provinces[random_index]
-		)
-		random_province_dict[ProvincesFromRaw.PROVINCE_OWNER_ID_KEY] = (
-				country.id
-		)
+		unassigned_provinces[random_index].owner_country = country
 		unassigned_provinces.remove_at(random_index)

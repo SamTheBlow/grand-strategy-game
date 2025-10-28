@@ -32,8 +32,12 @@ const BUILDING_TYPE_FORTRESS: String = "fortress"
 ## When data is invalid, uses the default value instead.
 ## Discards provinces with an already-in-use id.
 ##
+## Clears already existing provinces in given game.
+##
 ## NOTE: Countries must already be loaded before using this.
 static func parse_using(raw_data: Variant, game: Game) -> void:
+	game.world.provinces.clear()
+
 	if raw_data is not Array:
 		return
 	var raw_array: Array = raw_data
