@@ -11,7 +11,6 @@ script = ExtResource("1_cf754")
 world_margin = Vector2(0.25, 0.25)
 
 [node name="CameraDrag" type="Node" parent="." node_paths=PackedStringArray("_camera")]
-unique_name_in_owner = true
 script = ExtResource("2_vnpnf")
 _camera = NodePath("..")
 
@@ -20,6 +19,7 @@ script = ExtResource("3_c8o64")
 _camera = NodePath("..")
 default_zoom = 0.5
 
-[node name="CameraDragMeasurement" type="Node" parent="." node_paths=PackedStringArray("_camera")]
+[node name="CameraDragMeasurement" type="Node" parent="." node_paths=PackedStringArray("_camera", "_camera_drag")]
 script = ExtResource("4_blwgd")
 _camera = NodePath("..")
+_camera_drag = NodePath("../CameraDrag")

@@ -1,6 +1,7 @@
 class_name ProvinceSelectConditions
 extends Node
 ## Determines when a province is successfully selected.
+## Deselects a province when clicking on the background.
 
 ## Anyone can change the outcome from the outside.
 ## By default, the outcome is that the province will be selected.
@@ -17,22 +18,6 @@ var world_visuals: WorldVisuals2D:
 		if world_visuals != null:
 			world_visuals.province_visuals.unhandled_mouse_event_occured.connect(_on_province_unhandled_mouse_event)
 			world_visuals.background.clicked.connect(_on_background_clicked)
-
-## May be null.
-var camera_drag_measurement: CameraDragMeasurement
-
-
-func _camera_dragged_too_much() -> bool:
-	if camera_drag_measurement == null:
-		push_error("Drag measurement is null.")
-		return false
-
-	const MAX_DRAG_AMOUNT: float = 30.0
-	var drag_amount: Vector2 = camera_drag_measurement.drag_amount()
-	return (
-			absf(drag_amount.x) > MAX_DRAG_AMOUNT
-			or absf(drag_amount.y) > MAX_DRAG_AMOUNT
-	)
 
 
 func _on_province_unhandled_mouse_event(
@@ -53,10 +38,6 @@ func _on_province_unhandled_mouse_event(
 	if event_button.pressed:
 		return
 
-	# If the camera was dragged too much, don't select the province
-	if _camera_dragged_too_much():
-		return
-
 	var province: Province = province_visuals.province
 
 	# If the province is already selected, deselect it and return
@@ -72,14 +53,8 @@ func _on_province_unhandled_mouse_event(
 
 
 func _on_background_clicked() -> void:
-	if world_visuals == null:
-		return
-
-	# If the camera was dragged too much, don't deselect
-	if _camera_dragged_too_much():
-		return
-
-	world_visuals.province_selection.deselect()
+	if world_visuals != null:
+		world_visuals.province_selection.deselect()
 
 
 class ProvinceSelectionOutcome:

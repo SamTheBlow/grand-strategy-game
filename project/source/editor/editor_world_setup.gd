@@ -44,7 +44,6 @@ func clear() -> void:
 		NodeUtils.delete_node(_current_world)
 		_current_world = null
 	if _camera != null:
-		_province_select_conditions.camera_drag_measurement = null
 		NodeUtils.delete_node(_camera)
 		_camera = null
 
@@ -61,9 +60,6 @@ func load_world(project: GameProject) -> void:
 	_camera_container.add_child(_camera)
 	_camera.world_limits = project.game.world.limits()
 	_camera.move_to_world_center()
-	_province_select_conditions.camera_drag_measurement = (
-			_camera.get_node_or_null("CameraDragMeasurement")
-	)
 
 	_world_container.add_child(new_world)
 	_current_world = new_world
