@@ -14,7 +14,7 @@ var _map: Dictionary[Country, ProvincesOfCountry] = {
 func _init(countries: Countries, provinces: Provinces) -> void:
 	for country in countries.list():
 		_on_country_added(country)
-	countries.country_added.connect(_on_country_added)
+	countries.added.connect(_on_country_added)
 
 	for province in provinces.list():
 		_on_province_added(province)

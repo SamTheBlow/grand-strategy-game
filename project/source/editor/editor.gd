@@ -247,6 +247,9 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		5:
 			# "Provinces"
 			_open_interface(EditingInterface.InterfaceType.PROVINCE_LIST)
+		6:
+			# "Countries"
+			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
 		0, 4:
 			# Separators & sub menus
 			pass

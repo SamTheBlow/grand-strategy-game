@@ -27,7 +27,7 @@ func _init(game: Game) -> void:
 	for country in game.countries.list():
 		_on_country_added(country)
 
-	game.countries.country_added.connect(_on_country_added)
+	game.countries.added.connect(_on_country_added)
 	game.world.provinces.province_owner_changed.connect(
 			_on_province_owner_changed
 	)

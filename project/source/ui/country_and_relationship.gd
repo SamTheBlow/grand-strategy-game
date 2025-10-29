@@ -8,6 +8,13 @@ extends Control
 		is_button_enabled = value
 		_update_is_button_enabled()
 
+## The minimum size applied to the country button, in pixels.
+@export var button_minimum_size := Vector2(0.0, 64.0):
+	set(value):
+		button_minimum_size = value
+		if is_node_ready():
+			_country_button.custom_minimum_size = button_minimum_size
+
 var is_relationship_presets_disabled: bool = true:
 	set(value):
 		is_relationship_presets_disabled = value
@@ -43,6 +50,7 @@ func _ready() -> void:
 	_refresh_preset_label()
 	_update_is_button_enabled()
 	_update_button_press_outcome()
+	_country_button.custom_minimum_size = button_minimum_size
 
 
 func _update_button_press_outcome() -> void:

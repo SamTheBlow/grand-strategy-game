@@ -15,7 +15,7 @@ var dictionary: Dictionary[Country, ArmiesOfCountry] = {
 func _init(countries: Countries, armies: Armies) -> void:
 	for country in countries.list():
 		_on_country_added(country)
-	countries.country_added.connect(_on_country_added)
+	countries.added.connect(_on_country_added)
 
 	for army in armies.list():
 		_on_army_added(army)

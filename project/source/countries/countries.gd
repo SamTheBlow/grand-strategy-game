@@ -1,7 +1,7 @@
 class_name Countries
 ## An encapsulated list of [Country] objects.
 
-signal country_added(country: Country)
+signal added(country: Country)
 
 var _list: Array[Country] = []
 var _unique_id_system := UniqueIdSystem.new()
@@ -27,7 +27,7 @@ func add(country: Country) -> void:
 		_unique_id_system.claim_id(country.id)
 
 	_list.append(country)
-	country_added.emit(country)
+	added.emit(country)
 
 
 ## Returns null if there is no country with given id.

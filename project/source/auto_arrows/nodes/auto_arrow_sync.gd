@@ -22,7 +22,7 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	for country in _countries.list():
 		_on_country_added(country)
-	_countries.country_added.connect(_on_country_added)
+	_countries.added.connect(_on_country_added)
 
 
 ## Clients receive the info from the server.

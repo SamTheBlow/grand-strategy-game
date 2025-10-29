@@ -11,6 +11,7 @@ enum InterfaceType {
 	BACKGROUND_COLOR = 1,
 	DECORATION_LIST = 2,
 	PROVINCE_LIST = 3,
+	COUNTRY_LIST = 4,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
@@ -19,6 +20,7 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
 	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
+	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
 }
 
 var _current_interface: Node:
@@ -74,7 +76,7 @@ func open_province_edit_interface(
 			project.game.world.provinces.province_from_id(province_id)
 	)
 	if province == null:
-		push_warning("Province doesn't exist.")
+		push_error("Province doesn't exist.")
 		return
 
 	var province_interface := _new_interface(
@@ -141,6 +143,12 @@ func _new_interface(
 		list_interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
 		)
+	elif new_interface is InterfaceCountryList:
+		var list_interface := new_interface as InterfaceCountryList
+		list_interface.setup(project.game.countries)
+		list_interface.item_selected.connect(
+				_open_country_edit_interface.bind(project, editor_settings)
+		)
 
 	return new_interface
 
@@ -164,6 +172,34 @@ func _open_new_decoration_edit_interface(
 	)
 	new_interface.world_decoration = world_decoration
 	open_interface(new_interface)
+
+
+func _open_country_edit_interface(
+		country_id: int,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	var country: Country = (
+			project.game.countries.country_from_id(country_id)
+	)
+	if country == null:
+		push_error("Country doesn't exist.")
+		return
+
+	var edit_interface := _new_interface(
+			preload("uid://ck6hme0uj2nuu"), project, editor_settings
+	) as InterfaceCountryEdit
+	edit_interface.back_pressed.connect(open_new_interface.bind(
+			InterfaceType.COUNTRY_LIST, project, editor_settings
+	))
+	#edit_interface.delete_pressed.connect(
+			#_on_country_deleted.bind(project, editor_settings)
+	#)
+	#edit_interface.duplicate_pressed.connect(
+			#_on_country_duplicated.bind(project, editor_settings)
+	#)
+	edit_interface.country = country
+	open_interface(edit_interface)
 
 
 func _update_visibility() -> void:

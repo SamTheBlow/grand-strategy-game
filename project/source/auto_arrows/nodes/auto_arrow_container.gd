@@ -61,11 +61,11 @@ func _create_arrows_node(country: Country) -> void:
 
 
 func _connect_signals() -> void:
-	_countries.country_added.connect(_create_arrows_node)
+	_countries.added.connect(_create_arrows_node)
 
 
 func _disconnect_signals() -> void:
-	_countries.country_added.disconnect(_create_arrows_node)
+	_countries.added.disconnect(_create_arrows_node)
 
 
 func _on_preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D) -> void:

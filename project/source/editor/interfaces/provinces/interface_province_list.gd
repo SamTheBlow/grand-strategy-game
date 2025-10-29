@@ -27,8 +27,8 @@ func _ready() -> void:
 
 func setup(provinces: Provinces) -> void:
 	if _is_setup and is_node_ready():
-		provinces.added.disconnect(_on_province_added)
-		provinces.removed.disconnect(_on_province_removed)
+		_provinces.added.disconnect(_on_province_added)
+		_provinces.removed.disconnect(_on_province_removed)
 
 	_provinces = provinces
 	_is_setup = true
