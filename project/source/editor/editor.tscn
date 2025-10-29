@@ -1,17 +1,12 @@
-[gd_scene load_steps=13 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=8 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
 [ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/editor/project_load_popup.tscn" id="3_kcuw7"]
-[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_gofj8"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/editing_interface.tscn" id="7_um8he"]
-[ext_resource type="Script" uid="uid://p83m0qu8m7ad" path="res://source/camera/camera.gd" id="8_nha6u"]
-[ext_resource type="Script" uid="uid://kwgfyilqkc06" path="res://source/camera/camera_drag.gd" id="9_b8gba"]
-[ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="10_byi3d"]
-[ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="12_byi3d"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
@@ -25,12 +20,11 @@ script = ExtResource("5_b8gba")
 [node name="WorldLayer" type="CanvasLayer" parent="."]
 follow_viewport_enabled = true
 
-[node name="WorldSetup" type="Node" parent="WorldLayer" node_paths=PackedStringArray("_container", "_camera")]
+[node name="WorldSetup" type="Node" parent="WorldLayer" node_paths=PackedStringArray("_world_container", "_camera_container")]
 unique_name_in_owner = true
 script = ExtResource("4_l7l2i")
-_container = NodePath("../WorldContainer")
-_camera = NodePath("../../Camera")
-_world_scene = ExtResource("4_gofj8")
+_world_container = NodePath("../WorldContainer")
+_camera_container = NodePath("../../CameraContainer")
 
 [node name="WorldContainer" type="Node2D" parent="WorldLayer"]
 
@@ -38,22 +32,7 @@ _world_scene = ExtResource("4_gofj8")
 unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
 
-[node name="Camera" type="Camera2D" parent="."]
-unique_name_in_owner = true
-script = ExtResource("8_nha6u")
-world_margin = Vector2(0.25, 0.25)
-
-[node name="CameraDrag" type="Node" parent="Camera"]
-unique_name_in_owner = true
-script = ExtResource("9_b8gba")
-
-[node name="CameraZoom" type="Node" parent="Camera"]
-script = ExtResource("10_byi3d")
-default_zoom = 0.5
-
-[node name="CameraDragMeasurement" type="Node" parent="Camera"]
-unique_name_in_owner = true
-script = ExtResource("12_byi3d")
+[node name="CameraContainer" type="Node2D" parent="."]
 
 [node name="WorldOverlayLayer" type="CanvasLayer" parent="."]
 layer = 2

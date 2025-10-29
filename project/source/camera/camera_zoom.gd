@@ -6,6 +6,8 @@ extends Node
 ## See this video for more information about some of the code:
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
 
+@export var _camera: CustomCamera2D
+
 ## Try a value in-between 0 and 1.[br] If the value is too low or too high,
 ## the camera will use the minimum or maximum zoom.
 @export var default_zoom: float = 1.0
@@ -26,8 +28,6 @@ var _zoom_rate: float = 8.0
 ## If enabled, when zooming out, the camera will zoom away from the
 ## center of the viewport instead of zooming away from the cursor's position.
 var _zoom_away_from_center: bool = true
-
-@onready var _camera := %Camera as CustomCamera2D
 
 
 func _ready() -> void:

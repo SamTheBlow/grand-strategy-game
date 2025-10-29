@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3 uid="uid://44rygdcojakm"]
+
+[ext_resource type="Script" uid="uid://p83m0qu8m7ad" path="res://source/camera/camera.gd" id="1_cf754"]
+[ext_resource type="Script" uid="uid://kwgfyilqkc06" path="res://source/camera/camera_drag.gd" id="2_vnpnf"]
+[ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="3_c8o64"]
+[ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="4_blwgd"]
+
+[node name="Camera" type="Camera2D"]
+limit_enabled = false
+script = ExtResource("1_cf754")
+world_margin = Vector2(0.25, 0.25)
+
+[node name="CameraDrag" type="Node" parent="." node_paths=PackedStringArray("_camera")]
+unique_name_in_owner = true
+script = ExtResource("2_vnpnf")
+_camera = NodePath("..")
+
+[node name="CameraZoom" type="Node" parent="." node_paths=PackedStringArray("_camera")]
+script = ExtResource("3_c8o64")
+_camera = NodePath("..")
+default_zoom = 0.5
+
+[node name="CameraDragMeasurement" type="Node" parent="." node_paths=PackedStringArray("_camera")]
+script = ExtResource("4_blwgd")
+_camera = NodePath("..")

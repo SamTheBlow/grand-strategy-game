@@ -2,10 +2,11 @@ class_name CameraDragMeasurement
 extends Node
 ## Measures how much drag is being applied to the camera in one mouse click.
 
+@export var _camera: Node2D
+
 var _start_position := Vector2.ZERO
 var _drag_amount := Vector2.ZERO
 
-@onready var _camera := %Camera as Node2D
 @onready var _camera_drag := %CameraDrag as CameraDrag
 
 

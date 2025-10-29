@@ -8,9 +8,9 @@ extends Node
 signal drag_started()
 signal drag_ended()
 
-var _is_being_dragged: bool = false
+@export var _camera: CustomCamera2D
 
-@onready var _camera := %Camera as CustomCamera2D
+var _is_being_dragged: bool = false
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -23,14 +23,14 @@ func _input(event: InputEvent) -> void:
 
 
 func _detect_start_of_drag(event: InputEvent) -> void:
-	if not event is InputEventMouseButton:
+	if event is not InputEventMouseButton:
 		return
 
 	var event_mouse_button := event as InputEventMouseButton
-	if not event_mouse_button.is_pressed():
-		return
-
-	if event_mouse_button.button_index != MOUSE_BUTTON_LEFT:
+	if not (
+			event_mouse_button.is_pressed()
+			and event_mouse_button.button_index == MOUSE_BUTTON_LEFT
+	):
 		return
 
 	# You are now dragging the camera
@@ -39,14 +39,14 @@ func _detect_start_of_drag(event: InputEvent) -> void:
 
 
 func _detect_end_of_drag(event: InputEvent) -> void:
-	if not event is InputEventMouseButton:
+	if event is not InputEventMouseButton:
 		return
 
 	var event_mouse_button := event as InputEventMouseButton
-	if not event_mouse_button.is_released():
-		return
-
-	if event_mouse_button.button_index != MOUSE_BUTTON_LEFT:
+	if not (
+			event_mouse_button.is_released()
+			and event_mouse_button.button_index == MOUSE_BUTTON_LEFT
+	):
 		return
 
 	# You are no longer dragging the camera
@@ -55,11 +55,10 @@ func _detect_end_of_drag(event: InputEvent) -> void:
 
 
 func _drag_camera(event: InputEvent) -> void:
-	if not _is_being_dragged or not event is InputEventMouseMotion:
+	if not _is_being_dragged or event is not InputEventMouseMotion:
 		return
 	var event_mouse_motion := event as InputEventMouseMotion
 
-	# Move the camera
-	var camera_position: Vector2 = _camera.position_in_bounds(_camera.position)
-	var movement: Vector2 = -event_mouse_motion.relative / _camera.zoom
-	_camera.position = _camera.position_in_bounds(camera_position + movement)
+	_camera.move_to(
+			_camera.position - event_mouse_motion.relative / _camera.zoom
+	)

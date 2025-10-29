@@ -18,14 +18,17 @@ var world_visuals: WorldVisuals2D:
 			world_visuals.province_visuals.unhandled_mouse_event_occured.connect(_on_province_unhandled_mouse_event)
 			world_visuals.background.clicked.connect(_on_background_clicked)
 
-@onready var _camera_drag_measurement := (
-		%CameraDragMeasurement as CameraDragMeasurement
-)
+## May be null.
+var camera_drag_measurement: CameraDragMeasurement
 
 
 func _camera_dragged_too_much() -> bool:
+	if camera_drag_measurement == null:
+		push_error("Drag measurement is null.")
+		return false
+
 	const MAX_DRAG_AMOUNT: float = 30.0
-	var drag_amount: Vector2 = _camera_drag_measurement.drag_amount()
+	var drag_amount: Vector2 = camera_drag_measurement.drag_amount()
 	return (
 			absf(drag_amount.x) > MAX_DRAG_AMOUNT
 			or absf(drag_amount.y) > MAX_DRAG_AMOUNT

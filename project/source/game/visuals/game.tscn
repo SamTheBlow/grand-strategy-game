@@ -74,12 +74,14 @@ unique_name_in_owner = true
 script = ExtResource("19_oyfu3")
 world_margin = Vector2(0.25, 0.25)
 
-[node name="CameraDrag" type="Node" parent="Camera"]
+[node name="CameraDrag" type="Node" parent="Camera" node_paths=PackedStringArray("_camera")]
 unique_name_in_owner = true
 script = ExtResource("20_pfqno")
+_camera = NodePath("..")
 
-[node name="CameraZoom" type="Node" parent="Camera"]
+[node name="CameraZoom" type="Node" parent="Camera" node_paths=PackedStringArray("_camera")]
 script = ExtResource("21_oq116")
+_camera = NodePath("..")
 default_zoom = 0.5
 
 [node name="CameraEventMovement" type="Node" parent="Camera" node_paths=PackedStringArray("_game", "_camera")]
@@ -88,9 +90,10 @@ _game = NodePath("../..")
 _camera = NodePath("..")
 _start_in_center_of_map = true
 
-[node name="CameraDragMeasurement" type="Node" parent="Camera"]
+[node name="CameraDragMeasurement" type="Node" parent="Camera" node_paths=PackedStringArray("_camera")]
 unique_name_in_owner = true
 script = ExtResource("21_hk7jl")
+_camera = NodePath("..")
 
 [node name="UILayer" type="CanvasLayer" parent="."]
 unique_name_in_owner = true

@@ -88,8 +88,12 @@ func _ready() -> void:
 	world_visuals.project = project
 	world_visuals.world = game.world
 
-	(%ProvinceSelectConditions as ProvinceSelectConditions).world_visuals = (
-			world_visuals
+	var province_select_conditions := (
+			%ProvinceSelectConditions as ProvinceSelectConditions
+	)
+	province_select_conditions.world_visuals = world_visuals
+	province_select_conditions.camera_drag_measurement = (
+			%CameraDragMeasurement as CameraDragMeasurement
 	)
 
 	_camera.world_limits = project.game.world.limits()

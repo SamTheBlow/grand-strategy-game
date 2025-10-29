@@ -64,9 +64,18 @@ func position_in_bounds(input_position: Vector2) -> Vector2:
 	var min_y: float = world_limits.limit_top() + margin_y
 	var max_x: float = world_limits.limit_right() - margin_x
 	var max_y: float = world_limits.limit_bottom() - margin_y
-	var output_x: float = clampf(input_position.x, min_x, max_x)
-	var output_y: float = clampf(input_position.y, min_y, max_y)
-	return Vector2(output_x, output_y)
+
+	var output: Vector2
+	if min_x < max_x:
+		output.x = clampf(input_position.x, min_x, max_x)
+	else:
+		output.x = (min_x + max_x) * 0.5
+	if min_y < max_y:
+		output.y = clampf(input_position.y, min_y, max_y)
+	else:
+		output.y = (min_y + max_y) * 0.5
+
+	return output
 
 
 ## Puts the camera back in bounds.

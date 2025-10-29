@@ -1,11 +1,14 @@
 class_name EditorWorldSetup
 extends Node
 
+const _WORLD_SCENE := preload("uid://dpgoa2yg5bjcp") as PackedScene
+const _CAMERA_SCENE := preload("uid://44rygdcojakm") as PackedScene
+
 ## The world will be added as a child of this node.
-@export var _container: Node
-@export var _camera: CustomCamera2D
-## The scene's root node must be a WorldVisuals2D.
-@export var _world_scene: PackedScene
+@export var _world_container: Node
+
+## The camera will be added as a child of this node.
+@export var _camera_container: Node
 
 var editor_settings: AppEditorSettings:
 	set(value):
@@ -24,6 +27,9 @@ var _current_world: WorldVisuals2D:
 		_current_world = value
 		_province_select_conditions.world_visuals = _current_world
 
+## May be null.
+var _camera: CustomCamera2D
+
 @onready var _province_select_conditions := (
 		%ProvinceSelectConditions as ProvinceSelectConditions
 )
@@ -37,18 +43,29 @@ func clear() -> void:
 		_current_world.overlay_created.disconnect(_world_overlay.add_child)
 		NodeUtils.delete_node(_current_world)
 		_current_world = null
+	if _camera != null:
+		_province_select_conditions.camera_drag_measurement = null
+		NodeUtils.delete_node(_camera)
+		_camera = null
 
 
 ## Creates a new [WorldVisuals2D] instance.
 ## You might want to call "clear()" before calling this.
 func load_world(project: GameProject) -> void:
-	var new_world := _world_scene.instantiate() as WorldVisuals2D
+	var new_world := _WORLD_SCENE.instantiate() as WorldVisuals2D
 	new_world.project = project
 	new_world.world = project.game.world
 	new_world.overlay_created.connect(_world_overlay.add_child)
+
+	_camera = _CAMERA_SCENE.instantiate() as CustomCamera2D
+	_camera_container.add_child(_camera)
 	_camera.world_limits = project.game.world.limits()
 	_camera.move_to_world_center()
-	_container.add_child(new_world)
+	_province_select_conditions.camera_drag_measurement = (
+			_camera.get_node_or_null("CameraDragMeasurement")
+	)
+
+	_world_container.add_child(new_world)
 	_current_world = new_world
 	_update_decoration_visibility()
 
