@@ -20,6 +20,7 @@ var is_enabled: bool = false:
 
 var _is_setup: bool = false
 var _province_selection: ProvinceSelection
+var _edge_case: PolygonEditEdgeCase
 
 ## May be null.
 var _highlighted_province: Province
@@ -48,12 +49,14 @@ func _exit_tree() -> void:
 
 
 func setup(
-		province_selection: ProvinceSelection
+		province_selection: ProvinceSelection,
+		edge_case: PolygonEditEdgeCase
 ) -> void:
 	if is_enabled and _is_setup and is_node_ready():
 		_disconnect_signals()
 
 	_province_selection = province_selection
+	_edge_case = edge_case
 
 	_highlighted_province = null
 	_highlighted_province_link_ids = []
@@ -85,6 +88,7 @@ func _update_selected_province(_province: Province = null) -> void:
 		var polygon_edit := PolygonEdit.new()
 		polygon_edit.polygon = selected_province.polygon()
 		polygon_edit.is_draw_polygon_enabled = false
+		_edge_case.polygon_edit = polygon_edit
 		world_overlay.add_child(polygon_edit)
 
 		var army_position_edit := PositionEdit.new(

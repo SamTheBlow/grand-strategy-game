@@ -26,7 +26,7 @@ const _VERTEX_PREVIEW_COLOR := Color(0.0, 1.0, 1.0, 0.5)
 const _POLYGON_COLOR := Color(0.0, 0.5, 1.0, 0.2)
 
 var polygon := PackedVector2ArrayWithSignals.new(
-		[Vector2(32.0, 0.0), Vector2(-32.0, 32.0), Vector2(-32.0, -32.0)]
+		[Vector2.ZERO, Vector2.RIGHT, Vector2.DOWN]
 ):
 	set(value):
 		polygon.changed.disconnect(queue_redraw)
@@ -36,6 +36,17 @@ var polygon := PackedVector2ArrayWithSignals.new(
 ## If set to false, the polygon itself will not be drawn.
 ## The vertices will still be drawn.
 var is_draw_polygon_enabled: bool = true
+
+## If set to false, dragging the entire polygon is disabled.
+var can_drag_entire_polygon: bool = true:
+	set(value):
+		can_drag_entire_polygon = value
+		if (
+				not can_drag_entire_polygon
+				and _is_dragging and _is_dragging_entire_polygon
+		):
+			_create_action_drag_polygon()
+			_is_dragging = false
 
 ## The index of the active (hovered) vertex.
 ## It's -1 if the cursor is not hovering over any vertex.
@@ -110,18 +121,19 @@ func _handle_left_click(event: InputEvent) -> bool:
 			_is_dragging = true
 			_is_dragging_entire_polygon = false
 			is_handled = true
-		elif Geometry2D.is_point_in_polygon(_cursor_position, polygon.array):
+		elif can_drag_entire_polygon and (
+				Geometry2D.is_point_in_polygon(_cursor_position, polygon.array)
+		):
 			_drag_from = _cursor_position
 			_is_dragging = true
 			_is_dragging_entire_polygon = true
 			is_handled = true
 
 	if event_mouse_button.is_released() and _is_dragging:
-		if _drag_from != _drag_to:
-			if _is_dragging_entire_polygon:
-				_create_action_drag_polygon()
-			else:
-				_create_action_drag_vertex()
+		if _is_dragging_entire_polygon:
+			_create_action_drag_polygon()
+		else:
+			_create_action_drag_vertex()
 		_is_dragging = false
 		is_handled = true
 
@@ -226,6 +238,8 @@ func _remove_vertex() -> void:
 
 
 func _create_action_drag_vertex() -> void:
+	if _drag_from == _drag_to:
+		return
 	_undo_redo.create_action("Drag vertex")
 	_undo_redo.add_do_method(polygon.change_at.bind(_active_index, _drag_to))
 	_undo_redo.add_undo_method(
@@ -235,6 +249,8 @@ func _create_action_drag_vertex() -> void:
 
 
 func _create_action_drag_polygon() -> void:
+	if _drag_from == _drag_to:
+		return
 	_undo_redo.create_action("Drag polygon")
 	_undo_redo.add_do_method(polygon.add_to_all.bind(_drag_to - _drag_from))
 	_undo_redo.add_undo_method(polygon.add_to_all.bind(_drag_from - _drag_to))

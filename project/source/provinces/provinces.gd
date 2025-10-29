@@ -66,6 +66,11 @@ func list() -> Array[Province]:
 	return _list.values()
 
 
+## Returns the number of provinces in this list.
+func size() -> int:
+	return _list.size()
+
+
 ## Returns a list of every province that's linked to given province.
 ## Returns an empty list if there is no province with given id.
 func links_of(province_id: int) -> Array[Province]:

@@ -60,7 +60,10 @@ func _update() -> void:
 			_world_visuals.world.armies_in_each_province,
 			_world_visuals.province_selection
 	)
-	_node_editor_adj.setup(_world_visuals.province_selection)
+	_node_editor_adj.setup(
+			_world_visuals.province_selection,
+			PolygonEditEdgeCase.new(_world_visuals.world)
+	)
 
 	_enable_map_mode()
 
