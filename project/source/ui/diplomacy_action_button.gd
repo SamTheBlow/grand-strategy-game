@@ -54,7 +54,7 @@ func _refresh_is_disabled() -> void:
 		return
 
 	var turns_remaining: int = diplomacy_action.cooldown_turns_remaining(game)
-	if diplomacy_action.was_performed_this_turn():
+	if diplomacy_action.was_performed_this_turn(game):
 		_disabled_label.text = "Done!"
 	elif turns_remaining > 0:
 		_disabled_label.text = (

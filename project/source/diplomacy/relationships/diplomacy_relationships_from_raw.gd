@@ -9,9 +9,9 @@ class_name DiplomacyRelationshipsFromRaw
 
 const RECIPIENT_COUNTRY_ID_KEY: String = "recipient_country_id"
 const BASE_DATA_KEY: String = "base_data"
-const PERFORMED_ACTIONS_KEY: String = "actions_performed_this_turn"
 const AVAILABLE_ACTIONS_KEY: String = "available_actions"
 const TURN_IT_BECAME_AVAILABLE_KEY: String = "turn_it_became_available"
+const TURN_IT_WAS_LAST_PERFORMED_KEY: String = "turn_it_was_last_performed"
 
 
 static func parsed_from(
@@ -74,16 +74,6 @@ static func _parsed_diplomacy_relationship(
 	if ParseUtils.dictionary_has_dictionary(raw_dict, BASE_DATA_KEY):
 		loaded_relationship_data.merge(raw_dict[BASE_DATA_KEY])
 
-	# Backwards compatibility: 4.1
-	# A list of already performed actions is saved and handled separately.
-	var actions_already_performed: Array[int] = []
-	if ParseUtils.dictionary_has_array(raw_dict, PERFORMED_ACTIONS_KEY):
-		for element: Variant in raw_dict[PERFORMED_ACTIONS_KEY] as Array:
-			if not ParseUtils.is_number(element):
-				continue
-			var action_id: int = ParseUtils.number_as_int(element)
-			actions_already_performed.append(action_id)
-
 	var available_actions: Array[DiplomacyAction] = []
 	if ParseUtils.dictionary_has_dictionary(raw_dict, AVAILABLE_ACTIONS_KEY):
 		var available_actions_dict: Dictionary = raw_dict[AVAILABLE_ACTIONS_KEY]
@@ -97,21 +87,30 @@ static func _parsed_diplomacy_relationship(
 			)
 			if available_action_data is not Dictionary:
 				continue
-
 			var available_action_dict: Dictionary = available_action_data
-			if not ParseUtils.dictionary_has_number(
+
+			var turn_it_became_available: int = 1
+			if ParseUtils.dictionary_has_number(
 					available_action_dict, TURN_IT_BECAME_AVAILABLE_KEY
 			):
-				continue
+				turn_it_became_available = ParseUtils.dictionary_int(
+						available_action_dict,
+						TURN_IT_BECAME_AVAILABLE_KEY
+				)
+
+			var turn_it_was_last_performed: int = 0
+			if ParseUtils.dictionary_has_number(
+					available_action_dict, TURN_IT_WAS_LAST_PERFORMED_KEY
+			):
+				turn_it_was_last_performed = ParseUtils.dictionary_int(
+						available_action_dict,
+						TURN_IT_WAS_LAST_PERFORMED_KEY
+				)
 
 			var new_action := DiplomacyAction.new(
 					game.rules.diplomatic_actions.action_from_id(action_id),
-					game.turn.turn_changed,
-					ParseUtils.dictionary_int(
-							available_action_dict,
-							TURN_IT_BECAME_AVAILABLE_KEY
-					),
-					actions_already_performed.has(action_id)
+					turn_it_became_available,
+					turn_it_was_last_performed
 			)
 			available_actions.append(new_action)
 
@@ -120,18 +119,12 @@ static func _parsed_diplomacy_relationship(
 	relationship_data.merge(loaded_relationship_data, true)
 
 	var relationship := DiplomacyRelationship.new(
-			country,
-			recipient_country,
-			game.turn.turn_changed,
-			relationship_data,
-			base_actions,
+			country, recipient_country, relationship_data, base_actions
 	)
 
 	relationship.diplomacy_presets = game.rules.diplomatic_presets
 	relationship.diplomacy_actions = game.rules.diplomatic_actions
 	relationship.initialize_actions(
-			game.turn.current_turn(),
-			actions_already_performed,
-			available_actions
+			game.turn.current_turn(), available_actions
 	)
 	return relationship

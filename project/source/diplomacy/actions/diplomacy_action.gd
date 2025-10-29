@@ -7,22 +7,24 @@ signal performed(this: DiplomacyAction)
 
 var _definition: DiplomacyActionDefinition
 
+## Ensures this diplomatic action can only
+## be performed after a certain number of turns have passed.
+## By default, a value of 1 means it's always available.
 var _turn_it_became_available: int
 
-## Diplomatic actions may only be performed once per turn.
-var _was_performed_this_turn: bool = false
+## Ensures this diplomatic action can only be performed once per turn.
+## By default, a value of 0 means it was never performed.
+var _turn_it_was_last_performed: int
 
 
 func _init(
 		definition: DiplomacyActionDefinition,
-		turn_changed_signal: Signal,
 		turn_it_became_available: int = 1,
-		was_performed_this_turn_: bool = false,
+		turn_it_was_last_performed: int = 0,
 ) -> void:
 	_definition = definition
 	_turn_it_became_available = turn_it_became_available
-	_was_performed_this_turn = was_performed_this_turn_
-	turn_changed_signal.connect(_on_turn_changed)
+	_turn_it_was_last_performed = turn_it_was_last_performed
 
 
 ## Returns the id of this action's definition.
@@ -66,7 +68,7 @@ func can_be_performed(game: Game, push_debug_errors: bool = false) -> bool:
 				+ " turn" + ("" if turns_remaining == 1 else "s") + "."
 		)
 
-	if _was_performed_this_turn:
+	if was_performed_this_turn(game):
 		result = false
 		warning_message += "\nThe action was already performed this turn."
 
@@ -86,8 +88,8 @@ func cooldown_turns_remaining(game: Game) -> int:
 	)
 
 
-func was_performed_this_turn() -> bool:
-	return _was_performed_this_turn
+func was_performed_this_turn(game: Game) -> bool:
+	return _turn_it_was_last_performed == game.turn.current_turn()
 
 
 ## Performs the action, if possible.
@@ -121,9 +123,5 @@ func perform(
 
 	relationship.recipient_country.notifications.add(new_notification)
 
-	_was_performed_this_turn = true
+	_turn_it_was_last_performed = game.turn.current_turn()
 	performed.emit(self)
-
-
-func _on_turn_changed(_turn: int) -> void:
-	_was_performed_this_turn = false

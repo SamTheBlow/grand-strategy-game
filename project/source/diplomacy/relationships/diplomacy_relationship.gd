@@ -51,19 +51,15 @@ var _base_action_ids: Array[int] = []
 ## actions defined in the preset. This list is automatically updated.
 var _available_actions: Array[DiplomacyAction] = []
 
-var _turn_changed_signal: Signal
-
 
 func _init(
 		source_country_: Country,
 		recipient_country_: Country,
-		turn_changed_signal: Signal,
 		base_data: Dictionary = {},
 		base_action_ids: Array[int] = []
 ) -> void:
 	source_country = source_country_
 	recipient_country = recipient_country_
-	_turn_changed_signal = turn_changed_signal
 	_base_data = base_data
 	_base_action_ids = base_action_ids
 
@@ -106,17 +102,10 @@ func is_fighting() -> bool:
 ## Call this once after loading to initialize the list of available actions.
 func initialize_actions(
 		current_turn: int,
-		actions_already_performed: Array[int] = [],
 		starting_available_actions: Array[DiplomacyAction] = []
 ) -> void:
 	_available_actions = starting_available_actions
 	_update_available_actions(current_turn)
-
-	# Backwards compatibility: 4.1
-	# The list of already performed actions still needs to be dealt with.
-	for action in _available_actions:
-		if action.id() in actions_already_performed:
-			action._was_performed_this_turn = true
 
 
 # TODO sort the actions in the right order (as defined in the game rules)
@@ -131,7 +120,7 @@ func action_from_id(action_id: int) -> DiplomacyAction:
 	for action in _available_actions:
 		if action.id() == action_id:
 			return action
-	return DiplomacyAction.new(diplomacy_actions.empty(), _turn_changed_signal)
+	return DiplomacyAction.new(diplomacy_actions.empty())
 
 
 func action_is_available(action_id: int) -> bool:
@@ -229,7 +218,6 @@ func _update_available_actions(current_turn: int) -> void:
 		else:
 			new_available_actions.append(DiplomacyAction.new(
 					diplomacy_actions.action_from_id(action_id),
-					_turn_changed_signal,
 					current_turn
 			))
 		used_ids.append(action_id)

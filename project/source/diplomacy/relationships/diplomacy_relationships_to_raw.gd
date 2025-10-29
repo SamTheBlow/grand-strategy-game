@@ -30,22 +30,25 @@ static func _relationship_to_dict(
 			DiplomacyRelationshipsFromRaw.BASE_DATA_KEY: base_data
 		})
 
-	var actions_performed_this_turn: Array[int] = []
-	for action in relationship.available_actions():
-		if action.was_performed_this_turn():
-			actions_performed_this_turn.append(action.id())
-	if not actions_performed_this_turn.is_empty():
-		output.merge({
-			DiplomacyRelationshipsFromRaw.PERFORMED_ACTIONS_KEY:
-				actions_performed_this_turn,
-		})
-
 	var available_actions_dict: Dictionary = {}
 	for action in relationship.available_actions():
-		available_actions_dict[action.id()] = {
-			DiplomacyRelationshipsFromRaw.TURN_IT_BECAME_AVAILABLE_KEY:
-				action._turn_it_became_available,
-		}
+		var action_raw_dict: Dictionary = {}
+
+		if action._turn_it_became_available != 1:
+			action_raw_dict.merge({
+				DiplomacyRelationshipsFromRaw.TURN_IT_BECAME_AVAILABLE_KEY:
+					action._turn_it_became_available
+			})
+
+		if action._turn_it_was_last_performed != 0:
+			action_raw_dict.merge({
+				DiplomacyRelationshipsFromRaw.TURN_IT_WAS_LAST_PERFORMED_KEY:
+					action._turn_it_was_last_performed
+			})
+
+		if not action_raw_dict.is_empty():
+			available_actions_dict.merge({ action.id(): action_raw_dict })
+
 	if not available_actions_dict.is_empty():
 		output.merge({
 			DiplomacyRelationshipsFromRaw.AVAILABLE_ACTIONS_KEY:

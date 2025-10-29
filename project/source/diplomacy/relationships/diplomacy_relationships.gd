@@ -41,11 +41,7 @@ func _new_relationship(country: Country) -> DiplomacyRelationship:
 		base_actions = _base_actions
 
 	var relationship := DiplomacyRelationship.new(
-			_source_country,
-			country,
-			_game.turn.turn_changed,
-			default_data.duplicate(),
-			base_actions,
+			_source_country, country, default_data.duplicate(), base_actions
 	)
 
 	# TODO this is ugly
