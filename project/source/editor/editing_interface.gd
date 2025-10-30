@@ -5,6 +5,7 @@ extends Control
 
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
+signal province_change_owner_pressed(province: Province)
 signal country_interface_opened(country: Country)
 signal country_interface_closed()
 
@@ -95,6 +96,9 @@ func open_province_edit_interface(
 	)
 	province_interface.duplicate_pressed.connect(
 			_on_province_duplicated.bind(project, editor_settings)
+	)
+	province_interface.change_owner_pressed.connect(
+			province_change_owner_pressed.emit
 	)
 	province_interface.province = province
 	open_interface(province_interface)

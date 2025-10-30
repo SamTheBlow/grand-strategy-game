@@ -5,6 +5,7 @@ extends AppEditorInterface
 signal back_pressed()
 signal delete_pressed(province: Province)
 signal duplicate_pressed(province: Province)
+signal change_owner_pressed(province: Province)
 
 var province := Province.new()
 
@@ -20,26 +21,7 @@ func _ready() -> void:
 
 	_load_settings()
 	_preview.setup(province)
-
-	# Name
-	(_settings.item.child_items[0] as ItemString).value_changed.connect(
-			_on_name_value_changed
-	)
-
-	# Population
-	(_settings.item.child_items[3] as ItemInt).value_changed.connect(
-			_on_population_value_changed
-	)
-
-	# Money income
-	(_settings.item.child_items[4] as ItemInt).value_changed.connect(
-			_on_income_value_changed
-	)
-
-	# Has fortress
-	(_settings.item.child_items[5] as ItemBool).value_changed.connect(
-			_on_has_fortress_value_changed
-	)
+	province.owner_changed.connect(_on_owner_country_changed)
 
 
 func _process(_delta: float) -> void:
@@ -50,18 +32,48 @@ func _process(_delta: float) -> void:
 
 
 func _load_settings() -> void:
+	# Name
 	(_settings.item.child_items[0] as ItemString).value = province.name
 	(_settings.item.child_items[0] as ItemString).placeholder_text = (
 			province.default_name()
 	)
-	(_settings.item.child_items[3] as ItemInt).value = (
+	(_settings.item.child_items[0] as ItemString).value_changed.connect(
+			_on_name_value_changed
+	)
+
+	# Owner country
+	(_settings.item.child_items[3] as ItemCountry).value = (
+			province.owner_country
+	)
+	(_settings.item.child_items[3] as ItemCountry).value_changed.connect(
+			_on_item_country_changed
+	)
+	(_settings.item.child_items[3] as ItemCountry).change_requested.connect(
+			change_owner_pressed.emit.bind(province)
+	)
+
+	# Population
+	(_settings.item.child_items[4] as ItemInt).value = (
 			province.population().value
 	)
-	(_settings.item.child_items[4] as ItemInt).value = (
+	(_settings.item.child_items[4] as ItemInt).value_changed.connect(
+			_on_population_value_changed
+	)
+
+	# Money income
+	(_settings.item.child_items[5] as ItemInt).value = (
 			province.base_money_income().value
 	)
-	(_settings.item.child_items[5] as ItemBool).value = (
+	(_settings.item.child_items[5] as ItemInt).value_changed.connect(
+			_on_income_value_changed
+	)
+
+	# Has fortress
+	(_settings.item.child_items[6] as ItemBool).value = (
 			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
+	)
+	(_settings.item.child_items[6] as ItemBool).value_changed.connect(
+			_on_has_fortress_value_changed
 	)
 
 
@@ -77,6 +89,10 @@ func _on_name_value_changed(item: ItemString) -> void:
 	province.name = item.value
 
 
+func _on_item_country_changed(item: ItemCountry) -> void:
+	province.owner_country = item.value
+
+
 func _on_population_value_changed(item: ItemInt) -> void:
 	province.population().value = item.value
 
@@ -90,3 +106,9 @@ func _on_has_fortress_value_changed(item: ItemBool) -> void:
 		province.buildings.add(Fortress.new(province.id))
 	else:
 		province.buildings.remove(province.buildings._list[0])
+
+
+func _on_owner_country_changed(_province: Province) -> void:
+	(_settings.item.child_items[3] as ItemCountry).value = (
+			province.owner_country
+	)

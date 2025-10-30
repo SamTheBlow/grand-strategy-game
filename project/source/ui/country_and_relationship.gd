@@ -42,6 +42,7 @@ var button_press_outcome: Callable:
 @onready var _country_button := %CountryButton as CountryButton
 @onready var _no_country := %NoCountry as Control
 @onready var _country_name_label := %CountryName as Label
+@onready var _preset_root := %PresetRoot as Control
 @onready var _label_update := (
 		%RelationshipPresetLabelUpdate as RelationshipPresetLabelUpdate
 )
@@ -96,6 +97,7 @@ func _refresh_preset_label(thing_to_refresh: int = -1) -> void:
 
 	if thing_to_refresh == -1 or thing_to_refresh == 0:
 		_label_update.is_disabled = is_relationship_presets_disabled
+		_preset_root.visible = not is_relationship_presets_disabled
 	if thing_to_refresh == -1 or thing_to_refresh == 1:
 		_label_update.country = country
 	if thing_to_refresh == -1 or thing_to_refresh == 2:

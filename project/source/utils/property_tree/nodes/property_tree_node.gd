@@ -30,6 +30,7 @@ var _item_range_float_scene := load("uid://diptsnmuse4kn") as PackedScene
 var _item_color_scene := load("uid://bm83m86biyiv2") as PackedScene
 var _item_vector2_scene := load("uid://dp622gh87xpkt") as PackedScene
 var _item_texture_scene := load("uid://ccq7n0x7mov6s") as PackedScene
+var _item_country_scene := load("uid://bmfl2xa7n2g2n") as PackedScene
 var _item_void_scene := load("uid://cintikjibl1vr") as PackedScene
 
 @onready var _container := %Container as VBoxContainer
@@ -116,6 +117,12 @@ func _add_child_items(
 					_item_texture_scene.instantiate() as ItemTextureNode
 			)
 			item_node.item = child_item as ItemTexture
+			_add_item(item_node, with_spacing, with_tabbing)
+		elif child_item is ItemCountry:
+			var item_node := (
+					_item_country_scene.instantiate() as ItemCountryNode
+			)
+			item_node.item = child_item as ItemCountry
 			_add_item(item_node, with_spacing, with_tabbing)
 		else:
 			var item_node := _item_void_scene.instantiate() as ItemVoidNode

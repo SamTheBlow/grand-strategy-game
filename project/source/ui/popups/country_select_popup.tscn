@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://gfcp3xbnck52"]
+
+[ext_resource type="Script" uid="uid://c7au4r8vhf0op" path="res://source/ui/popups/country_select_popup.gd" id="1_merek"]
+[ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/country_list/country_list.tscn" id="2_v3pu8"]
+
+[node name="CountrySelectPopup" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_merek")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="CountryList" parent="Control/ScrollContainer" instance=ExtResource("2_v3pu8")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3

@@ -300,6 +300,25 @@ func _on_province_interface_closed() -> void:
 	)
 
 
+func _on_province_change_owner_pressed(province: Province) -> void:
+	if _current_project == null:
+		push_error("Current project is null.")
+		return
+
+	# Open popup that lets you choose a country
+	var popup := _popup_scene.instantiate() as GamePopup
+	var country_select_popup := (
+			preload("uid://gfcp3xbnck52").instantiate() as CountrySelectPopup
+	)
+	country_select_popup.country_selected.connect(
+		func(country: Country) -> void:
+			province.owner_country = country
+	)
+	country_select_popup.setup(_current_project.game.countries)
+	popup.contents_node = country_select_popup
+	_popup_container.add_child(popup)
+
+
 func _on_country_interface_opened(country: Country) -> void:
 	# Change map mode
 	_world_setup.world().map_mode_setup.set_map_mode_editor_country(country)
