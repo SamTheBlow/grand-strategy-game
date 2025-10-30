@@ -197,9 +197,9 @@ func _open_country_edit_interface(
 	#edit_interface.delete_pressed.connect(
 			#_on_country_deleted.bind(project, editor_settings)
 	#)
-	#edit_interface.duplicate_pressed.connect(
-			#_on_country_duplicated.bind(project, editor_settings)
-	#)
+	edit_interface.duplicate_pressed.connect(
+			_on_country_duplicated.bind(project, editor_settings)
+	)
 	edit_interface.country = country
 	open_interface(edit_interface)
 
@@ -271,3 +271,27 @@ func _on_province_duplicated(
 
 	project.game.world.provinces.add(new_province)
 	open_province_edit_interface(new_province.id, project, editor_settings)
+
+
+func _on_country_duplicated(
+		country: Country,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	# Copies everything except notifications
+	var new_country := Country.new()
+	new_country.country_name = country.country_name + " (Copy)"
+	new_country.color = country.color
+	new_country.money = country.money
+	# Create a deep duplicate by parsing to raw data and back into a new object
+	new_country.relationships = DiplomacyRelationshipsFromRaw.parsed_from(
+			DiplomacyRelationshipsToRaw.result(country.relationships),
+			project.game,
+			new_country
+	)
+	new_country.auto_arrows = (
+			AutoArrows.from_raw_data(country.auto_arrows.to_raw_data())
+	)
+
+	project.game.countries.add(new_country)
+	_open_country_edit_interface(new_country.id, project, editor_settings)
