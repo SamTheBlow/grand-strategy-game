@@ -3,6 +3,7 @@ extends Node
 ## The menu that appears when clicking "Play" on the main menu.
 ## Contains the [Lobby] and a [ChatInterface].
 
+signal exited()
 signal game_started(project: GameProject)
 
 @export var networking_interface_scene: PackedScene
@@ -38,6 +39,11 @@ func _ready() -> void:
 	_lobby.game_menu_state = _game_menu_state
 	_lobby.game_rules = _game_rules
 	_lobby.networking_interface = networking_interface
+
+
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed("ui_cancel"):
+		exited.emit()
 
 
 func _exit_tree() -> void:
