@@ -4,7 +4,8 @@ extends Control
 
 signal pressed(this: CountryListElement)
 
-var country := Country.new():
+## May be null.
+var country: Country = null:
 	set(value):
 		country = value
 		if is_node_ready():

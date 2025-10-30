@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://pns3cw110b6w"]
+[gd_scene load_steps=7 format=3 uid="uid://pns3cw110b6w"]
 
 [ext_resource type="Script" uid="uid://dj6yk7vw3e3r1" path="res://source/editor/interfaces/countries/country_list.gd" id="1_172jq"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_o5ejf"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_y5qp7"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
+[ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/country_list/country_list.tscn" id="5_o3ftt"]
 
 [sub_resource type="Resource" id="Resource_ub84e"]
 script = ExtResource("3_y5qp7")
@@ -59,25 +60,8 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = ExtResource("4_7s6pu")
 text = "+ Add"
 
-[node name="ItemList" type="Control" parent="VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ItemList"]
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
-grow_horizontal = 2
-grow_vertical = 2
-follow_focus = true
-
-[node name="ItemContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer"]
+[node name="CountryList" parent="VBoxContainer" instance=ExtResource("5_o3ftt")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
 
 [connection signal="pressed" from="VBoxContainer/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]

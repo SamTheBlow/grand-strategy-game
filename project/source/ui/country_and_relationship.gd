@@ -20,7 +20,8 @@ var is_relationship_presets_disabled: bool = true:
 		is_relationship_presets_disabled = value
 		_refresh_preset_label(0)
 
-var country: Country:
+## May be null.
+var country: Country = null:
 	set(value):
 		country = value
 		_refresh_country_info()
@@ -39,6 +40,7 @@ var button_press_outcome: Callable:
 		_update_button_press_outcome()
 
 @onready var _country_button := %CountryButton as CountryButton
+@onready var _no_country := %NoCountry as Control
 @onready var _country_name_label := %CountryName as Label
 @onready var _label_update := (
 		%RelationshipPresetLabelUpdate as RelationshipPresetLabelUpdate
@@ -61,11 +63,19 @@ func _update_button_press_outcome() -> void:
 
 
 func _refresh_country_info() -> void:
-	if country == null or not is_node_ready():
+	if not is_node_ready():
 		return
 
 	_country_button.country = country
-	_country_name_label.text = country.name_or_default()
+
+	if country == null:
+		_country_button.hide()
+		_no_country.show()
+		_country_name_label.text = "No country"
+	else:
+		_no_country.hide()
+		_country_button.show()
+		_country_name_label.text = country.name_or_default()
 
 
 func _update_is_button_enabled() -> void:

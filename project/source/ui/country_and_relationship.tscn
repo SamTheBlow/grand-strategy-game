@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://b7jj51hv4hwqq"]
+[gd_scene load_steps=6 format=3 uid="uid://b7jj51hv4hwqq"]
 
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="1_84m4d"]
 [ext_resource type="Script" uid="uid://cmnn3qx8p8xva" path="res://source/ui/country_and_relationship.gd" id="1_j5wfm"]
 [ext_resource type="Script" uid="uid://gxrluxci1kts" path="res://source/ui/relationship_preset_label.gd" id="3_c35fe"]
+[ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="3_yqgku"]
 [ext_resource type="Script" uid="uid://baay036rblhtb" path="res://source/ui/relationship_preset_label_update.gd" id="4_uhlps"]
 
 [node name="CountryAndRelationship" type="Control"]
@@ -36,6 +37,25 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
+
+[node name="NoCountry" type="Control" parent="MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.3
+mouse_filter = 1
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/NoCountry"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_yqgku")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="NameRoot" type="Control" parent="MarginContainer/HBoxContainer"]
 layout_mode = 2

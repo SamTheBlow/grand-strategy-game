@@ -9,7 +9,8 @@ var is_disabled: bool = false:
 		is_disabled = value
 		_refresh()
 
-var country: Country:
+## May be null.
+var country: Country = null:
 	set(value):
 		country = value
 		_refresh()

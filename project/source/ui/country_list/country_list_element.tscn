@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://bdw77emy4euku"]
 
-[ext_resource type="Script" uid="uid://cbxefs5pj57c8" path="res://source/editor/interfaces/countries/country_list_element.gd" id="1_vvkbl"]
+[ext_resource type="Script" uid="uid://cbxefs5pj57c8" path="res://source/ui/country_list/country_list_element.gd" id="1_vvkbl"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_md2f3"]
 [ext_resource type="PackedScene" uid="uid://b7jj51hv4hwqq" path="res://source/ui/country_and_relationship.tscn" id="3_vvkbl"]
 

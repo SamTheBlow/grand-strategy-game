@@ -16,7 +16,8 @@ signal pressed(country: Country)
 		is_button_enabled = value
 		_update_button_enabled()
 
-var country: Country:
+## May be null.
+var country: Country = null:
 	set(value):
 		if country != null:
 			country.color_changed.disconnect(_refresh)
@@ -51,10 +52,14 @@ func _draw() -> void:
 
 
 func _refresh() -> void:
-	if country == null or not is_node_ready():
+	if not is_node_ready():
 		return
 
-	_country_icon.color = country.color
+	if country == null:
+		_country_icon.hide()
+	else:
+		_country_icon.show()
+		_country_icon.color = country.color
 
 
 func _update_button_enabled() -> void:
