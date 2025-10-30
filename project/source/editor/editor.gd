@@ -298,3 +298,18 @@ func _on_province_interface_closed() -> void:
 	_world_setup.world().map_mode_setup.set_map_mode(
 			MapModeSetup.MapMode.POLITICAL
 	)
+
+
+func _on_country_interface_opened(country: Country) -> void:
+	# Change map mode
+	_world_setup.world().map_mode_setup.set_map_mode_editor_country(country)
+
+
+func _on_country_interface_closed() -> void:
+	if _world_setup.world() == null:
+		return
+
+	# Revert the map mode to normal
+	_world_setup.world().map_mode_setup.set_map_mode(
+			MapModeSetup.MapMode.POLITICAL
+	)

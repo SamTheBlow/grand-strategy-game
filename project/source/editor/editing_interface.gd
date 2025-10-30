@@ -5,6 +5,8 @@ extends Control
 
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
+signal country_interface_opened(country: Country)
+signal country_interface_closed()
 
 enum InterfaceType {
 	WORLD_LIMITS = 0,
@@ -59,9 +61,12 @@ func open_interface(new_interface: AppEditorInterface) -> void:
 func close_interface() -> void:
 	if _current_interface == null:
 		return
-	elif _current_interface is InterfaceProvinceEdit:
+	if _current_interface is InterfaceProvinceEdit:
 		_remove_existing_interface()
 		province_interface_closed.emit()
+	elif _current_interface is InterfaceCountryEdit:
+		_remove_existing_interface()
+		country_interface_closed.emit()
 	else:
 		_remove_existing_interface()
 
@@ -202,6 +207,7 @@ func _open_country_edit_interface(
 	)
 	edit_interface.country = country
 	open_interface(edit_interface)
+	country_interface_opened.emit(country)
 
 
 func _update_visibility() -> void:

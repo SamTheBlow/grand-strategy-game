@@ -12,10 +12,20 @@ signal province_selected(province: Province)
 ## Province may be null if no province is selected.
 signal selected_province_changed(province: Province)
 
+## Attemping to select or deselect a province has no effect when disabled.
+var is_disabled: bool = false:
+	set(value):
+		if value:
+			_selected_province_id = -1
+		is_disabled = value
+
 var _provinces: Provinces
 
 var _selected_province_id: int = -1:
 	set(value):
+		if is_disabled:
+			return
+
 		value = maxi(value, -1)
 
 		if _selected_province_id == value:

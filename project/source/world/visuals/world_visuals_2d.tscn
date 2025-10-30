@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene load_steps=13 format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" uid="uid://ctu7j3g2p76du" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="2_ofaev"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/world/visuals/map_mode_editor_adjacency.gd" id="4_ubut0"]
 [ext_resource type="Script" uid="uid://dao8t8wckp433" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
 [ext_resource type="Script" uid="uid://uk0qme4tx0on" path="res://source/world/visuals/map_mode_political.gd" id="5_bd3lk"]
+[ext_resource type="Script" uid="uid://thhc4h73i8pt" path="res://source/world/visuals/map_mode_editor_country.gd" id="6_obqf8"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 [ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
 
@@ -23,13 +24,17 @@ script = ExtResource("2_ofaev")
 unique_name_in_owner = true
 script = ExtResource("3_1p30q")
 
-[node name="MapModePolitical" type="Node" parent="MapModeSetup"]
+[node name="Political" type="Node" parent="MapModeSetup"]
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
 
-[node name="MapModeEditorAdj" type="Node" parent="MapModeSetup"]
+[node name="EditorAdjacency" type="Node" parent="MapModeSetup"]
 unique_name_in_owner = true
 script = ExtResource("4_ubut0")
+
+[node name="EditorCountry" type="Node" parent="MapModeSetup"]
+unique_name_in_owner = true
+script = ExtResource("6_obqf8")
 
 [node name="ArmyVisualsSetup" type="Node" parent="."]
 unique_name_in_owner = true
@@ -56,5 +61,6 @@ unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
-[connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/MapModeEditorAdj" method="_on_provinces_unhandled_mouse_event_occured"]
+[connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorAdjacency" method="_on_provinces_unhandled_mouse_event_occured"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]
+[connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorCountry" method="_on_provinces_unhandled_mouse_event_occured"]
