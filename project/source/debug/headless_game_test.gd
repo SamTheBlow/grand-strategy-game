@@ -113,7 +113,7 @@ func _on_game_over(winner_country: Country) -> void:
 	var debug_text: String = ""
 	debug_text += (
 			"The game is over! The winner is "
-			+ winner_country.country_name + ".\n"
+			+ winner_country.name_or_default() + ".\n"
 			+ "The game lasted " + str(_project.game.turn.current_turn() - 1)
 			+ " turn(s)."
 	)
@@ -122,7 +122,7 @@ func _on_game_over(winner_country: Country) -> void:
 	pcpc.calculate(_project.game.world.provinces.list())
 	for i in pcpc.countries.size():
 		debug_text += (
-				"\n- " + pcpc.countries[i].country_name + " controls "
+				"\n- " + pcpc.countries[i].name_or_default() + " controls "
 				+ str(pcpc.number_of_provinces[i]) + " province(s)."
 		)
 

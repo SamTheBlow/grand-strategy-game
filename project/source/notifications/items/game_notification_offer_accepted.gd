@@ -37,7 +37,7 @@ func icon() -> Texture2D:
 
 func description() -> String:
 	return (
-			_country_that_accepted.country_name
+			_country_that_accepted.name_or_default()
 			+ ' accepted your offer: "'
 			+ _diplomacy_action_definition.name + '"'
 	)

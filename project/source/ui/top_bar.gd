@@ -41,7 +41,7 @@ func _update_country(player: GamePlayer) -> void:
 	var country: Country = player.playing_country
 
 	_country_button.country = country
-	_country_name_label.text = country.country_name
+	_country_name_label.text = country.name_or_default()
 
 	_update_money_label(country.money)
 	if _money_changed_signal:

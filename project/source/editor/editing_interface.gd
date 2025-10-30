@@ -145,7 +145,9 @@ func _new_interface(
 		)
 	elif new_interface is InterfaceCountryList:
 		var list_interface := new_interface as InterfaceCountryList
-		list_interface.setup(project.game.countries)
+		list_interface.setup(
+				project.game.countries, Country.Factory.new(project.game)
+		)
 		list_interface.item_selected.connect(
 				_open_country_edit_interface.bind(project, editor_settings)
 		)

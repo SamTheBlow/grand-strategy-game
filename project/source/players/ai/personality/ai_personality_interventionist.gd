@@ -9,7 +9,7 @@ extends AIPersonality
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
-	#print("--- Interventionist ", playing_country.country_name)
+	#print("--- Interventionist ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)
 
@@ -32,16 +32,16 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		# Befriend weaker countries, fight stronger countries
 		var relative_strength: float = relative_strengths[i]
 		if relative_strength >= sum_of_strengths * 0.3:
-			#print("Very strong country: ", country.country_name)
+			#print("Very strong country: ", country.name_or_default())
 			decisions.dismiss_all_offers_from(country)
 			decisions.break_alliance_with(country)
 			decisions.declare_war_to(country)
 			decisions.stop_interacting_with(country)
 		elif relative_strength >= sum_of_strengths * 0.15:
-			#print("Strong country: ", country.country_name)
+			#print("Strong country: ", country.name_or_default())
 			decisions.dismiss_all_offers_from(country)
 		elif relative_strength < 0.3:
-			#print("Weak country: ", country.country_name)
+			#print("Weak country: ", country.name_or_default())
 			decisions.accept_all_offers_from(country)
 			decisions.make_peace_with(country)
 			decisions.make_alliance_with(country)

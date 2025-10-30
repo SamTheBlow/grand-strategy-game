@@ -88,6 +88,6 @@ func _print_branches(branches: Array[LinkBranch]) -> void:
 		for province in branch.link_chain:
 			print(
 					"	Id: ", province.id,
-					"; Country: ", province.owner_country.country_name
+					"; Country: ", province.owner_country.name_or_default()
 			)
 	print("End of branch tree.")

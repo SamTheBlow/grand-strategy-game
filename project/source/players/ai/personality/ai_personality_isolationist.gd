@@ -8,7 +8,7 @@ extends AIPersonality
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
-	#print("--- Isolationist ", playing_country.country_name)
+	#print("--- Isolationist ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)
 
@@ -86,12 +86,12 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	#	for candidate_country in candidate_countries:
 	#		print(
 	#				"Candidate country to attack: ",
-	#				candidate_country.country_name
+	#				candidate_country.name_or_default()
 	#		)
 	#print(
 	#		"Not attacking anyone."
 	#		if country_to_attack == null else
-	#		country_to_attack.country_name
+	#		country_to_attack.name_or_default()
 	#		+ " is the weakest neighbor, so I will attack them."
 	#)
 	#print("-----")

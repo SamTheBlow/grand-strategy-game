@@ -33,7 +33,7 @@ var username: String = "":
 		elif is_spectating():
 			return "Spectator"
 		else:
-			return playing_country.country_name
+			return playing_country.name_or_default()
 	set(value):
 		if username == value:
 			return

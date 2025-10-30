@@ -9,4 +9,4 @@ extends VBoxContainer
 
 ## To be called when this node is created.
 func init(winner: Country) -> void:
-	winner_label.text = winner.country_name + " wins!"
+	winner_label.text = winner.name_or_default() + " wins!"

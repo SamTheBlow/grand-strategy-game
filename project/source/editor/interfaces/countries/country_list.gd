@@ -9,6 +9,7 @@ const _COUNTRY_ELEMENT_SCENE := preload("uid://bdw77emy4euku") as PackedScene
 
 var _is_setup: bool = false
 var _countries: Countries
+var _country_factory: Country.Factory
 
 ## Maps ids to their corresponding node.
 var _nodes: Dictionary[int, Node] = {}
@@ -25,12 +26,13 @@ func _ready() -> void:
 		_update()
 
 
-func setup(countries: Countries) -> void:
+func setup(countries: Countries, country_factory: Country.Factory) -> void:
 	if _is_setup and is_node_ready():
 		_countries.added.disconnect(_on_country_added)
 		#_countries.removed.disconnect(_on_country_removed)
 
 	_countries = countries
+	_country_factory = country_factory
 	_is_setup = true
 
 	if is_node_ready():
@@ -63,8 +65,7 @@ func _add_element(country: Country) -> void:
 
 
 func _on_add_button_pressed() -> void:
-	# WIP
-	pass #_countries.add(Country.new())
+	_countries.add(_country_factory.new_country())
 
 
 func _on_element_pressed(element: CountryListElement) -> void:

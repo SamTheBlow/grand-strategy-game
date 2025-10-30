@@ -48,7 +48,7 @@ func icon() -> Texture2D:
 
 func description() -> String:
 	return (
-			_sender_country.country_name
+			_sender_country.name_or_default()
 			+ ' is offering: "'
 			+ _diplomacy_action_definition.name + '"'
 	)

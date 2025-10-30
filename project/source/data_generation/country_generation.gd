@@ -10,11 +10,7 @@ static func apply(game: Game, number_of_countries: int) -> void:
 		return
 
 	for i in number_of_countries:
-		var new_country := Country.new()
+		var new_country: Country = Country.Factory.new(game).new_country()
 		new_country.id = i
-		new_country.country_name = "Country " + str(i + 1)
 		new_country.color = Color(randf(), randf(), randf(), 1.0)
-		new_country.relationships = (
-				DiplomacyRelationships.new(game, new_country)
-		)
 		game.countries.add(new_country)

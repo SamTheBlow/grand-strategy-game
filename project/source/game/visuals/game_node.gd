@@ -298,7 +298,7 @@ func _on_game_over(winning_country: Country) -> void:
 		return
 	chat.send_global_message(
 			"The game is over! The winner is "
-			+ str(winning_country.country_name) + "."
+			+ winning_country.name_or_default() + "."
 	)
 	chat.send_global_message("You can continue playing if you want.")
 

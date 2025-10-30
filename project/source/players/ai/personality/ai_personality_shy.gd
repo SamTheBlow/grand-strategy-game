@@ -10,7 +10,7 @@ extends AIPersonality
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
-	#print("--- Shy ", playing_country.country_name)
+	#print("--- Shy ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)
 
@@ -31,7 +31,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	#for reachable_country in reachable_countries:
 		#print(
 				#"(Null)" if reachable_country == null else
-				#reachable_country.country_name
+				#reachable_country.name_or_default()
 		#)
 
 	# Find the current enemies, if any
@@ -63,7 +63,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	#if current_enemies.size() > 0:
 		#print("-- Current enemies: ")
 		#for current_enemy in current_enemies:
-			#print(current_enemy.country_name)
+			#print(current_enemy.name_or_default())
 
 	# Determine the candidate enemies
 	var candidate_enemies: Array[Country] = []
@@ -89,7 +89,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	#if candidate_enemies.size() > 0:
 		#print("-- Candidate enemies: ")
 		#for candidate_enemy in candidate_enemies:
-			#print(candidate_enemy.country_name)
+			#print(candidate_enemy.name_or_default())
 
 	# Between the candidate enemies, pick the weakest one
 	var country_to_attack: Country = null
@@ -109,7 +109,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 			strength_of_country_to_attack = candidate_strength
 
 	if country_to_attack != null:
-		#print("Attacking ", country_to_attack.country_name)
+		#print("Attacking ", country_to_attack.name_or_default())
 		decisions.dismiss_all_offers_from(country_to_attack)
 		decisions.break_alliance_with(country_to_attack)
 		decisions.declare_war_to(country_to_attack)
@@ -120,7 +120,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	for current_enemy in current_enemies:
 		if current_enemy == country_to_attack:
 			continue
-		#print("Asking for peace with ", current_enemy.country_name)
+		#print("Asking for peace with ", current_enemy.name_or_default())
 		decisions.make_peace_with(current_enemy)
 
 	#print("---")

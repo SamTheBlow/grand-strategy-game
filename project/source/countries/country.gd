@@ -2,6 +2,9 @@ class_name Country
 ## Represents a political entity. It is called "country", but in truth,
 ## this can represent any political entity, even those who do not
 ## have control over any land.
+##
+## Because some extra setup is required before a new instance can be used,
+## it's recommended to use Country.Factory to do the setup for you.
 
 signal money_changed(new_amount: int)
 
@@ -25,6 +28,21 @@ var relationships: DiplomacyRelationships
 var notifications := GameNotifications.new()
 
 var auto_arrows := AutoArrows.new()
+
+
+## The default name this instance would have if it didn't have a name.
+func default_name() -> String:
+	# Let's make these 1-indexed,
+	# so the first country is "Country 1" and not "Country 0".
+	return "Country " + str(id + 1)
+
+
+## This instance's name, or its default name if the name is empty.
+func name_or_default() -> String:
+	if country_name != "":
+		return country_name
+	else:
+		return default_name()
 
 
 ## Returns true if this country's armies have the
@@ -109,3 +127,16 @@ func reachable_countries(
 ## Returns this instance parsed to a raw dictionary.
 func to_raw_dict() -> Dictionary:
 	return CountryParsing.country_to_raw_dict(self)
+
+
+## Does the setup required when creating a new instance.
+class Factory:
+	var _game: Game
+
+	func _init(game: Game) -> void:
+		_game = game
+
+	func new_country() -> Country:
+		var output := Country.new()
+		output.relationships = DiplomacyRelationships.new(_game, output)
+		return output

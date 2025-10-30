@@ -8,7 +8,7 @@ extends AIPersonality
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
-	#print("--- Erratic ", playing_country.country_name)
+	#print("--- Erratic ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)
 
@@ -35,7 +35,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		if is_ignored:
 			continue
 
-		#print("Decided to do something about ", country.country_name)
+		#print("Decided to do something about ", country.name_or_default())
 
 		# 70% chance for positive action, 30% chance for negative action
 		var is_positive_action: bool = (game.rng.randi() % 100) < 70

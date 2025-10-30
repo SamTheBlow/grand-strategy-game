@@ -308,8 +308,8 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 			continue
 
 		#print(
-		#		other_country.country_name, " is the enemy of my friend ",
-		#		target_country.country_name, "."
+		#		other_country.name_or_default(), " is the enemy of my friend ",
+		#		target_country.name_or_default(), "."
 		#)
 
 		# Don't be hostile if the other country is already your ally

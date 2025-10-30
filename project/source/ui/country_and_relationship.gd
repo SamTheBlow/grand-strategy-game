@@ -65,7 +65,7 @@ func _refresh_country_info() -> void:
 		return
 
 	_country_button.country = country
-	_country_name_label.text = country.country_name
+	_country_name_label.text = country.name_or_default()
 
 
 func _update_is_button_enabled() -> void:

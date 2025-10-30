@@ -39,8 +39,8 @@ func apply(attacking_army: Army, defending_army: Army) -> void:
 
 	# The attacker attacks first
 	#print("=====\nA battle occurs!")
-	#print("Attacker %s (%s) has army size of %s" % [attacking_army.owner_country.country_name, attacking_army.id, attacker_army_size])
-	#print("Defender %s (%s) has army size of %s" % [defending_army.owner_country.country_name, defending_army.id, defender_army_size])
+	#print("Attacker %s (%s) has army size of %s" % [attacking_army.owner_country.name_or_default(), attacking_army.id, attacker_army_size])
+	#print("Defender %s (%s) has army size of %s" % [defending_army.owner_country.name_or_default(), defending_army.id, defender_army_size])
 	#print("Attacker deals %s damage! Attacker efficiency: %s" % [attacker_damage, attacker_efficiency])
 	defending_army.army_size.remove(attacker_damage)
 	#print("Defender army size is down to %s" % defending_army.army_size.current_size())

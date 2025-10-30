@@ -9,7 +9,7 @@ extends AIPersonality
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_player().playing_country
-	#print("--- Emotional ", playing_country.country_name)
+	#print("--- Emotional ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)
 
@@ -35,7 +35,7 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		):
 			continue
 
-		#print("Candidate for random alliance/war: ", country.country_name)
+		#print("Candidate for random alliance/war: ", country.name_or_default())
 
 		# 4/5 chance of not doing anything
 		var is_event_happening: float = (game.rng.randi() % 5) == 0
