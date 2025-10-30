@@ -15,65 +15,42 @@ const TURN_IT_WAS_LAST_PERFORMED_KEY: String = "turn_it_was_last_performed"
 
 
 static func parsed_from(
-		raw_data: Variant,
-		game: Game,
-		country: Country,
-		default_data: Dictionary,
-		base_actions: Array[int],
+		raw_data: Variant, game: Game, country: Country
 ) -> DiplomacyRelationships:
-	var diplomacy_relationships := DiplomacyRelationships.new(
-			game, country, default_data, base_actions
-	)
+	var output := DiplomacyRelationships.new(game, country)
 
 	if raw_data is not Array:
-		return diplomacy_relationships
+		return output
 	var raw_array: Array = raw_data
 
 	for element_data: Variant in raw_array:
-		var relationship: DiplomacyRelationship = _parsed_diplomacy_relationship(
-				element_data, game, country, default_data, base_actions
-		)
-		if relationship == null:
-			continue
+		_parse_diplomacy_relationship(element_data, game, output)
 
-		diplomacy_relationships.list[relationship.recipient_country] = (
-				relationship
-		)
-
-	return diplomacy_relationships
+	return output
 
 
-## This operation may fail, in which case it returns null.
-static func _parsed_diplomacy_relationship(
-		raw_data: Variant,
-		game: Game,
-		country: Country,
-		default_data: Dictionary,
-		base_actions: Array[int],
-) -> DiplomacyRelationship:
-	# Fails if the raw data isn't a dictionary
+static func _parse_diplomacy_relationship(
+		raw_data: Variant, game: Game, relationships: DiplomacyRelationships
+) -> void:
 	if raw_data is not Dictionary:
-		return null
+		return
 	var raw_dict: Dictionary = raw_data
 
-	# Fails if there is no recipient country id, or if it's not a number
+	# Recipient country (mandatory)
 	if not ParseUtils.dictionary_has_number(raw_dict, RECIPIENT_COUNTRY_ID_KEY):
-		return null
-	var recipient_country_id: int = (
+		return
+	var recipient_country: Country = game.countries.country_from_id(
 			ParseUtils.dictionary_int(raw_dict, RECIPIENT_COUNTRY_ID_KEY)
 	)
-
-	# Fails if the recipient country id doesn't refer to a valid country
-	var recipient_country: Country = (
-			game.countries.country_from_id(recipient_country_id)
-	)
 	if recipient_country == null:
-		return null
+		return
 
-	var loaded_relationship_data: Dictionary = {}
+	# Relationship data (optional)
+	var relationship_data: Dictionary = {}
 	if ParseUtils.dictionary_has_dictionary(raw_dict, BASE_DATA_KEY):
-		loaded_relationship_data.merge(raw_dict[BASE_DATA_KEY])
+		relationship_data.merge(raw_dict[BASE_DATA_KEY])
 
+	# Available actions (optional)
 	var available_actions: Array[DiplomacyAction] = []
 	if ParseUtils.dictionary_has_dictionary(raw_dict, AVAILABLE_ACTIONS_KEY):
 		var available_actions_dict: Dictionary = raw_dict[AVAILABLE_ACTIONS_KEY]
@@ -114,17 +91,5 @@ static func _parsed_diplomacy_relationship(
 			)
 			available_actions.append(new_action)
 
-	var relationship_data: Dictionary = {}
-	relationship_data.merge(default_data)
-	relationship_data.merge(loaded_relationship_data, true)
-
-	var relationship := DiplomacyRelationship.new(
-			country, recipient_country, relationship_data, base_actions
-	)
-
-	relationship.diplomacy_presets = game.rules.diplomatic_presets
-	relationship.diplomacy_actions = game.rules.diplomatic_actions
-	relationship.initialize_actions(
-			game.turn.current_turn(), available_actions
-	)
-	return relationship
+	# Add the new relationship to the list
+	relationships.add(recipient_country, relationship_data, available_actions)

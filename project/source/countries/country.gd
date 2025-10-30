@@ -19,6 +19,7 @@ var money: int = 0:
 		money = value
 		money_changed.emit(money)
 
+## WARNING: this must be manually initialized, requiring a [Game] instance!
 var relationships: DiplomacyRelationships
 
 var notifications := GameNotifications.new()

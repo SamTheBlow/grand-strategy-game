@@ -15,12 +15,6 @@ const COUNTRY_RELATIONSHIPS_KEY: String = "relationships"
 # If you're going to use this class right after using [CountryParsing],
 # then this won't be a problem.
 static func parse_using(raw_countries_data: Variant, game: Game) -> void:
-	var default_relationship_data: Dictionary = (
-			DiplomacyRelationships.new_default_data(game.rules)
-	)
-	var base_actions: Array[int] = (
-			DiplomacyRelationships.new_base_actions(game.rules)
-	)
 	var country_list: Array[Country] = game.countries.list()
 
 	var is_data_valid: bool = true
@@ -40,9 +34,5 @@ static func parse_using(raw_countries_data: Variant, game: Game) -> void:
 
 		var country: Country = country_list[i]
 		country.relationships = DiplomacyRelationshipsFromRaw.parsed_from(
-				relationships_data,
-				game,
-				country,
-				default_relationship_data,
-				base_actions,
+				relationships_data, game, country
 		)

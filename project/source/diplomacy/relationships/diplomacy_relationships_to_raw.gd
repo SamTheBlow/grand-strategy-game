@@ -5,15 +5,21 @@ class_name DiplomacyRelationshipsToRaw
 
 
 static func result(diplomacy_relationships: DiplomacyRelationships) -> Array:
-	var output_array: Array = []
+	var default_relationship_data: Dictionary = (
+			DiplomacyRelationships._new_default_data(
+					diplomacy_relationships._game.rules
+			)
+	)
+
+	var output: Array = []
 	for country: Country in diplomacy_relationships.list:
 		var relationship_dict: Dictionary = _relationship_to_dict(
 				diplomacy_relationships.list[country],
-				diplomacy_relationships._default_relationship_data
+				default_relationship_data
 		)
 		if not relationship_dict.is_empty():
-			output_array.append(relationship_dict)
-	return output_array
+			output.append(relationship_dict)
+	return output
 
 
 static func _relationship_to_dict(
@@ -23,7 +29,7 @@ static func _relationship_to_dict(
 	var output: Dictionary = {}
 
 	var base_data: Dictionary = (
-			relationship._base_data_no_defaults(default_relationship_data)
+			relationship._base_data_without(default_relationship_data)
 	)
 	if not base_data.is_empty():
 		output.merge({

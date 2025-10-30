@@ -307,14 +307,11 @@ func _set_preset_id(preset_id: int) -> void:
 	preset_changed.emit(self)
 
 
-## Returns the base data, but if a value in the base data
-## matches a given default value, it's not included in the output.
-func _base_data_no_defaults(default_data: Dictionary) -> Dictionary:
+## Returns the base data, but if a key/value pair in the base data
+## matches a key/value pair in given data, it's not included in the output.
+func _base_data_without(to_remove: Dictionary) -> Dictionary:
 	var output: Dictionary = {}
 	for key: Variant in _base_data:
-		if not (
-				default_data.has(key)
-				and _base_data[key] == default_data[key]
-		):
+		if not (to_remove.has(key) and _base_data[key] == to_remove[key]):
 			output[key] = _base_data[key]
 	return output

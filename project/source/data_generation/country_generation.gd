@@ -14,10 +14,7 @@ static func apply(game: Game, number_of_countries: int) -> void:
 		new_country.id = i
 		new_country.country_name = "Country " + str(i + 1)
 		new_country.color = Color(randf(), randf(), randf(), 1.0)
-		new_country.relationships = DiplomacyRelationships.new(
-				game,
-				new_country,
-				DiplomacyRelationships.new_default_data(game.rules),
-				DiplomacyRelationships.new_base_actions(game.rules)
+		new_country.relationships = (
+				DiplomacyRelationships.new(game, new_country)
 		)
 		game.countries.add(new_country)
