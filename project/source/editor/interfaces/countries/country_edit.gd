@@ -8,7 +8,7 @@ signal duplicate_pressed(country: Country)
 
 var country := Country.new()
 
-@onready var _preview := %CountryIcon as ColorRect
+@onready var _preview := %CountryButton as CountryButton
 @onready var _settings := %Settings as ItemVoidNode
 
 
@@ -19,7 +19,7 @@ func _ready() -> void:
 	_settings.refresh()
 
 	_load_settings()
-	_preview.color = country.color
+	_preview.country = country
 
 
 func _process(_delta: float) -> void:
@@ -30,7 +30,18 @@ func _process(_delta: float) -> void:
 
 
 func _load_settings() -> void:
-	pass
+	(_settings.item.child_items[0] as ItemString).value = country.country_name
+	(_settings.item.child_items[0] as ItemString).placeholder_text = (
+			country.default_name()
+	)
+	(_settings.item.child_items[0] as ItemString).value_changed.connect(
+			_on_name_changed
+	)
+
+	(_settings.item.child_items[1] as ItemColor).value = country.color
+	(_settings.item.child_items[1] as ItemColor).value_changed.connect(
+			_on_color_changed
+	)
 
 
 func _on_back_button_pressed() -> void:
@@ -39,3 +50,11 @@ func _on_back_button_pressed() -> void:
 
 func _on_delete_button_pressed() -> void:
 	delete_pressed.emit(country)
+
+
+func _on_name_changed(item: ItemString) -> void:
+	country.country_name = item.value
+
+
+func _on_color_changed(item: ItemColor) -> void:
+	country.color = item.value

@@ -31,14 +31,11 @@ var province: Province:
 var is_preview: bool = false
 var preview_rect: Rect2
 
+@onready var _color_update := %ColorUpdate as ProvinceColorUpdate
 @onready var _outlined_polygon := %Polygon as OutlinedPolygon2D
 @onready var _collision_shape := %CollisionShape as CollisionPolygon2D
 @onready var _buildings := %Buildings as BuildingVisuals2D
 @onready var _army_stack := %ArmyStack2D as ArmyStack2D
-
-## The color defined in the editor will be the default color
-## when the province doesn't have a valid owner country.
-@onready var _default_shape_color: Color = _outlined_polygon.color
 
 
 func _ready() -> void:
@@ -110,11 +107,11 @@ func _update_province() -> void:
 	position = Vector2.ZERO
 	scale = Vector2.ONE
 
+	_color_update.setup(province)
 	_army_stack.position = province.position_army_host
 	_buildings.setup(province)
 
 	_update_polygon()
-	_update_shape_color()
 	remove_highlight()
 
 	province.polygon().changed.connect(_update_polygon)
@@ -126,13 +123,6 @@ func _update_polygon() -> void:
 
 	_outlined_polygon.polygon = province.polygon().array
 	_collision_shape.polygon = province.polygon().array
-
-
-func _update_shape_color() -> void:
-	_outlined_polygon.color = (
-			province.owner_country.color
-			if province.owner_country != null else _default_shape_color
-	)
 
 
 func _update_preview() -> void:
@@ -195,8 +185,6 @@ func _connect_signals() -> void:
 	if province == null:
 		return
 
-	if not province.owner_changed.is_connected(_on_owner_changed):
-		province.owner_changed.connect(_on_owner_changed)
 	if not province.position_army_host_changed.is_connected(
 			_on_position_army_host_changed
 	):
@@ -209,18 +197,12 @@ func _disconnect_signals() -> void:
 	if province == null:
 		return
 
-	if province.owner_changed.is_connected(_on_owner_changed):
-		province.owner_changed.disconnect(_on_owner_changed)
 	if province.position_army_host_changed.is_connected(
 			_on_position_army_host_changed
 	):
 		province.position_army_host_changed.disconnect(
 				_on_position_army_host_changed
 		)
-
-
-func _on_owner_changed(_province: Province) -> void:
-	_update_shape_color()
 
 
 func _on_position_army_host_changed(new_position: Vector2) -> void:

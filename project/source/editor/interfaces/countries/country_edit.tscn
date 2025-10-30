@@ -1,14 +1,28 @@
-[gd_scene load_steps=7 format=3 uid="uid://ck6hme0uj2nuu"]
+[gd_scene load_steps=11 format=3 uid="uid://ck6hme0uj2nuu"]
 
 [ext_resource type="Script" uid="uid://db48vr1ct4fys" path="res://source/editor/interfaces/countries/country_edit.gd" id="1_ecsip"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_ijejh"]
-[ext_resource type="PackedScene" uid="uid://dv5h7wj8mri2l" path="res://source/ui/country_icon.tscn" id="3_lo1lb"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="3_x7hjw"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_agddt"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_4kgdt"]
+[ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="6_x7hjw"]
+[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="7_w7dwm"]
+
+[sub_resource type="Resource" id="Resource_v3378"]
+script = ExtResource("6_x7hjw")
+text = "Name:"
+metadata/_custom_type_script = "uid://bk5w8y642cp21"
+
+[sub_resource type="Resource" id="Resource_fnmph"]
+script = ExtResource("7_w7dwm")
+is_transparency_enabled = false
+text = "Color:"
+metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
 
 [sub_resource type="Resource" id="Resource_ecsip"]
 script = ExtResource("5_4kgdt")
 text = "Settings:"
+child_items = Array[ExtResource("5_4kgdt")]([SubResource("Resource_v3378"), SubResource("Resource_fnmph")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceCountryEdit" type="Control"]
@@ -56,13 +70,10 @@ offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CountryIcon" parent="Control" instance=ExtResource("3_lo1lb")]
+[node name="CountryButton" parent="Control" instance=ExtResource("3_x7hjw")]
 unique_name_in_owner = true
 layout_mode = 1
-anchor_left = 0.0
-anchor_top = 0.19879518
-anchor_right = 1.0
-anchor_bottom = 0.8012048
+is_button_enabled = false
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
 layout_mode = 1

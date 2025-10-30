@@ -6,6 +6,8 @@ class_name Country
 ## Because some extra setup is required before a new instance can be used,
 ## it's recommended to use Country.Factory to do the setup for you.
 
+signal name_changed()
+signal color_changed()
 signal money_changed(new_amount: int)
 
 const DEFAULT_COLOR := Color.WHITE
@@ -13,12 +15,24 @@ const DEFAULT_COLOR := Color.WHITE
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
-var country_name: String = ""
+var country_name: String = "":
+	set(value):
+		if country_name == value:
+			return
+		country_name = value
+		name_changed.emit()
 
-var color: Color = DEFAULT_COLOR
+var color: Color = DEFAULT_COLOR:
+	set(value):
+		if color == value:
+			return
+		color = value
+		color_changed.emit()
 
 var money: int = 0:
 	set(value):
+		if money == value:
+			return
 		money = value
 		money_changed.emit(money)
 

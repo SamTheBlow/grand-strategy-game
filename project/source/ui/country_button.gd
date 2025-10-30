@@ -18,8 +18,12 @@ signal pressed(country: Country)
 
 var country: Country:
 	set(value):
+		if country != null:
+			country.color_changed.disconnect(_refresh)
 		country = value
 		_refresh()
+		if country != null:
+			country.color_changed.connect(_refresh)
 
 @onready var _country_icon := %CountryIcon as ColorRect
 @onready var _button := %Button as Button
