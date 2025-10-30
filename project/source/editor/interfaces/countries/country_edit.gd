@@ -30,6 +30,7 @@ func _process(_delta: float) -> void:
 
 
 func _load_settings() -> void:
+	# Name
 	(_settings.item.child_items[0] as ItemString).value = country.country_name
 	(_settings.item.child_items[0] as ItemString).placeholder_text = (
 			country.default_name()
@@ -38,9 +39,16 @@ func _load_settings() -> void:
 			_on_name_changed
 	)
 
+	# Color
 	(_settings.item.child_items[1] as ItemColor).value = country.color
 	(_settings.item.child_items[1] as ItemColor).value_changed.connect(
 			_on_color_changed
+	)
+
+	# Amount of money
+	(_settings.item.child_items[2] as ItemInt).value = country.money
+	(_settings.item.child_items[2] as ItemInt).value_changed.connect(
+			_on_money_changed
 	)
 
 
@@ -58,3 +66,7 @@ func _on_name_changed(item: ItemString) -> void:
 
 func _on_color_changed(item: ItemColor) -> void:
 	country.color = item.value
+
+
+func _on_money_changed(item: ItemInt) -> void:
+	country.money = item.value

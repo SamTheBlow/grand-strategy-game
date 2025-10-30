@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://ck6hme0uj2nuu"]
+[gd_scene load_steps=13 format=3 uid="uid://ck6hme0uj2nuu"]
 
 [ext_resource type="Script" uid="uid://db48vr1ct4fys" path="res://source/editor/interfaces/countries/country_edit.gd" id="1_ecsip"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_ijejh"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_4kgdt"]
 [ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="6_x7hjw"]
 [ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="7_w7dwm"]
+[ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="8_w7dwm"]
 
 [sub_resource type="Resource" id="Resource_v3378"]
 script = ExtResource("6_x7hjw")
@@ -19,10 +20,20 @@ is_transparency_enabled = false
 text = "Color:"
 metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
 
+[sub_resource type="Resource" id="Resource_ewdy8"]
+script = ExtResource("8_w7dwm")
+value = 0
+has_minimum = true
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Amount of money:"
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
 [sub_resource type="Resource" id="Resource_ecsip"]
 script = ExtResource("5_4kgdt")
 text = "Settings:"
-child_items = Array[ExtResource("5_4kgdt")]([SubResource("Resource_v3378"), SubResource("Resource_fnmph")])
+child_items = Array[ExtResource("5_4kgdt")]([SubResource("Resource_v3378"), SubResource("Resource_fnmph"), SubResource("Resource_ewdy8")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceCountryEdit" type="Control"]
