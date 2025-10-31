@@ -8,6 +8,12 @@ extends AutoArrowNode2D
 ## Emitted when the mouse click is released on a valid destination province.
 signal released(this: AutoArrowPreviewNode2D)
 
+var _country: Country
+
+
+func _init(assigned_country: Country) -> void:
+	_country = assigned_country
+
 
 func _ready() -> void:
 	super()
@@ -20,6 +26,11 @@ func _input(event: InputEvent) -> void:
 			_release()
 	elif event is InputEventMouseMotion:
 		_update_pointing_position()
+
+
+## The country that the new autoarrow is for.
+func country() -> Country:
+	return _country
 
 
 func _release() -> void:

@@ -52,9 +52,7 @@ func _initialize() -> void:
 	_decorations_node.world_decorations = world.decorations
 	_update_decoration_visibility()
 
-	_auto_arrow_container.setup(
-			playing_country, project.game.countries, province_selection
-	)
+	_auto_arrow_container.setup(project.game.countries)
 
 
 ## Shows or hides the decorations.

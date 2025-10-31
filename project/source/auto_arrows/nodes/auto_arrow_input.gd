@@ -7,6 +7,8 @@ extends Node
 signal preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D)
 
 var game: Game
+## May be null.
+var country_to_edit: Country
 
 
 #region Adding an autoarrow
@@ -98,8 +100,10 @@ func _receive_clear_province(country_id: int, province_id: int) -> void:
 #endregion
 
 
-func _create_preview_arrow(province_visuals: ProvinceVisuals2D) -> void:
-	var preview_arrow := AutoArrowPreviewNode2D.new()
+func _create_preview_arrow(
+		country: Country, province_visuals: ProvinceVisuals2D
+) -> void:
+	var preview_arrow := AutoArrowPreviewNode2D.new(country)
 	preview_arrow.source_province = province_visuals
 	preview_arrow.released.connect(_on_preview_arrow_released)
 	preview_arrow_created.emit(preview_arrow)
@@ -126,33 +130,24 @@ func _on_provinces_unhandled_mouse_event_occured(
 	):
 		return
 
-	# Only when you control the playing country...
-	if (
-			not game.turn.is_running()
-			or not game.game_players.you_control_country(
-					multiplayer, game.turn.playing_player().playing_country
-			)
-	):
+	if country_to_edit == null:
 		return
 
 	# Double right click to remove all autoarrows in the province
 	if mouse_button_event.double_click:
-		var playing_country: Country = (
-				game.turn.playing_player().playing_country
-		)
-		_clear_province(playing_country, province_visuals.province.id)
+		_clear_province(country_to_edit, province_visuals.province.id)
 
 	# Show a preview autoarrow during right click
-	_create_preview_arrow(province_visuals)
+	_create_preview_arrow(country_to_edit, province_visuals)
 
 	get_viewport().set_input_as_handled()
 
 
 func _on_preview_arrow_released(preview_arrow: AutoArrowPreviewNode2D) -> void:
+	var country: Country = preview_arrow.country()
 	var auto_arrow: AutoArrow = preview_arrow.auto_arrow()
-	var playing_country: Country = game.turn.playing_player().playing_country
-	if playing_country.auto_arrows.has_equivalent_in_list(auto_arrow):
+	if country.auto_arrows.has_equivalent_in_list(auto_arrow):
 		# An equivalent arrow already exists? Remove it
-		_remove_auto_arrow(playing_country, auto_arrow)
+		_remove_auto_arrow(country, auto_arrow)
 	else:
-		_add_auto_arrow(playing_country, auto_arrow)
+		_add_auto_arrow(country, auto_arrow)

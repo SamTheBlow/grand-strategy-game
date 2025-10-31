@@ -1,7 +1,6 @@
 class_name AutoArrowsNode2D
 extends Node2D
 ## A list of [AutoArrowNode2D]. Visual representation of given [AutoArrows].
-## Automatically shows or hides itself when the right conditions are met.
 ##
 ## See also: [AutoArrow]
 
@@ -14,33 +13,9 @@ var province_visuals_container: ProvinceVisualsContainer2D
 
 var _list: Array[AutoArrowNode2D] = []
 
-## If any of these flags is turned on, this node will be hidden
-## 1: No province is selected
-## 2: The currently playing country doesn't have control over the autoarrows
-var _visible_flags: int = 0b11:
-	set(value):
-		_visible_flags = value
-		visible = _visible_flags == 0
-
 
 func _ready() -> void:
 	_update()
-
-
-## This node listens to changes in the game's state to update itself.
-## But, it cannot know the initial state of the game.
-## So we have to provide the initial state manually.
-## This function also connects the signals.
-func init(
-		playing_country: PlayingCountry, province_selection: ProvinceSelection
-) -> void:
-	_on_selected_province_changed(province_selection.selected_province())
-	province_selection.selected_province_changed.connect(
-			_on_selected_province_changed
-	)
-
-	_on_playing_country_changed(playing_country.country())
-	playing_country.changed.connect(_on_playing_country_changed)
 
 
 func _update() -> void:
@@ -125,20 +100,3 @@ func _remove_node(auto_arrow_node: AutoArrowNode2D) -> void:
 
 	remove_child(auto_arrow_node)
 	_list.erase(auto_arrow_node)
-
-
-func _on_selected_province_changed(province: Province) -> void:
-	if province == null:
-		_visible_flags |= 1
-	else:
-		_visible_flags &= ~1
-
-
-func _on_playing_country_changed(new_playing_country: Country) -> void:
-	if (
-			new_playing_country == null
-			or new_playing_country.auto_arrows != auto_arrows
-	):
-		_visible_flags |= 2
-	else:
-		_visible_flags &= ~2

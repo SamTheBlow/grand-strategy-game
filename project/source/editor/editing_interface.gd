@@ -28,8 +28,17 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 
 var _current_interface: Node:
 	set(value):
-		_current_interface = value
-		_update_visibility()
+		if _current_interface is InterfaceProvinceEdit:
+			_current_interface = value
+			province_interface_closed.emit()
+			_update_visibility()
+		elif _current_interface is InterfaceCountryEdit:
+			_current_interface = value
+			country_interface_closed.emit()
+			_update_visibility()
+		else:
+			_current_interface = value
+			_update_visibility()
 
 @onready var _contents_container: Node = %Contents
 
@@ -53,7 +62,7 @@ func open_new_interface(
 func open_interface(new_interface: AppEditorInterface) -> void:
 	if new_interface == null:
 		return
-	_remove_existing_interface()
+	close_interface()
 	_contents_container.add_child(new_interface)
 	_current_interface = new_interface
 
@@ -62,14 +71,8 @@ func open_interface(new_interface: AppEditorInterface) -> void:
 func close_interface() -> void:
 	if _current_interface == null:
 		return
-	if _current_interface is InterfaceProvinceEdit:
-		_remove_existing_interface()
-		province_interface_closed.emit()
-	elif _current_interface is InterfaceCountryEdit:
-		_remove_existing_interface()
-		country_interface_closed.emit()
-	else:
-		_remove_existing_interface()
+	NodeUtils.delete_node(_current_interface)
+	_current_interface = null
 
 
 ## Opens the interface for editing given province.
@@ -103,13 +106,6 @@ func open_province_edit_interface(
 	province_interface.province = province
 	open_interface(province_interface)
 	province_interface_opened.emit(province)
-
-
-func _remove_existing_interface() -> void:
-	if _current_interface == null:
-		return
-	NodeUtils.delete_node(_current_interface)
-	_current_interface = null
 
 
 ## May return null if the interface scene could not be found.
