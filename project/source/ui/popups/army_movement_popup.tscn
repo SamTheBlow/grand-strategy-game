@@ -15,7 +15,7 @@ script = ExtResource("1_hrsh1")
 [node name="Spacing1" type="Control" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 2
+mouse_filter = 1
 
 [node name="HSlider" type="HSlider" parent="."]
 unique_name_in_owner = true
@@ -34,6 +34,6 @@ vertical_alignment = 1
 [node name="Spacing2" type="Control" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 2
+mouse_filter = 1
 
 [connection signal="value_changed" from="HSlider" to="." method="_on_troop_slider_value_changed"]

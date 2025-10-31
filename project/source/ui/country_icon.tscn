@@ -9,5 +9,6 @@ anchor_right = 0.966875
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 script = ExtResource("1_idkw5")
 aspect_ratio = 1.66

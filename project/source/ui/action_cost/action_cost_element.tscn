@@ -14,6 +14,7 @@ script = ExtResource("1_rf7gb")
 [node name="Spacing" type="Control" parent="."]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="Title" type="Label" parent="."]
 unique_name_in_owner = true
@@ -32,3 +33,4 @@ vertical_alignment = 1
 [node name="Spacing2" type="Control" parent="."]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
+mouse_filter = 1

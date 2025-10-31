@@ -57,8 +57,10 @@ func _ready() -> void:
 
 
 func _on_button_pressed(_button_id: int) -> void:
-	NodeUtils.delete_node(self)
+	# It's important to only delete the popup at the end of the frame,
+	# so that the popup can still stop propagation of input during this frame.
+	queue_free()
 
 
 func _on_popup_invalidated() -> void:
-	NodeUtils.delete_node(self)
+	queue_free()

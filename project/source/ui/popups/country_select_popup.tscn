@@ -16,6 +16,7 @@ script = ExtResource("1_merek")
 [node name="Control" type="Control" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
+mouse_filter = 1
 
 [node name="ScrollContainer" type="ScrollContainer" parent="Control"]
 layout_mode = 1

@@ -10,7 +10,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-mouse_filter = 2
+mouse_filter = 1
 script = ExtResource("1_e00nu")
 
 [node name="ColorRect" type="ColorRect" parent="."]
@@ -25,6 +25,7 @@ offset_right = 8.0
 offset_bottom = 8.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_filter = 1
 color = Color(0.315, 0.33249998, 0.35, 1)
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]

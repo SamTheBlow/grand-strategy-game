@@ -16,7 +16,7 @@ script = ExtResource("1_hwjbu")
 [node name="SpacingTop" type="Control" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 2
+mouse_filter = 1
 
 [node name="Title" type="Label" parent="."]
 layout_mode = 2
@@ -27,7 +27,7 @@ vertical_alignment = 1
 [node name="SpacingMiddle" type="Control" parent="."]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
-mouse_filter = 2
+mouse_filter = 1
 
 [node name="ActionCost" parent="." instance=ExtResource("2_8oley")]
 unique_name_in_owner = true
@@ -36,4 +36,4 @@ layout_mode = 2
 [node name="SpacingBottom" type="Control" parent="."]
 layout_mode = 2
 size_flags_vertical = 3
-mouse_filter = 2
+mouse_filter = 1

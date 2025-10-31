@@ -64,6 +64,7 @@ theme_override_constants/separation = 0
 [node name="SpacingLeft" type="Control" parent="ScrollContainer/HBoxContainer"]
 custom_minimum_size = Vector2(4, 0)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/HBoxContainer"]
 layout_mode = 2
@@ -73,6 +74,7 @@ size_flags_vertical = 3
 [node name="SpacingTop" type="Control" parent="ScrollContainer/HBoxContainer/VBoxContainer"]
 custom_minimum_size = Vector2(0, 4)
 layout_mode = 2
+mouse_filter = 1
 
 [node name="BuiltInGames" parent="ScrollContainer/HBoxContainer/VBoxContainer" instance=ExtResource("2_rqmfa")]
 unique_name_in_owner = true
@@ -87,6 +89,7 @@ title = "Imported Games"
 [node name="SpacingRight" type="Control" parent="ScrollContainer/HBoxContainer"]
 custom_minimum_size = Vector2(4, 0)
 layout_mode = 2
+mouse_filter = 1
 
 [connection signal="project_imported" from="ProjectImport" to="." method="_on_project_imported"]
 [connection signal="dir_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_dir_selected"]
