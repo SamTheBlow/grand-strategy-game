@@ -39,7 +39,9 @@ func _detect_start_of_drag(event: InputEvent) -> void:
 
 
 func _detect_end_of_drag(event: InputEvent) -> void:
-	if event is not InputEventMouseButton:
+	# Checking that it's being dragged is actually important
+	# in case we receive a is_released event but not the is_pressed event.
+	if not _is_being_dragged or event is not InputEventMouseButton:
 		return
 
 	var event_mouse_button := event as InputEventMouseButton

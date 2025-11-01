@@ -65,6 +65,10 @@ var _is_dragging_entire_polygon: bool = false
 var _drag_from: Vector2
 var _drag_to: Vector2
 
+## Prevents setting mouse input as handled
+## when ending a polygon drag without ever moving the cursor.
+var _moved_cursor_during_polygon_drag: bool = false
+
 var _cursor_position: Vector2
 
 var _undo_redo := UndoRedo.new()
@@ -125,6 +129,8 @@ func _handle_left_click(event: InputEvent) -> bool:
 				Geometry2D.is_point_in_polygon(_cursor_position, polygon.array)
 		):
 			_drag_from = _cursor_position
+			_drag_to = _drag_from
+			_moved_cursor_during_polygon_drag = false
 			_is_dragging = true
 			_is_dragging_entire_polygon = true
 			is_handled = true
@@ -132,10 +138,11 @@ func _handle_left_click(event: InputEvent) -> bool:
 	if event_mouse_button.is_released() and _is_dragging:
 		if _is_dragging_entire_polygon:
 			_create_action_drag_polygon()
+			is_handled = _moved_cursor_during_polygon_drag
 		else:
 			_create_action_drag_vertex()
+			is_handled = true
 		_is_dragging = false
-		is_handled = true
 
 	return is_handled
 
@@ -168,6 +175,7 @@ func _handle_mouse_move(event: InputEvent) -> bool:
 
 	if _is_dragging:
 		if _is_dragging_entire_polygon:
+			_moved_cursor_during_polygon_drag = true
 			_drag_polygon(_cursor_position - previous_cursor_position)
 		else:
 			_drag_vertex()
