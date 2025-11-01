@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://bmfl2xa7n2g2n"]
 
 [ext_resource type="Script" uid="uid://bsaiyxqli3rj3" path="res://source/utils/property_tree/nodes/item_country_node.gd" id="1_reqb4"]
-[ext_resource type="PackedScene" uid="uid://b7jj51hv4hwqq" path="res://source/ui/country_and_relationship.tscn" id="2_1s1uy"]
+[ext_resource type="PackedScene" uid="uid://b7jj51hv4hwqq" path="res://source/ui/countries/country_and_relationship.tscn" id="2_1s1uy"]
 
 [node name="ItemCountry" type="MarginContainer"]
 anchors_preset = 15

@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_o5ejf"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_y5qp7"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
-[ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/country_list/country_list.tscn" id="5_o3ftt"]
+[ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/countries/country_list/country_list.tscn" id="5_o3ftt"]
 
 [sub_resource type="Resource" id="Resource_ub84e"]
 script = ExtResource("3_y5qp7")

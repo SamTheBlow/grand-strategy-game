@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://0eckxkn03e2x" path="res://source/notifications/visuals/game_notification_node.gd" id="1_2ds1f"]
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_iv0cq"]
-[ext_resource type="Script" uid="uid://b3fpexvbci6sg" path="res://source/ui/utils/custom_button.gd" id="3_dyl3y"]
+[ext_resource type="Script" uid="uid://b3fpexvbci6sg" path="res://source/utils/ui/custom_button.gd" id="3_dyl3y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6m8fg"]
 bg_color = Color(0, 0, 0, 0)

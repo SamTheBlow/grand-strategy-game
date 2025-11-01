@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://b2loam5g5ekg5"]
 
-[ext_resource type="Script" uid="uid://bcbf2r8432wpo" path="res://source/ui/country_button.gd" id="1_rn2iu"]
-[ext_resource type="PackedScene" uid="uid://dv5h7wj8mri2l" path="res://source/ui/country_icon.tscn" id="2_a6sw4"]
+[ext_resource type="Script" uid="uid://bcbf2r8432wpo" path="res://source/ui/countries/country_button.gd" id="1_rn2iu"]
+[ext_resource type="PackedScene" uid="uid://dv5h7wj8mri2l" path="res://source/ui/countries/country_icon.tscn" id="2_a6sw4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ha317"]
 bg_color = Color(0, 0, 0, 0)

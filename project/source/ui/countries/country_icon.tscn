@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://dv5h7wj8mri2l"]
 
-[ext_resource type="Script" uid="uid://ciejqnf20rumf" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="1_idkw5"]
+[ext_resource type="Script" uid="uid://ciejqnf20rumf" path="res://source/utils/ui/color_rect_aspect_ratio.gd" id="1_idkw5"]
 
 [node name="CountryIcon" type="ColorRect"]
 anchors_preset = -1

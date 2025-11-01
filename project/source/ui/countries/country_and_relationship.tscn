@@ -1,10 +1,10 @@
 [gd_scene load_steps=6 format=3 uid="uid://b7jj51hv4hwqq"]
 
-[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="1_84m4d"]
-[ext_resource type="Script" uid="uid://cmnn3qx8p8xva" path="res://source/ui/country_and_relationship.gd" id="1_j5wfm"]
-[ext_resource type="Script" uid="uid://gxrluxci1kts" path="res://source/ui/relationship_preset_label.gd" id="3_c35fe"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="1_84m4d"]
+[ext_resource type="Script" uid="uid://cmnn3qx8p8xva" path="res://source/ui/countries/country_and_relationship.gd" id="1_j5wfm"]
+[ext_resource type="Script" uid="uid://gxrluxci1kts" path="res://source/ui/diplomacy/relationship_preset_label.gd" id="3_c35fe"]
 [ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="3_yqgku"]
-[ext_resource type="Script" uid="uid://baay036rblhtb" path="res://source/ui/relationship_preset_label_update.gd" id="4_uhlps"]
+[ext_resource type="Script" uid="uid://baay036rblhtb" path="res://source/ui/diplomacy/relationship_preset_label_update.gd" id="4_uhlps"]
 
 [node name="CountryAndRelationship" type="Control"]
 custom_minimum_size = Vector2(0, 64)

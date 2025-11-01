@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://db48vr1ct4fys" path="res://source/editor/interfaces/countries/country_edit.gd" id="1_ecsip"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_ijejh"]
-[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="3_x7hjw"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="3_x7hjw"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="4_agddt"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_4kgdt"]
 [ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="6_x7hjw"]

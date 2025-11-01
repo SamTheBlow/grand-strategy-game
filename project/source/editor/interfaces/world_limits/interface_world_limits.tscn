@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cyspbdausxgwr"]
 
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="1_2hi7y"]
-[ext_resource type="Script" uid="uid://cryqgojuc1031" path="res://source/editor/interfaces/interface_world_limits.gd" id="1_dr3ch"]
+[ext_resource type="Script" uid="uid://cryqgojuc1031" path="res://source/editor/interfaces/world_limits/interface_world_limits.gd" id="1_dr3ch"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="5_6ocqx"]
 
 [sub_resource type="Resource" id="Resource_l27iq"]

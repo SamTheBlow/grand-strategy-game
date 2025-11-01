@@ -2,11 +2,11 @@
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
-[ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/editor/project_load_popup.tscn" id="3_kcuw7"]
+[ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/ui/popups/project_load_popup.tscn" id="3_kcuw7"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
-[ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/editing_interface.tscn" id="7_um8he"]
+[ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/interfaces/editing_interface.tscn" id="7_um8he"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")

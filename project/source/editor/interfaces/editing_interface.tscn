@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://0uiaabpgiqs"]
 
-[ext_resource type="Script" uid="uid://71nrlclp5ovx" path="res://source/editor/editing_interface.gd" id="1_qje5o"]
+[ext_resource type="Script" uid="uid://71nrlclp5ovx" path="res://source/editor/interfaces/editing_interface.gd" id="1_qje5o"]
 
 [node name="EditingInterface" type="Control"]
 layout_mode = 3

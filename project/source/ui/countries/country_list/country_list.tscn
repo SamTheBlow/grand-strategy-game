@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://de5y20lysfce8"]
 
-[ext_resource type="Script" uid="uid://caqoqoo8iilov" path="res://source/ui/country_list/country_list.gd" id="1_pwnxc"]
+[ext_resource type="Script" uid="uid://caqoqoo8iilov" path="res://source/ui/countries/country_list/country_list.gd" id="1_pwnxc"]
 
 [node name="CountryList" type="Control"]
 layout_mode = 3

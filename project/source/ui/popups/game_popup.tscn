@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://by865efl4iwy"]
 
 [ext_resource type="Script" uid="uid://dmweerfs3325e" path="res://source/ui/popups/game_popup.gd" id="1_q2ltp"]
-[ext_resource type="Script" uid="uid://d3x5ro3tt6aok" path="res://source/utils/draggable/draggable.gd" id="2_78k22"]
+[ext_resource type="Script" uid="uid://d3x5ro3tt6aok" path="res://source/utils/ui/draggable/draggable.gd" id="2_78k22"]
 [ext_resource type="Script" uid="uid://bhmnv1p8rs2xg" path="res://source/ui/popups/popup_buttons.gd" id="4_t04kf"]
 
 [node name="GamePopup" type="Control"]

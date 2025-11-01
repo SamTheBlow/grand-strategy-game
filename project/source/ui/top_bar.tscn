@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://dgm1qqboe50y7"]
 
 [ext_resource type="Script" uid="uid://c8gxjdquk0nfw" path="res://source/ui/top_bar.gd" id="1_y7n1y"]
-[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="2_ho3uv"]
-[ext_resource type="Script" uid="uid://ciejqnf20rumf" path="res://source/ui/utils/color_rect_aspect_ratio.gd" id="2_wy4xe"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="2_ho3uv"]
+[ext_resource type="Script" uid="uid://ciejqnf20rumf" path="res://source/utils/ui/color_rect_aspect_ratio.gd" id="2_wy4xe"]
 
 [node name="TopBar" type="Control"]
 layout_mode = 3

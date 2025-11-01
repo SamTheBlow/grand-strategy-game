@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://c0vy2wbupdj2k" path="res://source/ui/player_list/turn_order_element.gd" id="1_qvjuk"]
 [ext_resource type="Texture2D" uid="uid://d3y7j7vyu03ii" path="res://assets/remote_player_icon_256.png" id="2_w2s56"]
-[ext_resource type="Script" uid="uid://blmeppoxj0fur" path="res://source/ui/utils/list_container.gd" id="3_crpln"]
+[ext_resource type="Script" uid="uid://blmeppoxj0fur" path="res://source/utils/ui/list_container.gd" id="3_crpln"]
 [ext_resource type="Texture2D" uid="uid://cr08hxawkeaql" path="res://assets/add_button_256.png" id="4_hpyhm"]
 [ext_resource type="BitMap" uid="uid://bd0cj6rcgsdqb" path="res://assets/circle_click_mask_256.png" id="5_83le2"]
 [ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="6_jg5px"]

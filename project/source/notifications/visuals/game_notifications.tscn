@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c75xskthhgko2"]
 
 [ext_resource type="Script" uid="uid://cd67l4tyf4waq" path="res://source/notifications/visuals/game_notifications_node.gd" id="1_xdl0n"]
-[ext_resource type="Script" uid="uid://blmeppoxj0fur" path="res://source/ui/utils/list_container.gd" id="2_4s3vb"]
+[ext_resource type="Script" uid="uid://blmeppoxj0fur" path="res://source/utils/ui/list_container.gd" id="2_4s3vb"]
 [ext_resource type="PackedScene" uid="uid://4ctqqicmn2mn" path="res://source/notifications/visuals/game_notification.tscn" id="2_gdvgs"]
 
 [node name="GameNotifications" type="Control"]

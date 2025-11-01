@@ -1,10 +1,10 @@
 [gd_scene load_steps=9 format=3 uid="uid://b735rxfcexqks"]
 
 [ext_resource type="Script" uid="uid://u0jmot6xn8fc" path="res://source/main_menu/play_menu/lobby.gd" id="1_hty1g"]
-[ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/ui/utils/interface_tabs.gd" id="2_vjg4m"]
+[ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/utils/ui/interface_tabs.gd" id="2_vjg4m"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="3_ebbbm"]
 [ext_resource type="PackedScene" uid="uid://djneieh5i0c1" path="res://source/main_menu/play_menu/rules_menu/rules_menu.tscn" id="3_hb7ro"]
-[ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/ui/utils/id_button.gd" id="3_w00gd"]
+[ext_resource type="Script" uid="uid://byxo5fbpmlgpx" path="res://source/utils/ui/id_button.gd" id="3_w00gd"]
 [ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.tscn" id="5_0x7ha"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_6wm1c"]
 

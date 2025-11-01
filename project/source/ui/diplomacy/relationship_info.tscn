@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://cvxd6jpgibm68"]
 
-[ext_resource type="Script" uid="uid://bkjheoh4vuk0i" path="res://source/ui/relationship_info_node.gd" id="1_e8d3o"]
-[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/country_button.tscn" id="2_nh6o8"]
+[ext_resource type="Script" uid="uid://bkjheoh4vuk0i" path="res://source/ui/diplomacy/relationship_info_node.gd" id="1_e8d3o"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="2_nh6o8"]
 
 [node name="RelationshipInfo" type="Control"]
 layout_mode = 3
