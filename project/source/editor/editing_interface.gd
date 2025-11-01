@@ -1,7 +1,6 @@
 class_name EditingInterface
 extends Control
-## Hides itself when the interface is closed,
-## shows itself when the interface is open.
+## Opens and closes interfaces for the user to use in the editor.
 
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
@@ -28,23 +27,31 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 
 var _current_interface: Node:
 	set(value):
+		if _current_interface == value:
+			return
+
+		if _current_interface != null:
+			# Use queue_free() instead of immediately deleting the node
+			# so that input events still propagate through it on this frame.
+			_current_interface.queue_free()
+
 		if _current_interface is InterfaceProvinceEdit:
-			_current_interface = value
+			_current_interface = null
 			province_interface_closed.emit()
-			_update_visibility()
 		elif _current_interface is InterfaceCountryEdit:
-			_current_interface = value
+			_current_interface = null
 			country_interface_closed.emit()
-			_update_visibility()
-		else:
-			_current_interface = value
-			_update_visibility()
+
+		_current_interface = value
+
+		if is_node_ready():
+			_update_contents()
 
 @onready var _contents_container: Node = %Contents
 
 
 func _ready() -> void:
-	_update_visibility()
+	_update_contents()
 
 
 ## Opens a new interface of given type.
@@ -58,20 +65,12 @@ func open_new_interface(
 
 ## Opens given interface.
 ## Closes the already open interface if applicable.
-## No effect if the input is null.
 func open_interface(new_interface: AppEditorInterface) -> void:
-	if new_interface == null:
-		return
-	close_interface()
-	_contents_container.add_child(new_interface)
 	_current_interface = new_interface
 
 
 ## Has no effect if there is no interface open.
 func close_interface() -> void:
-	if _current_interface == null:
-		return
-	NodeUtils.delete_node(_current_interface)
 	_current_interface = null
 
 
@@ -81,6 +80,14 @@ func open_province_edit_interface(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
+	# Prevent infinite loop
+	if (
+			_current_interface is InterfaceProvinceEdit
+			and province_id
+			== (_current_interface as InterfaceProvinceEdit).province.id
+	):
+		return
+
 	var province: Province = (
 			project.game.world.provinces.province_from_id(province_id)
 	)
@@ -106,6 +113,12 @@ func open_province_edit_interface(
 	province_interface.province = province
 	open_interface(province_interface)
 	province_interface_opened.emit(province)
+
+
+func _update_contents() -> void:
+	visible = _current_interface != null
+	if _current_interface != null:
+		_contents_container.add_child(_current_interface)
 
 
 ## May return null if the interface scene could not be found.
@@ -208,10 +221,6 @@ func _open_country_edit_interface(
 	edit_interface.country = country
 	open_interface(edit_interface)
 	country_interface_opened.emit(country)
-
-
-func _update_visibility() -> void:
-	visible = _current_interface != null
 
 
 func _on_world_decoration_deleted(
