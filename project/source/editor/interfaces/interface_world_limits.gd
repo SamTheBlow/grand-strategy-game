@@ -29,14 +29,14 @@ func _ready() -> void:
 
 func setup(world_limits: WorldLimits) -> void:
 	if _is_setup:
+		_world_limits.mode_changed.disconnect(_update_limits_mode)
 		_world_limits.current_limits_changed.disconnect(_update_limit_items)
-		_world_limits.mode_changed.disconnect(_update_mode_item)
 	else:
-		_item_custom_limits_enabled.value_changed.connect(_on_limits_toggled)
-		_item_world_limit_left.value_changed.connect(_update_limit_left)
-		_item_world_limit_top.value_changed.connect(_update_limit_top)
-		_item_world_limit_right.value_changed.connect(_update_limit_right)
-		_item_world_limit_bottom.value_changed.connect(_update_limit_bottom)
+		_item_custom_limits_enabled.value_changed.connect(_set_limits_mode)
+		_item_world_limit_left.value_changed.connect(_set_limit_left)
+		_item_world_limit_top.value_changed.connect(_set_limit_top)
+		_item_world_limit_right.value_changed.connect(_set_limit_right)
+		_item_world_limit_bottom.value_changed.connect(_set_limit_bottom)
 
 	_world_limits = world_limits
 	_is_setup = true
@@ -46,12 +46,12 @@ func setup(world_limits: WorldLimits) -> void:
 
 
 func _update() -> void:
-	_update_mode_item()
+	_update_limits_mode()
 	_update_limit_items()
 	_update_editor_settings()
 	_update_game_settings()
+	_world_limits.mode_changed.connect(_update_limits_mode)
 	_world_limits.current_limits_changed.connect(_update_limit_items)
-	_world_limits.mode_changed.connect(_update_mode_item)
 
 
 func _update_editor_settings() -> void:
@@ -74,12 +74,17 @@ func _update_game_settings() -> void:
 	_game_settings_node.refresh()
 
 
+func _update_limits_mode() -> void:
+	_item_custom_limits_enabled.value_changed.disconnect(_set_limits_mode)
+	_item_custom_limits_enabled.value = _world_limits.is_custom_limits_enabled()
+	_item_custom_limits_enabled.value_changed.connect(_set_limits_mode)
+
+
 func _update_limit_items(_limits: WorldLimits = null) -> void:
-	# Temporarily disconnect signals to avoid side effects
-	_item_world_limit_left.value_changed.disconnect(_update_limit_left)
-	_item_world_limit_top.value_changed.disconnect(_update_limit_top)
-	_item_world_limit_right.value_changed.disconnect(_update_limit_right)
-	_item_world_limit_bottom.value_changed.disconnect(_update_limit_bottom)
+	_item_world_limit_left.value_changed.disconnect(_set_limit_left)
+	_item_world_limit_top.value_changed.disconnect(_set_limit_top)
+	_item_world_limit_right.value_changed.disconnect(_set_limit_right)
+	_item_world_limit_bottom.value_changed.disconnect(_set_limit_bottom)
 
 	var is_disabled: bool = not _world_limits.is_custom_limits_enabled()
 	_item_world_limit_left.value = _world_limits.limit_left()
@@ -91,35 +96,64 @@ func _update_limit_items(_limits: WorldLimits = null) -> void:
 	_item_world_limit_bottom.value = _world_limits.limit_bottom()
 	_item_world_limit_bottom.is_disabled = is_disabled
 
-	# Reconnect signals
-	_item_world_limit_left.value_changed.connect(_update_limit_left)
-	_item_world_limit_top.value_changed.connect(_update_limit_top)
-	_item_world_limit_right.value_changed.connect(_update_limit_right)
-	_item_world_limit_bottom.value_changed.connect(_update_limit_bottom)
+	_item_world_limit_left.value_changed.connect(_set_limit_left)
+	_item_world_limit_top.value_changed.connect(_set_limit_top)
+	_item_world_limit_right.value_changed.connect(_set_limit_right)
+	_item_world_limit_bottom.value_changed.connect(_set_limit_bottom)
 
 
-func _update_mode_item() -> void:
-	_item_custom_limits_enabled.value = _world_limits.is_custom_limits_enabled()
-
-
-func _update_limit_left(_item: PropertyTreeItem) -> void:
-	_world_limits.custom_limits.x = _item_world_limit_left.value
-
-
-func _update_limit_top(_item: PropertyTreeItem) -> void:
-	_world_limits.custom_limits.y = _item_world_limit_top.value
-
-
-func _update_limit_right(_item: PropertyTreeItem) -> void:
-	_world_limits.custom_limits.z = _item_world_limit_right.value
-
-
-func _update_limit_bottom(_item: PropertyTreeItem) -> void:
-	_world_limits.custom_limits.w = _item_world_limit_bottom.value
-
-
-func _on_limits_toggled(_item: PropertyTreeItem) -> void:
+func _set_limits_mode(_item: PropertyTreeItem) -> void:
 	if _item_custom_limits_enabled.value:
-		_world_limits.enable_custom_limits()
+		undo_redo.create_action("Enable custom world limits")
+		undo_redo.add_do_method(_world_limits.enable_custom_limits)
+		undo_redo.add_undo_method(_world_limits.disable_custom_limits)
+		undo_redo.commit_action()
 	else:
-		_world_limits.disable_custom_limits()
+		undo_redo.create_action("Disable custom world limits")
+		undo_redo.add_do_method(_world_limits.disable_custom_limits)
+		undo_redo.add_undo_method(_world_limits.enable_custom_limits)
+		undo_redo.commit_action()
+
+
+func _set_limit_left(_item: PropertyTreeItem) -> void:
+	undo_redo.create_action("Set custom world limits, left side")
+	undo_redo.add_do_method(_world_limits.set_custom_limit_left.bind(
+			_item_world_limit_left.value
+	))
+	undo_redo.add_undo_method(_world_limits.set_custom_limit_left.bind(
+			_world_limits.custom_limits.x
+	))
+	undo_redo.commit_action()
+
+
+func _set_limit_top(_item: PropertyTreeItem) -> void:
+	undo_redo.create_action("Set custom world limits, top side")
+	undo_redo.add_do_method(_world_limits.set_custom_limit_top.bind(
+			_item_world_limit_top.value
+	))
+	undo_redo.add_undo_method(_world_limits.set_custom_limit_top.bind(
+			_world_limits.custom_limits.y
+	))
+	undo_redo.commit_action()
+
+
+func _set_limit_right(_item: PropertyTreeItem) -> void:
+	undo_redo.create_action("Set custom world limits, right side")
+	undo_redo.add_do_method(_world_limits.set_custom_limit_right.bind(
+			_item_world_limit_right.value
+	))
+	undo_redo.add_undo_method(_world_limits.set_custom_limit_right.bind(
+			_world_limits.custom_limits.z
+	))
+	undo_redo.commit_action()
+
+
+func _set_limit_bottom(_item: PropertyTreeItem) -> void:
+	undo_redo.create_action("Set custom world limits, bottom side")
+	undo_redo.add_do_method(_world_limits.set_custom_limit_bottom.bind(
+			_item_world_limit_bottom.value
+	))
+	undo_redo.add_undo_method(_world_limits.set_custom_limit_bottom.bind(
+			_world_limits.custom_limits.w
+	))
+	undo_redo.commit_action()

@@ -65,6 +65,22 @@ func disable_custom_limits() -> void:
 		current_limits_changed.emit(self)
 
 
+func set_custom_limit_left(value: int) -> void:
+	custom_limits.x = value
+
+
+func set_custom_limit_top(value: int) -> void:
+	custom_limits.y = value
+
+
+func set_custom_limit_right(value: int) -> void:
+	custom_limits.z = value
+
+
+func set_custom_limit_bottom(value: int) -> void:
+	custom_limits.w = value
+
+
 func current_limits() -> Vector4i:
 	return _current_limits.value()
 

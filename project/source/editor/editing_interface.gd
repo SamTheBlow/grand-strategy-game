@@ -25,7 +25,10 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
 }
 
-var _current_interface: Node:
+## This will be given to all new interfaces.
+var undo_redo := UndoRedo.new()
+
+var _current_interface: AppEditorInterface:
 	set(value):
 		if _current_interface == value:
 			return
@@ -118,6 +121,7 @@ func open_province_edit_interface(
 func _update_contents() -> void:
 	visible = _current_interface != null
 	if _current_interface != null:
+		_current_interface.undo_redo = undo_redo
 		_contents_container.add_child(_current_interface)
 
 

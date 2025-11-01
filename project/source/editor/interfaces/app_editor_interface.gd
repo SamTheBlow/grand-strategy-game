@@ -7,6 +7,8 @@ var editor_settings := AppEditorSettings.new():
 		editor_settings = value
 		_update_editor_settings()
 
+var undo_redo := UndoRedo.new()
+
 
 func _ready() -> void:
 	_update_editor_settings()

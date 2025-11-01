@@ -14,3 +14,10 @@ static func print_relationships(countries: Countries) -> void:
 					country_1.relationships
 					.with_country(country_2).preset().name
 			)
+
+
+## Print nicely formatted information about given [UndoRedo].
+static func print_undo_redo(undo_redo: UndoRedo) -> void:
+	print("[UNDO REDO] Current version: ", undo_redo.get_version())
+	for i in undo_redo.get_history_count():
+		print(i, ": ", undo_redo.get_action_name(i))

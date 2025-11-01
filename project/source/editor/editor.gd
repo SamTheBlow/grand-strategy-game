@@ -32,6 +32,9 @@ var _undo_redo: UndoRedo:
 		_undo_redo = value
 		_undo_redo.version_changed.connect(_update_window_title)
 
+## Keeps track of at what point the project was last saved.
+var _undo_redo_saved_version: int = 1
+
 ## An array of file paths
 var _recently_opened_projects: Array[String] = []
 
@@ -62,6 +65,13 @@ func _exit_tree() -> void:
 	)
 
 
+func _process(_delta: float) -> void:
+	if Input.is_action_just_pressed(&"ui_undo"):
+		_undo_redo.undo()
+	elif Input.is_action_just_pressed(&"ui_redo"):
+		_undo_redo.redo()
+
+
 func _setup_project() -> void:
 	_world_setup.clear()
 	_world_limits_rect.world_limits = null
@@ -74,14 +84,19 @@ func _setup_project() -> void:
 			_on_selected_province_changed
 	)
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
+	_editing_interface.undo_redo = _undo_redo
 
 	_update_window_title()
 	_update_menu_visibility()
 
 
 func _update_window_title() -> void:
+	var dirty_string: String = ""
+	if _undo_redo.get_version() != _undo_redo_saved_version:
+		dirty_string = "*"
+
 	get_window().title = (
-			("*" if _undo_redo.get_version() > 1 else "")
+			dirty_string
 			+ _current_project.metadata.project_name_or_default() + " - "
 			+ ProjectSettings.get_setting("application/config/name", "")
 	)
@@ -101,6 +116,11 @@ func _update_menu_visibility_after_save() -> void:
 	_project_tab.set_item_disabled(
 			7, not _current_project.has_valid_file_path()
 	)
+
+
+func _update_undo_redo() -> void:
+	_undo_redo_saved_version = _undo_redo.get_version()
+	_update_window_title()
 
 
 func _setup_menu_shortcuts() -> void:
@@ -152,6 +172,7 @@ func _open_project() -> void:
 func _save_project() -> void:
 	if _current_project.has_valid_file_path():
 		_current_project.save()
+		_update_undo_redo()
 		_update_menu_visibility_after_save()
 	else:
 		_save_dialog.show()
@@ -251,6 +272,7 @@ func _on_project_loaded(project: GameProject) -> void:
 
 func _on_save_dialog_file_selected(path: String) -> void:
 	_current_project.save_as(path)
+	_update_undo_redo()
 	_update_menu_visibility_after_save()
 
 
