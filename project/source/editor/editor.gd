@@ -21,9 +21,16 @@ var editor_settings := AppEditorSettings.new()
 var _current_project: GameProject:
 	set(value):
 		_current_project = value
-		_setup_project()
-		_update_window_title()
-		_update_menu_visibility()
+		_undo_redo = UndoRedo.new()
+		if is_node_ready():
+			_setup_project()
+
+var _undo_redo: UndoRedo:
+	set(value):
+		if _undo_redo != null:
+			_undo_redo.version_changed.disconnect(_update_window_title)
+		_undo_redo = value
+		_undo_redo.version_changed.connect(_update_window_title)
 
 ## An array of file paths
 var _recently_opened_projects: Array[String] = []
@@ -37,30 +44,30 @@ var _recently_opened_projects: Array[String] = []
 @onready var _save_dialog := %SaveDialog as FileDialog
 
 
+func _init() -> void:
+	_open_new_project()
+
+
 func _ready() -> void:
-	_set_menu_shortcuts()
+	_setup_menu_shortcuts()
 	_world_setup.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
-	_open_new_project()
+	_setup_project()
 
 
 func _exit_tree() -> void:
 	# Reset the window title
-	_current_project = null
+	get_window().title = (
+			ProjectSettings.get_setting("application/config/name", "")
+	)
 
 
 func _setup_project() -> void:
-	if not is_node_ready():
-		return
-
 	_world_setup.clear()
 	_world_limits_rect.world_limits = null
 	# We close the interface
 	# because it may be using data from the previous project.
 	_editing_interface.close_interface()
-
-	if _current_project == null:
-		return
 
 	_world_setup.load_world(_current_project)
 	_world_setup.world().province_selection.selected_province_changed.connect(
@@ -68,36 +75,22 @@ func _setup_project() -> void:
 	)
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
 
+	_update_window_title()
+	_update_menu_visibility()
+
 
 func _update_window_title() -> void:
 	get_window().title = (
-			_window_title_prefix()
+			("*" if _undo_redo.get_version() > 1 else "")
+			+ _current_project.metadata.project_name_or_default() + " - "
 			+ ProjectSettings.get_setting("application/config/name", "")
 	)
 
 
-## If there is no current project, returns an empty string.
-func _window_title_prefix() -> String:
-	if _current_project == null:
-		return ""
-	return _current_project.metadata.project_name_or_default() + " - "
-
-
 ## Updates the visibility for all the menu options
 func _update_menu_visibility() -> void:
-	if not is_node_ready():
-		return
-
 	# "Open Recent"
 	_project_tab.set_item_disabled(2, _recently_opened_projects.is_empty())
-
-	# "Save"
-	_project_tab.set_item_disabled(4, _current_project == null)
-	# "Save As..."
-	_project_tab.set_item_disabled(5, _current_project == null)
-
-	# "Play"
-	_project_tab.set_item_disabled(9, _current_project == null)
 
 	_update_menu_visibility_after_save()
 
@@ -106,16 +99,11 @@ func _update_menu_visibility() -> void:
 func _update_menu_visibility_after_save() -> void:
 	# "Show in File Manager"
 	_project_tab.set_item_disabled(
-			7,
-			_current_project == null
-			or not _current_project.has_valid_file_path()
+			7, not _current_project.has_valid_file_path()
 	)
 
 
-func _set_menu_shortcuts() -> void:
-	if not is_node_ready():
-		return
-
+func _setup_menu_shortcuts() -> void:
 	var shortcut_quit := Shortcut.new()
 	shortcut_quit.events = InputMap.action_get_events(INPUT_ACTION_QUIT_EDITOR)
 	_editor_tab.set_item_shortcut(2, shortcut_quit)
@@ -175,7 +163,7 @@ func _play() -> void:
 
 
 func _open_interface(type: EditingInterface.InterfaceType) -> void:
-	if _current_project == null or editor_settings == null:
+	if editor_settings == null:
 		return
 
 	# Deselect province
@@ -262,9 +250,8 @@ func _on_project_loaded(project: GameProject) -> void:
 
 
 func _on_save_dialog_file_selected(path: String) -> void:
-	if _current_project != null:
-		_current_project.save_as(path)
-		_update_menu_visibility_after_save()
+	_current_project.save_as(path)
+	_update_menu_visibility_after_save()
 
 
 func _on_selected_province_changed(province: Province) -> void:
@@ -301,10 +288,6 @@ func _on_province_interface_closed() -> void:
 
 
 func _on_province_change_owner_pressed(province: Province) -> void:
-	if _current_project == null:
-		push_error("Current project is null.")
-		return
-
 	# Open popup that lets you choose a country
 	var popup := _popup_scene.instantiate() as GamePopup
 	var country_select_popup := (
