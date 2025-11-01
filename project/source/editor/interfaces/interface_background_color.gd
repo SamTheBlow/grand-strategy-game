@@ -18,15 +18,13 @@ func _ready() -> void:
 
 func setup(world: GameWorld) -> void:
 	if _is_setup:
-		_world.background_color_changed.disconnect(
-				_on_background_color_changed
-		)
+		_world.background_color_changed.disconnect(_update_background_color)
 	else:
-		_item_background_color.value_changed.connect(_on_item_value_changed)
+		_item_background_color.value_changed.connect(_set_background_color)
 
 	_world = world
 	_item_background_color.value = _world.background_color
-	_world.background_color_changed.connect(_on_background_color_changed)
+	_world.background_color_changed.connect(_update_background_color)
 	_is_setup = true
 
 	if is_node_ready():
@@ -38,9 +36,18 @@ func _update_game_settings() -> void:
 	_game_settings_node.refresh()
 
 
-func _on_item_value_changed(_item: ItemColor) -> void:
-	_world.background_color = _item_background_color.value
-
-
-func _on_background_color_changed(color: Color) -> void:
+func _update_background_color(color: Color) -> void:
+	_item_background_color.value_changed.disconnect(_set_background_color)
 	_item_background_color.value = color
+	_item_background_color.value_changed.connect(_set_background_color)
+
+
+func _set_background_color(_item: ItemColor) -> void:
+	undo_redo.create_action("Set background color")
+	undo_redo.add_do_method(_world.set_background_color.bind(
+			_item_background_color.value
+	))
+	undo_redo.add_undo_method(_world.set_background_color.bind(
+			_world.background_color
+	))
+	undo_redo.commit_action()

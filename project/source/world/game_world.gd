@@ -31,5 +31,9 @@ func _init(game: Game) -> void:
 	)
 
 
+func set_background_color(value: Color) -> void:
+	background_color = value
+
+
 func limits() -> WorldLimits:
 	return _limits
