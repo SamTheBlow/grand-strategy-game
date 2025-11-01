@@ -163,7 +163,7 @@ func _send_game_to_clients(
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	var game_raw_dict: Dictionary = GameParsing.game_to_raw_dict(project.game)
+	var game_raw_dict: Dictionary = GameParsing.to_raw_dict(project.game)
 
 	if multiplayer_id == -1:
 		_receive_new_game.rpc(game_raw_dict)

@@ -131,14 +131,6 @@ func client_controls_country(multiplayer_id: int, country: Country) -> bool:
 	return false
 
 
-## Converts this node into raw data for the purpose of saving/loading.
-func raw_data() -> Array:
-	var players_data: Array = []
-	for player in _list:
-		players_data.append(player.raw_data())
-	return players_data
-
-
 # TODO move this to a different class
 ## Finds the [GamePlayer] associated with given [Player].
 ## Turns it into an AI. If it's a spectator, removes it from the list.

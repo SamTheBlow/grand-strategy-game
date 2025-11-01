@@ -303,8 +303,8 @@ func _on_country_duplicated(
 	new_country.color = country.color
 	new_country.money = country.money
 	# Create a deep duplicate by parsing to raw data and back into a new object
-	new_country.relationships = DiplomacyRelationshipsFromRaw.parsed_from(
-			DiplomacyRelationshipsToRaw.result(country.relationships),
+	new_country.relationships = DiplomacyRelationshipParsing.from_raw_data(
+			DiplomacyRelationshipParsing.to_raw_array(country.relationships),
 			project.game,
 			new_country
 	)

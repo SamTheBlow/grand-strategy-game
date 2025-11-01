@@ -69,18 +69,5 @@ func is_spectating() -> bool:
 	return playing_country == null
 
 
-## For saving/loading purposes
-func raw_data() -> Dictionary:
-	var player_data: Dictionary = {}
-	player_data["id"] = id
-	if playing_country:
-		player_data["playing_country_id"] = playing_country.id
-	player_data["is_human"] = is_human
-	player_data["username"] = username
-	player_data["ai_type"] = player_ai.type()
-	player_data["ai_personality_type"] = player_ai.personality.type()
-	return player_data
-
-
 func _on_username_changed(new_username: String) -> void:
 	username = new_username

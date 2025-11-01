@@ -46,13 +46,3 @@ func list() -> Array[Country]:
 ## Returns the number of countries in this list.
 func size() -> int:
 	return _list.size()
-
-
-## Returns a new instance parsed from given raw data.
-static func from_raw_data(raw_data: Variant) -> Countries:
-	return CountryParsing.countries_from_raw_data(raw_data)
-
-
-## Returns this instance parsed to a raw array.
-func to_raw_array() -> Array:
-	return CountryParsing.countries_to_raw_array(_list)

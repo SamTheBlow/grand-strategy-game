@@ -65,13 +65,13 @@ func _send_active_state_to_clients() -> void:
 		return
 
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc(RulesToRawDict.result(active_state))
+		_receive_state.rpc(RuleParsing.to_raw_dict(active_state))
 
 
 ## Updates the entire state on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_state(data: Dictionary) -> void:
-	state_changed.emit(RulesFromRaw.parsed_from(data))
+	state_changed.emit(RuleParsing.from_raw_data(data))
 
 
 ## Updates a rule on clients.
@@ -92,9 +92,7 @@ func _on_rule_changed(rule_name: String, rule_item: PropertyTreeItem) -> void:
 ## On the server, sends the current state to the new client.
 func _on_peer_connected(peer_id: int) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_state.rpc_id(
-				peer_id, RulesToRawDict.result(active_state)
-		)
+		_receive_state.rpc_id(peer_id, RuleParsing.to_raw_dict(active_state))
 
 
 ## Resets the menu's state on disconnected clients.

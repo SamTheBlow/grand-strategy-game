@@ -1,5 +1,5 @@
 class_name ProjectParsing
-## Parses [GameProject] data.
+## Parses raw data from/to a [GameProject].
 
 const _VERSION_KEY: String = "version"
 const _TEXTURES_KEY: String = "textures"
@@ -72,13 +72,13 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 	var output: Dictionary = { _VERSION_KEY: _SAVE_DATA_VERSION }
 
 	# Game
-	var game_dict: Dictionary = GameParsing.game_to_raw_dict(project.game)
+	var game_dict: Dictionary = GameParsing.to_raw_dict(project.game)
 	if not game_dict.is_empty():
 		output.merge(game_dict)
 
 	# Textures
 	var texture_data: Array = (
-			ProjectTextureParsing.textures_to_raw_array(project.textures, true)
+			ProjectTextureParsing.to_raw_array(project.textures, true)
 	)
 	if not texture_data.is_empty():
 		output.merge({ _TEXTURES_KEY: texture_data })
@@ -97,12 +97,12 @@ static func _game_project(
 	var game_project := GameProject.new()
 
 	# Load the textures
-	game_project.textures = ProjectTextureParsing.textures_from_raw_data(
-			raw_dict.get(_TEXTURES_KEY)
+	game_project.textures = (
+			ProjectTextureParsing.from_raw_data(raw_dict.get(_TEXTURES_KEY))
 	)
 
 	# Load the game
-	game_project.game = GameParsing.game_from_raw_dict(raw_dict, file_path)
+	game_project.game = GameParsing.from_raw_dict(raw_dict, file_path)
 
 	# Load the metadata
 	game_project.metadata = ProjectMetadata.from_raw(raw_dict, file_path)

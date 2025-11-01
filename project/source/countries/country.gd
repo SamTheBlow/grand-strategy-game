@@ -138,11 +138,6 @@ func reachable_countries(
 	return reachable_countries_list
 
 
-## Returns this instance parsed to a raw dictionary.
-func to_raw_dict() -> Dictionary:
-	return CountryParsing.country_to_raw_dict(self)
-
-
 ## Does the setup required when creating a new instance.
 class Factory:
 	var _game: Game
