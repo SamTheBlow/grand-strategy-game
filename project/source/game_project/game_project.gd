@@ -3,8 +3,8 @@ class_name GameProject
 ## Also contains useful functions.
 
 var game := Game.new()
-var textures := ProjectTextures.new()
 var metadata := ProjectMetadata.new()
+var textures := ProjectTextures.new(metadata.project_absolute_path)
 
 
 ## Saves the project to its assigned file path.
@@ -18,7 +18,7 @@ func save() -> void:
 
 ## Updates this project's file path to use given path. Saves to the new path.
 func save_as(file_path: String) -> void:
-	metadata.file_path = file_path
+	metadata.project_absolute_path.value = file_path
 	save()
 
 
@@ -26,15 +26,15 @@ func save_as(file_path: String) -> void:
 func has_valid_file_path() -> bool:
 	if (
 			not OS.has_feature("editor")
-			and metadata.file_path.begins_with("res://")
+			and metadata.project_absolute_path.value.begins_with("res://")
 	):
 		return false
-	return FileAccess.file_exists(metadata.file_path)
+	return FileAccess.file_exists(metadata.project_absolute_path.value)
 
 
 ## No effect if the project doesn't have a valid file path.
 func show_in_file_manager() -> void:
 	if has_valid_file_path():
-		OS.shell_show_in_file_manager(
-				ProjectSettings.globalize_path(metadata.file_path)
-		)
+		OS.shell_show_in_file_manager(ProjectSettings.globalize_path(
+				metadata.project_absolute_path.value
+		))

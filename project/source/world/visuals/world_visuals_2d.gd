@@ -49,7 +49,7 @@ func _initialize() -> void:
 
 	_auto_arrow_input.game = project.game
 
-	_decorations_node.world_decorations = world.decorations
+	_decorations_node.setup(world.decorations, project.textures)
 	_update_decoration_visibility()
 
 	_auto_arrow_container.setup(project.game.countries)

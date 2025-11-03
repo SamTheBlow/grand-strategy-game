@@ -42,7 +42,9 @@ static func generated_from(
 		raw_data: Variant, metadata: ProjectMetadata, game_rules: GameRules
 ) -> ParseResult:
 	# Load the project
-	var parse_result: ParseResult = parsed_from(raw_data, metadata.file_path)
+	var parse_result: ParseResult = (
+			parsed_from(raw_data, metadata.project_absolute_path.value)
+	)
 	if parse_result.error:
 		return parse_result
 	var game_project: GameProject = parse_result.result_project
@@ -92,20 +94,25 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 
 
 static func _game_project(
-		raw_dict: Dictionary, file_path: String
+		raw_dict: Dictionary, project_absolute_path: String
 ) -> GameProject:
 	var game_project := GameProject.new()
+	var absolute_path_ref := StringRef.new(project_absolute_path)
 
 	# Load the textures
-	game_project.textures = (
-			ProjectTextureParsing.from_raw_data(raw_dict.get(_TEXTURES_KEY))
+	game_project.textures = ProjectTextureParsing.from_raw_data(
+			raw_dict.get(_TEXTURES_KEY), absolute_path_ref
 	)
 
 	# Load the game
-	game_project.game = GameParsing.from_raw_dict(raw_dict, file_path)
+	game_project.game = (
+			GameParsing.from_raw_dict(raw_dict, game_project.textures)
+	)
 
 	# Load the metadata
-	game_project.metadata = ProjectMetadata.from_raw(raw_dict, file_path)
+	game_project.metadata = (
+			ProjectMetadata.from_raw(raw_dict, absolute_path_ref)
+	)
 
 	return game_project
 

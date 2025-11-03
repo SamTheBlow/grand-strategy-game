@@ -71,7 +71,8 @@ func _update_file_path_visibility() -> void:
 		return
 
 	_file_path_node.visible = (
-			is_file_path_visible and metadata.file_path != ""
+			is_file_path_visible
+			and metadata.project_absolute_path.value != ""
 	)
 
 
@@ -81,7 +82,7 @@ func _update_info() -> void:
 
 	_icon_texture.texture = metadata.icon
 	_name_label.text = metadata.project_name_or_default()
-	_file_path_label.text = metadata.file_path
+	_file_path_label.text = metadata.project_absolute_path.value
 	settings.metadata = metadata
 
 

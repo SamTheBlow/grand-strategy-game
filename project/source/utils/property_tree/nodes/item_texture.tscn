@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://ccq7n0x7mov6s"]
+[gd_scene load_steps=2 format=3 uid="uid://ccq7n0x7mov6s"]
 
 [ext_resource type="Script" uid="uid://r58p2sm60px6" path="res://source/utils/property_tree/nodes/item_texture_node.gd" id="1_l37pk"]
-[ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_l37pk"]
 
 [node name="ItemTexture" type="MarginContainer"]
 anchors_preset = 15
@@ -20,17 +19,16 @@ theme_override_constants/separation = 0
 
 [node name="ItemContainer" type="HBoxContainer" parent="Container"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="Label" type="Label" parent="Container/ItemContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Texture"
 
 [node name="TextureRect" type="TextureRect" parent="Container/ItemContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
-texture = ExtResource("2_l37pk")
 expand_mode = 1
 stretch_mode = 5
 
@@ -39,13 +37,21 @@ layout_mode = 2
 size_flags_vertical = 4
 text = "Select image..."
 
-[node name="ErrorMessage" type="Label" parent="Container/ItemContainer"]
+[node name="Feedback" type="Label" parent="Container/ItemContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_colors/font_color = Color(1, 0.3, 0.3, 1)
-text = "Error :("
 vertical_alignment = 1
 clip_text = true
 
-[connection signal="pressed" from="Container/ItemContainer/BrowseButton" to="." method="_on_browse_button_pressed"]
+[node name="FileDialog" type="FileDialog" parent="."]
+oversampling_override = 1.0
+title = "Open a File"
+initial_position = 1
+size = Vector2i(904, 360)
+dialog_hide_on_ok = true
+file_mode = 0
+access = 2
+
+[connection signal="pressed" from="Container/ItemContainer/BrowseButton" to="FileDialog" method="show"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

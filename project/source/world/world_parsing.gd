@@ -15,7 +15,7 @@ const _LIMITS_KEY: String = "limits"
 ##
 ## Always succeeds. Ignores unrecognized data.
 static func load_from_raw_data(
-		raw_data: Variant, game: Game, project_file_path: String
+		raw_data: Variant, game: Game, project_textures: ProjectTextures
 ) -> void:
 	game.world = GameWorld.new(game)
 
@@ -42,7 +42,7 @@ static func load_from_raw_data(
 
 	# Decorations
 	var parse_result := WorldDecorationParsing.from_raw_data(
-			raw_dict.get(_DECORATIONS_KEY), project_file_path
+			raw_dict.get(_DECORATIONS_KEY), project_textures
 	)
 	if not parse_result.invalid_file_paths.is_empty():
 		push_warning(

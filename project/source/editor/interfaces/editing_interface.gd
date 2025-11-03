@@ -154,6 +154,7 @@ func _new_interface(
 	elif new_interface is InterfaceDecorationList:
 		var list_interface := new_interface as InterfaceDecorationList
 		list_interface.decorations = project.game.world.decorations
+		list_interface.project_textures = project.textures
 		list_interface.item_selected.connect(
 				_open_new_decoration_edit_interface.bind(
 						project, editor_settings
@@ -195,6 +196,7 @@ func _open_new_decoration_edit_interface(
 			_on_world_decoration_duplicated.bind(project, editor_settings)
 	)
 	new_interface.world_decoration = world_decoration
+	new_interface.project_textures = project.textures
 	open_interface(new_interface)
 
 

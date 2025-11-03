@@ -1,12 +1,11 @@
 @tool
 class_name ItemTexture
 extends PropertyTreeItem
-## A [PropertyTreeItem] that contains a [Texture2D].
+## A [PropertyTreeItem] that contains a [ProjectTexture].
 
 signal value_changed(this: PropertyTreeItem)
 
-## May be null.
-@export var value: Texture2D = null:
+var value: ProjectTexture = ProjectTexture.none():
 	set(new_value):
 		if _is_locked:
 			push_warning(_LOCKED_ITEM_MESSAGE)
@@ -16,14 +15,13 @@ signal value_changed(this: PropertyTreeItem)
 			value = new_value
 			value_changed.emit(self)
 
+## May be null.
+var project_textures: ProjectTextures
+## May be null.
+var fallback_texture: Texture2D
 
-func get_data() -> Dictionary:
-	return {} # TODO give raw image data
 
-
-func set_data(data: Variant) -> void:
-	if data is Dictionary:
-		# TODO turn raw image data into a texture
-		push_error("Not implemented yet...")
-	else:
-		push_warning(_INVALID_TYPE_MESSAGE)
+func texture() -> Texture2D:
+	if project_textures == null:
+		return null
+	return value.texture(project_textures, fallback_texture)

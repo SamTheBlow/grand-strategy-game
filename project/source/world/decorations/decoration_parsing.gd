@@ -13,7 +13,7 @@ const _COLOR_KEY: String = "color"
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func from_raw_data(
-		raw_data: Variant, project_file_path: String
+		raw_data: Variant, project_textures: ProjectTextures
 ) -> ParseResult:
 	var output := ParseResult.new()
 
@@ -24,7 +24,7 @@ static func from_raw_data(
 	var decoration_list: Array[WorldDecoration] = []
 	for raw_decoration: Variant in raw_array:
 		var parse_result: ParseResult = _decoration_from_raw(
-				raw_decoration, project_file_path
+				raw_decoration, project_textures
 		)
 		output.invalid_file_paths.append_array(parse_result.invalid_file_paths)
 		decoration_list.append_array(parse_result.decorations.list())
@@ -43,7 +43,7 @@ static func to_raw_array(world_decorations: WorldDecorations) -> Array:
 
 
 static func _decoration_from_raw(
-		raw_data: Variant, project_absolute_path: String
+		raw_data: Variant, project_textures: ProjectTextures
 ) -> ParseResult:
 	var output := ParseResult.new()
 
@@ -53,15 +53,21 @@ static func _decoration_from_raw(
 
 	var decoration := WorldDecoration.new()
 
-	if ParseUtils.dictionary_has_string(raw_dict, _TEXTURE_KEY):
-		decoration.texture_file_path = raw_dict[_TEXTURE_KEY]
-		decoration.texture = ProjectTexture.texture_from_relative_path(
-				project_absolute_path, decoration.texture_file_path
+	# Texture
+	if ParseUtils.dictionary_has_number(raw_dict, _TEXTURE_KEY):
+		# Id
+		var id: int = ParseUtils.dictionary_int(raw_dict, _TEXTURE_KEY)
+		project_textures.claim_id(id)
+		decoration.texture = TextureFromId.new(id)
+	elif ParseUtils.dictionary_has_string(raw_dict, _TEXTURE_KEY):
+		# File path
+		decoration.texture = TextureFromFilePath.new(
+				raw_dict[_TEXTURE_KEY],
+				project_textures.project_absolute_path_ref()
 		)
-
-	if decoration.texture == null:
-		output.invalid_file_paths = [decoration.texture_file_path]
-		return output
+	elif ParseUtils.dictionary_has_array(raw_dict, _TEXTURE_KEY):
+		# Image data
+		decoration.texture = TextureFromImageData.new(raw_dict[_TEXTURE_KEY])
 
 	if ParseUtils.dictionary_has_bool(raw_dict, _FLIP_H_KEY):
 		decoration.flip_h = raw_dict[_FLIP_H_KEY]
@@ -113,8 +119,8 @@ static func _decoration_to_raw(decoration: WorldDecoration) -> Dictionary:
 	# We use an empty decoration to check for default values
 	var default_decoration := WorldDecoration.new()
 
-	if decoration.texture_file_path != default_decoration.texture_file_path:
-		output.merge({ _TEXTURE_KEY: decoration.texture_file_path })
+	if decoration.texture.to_raw_data() != null:
+		output.merge({ _TEXTURE_KEY: decoration.texture.to_raw_data() })
 
 	if decoration.flip_h != default_decoration.flip_h:
 		output.merge({ _FLIP_H_KEY: decoration.flip_h })

@@ -8,8 +8,10 @@ const _RAW_IMAGE_DATA_KEY: String = "raw_image_data"
 
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
-static func from_raw_data(raw_data: Variant) -> ProjectTextures:
-	var project_textures := ProjectTextures.new()
+static func from_raw_data(
+		raw_data: Variant, project_absolute_path: StringRef
+) -> ProjectTextures:
+	var project_textures := ProjectTextures.new(project_absolute_path)
 
 	if raw_data is not Array:
 		return project_textures
@@ -27,12 +29,51 @@ static func to_raw_array(
 		project_textures: ProjectTextures, use_file_paths: bool
 ) -> Array:
 	var output: Array = []
-	for texture_id in project_textures._id_map:
-		if texture_id < 0:
+
+	# Start by adding the textures that have a file path.
+	var already_added_ids: Array[int] = []
+	for absolute_file_path in project_textures._file_map:
+		var id: int = project_textures._file_map[absolute_file_path]
+		if already_added_ids.has(id):
 			continue
-		output.append(_texture_to_raw_dict(
-				project_textures._id_map[texture_id], use_file_paths
-		))
+
+		if use_file_paths:
+			var relative_path: String = FileUtils.path_made_relative(
+					project_textures.project_absolute_path_ref().value,
+					absolute_file_path
+			)
+			if not relative_path.is_empty():
+				output.append({ _ID_KEY: id, _FILE_PATH_KEY: relative_path })
+		else:
+			var image_data := Array(TextureFromImageData.to_image_data(
+					project_textures._id_map[id]
+			))
+			if not image_data.is_empty():
+				output.append(
+						{ _ID_KEY: id, _RAW_IMAGE_DATA_KEY: image_data }
+				)
+
+		already_added_ids.append(id)
+
+	# Now add the textures that don't have a file path.
+	for id in project_textures._id_map:
+		if already_added_ids.has(id):
+			continue
+
+		if use_file_paths:
+			# TODO save the texture to a new file path
+			var relative_path: String = ""
+			if not relative_path.is_empty():
+				output.append({ _ID_KEY: id, _FILE_PATH_KEY: relative_path })
+		else:
+			var image_data := Array(TextureFromImageData.to_image_data(
+					project_textures._id_map[id]
+			))
+			if not image_data.is_empty():
+				output.append(
+						{ _ID_KEY: id, _RAW_IMAGE_DATA_KEY: image_data }
+				)
+
 	return output
 
 
@@ -47,43 +88,34 @@ static func _load_texture_from_raw_data(
 	if not ParseUtils.dictionary_has_number(raw_dict, _ID_KEY):
 		return
 	var id: int = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
+	if id < 0 or project_textures._id_map.has(id):
+		return
 
-	# If there's no file path and no raw image data, use the default texture
-	var new_project_texture := ProjectTexture.new()
-	new_project_texture.id = id
-
-	# File path (optional, has priority over raw image data)
-	if ParseUtils.dictionary_has_string(raw_dict, _FILE_PATH_KEY):
-		var file_path: String = raw_dict[_FILE_PATH_KEY]
-		var texture_from_path: ProjectTexture = (
-				project_textures.texture_from_file_path(file_path)
+	# File path (has priority over raw image data)
+	#
+	# Special case: if the file path is an empty string,
+	# act as if no file path was provided.
+	if (
+			ParseUtils.dictionary_has_string(raw_dict, _FILE_PATH_KEY)
+			and not raw_dict[_FILE_PATH_KEY].is_empty()
+	):
+		var absolute_path: String = ProjectTextures.texture_path_made_absolute(
+				project_textures.project_absolute_path_ref().value,
+				raw_dict[_FILE_PATH_KEY]
 		)
-		if texture_from_path != null:
-			# We've already loaded this image before.
-			# Avoid loading it again
-			new_project_texture.texture = texture_from_path.texture
-			new_project_texture._file_path = file_path
-		else:
-			new_project_texture.load_texture_from_path(file_path)
+		project_textures.claim_id_with_file_path(id, absolute_path)
 
-	# Raw image data (optional)
-	elif ParseUtils.dictionary_has_array(raw_dict, _RAW_IMAGE_DATA_KEY):
+	# Raw image data
+	#
+	# Special case: if the image data is an empty array,
+	# act as if no image data was provided.
+	elif (
+			ParseUtils.dictionary_has_array(raw_dict, _RAW_IMAGE_DATA_KEY)
+			and not raw_dict[_RAW_IMAGE_DATA_KEY].is_empty()
+	):
 		var raw_image_data := PackedByteArray(raw_dict[_RAW_IMAGE_DATA_KEY])
-		new_project_texture.load_texture_from_data(raw_image_data)
+		project_textures.claim_id_with_image_data(id, raw_image_data)
 
-	project_textures.add(new_project_texture)
-
-
-static func _texture_to_raw_dict(
-		project_texture: ProjectTexture, use_file_path: bool
-) -> Dictionary:
-	var output: Dictionary = { _ID_KEY: project_texture.id }
-
-	if use_file_path:
-		output.merge({ _FILE_PATH_KEY: project_texture._file_path })
+	# We didn't find either. Claim the id anyway.
 	else:
-		output.merge({
-			_RAW_IMAGE_DATA_KEY: Array(project_texture.texture_data())
-		})
-
-	return output
+		project_textures.claim_id(id)

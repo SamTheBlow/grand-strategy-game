@@ -81,7 +81,7 @@ func enter_play_menu() -> void:
 func play_game(project: GameProject) -> void:
 	project.game.game_started.connect(_on_game_started)
 	players.player_removed.connect(project.game.game_players._on_player_removed)
-	project.metadata.file_path = SAVE_FILE_PATH
+	project.metadata.project_absolute_path.value = SAVE_FILE_PATH
 
 	var game_node := game_scene.instantiate() as GameNode
 	game_node.project = project

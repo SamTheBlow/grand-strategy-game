@@ -15,7 +15,7 @@ static func generated_from(
 		metadata: ProjectMetadata, game_rules: GameRules
 ) -> ProjectParsing.ParseResult:
 	var file_json := FileJSON.new()
-	file_json.load_json(metadata.file_path)
+	file_json.load_json(metadata.project_absolute_path.value)
 	if file_json.error:
 		return ProjectParsing.ResultError.new(file_json.error_message)
 

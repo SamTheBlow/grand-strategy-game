@@ -3,14 +3,11 @@ class_name WorldDecoration
 
 signal changed(this: WorldDecoration)
 
-const _DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
+const DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
-var texture: Texture2D = _DEFAULT_TEXTURE:
+var texture: ProjectTexture = ProjectTexture.none():
 	set(value):
-		if value == null:
-			texture = _DEFAULT_TEXTURE
-		else:
-			texture = value
+		texture = value
 		changed.emit(self)
 
 var flip_h: bool = false:
@@ -43,13 +40,14 @@ var color := Color.WHITE:
 		color = value
 		changed.emit(self)
 
-## We keep the file path in memory to use it in save files
-var texture_file_path: String = ""
+
+func texture_2d(project_textures: ProjectTextures) -> Texture2D:
+	return texture.texture(project_textures, DEFAULT_TEXTURE)
 
 
 ## Takes a [Sprite2D] and applies this decoration's data to it.
-func apply_to_sprite(sprite: Sprite2D) -> void:
-	sprite.texture = texture
+func apply_to_sprite(sprite: Sprite2D, textures: ProjectTextures) -> void:
+	sprite.texture = texture_2d(textures)
 	sprite.flip_h = flip_h
 	sprite.flip_v = flip_v
 	sprite.position = position
@@ -59,9 +57,11 @@ func apply_to_sprite(sprite: Sprite2D) -> void:
 
 
 ## Takes a [TextureRect] and changes its data to look like this decoration.
-func apply_preview(texture_rect: TextureRect) -> void:
+func apply_preview(
+		texture_rect: TextureRect, textures: ProjectTextures
+) -> void:
 	# Position is not applied. Scale is changed but keeps aspect ratio.
-	texture_rect.texture = texture
+	texture_rect.texture = texture_2d(textures)
 	texture_rect.flip_h = flip_h
 	texture_rect.flip_v = flip_v
 	texture_rect.rotation_degrees = rotation_degrees

@@ -11,9 +11,9 @@ const _PLAYERS_KEY: String = "players"
 
 ## Always succeeds.
 static func from_raw_dict(
-		raw_dict: Dictionary, project_file_path: String
+		raw_dict: Dictionary, project_textures: ProjectTextures
 ) -> Game:
-	return GameFromRawData.new(raw_dict, project_file_path)
+	return GameFromRawData.new(raw_dict, project_textures)
 
 
 static func to_raw_dict(game: Game) -> Dictionary:
@@ -53,7 +53,9 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 
 class GameFromRawData extends Game:
-	func _init(raw_dict: Dictionary, project_file_path: String) -> void:
+	func _init(
+			raw_dict: Dictionary, project_textures: ProjectTextures
+	) -> void:
 		# Rules
 		rules = RuleParsing.from_raw_data(raw_dict.get(_RULES_KEY))
 
@@ -81,7 +83,7 @@ class GameFromRawData extends Game:
 
 		# World
 		WorldParsing.load_from_raw_data(
-				raw_dict.get(_WORLD_KEY), self, project_file_path
+				raw_dict.get(_WORLD_KEY), self, project_textures
 		)
 
 		super()

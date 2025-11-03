@@ -20,8 +20,8 @@ const KEY_STATE_PROJECT_NAME: String = "map_name"
 const KEY_STATE_ICON: String = "icon"
 const KEY_STATE_SETTINGS: String = "settings"
 
-## The project's absolute file path.
-var file_path: String = ""
+## The project's absolute file path. Do not overwrite!
+var project_absolute_path := StringRef.new()
 var project_name: String = ""
 ## The project may have no icon, in which case this will be null.
 var icon: Texture2D
@@ -56,16 +56,16 @@ static func from_file_path(base_path: String) -> ProjectMetadata:
 	if file_json.error:
 		return null
 
-	return from_raw(file_json.result, base_path)
+	return from_raw(file_json.result, StringRef.new(base_path))
 
 
 ## Converts given raw data into a new [ProjectMetadata] instance.
 ## You still need to provide the file path where the data was located.
 static func from_raw(
-		raw_data: Variant, project_absolute_path: String
+		raw_data: Variant, project_absolute_path_ref: StringRef
 ) -> ProjectMetadata:
 	var result := ProjectMetadata.new()
-	result.file_path = project_absolute_path
+	result.project_absolute_path = project_absolute_path_ref
 
 	if raw_data is not Dictionary:
 		return result
@@ -80,8 +80,8 @@ static func from_raw(
 
 	if ParseUtils.dictionary_has_string(meta_dict, KEY_META_ICON):
 		result._icon_file_path = meta_dict[KEY_META_ICON]
-		result.icon = ProjectTexture.texture_from_relative_path(
-				project_absolute_path, result._icon_file_path
+		result.icon = ProjectTextures.texture_from_relative_path(
+				result.project_absolute_path.value, result._icon_file_path
 		)
 
 	if ParseUtils.dictionary_has_dictionary(meta_dict, KEY_META_SETTINGS):
@@ -121,7 +121,7 @@ func to_dict(include_file_path: bool = true) -> Dictionary:
 	}
 
 	if include_file_path:
-		output.merge({ KEY_STATE_FILE_PATH: file_path })
+		output.merge({ KEY_STATE_FILE_PATH: project_absolute_path.value })
 
 	return output
 
@@ -139,9 +139,11 @@ func load_from_raw_dict(raw_dict: Dictionary) -> void:
 	var default_metadata := ProjectMetadata.new()
 
 	if ParseUtils.dictionary_has_string(raw_dict, KEY_STATE_FILE_PATH):
-		file_path = raw_dict[KEY_STATE_FILE_PATH]
+		project_absolute_path.value = raw_dict[KEY_STATE_FILE_PATH]
 	else:
-		file_path = default_metadata.file_path
+		project_absolute_path.value = (
+				default_metadata.project_absolute_path.value
+		)
 
 	if ParseUtils.dictionary_has_string(raw_dict, KEY_STATE_PROJECT_NAME):
 		project_name = raw_dict[KEY_STATE_PROJECT_NAME]

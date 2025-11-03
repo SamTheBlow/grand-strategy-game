@@ -12,6 +12,8 @@ var decorations := WorldDecorations.new():
 		decorations = value
 		_refresh_list()
 
+var project_textures: ProjectTextures
+
 @onready var _editor_settings_node := %EditorSettingsCategory as ItemVoidNode
 @onready var _item_container := %ItemContainer as Node
 
@@ -41,6 +43,7 @@ func _add_element(decoration: WorldDecoration) -> void:
 			_DECORATION_ELEMENT.instantiate() as WorldDecorationListElement
 	)
 	new_element.world_decoration = decoration
+	new_element.project_textures = project_textures
 	new_element.pressed.connect(_on_element_pressed)
 	_item_container.add_child(new_element)
 

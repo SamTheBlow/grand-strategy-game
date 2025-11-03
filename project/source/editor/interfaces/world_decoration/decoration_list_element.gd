@@ -4,10 +4,8 @@ extends Control
 
 signal pressed(this: WorldDecorationListElement)
 
-var world_decoration := WorldDecoration.new():
-	set(value):
-		world_decoration = value
-		_update()
+var world_decoration: WorldDecoration
+var project_textures: ProjectTextures
 
 @onready var _decoration_preview := %DecorationPreview as TextureRect
 @onready var _position_label := %PositionLabel as Label
@@ -25,7 +23,7 @@ func _process(_delta: float) -> void:
 func _update() -> void:
 	if not is_node_ready():
 		return
-	world_decoration.apply_preview(_decoration_preview)
+	world_decoration.apply_preview(_decoration_preview, project_textures)
 	_position_label.text = str(world_decoration.position)
 
 
