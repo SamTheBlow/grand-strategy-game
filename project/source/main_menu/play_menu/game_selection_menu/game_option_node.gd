@@ -13,9 +13,9 @@ var is_file_path_visible: bool = true:
 		is_file_path_visible = value
 		_update_file_path_visibility()
 
-var metadata := ProjectMetadata.new():
+var meta_bundle := MetadataBundle.new():
 	set(value):
-		metadata = value
+		meta_bundle = value
 		_update_info()
 		_update_file_path_visibility()
 
@@ -71,19 +71,18 @@ func _update_file_path_visibility() -> void:
 		return
 
 	_file_path_node.visible = (
-			is_file_path_visible
-			and metadata.project_absolute_path.value != ""
+			is_file_path_visible and meta_bundle.project_absolute_path != ""
 	)
 
 
 func _update_info() -> void:
-	if metadata == null or not is_node_ready():
+	if not is_node_ready():
 		return
 
-	_icon_texture.texture = metadata.icon()
-	_name_label.text = metadata.project_name_or_default()
-	_file_path_label.text = metadata.project_absolute_path.value
-	settings.metadata = metadata
+	_icon_texture.texture = meta_bundle.metadata.icon()
+	_name_label.text = meta_bundle.metadata.project_name_or_default()
+	_file_path_label.text = meta_bundle.project_absolute_path
+	settings.metadata = meta_bundle.metadata
 
 
 func _on_button_pressed() -> void:

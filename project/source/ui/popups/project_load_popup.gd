@@ -19,14 +19,10 @@ func _ready() -> void:
 	_imported_games.hide()
 
 	for project_file_path in _builtin_game_file_paths:
-		var metadata: ProjectMetadata = (
-				ProjectMetadata.from_file_path(project_file_path)
-		)
-		if metadata == null:
-			push_error("Built-in game file path is invalid.")
+		var parse_result := MetadataBundle.from_path(project_file_path)
+		if parse_result.error:
 			continue
-
-		_add_project(metadata, _builtin_games)
+		_add_project(parse_result.result, _builtin_games)
 
 
 func buttons() -> Array[String]:
@@ -34,14 +30,14 @@ func buttons() -> Array[String]:
 
 
 func _add_project(
-		project_metadata: ProjectMetadata,
+		meta_bundle: MetadataBundle,
 		container_node: Collapsible,
 		select_project: bool = false
 ) -> void:
 	var option_node := (
 			preload("uid://b65o5apaw32").instantiate() as GameOptionNode
 	)
-	option_node.metadata = project_metadata
+	option_node.meta_bundle = meta_bundle
 	option_node.selected.connect(_on_project_selected)
 	container_node.add_node(option_node)
 
@@ -65,7 +61,7 @@ func _on_button_pressed(button_id: int) -> void:
 
 		var project_parse_result: ProjectParsing.ParseResult = (
 				ProjectFromPath.loaded_from(
-						_selected_project.metadata.project_absolute_path.value
+						_selected_project.meta_bundle.project_absolute_path
 				)
 		)
 
@@ -84,8 +80,8 @@ func _on_project_selected(option_node: GameOptionNode) -> void:
 	_select_project(option_node)
 
 
-func _on_project_imported(project_metadata: ProjectMetadata) -> void:
+func _on_project_imported(meta_bundle: MetadataBundle) -> void:
 	_imported_games.show()
-	_add_project(project_metadata, _imported_games, true)
+	_add_project(meta_bundle, _imported_games, true)
 	await get_tree().process_frame
 	_imported_games.expand()

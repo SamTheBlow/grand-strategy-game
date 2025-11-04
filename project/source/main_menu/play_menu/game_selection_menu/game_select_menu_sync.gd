@@ -133,24 +133,30 @@ func _receive_selected_game_id(game_id: int) -> void:
 
 ## Adds a new imported game to the list on clients.
 @rpc("authority", "call_remote", "reliable")
-func _receive_new_imported_game(raw_metadata: Dictionary) -> void:
-	active_state.add_imported_game(MetadataParsing.from_raw_data(raw_metadata))
+func _receive_new_imported_game(meta_bundle_raw_data: Variant) -> void:
+	active_state.add_imported_game(
+			MetadataBundle.from_raw_data(meta_bundle_raw_data)
+	)
 
 
 ## Updates a game's metadata on clients.
 @rpc("authority", "call_remote", "reliable")
 func _receive_metadata_change(
-		game_id: int, raw_metadata: Dictionary
+		game_id: int, metadata_raw_data: Dictionary
 ) -> void:
-	var metadata_to_change: ProjectMetadata = (
+	var metadata_to_change: MetadataBundle = (
 			active_state.game_with_id(game_id)
 	)
 	if metadata_to_change == null:
 		push_error("Received an invalid game id when trying to sync.")
 		return
 
-	metadata_to_change.copy_metadata(
-			MetadataParsing.from_raw_data(raw_metadata)
+	metadata_to_change.metadata.copy_metadata(
+			# TODO this feels hacky.
+			# We pass an empty string as the project path.
+			# It only uses it to load from file paths, but this is networking.
+			# We never include file paths. So it doesn't need the project path.
+			MetadataParsing.from_raw_data(metadata_raw_data, "")
 	)
 
 
@@ -161,9 +167,9 @@ func _on_selected_game_changed() -> void:
 
 
 ## On the server, sends the new imported game to all clients.
-func _on_imported_game_added(metadata: ProjectMetadata) -> void:
+func _on_imported_game_added(meta_bundle: MetadataBundle) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
-		_receive_new_imported_game.rpc(metadata.to_raw_dict(false))
+		_receive_new_imported_game.rpc(meta_bundle.to_raw_data(false))
 
 
 ## On the server, sends the changed metadata to all clients.

@@ -67,9 +67,9 @@ func inject(
 ## Called in a separate thread.
 ## Loads a new game, generates data if applicable and
 ## populates the data with given generation settings.
-func _setup_game(metadata: ProjectMetadata, game_rules: GameRules) -> void:
+func _setup_game(meta_bundle: MetadataBundle, game_rules: GameRules) -> void:
 	var generated_game: ProjectParsing.ParseResult = (
-			ProjectFromPath.generated_from(metadata, game_rules)
+			ProjectFromPath.generated_from(meta_bundle, game_rules)
 	)
 
 	_mutex.lock()
@@ -107,7 +107,7 @@ func _on_start_game_error(error_message: String) -> void:
 
 
 func _on_start_game_requested(
-		metadata: ProjectMetadata, generation_settings: GameRules
+		meta_bundle: MetadataBundle, generation_settings: GameRules
 ) -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
@@ -117,7 +117,7 @@ func _on_start_game_requested(
 	_mutex.unlock()
 	_loading_screen.visible = true
 
-	_load_thread.start(_setup_game.bind(metadata, generation_settings))
+	_load_thread.start(_setup_game.bind(meta_bundle, generation_settings))
 
 
 ## Called on the main thread when user presses the "Cancel" button.

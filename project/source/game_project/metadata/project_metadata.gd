@@ -8,9 +8,8 @@ signal state_updated(this: ProjectMetadata)
 const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
 const _DEFAULT_PROJECT_ICON: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
-## The project's absolute file path. Do not overwrite!
-var project_absolute_path := StringRef.new()
 var project_name: String = ""
+
 ## Keys must be of type String, values may be any "raw" type.
 var settings: Dictionary = {}
 
@@ -42,14 +41,14 @@ func set_setting(key: String, value: Variant) -> void:
 ## Returns a new [ProjectMetadata] instance
 ## with data loaded from given file path.
 ## Returns null if the file could not be loaded.
-static func from_file_path(project_path: String) -> ProjectMetadata:
+static func from_file_path(project_absolute_path: String) -> ProjectMetadata:
 	var file_json := FileJSON.new()
-	file_json.load_json(project_path)
+	file_json.load_json(project_absolute_path)
 	if file_json.error:
 		return null
 
 	return MetadataParsing.from_raw_project_data(
-			file_json.result, StringRef.new(project_path)
+			file_json.result, project_absolute_path
 	)
 
 
@@ -61,7 +60,6 @@ func to_raw_dict(include_file_paths: bool) -> Dictionary:
 
 ## Updates all internal values to match given metadata.
 func copy_metadata(metadata: ProjectMetadata) -> void:
-	project_absolute_path.value = metadata.project_absolute_path.value
 	project_name = metadata.project_name
 	_icon = metadata._icon
 	settings = metadata.settings
@@ -84,17 +82,19 @@ class IconNone extends Icon:
 
 
 class IconFromFilePath extends Icon:
-	var _file_path: String
+	var _icon_relative_path: String
 
-	func _init(texture_path: String, project_absolute_path: StringRef) -> void:
-		_file_path = texture_path
+	func _init(
+			icon_relative_path: String, project_absolute_path: String
+	) -> void:
+		_icon_relative_path = icon_relative_path
 		texture = ProjectTextures.texture_from_relative_path(
-				project_absolute_path.value, texture_path
+				project_absolute_path, _icon_relative_path
 		)
 
 	func to_raw_data(include_file_paths: bool) -> Variant:
 		if include_file_paths:
-			return _file_path
+			return _icon_relative_path
 		else:
 			if texture == null:
 				return null

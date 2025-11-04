@@ -106,7 +106,6 @@ static func texture_path_made_absolute(
 		)
 		return texture_path
 
-
 	var project_dir: DirAccess = (
 			DirAccess.open(project_absolute_path.get_base_dir())
 	)
@@ -144,7 +143,7 @@ static func _texture_from_path(path: String) -> Texture2D:
 
 	var image := Image.new()
 	if image.load(path) != OK:
-		push_warning("File is not a valid image.")
+		push_warning("File is not a valid image: ", path)
 		return null
 
 	return ImageTexture.create_from_image(image)

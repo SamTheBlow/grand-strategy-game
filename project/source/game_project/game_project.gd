@@ -3,8 +3,19 @@ class_name GameProject
 ## Also contains useful functions.
 
 var game := Game.new()
+var textures := ProjectTextures.new(_absolute_file_path)
 var metadata := ProjectMetadata.new()
-var textures := ProjectTextures.new(metadata.project_absolute_path)
+
+var _absolute_file_path := StringRef.new()
+
+
+func _init(absolute_file_path: String = "") -> void:
+	_absolute_file_path.value = absolute_file_path
+
+
+## Returns the absolute file path where this project is located.
+func file_path() -> String:
+	return _absolute_file_path.value
 
 
 ## Saves the project to its assigned file path.
@@ -17,8 +28,8 @@ func save() -> void:
 
 
 ## Updates this project's file path to use given path. Saves to the new path.
-func save_as(file_path: String) -> void:
-	metadata.project_absolute_path.value = file_path
+func save_as(absolute_file_path: String) -> void:
+	_absolute_file_path.value = absolute_file_path
 	save()
 
 
@@ -26,15 +37,13 @@ func save_as(file_path: String) -> void:
 func has_valid_file_path() -> bool:
 	if (
 			not OS.has_feature("editor")
-			and metadata.project_absolute_path.value.begins_with("res://")
+			and file_path().begins_with("res://")
 	):
 		return false
-	return FileAccess.file_exists(metadata.project_absolute_path.value)
+	return FileAccess.file_exists(file_path())
 
 
 ## No effect if the project doesn't have a valid file path.
 func show_in_file_manager() -> void:
 	if has_valid_file_path():
-		OS.shell_show_in_file_manager(ProjectSettings.globalize_path(
-				metadata.project_absolute_path.value
-		))
+		OS.shell_show_in_file_manager(file_path())

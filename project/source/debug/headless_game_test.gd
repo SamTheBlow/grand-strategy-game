@@ -45,10 +45,14 @@ func _initialize() -> void:
 
 	_print_with_time("Generating the game...")
 
+	var parse_result := MetadataBundle.from_path(load_file_path)
+	if parse_result.error:
+		_print_with_time("[ERROR] Failed to load metadata at given file path.")
+		_is_finished = true
+		return
+
 	var generated_game: ProjectParsing.ParseResult = (
-			ProjectFromPath.generated_from(
-					ProjectMetadata.from_file_path(load_file_path), game_rules
-			)
+			ProjectFromPath.generated_from(parse_result.result, game_rules)
 	)
 	if generated_game.error:
 		_print_with_time(
@@ -135,7 +139,7 @@ func _on_game_over(winner_country: Country) -> void:
 
 
 func _save_game() -> void:
-	_project.metadata.project_absolute_path.value = save_file_path
+	_project._absolute_file_path.value = save_file_path
 
 	var project_save := ProjectSave.new()
 	project_save.save_project(_project)

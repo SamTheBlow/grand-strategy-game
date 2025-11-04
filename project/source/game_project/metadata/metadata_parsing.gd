@@ -1,7 +1,6 @@
 class_name MetadataParsing
 ## Parses raw data from/to a [ProjectMetadata] instance.
 
-const _FILE_PATH_KEY: String = "file_path"
 const _NAME_KEY: String = "name"
 const _ICON_KEY: String = "icon"
 const _SETTINGS_KEY: String = "settings"
@@ -10,18 +9,14 @@ const _SETTINGS_KEY: String = "settings"
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func from_raw_project_data(
-		project_raw_data: Variant, project_absolute_path := StringRef.new()
+		project_raw_data: Variant, project_absolute_path: String
 ) -> ProjectMetadata:
 	if project_raw_data is not Dictionary:
-		var output := ProjectMetadata.new()
-		output.project_absolute_path = project_absolute_path
-		return output
+		return ProjectMetadata.new()
 	var project_raw_dict: Dictionary = project_raw_data
 
 	if not project_raw_dict.has(ProjectParsing.METADATA_KEY):
-		var output := ProjectMetadata.new()
-		output.project_absolute_path = project_absolute_path
-		return output
+		return ProjectMetadata.new()
 
 	return from_raw_data(
 			project_raw_dict[ProjectParsing.METADATA_KEY],
@@ -29,21 +24,18 @@ static func from_raw_project_data(
 	)
 
 
+## NOTE: We need the project's file path in order to load the icon properly.
+##
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func from_raw_data(
-		raw_data: Variant, project_absolute_path := StringRef.new()
+		raw_data: Variant, project_absolute_path: String
 ) -> ProjectMetadata:
 	var output := ProjectMetadata.new()
-	output.project_absolute_path = project_absolute_path
 
 	if raw_data is not Dictionary:
 		return output
 	var raw_dict: Dictionary = raw_data
-
-	# Project absolute file path
-	if ParseUtils.dictionary_has_string(raw_dict, _FILE_PATH_KEY):
-		output.project_absolute_path.value = raw_dict[_FILE_PATH_KEY]
 
 	# Project name
 	if ParseUtils.dictionary_has_string(raw_dict, _NAME_KEY):
@@ -52,9 +44,9 @@ static func from_raw_data(
 	# Project icon
 	if ParseUtils.dictionary_has_string(raw_dict, _ICON_KEY):
 		# File path
-		var file_path: String = raw_dict[_ICON_KEY]
+		var icon_relative_path: String = raw_dict[_ICON_KEY]
 		output._icon = ProjectMetadata.IconFromFilePath.new(
-				file_path, project_absolute_path
+				icon_relative_path, project_absolute_path
 		)
 	elif ParseUtils.dictionary_has_array(raw_dict, _ICON_KEY):
 		# Image data
@@ -80,9 +72,6 @@ static func to_raw_dict(
 		metadata: ProjectMetadata, include_file_paths: bool
 ) -> Dictionary:
 	var output: Dictionary = {}
-
-	if include_file_paths and metadata.project_absolute_path.value != "":
-		output.get_or_add(_FILE_PATH_KEY, metadata.project_absolute_path.value)
 
 	if metadata.project_name != "":
 		output.get_or_add(_NAME_KEY, metadata.project_name)

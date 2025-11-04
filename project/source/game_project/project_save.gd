@@ -13,9 +13,7 @@ var error_message: String = ""
 
 
 func save_project(project: GameProject) -> void:
-	var file_access := FileAccess.open(
-			project.metadata.project_absolute_path.value, FileAccess.WRITE
-	)
+	var file_access := FileAccess.open(project.file_path(), FileAccess.WRITE)
 
 	if not file_access:
 		# Maybe use this to make more detailed error messages

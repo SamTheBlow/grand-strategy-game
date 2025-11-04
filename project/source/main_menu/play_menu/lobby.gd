@@ -8,7 +8,7 @@ extends Control
 ## Don't forget to inject the [Players] and the [GameRules] into their
 ## respective properties before adding this node to the scene tree.
 
-signal start_game_requested(metadata: ProjectMetadata, game_rules: GameRules)
+signal start_game_requested(meta_bundle: MetadataBundle, game_rules: GameRules)
 
 var players: Players:
 	set(value):
@@ -96,10 +96,9 @@ func _update_start_button_disabled() -> void:
 
 func _on_start_button_pressed() -> void:
 	# Create a duplicate as to not overwrite contents from the original
-	var metadata := ProjectMetadata.new()
-	metadata.copy_metadata(_games_interface.selected_game())
-
-	start_game_requested.emit(metadata, game_rules.copy())
+	start_game_requested.emit(
+			_games_interface.selected_game().duplicate(), game_rules.copy()
+	)
 
 
 func _on_connected_to_server() -> void:

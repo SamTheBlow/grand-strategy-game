@@ -3,13 +3,14 @@ extends Node
 ## Loads [ProjectMetadata] from some file/files/directory.
 
 ## Emitted whenever a project is successfully imported.
-signal project_imported(project_metadata: ProjectMetadata)
+signal project_imported(metadata_bundle: MetadataBundle)
 
 
 func _import_from_path(path: String) -> void:
-	var metadata: ProjectMetadata = ProjectMetadata.from_file_path(path)
-	if metadata != null:
-		project_imported.emit(metadata)
+	var parse_result := MetadataBundle.from_path(path)
+	if parse_result.error:
+		return
+	project_imported.emit(parse_result.result)
 
 
 ## Recursively searches for JSON files in given directory path.

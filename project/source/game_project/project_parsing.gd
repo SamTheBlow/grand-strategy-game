@@ -40,18 +40,18 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 ## Overwrites the [GameRules] with given one.
 ## Populates the game (see [PopulatedSaveFile]).
 static func generated_from(
-		raw_data: Variant, metadata: ProjectMetadata, game_rules: GameRules
+		raw_data: Variant, meta_bundle: MetadataBundle, game_rules: GameRules
 ) -> ParseResult:
 	# Load the project
 	var parse_result: ParseResult = (
-			parsed_from(raw_data, metadata.project_absolute_path.value)
+			parsed_from(raw_data, meta_bundle.project_absolute_path)
 	)
 	if parse_result.error:
 		return parse_result
 	var game_project: GameProject = parse_result.result_project
 
 	# Overwrite the settings
-	game_project.metadata.settings = metadata.settings
+	game_project.metadata.settings = meta_bundle.metadata.settings
 
 	# Overwrite the rules
 	game_project.game.rules = game_rules
@@ -97,12 +97,11 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 static func _game_project(
 		raw_dict: Dictionary, project_absolute_path: String
 ) -> GameProject:
-	var game_project := GameProject.new()
-	var absolute_path_ref := StringRef.new(project_absolute_path)
+	var game_project := GameProject.new(project_absolute_path)
 
 	# Load the textures
 	game_project.textures = ProjectTextureParsing.from_raw_data(
-			raw_dict.get(_TEXTURES_KEY), absolute_path_ref
+			raw_dict.get(_TEXTURES_KEY), game_project._absolute_file_path
 	)
 
 	# Load the game
@@ -112,7 +111,7 @@ static func _game_project(
 
 	# Load the metadata
 	game_project.metadata = MetadataParsing.from_raw_data(
-			raw_dict.get(METADATA_KEY), absolute_path_ref
+			raw_dict.get(METADATA_KEY), game_project.file_path()
 	)
 
 	return game_project

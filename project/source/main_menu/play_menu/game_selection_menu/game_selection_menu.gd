@@ -34,8 +34,8 @@ func set_game_menu_state(value: GameSelectMenuState) -> void:
 	_update_game_menu_state()
 
 
-func selected_game() -> ProjectMetadata:
-	return _selected_game_node.metadata
+func selected_game() -> MetadataBundle:
+	return _selected_game_node.meta_bundle
 
 
 ## Returns null if there is no [GameOptionNode] with given id.
@@ -59,20 +59,18 @@ func _update_game_menu_state() -> void:
 
 	# Load the built-in games if they aren't loaded already
 	if game_menu_state.builtin_games().size() == 0:
-		for builtin_game_file_path in _game_list_builtin.builtin_games:
-			var builtin_game: ProjectMetadata = (
-					ProjectMetadata.from_file_path(builtin_game_file_path)
-			)
-			if builtin_game == null:
+		for file_path in _game_list_builtin.builtin_games:
+			var parse_result := MetadataBundle.from_path(file_path)
+			if parse_result.error:
 				continue
-			game_menu_state.add_builtin_game(builtin_game)
+			game_menu_state.add_builtin_game(parse_result.result)
 
 	# Clear existing nodes
 	_game_list_builtin.clear()
 	_game_list_imported.clear()
 
 	# Load the [GameOptionNode]s
-	var builtin_games: Array[ProjectMetadata] = game_menu_state.builtin_games()
+	var builtin_games: Array[MetadataBundle] = game_menu_state.builtin_games()
 	_game_list_builtin.add_games(builtin_games, 0)
 	_game_list_imported.add_games(
 			game_menu_state.imported_games(), builtin_games.size()
@@ -160,14 +158,14 @@ func _on_project_selected() -> void:
 	_selected_game_node.select()
 
 
-func _on_imported_game_added(metadata: ProjectMetadata) -> void:
+func _on_imported_game_added(meta_bundle: MetadataBundle) -> void:
 	var new_game_id: int = game_menu_state.number_of_games() - 1
-	_game_list_imported.add_game(metadata, new_game_id)
+	_game_list_imported.add_game(meta_bundle, new_game_id)
 
 
 func _on_state_changed(_state: GameSelectMenuState) -> void:
 	_update_game_menu_state()
 
 
-func _on_project_imported(project_metadata: ProjectMetadata) -> void:
-	game_menu_state.add_imported_game(project_metadata)
+func _on_project_imported(meta_bundle: MetadataBundle) -> void:
+	game_menu_state.add_imported_game(meta_bundle)
