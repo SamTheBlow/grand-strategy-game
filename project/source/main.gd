@@ -125,31 +125,31 @@ func _send_scene_change_to_clients() -> void:
 		return
 
 	if current_scene is PlayMenu:
-		_send_enter_main_menu_to_clients()
+		_send_enter_play_menu_to_clients()
 	elif current_scene is GameNode:
 		_send_game_to_clients((current_scene as GameNode).project)
 	else:
 		push_error("Unrecognized scene node.")
 
 
-#region Inform clients that we enter the main menu
-## The server calls this to inform clients that the main menu is entered.
+#region Inform clients that we enter the play menu
+## The server calls this to inform clients that the play menu is entered.
 ## This function has no effect if you're not connected as a server.
 ## You may provide a multiplayer id to send the info to one specific client.
-func _send_enter_main_menu_to_clients(multiplayer_id: int = -1) -> void:
+func _send_enter_play_menu_to_clients(multiplayer_id: int = -1) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
 	if multiplayer_id == -1:
-		_receive_enter_main_menu.rpc()
+		_receive_enter_play_menu.rpc()
 	else:
-		_receive_enter_main_menu.rpc_id(multiplayer_id)
+		_receive_enter_play_menu.rpc_id(multiplayer_id)
 
 
-## The client receives the info that we've entered the main menu.
+## The client receives the info that we've entered the play menu.
 @rpc("authority", "call_remote", "reliable")
-func _receive_enter_main_menu() -> void:
-	enter_main_menu()
+func _receive_enter_play_menu() -> void:
+	enter_play_menu()
 #endregion
 
 
@@ -163,12 +163,12 @@ func _send_game_to_clients(
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	var game_raw_dict: Dictionary = GameParsing.to_raw_dict(project.game)
+	var raw_data: Variant = ProjectParsing.to_raw_data(project)
 
 	if multiplayer_id == -1:
-		_receive_new_game.rpc(game_raw_dict)
+		_receive_new_game.rpc(raw_data)
 	else:
-		_receive_new_game.rpc_id(multiplayer_id, game_raw_dict)
+		_receive_new_game.rpc_id(multiplayer_id, raw_data)
 
 
 ## The client receives a new game from the server.
@@ -213,7 +213,7 @@ func _on_multiplayer_peer_connected(multiplayer_id: int) -> void:
 				(current_scene as GameNode).project, multiplayer_id
 		)
 	elif current_scene is PlayMenu:
-		_send_enter_main_menu_to_clients(multiplayer_id)
+		_send_enter_play_menu_to_clients(multiplayer_id)
 	else:
 		push_error("Unrecognized scene. Cannot sync scene with new client.")
 
