@@ -1,16 +1,13 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://cjxq7pod7pt0u"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://cjxq7pod7pt0u"]
 
-[ext_resource type="Texture2D" uid="uid://dm34bh466qkf5" path="res://assets/openmoji/1F64F.svg" id="1_lm16h"]
 [ext_resource type="Script" uid="uid://juaxjlpyefo7" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_tyx8w"]
 
 [resource]
 script = ExtResource("1_tyx8w")
 id = 10
 name = "Ask to stop trespassing"
-icon = ExtResource("1_lm16h")
+icon_texture = "%openmoji_1f64f"
 requires_consent = true
-available_after_turns = 0
-your_outcome_data = {}
 their_outcome_data = {
 "is_trespassing": false
 }

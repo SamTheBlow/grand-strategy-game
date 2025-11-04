@@ -29,10 +29,6 @@ var rng := RandomNumberGenerator.new()
 ## Use this to obtain or provide modifiers across the entire game.
 var modifier_request := ModifierRequest.new()
 
-# TODO bad code: this has nothing to do with game logic.
-# The culprit: [GameNotification] shouldn't have an icon property.
-var offer_accepted_icon: Texture2D
-
 ## The user is allowed to continue playing after the game "ends".
 var _game_over: bool = false
 

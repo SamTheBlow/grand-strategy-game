@@ -60,11 +60,18 @@ static func _decoration_from_raw(
 		project_textures.claim_id(id)
 		decoration.texture = TextureFromId.new(id)
 	elif ParseUtils.dictionary_has_string(raw_dict, _TEXTURE_KEY):
+		var texture_string: String = raw_dict[_TEXTURE_KEY]
+
+		# Internal texture
+		if texture_string.begins_with(ExposedResources.INTERNAL_PREFIX):
+			decoration.texture = TextureInternal.new(texture_string)
+
 		# File path
-		decoration.texture = TextureFromFilePath.new(
-				raw_dict[_TEXTURE_KEY],
-				project_textures.project_absolute_path_ref()
-		)
+		else:
+			decoration.texture = TextureFromFilePath.new(
+					texture_string,
+					project_textures.project_absolute_path_ref()
+			)
 	elif ParseUtils.dictionary_has_array(raw_dict, _TEXTURE_KEY):
 		# Image data
 		decoration.texture = TextureFromImageData.new(raw_dict[_TEXTURE_KEY])

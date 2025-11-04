@@ -1,16 +1,12 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://d1vcmgrvxolht"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://d1vcmgrvxolht"]
 
 [ext_resource type="Script" uid="uid://juaxjlpyefo7" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_f0csu"]
-[ext_resource type="Texture2D" uid="uid://d1dja87k3jj2w" path="res://assets/openmoji/21AA.svg" id="1_fjl6n"]
 
 [resource]
 script = ExtResource("1_f0csu")
 id = 5
 name = "Grant military access"
-icon = ExtResource("1_fjl6n")
-requires_consent = false
-available_after_turns = 0
+icon_texture = "%openmoji_21aa"
 your_outcome_data = {
 "grants_military_access": true
 }
-their_outcome_data = {}

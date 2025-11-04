@@ -24,6 +24,16 @@ func claim_id(id: int) -> void:
 		_id_map[id] = null
 
 
+## Assigns to given id the internal texture with given keyword.
+func claim_id_with_internal(id: int, texture_keyword: String) -> void:
+	if not _unique_id_system.is_id_available(id):
+		return
+	_unique_id_system.claim_id(id)
+	var exposed_textures: ExposedResources = preload("uid://doda8npdqckhw")
+	_id_map[id] = exposed_textures.texture_with_keyword(texture_keyword)
+	_file_map[texture_keyword] = id
+
+
 ## Loads texture at given file path and assigns it given id,
 ## even if given file path is already in use.
 func claim_id_with_file_path(id: int, absolute_file_path: String) -> void:

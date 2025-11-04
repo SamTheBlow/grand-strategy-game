@@ -1,6 +1,6 @@
 {
 	"meta": {
-		"icon": "../flag_icon.png",
+		"icon": "%flag_icon",
 		"name": "Random Grid World",
 		"settings": {
 			"GRID_WIDTH": {

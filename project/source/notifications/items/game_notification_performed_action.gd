@@ -32,7 +32,7 @@ func action_id() -> int:
 
 
 func icon() -> Texture2D:
-	return _diplomacy_action_definition.icon
+	return _diplomacy_action_definition.icon()
 
 
 func description() -> String:

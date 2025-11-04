@@ -12,8 +12,9 @@ extends Resource
 ## The actions's name. May be shown to the user. It doesn't have to be unique.
 @export var name: String = ""
 
-## May be used to represent the action visually.
-@export var icon: Texture2D
+## An icon for this action. May be used to represent the action visually.[br]
+## See [ExposedResources].
+@export var icon_texture: String
 
 @export_group("Conditions")
 ## If true, this action will only be performed
@@ -30,6 +31,14 @@ extends Resource
 ## Add changes to the relationship here (see [DiplomacyRelationship]).
 ## Affects the target country's relationship with the source country.
 @export var their_outcome_data: Dictionary = {}
+
+var _texture: TextureInternal 
+
+
+func icon() -> Texture2D:
+	if _texture == null:
+		_texture = TextureInternal.new(icon_texture)
+	return _texture.texture(null, preload("uid://dlk4vjy5lgeuu"))
 
 
 func apply_action_data(

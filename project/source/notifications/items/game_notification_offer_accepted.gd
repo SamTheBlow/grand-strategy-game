@@ -4,6 +4,7 @@ extends GameNotification
 
 var _country_that_accepted: Country
 var _diplomacy_action_definition: DiplomacyActionDefinition
+var _icon := TextureInternal.new("%openmoji_1f44d")
 
 
 func _init(
@@ -32,7 +33,7 @@ func action_id() -> int:
 
 
 func icon() -> Texture2D:
-	return _game.offer_accepted_icon
+	return _icon.texture(null, preload("uid://dlk4vjy5lgeuu"))
 
 
 func description() -> String:

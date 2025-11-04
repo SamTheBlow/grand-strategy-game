@@ -17,7 +17,7 @@
 		}
 	],
 	"meta": {
-		"icon": "../icon.svg",
+		"icon": "%godot_icon",
 		"name": "Test map 2"
 	},
 	"version": "1",

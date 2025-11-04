@@ -1,14 +1,12 @@
-[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=3 format=3 uid="uid://i0e1lhoyfteg"]
+[gd_resource type="Resource" script_class="DiplomacyActionDefinition" load_steps=2 format=3 uid="uid://i0e1lhoyfteg"]
 
 [ext_resource type="Script" uid="uid://juaxjlpyefo7" path="res://source/diplomacy/actions/diplomacy_action_definition.gd" id="1_636vi"]
-[ext_resource type="Texture2D" uid="uid://cq7tgw4w2plsc" path="res://assets/openmoji/1F494.svg" id="1_pqw7o"]
 
 [resource]
 script = ExtResource("1_636vi")
 id = 4
 name = "Break alliance"
-icon = ExtResource("1_pqw7o")
-requires_consent = false
+icon_texture = "%openmoji_1f494"
 available_after_turns = 3
 your_outcome_data = {
 "preset_id": 2

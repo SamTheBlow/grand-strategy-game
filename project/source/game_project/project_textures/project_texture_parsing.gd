@@ -32,15 +32,22 @@ static func to_raw_array(
 
 	# Start by adding the textures that have a file path.
 	var already_added_ids: Array[int] = []
-	for absolute_file_path in project_textures._file_map:
-		var id: int = project_textures._file_map[absolute_file_path]
+	for file_path in project_textures._file_map:
+		var id: int = project_textures._file_map[file_path]
 		if already_added_ids.has(id):
 			continue
 
+		# Internal resource
+		if file_path.begins_with(ExposedResources.INTERNAL_PREFIX):
+			output.append({ _ID_KEY: id, _FILE_PATH_KEY: file_path })
+			already_added_ids.append(id)
+			continue
+
+		# Regular file path
 		if use_file_paths:
 			var relative_path: String = FileUtils.path_made_relative(
 					project_textures.project_absolute_path_ref().value,
-					absolute_file_path
+					file_path
 			)
 			if not relative_path.is_empty():
 				output.append({ _ID_KEY: id, _FILE_PATH_KEY: relative_path })
@@ -99,11 +106,17 @@ static func _load_texture_from_raw_data(
 			ParseUtils.dictionary_has_string(raw_dict, _FILE_PATH_KEY)
 			and not raw_dict[_FILE_PATH_KEY].is_empty()
 	):
-		var absolute_path: String = ProjectTextures.texture_path_made_absolute(
-				project_textures.project_absolute_path_ref().value,
-				raw_dict[_FILE_PATH_KEY]
-		)
-		project_textures.claim_id_with_file_path(id, absolute_path)
+		var file_string: String = raw_dict[_FILE_PATH_KEY]
+		if file_string.begins_with(ExposedResources.INTERNAL_PREFIX):
+			project_textures.claim_id_with_internal(id, file_string)
+		else:
+			var absolute_path: String = (
+					ProjectTextures.texture_path_made_absolute(
+							project_textures.project_absolute_path_ref().value,
+							file_string
+					)
+			)
+			project_textures.claim_id_with_file_path(id, absolute_path)
 
 	# Raw image data
 	#

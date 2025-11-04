@@ -23,8 +23,6 @@ signal exited()
 @export_group("Resources")
 ## Defines the outcome of a [Battle].
 @export var battle: Battle
-## Icon to use for [GameNotificationOfferAccepted].
-@export var offer_accepted_icon: Texture2D
 
 var project: GameProject:
 	set(value):
@@ -38,7 +36,6 @@ var game: Game:
 		game = value
 		game.error_triggered.connect(_on_game_error)
 		game.game_over.connect(_on_game_over)
-		game.offer_accepted_icon = offer_accepted_icon
 
 ## Reference to external node.
 ## May be null. If null, the players list will not be fully initialized.

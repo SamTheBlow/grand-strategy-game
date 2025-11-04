@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cyuj3d1q6iep5"
-path="res://.godot/imported/1F525.svg-6f4835bdd06c640b209c86cd479cee4e.ctex"
+uid="uid://jtcn81huq1mt"
+path="res://.godot/imported/1F49A.svg-a6dcea4dd14233901f9e5e845466c31b.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/openmoji/1F525.svg"
-dest_files=["res://.godot/imported/1F525.svg-6f4835bdd06c640b209c86cd479cee4e.ctex"]
+source_file="res://assets/openmoji/images/1F49A.svg"
+dest_files=["res://.godot/imported/1F49A.svg-a6dcea4dd14233901f9e5e845466c31b.ctex"]
 
 [params]
 

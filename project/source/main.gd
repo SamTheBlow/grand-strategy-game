@@ -44,6 +44,8 @@ var sync_check := SyncCheck.new()
 
 
 func _ready() -> void:
+	preload("uid://doda8npdqckhw").initialize()
+
 	multiplayer.connected_to_server.connect(_on_connected_to_server)
 	multiplayer.peer_connected.connect(_on_multiplayer_peer_connected)
 

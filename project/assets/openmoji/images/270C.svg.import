@@ -3,15 +3,15 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://bvgbb4t6ighb4"
-path="res://.godot/imported/270C.svg-7bdeb35be6429db1be01c4c132dce690.ctex"
+path="res://.godot/imported/270C.svg-eddd247d782eb7d543483561a02dded1.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/openmoji/270C.svg"
-dest_files=["res://.godot/imported/270C.svg-7bdeb35be6429db1be01c4c132dce690.ctex"]
+source_file="res://assets/openmoji/images/270C.svg"
+dest_files=["res://.godot/imported/270C.svg-eddd247d782eb7d543483561a02dded1.ctex"]
 
 [params]
 

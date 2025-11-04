@@ -43,11 +43,17 @@ static func from_raw_data(
 
 	# Project icon
 	if ParseUtils.dictionary_has_string(raw_dict, _ICON_KEY):
+		var icon_string: String = raw_dict[_ICON_KEY]
+
+		# Internal resource
+		if icon_string.begins_with(ExposedResources.INTERNAL_PREFIX):
+			output._icon = ProjectMetadata.IconInternal.new(icon_string)
+		
 		# File path
-		var icon_relative_path: String = raw_dict[_ICON_KEY]
-		output._icon = ProjectMetadata.IconFromFilePath.new(
-				icon_relative_path, project_absolute_path
-		)
+		else:
+			output._icon = ProjectMetadata.IconFromFilePath.new(
+					icon_string, project_absolute_path
+			)
 	elif ParseUtils.dictionary_has_array(raw_dict, _ICON_KEY):
 		# Image data
 		var image_data := PackedByteArray(raw_dict[_ICON_KEY])

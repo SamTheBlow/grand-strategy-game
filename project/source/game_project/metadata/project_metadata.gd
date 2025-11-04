@@ -81,6 +81,17 @@ class IconNone extends Icon:
 		return null
 
 
+class IconInternal extends Icon:
+	var _keyword: String
+
+	func _init(keyword: String) -> void:
+		_keyword = keyword
+		texture = preload("uid://doda8npdqckhw").texture_with_keyword(_keyword)
+
+	func to_raw_data(_include_file_paths: bool) -> Variant:
+		return _keyword
+
+
 class IconFromFilePath extends Icon:
 	var _icon_relative_path: String
 

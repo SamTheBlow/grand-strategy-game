@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -17,7 +17,6 @@
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="18_a3u80"]
 [ext_resource type="Script" uid="uid://3hqfpevmvw0f" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="18_pfqno"]
-[ext_resource type="Texture2D" uid="uid://c6vul3iw4lfxv" path="res://assets/openmoji/1F44D.svg" id="18_te1gd"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/utils/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://source/ui/top_bar.tscn" id="20_qfiqr"]
@@ -44,7 +43,6 @@ recruitment_scene = ExtResource("11_rjf2g")
 country_info_scene = ExtResource("15_6f53u")
 notification_info_scene = ExtResource("16_r8lxu")
 battle = ExtResource("15_vh3er")
-offer_accepted_icon = ExtResource("18_te1gd")
 
 [node name="DebugProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("_game")]
 script = ExtResource("18_pevj0")
