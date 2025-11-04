@@ -80,7 +80,7 @@ func _update_info() -> void:
 	if metadata == null or not is_node_ready():
 		return
 
-	_icon_texture.texture = metadata.icon
+	_icon_texture.texture = metadata.icon()
 	_name_label.text = metadata.project_name_or_default()
 	_file_path_label.text = metadata.project_absolute_path.value
 	settings.metadata = metadata

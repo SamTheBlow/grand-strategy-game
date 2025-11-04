@@ -96,9 +96,9 @@ func _update_start_button_disabled() -> void:
 
 func _on_start_button_pressed() -> void:
 	# Create a duplicate as to not overwrite contents from the original
-	var metadata: ProjectMetadata = ProjectMetadata.from_dict(
-			_games_interface.selected_game().to_dict()
-	)
+	var metadata := ProjectMetadata.new()
+	metadata.copy_metadata(_games_interface.selected_game())
+
 	start_game_requested.emit(metadata, game_rules.copy())
 
 

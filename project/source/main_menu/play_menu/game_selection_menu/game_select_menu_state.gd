@@ -82,11 +82,15 @@ func number_of_games() -> int:
 func get_raw_state(include_file_paths: bool = true) -> Dictionary:
 	var _raw_builtin_games: Array = []
 	for builtin_game in _builtin_games:
-		_raw_builtin_games.append(builtin_game.to_dict(include_file_paths))
+		_raw_builtin_games.append(
+				builtin_game.to_raw_dict(include_file_paths)
+		)
 
 	var _raw_imported_games: Array = []
 	for imported_game in _imported_games:
-		_raw_imported_games.append(imported_game.to_dict(include_file_paths))
+		_raw_imported_games.append(
+				imported_game.to_raw_dict(include_file_paths)
+		)
 
 	return {
 		KEY_SELECTED_GAME: _selected_game_id,
@@ -117,12 +121,10 @@ func set_raw_state(data: Dictionary) -> void:
 func _populate_game_list(
 		game_list: Array[ProjectMetadata], list_data: Array
 ) -> void:
-	for element: Variant in list_data:
-		if element is not Dictionary:
-			continue
-		var game_data: Dictionary = element
-
-		var metadata: ProjectMetadata = ProjectMetadata.from_dict(game_data)
+	for raw_data: Variant in list_data:
+		var metadata: ProjectMetadata = (
+				MetadataParsing.from_raw_data(raw_data)
+		)
 		metadata.setting_changed.connect(_on_metadata_changed)
 		game_list.append(metadata)
 

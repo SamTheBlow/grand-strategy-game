@@ -1,6 +1,7 @@
 class_name ProjectParsing
 ## Parses raw data from/to a [GameProject].
 
+const METADATA_KEY: String = "meta"
 const _VERSION_KEY: String = "version"
 const _TEXTURES_KEY: String = "textures"
 
@@ -86,9 +87,9 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 		output.merge({ _TEXTURES_KEY: texture_data })
 
 	# Metadata
-	var metadata_dict: Dictionary = project.metadata.to_dict_save_file()
+	var metadata_dict: Dictionary = project.metadata.to_raw_dict(true)
 	if not metadata_dict.is_empty():
-		output.merge({ ProjectMetadata.KEY_METADATA: metadata_dict })
+		output.merge({ METADATA_KEY: metadata_dict })
 
 	return output
 
@@ -110,8 +111,8 @@ static func _game_project(
 	)
 
 	# Load the metadata
-	game_project.metadata = (
-			ProjectMetadata.from_raw(raw_dict, absolute_path_ref)
+	game_project.metadata = MetadataParsing.from_raw_data(
+			raw_dict.get(METADATA_KEY), absolute_path_ref
 	)
 
 	return game_project
