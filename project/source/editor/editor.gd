@@ -244,22 +244,25 @@ func _on_project_tab_id_pressed(id: int) -> void:
 
 func _on_edit_tab_id_pressed(id: int) -> void:
 	match id:
-		1:
+		0:
+			# "Project Info"
+			_open_interface(EditingInterface.InterfaceType.PROJECT_INFO)
+		2:
 			# "World Limits"
 			_open_interface(EditingInterface.InterfaceType.WORLD_LIMITS)
-		2:
+		3:
 			# "Background Color"
 			_open_interface(EditingInterface.InterfaceType.BACKGROUND_COLOR)
-		3:
+		4:
 			# "Decorations"
 			_open_interface(EditingInterface.InterfaceType.DECORATION_LIST)
-		5:
+		6:
 			# "Provinces"
 			_open_interface(EditingInterface.InterfaceType.PROVINCE_LIST)
-		6:
+		7:
 			# "Countries"
 			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
-		0, 4:
+		1, 5:
 			# Separators & sub menus
 			pass
 		_:

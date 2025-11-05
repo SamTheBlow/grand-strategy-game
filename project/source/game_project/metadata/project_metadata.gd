@@ -2,30 +2,48 @@ class_name ProjectMetadata
 ## Data structure.
 ## Contains a project's metadata, such as its name and its file path.
 
+signal name_changed()
+signal icon_changed()
 signal setting_changed(this: ProjectMetadata)
 signal state_updated(this: ProjectMetadata)
 
-const _DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
-const _DEFAULT_PROJECT_ICON: Texture2D = preload("uid://dlk4vjy5lgeuu")
+const DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
+const DEFAULT_PROJECT_ICON: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
-var project_name: String = ""
+var project_name: String = "":
+	set(value):
+		if project_name == value:
+			return
+		project_name = value
+		name_changed.emit()
 
 ## Keys must be of type String, values may be any "raw" type.
 var settings: Dictionary = {}
 
-var _icon: Icon = Icon.none()
+var _icon: Icon = Icon.none():
+	set(value):
+		if _icon == value:
+			return
+		_icon = value
+		icon_changed.emit()
 
 
 ## Returns the default project name if the current project name is empty.
 func project_name_or_default() -> String:
-	return project_name if project_name != "" else _DEFAULT_PROJECT_NAME
+	return project_name if project_name != "" else DEFAULT_PROJECT_NAME
 
 
 ## Returns the project's icon.
 func icon() -> Texture2D:
-	if _icon.texture == null:
-		return _DEFAULT_PROJECT_ICON
-	return _icon.texture
+	return _icon.texture if _icon.texture != null else DEFAULT_PROJECT_ICON
+
+
+func set_project_name(value: String) -> void:
+	project_name = value
+
+
+func set_project_icon(value: Icon) -> void:
+	_icon = value
 
 
 ## Emits a signal.
@@ -77,7 +95,7 @@ func copy_metadata(metadata: ProjectMetadata) -> void:
 
 
 class IconNone extends Icon:
-	func to_raw_data(_include_file_paths: bool) -> Variant:
+	func to_raw_data(_include_file_paths: bool = false) -> Variant:
 		return null
 
 
@@ -88,7 +106,7 @@ class IconInternal extends Icon:
 		_keyword = keyword
 		texture = preload("uid://doda8npdqckhw").texture_with_keyword(_keyword)
 
-	func to_raw_data(_include_file_paths: bool) -> Variant:
+	func to_raw_data(_include_file_paths: bool = false) -> Variant:
 		return _keyword
 
 
@@ -102,6 +120,9 @@ class IconFromFilePath extends Icon:
 		texture = ProjectTextures.texture_from_relative_path(
 				project_absolute_path, _icon_relative_path
 		)
+
+	func relative_path() -> String:
+		return _icon_relative_path
 
 	func to_raw_data(include_file_paths: bool) -> Variant:
 		if include_file_paths:
@@ -119,5 +140,5 @@ class IconFromImageData extends Icon:
 		_image_data = Array(image_data)
 		texture = TextureFromImageData.from_image_data(image_data)
 
-	func to_raw_data(_include_file_paths: bool) -> Variant:
+	func to_raw_data(_include_file_paths: bool = false) -> Variant:
 		return _image_data

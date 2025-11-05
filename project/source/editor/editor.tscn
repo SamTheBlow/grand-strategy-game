@@ -135,22 +135,24 @@ item_9/id = 9
 [node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
-item_count = 7
-item_0/text = "World"
+item_count = 8
+item_0/text = "Project Info"
 item_0/id = 0
-item_0/separator = true
-item_1/text = "World Limits"
+item_1/text = "World"
 item_1/id = 1
-item_2/text = "Background Color"
+item_1/separator = true
+item_2/text = "World Limits"
 item_2/id = 2
-item_3/text = "Decorations"
+item_3/text = "Background Color"
 item_3/id = 3
+item_4/text = "Decorations"
 item_4/id = 4
-item_4/separator = true
-item_5/text = "Provinces"
 item_5/id = 5
-item_6/text = "Countries"
+item_5/separator = true
+item_6/text = "Provinces"
 item_6/id = 6
+item_7/text = "Countries"
+item_7/id = 7
 
 [node name="EditingInterface" parent="UILayer" instance=ExtResource("7_um8he")]
 unique_name_in_owner = true

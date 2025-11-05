@@ -10,15 +10,17 @@ signal country_interface_opened(country: Country)
 signal country_interface_closed()
 
 enum InterfaceType {
-	WORLD_LIMITS = 0,
-	BACKGROUND_COLOR = 1,
-	DECORATION_LIST = 2,
-	PROVINCE_LIST = 3,
-	COUNTRY_LIST = 4,
+	PROJECT_INFO,
+	WORLD_LIMITS,
+	BACKGROUND_COLOR,
+	DECORATION_LIST,
+	PROVINCE_LIST,
+	COUNTRY_LIST,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
 const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
+	InterfaceType.PROJECT_INFO: preload("uid://7k82f8lx1vpe"),
 	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
 	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
@@ -146,11 +148,17 @@ func _new_interface(
 	var new_interface := interface_scene.instantiate() as AppEditorInterface
 	new_interface.editor_settings = editor_settings
 
-	if new_interface is InterfaceWorldLimits:
+	if new_interface is InterfaceProjectInfo:
+		var info_interface := new_interface as InterfaceProjectInfo
+		info_interface.setup(project.metadata, project._absolute_file_path)
+		info_interface.texture_popup_requested.connect(
+				texture_popup_requested.emit
+		)
+	elif new_interface is InterfaceWorldLimits:
 		(new_interface as InterfaceWorldLimits).setup(
 				project.game.world.limits()
 		)
-	if new_interface is InterfaceBackgroundColor:
+	elif new_interface is InterfaceBackgroundColor:
 		(new_interface as InterfaceBackgroundColor).setup(project.game.world)
 	elif new_interface is InterfaceDecorationList:
 		var list_interface := new_interface as InterfaceDecorationList
