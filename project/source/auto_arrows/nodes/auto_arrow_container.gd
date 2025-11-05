@@ -6,8 +6,8 @@ extends Node2D
 var _is_setup: bool = false
 var _countries: Countries
 
-## Maps each country to its associated node.
-var _list: Dictionary[Country, AutoArrowsNode2D] = {}
+## Maps each country id to its associated node.
+var _list: Dictionary[int, AutoArrowsNode2D] = {}
 ## Keeps track of the currently visible arrows. May be null.
 var _visible_node: Node2D = null
 
@@ -30,14 +30,14 @@ func setup(countries: Countries) -> void:
 		_update()
 
 
-## Argument may be null, in which case this hides all countries.
-func show_country(country: Country) -> void:
+## Hides all nodes if given country doesn't have a corresponding node.
+func show_country(country_id: int) -> void:
 	if _visible_node != null:
 		_visible_node.hide()
 
-	if not _list.has(country):
+	if not _list.has(country_id):
 		return
-	_visible_node = _list[country]
+	_visible_node = _list[country_id]
 	_visible_node.show()
 
 
@@ -62,14 +62,15 @@ func _create_arrows_node(country: Country) -> void:
 	new_node.hide()
 
 	add_child(new_node)
-	_list[country] = new_node
+	_list[country.id] = new_node
 
 
-func _on_preview_arrow_created(preview_arrow: AutoArrowPreviewNode2D) -> void:
-	var country: Country = preview_arrow.country()
-	if not _list.has(country):
+func _on_preview_arrow_created(
+		preview_arrow: AutoArrowPreviewNode2D, country: Country
+) -> void:
+	if not _list.has(country.id):
 		_create_arrows_node(country)
-	_list[country].add_child(preview_arrow)
+	_list[country.id].add_child(preview_arrow)
 
 	# TODO bad code: private function
 	_provinces_container.province_mouse_entered.connect(

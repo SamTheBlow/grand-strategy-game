@@ -68,7 +68,7 @@ func set_map_mode(map_mode: MapMode) -> void:
 func set_map_mode_editor_country(country: Country) -> void:
 	_node_editor_country.setup(country)
 	set_map_mode(MapMode.EDITOR_COUNTRY)
-	_arrow_behavior = ArrowBehaviorSpecificCountry.new(country)
+	_arrow_behavior = ArrowBehaviorSpecificCountry.new(country.id)
 
 
 func _update() -> void:
@@ -154,21 +154,21 @@ class ArrowBehaviorOngoingGame extends ArrowBehavior:
 		)
 
 	func _update_country() -> void:
-		var country: Country = _current_country()
-		_input.country_to_edit = country
-		_container.show_country(country)
+		var country_id: int = _current_country_id()
+		_input.country_to_edit_id = country_id
+		_container.show_country(country_id)
 
-	## Returns the playing country only when you control it.
-	func _current_country() -> Country:
+	## Returns the playing country's id only when you control it.
+	func _current_country_id() -> int:
 		if not _game.turn.is_running():
-			return null
+			return -1
 
 		if _game.game_players.you_control_country(
 				_multiplayer, _playing_country.country()
 		):
-			return _playing_country.country()
+			return _playing_country.country().id
 
-		return null
+		return -1
 
 
 class ArrowBehaviorNone extends ArrowBehavior:
@@ -177,12 +177,12 @@ class ArrowBehaviorNone extends ArrowBehavior:
 
 
 class ArrowBehaviorSpecificCountry extends ArrowBehavior:
-	var _country: Country
+	var _country_id: int
 
-	func _init(country: Country) -> void:
-		_country = country
+	func _init(country_id: int) -> void:
+		_country_id = country_id
 
 	func start(input: AutoArrowInput, container: AutoArrowContainer) -> void:
-		input.country_to_edit = _country
+		input.country_to_edit_id = _country_id
 		container.show()
-		container.show_country(_country)
+		container.show_country(_country_id)
