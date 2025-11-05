@@ -40,7 +40,7 @@ func claim_id_with_file_path(id: int, absolute_file_path: String) -> void:
 	if not _unique_id_system.is_id_available(id):
 		return
 	_unique_id_system.claim_id(id)
-	_id_map[id] = _texture_from_path(absolute_file_path)
+	_id_map[id] = texture_from_path(absolute_file_path)
 	_file_map[absolute_file_path] = id
 
 
@@ -61,7 +61,7 @@ func new_id_from_file_path(absolute_file_path: String) -> int:
 		return _file_map[absolute_file_path]
 
 	var id: int = _unique_id_system.new_unique_id()
-	_id_map[id] = _texture_from_path(absolute_file_path)
+	_id_map[id] = texture_from_path(absolute_file_path)
 	_file_map[absolute_file_path] = id
 	return id
 
@@ -96,7 +96,7 @@ func project_absolute_path_ref() -> StringRef:
 static func texture_from_relative_path(
 		project_absolute_path: String, texture_path: String
 ) -> Texture2D:
-	return _texture_from_path(
+	return texture_from_path(
 			texture_path_made_absolute(project_absolute_path, texture_path)
 	)
 
@@ -136,7 +136,7 @@ static func texture_path_made_absolute(
 	return project_dir.get_current_dir().path_join(texture_path.get_file())
 
 
-static func _texture_from_path(path: String) -> Texture2D:
+static func texture_from_path(path: String) -> Texture2D:
 	# If the image was already imported into the engine, we can use load().
 	if ResourceLoader.exists(path, "Texture2D"):
 		return load(path) as Texture2D

@@ -33,6 +33,10 @@ func to_raw_data() -> Variant:
 	return super()
 
 
+func absolute_path() -> String:
+	return _texture_absolute_path
+
+
 ## Returns the texture's absolute path unchanged
 ## if the project's absolute path is empty.
 func _relative_path() -> String:

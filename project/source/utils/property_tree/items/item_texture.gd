@@ -4,6 +4,7 @@ extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [ProjectTexture].
 
 signal value_changed(this: PropertyTreeItem)
+signal popup_requested(this: ItemTexture)
 
 var value: ProjectTexture = ProjectTexture.none():
 	set(new_value):
@@ -19,6 +20,10 @@ var value: ProjectTexture = ProjectTexture.none():
 var project_textures: ProjectTextures
 ## May be null.
 var fallback_texture: Texture2D
+
+
+func request_popup() -> void:
+	popup_requested.emit(self)
 
 
 func texture() -> Texture2D:

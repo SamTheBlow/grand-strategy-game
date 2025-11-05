@@ -5,6 +5,7 @@ extends AppEditorInterface
 signal back_pressed()
 signal delete_pressed(world_decoration: WorldDecoration)
 signal duplicate_pressed(world_decoration: WorldDecoration)
+signal texture_popup_requested(item_texture: ItemTexture)
 
 var world_decoration: WorldDecoration
 var project_textures: ProjectTextures
@@ -37,6 +38,7 @@ func _load_settings() -> void:
 	item_texture.fallback_texture = WorldDecoration.DEFAULT_TEXTURE
 	item_texture.value = world_decoration.texture
 	item_texture.value_changed.connect(_on_texture_value_changed)
+	item_texture.popup_requested.connect(texture_popup_requested.emit)
 	# Flip H
 	(_settings.item.child_items[1] as ItemBool).value = (
 			world_decoration.flip_h

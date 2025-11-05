@@ -11,6 +11,9 @@ const INTERNAL_PREFIX: String = "%"
 ## It should be easy to read and understand by humans.
 @export var _exposed_textures: Dictionary[String, Texture2D] = {}
 
+var _base_textures: Array[String] = []
+var _openmoji_textures: Array[String] = []
+
 
 ## Returns null if there is no texture with given keyword.
 func texture_with_keyword(keyword: String) -> Texture2D:
@@ -23,6 +26,8 @@ func texture_with_keyword(keyword: String) -> Texture2D:
 ## Procedurally adds specific resources to the list of exposed resources.
 ## Meant to be run only once, right when the app is launched.
 func initialize() -> void:
+	_base_textures = _exposed_textures.keys()
+
 	# Add all the openmoji textures.
 	const OPENMOJI_PATH: String = "res://assets/openmoji/images"
 	var dir_access: DirAccess = DirAccess.open(OPENMOJI_PATH)
@@ -39,3 +44,14 @@ func initialize() -> void:
 				keyword,
 				load(OPENMOJI_PATH.path_join(file_name))
 		)
+
+		if not _openmoji_textures.has(keyword):
+			_openmoji_textures.append(keyword)
+
+
+func base_textures() -> Array[String]:
+	return _base_textures
+
+
+func openmoji_textures() -> Array[String]:
+	return _openmoji_textures

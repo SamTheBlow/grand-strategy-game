@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=9 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
@@ -7,11 +7,16 @@
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/interfaces/editing_interface.tscn" id="7_um8he"]
+[ext_resource type="Script" uid="uid://bk2i3kq3bheo7" path="res://source/editor/texture_select_popup_setup.gd" id="8_uwkq8"]
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
 _popup_scene = ExtResource("2_isggd")
 _project_load_popup_scene = ExtResource("3_kcuw7")
+
+[node name="TextureSelectPopupSetup" type="Node" parent="." node_paths=PackedStringArray("_popup_container")]
+script = ExtResource("8_uwkq8")
+_popup_container = NodePath("../UILayer/PopupContainer")
 
 [node name="ProvinceSelectConditions" type="Node" parent="."]
 unique_name_in_owner = true
@@ -179,4 +184,5 @@ use_native_dialog = true
 [connection signal="province_change_owner_pressed" from="UILayer/EditingInterface" to="." method="_on_province_change_owner_pressed"]
 [connection signal="province_interface_closed" from="UILayer/EditingInterface" to="." method="_on_province_interface_closed"]
 [connection signal="province_interface_opened" from="UILayer/EditingInterface" to="." method="_on_province_interface_opened"]
+[connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]

@@ -1,0 +1,138 @@
+[gd_scene load_steps=3 format=3 uid="uid://cffc06lk8bb0f"]
+
+[ext_resource type="Script" uid="uid://cjxxph41rnkc4" path="res://source/ui/popups/texture_select_popup.gd" id="1_430ed"]
+[ext_resource type="Script" uid="uid://c6dynpagur5wa" path="res://source/ui/popups/texture_import.gd" id="2_q6loa"]
+
+[node name="TextureSelectInterface" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_430ed")
+
+[node name="TextureImport" type="Node" parent="." node_paths=PackedStringArray("_imported_textures_tab")]
+script = ExtResource("2_q6loa")
+_imported_textures_tab = NodePath("../Control/TabContainer/Imported Textures")
+
+[node name="ImportDialog" type="FileDialog" parent="."]
+title = "Open a File or Directory"
+initial_position = 1
+size = Vector2i(931, 500)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 3
+access = 2
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="TabContainer" type="TabContainer" parent="Control"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/tab_separation = 1
+current_tab = 0
+
+[node name="Base Textures" type="Control" parent="Control/TabContainer"]
+layout_mode = 2
+mouse_filter = 1
+metadata/_tab_index = 0
+
+[node name="BaseTexturesList" type="ItemList" parent="Control/TabContainer/Base Textures"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+
+[node name="OpenMoji" type="Control" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+mouse_filter = 1
+metadata/_tab_index = 1
+
+[node name="OpenMojiList" type="ItemList" parent="Control/TabContainer/OpenMoji"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+
+[node name="Imported Textures" type="Control" parent="Control/TabContainer"]
+visible = false
+layout_mode = 2
+mouse_filter = 1
+metadata/_tab_index = 2
+
+[node name="ImportedList" type="ItemList" parent="Control/TabContainer/Imported Textures"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+max_columns = 0
+same_column_width = true
+icon_mode = 0
+fixed_icon_size = Vector2i(64, 64)
+
+[node name="Control" type="Control" parent="Control"]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+mouse_filter = 2
+
+[node name="ImportButton" type="Button" parent="Control/Control"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.7
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = 32.0
+offset_right = -32.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "Import..."
+
+[connection signal="texture_imported" from="TextureImport" to="." method="_on_texture_imported"]
+[connection signal="dir_selected" from="ImportDialog" to="TextureImport" method="_scan_dir"]
+[connection signal="file_selected" from="ImportDialog" to="TextureImport" method="_scan_file"]
+[connection signal="files_selected" from="ImportDialog" to="TextureImport" method="_scan_files"]
+[connection signal="item_activated" from="Control/TabContainer/Base Textures/BaseTexturesList" to="." method="_on_item_activated" binds= [0]]
+[connection signal="item_activated" from="Control/TabContainer/OpenMoji/OpenMojiList" to="." method="_on_item_activated" binds= [1]]
+[connection signal="item_activated" from="Control/TabContainer/Imported Textures/ImportedList" to="." method="_on_item_activated" binds= [2]]
+[connection signal="pressed" from="Control/Control/ImportButton" to="ImportDialog" method="show"]

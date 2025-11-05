@@ -37,21 +37,4 @@ layout_mode = 2
 size_flags_vertical = 4
 text = "Select image..."
 
-[node name="Feedback" type="Label" parent="Container/ItemContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-vertical_alignment = 1
-clip_text = true
-
-[node name="FileDialog" type="FileDialog" parent="."]
-oversampling_override = 1.0
-title = "Open a File"
-initial_position = 1
-size = Vector2i(904, 360)
-dialog_hide_on_ok = true
-file_mode = 0
-access = 2
-
-[connection signal="pressed" from="Container/ItemContainer/BrowseButton" to="FileDialog" method="show"]
-[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="Container/ItemContainer/BrowseButton" to="." method="_on_browse_button_pressed"]

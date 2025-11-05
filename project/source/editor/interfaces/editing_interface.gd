@@ -2,6 +2,7 @@ class_name EditingInterface
 extends Control
 ## Opens and closes interfaces for the user to use in the editor.
 
+signal texture_popup_requested(item_texture: ItemTexture)
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
 signal province_change_owner_pressed(province: Province)
@@ -195,6 +196,7 @@ func _open_new_decoration_edit_interface(
 	new_interface.duplicate_pressed.connect(
 			_on_world_decoration_duplicated.bind(project, editor_settings)
 	)
+	new_interface.texture_popup_requested.connect(texture_popup_requested.emit)
 	new_interface.world_decoration = world_decoration
 	new_interface.project_textures = project.textures
 	open_interface(new_interface)

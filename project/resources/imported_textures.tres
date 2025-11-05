@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="ImportedTextures" load_steps=2 format=3 uid="uid://cc4p22tibbgcx"]
+
+[ext_resource type="Script" uid="uid://d0bjevxay2g2k" path="res://source/file_management/imported_textures.gd" id="1_cak3v"]
+
+[resource]
+script = ExtResource("1_cak3v")
+metadata/_custom_type_script = "uid://d0bjevxay2g2k"
