@@ -66,7 +66,7 @@ func set_map_mode(map_mode: MapMode) -> void:
 
 ## Use this to specify a country.
 func set_map_mode_editor_country(country: Country) -> void:
-	_node_editor_country.setup(country)
+	_node_editor_country.selected_country_id = country.id
 	set_map_mode(MapMode.EDITOR_COUNTRY)
 	_arrow_behavior = ArrowBehaviorSpecificCountry.new(country.id)
 
@@ -83,6 +83,7 @@ func _update() -> void:
 			_world_visuals.province_selection,
 			PolygonEditEdgeCase.new(_world_visuals.world)
 	)
+	_node_editor_country.setup(_world_visuals.project.game.countries)
 
 	_enable_map_mode()
 
