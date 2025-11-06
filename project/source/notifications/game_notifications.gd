@@ -29,7 +29,7 @@ func add(game_notification: GameNotification, specific_id: int = -1) -> void:
 		_unique_id_system.claim_id(specific_id)
 
 	game_notification.id = id
-	game_notification.handled.connect(_on_notification_handled)
+	game_notification.handled.connect(_remove)
 	_list.append(game_notification)
 	notification_added.emit(game_notification)
 
@@ -52,7 +52,7 @@ func id_system() -> UniqueIdSystem:
 
 
 func _remove(game_notification: GameNotification) -> void:
-	game_notification.handled.disconnect(_on_notification_handled)
+	game_notification.handled.disconnect(_remove)
 	_list.erase(game_notification)
 	notification_removed.emit(game_notification)
 
@@ -101,7 +101,3 @@ func _is_duplicate(
 		)
 
 	return false
-
-
-func _on_notification_handled(game_notification: GameNotification) -> void:
-	_remove(game_notification)

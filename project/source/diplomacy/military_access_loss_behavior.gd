@@ -11,30 +11,38 @@ func _init(game: Game) -> void:
 	_game = game
 
 	if game.countries == null:
-		push_error(
-				"Created a military access loss behavior, but "
-				+ "the game's countries is null! It will have no effect."
-		)
+		push_error("Countries is null.")
 		return
-
 	if game.world == null:
-		push_error(
-				"Created a military access loss behavior, but "
-				+ "the game's world is null! It will have no effect."
-		)
+		push_error("World is null.")
 		return
 
 	for country in game.countries.list():
 		_on_country_added(country)
 
 	game.countries.added.connect(_on_country_added)
+	game.countries.removed.connect(_on_country_removed)
 	game.world.provinces.province_owner_changed.connect(
 			_on_province_owner_changed
 	)
 
 
 func _on_country_added(country: Country) -> void:
-	country.relationships.relationship_created.connect(_on_relationship_created)
+	country.relationships.relationship_created.connect(
+			_on_relationship_created
+	)
+
+
+func _on_country_removed(country: Country) -> void:
+	country.relationships.relationship_created.disconnect(
+			_on_relationship_created
+	)
+	for other_country in country.relationships.list:
+		(
+				country.relationships.list[other_country]
+				.military_access_changed
+				.disconnect(_on_military_access_changed)
+		)
 
 
 func _on_relationship_created(relationship: DiplomacyRelationship) -> void:

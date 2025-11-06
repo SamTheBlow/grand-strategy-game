@@ -228,9 +228,9 @@ func _open_country_edit_interface(
 	edit_interface.back_pressed.connect(open_new_interface.bind(
 			InterfaceType.COUNTRY_LIST, project, editor_settings
 	))
-	#edit_interface.delete_pressed.connect(
-			#_on_country_deleted.bind(project, editor_settings)
-	#)
+	edit_interface.delete_pressed.connect(
+			_on_country_deleted.bind(project, editor_settings)
+	)
 	edit_interface.duplicate_pressed.connect(
 			_on_country_duplicated.bind(project, editor_settings)
 	)
@@ -302,6 +302,16 @@ func _on_province_duplicated(
 
 	project.game.world.provinces.add(new_province)
 	open_province_edit_interface(new_province.id, project, editor_settings)
+
+
+func _on_country_deleted(
+		country: Country,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	close_interface()
+	project.game.countries.remove(country.id)
+	open_new_interface(InterfaceType.COUNTRY_LIST, project, editor_settings)
 
 
 func _on_country_duplicated(

@@ -41,3 +41,8 @@ func description() -> String:
 			+ ' performed this action: "'
 			+ _diplomacy_action_definition.name + '"'
 	)
+
+
+func _on_country_removed(country: Country) -> void:
+	if country == _sender_country or country == _recipient_country:
+		dismiss()

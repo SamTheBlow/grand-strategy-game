@@ -16,6 +16,7 @@ func _init(countries: Countries, armies: Armies) -> void:
 	for country in countries.list():
 		_on_country_added(country)
 	countries.added.connect(_on_country_added)
+	countries.removed.connect(_on_country_removed.bind(armies))
 
 	for army in armies.list():
 		_on_army_added(army)
@@ -24,7 +25,23 @@ func _init(countries: Countries, armies: Armies) -> void:
 
 
 func _on_country_added(country: Country) -> void:
+	if dictionary.has(country):
+		push_error("Country is already in the list.")
+		return
+
 	dictionary[country] = ArmiesOfCountry.new()
+
+
+func _on_country_removed(country: Country, armies: Armies) -> void:
+	if not dictionary.has(country):
+		push_error("Country is not in the list.")
+		return
+
+	# Remove all of the country's armies from the game
+	for army: Army in dictionary[country].list.duplicate():
+		armies.remove_army(army)
+
+	dictionary.erase(country)
 
 
 func _on_army_added(army: Army) -> void:

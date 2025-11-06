@@ -4,9 +4,9 @@ class_name DebugUtils
 
 ## Prints the status of all country relationships.
 static func print_relationships(countries: Countries) -> void:
-	for country_1 in countries._list:
+	for country_1 in countries.list():
 		print("Country: ", country_1.name_or_default())
-		for country_2 in countries._list:
+		for country_2 in countries.list():
 			if country_1 == country_2:
 				continue
 			print(

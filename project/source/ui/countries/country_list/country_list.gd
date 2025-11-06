@@ -29,7 +29,7 @@ func _ready() -> void:
 func setup(countries: Countries, no_country_is_allowed: bool) -> void:
 	if _is_setup and is_node_ready():
 		_countries.added.disconnect(_on_country_added)
-		#_countries.removed.disconnect(_on_country_removed)
+		_countries.removed.disconnect(_on_country_removed)
 
 	_countries = countries
 	_no_country_is_allowed = no_country_is_allowed
@@ -51,7 +51,7 @@ func _update() -> void:
 		_add_element(country)
 
 	_countries.added.connect(_on_country_added)
-	#_countries.removed.connect(_on_country_removed)
+	_countries.removed.connect(_on_country_removed)
 
 
 func _add_element(new_country: Country) -> void:

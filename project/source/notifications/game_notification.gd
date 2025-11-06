@@ -54,6 +54,7 @@ func _init(
 
 	game.turn.turn_changed.connect(_on_turn_changed)
 	game.turn.player_changed.connect(_on_player_changed)
+	game.countries.removed.connect(_on_country_removed)
 
 
 ## Returns the turn on which this notification was created.
@@ -119,6 +120,11 @@ func _outcome_can_be_selected() -> bool:
 		return false
 
 	return true
+
+
+func _on_country_removed(country: Country) -> void:
+	if country.id == _recipient_country.id:
+		dismiss()
 
 
 func _on_player_changed(player: GamePlayer) -> void:

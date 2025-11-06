@@ -26,7 +26,7 @@ func _init(
 
 	_components.append(AutoDismissInvalidOffer.new(
 			self,
-			_sender_country.relationships.with_country(_recipient_country)
+			_sender_country.relationships.with_country(recipient_country)
 			.available_actions_changed
 	))
 
@@ -69,3 +69,8 @@ func _accept() -> void:
 			_recipient_country,
 			_diplomacy_action_definition
 	))
+
+
+func _on_country_removed(country: Country) -> void:
+	if country == _sender_country or country == _recipient_country:
+		dismiss()

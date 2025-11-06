@@ -34,7 +34,7 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 	# Countries
 	var countries_data: Array = (
-			CountryParsing.to_raw_array(game.countries._list)
+			CountryParsing.to_raw_array(game.countries.list())
 	)
 	if not countries_data.is_empty():
 		output.merge({ _COUNTRIES_KEY: countries_data })

@@ -2,11 +2,11 @@ class_name Countries
 ## An encapsulated list of [Country] objects.
 
 signal added(country: Country)
+signal removed(country: Country)
 
-## Maps to each country its unique id, for fast lookup.
-var _map: Dictionary[int, Country] = {}
+## Maps each country to its unique id.
+var _list: Dictionary[int, Country] = {}
 
-var _list: Array[Country] = []
 var _unique_id_system := UniqueIdSystem.new()
 
 
@@ -16,7 +16,7 @@ var _unique_id_system := UniqueIdSystem.new()
 ## No effect if given country's id is already in use,
 ## or if given country is already in the list.
 func add(country: Country) -> void:
-	if _list.has(country):
+	if _list.has(country.id):
 		print_debug("Country is already in the list.")
 		return
 	if not _unique_id_system.is_id_valid(country.id):
@@ -29,19 +29,27 @@ func add(country: Country) -> void:
 	else:
 		_unique_id_system.claim_id(country.id)
 
-	_list.append(country)
-	_map[country.id] = country
+	_list[country.id] = country
 	added.emit(country)
+
+
+## No effect if given country is not on the list.
+func remove(country_id: int) -> void:
+	if not _list.has(country_id):
+		return
+	var country: Country = _list[country_id]
+	_list.erase(country_id)
+	removed.emit(country)
 
 
 ## Returns null if there is no country with given id.
 func country_from_id(id: int) -> Country:
-	return _map[id] if _map.has(id) else null
+	return _list[id] if _list.has(id) else null
 
 
 ## Returns a new copy of this list.
 func list() -> Array[Country]:
-	return _list.duplicate()
+	return _list.values()
 
 
 ## Returns the number of countries in this list.

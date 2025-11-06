@@ -15,6 +15,7 @@ func _init(countries: Countries, provinces: Provinces) -> void:
 	for country in countries.list():
 		_on_country_added(country)
 	countries.added.connect(_on_country_added)
+	countries.removed.connect(_on_country_removed)
 
 	for province in provinces.list():
 		_on_province_added(province)
@@ -28,7 +29,23 @@ func of_country(country: Country) -> ProvincesOfCountry:
 
 
 func _on_country_added(country: Country) -> void:
+	if _map.has(country):
+		push_error("Country is already in the list.")
+		return
+
 	_map[country] = ProvincesOfCountry.new()
+
+
+func _on_country_removed(country: Country) -> void:
+	if not _map.has(country):
+		push_error("Country is not in the list.")
+		return
+
+	# Mark all of the country's provinces as unclaimed
+	for province: Province in _map[country].list.duplicate():
+		province.owner_country = null
+
+	_map.erase(country)
 
 
 func _on_province_added(province: Province) -> void:

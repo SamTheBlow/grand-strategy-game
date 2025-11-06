@@ -42,3 +42,8 @@ func description() -> String:
 			+ ' accepted your offer: "'
 			+ _diplomacy_action_definition.name + '"'
 	)
+
+
+func _on_country_removed(country: Country) -> void:
+	if country == _country_that_accepted or country == _recipient_country:
+		dismiss()

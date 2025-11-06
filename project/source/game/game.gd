@@ -55,6 +55,7 @@ func _init() -> void:
 	world.provinces.building_added.connect(modifier_request.add_provider)
 
 	_components.append_array([
+		CountryRemovalCleanup.new(self),
 		AutoArrowProvinceReaction.new(self),
 		ProvinceOwnershipUpdate.new(self),
 		NewTurnEvents.new(self),

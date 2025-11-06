@@ -22,6 +22,7 @@ func _ready() -> void:
 func setup(countries: Countries) -> void:
 	if _is_setup and is_node_ready():
 		_countries.added.disconnect(_create_arrows_node)
+		_countries.removed.disconnect(_remove_arrows_node)
 
 	_countries = countries
 	_is_setup = true
@@ -53,6 +54,7 @@ func _update() -> void:
 
 	# Connect signals for automatic updates
 	_countries.added.connect(_create_arrows_node)
+	_countries.removed.connect(_remove_arrows_node)
 
 
 func _create_arrows_node(country: Country) -> void:
@@ -63,6 +65,18 @@ func _create_arrows_node(country: Country) -> void:
 
 	add_child(new_node)
 	_list[country.id] = new_node
+
+
+func _remove_arrows_node(country: Country) -> void:
+	if not _list.has(country.id):
+		return
+
+	if _list[country.id] == _visible_node:
+		_visible_node.hide()
+		_visible_node = null
+
+	_list[country.id].queue_free()
+	_list.erase(country.id)
 
 
 func _on_preview_arrow_created(
