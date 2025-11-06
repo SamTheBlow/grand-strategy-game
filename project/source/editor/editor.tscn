@@ -1,8 +1,6 @@
-[gd_scene load_steps=9 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene load_steps=7 format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
-[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_isggd"]
-[ext_resource type="PackedScene" uid="uid://df5yjnsebj5np" path="res://source/ui/popups/project_load_popup.tscn" id="3_kcuw7"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
 [ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="5_b8gba"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
@@ -11,8 +9,6 @@
 
 [node name="Editor" type="Node"]
 script = ExtResource("1_ae8ev")
-_popup_scene = ExtResource("2_isggd")
-_project_load_popup_scene = ExtResource("3_kcuw7")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -99,38 +95,32 @@ grow_vertical = 2
 [node name="Editor" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
-item_count = 3
-item_0/text = "Editor Settings..."
+item_count = 1
+item_0/text = "Quit"
 item_0/id = 0
-item_1/id = 1
-item_1/separator = true
-item_2/text = "Quit"
-item_2/id = 2
 
 [node name="Project" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
-item_count = 10
+item_count = 9
 item_0/text = "New Project"
 item_0/id = 0
 item_1/text = "Open..."
 item_1/id = 1
-item_2/text = "Open Recent"
 item_2/id = 2
+item_2/separator = true
+item_3/text = "Save"
 item_3/id = 3
-item_3/separator = true
-item_4/text = "Save"
+item_4/text = "Save As..."
 item_4/id = 4
-item_5/text = "Save As..."
 item_5/id = 5
+item_5/separator = true
+item_6/text = "Show in File Manager"
 item_6/id = 6
-item_6/separator = true
-item_7/text = "Show in File Manager"
 item_7/id = 7
+item_7/separator = true
+item_8/text = "Play"
 item_8/id = 8
-item_8/separator = true
-item_9/text = "Play"
-item_9/id = 9
 
 [node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
 unique_name_in_owner = true

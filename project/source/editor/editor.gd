@@ -4,17 +4,35 @@ extends Node
 
 signal exited()
 
-const INPUT_ACTION_QUIT_EDITOR: String = "quit_editor"
-const INPUT_ACTION_NEW_PROJECT: String = "new_project"
-const INPUT_ACTION_OPEN_PROJECT: String = "open_project"
-const INPUT_ACTION_SAVE: String = "save"
-const INPUT_ACTION_SAVE_AS: String = "save_as"
-const INPUT_ACTION_PLAY_PROJECT: String = "play_project"
+const INPUT_ACTION_QUIT_EDITOR: StringName = &"quit_editor"
+const INPUT_ACTION_NEW_PROJECT: StringName = &"new_project"
+const INPUT_ACTION_OPEN_PROJECT: StringName = &"open_project"
+const INPUT_ACTION_SAVE: StringName = &"save"
+const INPUT_ACTION_SAVE_AS: StringName = &"save_as"
+const INPUT_ACTION_PLAY_PROJECT: StringName = &"play_project"
 
-## The scene's root node must be a [GamePopup].
-@export var _popup_scene: PackedScene
-## The scene's root node must be a [ProjectLoadPopup].
-@export var _project_load_popup_scene: PackedScene
+const EDITOR_TAB_SEPARATOR_IDS: Array[int] = []
+const EDITOR_TAB_QUIT_ID: int = 0
+
+const PROJECT_TAB_SEPARATOR_IDS: Array[int] = [2, 5, 7]
+const PROJECT_TAB_NEW_PROJECT_ID: int = 0
+const PROJECT_TAB_OPEN_ID: int = 1
+const PROJECT_TAB_SAVE_ID: int = 3
+const PROJECT_TAB_SAVE_AS_ID: int = 4
+const PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID: int = 6
+const PROJECT_TAB_PLAY_ID: int = 8
+
+const EDIT_TAB_SEPARATOR_IDS: Array[int] = [1, 5]
+const EDIT_TAB_PROJECT_INFO_ID: int = 0
+const EDIT_TAB_WORLD_LIMITS_ID: int = 2
+const EDIT_TAB_BACKGROUND_COLOR_ID: int = 3
+const EDIT_TAB_DECORATIONS_ID: int = 4
+const EDIT_TAB_PROVINCES_ID: int = 6
+const EDIT_TAB_COUNTRIES_ID: int = 7
+
+const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
+const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
+const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings := AppEditorSettings.new()
 
@@ -34,9 +52,6 @@ var _undo_redo: UndoRedo:
 
 ## Keeps track of at what point the project was last saved.
 var _undo_redo_saved_version: int = 1
-
-## An array of file paths
-var _recently_opened_projects: Array[String] = []
 
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
@@ -104,9 +119,6 @@ func _update_window_title() -> void:
 
 ## Updates the visibility for all the menu options
 func _update_menu_visibility() -> void:
-	# "Open Recent"
-	_project_tab.set_item_disabled(2, _recently_opened_projects.is_empty())
-
 	_update_menu_visibility_after_save()
 
 
@@ -114,7 +126,8 @@ func _update_menu_visibility() -> void:
 func _update_menu_visibility_after_save() -> void:
 	# "Show in File Manager"
 	_project_tab.set_item_disabled(
-			7, not _current_project.has_valid_file_path()
+			PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID,
+			not _current_project.has_valid_file_path()
 	)
 
 
@@ -126,32 +139,27 @@ func _update_undo_redo() -> void:
 func _setup_menu_shortcuts() -> void:
 	var shortcut_quit := Shortcut.new()
 	shortcut_quit.events = InputMap.action_get_events(INPUT_ACTION_QUIT_EDITOR)
-	_editor_tab.set_item_shortcut(2, shortcut_quit)
+	_editor_tab.set_item_shortcut(EDITOR_TAB_QUIT_ID, shortcut_quit)
 
 	var shortcut_new := Shortcut.new()
 	shortcut_new.events = InputMap.action_get_events(INPUT_ACTION_NEW_PROJECT)
-	_project_tab.set_item_shortcut(0, shortcut_new)
+	_project_tab.set_item_shortcut(PROJECT_TAB_NEW_PROJECT_ID, shortcut_new)
 
 	var shortcut_open := Shortcut.new()
 	shortcut_open.events = InputMap.action_get_events(INPUT_ACTION_OPEN_PROJECT)
-	_project_tab.set_item_shortcut(1, shortcut_open)
+	_project_tab.set_item_shortcut(PROJECT_TAB_OPEN_ID, shortcut_open)
 
 	var shortcut_save := Shortcut.new()
 	shortcut_save.events = InputMap.action_get_events(INPUT_ACTION_SAVE)
-	_project_tab.set_item_shortcut(4, shortcut_save)
+	_project_tab.set_item_shortcut(PROJECT_TAB_SAVE_ID, shortcut_save)
 
 	var shortcut_save_as := Shortcut.new()
 	shortcut_save_as.events = InputMap.action_get_events(INPUT_ACTION_SAVE_AS)
-	_project_tab.set_item_shortcut(5, shortcut_save_as)
+	_project_tab.set_item_shortcut(PROJECT_TAB_SAVE_AS_ID, shortcut_save_as)
 
 	var shortcut_play := Shortcut.new()
 	shortcut_play.events = InputMap.action_get_events(INPUT_ACTION_PLAY_PROJECT)
-	_project_tab.set_item_shortcut(9, shortcut_play)
-
-
-func _open_editor_settings() -> void:
-	# TODO implement
-	pass
+	_project_tab.set_item_shortcut(PROJECT_TAB_PLAY_ID, shortcut_play)
 
 
 func _open_new_project() -> void:
@@ -159,9 +167,9 @@ func _open_new_project() -> void:
 
 
 func _open_project() -> void:
-	var popup := _popup_scene.instantiate() as GamePopup
+	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
 	var project_load_popup := (
-			_project_load_popup_scene.instantiate() as ProjectLoadPopup
+			_PROJECT_LOAD_POPUP_SCENE.instantiate() as ProjectLoadPopup
 	)
 	project_load_popup.project_loaded.connect(_on_project_loaded)
 	popup.contents_node = project_load_popup
@@ -200,14 +208,10 @@ func _open_interface(type: EditingInterface.InterfaceType) -> void:
 ## in the menu bar's "Editor" tab.
 func _on_editor_tab_id_pressed(id: int) -> void:
 	match id:
-		0:
-			# "Editor Settings..."
-			_open_editor_settings()
-		2:
+		EDITOR_TAB_QUIT_ID:
 			# "Quit"
 			exited.emit()
-		1:
-			# Separators & sub menus
+		EDITOR_TAB_SEPARATOR_IDS:
 			pass
 		_:
 			push_error("Unrecognized menu id.")
@@ -217,25 +221,25 @@ func _on_editor_tab_id_pressed(id: int) -> void:
 ## in the menu bar's "Project" tab.
 func _on_project_tab_id_pressed(id: int) -> void:
 	match id:
-		0:
+		PROJECT_TAB_NEW_PROJECT_ID:
 			# "New Project"
 			_open_new_project()
-		1:
+		PROJECT_TAB_OPEN_ID:
 			# "Open..."
 			_open_project()
-		4:
+		PROJECT_TAB_SAVE_ID:
 			# "Save"
 			_save_project()
-		5:
+		PROJECT_TAB_SAVE_AS_ID:
 			# "Save As..."
 			_save_dialog.show()
-		7:
+		PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID:
 			# "Show in File Manager"
 			_current_project.show_in_file_manager()
-		9:
+		PROJECT_TAB_PLAY_ID:
 			# "Play"
 			_play()
-		2, 3, 6, 8:
+		PROJECT_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			pass
 		_:
@@ -244,25 +248,25 @@ func _on_project_tab_id_pressed(id: int) -> void:
 
 func _on_edit_tab_id_pressed(id: int) -> void:
 	match id:
-		0:
+		EDIT_TAB_PROJECT_INFO_ID:
 			# "Project Info"
 			_open_interface(EditingInterface.InterfaceType.PROJECT_INFO)
-		2:
+		EDIT_TAB_WORLD_LIMITS_ID:
 			# "World Limits"
 			_open_interface(EditingInterface.InterfaceType.WORLD_LIMITS)
-		3:
+		EDIT_TAB_BACKGROUND_COLOR_ID:
 			# "Background Color"
 			_open_interface(EditingInterface.InterfaceType.BACKGROUND_COLOR)
-		4:
+		EDIT_TAB_DECORATIONS_ID:
 			# "Decorations"
 			_open_interface(EditingInterface.InterfaceType.DECORATION_LIST)
-		6:
+		EDIT_TAB_PROVINCES_ID:
 			# "Provinces"
 			_open_interface(EditingInterface.InterfaceType.PROVINCE_LIST)
-		7:
+		EDIT_TAB_COUNTRIES_ID:
 			# "Countries"
 			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
-		1, 5:
+		EDITOR_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			pass
 		_:
@@ -318,9 +322,9 @@ func _on_province_interface_closed() -> void:
 
 func _on_province_change_owner_pressed(province: Province) -> void:
 	# Open popup that lets you choose a country
-	var popup := _popup_scene.instantiate() as GamePopup
+	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
 	var country_select_popup := (
-			preload("uid://gfcp3xbnck52").instantiate() as CountrySelectPopup
+			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
 	)
 	country_select_popup.country_selected.connect(
 		func(country: Country) -> void:
