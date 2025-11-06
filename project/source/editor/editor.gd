@@ -274,6 +274,10 @@ func _on_project_loaded(project: GameProject) -> void:
 
 
 func _on_save_dialog_file_selected(path: String) -> void:
+	# Add the file extension if the user didn't type it in
+	if not path.to_lower().ends_with(".json"):
+		path = path + ".json"
+
 	_current_project.save_as(path)
 	_update_undo_redo()
 	_update_menu_visibility_after_save()
