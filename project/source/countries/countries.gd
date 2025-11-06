@@ -3,6 +3,9 @@ class_name Countries
 
 signal added(country: Country)
 
+## Maps to each country its unique id, for fast lookup.
+var _map: Dictionary[int, Country] = {}
+
 var _list: Array[Country] = []
 var _unique_id_system := UniqueIdSystem.new()
 
@@ -27,15 +30,13 @@ func add(country: Country) -> void:
 		_unique_id_system.claim_id(country.id)
 
 	_list.append(country)
+	_map[country.id] = country
 	added.emit(country)
 
 
 ## Returns null if there is no country with given id.
 func country_from_id(id: int) -> Country:
-	for country in _list:
-		if country.id == id:
-			return country
-	return null
+	return _map[id] if _map.has(id) else null
 
 
 ## Returns a new copy of this list.
