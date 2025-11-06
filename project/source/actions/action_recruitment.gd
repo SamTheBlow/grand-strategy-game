@@ -31,7 +31,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		return
 
 	var recruit_limits := ArmyRecruitmentLimits.new(
-			your_country, province, game
+			game, your_country, province
 	)
 	if recruit_limits.maximum() < _number_of_troops:
 		push_warning(

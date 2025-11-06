@@ -124,21 +124,22 @@ func _setup_global_modifiers() -> void:
 
 ## Used to determine the winner when the game ends.
 ## Currently returns the country that controls the most provinces.
+## Returns null if the game has no countries.
 func _winning_country() -> Country:
-	# Count how many provinces each country has
-	var pcpc := ProvinceCountPerCountry.new()
-	pcpc.calculate(world.provinces.list())
+	var province_count_per_country: Dictionary[Country, int] = (
+			ProvinceCountPerCountry.result(world.provinces.list())
+	)
 
-	# Determine which country controls the most provinces
-	var winning_player_index: int = 0
-	for i in pcpc.countries.size():
+	var winner_country: Country = null
+	for country in province_count_per_country:
 		if (
-				pcpc.number_of_provinces[i]
-				> pcpc.number_of_provinces[winning_player_index]
+				winner_country == null
+				or province_count_per_country[country]
+				> province_count_per_country[winner_country]
 		):
-			winning_player_index = i
+			winner_country = country
 
-	return pcpc.countries[winning_player_index]
+	return winner_country
 
 
 func _on_is_running_changed(is_running: bool) -> void:
@@ -151,8 +152,7 @@ func _on_game_over() -> void:
 		return
 
 	_game_over = true
-	var winning_country: Country = _winning_country()
-	game_over.emit(winning_country)
+	game_over.emit(_winning_country())
 
 
 ## This object is itself a provider for the [ModifierRequest] system.

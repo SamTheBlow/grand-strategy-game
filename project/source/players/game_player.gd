@@ -3,15 +3,20 @@ class_name GamePlayer
 ## This player can be either a human or an AI.
 ## The player may either control a [Country] or spectate.
 
+signal playing_country_changed()
 signal human_status_changed(this: GamePlayer)
 signal username_changed(this: GamePlayer)
 
-## The unique id assigned to this player.
-## Each player has its own id. Useful for saving/loading, networking, etc.
+## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
 
-## Null means the player is spectating.
-var playing_country: Country
+## May be null, in which case the player is spectating.
+var playing_country: Country = null:
+	set(value):
+		if playing_country == value:
+			return
+		playing_country = value
+		playing_country_changed.emit()
 
 ## Note that if you are turning this player into a human, then
 ## you might want to set the player_human property before setting this one

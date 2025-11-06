@@ -3,16 +3,25 @@ extends Node2D
 
 signal overlay_created(node: Node)
 
-# TODO Temporary... Figure out how to not need this
-var project: GameProject
-
-var world: GameWorld:
+## Setting this sets everything else automatically.
+var project: GameProject:
 	set(value):
-		world = value
-		province_selection = ProvinceSelection.new(world.provinces)
-		_initialize()
+		project = value
+		world = project.game.world
+		playing_country = PlayingCountry.new(project.game)
+		province_selection = (
+				ProvinceSelection.new(project.game.world.provinces)
+		)
+		if is_node_ready():
+			_update()
 
-## Automatically initialized when providing the [GameWorld].
+## Automatically initialized when providing the [GameProject].
+var world: GameWorld
+
+## Automatically initialized when providing the [GameProject].
+var playing_country: PlayingCountry
+
+## Automatically initialized when providing the [GameProject].
 var province_selection: ProvinceSelection
 
 var _is_decorations_visible: bool = true
@@ -28,15 +37,11 @@ var _is_decorations_visible: bool = true
 
 
 func _ready() -> void:
-	_initialize()
+	if project != null:
+		_update()
 
 
-func _initialize() -> void:
-	if not is_node_ready() or project == null or world == null:
-		return
-
-	var playing_country := PlayingCountry.new(project.game.turn)
-
+func _update() -> void:
 	# We need to setup the provinces first
 	province_visuals.setup(world.provinces)
 

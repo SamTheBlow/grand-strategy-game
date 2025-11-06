@@ -83,7 +83,6 @@ func _ready() -> void:
 	_action_input.game = game
 
 	world_visuals.project = project
-	world_visuals.world = game.world
 
 	(%ProvinceSelectConditions as ProvinceSelectConditions).world_visuals = (
 			world_visuals
@@ -193,7 +192,7 @@ func _open_recruitment_popup(province: Province) -> void:
 			recruitment_scene.instantiate() as RecruitmentPopup
 	)
 	var recruitment_limits := ArmyRecruitmentLimits.new(
-			game.turn.playing_player().playing_country, province, game
+			game, game.turn.playing_player().playing_country, province
 	)
 	recruitment_popup.setup(
 			game.world.provinces,

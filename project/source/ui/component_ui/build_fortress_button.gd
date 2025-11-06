@@ -2,50 +2,84 @@ class_name BuildFortressButton
 extends Button
 ## Automatically disables itself when given player
 ## is unable to build a fortress in given province.
-## Also disables itself if either the province or the player is null.
+## (Or if given data is null.)
 ##
 ## See also: [RecruitButton], [ComponentUI]
 # TODO this code looks a lot like the code for [RecruitButton]
 
-var province: Province:
-	set(value):
-		if province == value:
-			return
-		province = value
-		_setup_build_conditions()
-		_refresh_is_disabled()
-
-var player: GamePlayer:
-	set(value):
-		if player == value:
-			return
-		player = value
-		_setup_build_conditions()
-		_refresh_is_disabled()
-
-var game: Game:
+## May be null.
+var game: Game = null:
 	set(value):
 		if game == value:
 			return
 		game = value
 		_setup_build_conditions()
-		_refresh_is_disabled()
+		_update_is_disabled()
 
-var _fortress_build_conditions: FortressBuildConditions:
+## May be null.
+var province: Province = null:
+	set(value):
+		if province == value:
+			return
+		province = value
+		_setup_build_conditions()
+		_update_is_disabled()
+
+## May be null.
+var player: GamePlayer = null:
+	set(value):
+		if player == value:
+			return
+
+		# Disconnect signals
+		if player != null:
+			player.playing_country_changed.disconnect(
+					_on_playing_country_changed
+			)
+
+		player = value
+
+		# Connect signals
+		if player != null:
+			player.playing_country_changed.connect(
+					_on_playing_country_changed
+			)
+
+		_setup_build_conditions()
+		_update_is_disabled()
+
+## May be null.
+var _fortress_build_conditions: FortressBuildConditions = null:
 	set(value):
 		if _fortress_build_conditions == value:
 			return
-		_disconnect_signals()
+
+		# Disconnect signals
+		if _fortress_build_conditions != null:
+			_fortress_build_conditions.can_build_changed.disconnect(
+					_on_fortress_can_build_changed
+			)
+
 		_fortress_build_conditions = value
-		_connect_signals()
+
+		# Connect signals
+		if _fortress_build_conditions != null:
+			_fortress_build_conditions.can_build_changed.connect(
+					_on_fortress_can_build_changed
+			)
 
 
 func _ready() -> void:
-	_refresh_is_disabled()
+	_update_is_disabled()
 
 
 func _setup_build_conditions() -> void:
-	if province == null or player == null or game == null:
+	if (
+			game == null
+			or province == null
+			or player == null
+			or player.playing_country == null
+	):
 		_fortress_build_conditions = null
 		return
 
@@ -54,45 +88,20 @@ func _setup_build_conditions() -> void:
 	)
 
 
-func _refresh_is_disabled() -> void:
+func _update_is_disabled() -> void:
 	if not is_node_ready():
 		return
 
-	if player == null or _fortress_build_conditions == null:
-		disabled = true
-		return
-
-	disabled = not (
-			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
-			and _fortress_build_conditions.can_build()
+	disabled = (
+			_fortress_build_conditions == null
+			or not MultiplayerUtils.has_gameplay_authority(multiplayer, player)
+			or not _fortress_build_conditions.can_build()
 	)
 
 
-func _connect_signals() -> void:
-	if _fortress_build_conditions == null:
-		return
-
-	if not (
-			_fortress_build_conditions.can_build_changed
-			.is_connected(_on_fortress_can_build_changed)
-	):
-		_fortress_build_conditions.can_build_changed.connect(
-				_on_fortress_can_build_changed
-		)
-
-
-func _disconnect_signals() -> void:
-	if _fortress_build_conditions == null:
-		return
-
-	if (
-			_fortress_build_conditions.can_build_changed
-			.is_connected(_on_fortress_can_build_changed)
-	):
-		_fortress_build_conditions.can_build_changed.disconnect(
-				_on_fortress_can_build_changed
-		)
-
-
 func _on_fortress_can_build_changed(_can_build: bool) -> void:
-	_refresh_is_disabled()
+	_update_is_disabled()
+
+
+func _on_playing_country_changed() -> void:
+	_setup_build_conditions()

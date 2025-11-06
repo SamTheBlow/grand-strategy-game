@@ -122,12 +122,15 @@ func _on_game_over(winner_country: Country) -> void:
 			+ " turn(s)."
 	)
 
-	var pcpc := ProvinceCountPerCountry.new()
-	pcpc.calculate(_project.game.world.provinces.list())
-	for i in pcpc.countries.size():
+	var province_count_per_country: Dictionary[Country, int] = (
+			ProvinceCountPerCountry.result(
+					_project.game.world.provinces.list()
+			)
+	)
+	for country in province_count_per_country:
 		debug_text += (
-				"\n- " + pcpc.countries[i].name_or_default() + " controls "
-				+ str(pcpc.number_of_provinces[i]) + " province(s)."
+				"\n- " + country.name_or_default() + " controls "
+				+ str(province_count_per_country[country]) + " province(s)."
 		)
 
 	print(debug_text)

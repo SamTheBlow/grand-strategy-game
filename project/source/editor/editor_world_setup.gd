@@ -53,7 +53,6 @@ func clear() -> void:
 func load_world(project: GameProject) -> void:
 	var new_world := _WORLD_SCENE.instantiate() as WorldVisuals2D
 	new_world.project = project
-	new_world.world = project.game.world
 	new_world.overlay_created.connect(_world_overlay.add_child)
 
 	_camera = _CAMERA_SCENE.instantiate() as CustomCamera2D

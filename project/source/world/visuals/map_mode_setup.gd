@@ -75,7 +75,7 @@ func _update() -> void:
 	_node_political.setup(
 			_world_visuals.world.armies,
 			_world_visuals.world.provinces,
-			PlayingCountry.new(_world_visuals.project.game.turn),
+			_world_visuals.playing_country,
 			_world_visuals.world.armies_in_each_province,
 			_world_visuals.province_selection
 	)
@@ -105,7 +105,8 @@ func _enable_map_mode() -> void:
 		_arrow_behavior = ArrowBehaviorOngoingGame.new(
 				_world_visuals.project.game,
 				multiplayer,
-				_world_visuals.province_selection
+				_world_visuals.province_selection,
+				_world_visuals.playing_country
 		)
 
 
@@ -119,24 +120,25 @@ class ArrowBehaviorOngoingGame extends ArrowBehavior:
 	var _game: Game
 	var _multiplayer: MultiplayerAPI
 	var _province_selection: ProvinceSelection
-
 	var _playing_country: PlayingCountry
+
 	var _input: AutoArrowInput
 	var _container: AutoArrowContainer
 
 	func _init(
 			game: Game,
 			multiplayer: MultiplayerAPI,
-			province_selection: ProvinceSelection
+			province_selection: ProvinceSelection,
+			playing_country: PlayingCountry
 	) -> void:
 		_game = game
 		_multiplayer = multiplayer
 		_province_selection = province_selection
+		_playing_country = playing_country
 
 	func start(
 			input: AutoArrowInput, container: AutoArrowContainer
 	) -> void:
-		_playing_country = PlayingCountry.new(_game.turn)
 		_input = input
 		_container = container
 

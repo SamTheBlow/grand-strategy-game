@@ -20,13 +20,13 @@ func _check_percentage_winner(percentage_to_win: float) -> void:
 	var provinces_list: Array[Province] = _game.world.provinces.list()
 	var number_of_provinces: int = provinces_list.size()
 
-	var pcpc := ProvinceCountPerCountry.new()
-	pcpc.calculate(provinces_list)
-
-	for i in pcpc.countries.size():
+	var province_count_per_country: Dictionary[Country, int] = (
+			ProvinceCountPerCountry.result(provinces_list)
+	)
+	for country in province_count_per_country:
 		if (
-				float(pcpc.number_of_provinces[i]) / number_of_provinces
-				>= percentage_to_win
+				float(province_count_per_country[country])
+				/ number_of_provinces >= percentage_to_win
 		):
 			game_over.emit()
 			break
@@ -35,11 +35,11 @@ func _check_percentage_winner(percentage_to_win: float) -> void:
 ## Checks if someone won from controlling a certain number
 ## of [Province]s and, if so, declares the game over.
 func _check_number_winner(number_to_win: int) -> void:
-	var pcpc := ProvinceCountPerCountry.new()
-	pcpc.calculate(_game.world.provinces.list())
-
-	for i in pcpc.countries.size():
-		if pcpc.number_of_provinces[i] >= number_to_win:
+	var province_count_per_country: Dictionary[Country, int] = (
+			ProvinceCountPerCountry.result(_game.world.provinces.list())
+	)
+	for country in province_count_per_country:
+		if province_count_per_country[country] >= number_to_win:
 			game_over.emit()
 			break
 

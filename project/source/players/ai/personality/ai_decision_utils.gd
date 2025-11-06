@@ -10,7 +10,7 @@ var game: Game
 ## This is to ensure that the actions in this list are all valid.
 var _action_list: Array[Action] = []
 
-var _countries_done_interacting_with: Array[Country] = []
+var _countries_done_interacting_with: Array[int] = []
 
 
 func _init(game_: Game = null) -> void:
@@ -128,9 +128,9 @@ func strength_of_countries() -> Array[float]:
 ## Once called, other functions like make_peace and dismiss_all_offers_from
 ## will have no effect on given country.
 func stop_interacting_with(country: Country) -> void:
-	if country in _countries_done_interacting_with:
+	if country.id in _countries_done_interacting_with:
 		return
-	_countries_done_interacting_with.append(country)
+	_countries_done_interacting_with.append(country.id)
 
 
 func make_peace_with(country: Country) -> void:
@@ -401,7 +401,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 		return
 
 	if (
-			action_diplomacy.target_country(game)
+			action_diplomacy.target_country(game).id
 			in _countries_done_interacting_with
 	):
 		return
@@ -461,7 +461,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 # TODO more, better validation
 func _add_action_notif(action_notif: ActionHandleNotification) -> void:
 	if (
-			action_notif.game_notification(game).sender_country()
+			action_notif.game_notification(game).sender_country().id
 			in _countries_done_interacting_with
 	):
 		return

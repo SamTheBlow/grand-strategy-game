@@ -14,24 +14,53 @@ signal maximum_changed(new_maximum: int)
 
 var error_message: String = ""
 
-var _country: Country
-var _province: Province
+var country: Country:
+	set(value):
+		if country == value:
+			return
+
+		# Disconnect signals
+		if country != null:
+			country.money_changed.disconnect(_on_money_changed)
+
+		country = value
+
+		# Connect signals
+		country.money_changed.connect(_on_money_changed)
+
+		_update()
+
+var province: Province:
+	set(value):
+		if province == value:
+			return
+
+		# Disconnect signals
+		if province != null:
+			province.owner_changed.disconnect(_on_province_owner_changed)
+			province.population().value_changed.connect(
+					_on_population_size_changed
+			)
+
+		province = value
+
+		# Connect signals
+		province.owner_changed.connect(_on_province_owner_changed)
+		province.population().value_changed.connect(
+				_on_population_size_changed
+		)
+
+		_update()
+
 var _game: Game
 var _minimum: int
 var _maximum: int
 
 
-func _init(country: Country, province: Province, game: Game) -> void:
-	_country = country
-	_province = province
+func _init(game: Game, country_: Country, province_: Province) -> void:
 	_game = game
-
-	_province.owner_changed.connect(_on_province_owner_changed)
-	_country.money_changed.connect(_on_money_changed)
-	_province.population().value_changed.connect(_on_population_size_changed)
-
-	_minimum = _calculated_minimum()
-	_maximum = _calculated_maximum()
+	country = country_
+	province = province_
 
 
 func minimum() -> int:
@@ -42,9 +71,16 @@ func maximum() -> int:
 	return _maximum
 
 
-#func _update_minimum() -> void:
+func _update() -> void:
+	if country == null or province == null:
+		return
+	_update_minimum()
+	_update_maximum()
+
+
+func _update_minimum() -> void:
 #	var old_minimum: int = _minimum
-#	_minimum = _calculated_minimum()
+	_minimum = _calculated_minimum()
 #	if _minimum != old_minimum:
 #		minimum_changed.emit(_minimum)
 
@@ -61,10 +97,10 @@ func _calculated_minimum() -> int:
 	# if the country controls any (active) army on the province,
 	# then the minimum you can recruit will always be 0.
 	var armies_in_province: Array[Army] = (
-			_game.world.armies_in_each_province.in_province(_province).list
+			_game.world.armies_in_each_province.in_province(province).list
 	)
 	for army in armies_in_province:
-		if army.owner_country == _country and army.is_able_to_move():
+		if army.owner_country == country and army.is_able_to_move():
 			return 0
 
 	return _game.rules.minimum_army_size.value
@@ -75,7 +111,7 @@ func _calculated_maximum() -> int:
 		error_message = "The game's rules don't allow for recruitment!"
 		return 0
 
-	if _province.owner_country != _country:
+	if province.owner_country != country:
 		error_message = "The province is not under your country's control!"
 		return 0
 
@@ -86,19 +122,19 @@ func _calculated_maximum() -> int:
 	# Money
 	var money_per_unit: float = _game.rules.recruitment_money_per_unit.value
 	var money_for_one_troop: int = ceili(money_per_unit)
-	if _country.money < money_for_one_troop:
+	if country.money < money_for_one_troop:
 		error_message = (
 				"Your country doesn't have enough money to recruit any. "
 				+ "One troop costs " + str(money_for_one_troop) + " money, "
-				+ "but you only have " + str(_country.money) + "."
+				+ "but you only have " + str(country.money) + "."
 		)
 		return 0
 	if money_per_unit != 0.0:
-		var max_troops_with_money: int = floori(_country.money / money_per_unit)
+		var max_troops_with_money: int = floori(country.money / money_per_unit)
 		maximums.append(max_troops_with_money)
 
 	# Population
-	var population_size: int = _province.population().value
+	var population_size: int = province.population().value
 	var pop_per_unit: float = _game.rules.recruitment_population_per_unit.value
 	var pop_for_one_troop: int = ceili(pop_per_unit)
 	if population_size < pop_for_one_troop:
@@ -142,8 +178,8 @@ func _check_condition(condition: bool) -> void:
 	maximum_changed.emit(_maximum)
 
 
-func _on_province_owner_changed(province: Province) -> void:
-	_check_condition(province.owner_country == _country)
+func _on_province_owner_changed(_province: Province) -> void:
+	_check_condition(province.owner_country == country)
 
 
 func _on_money_changed(_money: int) -> void:

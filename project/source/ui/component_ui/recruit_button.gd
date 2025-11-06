@@ -2,95 +2,106 @@ class_name RecruitButton
 extends Button
 ## Automatically disables itself when given player
 ## is unable to recruit armies in given province.
-## Also disables itself if either the province or the player is null.
+## (Or if given data is null.)
 ##
 ## See also: [BuildFortressButton], [ComponentUI]
 
-var province: Province:
-	set(value):
-		if province == value:
-			return
-		province = value
-		_setup_recruitment_limits()
-		_refresh_is_disabled()
-
-var player: GamePlayer:
-	set(value):
-		if player == value:
-			return
-		player = value
-		_setup_recruitment_limits()
-		_refresh_is_disabled()
-
-var game: Game:
+## May be null.
+var game: Game = null:
 	set(value):
 		if game == value:
 			return
 		game = value
 		_setup_recruitment_limits()
-		_refresh_is_disabled()
+		_update_is_disabled()
 
-var _army_recruit_limits: ArmyRecruitmentLimits:
+## May be null.
+var province: Province = null:
+	set(value):
+		if province == value:
+			return
+		province = value
+		_setup_recruitment_limits()
+		_update_is_disabled()
+
+## May be null.
+var player: GamePlayer = null:
+	set(value):
+		if player == value:
+			return
+
+		# Disconnect signals
+		if player != null:
+			player.playing_country_changed.disconnect(
+					_on_playing_country_changed
+			)
+
+		player = value
+
+		# Connect signals
+		if player != null:
+			player.playing_country_changed.connect(
+					_on_playing_country_changed
+			)
+
+		_setup_recruitment_limits()
+		_update_is_disabled()
+
+## May be null.
+var _army_recruit_limits: ArmyRecruitmentLimits = null:
 	set(value):
 		if _army_recruit_limits == value:
 			return
-		_disconnect_signals()
+
+		# Disconnect signals
+		if _army_recruit_limits != null:
+			_army_recruit_limits.maximum_changed.disconnect(
+					_on_army_maximum_changed
+			)
+
 		_army_recruit_limits = value
-		_connect_signals()
+
+		# Connect signals
+		if _army_recruit_limits != null:
+			_army_recruit_limits.maximum_changed.connect(
+					_on_army_maximum_changed
+			)
 
 
 func _ready() -> void:
-	_refresh_is_disabled()
+	_update_is_disabled()
 
 
 func _setup_recruitment_limits() -> void:
-	if province == null or player == null or game == null:
+	if (
+			game == null
+			or province == null
+			or player == null
+			or player.playing_country == null
+	):
 		_army_recruit_limits = null
 		return
 
 	_army_recruit_limits = (
-			ArmyRecruitmentLimits.new(player.playing_country, province, game)
+			ArmyRecruitmentLimits.new(game, player.playing_country, province)
 	)
 
 
-func _refresh_is_disabled() -> void:
+func _update_is_disabled() -> void:
 	if not is_node_ready():
 		return
 
-	if province == null or player == null or _army_recruit_limits == null:
-		disabled = true
-		return
-
-	disabled = not (
-			MultiplayerUtils.has_gameplay_authority(multiplayer, player)
-			and _army_recruit_limits.maximum()
-			>= game.rules.minimum_army_size.value
+	disabled = (
+			_army_recruit_limits == null
+			or not MultiplayerUtils.has_gameplay_authority(multiplayer, player)
+			or _army_recruit_limits.maximum()
+			< game.rules.minimum_army_size.value
 	)
 
 
-func _connect_signals() -> void:
-	if _army_recruit_limits == null:
-		return
-
-	if not (
-			_army_recruit_limits.maximum_changed
-			.is_connected(_on_army_maximum_changed)
-	):
-		_army_recruit_limits.maximum_changed.connect(_on_army_maximum_changed)
-
-
-func _disconnect_signals() -> void:
-	if _army_recruit_limits == null:
-		return
-
-	if (
-			_army_recruit_limits.maximum_changed
-			.is_connected(_on_army_maximum_changed)
-	):
-		_army_recruit_limits.maximum_changed.disconnect(
-				_on_army_maximum_changed
-		)
-
-
 func _on_army_maximum_changed(_new_maximum: int) -> void:
-	_refresh_is_disabled()
+	_update_is_disabled()
+
+
+func _on_playing_country_changed() -> void:
+	_setup_recruitment_limits()
