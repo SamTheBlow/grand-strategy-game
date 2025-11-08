@@ -46,27 +46,27 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 
 	if army.owner_country != player.playing_country:
 		push_warning(
-				"Tried to split an army, "
-				+ "but the army is not under the player's control!"
+				"Tried to split an army, ",
+				"but the army is not under the player's control!"
 		)
 		return
 
 	var partition_sum: int = 0
 	for army_size in _troop_partition:
-		if army_size < army.army_size.minimum():
+		if army_size < army.size().minimum_value:
 			push_warning(
-					"Tried to split an army, but at least one "
-					+ "of the resulting armies was too small!"
+					"Tried to split an army, but at least one ",
+					"of the resulting armies was too small!"
 			)
 			return
 		partition_sum += army_size
 
-	if partition_sum != army.army_size.current_size():
+	if partition_sum != army.size().value:
 		push_warning(
-				"Tried to split an army, but the given partition's sum "
-				+ "does not match the army's size! It should be "
-				+ str(army.army_size.current_size()) + " but instead it is "
-				+ str(partition_sum) + "."
+				"Tried to split an army, but the given partition's sum ",
+				"does not match the army's size! ",
+				"It should be ", army.size().value,
+				" but instead it is ", partition_sum, "."
 		)
 		return
 
@@ -82,7 +82,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 
 		# Reduce the original army's troop count
-		army.army_size.remove(_troop_partition[i + 1])
+		army.size().value -= _troop_partition[i + 1]
 
 
 func raw_data() -> Dictionary:

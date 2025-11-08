@@ -27,7 +27,7 @@ func add(army: Army) -> void:
 	else:
 		_unique_id_system.claim_id(army.id)
 
-	army.destroyed.connect(remove_army)
+	army.size().became_too_small.connect(remove_army.bind(army))
 	_list.append(army)
 	army_added.emit(army)
 
@@ -38,7 +38,7 @@ func remove_army(army: Army) -> void:
 		push_warning("Army is not in the list.")
 		return
 
-	army.destroyed.disconnect(remove_army)
+	army.size().became_too_small.disconnect(remove_army)
 	_list.erase(army)
 	army_removed.emit(army)
 
@@ -74,7 +74,7 @@ func merge_armies(
 							or army1.movements_made() == army2.movements_made()
 					)
 			):
-				army2.army_size.add(army1.army_size.current_size())
+				army2.size().value += army1.size().value
 				remove_army(army1)
 				break
 

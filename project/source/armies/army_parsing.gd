@@ -33,7 +33,7 @@ static func to_raw_array(armies_list: Array[Army]) -> Array:
 	for army in armies_list:
 		var army_data: Dictionary = {
 			_ID_KEY: army.id,
-			_SIZE_KEY: army.army_size.current_size(),
+			_SIZE_KEY: army.size().value,
 			_OWNER_ID_KEY: army.owner_country.id,
 			_PROVINCE_ID_KEY: army.province_id(),
 		}

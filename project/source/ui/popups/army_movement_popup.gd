@@ -53,8 +53,8 @@ func _update() -> void:
 
 	_provinces.removed.connect(_on_province_removed)
 
-	_troop_slider.min_value = _army.army_size.minimum()
-	_troop_slider.max_value = _army.army_size.current_size()
+	_troop_slider.min_value = _army.size().minimum_value
+	_troop_slider.max_value = _army.size().value
 
 	# Default to moving the entire army
 	_troop_slider.value = _troop_slider.max_value
@@ -70,7 +70,7 @@ func _update_label() -> void:
 
 func _on_troop_slider_value_changed(value: float) -> void:
 	if (
-			value > _troop_slider.max_value - _army.army_size.minimum()
+			value > _troop_slider.max_value - _army.size().minimum_value
 			and value < _troop_slider.max_value
 	):
 		# We return early, because setting the slider's value here

@@ -8,7 +8,6 @@ class_name Army
 ##
 ## See also: [ArmyVisuals2D]
 
-signal size_changed(size: int)
 signal allegiance_changed(country: Country)
 ## Always emitted when the province changes.
 signal province_changed(this_army: Army)
@@ -18,23 +17,8 @@ signal province_changed(this_army: Army)
 signal moved_to_province(province: Province)
 signal movements_made_changed(movements_made: int)
 
-## Emitted when this army believes it has been destroyed.
-## This is used to ask the game to remove the army from the game.
-signal destroyed(this_army: Army)
-
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
-
-## Provides information on this army's size. Currently must not be null.
-## Must initialize when the army is created.
-var army_size: ArmySize:
-	set(value):
-		if army_size:
-			army_size.size_changed.disconnect(_on_size_changed)
-			army_size.became_too_small.disconnect(destroy)
-		army_size = value
-		army_size.size_changed.connect(_on_size_changed)
-		army_size.became_too_small.connect(destroy)
 
 ## The [Country] in control of this army.
 ## This must not be null! If you want an army to be unaligned,
@@ -48,6 +32,8 @@ var owner_country: Country:
 
 		owner_country = value
 		allegiance_changed.emit(owner_country)
+
+var _army_size := ArmySize.new()
 
 ## The province in which this army is located.
 var _province_id: int = -1:
@@ -73,23 +59,24 @@ var _movements_made: int = 0:
 ## Use -1 for the id if you don't want to provide a specific one.
 static func quick_setup(
 		game: Game,
-		army_size_: int,
+		army_size: int,
 		owner_country_: Country,
 		province_id_: int,
 		id_: int = -1,
 		movements_made_: int = 0,
 ) -> Army:
 	var minimum_army_size: int = game.rules.minimum_army_size.value
-	if army_size_ < minimum_army_size:
+	if army_size < minimum_army_size:
 		push_error(
-				"Tried to create an army, "
-				+ "but its size is smaller than the minimum allowed."
+				"Tried to create an army, ",
+				"but its size is smaller than the minimum allowed."
 		)
 		return null
 
 	var army := Army.new()
 	army.id = id_
-	army.army_size = ArmySize.new(army_size_, minimum_army_size)
+	army.size().minimum_value = minimum_army_size
+	army.size().value = army_size
 	army.owner_country = owner_country_
 	army._province_id = province_id_
 	army._movements_made = movements_made_
@@ -100,7 +87,11 @@ static func quick_setup(
 
 
 func destroy() -> void:
-	destroyed.emit(self)
+	_army_size.value = 0
+
+
+func size() -> ArmySize:
+	return _army_size
 
 
 func province_id() -> int:
@@ -208,7 +199,3 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 func _on_player_turn_changed(player: GamePlayer) -> void:
 	if player.playing_country == owner_country:
 		_movements_made = 0
-
-
-func _on_size_changed(new_size: int) -> void:
-	size_changed.emit(new_size)

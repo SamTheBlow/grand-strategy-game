@@ -54,7 +54,7 @@ func _refresh() -> void:
 		return
 
 	_on_army_allegiance_changed(army.owner_country)
-	_on_army_size_changed(army.army_size.current_size())
+	_on_army_size_changed(army.size().value)
 	_box.show()
 
 
@@ -103,8 +103,8 @@ func _disconnect_signals() -> void:
 
 	if army.allegiance_changed.is_connected(_on_army_allegiance_changed):
 		army.allegiance_changed.disconnect(_on_army_allegiance_changed)
-	if army.size_changed.is_connected(_on_army_size_changed):
-		army.size_changed.disconnect(_on_army_size_changed)
+	if army.size().changed.is_connected(_on_army_size_changed):
+		army.size().changed.disconnect(_on_army_size_changed)
 
 
 func _connect_signals() -> void:
@@ -113,8 +113,8 @@ func _connect_signals() -> void:
 
 	if not army.allegiance_changed.is_connected(_on_army_allegiance_changed):
 		army.allegiance_changed.connect(_on_army_allegiance_changed)
-	if not army.size_changed.is_connected(_on_army_size_changed):
-		army.size_changed.connect(_on_army_size_changed)
+	if not army.size().changed.is_connected(_on_army_size_changed):
+		army.size().changed.connect(_on_army_size_changed)
 
 
 func _on_army_allegiance_changed(_owner_country: Country) -> void:

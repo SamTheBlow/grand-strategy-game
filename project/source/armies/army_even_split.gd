@@ -25,14 +25,11 @@ func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	var number_of_targets: int = destination_provinces.size()
 	if number_of_targets == 0:
 		return
-	var troop_count: int = army.army_size.current_size()
+	var troop_count: int = army.size().value
 	@warning_ignore("integer_division")
 	var troops_per_army: int = troop_count / number_of_targets
 
-	# TODO
-	# Check using the game's minimum size for a new army
-	# instead of the given army's minimum size
-	if troops_per_army < army.army_size.minimum():
+	if troops_per_army < army.size().minimum_value:
 		return
 
 	var new_army_ids: Array[int] = []

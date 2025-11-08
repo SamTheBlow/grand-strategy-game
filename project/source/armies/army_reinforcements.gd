@@ -29,9 +29,6 @@ static func apply(game: Game, province: Province) -> void:
 		_:
 			push_warning("Unrecognized army reinforcements option.")
 
-	if reinforcements_size < game.rules.minimum_army_size.value:
-		return
-
 	# Creating new armies is bad for performance.
 	# It's better to directly increase an existing army's size.
 	for army: Army in (
@@ -40,7 +37,11 @@ static func apply(game: Game, province: Province) -> void:
 		if army.owner_country != province.owner_country:
 			continue
 
-		army.army_size.add(reinforcements_size)
+		army.size().value += reinforcements_size
+		return
+
+	# Don't create a new army if it's too small.
+	if reinforcements_size < game.rules.minimum_army_size.value:
 		return
 
 	# Couldn't find a valid army to reinforce. Create a new army.

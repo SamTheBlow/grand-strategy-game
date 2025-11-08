@@ -115,8 +115,7 @@ func strength_of_countries() -> Array[float]:
 		)
 		for army in armies_of_country:
 			country_score += (
-					SCORE_WEIGHT_EXISTING_ARMIES
-					* army.army_size.current_size()
+					SCORE_WEIGHT_EXISTING_ARMIES * army.size().value
 			)
 
 		strengths.append(country_score)

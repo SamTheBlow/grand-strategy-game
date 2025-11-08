@@ -378,14 +378,13 @@ func _on_army_movement_confirmed(
 	var moving_army_id: int = army.id
 
 	# Split the army into two if needed
-	var army_size: int = army.army_size.current_size()
-	if army_size > number_of_troops:
+	if army.size().value > number_of_troops:
 		var new_army_id: int = (
 				game.world.armies.id_system().new_unique_id(false)
 		)
 		_action_input.apply_action(ActionArmySplit.new(
 				army.id,
-				[army_size - number_of_troops, number_of_troops],
+				[army.size().value - number_of_troops, number_of_troops],
 				[new_army_id]
 		))
 		moving_army_id = new_army_id

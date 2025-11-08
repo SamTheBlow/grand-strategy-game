@@ -80,7 +80,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 		# Is this army on the frontline?
 		if frontline_provinces.has(province):
-			var army_size: int = army.army_size.current_size()
+			var army_size: int = army.size().value
 
 			# Get a list of all the hostile link provinces
 			var hostile_links: Array[Province] = []
@@ -291,10 +291,10 @@ func _army_size(
 	for army in armies_in_province.list:
 		if is_yours:
 			if army.owner_country == playing_country:
-				output += army.army_size.current_size()
+				output += army.size().value
 		else:
 			if army.owner_country != playing_country:
-				output += army.army_size.current_size()
+				output += army.size().value
 
 	return output
 
@@ -305,7 +305,7 @@ func _hostile_army_size(your_country: Country, army_list: Array[Army]) -> int:
 
 	for army in army_list:
 		if Country.is_fighting(your_country, army.owner_country):
-			hostile_army_size += army.army_size.current_size()
+			hostile_army_size += army.size().value
 
 	return hostile_army_size
 

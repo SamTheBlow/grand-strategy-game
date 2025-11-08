@@ -56,7 +56,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			game.world.armies_in_each_province.in_province(province).list
 	):
 		if army.owner_country == your_country and army.is_able_to_move():
-			army.army_size.add(_number_of_troops)
+			army.size().value += _number_of_troops
 			return
 
 	# Otherwise, create a new army instead.

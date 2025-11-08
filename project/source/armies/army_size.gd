@@ -1,106 +1,54 @@
 class_name ArmySize
-## Represents the size of an [Army].
-## It may have a minimum and/or a maximum, which this class takes care of.
+## An [int] that has a minimum and, optionally, a maximum.
+## The minimum value may not be less than 1.
 
-## Emits whenever the army's size changes.
-signal size_changed(new_size: int)
-## Emits whenever some piece of code tries to set the army size to a value
-## smaller than 1.
-signal reached_zero()
-## Emits whenever some piece of code tries to set the army size to a value
-## smaller than the minimum army size.
+## Emitted whenever the value changes.
+signal changed(new_value: int)
+## Emitted when the value is set to less than the minimum.
 signal became_too_small()
-## Emits whenever some piece of code tries to set the army size to a value
-## larger than the maximum army size, if there is a maximum.
+## Emitted when the value is set to more than the maximum.
 signal became_too_large()
 
-var _size: int:
-	set(value):
-		if value == _size:
+var value: int = 1:
+	set(new_value):
+		if new_value == value:
 			return
 
 		# Respect maximum size
-		if _has_maximum_size and value > _maximum_size:
-			_size = _maximum_size
+		if has_maximum() and new_value > maximum_value:
+			value = maximum_value
 			became_too_large.emit()
-			size_changed.emit(_size)
-			return
 
 		# Respect minimum size
-		elif value < _minimum_size:
-			_size = _minimum_size
-			if value < 1:
-				reached_zero.emit()
+		elif new_value < minimum_value:
+			value = minimum_value
 			became_too_small.emit()
-			size_changed.emit(_size)
-			return
 
-		_size = value
-		size_changed.emit(_size)
+		else:
+			value = new_value
 
-var _minimum_size: int
-var _has_maximum_size: bool = false
-var _maximum_size: int
+		changed.emit(value)
+
+## Cannot be less than 1.
+var minimum_value: int = 1:
+	set(new_value):
+		minimum_value = maxi(1, new_value)
+
+## If the maximum value is less than 1, then there is no maximum value.
+var maximum_value: int = 0:
+	set(new_value):
+		maximum_value = maxi(0, new_value)
 
 
-## If the maximum size is less than 1, then there is no maximum size.
-##
-## Conditions for each input:
-## - The starting size must be greater or equal to 1.
-## - The starting size must be within the minimum and maximum size.
-## - The minimum size must be greater or equal to 1.
-## - If there is a maximum size, it must be
-##   greater or equal to the minimum size.
 func _init(
-		starting_size: int = 1,
-		minimum_size: int = 1,
-		maximum_size: int = 0
+		starting_value: int = 1,
+		starting_minimum: int = 1,
+		starting_maximum: int = 0
 ) -> void:
-	_minimum_size = minimum_size
-	_has_maximum_size = maximum_size > 0
-	_maximum_size = maximum_size
-	_size = starting_size
+	minimum_value = starting_minimum
+	maximum_value = starting_maximum
+	value = starting_value
 
 
-func current_size() -> int:
-	return _size
-
-
-func minimum() -> int:
-	return _minimum_size
-
-
-## Adds some amount of troops. The input must be positive or zero.
-func add(number: int) -> void:
-	_size += number
-
-
-## Removes some amount of troops. The input must be positive or zero.
-func remove(number: int) -> void:
-	_size -= number
-
-
-static func _unit_test() -> void:
-	var army_size_1 := ArmySize.new(1, 1, 0)
-	assert(army_size_1.current_size() == 1)
-	army_size_1.remove(69)
-	assert(army_size_1.current_size() == 1)
-	army_size_1.add(69)
-	assert(army_size_1.current_size() == 70)
-
-	var army_size_2 := ArmySize.new(14, 10, 100)
-	assert(army_size_2.current_size() == 14)
-	army_size_2.remove(2)
-	assert(army_size_2.current_size() == 12)
-	army_size_2.remove(69)
-	assert(army_size_2.current_size() == 10)
-	army_size_2.add(59)
-	assert(army_size_2.current_size() == 69)
-	army_size_2.remove(0)
-	assert(army_size_2.current_size() == 69)
-	army_size_2.add(0)
-	assert(army_size_2.current_size() == 69)
-	army_size_2.add(1000)
-	assert(army_size_2.current_size() == 100)
-	army_size_2.remove(3)
-	assert(army_size_2.current_size() == 97)
+func has_maximum() -> bool:
+	return maximum_value > 0
