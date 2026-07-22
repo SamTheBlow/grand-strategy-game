@@ -292,6 +292,7 @@ func _on_province_duplicated(
 	var new_province := Province.new()
 	new_province.polygon().array = province.polygon().array.duplicate()
 	new_province.position_army_host = province.position_army_host
+	new_province.position_fortress = province.position_fortress
 	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)
 	new_province.owner_country = province.owner_country
 	new_province.population().value = province.population().value

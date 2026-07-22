@@ -55,6 +55,7 @@ func _generate_provinces_with_noise(
 			province.position_army_host = (
 					province_position + square_length * 0.5 * Vector2.ONE
 			)
+			province.position_fortress += province.position_army_host
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([
@@ -103,6 +104,7 @@ func _generate_provinces_without_noise(
 			province.position_army_host = (
 					province_position + square_length * 0.5 * Vector2.ONE
 			)
+			province.position_fortress += province.position_army_host
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([

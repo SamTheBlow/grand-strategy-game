@@ -6,6 +6,8 @@ const _NAME_KEY: String = "name"
 const _LINKS_KEY: String = "links"
 const _POSITION_ARMY_HOST_X_KEY: String = "position_army_host_x"
 const _POSITION_ARMY_HOST_Y_KEY: String = "position_army_host_y"
+const _POSITION_FORTRESS_X_KEY: String = "position_fortress_x"
+const _POSITION_FORTRESS_Y_KEY: String = "position_fortress_y"
 const _SHAPE_KEY: String = "shape"
 const _POSITION_KEY: String = "position"
 const _POS_X_KEY: String = "x"
@@ -100,6 +102,16 @@ static func to_raw_array(province_list: Array[Province]) -> Array:
 				_POSITION_ARMY_HOST_Y_KEY: province.position_army_host.y
 			})
 
+		# Position fortress
+		if province.position_fortress.x != 0.0:
+			province_data.merge({
+				_POSITION_FORTRESS_X_KEY: province.position_fortress.x
+			})
+		if province.position_fortress.y != 0.0:
+			province_data.merge({
+				_POSITION_FORTRESS_Y_KEY: province.position_fortress.y
+			})
+
 		# Population
 		if province.population().value != 0:
 			province_data.merge({
@@ -166,6 +178,9 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 	# Position of the host army
 	province.position_army_host = _position_army_host_from_raw(raw_dict)
 
+	# Position of the fortress
+	province.position_fortress = _position_fortress_from_raw(raw_dict)
+
 	# Owner country
 	if ParseUtils.dictionary_has_number(raw_dict, _OWNER_ID_KEY):
 		var country_id: int = (
@@ -203,6 +218,7 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 			_province_position_from_raw(raw_dict.get(_POSITION_KEY))
 	)
 	province.position_army_host -= offset
+	province.position_fortress -= offset
 	province.move_relative(offset)
 
 	game.world.provinces.add(province)
@@ -261,6 +277,20 @@ static func _position_army_host_from_raw(raw_dict: Dictionary) -> Vector2:
 		position_x = ParseUtils.number_as_float(x_data)
 
 	var y_data: Variant = raw_dict.get(_POSITION_ARMY_HOST_Y_KEY)
+	var position_y: float = 0.0
+	if ParseUtils.is_number(y_data):
+		position_y = ParseUtils.number_as_float(y_data)
+
+	return Vector2(position_x, position_y)
+
+
+static func _position_fortress_from_raw(raw_dict: Dictionary) -> Vector2:
+	var x_data: Variant = raw_dict.get(_POSITION_FORTRESS_X_KEY)
+	var position_x: float = 0.0
+	if ParseUtils.is_number(x_data):
+		position_x = ParseUtils.number_as_float(x_data)
+
+	var y_data: Variant = raw_dict.get(_POSITION_FORTRESS_Y_KEY)
 	var position_y: float = 0.0
 	if ParseUtils.is_number(y_data):
 		position_y = ParseUtils.number_as_float(y_data)

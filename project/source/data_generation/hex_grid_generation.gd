@@ -57,9 +57,11 @@ func _generate_provinces_with_noise(
 
 			var province := Province.new()
 			province.id = province_id
-			province.position_army_host = province_position + 0.5 * Vector2(
-					hexagon_width, hexagon_height
+			province.position_army_host = (
+					province_position
+					+ 0.5 * Vector2(hexagon_width, hexagon_height)
 			)
+			province.position_fortress += province.position_army_host
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([
@@ -134,9 +136,11 @@ func _generate_provinces_without_noise(
 		for i in grid_width:
 			var province := Province.new()
 			province.id = province_id
-			province.position_army_host = province_position + 0.5 * Vector2(
-					hexagon_width, hexagon_height
+			province.position_army_host = (
+					province_position
+					+ 0.5 * Vector2(hexagon_width, hexagon_height)
 			)
+			province.position_fortress += province.position_army_host
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([

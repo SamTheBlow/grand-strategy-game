@@ -9,6 +9,7 @@ signal links_reset()
 signal owner_changed(this: Province)
 signal position_changed()
 signal position_army_host_changed(new_position: Vector2)
+signal position_fortress_changed(new_position: Vector2)
 
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
@@ -34,6 +35,14 @@ var position_army_host := Vector2.ZERO:
 			return
 		position_army_host = value
 		position_army_host_changed.emit(position_army_host)
+
+## Where this province's [Fortress] will be positioned.
+var position_fortress := Vector2(80.0, 56.0):
+	set(value):
+		if position_fortress == value:
+			return
+		position_fortress = value
+		position_fortress_changed.emit(position_fortress)
 
 ## A list of IDs for all the provinces that are
 ## neighboring this province, e.g. when moving armies.
@@ -124,12 +133,6 @@ func move_relative(movement_amount: Vector2) -> void:
 	_polygon.add_to_all(movement_amount)
 
 
-## Returns the position of this province's [Fortress].
-func fortress_position() -> Vector2:
-	const FORTRESS_POSITION_OFFSET := Vector2(80.0, 56.0)
-	return position_army_host + FORTRESS_POSITION_OFFSET
-
-
 func population() -> IntWithSignals:
 	return _population
 
@@ -206,4 +209,5 @@ func nearest_provinces(
 
 func _on_polygon_moved(movement_amount: Vector2) -> void:
 	position_army_host += movement_amount
+	position_fortress += movement_amount
 	position_changed.emit()

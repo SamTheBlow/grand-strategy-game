@@ -104,6 +104,19 @@ func _update_selected_province(_province: Province = null) -> void:
 				_on_army_position_changed.bind(selected_province)
 		)
 
+		var fortress_position_edit := PositionEdit.new(
+				"Fortress position", PositionEdit.PointShape.SQUARE
+		)
+		fortress_position_edit.position = selected_province.position_fortress
+		world_overlay.add_child(fortress_position_edit)
+
+		selected_province.position_fortress_changed.connect(
+				fortress_position_edit.set_position
+		)
+		fortress_position_edit.position_changed.connect(
+				_on_fortress_position_changed.bind(selected_province)
+		)
+
 		_world_overlay = world_overlay
 
 	# Highlight all the linked provinces with the correct highlight type
@@ -183,6 +196,12 @@ func _on_army_position_changed(
 		new_position: Vector2, province: Province
 ) -> void:
 	province.position_army_host = new_position
+
+
+func _on_fortress_position_changed(
+		new_position: Vector2, province: Province
+) -> void:
+	province.position_fortress = new_position
 
 
 func _on_provinces_unhandled_mouse_event_occured(

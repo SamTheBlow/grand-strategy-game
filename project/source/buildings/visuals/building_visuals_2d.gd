@@ -17,7 +17,7 @@ func _ready() -> void:
 
 func setup(province: Province) -> void:
 	if _is_setup:
-		_province.position_army_host_changed.disconnect(_on_position_changed)
+		_province.position_fortress_changed.disconnect(_on_position_changed)
 		if is_node_ready():
 			_province.buildings.added.disconnect(_add_building)
 			_province.buildings.removed.disconnect(_remove_building)
@@ -25,7 +25,7 @@ func setup(province: Province) -> void:
 	_province = province
 	_is_setup = true
 
-	_province.position_army_host_changed.connect(_on_position_changed)
+	_province.position_fortress_changed.connect(_on_position_changed)
 
 	if is_node_ready():
 		_update()
@@ -48,7 +48,7 @@ func _add_building(building: Building) -> void:
 		return
 
 	var new_fortress := _FORTRESS_VISUALS_SCENE.instantiate() as Node2D
-	new_fortress.position = _province.fortress_position()
+	new_fortress.position = _province.position_fortress
 	add_child(new_fortress)
 	_building_nodes.append(new_fortress)
 
@@ -64,4 +64,4 @@ func _remove_building(building: Building) -> void:
 
 func _on_position_changed(_new_position: Vector2) -> void:
 	for building_node in _building_nodes:
-		building_node.position = _province.fortress_position()
+		building_node.position = _province.position_fortress
