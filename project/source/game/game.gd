@@ -6,6 +6,12 @@ signal game_started()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)
 
+enum GameState {
+	SETUP = 0,
+	ONGOING = 1,
+	GAMEOVER = 2,
+}
+
 ## Note: the game's rules must not change after the game started.
 var rules := GameRules.new()
 
@@ -29,8 +35,7 @@ var rng := RandomNumberGenerator.new()
 ## Use this to obtain or provide modifiers across the entire game.
 var modifier_request := ModifierRequest.new()
 
-## The user is allowed to continue playing after the game "ends".
-var _game_over: bool = false
+var _game_state: GameState = GameState.SETUP
 
 ## Keys are a modifier context (String); values are a [Modifier].
 var _global_modifiers: Dictionary = {}
@@ -62,11 +67,16 @@ func _init() -> void:
 	])
 
 
-## Call this when you're ready to start the game loop.
-func start() -> void:
-	# Can't start a game with 0 players.
-	if game_players.size() == 0:
-		error_triggered.emit("Cannot start a game with 0 players.")
+## Returns the game's current state.
+func state() -> GameState:
+	return _game_state
+
+
+## Sets up the game to be ready for playing,
+## and marks the game as ongoing.
+## No effect if game isn't in setup phase.
+func end_setup() -> void:
+	if _game_state != GameState.SETUP:
 		return
 
 	rules.lock()
@@ -77,11 +87,11 @@ func start() -> void:
 		turn_limit.final_turn = rules.turn_limit.value
 		# TODO bad code: private function
 		turn.turn_changed.connect(turn_limit._on_new_turn)
-		turn_limit.game_over.connect(_on_game_over)
+		turn_limit.game_over.connect(end_game)
 		_components.append(turn_limit)
 
 	var province_control_goal := ProvinceControlGoal.new(self)
-	province_control_goal.game_over.connect(_on_game_over)
+	province_control_goal.game_over.connect(end_game)
 	_components.append(province_control_goal)
 
 	_components.append_array([
@@ -94,7 +104,27 @@ func start() -> void:
 	])
 
 	turn.is_running_changed.connect(_on_is_running_changed)
+
+	_game_state = GameState.ONGOING
+
+
+## Starts/resumes the gameplay loop, if possible.
+func start() -> void:
+	# Can't start a game with 0 players.
+	if game_players.size() == 0:
+		error_triggered.emit("Cannot start a game with 0 players.")
+		return
+
 	turn.start()
+
+
+## Marks game over.
+func end_game() -> void:
+	if _game_state != GameState.ONGOING:
+		return
+
+	_game_state = GameState.GAMEOVER
+	game_over.emit(_winning_country())
 
 
 func apply_action(action: Action) -> void:
@@ -143,17 +173,11 @@ func _winning_country() -> Country:
 	return winner_country
 
 
+# Note: this is for when the gameplay loop is paused or resumed.
+# It is unrelated to the game state.
 func _on_is_running_changed(is_running: bool) -> void:
 	if is_running:
 		game_started.emit()
-
-
-func _on_game_over() -> void:
-	if _game_over:
-		return
-
-	_game_over = true
-	game_over.emit(_winning_country())
 
 
 ## This object is itself a provider for the [ModifierRequest] system.

@@ -150,6 +150,7 @@ func _ready() -> void:
 		if players != null:
 			_player_assignment.assign_players(players.list())
 
+		game.end_setup()
 		game.start()
 
 
@@ -438,6 +439,7 @@ func _on_exit_to_main_menu_requested() -> void:
 
 ## Clients start the game when synchronization is finished.
 func _on_player_assignment_sync_finished() -> void:
+	game.end_setup()
 	game.start()
 
 
