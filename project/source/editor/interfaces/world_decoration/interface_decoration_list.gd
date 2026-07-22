@@ -7,10 +7,17 @@ signal item_selected(decoration: WorldDecoration)
 
 const _DECORATION_ELEMENT := preload("uid://gwjmb35fowhg") as PackedScene
 
-var decorations := WorldDecorations.new():
+var decorations: WorldDecorations:
 	set(value):
+		if decorations != null:
+			decorations.added.disconnect(_add_element)
+			decorations.removed.disconnect(_remove_element)
+
 		decorations = value
+
 		_refresh_list()
+		decorations.added.connect(_add_element)
+		decorations.removed.connect(_remove_element)
 
 var project_textures: ProjectTextures
 
@@ -19,6 +26,10 @@ var project_textures: ProjectTextures
 
 
 func _ready() -> void:
+	# This is just so that this node still works by itself in the Godot editor
+	if decorations == null:
+		decorations = WorldDecorations.new()
+
 	super()
 	_refresh_list()
 
@@ -30,7 +41,8 @@ func _update_editor_settings() -> void:
 	_editor_settings_node.refresh()
 
 
-func _refresh_list() -> void:
+## Deletes existing child nodes and creates new child nodes.
+func _refresh_list(_world_decoration: WorldDecoration = null) -> void:
 	if not is_node_ready():
 		return
 	NodeUtils.remove_all_children(_item_container)
@@ -38,20 +50,36 @@ func _refresh_list() -> void:
 		_add_element(decoration)
 
 
-func _add_element(decoration: WorldDecoration) -> void:
+## Appends a new child node for given [WorldDecoration].
+func _add_element(world_decoration: WorldDecoration) -> void:
 	var new_element := (
 			_DECORATION_ELEMENT.instantiate() as WorldDecorationListElement
 	)
-	new_element.world_decoration = decoration
+	new_element.world_decoration = world_decoration
 	new_element.project_textures = project_textures
 	new_element.pressed.connect(_on_element_pressed)
 	_item_container.add_child(new_element)
 
 
+## Removes the first child node that uses given [WorldDecoration].
+func _remove_element(world_decoration: WorldDecoration) -> void:
+	for child in _item_container.get_children():
+		if child is not WorldDecorationListElement:
+			continue
+		var element := child as WorldDecorationListElement
+		if element.world_decoration == world_decoration:
+			_item_container.remove_child(element)
+			return
+
+	push_warning("Could not find child node with matching world decoration.")
+
+
 func _on_add_button_pressed() -> void:
 	var new_item := WorldDecoration.new()
-	decorations.add(new_item)
-	_add_element(new_item)
+	undo_redo.create_action("Add new world decoration")
+	undo_redo.add_do_method(decorations.add.bind(new_item))
+	undo_redo.add_undo_method(decorations.remove.bind(new_item))
+	undo_redo.commit_action()
 
 
 func _on_element_pressed(element: WorldDecorationListElement) -> void:

@@ -195,7 +195,7 @@ func _open_new_decoration_edit_interface(
 	var new_interface := _new_interface(
 			preload("uid://bfpg282qeb0rx"), project, editor_settings
 	) as InterfaceWorldDecorationEdit
-	new_interface.back_pressed.connect(open_new_interface.bind(
+	new_interface.closed.connect(open_new_interface.bind(
 			InterfaceType.DECORATION_LIST, project, editor_settings
 	))
 	new_interface.delete_pressed.connect(
@@ -207,6 +207,7 @@ func _open_new_decoration_edit_interface(
 	new_interface.texture_popup_requested.connect(texture_popup_requested.emit)
 	new_interface.world_decoration = world_decoration
 	new_interface.project_textures = project.textures
+	new_interface.world_decorations = project.game.world.decorations
 	open_interface(new_interface)
 
 
@@ -244,7 +245,17 @@ func _on_world_decoration_deleted(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	project.game.world.decorations.remove(world_decoration)
+	# Create and apply undo_redo action
+	undo_redo.create_action("Delete world decoration")
+	undo_redo.add_do_method(
+			project.game.world.decorations.remove.bind(world_decoration)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.decorations.add.bind(world_decoration)
+	)
+	undo_redo.commit_action()
+
+	# Go back to decoration list interface
 	open_new_interface(InterfaceType.DECORATION_LIST, project, editor_settings)
 
 
@@ -255,6 +266,7 @@ func _on_world_decoration_duplicated(
 ) -> void:
 	const _DUPLICATE_DECORATION_OFFSET = Vector2(64.0, 64.0)
 
+	# Create duplicate
 	var new_decoration := WorldDecoration.new()
 	new_decoration.texture = world_decoration.texture
 	new_decoration.flip_h = world_decoration.flip_h
@@ -266,7 +278,17 @@ func _on_world_decoration_duplicated(
 	new_decoration.scale = world_decoration.scale
 	new_decoration.color = world_decoration.color
 
-	project.game.world.decorations.add(new_decoration)
+	# Create and apply undo_redo action
+	undo_redo.create_action("Duplicate world decoration")
+	undo_redo.add_do_method(
+			project.game.world.decorations.add.bind(new_decoration)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.decorations.remove.bind(new_decoration)
+	)
+	undo_redo.commit_action()
+
+	# Open interface to edit the new decoration
 	_open_new_decoration_edit_interface(
 			new_decoration, project, editor_settings
 	)
