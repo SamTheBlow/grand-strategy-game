@@ -16,7 +16,8 @@ func _ready() -> void:
 		return
 
 	refresh()
-	_line_edit.text_changed.connect(_on_text_changed)
+	_line_edit.text_submitted.connect(_on_text_changed)
+	_line_edit.focus_exited.connect(_on_text_changed)
 	item.value_changed.connect(_on_item_value_changed)
 	item.placeholder_text_changed.connect(_on_placeholder_text_changed)
 
@@ -34,11 +35,11 @@ func _item() -> PropertyTreeItem:
 	return item
 
 
-func _on_text_changed(text: String) -> void:
+func _on_text_changed(_text: String = "") -> void:
 	# Disconnect the signal temporarily to avoid infinite loop
 	# and to avoid messing with the LineEdit's cursor
 	item.value_changed.disconnect(_on_item_value_changed)
-	item.value = text
+	item.value = _line_edit.text
 	item.value_changed.connect(_on_item_value_changed)
 
 

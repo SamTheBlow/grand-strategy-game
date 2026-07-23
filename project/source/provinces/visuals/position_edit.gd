@@ -3,6 +3,7 @@ extends Node2D
 ## Displays a 2D point that you can move around with your mouse.
 
 signal position_changed(new_position: Vector2)
+signal drag_finished(start_position: Vector2, end_position: Vector2)
 
 enum PointShape {
 	SQUARE,
@@ -18,6 +19,7 @@ var _text: String = ""
 var _point_shape: PointShape
 var _is_hovered: bool = false
 var _is_dragging: bool = false
+var _start_position := Vector2.ZERO
 
 
 func _init(text: String = "", point_shape := PointShape.CIRCLE) -> void:
@@ -82,10 +84,12 @@ func _handle_left_click(event: InputEvent) -> bool:
 
 	if event_mouse_button.is_pressed() and _is_hovered:
 		_is_dragging = true
+		_start_position = position
 		return true
 
 	if event_mouse_button.is_released() and _is_dragging:
 		_is_dragging = false
+		drag_finished.emit(_start_position, position)
 		return true
 
 	return false

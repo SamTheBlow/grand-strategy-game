@@ -48,6 +48,9 @@ var can_drag_entire_polygon: bool = true:
 			_create_action_drag_polygon()
 			_is_dragging = false
 
+## The [UndoRedo] system to undo/redo changes.
+var undo_redo := UndoRedo.new()
+
 ## The index of the active (hovered) vertex.
 ## It's -1 if the cursor is not hovering over any vertex.
 var _active_index: int = -1
@@ -71,18 +74,9 @@ var _moved_cursor_during_polygon_drag: bool = false
 
 var _cursor_position: Vector2
 
-var _undo_redo := UndoRedo.new()
-
 
 func _init() -> void:
 	polygon.changed.connect(queue_redraw)
-
-
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"ui_undo"):
-		_undo_redo.undo()
-	elif Input.is_action_just_pressed(&"ui_redo"):
-		_undo_redo.redo()
 
 
 func _draw() -> void:
@@ -228,41 +222,39 @@ func _active_side() -> int:
 
 
 func _add_vertex() -> void:
-	_undo_redo.create_action("Add vertex")
-	_undo_redo.add_do_method(
-			polygon.insert.bind(_can_add_at, _cursor_position)
-	)
-	_undo_redo.add_undo_method(polygon.remove_at.bind(_can_add_at))
-	_undo_redo.commit_action()
+	undo_redo.create_action("Add vertex to polygon")
+	undo_redo.add_do_method(polygon.insert.bind(_can_add_at, _cursor_position))
+	undo_redo.add_undo_method(polygon.remove_at.bind(_can_add_at))
+	undo_redo.commit_action()
 
 
 func _remove_vertex() -> void:
-	_undo_redo.create_action("Remove vertex")
-	_undo_redo.add_do_method(polygon.remove_at.bind(_active_index))
-	_undo_redo.add_undo_method(polygon.insert.bind(
-			_active_index, polygon.array[_active_index]
-	))
-	_undo_redo.commit_action()
+	undo_redo.create_action("Remove vertex from polygon")
+	undo_redo.add_do_method(polygon.remove_at.bind(_active_index))
+	undo_redo.add_undo_method(
+			polygon.insert.bind(_active_index, polygon.array[_active_index])
+	)
+	undo_redo.commit_action()
 
 
 func _create_action_drag_vertex() -> void:
 	if _drag_from == _drag_to:
 		return
-	_undo_redo.create_action("Drag vertex")
-	_undo_redo.add_do_method(polygon.change_at.bind(_active_index, _drag_to))
-	_undo_redo.add_undo_method(
+	undo_redo.create_action("Move vertex in polygon")
+	undo_redo.add_do_method(polygon.change_at.bind(_active_index, _drag_to))
+	undo_redo.add_undo_method(
 			polygon.change_at.bind(_active_index, _drag_from)
 	)
-	_undo_redo.commit_action()
+	undo_redo.commit_action(false)
 
 
 func _create_action_drag_polygon() -> void:
 	if _drag_from == _drag_to:
 		return
-	_undo_redo.create_action("Drag polygon")
-	_undo_redo.add_do_method(polygon.add_to_all.bind(_drag_to - _drag_from))
-	_undo_redo.add_undo_method(polygon.add_to_all.bind(_drag_from - _drag_to))
-	_undo_redo.commit_action(false)
+	undo_redo.create_action("Move polygon")
+	undo_redo.add_do_method(polygon.add_to_all.bind(_drag_to - _drag_from))
+	undo_redo.add_undo_method(polygon.add_to_all.bind(_drag_from - _drag_to))
+	undo_redo.commit_action(false)
 
 
 ## Moves the entire polygon by given relative amount.

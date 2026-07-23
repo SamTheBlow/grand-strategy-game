@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dpgoa2yg5bjcp"]
+[gd_scene format=3 uid="uid://dpgoa2yg5bjcp"]
 
 [ext_resource type="Script" uid="uid://ctu7j3g2p76du" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="2_ofaev"]
@@ -13,54 +13,54 @@
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 [ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
 
-[node name="WorldVisuals2D" type="Node2D"]
+[node name="WorldVisuals2D" type="Node2D" unique_id=342240876]
 script = ExtResource("1_im3sb")
 
-[node name="BackgroundColor" type="Node" parent="."]
+[node name="BackgroundColor" type="Node" parent="." unique_id=512342386]
 unique_name_in_owner = true
 script = ExtResource("2_ofaev")
 
-[node name="MapModeSetup" type="Node" parent="."]
+[node name="MapModeSetup" type="Node" parent="." unique_id=771863703]
 unique_name_in_owner = true
 script = ExtResource("3_1p30q")
 
-[node name="Political" type="Node" parent="MapModeSetup"]
+[node name="Political" type="Node" parent="MapModeSetup" unique_id=1079725585]
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
 
-[node name="EditorAdjacency" type="Node" parent="MapModeSetup"]
+[node name="EditorAdjacency" type="Node" parent="MapModeSetup" unique_id=840737747]
 unique_name_in_owner = true
 script = ExtResource("4_ubut0")
 
-[node name="EditorCountry" type="Node" parent="MapModeSetup"]
+[node name="EditorCountry" type="Node" parent="MapModeSetup" unique_id=351145755]
 unique_name_in_owner = true
 script = ExtResource("6_obqf8")
 
-[node name="ArmyVisualsSetup" type="Node" parent="."]
+[node name="ArmyVisualsSetup" type="Node" parent="." unique_id=751048657]
 unique_name_in_owner = true
 script = ExtResource("4_0v0rh")
 
-[node name="AutoArrowInput" type="Node" parent="."]
+[node name="AutoArrowInput" type="Node" parent="." unique_id=266650010]
 unique_name_in_owner = true
 script = ExtResource("9_g4nb7")
 
-[node name="Background" type="Node2D" parent="."]
+[node name="Background" type="Node2D" parent="." unique_id=1934326959]
 unique_name_in_owner = true
 script = ExtResource("2_unrx0")
 
-[node name="Provinces" type="Node2D" parent="."]
+[node name="Provinces" type="Node2D" parent="." unique_id=1543545158]
 unique_name_in_owner = true
 script = ExtResource("5_4fqv4")
 
-[node name="Decorations" type="Node2D" parent="."]
+[node name="Decorations" type="Node2D" parent="." unique_id=2090586468]
 unique_name_in_owner = true
 script = ExtResource("11_obqf8")
 
-[node name="AutoArrows" type="Node2D" parent="."]
+[node name="AutoArrows" type="Node2D" parent="." unique_id=1572604340]
 unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorAdjacency" method="_on_provinces_unhandled_mouse_event_occured"]
-[connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorCountry" method="_on_provinces_unhandled_mouse_event_occured"]
+[connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]

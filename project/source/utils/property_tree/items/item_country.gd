@@ -4,7 +4,7 @@ extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [Country] value.
 
 signal value_changed(this: PropertyTreeItem)
-signal change_requested()
+signal change_requested(this: ItemCountry)
 
 var value: Country = null:
 	set(new_value):
@@ -17,5 +17,9 @@ var value: Country = null:
 			value_changed.emit(self)
 
 
+func set_value(new_value: Country) -> void:
+	value = new_value
+
+
 func request_change() -> void:
-	change_requested.emit()
+	change_requested.emit(self)

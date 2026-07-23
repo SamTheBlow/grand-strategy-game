@@ -58,6 +58,7 @@ func _init() -> void:
 	rules.battle.modifier_request = modifier_request
 
 	world.provinces.building_added.connect(modifier_request.add_provider)
+	world.provinces.building_removed.connect(modifier_request.remove_provider)
 
 	_components.append_array([
 		CountryRemovalCleanup.new(self),

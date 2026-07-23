@@ -101,6 +101,17 @@ func _setup_project() -> void:
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
 	_editing_interface.undo_redo = _undo_redo
 
+	# Give the [UndoRedo] system to the editor map mode
+	# TODO this is ugly!!!
+	var map_mode_editor_adjacency := (
+			_world_setup.world().get_node_or_null("%EditorAdjacency")
+			as MapModeEditorAdjacency
+	)
+	if map_mode_editor_adjacency != null:
+		map_mode_editor_adjacency.undo_redo = _undo_redo
+	else:
+		push_warning("Could not get the editor adjacancy map mode")
+
 	_update_window_title()
 	_update_menu_visibility()
 
@@ -320,16 +331,13 @@ func _on_province_interface_closed() -> void:
 	)
 
 
-func _on_province_change_owner_pressed(province: Province) -> void:
+func _on_country_select_pressed(item_country: ItemCountry) -> void:
 	# Open popup that lets you choose a country
 	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
 	var country_select_popup := (
 			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
 	)
-	country_select_popup.country_selected.connect(
-		func(country: Country) -> void:
-			province.owner_country = country
-	)
+	country_select_popup.country_selected.connect(item_country.set_value)
 	country_select_popup.setup(_current_project.game.countries)
 	popup.contents_node = country_select_popup
 	_popup_container.add_child(popup)

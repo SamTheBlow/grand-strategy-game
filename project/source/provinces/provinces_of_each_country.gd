@@ -63,6 +63,7 @@ func _on_province_removed(province: Province) -> void:
 		return
 
 	_map[province.owner_country].remove(province)
+	province.owner_changed.disconnect(_on_province_owner_changed)
 
 
 func _on_province_owner_changed(province: Province) -> void:

@@ -5,7 +5,7 @@ extends Control
 signal texture_popup_requested(item_texture: ItemTexture)
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
-signal province_change_owner_pressed(province: Province)
+signal country_select_pressed(item_country: ItemCountry)
 signal country_interface_opened(country: Country)
 signal country_interface_closed()
 
@@ -104,7 +104,7 @@ func open_province_edit_interface(
 	var province_interface := _new_interface(
 			preload("uid://bafpj3jqosje7"), project, editor_settings
 	) as InterfaceProvinceEdit
-	province_interface.back_pressed.connect(open_new_interface.bind(
+	province_interface.closed.connect(open_new_interface.bind(
 			InterfaceType.PROVINCE_LIST, project, editor_settings
 	))
 	province_interface.delete_pressed.connect(
@@ -113,10 +113,11 @@ func open_province_edit_interface(
 	province_interface.duplicate_pressed.connect(
 			_on_province_duplicated.bind(project, editor_settings)
 	)
-	province_interface.change_owner_pressed.connect(
-			province_change_owner_pressed.emit
+	province_interface.country_select_pressed.connect(
+			country_select_pressed.emit
 	)
 	province_interface.province = province
+	province_interface.provinces = project.game.world.provinces
 	open_interface(province_interface)
 	province_interface_opened.emit(province)
 
@@ -299,8 +300,7 @@ func _on_province_deleted(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	close_interface()
-	project.game.world.provinces.remove(province.id)
+	project.game.world.provinces.undo_redo_remove(province, undo_redo)
 	open_new_interface(InterfaceType.PROVINCE_LIST, project, editor_settings)
 
 
@@ -311,6 +311,7 @@ func _on_province_duplicated(
 ) -> void:
 	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
 
+	# Create duplicate
 	var new_province := Province.new()
 	new_province.polygon().array = province.polygon().array.duplicate()
 	new_province.position_army_host = province.position_army_host
@@ -323,7 +324,22 @@ func _on_province_duplicated(
 	for building in province.buildings.list():
 		new_province.buildings.add(Fortress.new(province.id))
 
+	# We need this new province to have a new unique id
+	# assigned to it before we can create the undo_redo action
 	project.game.world.provinces.add(new_province)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the province)
+	undo_redo.create_action("Duplicate province")
+	undo_redo.add_do_method(
+			project.game.world.provinces.add.bind(new_province)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.provinces.remove.bind(new_province.id)
+	)
+	undo_redo.commit_action(false)
+
+	# Open interface to edit the new province
 	open_province_edit_interface(new_province.id, project, editor_settings)
 
 

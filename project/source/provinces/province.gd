@@ -3,6 +3,7 @@ class_name Province
 ## It may be of any size or shape, and
 ## it may or may not be under the control of a [Country].
 
+signal name_changed(new_name: String)
 signal link_added(linked_province_id: int)
 signal link_removed(linked_province_id: int)
 signal links_reset()
@@ -15,7 +16,12 @@ signal position_fortress_changed(new_position: Vector2)
 var id: int = -1
 
 ## This province's name.
-var name: String = ""
+var name: String = "":
+	set(value):
+		if name == value:
+			return
+		name = value
+		name_changed.emit(name)
 
 ## The [Country] in control of this province. This can be null.
 ## Must initialize when the province is created.

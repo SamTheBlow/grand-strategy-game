@@ -12,6 +12,8 @@ class_name ModifierRequest
 
 signal modifiers_requested(array: Array[Modifier], context: ModifierContext)
 
+const _REQUEST_METHOD_NAME: String = "_on_modifiers_requested"
+
 
 func modifiers(context: ModifierContext) -> ModifierList:
 	var array: Array[Modifier] = []
@@ -22,13 +24,15 @@ func modifiers(context: ModifierContext) -> ModifierList:
 ## The given object will be able to add modifiers to the game.
 ## The object must have the method that provides modifiers.
 func add_provider(object: Object) -> void:
-	const method_name: String = "_on_modifiers_requested"
-
-	if not object.has_method(method_name):
+	if not object.has_method(_REQUEST_METHOD_NAME):
 		push_warning(
 				"Tried to add a modifier provider that "
-				+ "doesn't have method \"" + method_name + "\"."
+				+ "doesn't have method \"" + _REQUEST_METHOD_NAME + "\"."
 		)
 		return
 
-	modifiers_requested.connect(Callable(object, method_name))
+	modifiers_requested.connect(Callable(object, _REQUEST_METHOD_NAME))
+
+
+func remove_provider(object: Object) -> void:
+	modifiers_requested.disconnect(Callable(object, _REQUEST_METHOD_NAME))

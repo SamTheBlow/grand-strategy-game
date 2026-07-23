@@ -59,11 +59,23 @@ func _add_element(province: Province) -> void:
 	new_element.province = province
 	new_element.pressed.connect(_on_element_pressed)
 	_item_container.add_child(new_element)
+	_item_container.move_child(new_element, _provinces.position_of(province.id))
 	_nodes[province.id] = new_element
 
 
 func _on_add_button_pressed() -> void:
-	_provinces.add(Province.new())
+	var new_province := Province.new()
+
+	# We need this new province to have a new unique id
+	# assigned to it before we can create the undo_redo action
+	_provinces.add(new_province)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the province)
+	undo_redo.create_action("Create new province")
+	undo_redo.add_do_method(_provinces.add.bind(new_province))
+	undo_redo.add_undo_method(_provinces.remove.bind(new_province.id))
+	undo_redo.commit_action(false)
 
 
 func _on_element_pressed(element: ProvinceListElement) -> void:

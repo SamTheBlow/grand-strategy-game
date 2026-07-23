@@ -18,6 +18,9 @@ var is_enabled: bool = false:
 			else:
 				_disconnect_signals()
 
+## The [UndoRedo] system to undo/redo changes.
+var undo_redo := UndoRedo.new()
+
 var _is_setup: bool = false
 var _province_selection: ProvinceSelection
 var _edge_case: PolygonEditEdgeCase
@@ -88,6 +91,7 @@ func _update_selected_province(_province: Province = null) -> void:
 		var polygon_edit := PolygonEdit.new()
 		polygon_edit.polygon = selected_province.polygon()
 		polygon_edit.is_draw_polygon_enabled = false
+		polygon_edit.undo_redo = undo_redo
 		_edge_case.polygon_edit = polygon_edit
 		world_overlay.add_child(polygon_edit)
 
@@ -103,6 +107,9 @@ func _update_selected_province(_province: Province = null) -> void:
 		army_position_edit.position_changed.connect(
 				_on_army_position_changed.bind(selected_province)
 		)
+		army_position_edit.drag_finished.connect(
+				_on_army_drag_finished.bind(selected_province)
+		)
 
 		var fortress_position_edit := PositionEdit.new(
 				"Fortress position", PositionEdit.PointShape.SQUARE
@@ -115,6 +122,9 @@ func _update_selected_province(_province: Province = null) -> void:
 		)
 		fortress_position_edit.position_changed.connect(
 				_on_fortress_position_changed.bind(selected_province)
+		)
+		fortress_position_edit.drag_finished.connect(
+				_on_fortress_drag_finished.bind(selected_province)
 		)
 
 		_world_overlay = world_overlay
@@ -204,6 +214,32 @@ func _on_fortress_position_changed(
 	province.position_fortress = new_position
 
 
+func _on_army_drag_finished(
+		start_position: Vector2, end_position: Vector2, province: Province
+) -> void:
+	if start_position == end_position:
+		return
+
+	# Note: we don't execute it since the position was already changed.
+	undo_redo.create_action("Move army in province")
+	undo_redo.add_do_property(province, &"position_army_host", end_position)
+	undo_redo.add_undo_property(province, &"position_army_host", start_position)
+	undo_redo.commit_action(false)
+
+
+func _on_fortress_drag_finished(
+		start_position: Vector2, end_position: Vector2, province: Province
+) -> void:
+	if start_position == end_position:
+		return
+
+	# Note: we don't execute it since the position was already changed.
+	undo_redo.create_action("Move fortress in province")
+	undo_redo.add_do_property(province, &"position_fortress", end_position)
+	undo_redo.add_undo_property(province, &"position_fortress", start_position)
+	undo_redo.commit_action(false)
+
+
 func _on_provinces_unhandled_mouse_event_occured(
 		event: InputEventMouse, province_visuals: ProvinceVisuals2D
 ) -> void:
@@ -217,18 +253,48 @@ func _on_provinces_unhandled_mouse_event_occured(
 	):
 		return
 
+	var selected_province: Province = _province_selection.selected_province()
+	var clicked_province_id: int = province_visuals.province.id
+
 	# Double right click the selected province to remove all its links
 	if (
 			mouse_button_event.double_click
-			and province_visuals.province.id
-			== _province_selection.selected_province().id
+			and clicked_province_id == selected_province.id
 	):
-		province_visuals.province.reset_links()
+		# Keep track of the linked provinces for undo/redo
+		var linked_province_ids: Array[int] = (
+				selected_province.linked_province_ids().duplicate()
+		)
+
+		undo_redo.create_action("Reset province's linked provinces")
+		undo_redo.add_do_method(selected_province.reset_links)
+		for linked_province_id in linked_province_ids:
+			undo_redo.add_undo_method(
+					selected_province.add_link.bind(linked_province_id)
+			)
+		undo_redo.commit_action()
+
+		get_viewport().set_input_as_handled()
+		return
 
 	# Right click a province to toggle
 	# whether or not it's linked to the selected province
-	_province_selection.selected_province().toggle_link(
-			province_visuals.province.id
-	)
+	if selected_province.is_linked_to(clicked_province_id):
+		undo_redo.create_action("Remove province link")
+		undo_redo.add_do_method(
+				selected_province.remove_link.bind(clicked_province_id)
+		)
+		undo_redo.add_undo_method(
+				selected_province.add_link.bind(clicked_province_id)
+		)
+	else:
+		undo_redo.create_action("Add province link")
+		undo_redo.add_do_method(
+				selected_province.add_link.bind(clicked_province_id)
+		)
+		undo_redo.add_undo_method(
+				selected_province.remove_link.bind(clicked_province_id)
+		)
+	undo_redo.commit_action()
 
 	get_viewport().set_input_as_handled()

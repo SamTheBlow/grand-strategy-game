@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://be0pqxrjfpukm"]
+[gd_scene format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/editor_world_setup.gd" id="4_l7l2i"]
@@ -7,45 +7,45 @@
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/interfaces/editing_interface.tscn" id="7_um8he"]
 [ext_resource type="Script" uid="uid://bk2i3kq3bheo7" path="res://source/editor/texture_select_popup_setup.gd" id="8_uwkq8"]
 
-[node name="Editor" type="Node"]
+[node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
 
-[node name="TextureSelectPopupSetup" type="Node" parent="." node_paths=PackedStringArray("_popup_container")]
+[node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
 _popup_container = NodePath("../UILayer/PopupContainer")
 
-[node name="ProvinceSelectConditions" type="Node" parent="."]
+[node name="ProvinceSelectConditions" type="Node" parent="." unique_id=1366961923]
 unique_name_in_owner = true
 script = ExtResource("5_b8gba")
 
-[node name="WorldLayer" type="CanvasLayer" parent="."]
+[node name="WorldLayer" type="CanvasLayer" parent="." unique_id=2026811626]
 follow_viewport_enabled = true
 
-[node name="WorldSetup" type="Node" parent="WorldLayer" node_paths=PackedStringArray("_world_container", "_camera_container")]
+[node name="WorldSetup" type="Node" parent="WorldLayer" unique_id=75709932 node_paths=PackedStringArray("_world_container", "_camera_container")]
 unique_name_in_owner = true
 script = ExtResource("4_l7l2i")
 _world_container = NodePath("../WorldContainer")
 _camera_container = NodePath("../../CameraContainer")
 
-[node name="WorldContainer" type="Node2D" parent="WorldLayer"]
+[node name="WorldContainer" type="Node2D" parent="WorldLayer" unique_id=1427898406]
 
-[node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer"]
+[node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
 unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
 
-[node name="CameraContainer" type="Node2D" parent="."]
+[node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
 
-[node name="WorldOverlayLayer" type="CanvasLayer" parent="."]
+[node name="WorldOverlayLayer" type="CanvasLayer" parent="." unique_id=1559674596]
 layer = 2
 follow_viewport_enabled = true
 
-[node name="WorldOverlay" type="Node2D" parent="WorldOverlayLayer"]
+[node name="WorldOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=2123895785]
 unique_name_in_owner = true
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=151164930]
 layer = 3
 
-[node name="TopBarContainer" type="SubViewportContainer" parent="UILayer"]
+[node name="TopBarContainer" type="SubViewportContainer" parent="UILayer" unique_id=1726182058]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -53,13 +53,13 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="UILayer/TopBarContainer"]
+[node name="SubViewport" type="SubViewport" parent="UILayer/TopBarContainer" unique_id=772250658]
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="Control" type="Control" parent="UILayer/TopBarContainer/SubViewport"]
+[node name="Control" type="Control" parent="UILayer/TopBarContainer/SubViewport" unique_id=836868101]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -68,13 +68,13 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="TopBar" type="Control" parent="UILayer/TopBarContainer/SubViewport/Control"]
+[node name="TopBar" type="Control" parent="UILayer/TopBarContainer/SubViewport/Control" unique_id=937602123]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.075
 mouse_filter = 1
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=831517367]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -83,7 +83,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="MenuBar" type="MenuBar" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar"]
+[node name="MenuBar" type="MenuBar" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=871537756]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
@@ -92,14 +92,14 @@ anchor_bottom = 0.5
 offset_left = 8.0
 grow_vertical = 2
 
-[node name="Editor" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
+[node name="Editor" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1991500053]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 1
 item_0/text = "Quit"
 item_0/id = 0
 
-[node name="Project" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
+[node name="Project" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1888538547]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 9
@@ -122,7 +122,7 @@ item_7/separator = true
 item_8/text = "Play"
 item_8/id = 8
 
-[node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar"]
+[node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 8
@@ -144,13 +144,13 @@ item_6/id = 6
 item_7/text = "Countries"
 item_7/id = 7
 
-[node name="EditingInterface" parent="UILayer" instance=ExtResource("7_um8he")]
+[node name="EditingInterface" parent="UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
 unique_name_in_owner = true
 anchors_preset = -1
 anchor_top = 0.075
 anchor_right = 0.4
 
-[node name="PopupContainer" type="Control" parent="UILayer"]
+[node name="PopupContainer" type="Control" parent="UILayer" unique_id=1918851921]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -160,7 +160,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SaveDialog" type="FileDialog" parent="."]
+[node name="SaveDialog" type="FileDialog" parent="." unique_id=32787500]
 unique_name_in_owner = true
 initial_position = 2
 size = Vector2i(931, 500)
@@ -173,7 +173,7 @@ use_native_dialog = true
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="." method="_on_edit_tab_id_pressed"]
 [connection signal="country_interface_closed" from="UILayer/EditingInterface" to="." method="_on_country_interface_closed"]
 [connection signal="country_interface_opened" from="UILayer/EditingInterface" to="." method="_on_country_interface_opened"]
-[connection signal="province_change_owner_pressed" from="UILayer/EditingInterface" to="." method="_on_province_change_owner_pressed"]
+[connection signal="country_select_pressed" from="UILayer/EditingInterface" to="." method="_on_country_select_pressed"]
 [connection signal="province_interface_closed" from="UILayer/EditingInterface" to="." method="_on_province_interface_closed"]
 [connection signal="province_interface_opened" from="UILayer/EditingInterface" to="." method="_on_province_interface_opened"]
 [connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
