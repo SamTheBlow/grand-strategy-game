@@ -32,6 +32,8 @@ var world := GameWorld.new(self)
 ## so that RNG stays the same when you reload the game and when you play online.
 var rng := RandomNumberGenerator.new()
 
+var game_rng := GameRNG.new(rng)
+
 ## Use this to obtain or provide modifiers across the entire game.
 var modifier_request := ModifierRequest.new()
 

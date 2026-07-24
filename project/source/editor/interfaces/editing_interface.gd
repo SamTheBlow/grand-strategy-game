@@ -11,6 +11,7 @@ signal country_interface_closed()
 
 enum InterfaceType {
 	PROJECT_INFO,
+	RNG,
 	WORLD_LIMITS,
 	BACKGROUND_COLOR,
 	DECORATION_LIST,
@@ -21,6 +22,7 @@ enum InterfaceType {
 ## The root node of each scene is an [AppEditorInterface].
 const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.PROJECT_INFO: preload("uid://7k82f8lx1vpe"),
+	InterfaceType.RNG: preload("uid://dp53fawdiydun"),
 	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
 	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
@@ -155,6 +157,8 @@ func _new_interface(
 		info_interface.texture_popup_requested.connect(
 				texture_popup_requested.emit
 		)
+	elif new_interface is InterfaceRNG:
+		(new_interface as InterfaceRNG).game_rng = project.game.game_rng
 	elif new_interface is InterfaceWorldLimits:
 		(new_interface as InterfaceWorldLimits).setup(
 				project.game.world.limits()

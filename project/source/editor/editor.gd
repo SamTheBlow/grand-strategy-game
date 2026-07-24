@@ -22,13 +22,14 @@ const PROJECT_TAB_SAVE_AS_ID: int = 4
 const PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID: int = 6
 const PROJECT_TAB_PLAY_ID: int = 8
 
-const EDIT_TAB_SEPARATOR_IDS: Array[int] = [1, 5]
+const EDIT_TAB_SEPARATOR_IDS: Array[int] = [2, 6]
 const EDIT_TAB_PROJECT_INFO_ID: int = 0
-const EDIT_TAB_WORLD_LIMITS_ID: int = 2
-const EDIT_TAB_BACKGROUND_COLOR_ID: int = 3
-const EDIT_TAB_DECORATIONS_ID: int = 4
-const EDIT_TAB_PROVINCES_ID: int = 6
-const EDIT_TAB_COUNTRIES_ID: int = 7
+const EDIT_TAB_RNG_ID: int = 1
+const EDIT_TAB_WORLD_LIMITS_ID: int = 3
+const EDIT_TAB_BACKGROUND_COLOR_ID: int = 4
+const EDIT_TAB_DECORATIONS_ID: int = 5
+const EDIT_TAB_PROVINCES_ID: int = 7
+const EDIT_TAB_COUNTRIES_ID: int = 8
 
 const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
 const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
@@ -262,6 +263,9 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		EDIT_TAB_PROJECT_INFO_ID:
 			# "Project Info"
 			_open_interface(EditingInterface.InterfaceType.PROJECT_INFO)
+		EDIT_TAB_RNG_ID:
+			# "RNG"
+			_open_interface(EditingInterface.InterfaceType.RNG)
 		EDIT_TAB_WORLD_LIMITS_ID:
 			# "World Limits"
 			_open_interface(EditingInterface.InterfaceType.WORLD_LIMITS)
