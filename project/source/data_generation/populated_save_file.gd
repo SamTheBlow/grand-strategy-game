@@ -6,6 +6,9 @@ class_name PopulatedSaveFile
 
 
 static func apply(game: Game) -> void:
+	# RNG
+	_overwrite_rng(game)
+
 	# Players and countries
 	_add_players(game)
 	_randomly_assign_players_to_countries(game)
@@ -42,6 +45,13 @@ static func apply(game: Game) -> void:
 
 	# Armies
 	_add_starting_armies(game)
+
+
+## Overwrites the RNG seed according to the game rules.
+static func _overwrite_rng(game: Game) -> void:
+	if not game.rules.rng_seed_override_enabled.value:
+		return
+	game.rng.rng_seed = game.rules.rng_seed.value
 
 
 ## Add new players so that each country starts with an AI.

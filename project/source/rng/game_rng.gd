@@ -5,7 +5,7 @@ signal seed_changed(before: String, after: String)
 signal state_changed(before: String, after: String)
 
 ## An empty string means it'll be a random seed when the game starts.
-## After setup is finished, this variable can no longer be changed
+## After locking, this variable can no longer be changed
 ## and instead returns the underlying hashed seed.
 var rng_seed: String = "":
 	get:
@@ -24,7 +24,11 @@ var rng_seed: String = "":
 			return
 
 		rng_seed = value
-		_rng.seed = hash(value)
+
+		if rng_seed == "":
+			_rng.randomize()
+		else:
+			_rng.seed = hash(value)
 
 		seed_changed.emit(old_seed, value)
 		if old_state != _rng.state:
@@ -33,7 +37,7 @@ var rng_seed: String = "":
 ## An empty string means it'll be the seed's initial state
 ## when the game starts. When setting this value,
 ## turns the value into an integer and then back into a string.
-## After setup is finished, this variable can no longer be changed
+## After locking, this variable can no longer be changed
 ## and instead returns the underlying RNG's current state.
 var rng_state: String = "":
 	get:
@@ -50,7 +54,10 @@ var rng_state: String = "":
 		if old_state == new_state:
 			return
 
-		if new_state != "":
+		if new_state == "":
+			# This resets the state without changing the seed
+			_rng.seed = _rng.seed
+		else:
 			_rng.state = new_state.to_int()
 			new_state = str(_rng.state)
 
@@ -92,13 +99,6 @@ func randi_range(from: int, to: int) -> int:
 	return _rng.randi_range(from, to)
 
 
-## Locks the rng_seed and rng_state values so that they can't be changed,
-## and randomizes the internal RNG if applicable.
-func end_setup() -> void:
+## Locks the rng_seed and rng_state values so that they can't be changed.
+func lock() -> void:
 	_is_locked = true
-
-	if rng_seed == "":
-		_rng.randomize()
-	elif rng_state == "":
-		# This resets the rng_state without changing the seed
-		_rng.seed = _rng.seed

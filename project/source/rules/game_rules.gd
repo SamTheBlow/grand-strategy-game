@@ -33,6 +33,8 @@ enum GameOverProvincesOwnedOption {
 ## as well as a "value_changed" signal. This signal must
 ## pass itself (a [PropertyTreeItem]) as the only argument.
 const RULE_NAMES: Array[String] = [
+	"rng_seed_override_enabled",
+	"rng_seed",
 	"turn_limit_enabled",
 	"turn_limit",
 	"game_over_provinces_owned_option",
@@ -115,6 +117,8 @@ var diplomatic_actions := DiplomacyActionDefinitions.new([
 var battle: Battle = preload("uid://cuylrn1evjy6r")
 
 # Individual rules
+var rng_seed_override_enabled := ItemBool.new()
+var rng_seed := ItemString.new()
 var turn_limit_enabled := ItemBool.new()
 var turn_limit := ItemInt.new()
 var game_over_provinces_owned_option := ItemOptions.new()
@@ -201,6 +205,15 @@ var root_rules: Array[PropertyTreeItem] = []
 # Defines the default rules & rule layout
 # TODO this is kinda cursed I guess
 func _init() -> void:
+	rng_seed_override_enabled.text = "Override RNG seed"
+	rng_seed_override_enabled.value = false
+	rng_seed_override_enabled.child_items = [rng_seed]
+	rng_seed_override_enabled.child_items_on = [0]
+
+	rng_seed.text = "Seed"
+	rng_seed.placeholder_text = "(Random)"
+	rng_seed.value = ""
+
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
 	turn_limit_enabled.child_items = [turn_limit]
@@ -617,6 +630,7 @@ func _init() -> void:
 	province_income_random_range.max_value = 100
 
 	root_rules = [
+		rng_seed_override_enabled,
 		_category_game_over,
 		_category_recruitment,
 		_category_population,
@@ -669,8 +683,8 @@ func _connect_signals() -> void:
 		if rule == null:
 			push_error("Rule is null.")
 			continue
-		if rule.has_signal("value_changed"):
-			rule.connect("value_changed", _on_rule_value_changed)
+		if rule.has_signal(&"value_changed"):
+			rule.connect(&"value_changed", _on_rule_value_changed)
 		else:
 			push_error('Rule does not have a "value_changed" signal.')
 

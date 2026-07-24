@@ -80,11 +80,9 @@ func end_setup() -> void:
 	if _game_state != GameState.SETUP:
 		return
 
+	rng.lock()
 	rules.lock()
 	_setup_global_modifiers()
-
-	# Lock RNG from being changed and generate random seed if applicable
-	rng.end_setup()
 
 	# Add turn limit component
 	if rules.turn_limit_enabled.value:
