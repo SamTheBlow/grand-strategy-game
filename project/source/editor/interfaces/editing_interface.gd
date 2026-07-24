@@ -227,7 +227,7 @@ func _open_country_edit_interface(
 	var edit_interface := _new_interface(
 			preload("uid://ck6hme0uj2nuu"), project, editor_settings
 	) as InterfaceCountryEdit
-	edit_interface.back_pressed.connect(open_new_interface.bind(
+	edit_interface.closed.connect(open_new_interface.bind(
 			InterfaceType.COUNTRY_LIST, project, editor_settings
 	))
 	edit_interface.delete_pressed.connect(
@@ -237,6 +237,7 @@ func _open_country_edit_interface(
 			_on_country_duplicated.bind(project, editor_settings)
 	)
 	edit_interface.country = country
+	edit_interface.countries = project.game.countries
 	open_interface(edit_interface)
 	country_interface_opened.emit(country)
 
@@ -348,8 +349,9 @@ func _on_country_deleted(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	close_interface()
-	project.game.countries.remove(country.id)
+	project.game.countries.undo_redo_remove(
+			country, undo_redo, project.game.world.provinces
+	)
 	open_new_interface(InterfaceType.COUNTRY_LIST, project, editor_settings)
 
 
@@ -373,5 +375,19 @@ func _on_country_duplicated(
 			AutoArrows.from_raw_data(country.auto_arrows.to_raw_data())
 	)
 
+	# We need this new country to have a new unique id
+	# assigned to it before we can create the undo_redo action
 	project.game.countries.add(new_country)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the country)
+	undo_redo.create_action("Duplicate country")
+	undo_redo.add_do_method(
+			project.game.countries.add.bind(new_country)
+	)
+	undo_redo.add_undo_method(
+			project.game.countries.remove.bind(new_country.id)
+	)
+	undo_redo.commit_action(false)
+
 	_open_country_edit_interface(new_country.id, project, editor_settings)

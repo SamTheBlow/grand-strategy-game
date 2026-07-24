@@ -59,6 +59,11 @@ func _add_element(new_country: Country) -> void:
 		push_warning("Country already has a corresponding node.")
 		return
 
+	if new_country != null:
+		new_country.name_changed.connect(
+				_on_country_name_changed.bind(new_country)
+		)
+
 	var new_element := (
 			_COUNTRY_ELEMENT_SCENE.instantiate() as CountryListElement
 	)
@@ -94,8 +99,17 @@ func _on_country_added(country: Country) -> void:
 
 func _on_country_removed(country: Country) -> void:
 	if _nodes.has(country):
+		if country != null:
+			country.name_changed.disconnect(_on_country_name_changed)
+
 		NodeUtils.delete_node(_nodes[country])
 		_nodes.erase(country)
 		_sorted_countries.erase(country)
 	else:
 		push_warning("Country doesn't have a corresponding node.")
+
+
+func _on_country_name_changed(country: Country) -> void:
+	# Remove it and re-add it so that it gets properly refreshed and sorted
+	_on_country_removed(country)
+	_on_country_added(country)
