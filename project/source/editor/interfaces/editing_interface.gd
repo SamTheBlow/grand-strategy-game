@@ -158,7 +158,7 @@ func _new_interface(
 				texture_popup_requested.emit
 		)
 	elif new_interface is InterfaceRNG:
-		(new_interface as InterfaceRNG).game_rng = project.game.game_rng
+		(new_interface as InterfaceRNG).game_rng = project.game.rng
 	elif new_interface is InterfaceWorldLimits:
 		(new_interface as InterfaceWorldLimits).setup(
 				project.game.world.limits()

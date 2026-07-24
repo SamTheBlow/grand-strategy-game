@@ -31,7 +31,7 @@ func _ready() -> void:
 	_item_seed.value_changed.connect(_on_seed_value_changed)
 
 	_item_state.text = "State:"
-	_item_state.placeholder_text = "(Random)"
+	_item_state.placeholder_text = "(Initial state)"
 	_item_state.value_changed.connect(_on_state_value_changed)
 
 	_refresh()

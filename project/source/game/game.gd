@@ -30,9 +30,7 @@ var world := GameWorld.new(self)
 ## The game's RNG.
 ## It's important to always use this instead of built-in RNG methods
 ## so that RNG stays the same when you reload the game and when you play online.
-var rng := RandomNumberGenerator.new()
-
-var game_rng := GameRNG.new(rng)
+var rng := GameRNG.new()
 
 ## Use this to obtain or provide modifiers across the entire game.
 var modifier_request := ModifierRequest.new()
@@ -85,6 +83,10 @@ func end_setup() -> void:
 	rules.lock()
 	_setup_global_modifiers()
 
+	# Lock RNG from being changed and generate random seed if applicable
+	rng.end_setup()
+
+	# Add turn limit component
 	if rules.turn_limit_enabled.value:
 		var turn_limit := TurnLimit.new()
 		turn_limit.final_turn = rules.turn_limit.value
@@ -93,10 +95,12 @@ func end_setup() -> void:
 		turn_limit.game_over.connect(end_game)
 		_components.append(turn_limit)
 
+	# Add province control goal component
 	var province_control_goal := ProvinceControlGoal.new(self)
 	province_control_goal.game_over.connect(end_game)
 	_components.append(province_control_goal)
 
+	# Add other components
 	_components.append_array([
 		MilitaryAccessLossBehavior.new(self),
 		DiplomacyRelationshipAutoChanges.new(self),

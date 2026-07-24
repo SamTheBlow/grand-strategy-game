@@ -5,8 +5,18 @@ signal seed_changed(before: String, after: String)
 signal state_changed(before: String, after: String)
 
 ## An empty string means it'll be a random seed when the game starts.
+## After setup is finished, this variable can no longer be changed
+## and, if it's a random seed, instead returns the underlying RNG's seed.
 var rng_seed: String = "":
+	get:
+		if _is_locked and rng_seed == "":
+			return str(_rng.seed)
+		return rng_seed
 	set(value):
+		if _is_locked:
+			push_warning("Tried to change RNG seed but the RNG is locked")
+			return
+
 		var old_seed: String = rng_seed
 		var old_state: int = _rng.state
 
@@ -18,13 +28,23 @@ var rng_seed: String = "":
 
 		seed_changed.emit(old_seed, value)
 		if old_state != _rng.state:
-			rng_state = str(_rng.state)
+			rng_state = ""
 
-## An empty string means it'll be a random state when the game starts.
-## When setting this value,
+## An empty string means it'll be the seed's initial state
+## when the game starts. When setting this value,
 ## turns the value into an integer and then back into a string.
+## After setup is finished, this variable can no longer be changed
+## and instead returns the underlying RNG's current state.
 var rng_state: String = "":
+	get:
+		if _is_locked:
+			return str(_rng.state)
+		return rng_state
 	set(new_state):
+		if _is_locked:
+			push_warning("Tried to change RNG state but the RNG is locked")
+			return
+
 		var old_state: String = rng_state
 
 		if old_state == new_state:
@@ -40,8 +60,32 @@ var rng_state: String = "":
 		rng_state = new_state
 		state_changed.emit(old_state, new_state)
 
-var _rng: RandomNumberGenerator
+var _is_locked: bool = false
+var _rng := RandomNumberGenerator.new()
 
 
-func _init(rng := RandomNumberGenerator.new()) -> void:
-	_rng = rng
+## Exposes the internal [RandomNumberGenerator]'s method.
+func randi() -> int:
+	return _rng.randi()
+
+
+## Exposes the internal [RandomNumberGenerator]'s method.
+func randf() -> float:
+	return _rng.randf()
+
+
+## Exposes the internal [RandomNumberGenerator]'s method.
+func randi_range(from: int, to: int) -> int:
+	return _rng.randi_range(from, to)
+
+
+## Locks the rng_seed and rng_state values so that they can't be changed,
+## and randomizes the internal RNG if applicable.
+func end_setup() -> void:
+	_is_locked = true
+
+	if rng_seed == "":
+		_rng.randomize()
+	elif rng_state == "":
+		# This resets the rng_state without changing the seed
+		_rng.seed = _rng.seed

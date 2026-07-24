@@ -31,7 +31,9 @@ static func to_raw_dict(game: Game) -> Dictionary:
 		output.merge({ _RULES_KEY: rules_data })
 
 	# RNG
-	output.merge({ _RNG_KEY: RNGParsing.to_raw_data(game.rng) })
+	var rng_data: Dictionary = RNGParsing.to_raw_dict(game.rng)
+	if not rng_data.is_empty():
+		output.merge({ _RNG_KEY: rng_data })
 
 	# Players
 	var players_data: Array = GamePlayerParsing.to_raw_array(game.game_players)
@@ -97,6 +99,12 @@ class GameFromRawData extends Game:
 				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
 		)
 		if status != Game.GameState.SETUP:
+			if rng.rng_seed == "":
+				push_warning(
+						"Loaded an already started game with no RNG seed. "
+						+ "The game will continue with a random seed."
+				)
+
 			end_setup()
 			if status == Game.GameState.GAMEOVER:
 				end_game()
