@@ -6,10 +6,10 @@ signal state_changed(before: String, after: String)
 
 ## An empty string means it'll be a random seed when the game starts.
 ## After setup is finished, this variable can no longer be changed
-## and, if it's a random seed, instead returns the underlying RNG's seed.
+## and instead returns the underlying hashed seed.
 var rng_seed: String = "":
 	get:
-		if _is_locked and rng_seed == "":
+		if _is_locked :
 			return str(_rng.seed)
 		return rng_seed
 	set(value):
@@ -62,6 +62,19 @@ var rng_state: String = "":
 
 var _is_locked: bool = false
 var _rng := RandomNumberGenerator.new()
+
+
+## Allows you to provide an initial seed (hashed) and state.
+func _init(
+		has_initial_seed: bool = false,
+		initial_seed: int = 0,
+		has_initial_state: bool = false,
+		initial_state: int = 0
+) -> void:
+	if has_initial_seed:
+		_rng.seed = initial_seed
+		if has_initial_state:
+			_rng.state = initial_state
 
 
 ## Exposes the internal [RandomNumberGenerator]'s method.

@@ -62,11 +62,16 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 class GameFromRawData extends Game:
 	func _init(raw_dict: Dictionary, project_textures: ProjectTextures) -> void:
+		# Status
+		var status: Game.GameState = (
+				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
+		)
+
 		# Rules
 		rules = RuleParsing.from_raw_data(raw_dict.get(_RULES_KEY))
 
 		# RNG
-		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY))
+		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), status)
 
 		# Turn
 		turn = (
@@ -94,17 +99,7 @@ class GameFromRawData extends Game:
 
 		super()
 
-		# Status
-		var status: Game.GameState = (
-				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
-		)
 		if status != Game.GameState.SETUP:
-			if rng.rng_seed == "":
-				push_warning(
-						"Loaded an already started game with no RNG seed. "
-						+ "The game will continue with a random seed."
-				)
-
 			end_setup()
 			if status == Game.GameState.GAMEOVER:
 				end_game()
