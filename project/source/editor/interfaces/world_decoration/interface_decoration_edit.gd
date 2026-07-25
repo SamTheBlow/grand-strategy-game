@@ -25,16 +25,12 @@ var project_textures: ProjectTextures
 var world_decorations: WorldDecorations = null:
 	set(value):
 		if world_decorations != null:
-			world_decorations.removed.disconnect(
-					_on_world_decoration_removed
-			)
+			world_decorations.removed.disconnect(_on_world_decoration_removed)
 
 		world_decorations = value
 
 		if world_decorations != null:
-			world_decorations.removed.connect(
-					_on_world_decoration_removed
-			)
+			world_decorations.removed.connect(_on_world_decoration_removed)
 
 @onready var _preview_rect := %PreviewRect as TextureRect
 @onready var _settings := %Settings as ItemVoidNode
@@ -135,10 +131,8 @@ func _on_back_button_pressed() -> void:
 	closed.emit()
 
 
-func _on_world_decoration_removed(
-		world_decoration_removed: WorldDecoration
-) -> void:
-	if world_decoration_removed == world_decoration:
+func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
+	if decoration_removed == world_decoration:
 		closed.emit()
 
 

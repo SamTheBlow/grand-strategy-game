@@ -30,6 +30,7 @@ const EDIT_TAB_BACKGROUND_COLOR_ID: int = 4
 const EDIT_TAB_DECORATIONS_ID: int = 5
 const EDIT_TAB_PROVINCES_ID: int = 7
 const EDIT_TAB_COUNTRIES_ID: int = 8
+const EDIT_TAB_PLAYERS_ID: int = 9
 
 const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
 const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
@@ -281,6 +282,9 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		EDIT_TAB_COUNTRIES_ID:
 			# "Countries"
 			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
+		EDIT_TAB_PLAYERS_ID:
+			# "Players"
+			_open_interface(EditingInterface.InterfaceType.PLAYER_LIST)
 		EDITOR_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			pass

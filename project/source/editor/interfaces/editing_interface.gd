@@ -19,6 +19,7 @@ enum InterfaceType {
 	COUNTRY_LIST,
 	COUNTRY_RELATIONSHIPS,
 	COUNTRY_NOTIFICATIONS,
+	PLAYER_LIST,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
@@ -32,6 +33,7 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
 	InterfaceType.COUNTRY_RELATIONSHIPS: preload("uid://bxnnpjildojmj"),
 	InterfaceType.COUNTRY_NOTIFICATIONS: preload("uid://bs0hbgxgmptdv"),
+	InterfaceType.PLAYER_LIST: preload("uid://dlpstn5iyda4k"),
 }
 
 ## This will be given to all new interfaces.
@@ -114,7 +116,7 @@ func open_province_edit_interface(
 			InterfaceType.PROVINCE_LIST, project, editor_settings
 	))
 	province_interface.delete_pressed.connect(
-			_on_province_deleted.bind(project, editor_settings)
+			project.game.world.provinces.undo_redo_remove.bind(undo_redo)
 	)
 	province_interface.duplicate_pressed.connect(
 			_on_province_duplicated.bind(project, editor_settings)
@@ -192,6 +194,12 @@ func _new_interface(
 		list_interface.item_selected.connect(
 				_open_country_edit_interface.bind(project, editor_settings)
 		)
+	elif new_interface is InterfacePlayerList:
+		var list_interface := new_interface as InterfacePlayerList
+		list_interface.setup(project.game.game_players)
+		list_interface.item_selected.connect(
+				_open_player_edit_interface.bind(project, editor_settings)
+		)
 
 	return new_interface
 
@@ -208,7 +216,7 @@ func _open_new_decoration_edit_interface(
 			InterfaceType.DECORATION_LIST, project, editor_settings
 	))
 	new_interface.delete_pressed.connect(
-			_on_world_decoration_deleted.bind(project, editor_settings)
+			_on_world_decoration_deleted.bind(project.game.world.decorations)
 	)
 	new_interface.duplicate_pressed.connect(
 			_on_world_decoration_duplicated.bind(project, editor_settings)
@@ -239,7 +247,9 @@ func _open_country_edit_interface(
 			InterfaceType.COUNTRY_LIST, project, editor_settings
 	))
 	edit_interface.delete_pressed.connect(
-			_on_country_deleted.bind(project, editor_settings)
+			project.game.countries.undo_redo_remove.bind(
+					undo_redo, project.game.world.provinces
+			)
 	)
 	edit_interface.duplicate_pressed.connect(
 			_on_country_duplicated.bind(project, editor_settings)
@@ -260,23 +270,43 @@ func _open_country_edit_interface(
 	country_interface_opened.emit(country)
 
 
-func _on_world_decoration_deleted(
-		world_decoration: WorldDecoration,
+func _open_player_edit_interface(
+		player_id: int,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	# Create and apply undo_redo action
-	undo_redo.create_action("Delete world decoration")
-	undo_redo.add_do_method(
-			project.game.world.decorations.remove.bind(world_decoration)
+	var game_player: GamePlayer = (
+			project.game.game_players.player_from_id(player_id)
 	)
-	undo_redo.add_undo_method(
-			project.game.world.decorations.add.bind(world_decoration)
-	)
-	undo_redo.commit_action()
+	if game_player == null:
+		push_error("Player doesn't exist.")
+		return
 
-	# Go back to decoration list interface
-	open_new_interface(InterfaceType.DECORATION_LIST, project, editor_settings)
+	var edit_interface := _new_interface(
+			preload("uid://exhe7mpnu7w1"), project, editor_settings
+	) as InterfacePlayerEdit
+	edit_interface.closed.connect(open_new_interface.bind(
+			InterfaceType.PLAYER_LIST, project, editor_settings
+	))
+	# TODO implement with undo_redo
+	#edit_interface.delete_pressed.connect(
+	#		project.game.game_players.remove_player
+	#)
+	edit_interface.duplicate_pressed.connect(
+			_on_player_duplicated.bind(project, editor_settings)
+	)
+	edit_interface.game_player = game_player
+	edit_interface.game_players = project.game.game_players
+	open_interface(edit_interface)
+
+
+func _on_world_decoration_deleted(
+		world_decoration: WorldDecoration, world_decorations: WorldDecorations
+) -> void:
+	undo_redo.create_action("Delete world decoration")
+	undo_redo.add_do_method(world_decorations.remove.bind(world_decoration))
+	undo_redo.add_undo_method(world_decorations.add.bind(world_decoration))
+	undo_redo.commit_action()
 
 
 func _on_world_decoration_duplicated(
@@ -312,15 +342,6 @@ func _on_world_decoration_duplicated(
 	_open_new_decoration_edit_interface(
 			new_decoration, project, editor_settings
 	)
-
-
-func _on_province_deleted(
-		province: Province,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	project.game.world.provinces.undo_redo_remove(province, undo_redo)
-	open_new_interface(InterfaceType.PROVINCE_LIST, project, editor_settings)
 
 
 func _on_province_duplicated(
@@ -362,17 +383,6 @@ func _on_province_duplicated(
 	open_province_edit_interface(new_province.id, project, editor_settings)
 
 
-func _on_country_deleted(
-		country: Country,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	project.game.countries.undo_redo_remove(
-			country, undo_redo, project.game.world.provinces
-	)
-	open_new_interface(InterfaceType.COUNTRY_LIST, project, editor_settings)
-
-
 func _on_country_duplicated(
 		country: Country,
 		project: GameProject,
@@ -409,6 +419,15 @@ func _on_country_duplicated(
 	undo_redo.commit_action(false)
 
 	_open_country_edit_interface(new_country.id, project, editor_settings)
+
+
+func _on_player_duplicated(
+		_player: GamePlayer,
+		_project: GameProject,
+		_editor_settings: AppEditorSettings
+) -> void:
+	# TODO implement
+	pass
 
 
 func _on_country_relationships_opened(
