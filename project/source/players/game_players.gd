@@ -16,25 +16,7 @@ var _unique_id_system := UniqueIdSystem.new()
 ## An error will occur if given id is not available.
 ## Use is_id_available first to verify (see [UniqueIdSystem]).
 func add_player(player: GamePlayer, specific_id: int = -1) -> void:
-	if _list.has(player):
-		return
-
-	var id: int = specific_id
-	if not _unique_id_system.is_id_valid(specific_id):
-		id = _unique_id_system.new_unique_id()
-	elif not _unique_id_system.is_id_available(specific_id):
-		push_error(
-				"Specified player id is not unique."
-				+ " (id: " + str(specific_id) + ")"
-		)
-		id = _unique_id_system.new_unique_id()
-	else:
-		_unique_id_system.claim_id(specific_id)
-
-	player.id = id
-	player.username_changed.connect(_on_username_changed)
-	_list.append(player)
-	player_added.emit(player, _list.size() - 1)
+	_add_player(player, -1, specific_id)
 
 
 func remove_player(player: GamePlayer) -> void:
@@ -46,6 +28,21 @@ func remove_player(player: GamePlayer) -> void:
 	player_removed.emit(player)
 
 
+## Removes a player, using given [UndoRedo] system.
+## Ensures that when we undo, everything is exactly as it was before.
+func undo_redo_remove(player: GamePlayer, undo_redo: UndoRedo) -> void:
+	if not _list.has(player):
+		return
+
+	undo_redo.create_action("Delete player")
+	undo_redo.add_do_method(remove_player.bind(player))
+
+	# Ensure the player's position in the list is restored on undo
+	undo_redo.add_undo_method(_add_player.bind(player, _list.find(player)))
+
+	undo_redo.commit_action()
+
+
 ## Returns a new copy of this list.
 func list() -> Array[GamePlayer]:
 	return _list.duplicate()
@@ -54,6 +51,12 @@ func list() -> Array[GamePlayer]:
 ## Returns the number of players on the list.
 func size() -> int:
 	return _list.size()
+
+
+## Returns the index of given player in the list,
+## or -1 if the player is not in the list.
+func find(player: GamePlayer) -> int:
+	return _list.find(player)
 
 
 ## Returns the player at given index position.
@@ -129,6 +132,36 @@ func client_controls_country(multiplayer_id: int, country: Country) -> bool:
 		):
 			return true
 	return false
+
+
+## Keeps the insertion index a private feature.
+func _add_player(
+		player: GamePlayer, insertion_index: int = -1, specific_id: int = -1
+) -> void:
+	if _list.has(player):
+		return
+
+	var id: int = specific_id
+	if not _unique_id_system.is_id_valid(specific_id):
+		id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(specific_id):
+		push_error(
+				"Specified player id is not unique."
+				+ " (id: " + str(specific_id) + ")"
+		)
+		id = _unique_id_system.new_unique_id()
+	else:
+		_unique_id_system.claim_id(specific_id)
+
+	player.id = id
+	player.username_changed.connect(_on_username_changed)
+
+	if insertion_index < 0 or insertion_index >= _list.size():
+		_list.append(player)
+	else:
+		_list.insert(insertion_index, player)
+
+	player_added.emit(player, _list.find(player))
 
 
 # TODO move this to a different class

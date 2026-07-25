@@ -126,7 +126,7 @@ func _update_shown_username() -> void:
 		username_label.text = ""
 		return
 
-	username_label.text = player.username
+	username_label.text = player.username_or_default()
 	if not player.is_human:
 		username_label.text += " (AI)"
 	if player.is_spectating():
@@ -214,14 +214,11 @@ func _can_edit() -> bool:
 
 
 func _submit_username_change() -> void:
-	if not player:
+	if player == null:
 		push_error("Tried to change someone's username, but player is null!")
 		return
 
-	var new_username: String = username_line_edit.text.strip_edges()
-	if new_username == "" or new_username == player.username:
-		return
-	player.username = new_username
+	player.username = username_line_edit.text.strip_edges()
 
 
 func _is_mouse_inside() -> bool:

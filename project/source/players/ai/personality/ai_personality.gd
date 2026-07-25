@@ -49,11 +49,12 @@ func actions(_game: Game, _player: GamePlayer) -> Array[Action]:
 	return []
 
 
-## Returns a new AIPersonality of given type,
-## for the purposes of saving/loading.
-## If the given type is invalid, returns null.
+## Returns a new AIPersonality instance of given type.
+## Returns null if type is not recognized.
 static func from_type(personality_type: int) -> AIPersonality:
 	match personality_type:
+		-1:
+			return RandomAIPersonality.new()
 		Type.NONE:
 			return AIPersonality.new()
 		Type.INTERVENTIONIST:
@@ -76,7 +77,9 @@ static func from_type(personality_type: int) -> AIPersonality:
 
 ## Returns this AI's type as an int, for the purposes of saving/loading.
 func type() -> int:
-	if self is AIPersonalityInterventionist:
+	if self is RandomAIPersonality:
+		return -1
+	elif self is AIPersonalityInterventionist:
 		return Type.INTERVENTIONIST
 	elif self is AIPersonalityIsolationist:
 		return Type.ISOLATIONIST

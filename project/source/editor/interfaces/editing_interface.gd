@@ -288,13 +288,13 @@ func _open_player_edit_interface(
 	edit_interface.closed.connect(open_new_interface.bind(
 			InterfaceType.PLAYER_LIST, project, editor_settings
 	))
-	# TODO implement with undo_redo
-	#edit_interface.delete_pressed.connect(
-	#		project.game.game_players.remove_player
-	#)
+	edit_interface.delete_pressed.connect(
+			project.game.game_players.undo_redo_remove.bind(undo_redo)
+	)
 	edit_interface.duplicate_pressed.connect(
 			_on_player_duplicated.bind(project, editor_settings)
 	)
+	edit_interface.country_select_pressed.connect(country_select_pressed.emit)
 	edit_interface.game_player = game_player
 	edit_interface.game_players = project.game.game_players
 	open_interface(edit_interface)
@@ -422,12 +422,36 @@ func _on_country_duplicated(
 
 
 func _on_player_duplicated(
-		_player: GamePlayer,
-		_project: GameProject,
-		_editor_settings: AppEditorSettings
+		player: GamePlayer,
+		project: GameProject,
+		editor_settings: AppEditorSettings
 ) -> void:
-	# TODO implement
-	pass
+	# Create duplicate
+	var new_player := GamePlayer.new()
+	new_player.username = player.username
+	new_player.playing_country = player.playing_country
+	new_player.is_human = player.is_human
+	new_player.player_ai = PlayerAI.from_type(player.player_ai.type())
+	new_player.player_ai.personality = (
+			AIPersonality.from_type(player.player_ai.personality.type())
+	)
+
+	# We need this new player to have a new unique id
+	# assigned to it before we can create the undo_redo action
+	project.game.game_players.add_player(new_player)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the player)
+	undo_redo.create_action("Duplicate player")
+	undo_redo.add_do_method(
+			project.game.game_players.add_player.bind(new_player)
+	)
+	undo_redo.add_undo_method(
+			project.game.game_players.remove_player.bind(new_player)
+	)
+	undo_redo.commit_action(false)
+
+	_open_player_edit_interface(new_player.id, project, editor_settings)
 
 
 func _on_country_relationships_opened(

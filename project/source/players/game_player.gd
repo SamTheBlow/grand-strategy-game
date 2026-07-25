@@ -6,6 +6,7 @@ class_name GamePlayer
 signal playing_country_changed()
 signal human_status_changed(this: GamePlayer)
 signal username_changed(this: GamePlayer)
+signal ai_changed(old_ai: PlayerAI, new_ai: PlayerAI)
 
 ## Unique identifier. Useful for saving/loading, networking, etc.
 var id: int = -1
@@ -29,16 +30,7 @@ var is_human: bool = false:
 
 ## This player's username. Allows you to give AI players a username.
 ## Changing this value automatically changes a human [Player]'s username.
-## If this property is set to an empty String, then it returns "Spectator"
-## when spectating, otherwise returns the playing country's name.
 var username: String = "":
-	get:
-		if username != "":
-			return username
-		elif is_spectating():
-			return "Spectator"
-		else:
-			return playing_country.name_or_default()
 	set(value):
 		if username == value:
 			return
@@ -67,7 +59,24 @@ var player_human: Player:
 
 ## This player's AI.
 ## It may only be used when [code]is_human[/code] is set to false.
-var player_ai := PlayerAI.new()
+var player_ai := PlayerAI.new():
+	set(new_ai):
+		var old_ai: PlayerAI = player_ai
+		if old_ai == new_ai:
+			return
+		player_ai = new_ai
+		ai_changed.emit(old_ai, new_ai)
+
+
+## Returns the username or, if it's an empty string, returns "Spectator"
+## when spectating, otherwise returns the playing country's name.
+func username_or_default() -> String:
+	if username != "":
+		return username
+	elif is_spectating():
+		return "Spectator"
+	else:
+		return playing_country.name_or_default()
 
 
 func is_spectating() -> bool:

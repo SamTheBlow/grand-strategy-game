@@ -59,11 +59,16 @@ func _add_element(game_player: GamePlayer) -> void:
 	new_element.game_player = game_player
 	new_element.pressed.connect(_on_element_pressed)
 	_item_container.add_child(new_element)
+	_item_container.move_child(new_element, _game_players.find(game_player))
 	_nodes[game_player.id] = new_element
 
 
 func _on_add_button_pressed() -> void:
 	var new_player := GamePlayer.new()
+
+	# Set default values
+	new_player.player_ai = PlayerAI.from_type(PlayerAI.Type.TESTAI2)
+	new_player.player_ai.personality = RandomAIPersonality.new()
 
 	# We need this new player to have a new unique id
 	# assigned to it before we can create the undo_redo action

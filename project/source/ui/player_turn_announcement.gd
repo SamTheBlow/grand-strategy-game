@@ -26,5 +26,5 @@ func _on_turn_player_changed(player: GamePlayer) -> void:
 	if not player.is_human:
 		return
 
-	_label.text = "It's " + player.username + "'s turn"
+	_label.text = "It's " + player.username_or_default() + "'s turn"
 	_animation_player.play("new_animation")

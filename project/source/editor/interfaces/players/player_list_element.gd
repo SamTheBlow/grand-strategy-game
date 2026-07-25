@@ -8,12 +8,14 @@ var game_player: GamePlayer:
 	set(value):
 		if game_player != null:
 			game_player.username_changed.disconnect(_refresh_username)
+			game_player.playing_country_changed.disconnect(_refresh_username)
 			game_player.human_status_changed.disconnect(_refresh_status)
 
 		game_player = value
 
 		_refresh()
 		game_player.username_changed.connect(_refresh_username)
+		game_player.playing_country_changed.connect(_refresh_username)
 		game_player.human_status_changed.connect(_refresh_status)
 
 @onready var _name_label := %NameLabel as Label
@@ -36,7 +38,7 @@ func _refresh() -> void:
 func _refresh_username(_game_player: GamePlayer = null) -> void:
 	if not is_node_ready():
 		return
-	_name_label.text = game_player.username
+	_name_label.text = game_player.username_or_default()
 
 
 func _refresh_status(_game_player: GamePlayer = null) -> void:

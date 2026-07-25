@@ -7,6 +7,8 @@ class_name PlayerAI
 ## If you want to make your own AI, create a subclass of this class
 ## and add it to the Type enum, and the from_type() and type() functions.
 
+signal personality_changed()
+
 enum Type {
 	NONE = 0,
 	TESTAI1 = 1,
@@ -14,7 +16,12 @@ enum Type {
 }
 
 ## This is responsible for the AI's diplomatic actions. It must not be null.
-var personality := AIPersonality.from_type(AIPersonality.Type.NONE)
+var personality := AIPersonality.from_type(AIPersonality.Type.NONE):
+	set(value):
+		if personality == value:
+			return
+		personality = value
+		personality_changed.emit()
 
 
 ## This is where the AI generates its actions based on a given game state.
@@ -22,9 +29,12 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	return personality.actions(game, player)
 
 
-## Returns a new PlayerAI of given type, for the purposes of saving/loading.
+## Returns a new PlayerAI instance of given type.
+## Returns null if type is not recognized.
 static func from_type(ai_type: int) -> PlayerAI:
 	match ai_type:
+		-1:
+			return RandomAI.new()
 		Type.NONE:
 			return PlayerAI.new()
 		Type.TESTAI1:
@@ -38,7 +48,9 @@ static func from_type(ai_type: int) -> PlayerAI:
 
 ## Returns this AI's type as an int, for the purposes of saving/loading.
 func type() -> int:
-	if self is TestAI1:
+	if self is RandomAI:
+		return -1
+	elif self is TestAI1:
 		return Type.TESTAI1
 	elif self is TestAI2:
 		return Type.TESTAI2
