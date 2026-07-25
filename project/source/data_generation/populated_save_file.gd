@@ -78,7 +78,7 @@ static func _add_players(game: Game) -> void:
 		new_player.player_ai.personality = AIPersonality.from_type(
 				game.rules.default_ai_personality_option.selected_value()
 		)
-		game.game_players.add_player(new_player)
+		game.game_players.add(new_player)
 
 
 ## If a player is already assigned to a valid country,

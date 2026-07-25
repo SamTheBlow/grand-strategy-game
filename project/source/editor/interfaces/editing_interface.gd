@@ -438,16 +438,16 @@ func _on_player_duplicated(
 
 	# We need this new player to have a new unique id
 	# assigned to it before we can create the undo_redo action
-	project.game.game_players.add_player(new_player)
+	project.game.game_players.add(new_player)
 
 	# Create undo_redo action
 	# (don't execute it since we already added the player)
 	undo_redo.create_action("Duplicate player")
 	undo_redo.add_do_method(
-			project.game.game_players.add_player.bind(new_player)
+			project.game.game_players.add.bind(new_player)
 	)
 	undo_redo.add_undo_method(
-			project.game.game_players.remove_player.bind(new_player)
+			project.game.game_players.remove.bind(new_player)
 	)
 	undo_redo.commit_action(false)
 

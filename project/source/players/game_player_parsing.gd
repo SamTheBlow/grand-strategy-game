@@ -96,7 +96,7 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 	if ai_personality != null:
 		player.player_ai.personality = ai_personality
 
-	game.game_players.add_player(player, id)
+	game.game_players.add(player, id)
 
 
 static func _player_to_raw_dict(player: GamePlayer) -> Dictionary:

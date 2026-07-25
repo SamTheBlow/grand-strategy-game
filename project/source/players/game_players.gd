@@ -15,11 +15,11 @@ var _unique_id_system := UniqueIdSystem.new()
 ##
 ## An error will occur if given id is not available.
 ## Use is_id_available first to verify (see [UniqueIdSystem]).
-func add_player(player: GamePlayer, specific_id: int = -1) -> void:
-	_add_player(player, -1, specific_id)
+func add(player: GamePlayer, specific_id: int = -1) -> void:
+	_add(player, -1, specific_id)
 
 
-func remove_player(player: GamePlayer) -> void:
+func remove(player: GamePlayer) -> void:
 	if not _list.has(player):
 		return
 
@@ -35,10 +35,10 @@ func undo_redo_remove(player: GamePlayer, undo_redo: UndoRedo) -> void:
 		return
 
 	undo_redo.create_action("Delete player")
-	undo_redo.add_do_method(remove_player.bind(player))
+	undo_redo.add_do_method(remove.bind(player))
 
 	# Ensure the player's position in the list is restored on undo
-	undo_redo.add_undo_method(_add_player.bind(player, _list.find(player)))
+	undo_redo.add_undo_method(_add.bind(player, _list.find(player)))
 
 	undo_redo.commit_action()
 
@@ -135,7 +135,7 @@ func client_controls_country(multiplayer_id: int, country: Country) -> bool:
 
 
 ## Keeps the insertion index a private feature.
-func _add_player(
+func _add(
 		player: GamePlayer, insertion_index: int = -1, specific_id: int = -1
 ) -> void:
 	if _list.has(player):
@@ -179,7 +179,7 @@ func _on_player_removed(player: Player) -> void:
 		game_player.is_human = false
 
 		if game_player.is_spectating():
-			remove_player(game_player)
+			remove(game_player)
 
 		break
 
