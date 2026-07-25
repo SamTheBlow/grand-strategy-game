@@ -5,6 +5,8 @@ extends AppEditorInterface
 signal closed()
 signal delete_pressed(country: Country)
 signal duplicate_pressed(country: Country)
+signal relationships_pressed()
+signal notifications_pressed()
 
 var country := Country.new()
 
@@ -92,6 +94,14 @@ func _on_back_button_pressed() -> void:
 func _on_country_removed(country_removed: Country) -> void:
 	if country_removed == country:
 		closed.emit()
+
+
+func _on_edit_relationships_pressed() -> void:
+	relationships_pressed.emit()
+
+
+func _on_edit_notifications_pressed() -> void:
+	notifications_pressed.emit()
 
 
 func _on_delete_button_pressed() -> void:

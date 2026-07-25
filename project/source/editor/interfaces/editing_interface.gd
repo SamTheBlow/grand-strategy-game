@@ -17,6 +17,8 @@ enum InterfaceType {
 	DECORATION_LIST,
 	PROVINCE_LIST,
 	COUNTRY_LIST,
+	COUNTRY_RELATIONSHIPS,
+	COUNTRY_NOTIFICATIONS,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
@@ -28,6 +30,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
 	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
 	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
+	InterfaceType.COUNTRY_RELATIONSHIPS: preload("uid://bxnnpjildojmj"),
+	InterfaceType.COUNTRY_NOTIFICATIONS: preload("uid://bs0hbgxgmptdv"),
 }
 
 ## This will be given to all new interfaces.
@@ -240,6 +244,16 @@ func _open_country_edit_interface(
 	edit_interface.duplicate_pressed.connect(
 			_on_country_duplicated.bind(project, editor_settings)
 	)
+	edit_interface.relationships_pressed.connect(
+			_on_country_relationships_opened.bind(
+					project, editor_settings, country
+			)
+	)
+	edit_interface.notifications_pressed.connect(
+			_on_country_notifications_opened.bind(
+					project, editor_settings, country
+			)
+	)
 	edit_interface.country = country
 	edit_interface.countries = project.game.countries
 	open_interface(edit_interface)
@@ -395,3 +409,53 @@ func _on_country_duplicated(
 	undo_redo.commit_action(false)
 
 	_open_country_edit_interface(new_country.id, project, editor_settings)
+
+
+func _on_country_relationships_opened(
+		project: GameProject,
+		editor_settings: AppEditorSettings,
+		country: Country
+) -> void:
+	var relationships_interface := _new_interface(
+			preload("uid://bxnnpjildojmj"), project, editor_settings
+	) as InterfaceCountryRelationships
+	relationships_interface.closed.connect(
+			_on_return_to_country_interface.bind(
+					country.id, project, editor_settings
+			)
+	)
+	relationships_interface.country = country
+	relationships_interface.countries = project.game.countries
+	open_interface(relationships_interface)
+
+
+func _on_country_notifications_opened(
+		project: GameProject,
+		editor_settings: AppEditorSettings,
+		country: Country
+) -> void:
+	var notifications_interface := _new_interface(
+			preload("uid://bs0hbgxgmptdv"), project, editor_settings
+	) as InterfaceCountryNotifications
+	notifications_interface.closed.connect(
+			_on_return_to_country_interface.bind(
+					country.id, project, editor_settings
+			)
+	)
+	notifications_interface.country = country
+	notifications_interface.countries = project.game.countries
+	open_interface(notifications_interface)
+
+
+## Opens the country edit interface if the country still exists,
+## otherwise falls back to the country list interface.
+func _on_return_to_country_interface(
+		country_id: int,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	var country: Country = project.game.countries.country_from_id(country_id)
+	if country == null:
+		open_new_interface(InterfaceType.COUNTRY_LIST, project, editor_settings)
+	else:
+		_open_country_edit_interface(country_id, project, editor_settings)
