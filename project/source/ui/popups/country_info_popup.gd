@@ -51,7 +51,7 @@ func _refresh() -> void:
 		return
 	var game: Game = game_node.game
 
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 
 	_header.country = country
 	_header.country_to_relate_to = playing_country

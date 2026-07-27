@@ -93,13 +93,17 @@ func _process(_delta: float) -> void:
 
 func setup(game: Game, province_visuals: ProvinceVisuals2D) -> void:
 	if _game != null:
-		_game.turn.player_changed.disconnect(_on_turn_player_changed)
+		_game.turn.playing_country_changed.disconnect(
+				_update_nodes_playing_player
+		)
 
 	_game = game
 	_province_visuals = province_visuals
 
 	if _game != null:
-		_game.turn.player_changed.connect(_on_turn_player_changed)
+		_game.turn.playing_country_changed.connect(
+				_update_nodes_playing_player
+		)
 
 	if is_node_ready():
 		_update_nodes_game()
@@ -150,7 +154,6 @@ func _update_nodes_game() -> void:
 				not _game.rules.is_diplomacy_presets_enabled()
 		)
 
-		_update_nodes_playing_player(_game.turn.playing_player())
 		_update_income_money()
 	else:
 		_left_side_nodes[0].visible = false
@@ -160,7 +163,7 @@ func _update_nodes_game() -> void:
 		_recruit_button.game = null
 		_relationship_preset_label_update.is_disabled = true
 
-		_update_nodes_playing_player(null)
+	_update_nodes_playing_player()
 
 
 func _update_nodes_province() -> void:
@@ -192,15 +195,21 @@ func _update_income_money() -> void:
 	)
 
 
-func _update_nodes_playing_player(playing_player: GamePlayer) -> void:
+func _update_nodes_playing_player(_country: Country = null) -> void:
 	if not is_node_ready():
 		return
+
+	var playing_player: GamePlayer = null
+	if _game != null:
+		var playing_players: Array[GamePlayer] = _game.turn.playing_players()
+		if not playing_players.is_empty():
+			playing_player = playing_players[0]
 
 	_build_fortress_button.player = playing_player
 	_recruit_button.player = playing_player
 
 	_relationship_preset_label_update.country = (
-			playing_player.playing_country if playing_player else null
+			_game.turn.playing_country() if _game != null else null
 	)
 
 
@@ -210,7 +219,3 @@ func _on_build_fortress_button_pressed() -> void:
 
 func _on_recruit_button_pressed() -> void:
 	button_pressed.emit(1)
-
-
-func _on_turn_player_changed(player: GamePlayer) -> void:
-	_update_nodes_playing_player(player)

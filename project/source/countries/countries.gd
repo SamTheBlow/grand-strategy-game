@@ -45,6 +45,13 @@ func country_from_id(id: int) -> Country:
 	return _list[id] if _list.has(id) else null
 
 
+## Returns null if given index is invalid.
+func country_from_index(index: int) -> Country:
+	if index < 0 or index >= _ordered_ids.size():
+		return null
+	return _list[_ordered_ids[index]]
+
+
 ## Returns a new copy of this list.
 func list() -> Array[Country]:
 	var output: Array[Country] = []

@@ -193,11 +193,11 @@ func _refresh_available_actions() -> void:
 		_update_minimum_height()
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 	if not (
 			playing_country in [country_1, country_2]
 			and MultiplayerUtils.has_gameplay_authority(
-					multiplayer, game.turn.playing_player()
+					multiplayer, game.turn.playing_players()[0]
 			)
 	):
 		_update_minimum_height()
@@ -231,7 +231,7 @@ func _on_diplomacy_action_button_pressed(
 	if country_1 == null or country_2 == null or game == null:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 	if playing_country == country_1:
 		diplomacy_action_pressed.emit(diplomacy_action, country_2)
 	elif playing_country == country_2:

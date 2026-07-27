@@ -43,17 +43,17 @@ var player: GamePlayer:
 						_on_player_sync_finished
 				)
 
-## It's okay to leave this [code]null[/code] if you want.
-var turn: GameTurn:
+## May be null.
+var turn: GameTurn = null:
 	set(value):
-		if turn:
-			turn.player_changed.disconnect(_on_player_turn_changed)
+		if turn != null:
+			turn.playing_country_changed.disconnect(_update_turn_indicator)
 
 		turn = value
 		_update_turn_indicator()
 
-		if turn:
-			turn.player_changed.connect(_on_player_turn_changed)
+		if turn != null:
+			turn.playing_country_changed.connect(_update_turn_indicator)
 
 ## This is for when you want to prevent the user from removing
 ## a [Player] when it's their last local player.
@@ -77,7 +77,7 @@ var _is_renaming: bool = false:
 
 @onready var color_rect := $ColorRect as ColorRect
 @onready var arrow_container := %ArrowContainer as Control
-@onready var arrow_label := %ArrowLabel as Label
+@onready var _arrow_label := %ArrowLabel as Label
 @onready var username_label := %UsernameLabel as Label
 @onready var username_edit := %UsernameEdit as Control
 @onready var username_line_edit := %UsernameLineEdit as LineEdit
@@ -133,18 +133,17 @@ func _update_shown_username() -> void:
 		username_label.text += " (Spectator)"
 
 
-func _update_turn_indicator() -> void:
+func _update_turn_indicator(_country: Country = null) -> void:
 	if not is_node_ready():
 		return
 
-	if (not turn) or (not player):
-		arrow_label.text = ""
-		return
-
-	if turn.playing_player() == player:
-		arrow_label.text = "->"
+	if (
+			turn != null and player != null
+			and turn.playing_country() == player.playing_country
+	):
+		_arrow_label.text = "->"
 	else:
-		arrow_label.text = ""
+		_arrow_label.text = ""
 
 
 func _update_appearance() -> void:
@@ -255,10 +254,6 @@ func _on_human_status_changed(_changed_player: GamePlayer) -> void:
 		player.player_human.sync_finished.connect(_on_player_sync_finished)
 
 	_update_appearance()
-
-
-func _on_player_turn_changed(_playing_player: GamePlayer) -> void:
-	_update_turn_indicator()
 
 
 func _on_add_button_pressed() -> void:

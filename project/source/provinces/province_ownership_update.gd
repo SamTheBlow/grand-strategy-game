@@ -1,15 +1,15 @@
 class_name ProvinceOwnershipUpdate
-## Updates the owner country of each province at the end of each player's turn.
+## Updates the owner country of each province at the end of each country's turn.
 
 var _game: Game
 
 
 func _init(game: Game) -> void:
 	_game = game
-	_game.turn.player_turn_ended.connect(_on_player_turn_ended)
+	_game.turn.country_turn_ended.connect(_update_ownership)
 
 
-func _update_ownership() -> void:
+func _update_ownership(_country: Country = null) -> void:
 	for province in _game.world.provinces.list():
 		_update_ownership_of(province)
 
@@ -42,7 +42,3 @@ func _update_ownership_of(province: Province) -> void:
 		new_owner = army.owner_country
 
 	province.owner_country = new_owner
-
-
-func _on_player_turn_ended(_player: GamePlayer) -> void:
-	_update_ownership()

@@ -8,7 +8,7 @@ extends AIPersonality
 
 
 func actions(game: Game, _player: GamePlayer) -> Array[Action]:
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 	#print("--- Interventionist ", playing_country.name_or_default())
 
 	var decisions := AIDecisionUtils.new(game)

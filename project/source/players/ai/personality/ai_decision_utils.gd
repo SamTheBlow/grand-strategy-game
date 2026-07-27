@@ -199,9 +199,7 @@ func accept_all_offers() -> void:
 	if not game:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
-
-	for game_notification in playing_country.notifications.list():
+	for game_notification in game.turn.playing_country().notifications.list():
 		accept_offer(game_notification)
 
 
@@ -209,9 +207,7 @@ func accept_all_offers_from(sender_country: Country) -> void:
 	if not game:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
-
-	for game_notification in playing_country.notifications.list():
+	for game_notification in game.turn.playing_country().notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
 		accept_offer(game_notification)
@@ -221,9 +217,7 @@ func dismiss_all_offers_from(sender_country: Country) -> void:
 	if not game:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
-
-	for game_notification in playing_country.notifications.list():
+	for game_notification in game.turn.playing_country().notifications.list():
 		if game_notification.sender_country() != sender_country:
 			continue
 		dismiss_offer(game_notification)
@@ -235,7 +229,7 @@ func fight_a_reachable_country(choice_filter: Callable) -> void:
 	if not game:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 
 	var reachable_countries: Array[Country] = (
 			playing_country.reachable_countries(
@@ -283,7 +277,7 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 	if not game:
 		return
 
-	var playing_country: Country = game.turn.playing_player().playing_country
+	var playing_country: Country = game.turn.playing_country()
 
 	if target_country == playing_country:
 		return
@@ -413,7 +407,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 	# Avoid making an invalid action
 	var target_country: Country = action_diplomacy.target_country(game)
 	var relationship: DiplomacyRelationship = (
-			game.turn.playing_player().playing_country
+			game.turn.playing_country()
 			.relationships.with_country(target_country)
 	)
 	var diplomacy_action: DiplomacyAction = (
@@ -445,8 +439,7 @@ func _add_action_diplomacy(action_diplomacy: ActionDiplomacy) -> void:
 				and
 				(other_action as ActionHandleNotification)._outcome_index == 0
 				and
-				game.turn.playing_player().playing_country.notifications
-				.from_id(
+				game.turn.playing_country().notifications.from_id(
 						(other_action as ActionHandleNotification)
 						._notification_id
 				)._sender_country

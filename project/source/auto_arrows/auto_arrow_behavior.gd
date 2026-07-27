@@ -3,12 +3,13 @@ class_name AutoArrowBehavior
 
 
 static func apply(game: Game) -> void:
-	var player: GamePlayer = game.turn.playing_player()
+	var playing_country: Country = game.turn.playing_country()
+	var player: GamePlayer = game.turn.playing_players()[0]
 
 	# Get the source provinces and the arrow destinations.
 	# Each source province has its own list of arrow destinations.
 	var arrow_destinations: Dictionary[Province, ArrowDestinations] = {}
-	for auto_arrow in player.playing_country.auto_arrows.list():
+	for auto_arrow in playing_country.auto_arrows.list():
 		var source_province: Province = game.world.provinces.province_from_id(
 				auto_arrow.source_province_id()
 		)
@@ -35,7 +36,7 @@ static func apply(game: Game) -> void:
 		)
 		for army in armies_in_province:
 			if not (
-					army.owner_country == player.playing_country
+					army.owner_country == playing_country
 					and army.is_able_to_move()
 			):
 				continue

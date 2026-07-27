@@ -11,20 +11,25 @@ extends Control
 
 func _ready() -> void:
 	modulate.a = 0.0
-	_game.game.turn.player_changed.connect(_on_turn_player_changed)
-	_on_turn_player_changed(_game.game.turn.playing_player())
+	_game.game.turn.playing_country_changed.connect(_refresh)
+	_refresh()
 
 
-func _on_turn_player_changed(player: GamePlayer) -> void:
+func _refresh(_country: Country = null) -> void:
 	_animation_player.stop()
 
 	# Only announce a new player's turn when there is more than 1 human player
 	if _game.game.game_players.number_of_playing_humans() < 2:
 		return
 
+	var playing_players: Array[GamePlayer] = _game.game.turn.playing_players()
+	if playing_players.is_empty():
+		return
+	var player: GamePlayer = playing_players[0]
+
 	# Only make the announcement when it's a human player's turn
 	if not player.is_human:
 		return
 
 	_label.text = "It's " + player.username_or_default() + "'s turn"
-	_animation_player.play("new_animation")
+	_animation_player.play(&"new_animation")

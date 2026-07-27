@@ -4,7 +4,7 @@ extends Action
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
-	if game.turn.playing_player() == player:
+	if player in game.turn.playing_players():
 		game.turn.end_turn()
 	else:
 		push_warning("Tried to end someone else's turn.")

@@ -1,15 +1,17 @@
 class_name GameTurn
 ## Class responsible for a turn-based system.
-## Each [GamePlayer] plays one at a time in order.
+## Each [Country] plays one at a time in order.
 ## After everyone is done playing, a new turn begins.
+# TODO implement multiple players playing at the same time
+# for now, assume the playing player is the first element in playing_players()
 
 signal is_running_changed(is_running: bool)
-## This signal is only called once all players have played their turn.
+## Emitted once all countries have played their turn.
 signal turn_changed(new_turn: int)
-## Emitted after a player ends their turn, but before the next player's turn.
-signal player_turn_ended(playing_player: GamePlayer)
-## This signal is called whenever it's a different player's turn to play.
-signal player_changed(new_player: GamePlayer)
+## Emitted when a country's turn ends, before the next country's turn begins.
+signal country_turn_ended(country: Country)
+## Emitted the moment it becomes a different country's turn to play.
+signal playing_country_changed(country: Country)
 
 var _game: Game
 
@@ -22,28 +24,22 @@ var _is_running: bool = false:
 
 var _turn: int = 1
 
-# TODO It's probably not impossible to create a save file that
-# loads the game with a spectator as the current playing player,
-# in which case there is no check for this, and the game will surely crash.
-# DANGER This implementation depends on the fact that
-# the [GamePlayers] player order never changes.
-var _playing_player_index: int = 0
+## This is -1 if the game has not yet started.
+var _playing_country_id: int = -1
 
 var _ai_thread := AIThread.new()
 
-# When true, doesn't play the next player's turn after the AI submits
+# When true, doesn't play the next country's turn after the AI submits
 # their moves, and calling "start()" has no effect.
 var _is_gameplay_loop_interrupted: bool = false
 
 
 func _init(
-		game: Game,
-		starting_turn: int = 1,
-		playing_player_index: int = 0
+		game: Game, starting_turn: int = 1, playing_country_id: int = -1
 ) -> void:
 	_game = game
 	_turn = starting_turn
-	_playing_player_index = playing_player_index
+	_playing_country_id = playing_country_id
 	_ai_thread.finished.connect(_on_ai_finished)
 
 
@@ -56,48 +52,65 @@ func current_turn() -> int:
 	return _turn
 
 
-## Returns a player: it's currently that player's turn to play.
+## Returns a country: it's currently that country's turn to play.
 ## Only use this while the gameplay loop is running.
-func playing_player() -> GamePlayer:
-	return _game.game_players.player_from_index(_playing_player_index)
+## Returns null if game has not yet started.
+func playing_country() -> Country:
+	return _game.countries.country_from_id(_playing_country_id)
 
 
-## Ends a human player's turn. Has no effect if it's an AI's turn to play.
+## Returns a list of all players whose country is the current playing country.
+func playing_players() -> Array[GamePlayer]:
+	var country: Country = playing_country()
+	if country == null:
+		return []
+
+	var output: Array[GamePlayer] = []
+	for player in _game.game_players.list():
+		if player.playing_country == country:
+			output.append(player)
+	return output
+
+
+## Ends the player's turn. Has no effect if the player is an AI.
 func end_turn() -> void:
-	if not playing_player().is_human:
+	var player: GamePlayer = playing_players()[0]
+
+	if not player.is_human:
 		return
 
-	_end_player_turn()
+	_end_player_turn(player)
 
 
 ## Starts the gameplay loop, if possible.
-## Skips spectators. When it's an AI's turn, creates a new thread for the AI
+## When it's an AI's turn, creates a new thread for the AI
 ## and waits for the thread to be finished.
 func start() -> void:
 	if _is_gameplay_loop_interrupted:
 		return
 
-	# Cannot start with 0 players.
+	# Cannot start with 0 countries.
 	# Please verify this before calling this function.
-	if _game.game_players.size() == 0:
-		push_error("Cannot start with 0 players.")
+	if _game.countries.size() == 0:
+		_playing_country_id = -1
+		push_error("Cannot start with 0 countries.")
 		return
+	elif _playing_country_id == -1:
+		_playing_country_id = _game.countries.country_from_index(0).id
 
 	_is_running = true
 
-	var player: GamePlayer = playing_player()
+	var players: Array[GamePlayer] = playing_players()
 
-	# Skip spectators
-	if player.is_spectating():
-		_go_to_next_player()
-		start()
-		return
+	# Don't wait on players if there is no player playing this country
+	if players.size() == 0:
+		_go_to_next_country()
 
-	if player.is_human:
-		return
+	var player: GamePlayer = players[0]
 
-	# The player is an AI. Play their actions in a separate thread.
-	_ai_thread.run(_game, player, player.player_ai)
+	# If the player is an AI, play their actions in a separate thread
+	if not player.is_human:
+		_ai_thread.run(_game, player, player.player_ai)
 
 
 # Stops the gameplay loop.
@@ -107,9 +120,7 @@ func stop() -> void:
 	_is_gameplay_loop_interrupted = true
 
 
-func _end_player_turn() -> void:
-	var player: GamePlayer = playing_player()
-
+func _end_player_turn(player: GamePlayer) -> void:
 	# Make army movements according to [AutoArrow]s
 	if player.is_human:
 		AutoArrowBehavior.apply(_game)
@@ -120,34 +131,38 @@ func _end_player_turn() -> void:
 				armies_in_province, player.playing_country
 		)
 
-	player_turn_ended.emit(player)
-	_go_to_next_player()
+	country_turn_ended.emit(player.playing_country)
+	_go_to_next_country()
 	start()
 
 
-func _go_to_next_player() -> void:
-	_playing_player_index += 1
+func _go_to_next_country() -> void:
+	var playing_country_index: int = (
+			_game.countries.position_of(_playing_country_id) + 1
+	)
 
-	if _playing_player_index >= _game.game_players.size():
-		_playing_player_index = 0
+	if playing_country_index >= _game.countries.size():
+		playing_country_index = 0
+
+		_playing_country_id = _game.countries.country_from_index(0).id
+
 		_turn += 1
 		turn_changed.emit(_turn)
+	else:
+		_playing_country_id = (
+				_game.countries.country_from_index(playing_country_index).id
+		)
 
-	# Spectators cannot be the playing player.
-	# WARNING: if somehow all the players are spectators,
-	# this will freeze the game in an infinite loop.
-	if playing_player().is_spectating():
-		_go_to_next_player()
-		return
-
-	player_changed.emit(playing_player())
+	playing_country_changed.emit(playing_country())
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:
 	if _is_gameplay_loop_interrupted:
 		return
 
-	for action in actions:
-		action.apply_to(_game, playing_player())
+	var player: GamePlayer = playing_players()[0]
 
-	_end_player_turn()
+	for action in actions:
+		action.apply_to(_game, player)
+
+	_end_player_turn(player)

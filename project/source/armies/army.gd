@@ -81,7 +81,7 @@ static func quick_setup(
 	army._province_id = province_id_
 	army._movements_made = movements_made_
 
-	game.turn.player_changed.connect(army._on_player_turn_changed)
+	game.turn.playing_country_changed.connect(army._on_playing_country_changed)
 	game.world.armies.add(army)
 	return army
 
@@ -196,6 +196,6 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 	).cost_fori(troop_count)
 
 
-func _on_player_turn_changed(player: GamePlayer) -> void:
-	if player.playing_country == owner_country:
+func _on_playing_country_changed(country: Country) -> void:
+	if country == owner_country:
 		_movements_made = 0

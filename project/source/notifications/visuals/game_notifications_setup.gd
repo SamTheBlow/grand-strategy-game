@@ -11,23 +11,17 @@ func _ready() -> void:
 		push_error("An export variable is null, oops.")
 		return
 
-	_game.game.game_started.connect(_on_game_started)
-	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_game.game.game_started.connect(_update_player)
+	_game.game.turn.playing_country_changed.connect(_update_player)
 
 
-func _update_player(playing_player: GamePlayer) -> void:
+func _update_player(_playing_country: Country = null) -> void:
+	var playing_players: Array[GamePlayer] = _game.game.turn.playing_players()
+	if playing_players.is_empty():
+		return
+	var playing_player: GamePlayer = playing_players[0]
+
 	if MultiplayerUtils.has_gameplay_authority(multiplayer, playing_player):
 		_game_notifications_node.game_player = playing_player
 	else:
 		_game_notifications_node.game_player = null
-
-
-func _on_game_started() -> void:
-	_update_player(_game.game.turn.playing_player())
-
-
-func _on_turn_player_changed(playing_player: GamePlayer) -> void:
-	if _game_notifications_node == null:
-		return
-
-	_update_player(playing_player)

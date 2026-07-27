@@ -20,9 +20,9 @@ func _ready() -> void:
 		return
 
 	_update_visibility(_game.game.turn.is_running())
-	_game.game.turn.is_running_changed.connect(_on_is_running_changed)
-	_game.game.turn.turn_changed.connect(_on_turn_changed)
-	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_game.game.turn.is_running_changed.connect(_update_visibility)
+	_game.game.turn.turn_changed.connect(_update_turn_label)
+	_game.game.turn.playing_country_changed.connect(_update_country)
 
 	# TODO bad code: private function
 	_country_button.pressed.connect(_game._on_country_button_pressed)
@@ -34,20 +34,19 @@ func _update_visibility(is_game_running: bool) -> void:
 
 	if is_game_running:
 		_update_turn_label(_game.game.turn.current_turn())
-		_update_country(_game.game.turn.playing_player())
+		_update_country(_game.game.turn.playing_country())
 
 
-func _update_country(player: GamePlayer) -> void:
-	var country: Country = player.playing_country
-
+func _update_country(country: Country) -> void:
 	_country_button.country = country
 	_country_name_label.text = country.name_or_default()
 
 	_update_money_label(country.money)
+
 	if _money_changed_signal:
-		_money_changed_signal.disconnect(_on_money_changed)
+		_money_changed_signal.disconnect(_update_money_label)
 	_money_changed_signal = country.money_changed
-	_money_changed_signal.connect(_on_money_changed)
+	_money_changed_signal.connect(_update_money_label)
 
 
 func _update_money_label(money: int) -> void:
@@ -56,19 +55,3 @@ func _update_money_label(money: int) -> void:
 
 func _update_turn_label(turn: int) -> void:
 	_game_turn_label.text = "Turn " + str(turn)
-
-
-func _on_is_running_changed(is_game_running: bool) -> void:
-	_update_visibility(is_game_running)
-
-
-func _on_money_changed(new_amount: int) -> void:
-	_update_money_label(new_amount)
-
-
-func _on_turn_changed(new_turn: int) -> void:
-	_update_turn_label(new_turn)
-
-
-func _on_turn_player_changed(player: GamePlayer) -> void:
-	_update_country(player)

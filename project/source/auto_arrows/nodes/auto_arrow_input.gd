@@ -116,7 +116,7 @@ func _create_preview_arrow(
 ## allowed to add or remove autoarrows.
 func _client_can_apply_changes(multiplayer_id: int) -> bool:
 	return game.game_players.client_controls_country(
-			multiplayer_id, game.turn.playing_player().playing_country
+			multiplayer_id, game.turn.playing_country()
 	)
 
 

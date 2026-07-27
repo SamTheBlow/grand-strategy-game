@@ -133,7 +133,7 @@ func end_game() -> void:
 
 
 func apply_action(action: Action) -> void:
-	action.apply_to(self, turn.playing_player())
+	action.apply_to(self, turn.playing_players()[0])
 	action_applied.emit(action)
 
 

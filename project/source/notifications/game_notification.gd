@@ -50,10 +50,10 @@ func _init(
 	_creation_turn = creation_turn_
 	_turns_before_dismiss = turns_before_dismiss
 	_was_seen_this_turn = was_seen_this_turn
-	_on_player_changed(game.turn.playing_player())
+	_on_playing_country_changed(game.turn.playing_country())
 
 	game.turn.turn_changed.connect(_on_turn_changed)
-	game.turn.player_changed.connect(_on_player_changed)
+	game.turn.playing_country_changed.connect(_on_playing_country_changed)
 	game.countries.removed.connect(_on_country_removed)
 
 
@@ -110,7 +110,7 @@ func _outcome_can_be_selected() -> bool:
 	if _game == null:
 		return true
 
-	var playing_country: Country = _game.turn.playing_player().playing_country
+	var playing_country: Country = _game.turn.playing_country()
 
 	if playing_country != _recipient_country:
 		push_warning(
@@ -127,8 +127,8 @@ func _on_country_removed(country: Country) -> void:
 		dismiss()
 
 
-func _on_player_changed(player: GamePlayer) -> void:
-	if player.playing_country == _recipient_country:
+func _on_playing_country_changed(country: Country) -> void:
+	if country == _recipient_country:
 		_was_seen_this_turn = true
 
 

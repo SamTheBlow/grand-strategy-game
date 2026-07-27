@@ -17,22 +17,20 @@ func _process(_delta: float) -> void:
 
 func _province_filter_frontline(province: Province) -> bool:
 	return province.is_frontline(
-			_game.game.turn.playing_player().playing_country,
-			_game.game.world.provinces
+			_game.game.turn.playing_country(), _game.game.world.provinces
 	)
 
 
 func _province_filter_war_frontline(province: Province) -> bool:
 	return province.is_war_frontline(
-			_game.game.turn.playing_player().playing_country,
-			_game.game.world.provinces
+			_game.game.turn.playing_country(), _game.game.world.provinces
 	)
 
 
 func _province_filter_testai1(province: Province) -> bool:
 	return (
 			province.owner_country == null
-			or not _game.game.turn.playing_player().playing_country
+			or not _game.game.turn.playing_country()
 			.has_permission_to_move_into_country(province.owner_country)
 	)
 

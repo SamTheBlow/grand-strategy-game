@@ -193,7 +193,7 @@ func _open_recruitment_popup(province: Province) -> void:
 			recruitment_scene.instantiate() as RecruitmentPopup
 	)
 	var recruitment_limits := ArmyRecruitmentLimits.new(
-			game, game.turn.playing_player().playing_country, province
+			game, game.turn.playing_country(), province
 	)
 	recruitment_popup.setup(
 			game.world.provinces,
@@ -307,7 +307,7 @@ func _on_province_select_attempted(
 		outcome: ProvinceSelectConditions.ProvinceSelectionOutcome
 ) -> void:
 	# Only open the popup if it's your turn
-	var you: GamePlayer = game.turn.playing_player()
+	var you: GamePlayer = game.turn.playing_players()[0]
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
 		return
 
@@ -323,7 +323,7 @@ func _on_province_select_attempted(
 	)
 	for army: Army in my_active_armies_in_province.duplicate():
 		if not (
-				army.owner_country == you.playing_country
+				army.owner_country == game.turn.playing_country()
 				and army.is_able_to_move()
 		):
 			my_active_armies_in_province.erase(army)
@@ -475,9 +475,8 @@ func _on_diplomacy_action_pressed(
 		recipient_country: Country
 ) -> void:
 	# TODO this check shouldn't be here...
-	if (
-			not MultiplayerUtils
-			.has_gameplay_authority(multiplayer, game.turn.playing_player())
+	if not MultiplayerUtils.has_gameplay_authority(
+			multiplayer, game.turn.playing_players()[0]
 	):
 		push_warning(
 				"Tried to perform a diplomatic action, but"
@@ -507,9 +506,8 @@ func _on_notification_decision_made(
 		game_notification: GameNotification, outcome_index: int
 ) -> void:
 	# TASK this check shouldn't be here... also DRY: this is a copy/paste
-	if (
-			not MultiplayerUtils
-			.has_gameplay_authority(multiplayer, game.turn.playing_player())
+	if not MultiplayerUtils.has_gameplay_authority(
+			multiplayer, game.turn.playing_players()[0]
 	):
 		push_warning(
 				"Tried to handle a game notification, but"

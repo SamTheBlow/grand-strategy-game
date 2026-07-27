@@ -9,21 +9,20 @@ extends Control
 
 
 func _ready() -> void:
-	visible = false
-	_game.game.game_started.connect(_on_game_started)
-	_game.game.turn.player_changed.connect(_on_turn_player_changed)
+	_refresh()
+	_game.game.game_started.connect(_refresh)
+	_game.game.turn.playing_country_changed.connect(_refresh)
 
 
-func _update_visibility(player: GamePlayer) -> void:
-	visible = (
-			player != null
-			and MultiplayerUtils.has_gameplay_authority(multiplayer, player)
-	)
+func _refresh(_country: Country = null) -> void:
+	if not _game.game.turn.is_running():
+		visible = false
+		return
 
+	var playing_players: Array[GamePlayer] = _game.game.turn.playing_players()
+	if playing_players.is_empty():
+		visible = false
+		return
 
-func _on_game_started() -> void:
-	_update_visibility(_game.game.turn.playing_player())
-
-
-func _on_turn_player_changed(player: GamePlayer) -> void:
-	_update_visibility(player)
+	var player: GamePlayer = playing_players[0]
+	visible = MultiplayerUtils.has_gameplay_authority(multiplayer, player)

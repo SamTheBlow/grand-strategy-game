@@ -30,10 +30,7 @@ func apply_to(game: Game, _player: GamePlayer) -> void:
 
 ## May return null.
 func game_notification(game: Game) -> GameNotification:
-	return (
-			game.turn.playing_player().playing_country.notifications
-			.from_id(_notification_id)
-	)
+	return game.turn.playing_country().notifications.from_id(_notification_id)
 
 
 func handles_the_same_notification_as(

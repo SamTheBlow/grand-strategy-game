@@ -5,26 +5,25 @@ class_name AutoEndTurn
 
 var _turn: GameTurn
 
-var _human_status_changed: Signal:
-	set(value):
-		if _human_status_changed:
-			_human_status_changed.disconnect(_on_player_human_status_changed)
-		_human_status_changed = value
-		_human_status_changed.connect(_on_player_human_status_changed)
-
+var _human_status_changed: Signal
 
 func _init(game: Game) -> void:
 	_turn = game.turn
-	_turn.player_changed.connect(_on_turn_player_changed)
-	game.game_started.connect(_on_game_started)
+	_turn.playing_country_changed.connect(_update_signal)
+	game.game_started.connect(_update_signal)
 
 
-func _on_game_started() -> void:
-	_human_status_changed = _turn.playing_player().human_status_changed
+func _update_signal(_country: Country = null) -> void:
+	if _human_status_changed:
+		_human_status_changed.disconnect(_on_player_human_status_changed)
 
+	var playing_players: Array[GamePlayer] = _turn.playing_players()
+	if playing_players.is_empty():
+		return
+	var playing_player: GamePlayer = playing_players[0]
 
-func _on_turn_player_changed(player: GamePlayer) -> void:
-	_human_status_changed = player.human_status_changed
+	_human_status_changed = playing_player.human_status_changed
+	_human_status_changed.connect(_on_player_human_status_changed)
 
 
 func _on_player_human_status_changed(player: GamePlayer) -> void:

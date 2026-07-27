@@ -150,5 +150,5 @@ func _teleport_armies_out(
 				_game.world.armies.merge_armies(
 						_game.world.armies_in_each_province
 						.in_province(province_to_move_to),
-						_game.turn.playing_player().playing_country
+						_game.turn.playing_country()
 				)
