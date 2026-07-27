@@ -26,11 +26,11 @@ static func from_raw_data(raw_data: Variant) -> Countries:
 	return countries
 
 
-static func to_raw_array(country_list: Array[Country]) -> Array:
+static func to_raw_array(countries: Countries) -> Array:
 	var output: Array = []
 
-	for country in country_list:
-		output.append(_country_to_raw_dict(country))
+	for country_id in countries._order:
+		output.append(_country_to_raw_dict(countries._list[country_id]))
 
 	return output
 

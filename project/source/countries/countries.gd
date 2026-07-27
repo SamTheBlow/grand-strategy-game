@@ -3,14 +3,13 @@ class_name Countries
 
 signal added(country: Country)
 signal removed(country: Country)
+signal order_changed()
 
 ## Maps each country to its unique id.
 var _list: Dictionary[int, Country] = {}
 
-## Tracks the insertion order of countries.
-## Ensures that adding, removing and re-adding
-## a country preserves the insertion order.
-var _ordered_ids: Array[int] = []
+## The order in which the items are in the list.
+var _order: Array[int] = []
 
 var _unique_id_system := UniqueIdSystem.new()
 
@@ -31,13 +30,28 @@ func remove(country_id: int) -> void:
 	var country: Country = _list[country_id]
 
 	_list.erase(country_id)
-	_ordered_ids.erase(country_id)
+	_order.erase(country_id)
 
 	# We have to unclaim the id because, if we want to bring this country
 	# back in the list later with the same id, the id needs to not be in use.
 	_unique_id_system.unclaim_id(country_id)
 
 	removed.emit(country)
+
+
+## Moves country with given id to be at given index position in the list.
+## No effect if either input is invalid.
+func reorder(country_id: int, new_index: int) -> void:
+	if country_id not in _order or new_index < 0 or new_index >= _order.size():
+		return
+
+	# Don't do anything if the resulting order will be unchanged
+	var old_index: int = _order.find(country_id)
+	if old_index == new_index:
+		return
+
+	_order.insert(new_index, _order.pop_at(old_index))
+	order_changed.emit()
 
 
 ## Returns null if there is no country with given id.
@@ -47,16 +61,16 @@ func country_from_id(id: int) -> Country:
 
 ## Returns null if given index is invalid.
 func country_from_index(index: int) -> Country:
-	if index < 0 or index >= _ordered_ids.size():
+	if index < 0 or index >= _order.size():
 		return null
-	return _list[_ordered_ids[index]]
+	return _list[_order[index]]
 
 
 ## Returns a new copy of this list.
 func list() -> Array[Country]:
 	var output: Array[Country] = []
-	for country_id in _ordered_ids:
-		output.append(_list[country_id])
+	for id in _order:
+		output.append(_list[id])
 	return output
 
 
@@ -68,7 +82,7 @@ func size() -> int:
 ## Returns the position of given country in the list,
 ## or -1 if there is no country in this list with given id.
 func position_of(country_id: int) -> int:
-	return _ordered_ids.find(country_id)
+	return _order.find(country_id)
 
 
 ## Removes a country, using given [UndoRedo] system.
@@ -92,7 +106,7 @@ func undo_redo_remove(
 	undo_redo.add_do_method(remove.bind(country.id))
 
 	# Ensure the country's position in the list is restored on undo
-	var country_index: int = _ordered_ids.find(country.id)
+	var country_index: int = _order.find(country.id)
 	undo_redo.add_undo_method(_add.bind(country, country_index))
 
 	# Ensure the country's relationships are restored on undo
@@ -162,9 +176,9 @@ func _add(country: Country, insertion_index: int = -1) -> void:
 
 	_list[country.id] = country
 
-	if insertion_index < 0 or insertion_index >= _ordered_ids.size():
-		_ordered_ids.append(country.id)
+	if insertion_index < 0 or insertion_index >= _order.size():
+		_order.append(country.id)
 	else:
-		_ordered_ids.insert(insertion_index, country.id)
+		_order.insert(insertion_index, country.id)
 
 	added.emit(country)
