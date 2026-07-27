@@ -35,6 +35,7 @@ enum GameOverProvincesOwnedOption {
 const RULE_NAMES: Array[String] = [
 	"rng_seed_override_enabled",
 	"rng_seed",
+	"random_turn_order_enabled",
 	"turn_limit_enabled",
 	"turn_limit",
 	"game_over_provinces_owned_option",
@@ -119,6 +120,7 @@ var battle: Battle = preload("uid://cuylrn1evjy6r")
 # Individual rules
 var rng_seed_override_enabled := ItemBool.new()
 var rng_seed := ItemString.new()
+var random_turn_order_enabled := ItemBool.new()
 var turn_limit_enabled := ItemBool.new()
 var turn_limit := ItemInt.new()
 var game_over_provinces_owned_option := ItemOptions.new()
@@ -213,6 +215,9 @@ func _init() -> void:
 	rng_seed.text = "Seed"
 	rng_seed.placeholder_text = "(Random)"
 	rng_seed.value = ""
+
+	random_turn_order_enabled.text = "Random turn order"
+	random_turn_order_enabled.value = false
 
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
@@ -631,6 +636,7 @@ func _init() -> void:
 
 	root_rules = [
 		rng_seed_override_enabled,
+		random_turn_order_enabled,
 		_category_game_over,
 		_category_recruitment,
 		_category_population,

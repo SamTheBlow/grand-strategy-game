@@ -15,6 +15,10 @@ static func apply(game: Game) -> void:
 	_populate_countries(game)
 	_populate_players(game)
 
+	# Shuffle turn order
+	if game.rules.random_turn_order_enabled.value:
+		game.countries.shuffle_order(game.rng)
+
 	# Provinces
 	for province in game.world.provinces.list():
 		# Determine if this is a "starting province"

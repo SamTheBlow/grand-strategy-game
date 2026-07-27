@@ -39,6 +39,12 @@ func remove(country_id: int) -> void:
 	removed.emit(country)
 
 
+## Shuffles the list's order using given [GameRNG].
+func shuffle_order(rng: GameRNG) -> void:
+	for i in _order.size() - 1:
+		reorder(_order[rng.randi_range(i, _order.size() - 1)], i)
+
+
 ## Moves country with given id to be at given index position in the list.
 ## No effect if either input is invalid.
 func reorder(country_id: int, new_index: int) -> void:
