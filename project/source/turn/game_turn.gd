@@ -26,6 +26,8 @@ var _turn: int = 1
 
 ## This is -1 if the game has not yet started.
 var _playing_country_id: int = -1
+## This is -1 if the game has not yet started.
+var _playing_country_index: int = -1
 
 var _ai_thread := AIThread.new()
 
@@ -93,30 +95,38 @@ func start() -> void:
 	# Please verify this before calling this function.
 	if _game.countries.size() == 0:
 		_playing_country_id = -1
+		_playing_country_index = -1
 		push_error("Cannot start with 0 countries.")
 		return
-	elif _playing_country_id == -1:
+
+	# If playing country id is invalid, start at the first country in the list
+	elif _game.countries.country_from_id(_playing_country_id) == null:
 		_playing_country_id = _game.countries.country_from_index(0).id
+		_playing_country_index = 0
 
-	_is_running = true
+	# Make sure country id and country index point at the same country
+	else:
+		_playing_country_index = (
+				_game.countries.position_of(_playing_country_id)
+		)
 
-	var players: Array[GamePlayer] = playing_players()
+	if not _is_running:
+		_game.countries.added.connect(_on_country_added)
+		_game.countries.removed.connect(_on_country_removed)
+		_game.countries.order_changed.connect(_on_country_order_changed)
+		_is_running = true
 
-	# Don't wait on players if there is no player playing this country
-	if players.size() == 0:
-		_go_to_next_country()
-
-	var player: GamePlayer = players[0]
-
-	# If the player is an AI, play their actions in a separate thread
-	if not player.is_human:
-		_ai_thread.run(_game, player, player.player_ai)
+	_run_gameplay_loop()
 
 
 # Stops the gameplay loop.
 # Useful when it's an AI only game and you want the game loop to end.
 func stop() -> void:
-	_is_running = false
+	if _is_running:
+		_game.countries.added.disconnect(_on_country_added)
+		_game.countries.removed.disconnect(_on_country_removed)
+		_game.countries.order_changed.disconnect(_on_country_order_changed)
+		_is_running = false
 	_is_gameplay_loop_interrupted = true
 
 
@@ -133,27 +143,60 @@ func _end_player_turn(player: GamePlayer) -> void:
 
 	country_turn_ended.emit(player.playing_country)
 	_go_to_next_country()
-	start()
+	_run_gameplay_loop()
 
 
 func _go_to_next_country() -> void:
-	var playing_country_index: int = (
-			_game.countries.position_of(_playing_country_id) + 1
-	)
+	_playing_country_index += 1
 
-	if playing_country_index >= _game.countries.size():
-		playing_country_index = 0
-
+	if _playing_country_index >= _game.countries.size():
 		_playing_country_id = _game.countries.country_from_index(0).id
+		_playing_country_index = 0
 
 		_turn += 1
 		turn_changed.emit(_turn)
 	else:
 		_playing_country_id = (
-				_game.countries.country_from_index(playing_country_index).id
+				_game.countries.country_from_index(_playing_country_index).id
 		)
 
 	playing_country_changed.emit(playing_country())
+
+
+func _run_gameplay_loop() -> void:
+	var players: Array[GamePlayer] = playing_players()
+
+	# Don't wait on players if there is no player playing this country
+	if players.size() == 0:
+		_go_to_next_country()
+		_run_gameplay_loop()
+		return
+
+	var player: GamePlayer = players[0]
+
+	# If the player is an AI, play their actions in a separate thread
+	if not player.is_human:
+		_ai_thread.run(_game, player, player.player_ai)
+
+
+func _on_country_added(_country: Country) -> void:
+	_playing_country_index = _game.countries.position_of(_playing_country_id)
+
+
+func _on_country_removed(country: Country) -> void:
+	if country.id == _playing_country_id:
+		_go_to_next_country()
+		_run_gameplay_loop()
+	else:
+		_playing_country_index = (
+				_game.countries.position_of(_playing_country_id)
+		)
+
+
+func _on_country_order_changed(
+		_country_id: int, _old_index: int, _new_index: int
+) -> void:
+	_playing_country_index = _game.countries.position_of(_playing_country_id)
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:

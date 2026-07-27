@@ -31,9 +31,13 @@ const _ELEMENT_SCENE: PackedScene = preload("uid://p440ahx3w70n")
 var countries: Countries:
 	set(value):
 		if countries != null:
+			countries.added.disconnect(_on_country_added)
+			countries.removed.disconnect(_on_country_removed)
 			countries.order_changed.disconnect(_on_order_changed)
 		countries = value
 		_refresh_list()
+		countries.added.connect(_on_country_added)
+		countries.removed.connect(_on_country_removed)
 		countries.order_changed.connect(_on_order_changed)
 
 var players: GamePlayers:
@@ -171,6 +175,30 @@ func _on_element_delete_pressed(game_player: GamePlayer) -> void:
 	if not game_player.is_human or game_player.player_human == null:
 		return
 	player_removal_requested.emit(game_player.player_human)
+
+
+func _on_country_added(country: Country) -> void:
+	_players_of_country.insert(
+			countries.position_of(country.id), PlayersOfCountry.new()
+	)
+
+
+func _on_country_removed(_country: Country) -> void:
+	# There's no way to know what the country's index was...
+	# So we gotta search for it.
+	for i in _players_of_country.size():
+		var players_i: Array[GamePlayer] = _players_of_country[i].game_players
+		if players_i.is_empty() or players_i[0].playing_country != null:
+			continue
+
+		for player in players_i:
+			_remove_element(player)
+
+		_players_of_country.remove_at(i)
+
+		_refresh_node_size()
+		_update_elements()
+		return
 
 
 func _on_order_changed(
