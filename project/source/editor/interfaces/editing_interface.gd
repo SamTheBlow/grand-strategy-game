@@ -3,37 +3,39 @@ extends Control
 ## Opens and closes interfaces for the user to use in the editor.
 
 signal texture_popup_requested(item_texture: ItemTexture)
-signal province_interface_opened(province: Province)
-signal province_interface_closed()
 signal country_select_pressed(item_country: ItemCountry)
 signal country_interface_opened(country: Country)
 signal country_interface_closed()
+signal province_interface_opened(province: Province)
+signal province_interface_closed()
 
 enum InterfaceType {
 	PROJECT_INFO,
 	RNG,
-	WORLD_LIMITS,
-	BACKGROUND_COLOR,
-	DECORATION_LIST,
-	PROVINCE_LIST,
 	COUNTRY_LIST,
 	COUNTRY_RELATIONSHIPS,
 	COUNTRY_NOTIFICATIONS,
 	PLAYER_LIST,
+	TURN_ORDER,
+	WORLD_LIMITS,
+	BACKGROUND_COLOR,
+	DECORATION_LIST,
+	PROVINCE_LIST,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
 const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.PROJECT_INFO: preload("uid://7k82f8lx1vpe"),
 	InterfaceType.RNG: preload("uid://dp53fawdiydun"),
-	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
-	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
-	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
-	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
 	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
 	InterfaceType.COUNTRY_RELATIONSHIPS: preload("uid://bxnnpjildojmj"),
 	InterfaceType.COUNTRY_NOTIFICATIONS: preload("uid://bs0hbgxgmptdv"),
 	InterfaceType.PLAYER_LIST: preload("uid://dlpstn5iyda4k"),
+	InterfaceType.TURN_ORDER: preload("uid://bgcrykgs0vh3o"),
+	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
+	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
+	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
+	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
 }
 
 ## This will be given to all new interfaces.
@@ -165,27 +167,6 @@ func _new_interface(
 		)
 	elif new_interface is InterfaceRNG:
 		(new_interface as InterfaceRNG).game_rng = project.game.rng
-	elif new_interface is InterfaceWorldLimits:
-		(new_interface as InterfaceWorldLimits).setup(
-				project.game.world.limits()
-		)
-	elif new_interface is InterfaceBackgroundColor:
-		(new_interface as InterfaceBackgroundColor).setup(project.game.world)
-	elif new_interface is InterfaceDecorationList:
-		var list_interface := new_interface as InterfaceDecorationList
-		list_interface.decorations = project.game.world.decorations
-		list_interface.project_textures = project.textures
-		list_interface.item_selected.connect(
-				_open_new_decoration_edit_interface.bind(
-						project, editor_settings
-				)
-		)
-	elif new_interface is InterfaceProvinceList:
-		var list_interface := new_interface as InterfaceProvinceList
-		list_interface.setup(project.game.world.provinces)
-		list_interface.item_selected.connect(
-				open_province_edit_interface.bind(project, editor_settings)
-		)
 	elif new_interface is InterfaceCountryList:
 		var list_interface := new_interface as InterfaceCountryList
 		list_interface.setup(
@@ -200,32 +181,35 @@ func _new_interface(
 		list_interface.item_selected.connect(
 				_open_player_edit_interface.bind(project, editor_settings)
 		)
+	elif new_interface is InterfaceTurnOrder:
+		var interface := new_interface as InterfaceTurnOrder
+		interface.countries = project.game.countries
+		interface.item_random_turn_order = (
+				project.game.rules.random_turn_order_enabled
+		)
+	elif new_interface is InterfaceWorldLimits:
+		(new_interface as InterfaceWorldLimits).setup(
+				project.game.world.limits()
+		)
+	elif new_interface is InterfaceBackgroundColor:
+		(new_interface as InterfaceBackgroundColor).setup(project.game.world)
+	elif new_interface is InterfaceDecorationList:
+		var list_interface := new_interface as InterfaceDecorationList
+		list_interface.decorations = project.game.world.decorations
+		list_interface.project_textures = project.textures
+		list_interface.item_selected.connect(
+				_open_decoration_edit_interface.bind(
+						project, editor_settings
+				)
+		)
+	elif new_interface is InterfaceProvinceList:
+		var list_interface := new_interface as InterfaceProvinceList
+		list_interface.setup(project.game.world.provinces)
+		list_interface.item_selected.connect(
+				open_province_edit_interface.bind(project, editor_settings)
+		)
 
 	return new_interface
-
-
-func _open_new_decoration_edit_interface(
-		world_decoration: WorldDecoration,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	var new_interface := _new_interface(
-			preload("uid://bfpg282qeb0rx"), project, editor_settings
-	) as InterfaceWorldDecorationEdit
-	new_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.DECORATION_LIST, project, editor_settings
-	))
-	new_interface.delete_pressed.connect(
-			_on_world_decoration_deleted.bind(project.game.world.decorations)
-	)
-	new_interface.duplicate_pressed.connect(
-			_on_world_decoration_duplicated.bind(project, editor_settings)
-	)
-	new_interface.texture_popup_requested.connect(texture_popup_requested.emit)
-	new_interface.world_decoration = world_decoration
-	new_interface.project_textures = project.textures
-	new_interface.world_decorations = project.game.world.decorations
-	open_interface(new_interface)
 
 
 func _open_country_edit_interface(
@@ -300,6 +284,30 @@ func _open_player_edit_interface(
 	open_interface(edit_interface)
 
 
+func _open_decoration_edit_interface(
+		world_decoration: WorldDecoration,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	var new_interface := _new_interface(
+			preload("uid://bfpg282qeb0rx"), project, editor_settings
+	) as InterfaceWorldDecorationEdit
+	new_interface.closed.connect(open_new_interface.bind(
+			InterfaceType.DECORATION_LIST, project, editor_settings
+	))
+	new_interface.delete_pressed.connect(
+			_on_world_decoration_deleted.bind(project.game.world.decorations)
+	)
+	new_interface.duplicate_pressed.connect(
+			_on_world_decoration_duplicated.bind(project, editor_settings)
+	)
+	new_interface.texture_popup_requested.connect(texture_popup_requested.emit)
+	new_interface.world_decoration = world_decoration
+	new_interface.project_textures = project.textures
+	new_interface.world_decorations = project.game.world.decorations
+	open_interface(new_interface)
+
+
 func _on_world_decoration_deleted(
 		world_decoration: WorldDecoration, world_decorations: WorldDecorations
 ) -> void:
@@ -339,9 +347,7 @@ func _on_world_decoration_duplicated(
 	undo_redo.commit_action()
 
 	# Open interface to edit the new decoration
-	_open_new_decoration_edit_interface(
-			new_decoration, project, editor_settings
-	)
+	_open_decoration_edit_interface(new_decoration, project, editor_settings)
 
 
 func _on_province_duplicated(

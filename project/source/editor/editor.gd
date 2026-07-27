@@ -25,12 +25,13 @@ const PROJECT_TAB_PLAY_ID: int = 8
 const EDIT_TAB_SEPARATOR_IDS: Array[int] = [2, 6]
 const EDIT_TAB_PROJECT_INFO_ID: int = 0
 const EDIT_TAB_RNG_ID: int = 1
-const EDIT_TAB_WORLD_LIMITS_ID: int = 3
-const EDIT_TAB_BACKGROUND_COLOR_ID: int = 4
-const EDIT_TAB_DECORATIONS_ID: int = 5
-const EDIT_TAB_PROVINCES_ID: int = 7
-const EDIT_TAB_COUNTRIES_ID: int = 8
-const EDIT_TAB_PLAYERS_ID: int = 9
+const EDIT_TAB_COUNTRIES_ID: int = 3
+const EDIT_TAB_PLAYERS_ID: int = 4
+const EDIT_TAB_TURN_ORDER_ID: int = 5
+const EDIT_TAB_WORLD_LIMITS_ID: int = 7
+const EDIT_TAB_BACKGROUND_COLOR_ID: int = 8
+const EDIT_TAB_DECORATIONS_ID: int = 9
+const EDIT_TAB_PROVINCES_ID: int = 10
 
 const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
 const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
@@ -267,6 +268,15 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		EDIT_TAB_RNG_ID:
 			# "RNG"
 			_open_interface(EditingInterface.InterfaceType.RNG)
+		EDIT_TAB_COUNTRIES_ID:
+			# "Countries"
+			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
+		EDIT_TAB_PLAYERS_ID:
+			# "Players"
+			_open_interface(EditingInterface.InterfaceType.PLAYER_LIST)
+		EDIT_TAB_TURN_ORDER_ID:
+			# "Turn Order"
+			_open_interface(EditingInterface.InterfaceType.TURN_ORDER)
 		EDIT_TAB_WORLD_LIMITS_ID:
 			# "World Limits"
 			_open_interface(EditingInterface.InterfaceType.WORLD_LIMITS)
@@ -279,12 +289,6 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		EDIT_TAB_PROVINCES_ID:
 			# "Provinces"
 			_open_interface(EditingInterface.InterfaceType.PROVINCE_LIST)
-		EDIT_TAB_COUNTRIES_ID:
-			# "Countries"
-			_open_interface(EditingInterface.InterfaceType.COUNTRY_LIST)
-		EDIT_TAB_PLAYERS_ID:
-			# "Players"
-			_open_interface(EditingInterface.InterfaceType.PLAYER_LIST)
 		EDITOR_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			pass
