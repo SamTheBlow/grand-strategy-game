@@ -3,7 +3,7 @@ class_name Countries
 
 signal added(country: Country)
 signal removed(country: Country)
-signal order_changed()
+signal order_changed(country_id: int, old_index: int, new_index: int)
 
 ## Maps each country to its unique id.
 var _list: Dictionary[int, Country] = {}
@@ -51,7 +51,7 @@ func reorder(country_id: int, new_index: int) -> void:
 		return
 
 	_order.insert(new_index, _order.pop_at(old_index))
-	order_changed.emit()
+	order_changed.emit(country_id, old_index, new_index)
 
 
 ## Returns null if there is no country with given id.

@@ -138,6 +138,7 @@ func _ready() -> void:
 	else:
 		_player_list.visible = false
 
+	_turn_order_list.countries = game.countries
 	_turn_order_list.players = game.game_players
 	_turn_order_list.game_turn = game.turn
 	_turn_order_list.new_human_player_requested.connect(

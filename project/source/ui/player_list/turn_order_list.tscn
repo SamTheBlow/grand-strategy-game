@@ -1,9 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://bsk11sxt73iy4"]
+[gd_scene format=3 uid="uid://bsk11sxt73iy4"]
 
 [ext_resource type="Script" uid="uid://dytxdug3piwwu" path="res://source/ui/player_list/turn_order_list.gd" id="1_l0g4s"]
-[ext_resource type="PackedScene" uid="uid://p440ahx3w70n" path="res://source/ui/player_list/turn_order_element.tscn" id="2_lgnwa"]
 
-[node name="TurnOrderList" type="Control"]
+[node name="TurnOrderList" type="Control" unique_id=1937698962]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
@@ -11,9 +10,8 @@ offset_bottom = 32.0
 grow_horizontal = 2
 size_flags_vertical = 0
 script = ExtResource("1_l0g4s")
-turn_order_element = ExtResource("2_lgnwa")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1387546252]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,7 +20,8 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=2037091]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -34,10 +33,10 @@ offset_bottom = -16.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="MarginContainer"]
+[node name="Control" type="Control" parent="MarginContainer" unique_id=1550933430]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Control"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/Control" unique_id=1063135062]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -45,12 +44,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Control/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer/Control/VBoxContainer" unique_id=1875199610]
 layout_mode = 2
 size_flags_vertical = 3
 follow_focus = true
 
-[node name="PlayerContainer" type="VBoxContainer" parent="MarginContainer/Control/VBoxContainer/ScrollContainer"]
+[node name="ElementContainer" type="VBoxContainer" parent="MarginContainer/Control/VBoxContainer/ScrollContainer" unique_id=1281904368]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

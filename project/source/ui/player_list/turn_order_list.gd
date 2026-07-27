@@ -1,114 +1,133 @@
 @tool
 class_name TurnOrderList
 extends Control
-## Class responsible for displaying a list of [GamePlayers] in the
-## turn order that they play. It shows all players by their username.
-## It also shows with an arrow whose turn it is to play.
-## The user, when allowed, can add, remove and rename players.
+## Displays a list of [GamePlayers] in the order in which
+## they will play their turn. Shows with an arrow whose turn it is to play.
+## Allows the user to rename players and add/remove human players.
 
 signal new_human_player_requested(game_player: GamePlayer)
 signal player_removal_requested(player: Player)
 
-@export var turn_order_element: PackedScene
+## The root node of this scene must be a [TurnOrderElement].
+const _ELEMENT_SCENE: PackedScene = preload("uid://p440ahx3w70n")
 
-## If true, the player list shrinks down to the size of the contents.
-## If false, it uses the given position/anchors as usual.
+## If true, shrinks down to the size of the contents.
+## Otherwise, uses position/anchors as usual.
 ## Do not change this while the game is running.
 @export var is_shrunk: bool = true:
 	set(value):
 		is_shrunk = value
-		_update_size()
+		if is_node_ready():
+			_refresh_node_size()
 
 ## The number of pixels that separate the list's contents from the edges.
 @export var margin_pixels: int = 16:
 	set(value):
 		margin_pixels = value
-		_update_margin_offsets()
-		_update_size()
+		if is_node_ready():
+			_set_margin_offsets()
+			_refresh_node_size()
+
+var countries: Countries:
+	set(value):
+		if countries != null:
+			countries.order_changed.disconnect(_on_order_changed)
+		countries = value
+		_refresh_list()
+		countries.order_changed.connect(_on_order_changed)
 
 var players: GamePlayers:
 	set(value):
-		if players:
+		if players != null:
 			players.player_added.disconnect(_on_player_added)
 			players.player_removed.disconnect(_on_player_removed)
-			_clear_elements()
-
 		players = value
-		_create_elements()
+		_refresh_list()
 		players.player_added.connect(_on_player_added)
 		players.player_removed.connect(_on_player_removed)
 
-## Set this if you want the list to show with an arrow whose turn it is.
-## If you don't want it to, leave this value to [code]null[/code].
+## Allows showing with an arrow whose turn it is to play.
+## May be null, in which case this feature is disabled.
 var game_turn: GameTurn = null:
 	set(value):
 		game_turn = value
 
-		for element in _visual_players:
-			element.turn = game_turn
+		for player in _element_nodes:
+			_element_nodes[player].turn = game_turn
 
-## A list of all the element nodes, for easy access
-var _visual_players: Array[TurnOrderElement] = []
+var _element_nodes: Dictionary[GamePlayer, TurnOrderElement] = {}
 
-var _margin_container: Control:
-	get:
-		if not _margin_container:
-			_margin_container = $MarginContainer as Control
-		return _margin_container
+## Stores the players in country order. Used for sorting.
+var _players_of_country: Array[PlayersOfCountry] = []
+class PlayersOfCountry:
+	var game_players: Array[GamePlayer] = []
 
-var _player_container: Control:
-	get:
-		if not _player_container:
-			_player_container = %PlayerContainer as Control
-		return _player_container
+@onready var _margin_container := %MarginContainer as Control
+@onready var _element_container := %ElementContainer as Control
 
 
 func _ready() -> void:
-	_update_margin_offsets()
-	_update_size()
-	get_viewport().size_changed.connect(_on_viewport_size_changed)
+	_set_margin_offsets()
+	_refresh_list()
+
+	get_viewport().size_changed.connect(_refresh_node_size)
+
+
+func _refresh_list() -> void:
+	if not is_node_ready():
+		return
+
+	NodeUtils.delete_all_children(_element_container)
+	_element_nodes.clear()
+	_players_of_country.clear()
+
+	if countries == null or players == null:
+		return
+
+	# Initialize _players_of_country
+	for country in countries.list():
+		_players_of_country.append(PlayersOfCountry.new())
+
+	# Populate _players_of_country with players
+	for player in players.list():
+		if player.is_spectating():
+			continue
+		_players_of_country[
+				countries.position_of(player.playing_country.id)
+		].game_players.append(player)
+
+	# Create elements in country order
+	for item in _players_of_country:
+		for player in item.game_players:
+			_add_element(player)
+
+	_refresh_node_size()
+	_update_elements()
 
 
 ## Leave position_index to -1 to add it to the end of the list
 func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
 	if player and player.is_human and player.player_human:
-		player.player_human.sync_finished.connect(_on_player_sync_finished)
+		player.player_human.sync_finished.connect(_update_elements)
 
-	var element := turn_order_element.instantiate() as TurnOrderElement
+	var element := _ELEMENT_SCENE.instantiate() as TurnOrderElement
 	element.delete_pressed.connect(_on_element_delete_pressed)
-	element.new_player_requested.connect(_on_new_player_requested)
+	element.new_player_requested.connect(new_human_player_requested.emit)
 	element.player = player
 	element.init()
 	element.turn = game_turn
-	_visual_players.append(element)
-	_player_container.add_child(element)
-	_player_container.move_child(element, position_index)
-
-
-func _create_elements() -> void:
-	for player in players.list():
-		_add_element(player)
-	_update_size()
-	_update_elements()
+	_element_nodes[player] = element
+	_element_container.add_child(element)
+	_element_container.move_child(element, position_index)
 
 
 func _remove_element(player: GamePlayer) -> void:
-	for visual in _visual_players:
-		if visual.player == player:
-			visual.get_parent().remove_child(visual)
-			visual.queue_free()
-			_visual_players.erase(visual)
-			break
+	NodeUtils.delete_node(_element_nodes[player])
+	_element_nodes.erase(player)
 
 
-func _clear_elements() -> void:
-	NodeUtils.delete_nodes(_visual_players)
-	_visual_players.clear()
-
-
-## To be called when the margin_pixels property changes.
-func _update_margin_offsets() -> void:
+func _set_margin_offsets() -> void:
 	_margin_container.offset_left = margin_pixels
 	_margin_container.offset_right = -margin_pixels
 	_margin_container.offset_top = margin_pixels
@@ -117,41 +136,35 @@ func _update_margin_offsets() -> void:
 
 ## Manually sets this node's size.
 ## Edits the value of [code]offset_bottom[/code] as well as the anchors.
-## Call this whenever any child node's vertical size changes.
-## This function has no effect when [code]is_shrunk[/code] is set to false.
-func _update_size() -> void:
-	if not is_node_ready() or not is_shrunk:
+## No effect if [code]is_shrunk[/code] is set to false.
+func _refresh_node_size() -> void:
+	if not is_shrunk:
 		return
 
+	const _SEPARATION: int = 4
 	var new_size: int = 0
-	for element in _visual_players:
-		new_size += roundi(element.size.y)
-
-		# Godot adds 4 pixels of spacing between each node
-		new_size += 4
-
+	for player in _element_nodes:
+		new_size += roundi(_element_nodes[player].size.y) + _SEPARATION
 	if new_size > 0:
-		new_size -= 4
+		new_size -= _SEPARATION
 
 	anchors_preset = PRESET_TOP_WIDE
 	offset_bottom = new_size + margin_pixels * 2
-	if get_parent_control():
+	if get_parent_control() != null:
 		offset_bottom = minf(offset_bottom, get_parent_control().size.y)
 
 
-## To be called whenever the number of local human players changes
-func _update_elements() -> void:
+## Lets elements know if they're the only local human player.
+## Prevents the user from deleting the only local human player.
+func _update_elements(_player: Player = null) -> void:
 	var is_the_only_local_human: bool = players.number_of_local_humans() == 1
-	for element in _visual_players:
-		var human: Player = element.player.player_human
-		if element.player.is_human and not (human and human.is_remote()):
+	for player in _element_nodes:
+		var human: Player = player.player_human
+		var element: TurnOrderElement = _element_nodes[player]
+		if player.is_human and not (human and human.is_remote()):
 			element.is_the_only_local_human = is_the_only_local_human
 		else:
 			element.is_the_only_local_human = false
-
-
-func _on_viewport_size_changed() -> void:
-	_update_size()
 
 
 func _on_element_delete_pressed(game_player: GamePlayer) -> void:
@@ -160,19 +173,58 @@ func _on_element_delete_pressed(game_player: GamePlayer) -> void:
 	player_removal_requested.emit(game_player.player_human)
 
 
-func _on_player_added(player: GamePlayer, position_index: int) -> void:
+func _on_order_changed(
+		_country_id: int, old_index: int, new_index: int
+) -> void:
+	var _players_to_move: PlayersOfCountry = (
+			_players_of_country.pop_at(old_index)
+	)
+	_players_of_country.insert(new_index, _players_to_move)
+
+	# Determine where the moved elements go
+	var new_element_index: int = 0
+	for i in _players_of_country.size():
+		if i == new_index:
+			break
+		else:
+			new_element_index += _players_of_country[i].game_players.size()
+
+	for player in _element_nodes:
+		if player in _players_to_move.game_players:
+			_element_container.move_child(
+					_element_nodes[player], new_element_index
+			)
+			new_element_index += 1
+
+
+func _on_player_added(player: GamePlayer, _player_index: int) -> void:
+	if player.is_spectating():
+		return
+
+	# Determine where this new player goes in country order
+	var position_index: int = 0
+	var new_player_country_index: int = (
+			countries.position_of(player.playing_country.id)
+	)
+	for i in _players_of_country.size():
+		position_index += _players_of_country[i].game_players.size()
+		if i == new_player_country_index:
+			_players_of_country[i].game_players.append(player)
+			break
+
 	_add_element(player, position_index)
-	_update_size()
+	_refresh_node_size()
 	_update_elements()
 
 
 func _on_player_removed(player: GamePlayer) -> void:
+	# Remove this player from country order
+	_players_of_country[
+			countries.position_of(player.playing_country.id)
+	].game_players.erase(player)
+
 	_remove_element(player)
-	_update_size()
-	_update_elements()
-
-
-func _on_player_sync_finished(_player: Player) -> void:
+	_refresh_node_size()
 	_update_elements()
 
 
@@ -185,13 +237,9 @@ func _on_human_status_changed(game_player: GamePlayer) -> void:
 			game_player.is_human
 			and game_player.player_human != null
 			and not game_player.player_human.sync_finished.is_connected(
-					_on_player_sync_finished
+					_update_elements
 			)
 	):
-		game_player.player_human.sync_finished.connect(_on_player_sync_finished)
+		game_player.player_human.sync_finished.connect(_update_elements)
 
 	_update_elements()
-
-
-func _on_new_player_requested(game_player: GamePlayer) -> void:
-	new_human_player_requested.emit(game_player)
