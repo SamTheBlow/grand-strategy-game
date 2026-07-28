@@ -34,16 +34,14 @@ var minimum_value: int = 1:
 	set(new_value):
 		minimum_value = maxi(1, new_value)
 
-## If the maximum value is less than 1, then there is no maximum value.
-var maximum_value: int = 0:
-	set(new_value):
-		maximum_value = maxi(0, new_value)
+## If less than 1, then there is no maximum value.
+var maximum_value: int = -1
 
 
 func _init(
 		starting_value: int = 1,
 		starting_minimum: int = 1,
-		starting_maximum: int = 0
+		starting_maximum: int = -1
 ) -> void:
 	minimum_value = starting_minimum
 	maximum_value = starting_maximum

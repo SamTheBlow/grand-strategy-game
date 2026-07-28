@@ -65,6 +65,7 @@ const RULE_NAMES: Array[String] = [
 	"province_income_constant",
 	"province_income_per_person",
 	"minimum_army_size",
+	"maximum_army_size",
 	"starting_army_size",
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
@@ -150,6 +151,7 @@ var province_income_random_max := ItemInt.new()
 var province_income_constant := ItemInt.new()
 var province_income_per_person := ItemFloat.new()
 var minimum_army_size := ItemInt.new()
+var maximum_army_size := ItemInt.new()
 var starting_army_size := ItemInt.new()
 var global_attacker_efficiency := ItemFloat.new()
 var global_defender_efficiency := ItemFloat.new()
@@ -395,6 +397,11 @@ func _init() -> void:
 	minimum_army_size.minimum = 1
 	minimum_army_size.has_minimum = true
 	minimum_army_size.value = 1
+
+	maximum_army_size.text = "Maximum army size"
+	maximum_army_size.minimum = -1
+	maximum_army_size.has_minimum = true
+	maximum_army_size.value = -1
 
 	starting_army_size.text = "Starting army size"
 	starting_army_size.minimum = 0
@@ -644,6 +651,7 @@ func _init() -> void:
 		starting_money,
 		province_income_override_enabled,
 		minimum_army_size,
+		maximum_army_size,
 		starting_army_size,
 		_category_battle,
 		_category_ai,

@@ -75,8 +75,11 @@ static func quick_setup(
 
 	var army := Army.new()
 	army.id = id_
-	army.size().minimum_value = minimum_army_size
-	army.size().value = army_size
+	army._army_size = ArmySize.new(
+			army_size,
+			minimum_army_size,
+			game.rules.maximum_army_size.value
+	)
 	army.owner_country = owner_country_
 	army._province_id = province_id_
 	army._movements_made = movements_made_
