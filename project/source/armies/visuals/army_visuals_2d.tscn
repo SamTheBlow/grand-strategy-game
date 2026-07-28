@@ -1,23 +1,25 @@
-[gd_scene load_steps=5 format=3 uid="uid://eso260jnknd4"]
+[gd_scene format=3 uid="uid://eso260jnknd4"]
 
 [ext_resource type="Script" uid="uid://cstr57gscx507" path="res://source/armies/visuals/army_visuals_2d.gd" id="1_80ub2"]
 [ext_resource type="Script" uid="uid://cu6mk4b2brdh6" path="res://source/armies/visuals/army_movement_animation.gd" id="2_2gbtg"]
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="3_5ukdx"]
 [ext_resource type="Script" uid="uid://dq0mi0k7iydq" path="res://source/armies/visuals/army_size_box.gd" id="4_r42rs"]
 
-[node name="ArmyVisuals2D" type="Node2D"]
+[node name="ArmyVisuals2D" type="Node2D" unique_id=853084620]
 z_index = 1
 script = ExtResource("1_80ub2")
 
-[node name="MovementAnimation" type="Node" parent="." node_paths=PackedStringArray("_army_visuals")]
+[node name="MovementAnimation" type="Node" parent="." unique_id=2080034549 node_paths=PackedStringArray("_army_visuals")]
+unique_name_in_owner = true
 script = ExtResource("2_2gbtg")
 _army_visuals = NodePath("..")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="ArmySprite" type="Sprite2D" parent="." unique_id=2119544195]
+unique_name_in_owner = true
 scale = Vector2(0.5, 0.5)
 texture = ExtResource("3_5ukdx")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=1501567451]
 layout_mode = 3
 anchors_preset = 0
 offset_left = -32.0
@@ -26,19 +28,19 @@ offset_right = 32.0
 offset_bottom = 32.0
 mouse_filter = 2
 
-[node name="ArmySizeBox" type="Control" parent="Control"]
+[node name="ArmySizeBox" type="Control" parent="Control" unique_id=2043348666]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(44, 0)
 layout_mode = 1
-anchor_left = -0.159668
+anchor_left = -0.16088867
 anchor_top = 0.6
-anchor_right = 1.15967
+anchor_right = 1.1608887
 anchor_bottom = 1.0
 grow_horizontal = 2
 mouse_filter = 2
 script = ExtResource("4_r42rs")
 
-[node name="ArmySizeLabel" type="Label" parent="Control/ArmySizeBox"]
+[node name="ArmySizeLabel" type="Label" parent="Control/ArmySizeBox" unique_id=1699286558]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

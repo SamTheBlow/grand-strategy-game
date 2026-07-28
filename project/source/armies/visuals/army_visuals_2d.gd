@@ -2,14 +2,19 @@ class_name ArmyVisuals2D
 extends Node2D
 ## An [Army]'s visuals for a 2D world map.
 
-## This is meant to be set only once.
 var army: Army:
 	set(value):
 		army = value
+
+		# Give this node a unique meaningful name
+		name = "Army" + str(army.id)
+
+		army.allegiance_changed.connect(_refresh_army_color)
+		army.size().changed.connect(_refresh_army_size)
+
 		army.province_changed.connect(_on_army_province_changed)
 		army.moved_to_province.connect(_on_army_moved_to_province)
 		army.movements_made_changed.connect(_on_army_movements_made_changed)
-		name = "Army" + str(army.id)
 
 ## Stops animations and updates tint when the playing country changes.
 var playing_country: PlayingCountry:
@@ -17,11 +22,18 @@ var playing_country: PlayingCountry:
 		playing_country = value
 		playing_country.changed.connect(_on_playing_country_changed)
 
-@onready var _animation := $MovementAnimation as ArmyMovementAnimation2D
+@onready var _animation := %MovementAnimation as ArmyMovementAnimation2D
+@onready var _army_sprite := %ArmySprite as Sprite2D
+@onready var _army_size_box := %ArmySizeBox as ArmySizeBox
 
 
 func _ready() -> void:
-	(%ArmySizeBox as ArmySizeBox).army = army
+	_refresh_army_color()
+	_refresh_army_size()
+
+	if army.size().maximum_value == 1:
+		_army_size_box.hide()
+
 	_animation.is_playing_changed.connect(_on_animation_is_playing_changed)
 	_refresh_brightness()
 
@@ -42,6 +54,21 @@ func move_to(new_position: Vector2) -> void:
 
 	if _animation.is_playing():
 		position = _old_position
+
+
+func _refresh_army_color(_owner_country: Country = null) -> void:
+	if not is_node_ready():
+		return
+
+	_army_sprite.modulate = army.owner_country.color
+	_army_size_box.color = army.owner_country.color
+
+
+func _refresh_army_size(_new_army_size: int = 0) -> void:
+	if not is_node_ready():
+		return
+
+	_army_size_box.number = army.size().value
 
 
 ## Darkens the visuals if the army cannot perform any action.
