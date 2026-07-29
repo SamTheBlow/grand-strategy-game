@@ -34,9 +34,7 @@ var rng_seed: String = "":
 		if old_state != _rng.state:
 			rng_state = ""
 
-## An empty string means it'll be the seed's initial state
-## when the game starts. When setting this value,
-## turns the value into an integer and then back into a string.
+## An empty string means it'll be the seed's initial state.
 ## After locking, this variable can no longer be changed
 ## and instead returns the underlying RNG's current state.
 var rng_state: String = "":
@@ -54,17 +52,14 @@ var rng_state: String = "":
 		if old_state == new_state:
 			return
 
+		rng_state = new_state
+
 		if new_state == "":
 			# This resets the state without changing the seed
 			_rng.seed = _rng.seed
 		else:
 			_rng.state = new_state.to_int()
-			new_state = str(_rng.state)
 
-		if old_state == new_state:
-			return
-
-		rng_state = new_state
 		state_changed.emit(old_state, new_state)
 
 var _is_locked: bool = false

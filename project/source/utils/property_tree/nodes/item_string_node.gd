@@ -36,11 +36,22 @@ func _item() -> PropertyTreeItem:
 
 
 func _on_text_changed(_text: String = "") -> void:
-	# Disconnect the signal temporarily to avoid infinite loop
-	# and to avoid messing with the LineEdit's cursor
-	item.value_changed.disconnect(_on_item_value_changed)
+	# We disconnect the signal temporarily to avoid infinite loop
+	# and to avoid messing with the LineEdit's cursor.
+
+	# There is an edge case where we can
+	# enter this function with the signal already disconnected:
+	# when text is submitted, which calls this, which sets the item's value,
+	# if changing the value causes this node to exit focus,
+	# then this function is called a second time
+	# but with the signal still disconnected.
+	# That is why we must check if the signal is/isn't connected.
+
+	if item.value_changed.is_connected(_on_item_value_changed):
+		item.value_changed.disconnect(_on_item_value_changed)
 	item.value = _line_edit.text
-	item.value_changed.connect(_on_item_value_changed)
+	if not item.value_changed.is_connected(_on_item_value_changed):
+		item.value_changed.connect(_on_item_value_changed)
 
 
 func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:

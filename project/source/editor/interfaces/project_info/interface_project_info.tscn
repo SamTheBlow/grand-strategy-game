@@ -1,8 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://7k82f8lx1vpe"]
+[gd_scene format=3 uid="uid://7k82f8lx1vpe"]
 
 [ext_resource type="Script" uid="uid://dmd1fguvgle07" path="res://source/editor/interfaces/project_info/interface_project_info.gd" id="1_ouoqs"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_ouoqs"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_y6eoc"]
 
-[node name="InterfaceProjectInfo" type="Control"]
+[sub_resource type="Resource" id="Resource_qfyaa"]
+script = ExtResource("3_y6eoc")
+text = "Game settings:"
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[node name="InterfaceProjectInfo" type="Control" unique_id=2101900363]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -11,8 +18,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_ouoqs")
 
-[node name="Container" type="VBoxContainer" parent="."]
-unique_name_in_owner = true
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=53246761]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,10 +27,12 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
 
-[node name="RichTextLabel" type="RichTextLabel" parent="Container"]
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer" unique_id=1235412366]
 layout_mode = 2
 text = "General information about this project."
 fit_content = true
 
-[node name="Spacing" type="Control" parent="Container"]
+[node name="GameSettingsCategory" parent="VBoxContainer" unique_id=451957286 instance=ExtResource("2_ouoqs")]
+unique_name_in_owner = true
 layout_mode = 2
+item = SubResource("Resource_qfyaa")

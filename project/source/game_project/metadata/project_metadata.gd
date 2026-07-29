@@ -38,14 +38,6 @@ func icon() -> Texture2D:
 	return _icon.texture if _icon.texture != null else DEFAULT_PROJECT_ICON
 
 
-func set_project_name(value: String) -> void:
-	project_name = value
-
-
-func set_project_icon(value: Icon) -> void:
-	_icon = value
-
-
 ## Emits a signal.
 ## Please use this rather than manually editing the settings property.
 func set_setting(key: String, value: Variant) -> void:

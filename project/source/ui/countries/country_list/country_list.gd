@@ -5,53 +5,56 @@ extends Control
 
 signal country_selected(country: Country)
 
-const _COUNTRY_ELEMENT_SCENE := preload("uid://bdw77emy4euku") as PackedScene
+const _ELEMENT_SCENE := preload("uid://bdw77emy4euku") as PackedScene
 
-var _is_setup: bool = false
-var _countries: Countries
-var _no_country_is_allowed: bool = false
+## May be null, in which case the list is empty.
+var countries: Countries = null:
+	set(value):
+		if countries != null:
+			countries.added.disconnect(_on_country_added)
+			countries.removed.disconnect(_on_country_removed)
+
+		countries = value
+		_refresh()
+
+		if countries != null:
+			countries.added.connect(_on_country_added)
+			countries.removed.connect(_on_country_removed)
+
+## If true, then there is an extra option in the list "No Country".
+var no_country_is_allowed: bool = false
 
 ## Maps elements to their corresponding node.
 var _nodes: Dictionary[Country, Node] = {}
 ## Keeps track of the order the countries are in.
 var _sorted_countries: Array[Country] = []
 
-@onready var _container := %CountryContainer as Node
+@onready var _element_container := %CountryContainer as Node
 
 
 func _ready() -> void:
-	if _is_setup:
-		_update()
+	_refresh()
 
 
-## If no_country_is_allowed is set to true, the user will be able to
-## select an extra option indicating that they choose none of the countries.
-func setup(countries: Countries, no_country_is_allowed: bool) -> void:
-	if _is_setup and is_node_ready():
-		_countries.added.disconnect(_on_country_added)
-		_countries.removed.disconnect(_on_country_removed)
+func _refresh() -> void:
+	if not is_node_ready():
+		return
 
-	_countries = countries
-	_no_country_is_allowed = no_country_is_allowed
-	_is_setup = true
+	# Clear everything
+	NodeUtils.delete_all_children(_element_container)
+	_nodes.clear()
+	for country in _sorted_countries:
+		country.name_changed.disconnect(_on_country_name_changed)
+	_sorted_countries.clear()
 
-	if is_node_ready():
-		_update()
+	if countries == null:
+		return
 
-
-func _update() -> void:
-	NodeUtils.remove_all_children(_container)
-	_nodes = {}
-	_sorted_countries = []
-
-	if _no_country_is_allowed:
+	if no_country_is_allowed:
 		_add_element(null)
 
-	for country in _countries.list():
+	for country in countries.list():
 		_add_element(country)
-
-	_countries.added.connect(_on_country_added)
-	_countries.removed.connect(_on_country_removed)
 
 
 func _add_element(new_country: Country) -> void:
@@ -64,9 +67,7 @@ func _add_element(new_country: Country) -> void:
 				_on_country_name_changed.bind(new_country)
 		)
 
-	var new_element := (
-			_COUNTRY_ELEMENT_SCENE.instantiate() as CountryListElement
-	)
+	var new_element := _ELEMENT_SCENE.instantiate() as CountryListElement
 	new_element.country = new_country
 	new_element.pressed.connect(_on_element_pressed)
 
@@ -83,8 +84,8 @@ func _add_element(new_country: Country) -> void:
 				break
 			new_country_index += 1
 
-	_container.add_child(new_element)
-	_container.move_child(new_element, new_country_index)
+	_element_container.add_child(new_element)
+	_element_container.move_child(new_element, new_country_index)
 	_nodes[new_country] = new_element
 	_sorted_countries.insert(new_country_index, new_country)
 
@@ -98,15 +99,16 @@ func _on_country_added(country: Country) -> void:
 
 
 func _on_country_removed(country: Country) -> void:
-	if _nodes.has(country):
-		if country != null:
-			country.name_changed.disconnect(_on_country_name_changed)
-
-		NodeUtils.delete_node(_nodes[country])
-		_nodes.erase(country)
-		_sorted_countries.erase(country)
-	else:
+	if not _nodes.has(country):
 		push_warning("Country doesn't have a corresponding node.")
+		return
+
+	if country != null:
+		country.name_changed.disconnect(_on_country_name_changed)
+
+	_element_container.remove_child(_nodes[country])
+	_nodes.erase(country)
+	_sorted_countries.erase(country)
 
 
 func _on_country_name_changed(country: Country) -> void:

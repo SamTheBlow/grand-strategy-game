@@ -1,14 +1,7 @@
 [gd_scene format=3 uid="uid://bluif37tipwg7"]
 
 [ext_resource type="Script" uid="uid://1ssv824ya57" path="res://source/editor/interfaces/provinces/interface_province_list.gd" id="1_10wi1"]
-[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_rlj5c"]
-[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_i652q"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_u6nya"]
-
-[sub_resource type="Resource" id="Resource_ub84e"]
-script = ExtResource("3_i652q")
-text = "Editor settings:"
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceProvinceList" type="Control" unique_id=2129529268]
 layout_mode = 3
@@ -34,14 +27,6 @@ text = "A province is a region on the world map.
 It's an essential feature of most grand strategy games.
 It has many properties."
 fit_content = true
-
-[node name="EditorSettingsCategory" parent="VBoxContainer" unique_id=374986947 instance=ExtResource("2_rlj5c")]
-unique_name_in_owner = true
-layout_mode = 2
-item = SubResource("Resource_ub84e")
-
-[node name="Spacing" type="Control" parent="VBoxContainer" unique_id=1883980693]
-layout_mode = 2
 
 [node name="ButtonSection" type="Control" parent="VBoxContainer" unique_id=780944764]
 custom_minimum_size = Vector2(0, 32)
@@ -75,7 +60,7 @@ grow_horizontal = 2
 grow_vertical = 2
 follow_focus = true
 
-[node name="ItemContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer" unique_id=857619387]
+[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer" unique_id=857619387]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

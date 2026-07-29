@@ -3,102 +3,70 @@ extends AppEditorInterface
 
 signal texture_popup_requested(item_texture: ItemTexture)
 
-var _is_setup: bool = false
-var _metadata: ProjectMetadata
-var _project_absolute_path: StringRef
+var project: GameProject
 
 var _item_project_name := ItemString.new()
 var _item_project_icon := ItemTexture.new()
 
-@onready var _container_node: Node = %Container
-
-
-func _init() -> void:
-	_item_project_name.text = "Name:"
-	_item_project_name.placeholder_text = _metadata.DEFAULT_PROJECT_NAME
-	_item_project_icon.text = "Icon:"
-	_item_project_icon.project_textures = ProjectTextures.new(StringRef.new())
-	_item_project_icon.fallback_texture = _metadata.DEFAULT_PROJECT_ICON
-	_item_project_icon.popup_requested.connect(texture_popup_requested.emit)
+@onready var _game_settings_node := %GameSettingsCategory as ItemVoidNode
 
 
 func _ready() -> void:
-	var project_name_node := (
-			preload("uid://cemtdca5rfqlk").instantiate() as ItemStringNode
+	_item_project_name.text = "Name:"
+	_item_project_name.placeholder_text = project.metadata.DEFAULT_PROJECT_NAME
+	_item_project_name.value = project.metadata.project_name
+	_item_project_name.value_changed.connect(_on_item_name_changed)
+	project.metadata.name_changed.connect(_on_project_name_changed)
+
+	_item_project_icon.text = "Icon:"
+	_item_project_icon.project_textures = project.textures
+	_item_project_icon.fallback_texture = project.metadata.DEFAULT_PROJECT_ICON
+	_item_project_icon.popup_requested.connect(texture_popup_requested.emit)
+	_item_project_icon.value = _from_metadata_icon(
+			project.metadata._icon, project._absolute_file_path
 	)
-	project_name_node.item = _item_project_name
-	_container_node.add_child(project_name_node)
+	_item_project_icon.value_changed.connect(_on_item_icon_changed)
+	project.metadata.icon_changed.connect(_on_project_icon_changed)
 
-	var project_icon_node := (
-			preload("uid://ccq7n0x7mov6s").instantiate() as ItemTextureNode
+	_game_settings_node.item.child_items = [
+		_item_project_name, _item_project_icon
+	]
+	_game_settings_node.refresh()
+
+
+func _on_project_name_changed() -> void:
+	_item_project_name.value_changed.disconnect(_on_item_name_changed)
+	_item_project_name.value = project.metadata.project_name
+	_item_project_name.value_changed.connect(_on_item_name_changed)
+
+
+func _on_project_icon_changed() -> void:
+	_item_project_icon.value_changed.disconnect(_on_item_icon_changed)
+	_item_project_icon.value = _from_metadata_icon(
+			project.metadata._icon, project._absolute_file_path
 	)
-	project_icon_node.item = _item_project_icon
-	_container_node.add_child(project_icon_node)
-
-	if _is_setup:
-		_update()
+	_item_project_icon.value_changed.connect(_on_item_icon_changed)
 
 
-func setup(
-		metadata: ProjectMetadata, project_absolute_path: StringRef
-) -> void:
-	if _is_setup:
-		_metadata.name_changed.disconnect(_update_project_name)
-		_metadata.icon_changed.disconnect(_update_project_icon)
-	else:
-		_item_project_name.value_changed.connect(_set_project_name)
-		_item_project_icon.value_changed.connect(_set_project_icon)
+func _on_item_name_changed(_item: PropertyTreeItem) -> void:
+	var old_name: String = project.metadata.project_name
+	var new_name: String = _item_project_name.value
 
-	_metadata = metadata
-	_project_absolute_path = project_absolute_path
-	_is_setup = true
-
-	if is_node_ready():
-		_update()
-
-
-func _update() -> void:
-	_update_project_name()
-	_update_project_icon()
-	_metadata.name_changed.connect(_update_project_name)
-	_metadata.icon_changed.connect(_update_project_icon)
-
-
-func _update_project_name() -> void:
-	_item_project_name.value_changed.disconnect(_set_project_name)
-	_item_project_name.value = _metadata.project_name
-	_item_project_name.value_changed.connect(_set_project_name)
-
-
-func _update_project_icon() -> void:
-	_item_project_icon.value_changed.disconnect(_set_project_icon)
-	_item_project_icon.value = (
-			_from_metadata_icon(_metadata._icon, _project_absolute_path)
-	)
-	_item_project_icon.value_changed.connect(_set_project_icon)
-
-
-func _set_project_name(_item: PropertyTreeItem) -> void:
 	undo_redo.create_action("Change project name")
-	undo_redo.add_do_method(
-			_metadata.set_project_name.bind(_item_project_name.value)
-	)
-	undo_redo.add_undo_method(
-			_metadata.set_project_name.bind(_metadata.project_name)
-	)
+	undo_redo.add_do_property(project.metadata, &"project_name", new_name)
+	undo_redo.add_undo_property(project.metadata, &"project_name", old_name)
 	undo_redo.commit_action()
 
 
-func _set_project_icon(_item: PropertyTreeItem) -> void:
+func _on_item_icon_changed(_item: PropertyTreeItem) -> void:
+	var old_icon: ProjectMetadata.Icon = project.metadata._icon
+	var new_icon: ProjectMetadata.Icon = _to_metadata_icon(
+			_item_project_icon.value, project._absolute_file_path
+	)
+
 	undo_redo.create_action("Change project icon")
-	undo_redo.add_do_method(
-			_metadata.set_project_icon.bind(_to_metadata_icon(
-					_item_project_icon.value, _project_absolute_path
-			))
-	)
-	undo_redo.add_undo_method(
-			_metadata.set_project_icon.bind(_metadata._icon)
-	)
+	undo_redo.add_do_property(project.metadata, &"_icon", new_icon)
+	undo_redo.add_undo_property(project.metadata, &"_icon", old_icon)
 	undo_redo.commit_action()
 
 

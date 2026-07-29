@@ -160,25 +160,23 @@ func _new_interface(
 	new_interface.editor_settings = editor_settings
 
 	if new_interface is InterfaceProjectInfo:
-		var info_interface := new_interface as InterfaceProjectInfo
-		info_interface.setup(project.metadata, project._absolute_file_path)
-		info_interface.texture_popup_requested.connect(
-				texture_popup_requested.emit
-		)
+		var interface := new_interface as InterfaceProjectInfo
+		interface.project = project
+		interface.texture_popup_requested.connect(texture_popup_requested.emit)
 	elif new_interface is InterfaceRNG:
-		(new_interface as InterfaceRNG).game_rng = project.game.rng
+		var interface := new_interface as InterfaceRNG
+		interface.game_rng = project.game.rng
 	elif new_interface is InterfaceCountryList:
-		var list_interface := new_interface as InterfaceCountryList
-		list_interface.setup(
-				project.game.countries, Country.Factory.new(project.game)
-		)
-		list_interface.item_selected.connect(
+		var interface := new_interface as InterfaceCountryList
+		interface.countries = project.game.countries
+		interface.country_factory = Country.Factory.new(project.game)
+		interface.item_selected.connect(
 				_open_country_edit_interface.bind(project, editor_settings)
 		)
 	elif new_interface is InterfacePlayerList:
-		var list_interface := new_interface as InterfacePlayerList
-		list_interface.setup(project.game.game_players)
-		list_interface.item_selected.connect(
+		var interface := new_interface as InterfacePlayerList
+		interface.game_players = project.game.game_players
+		interface.item_selected.connect(
 				_open_player_edit_interface.bind(project, editor_settings)
 		)
 	elif new_interface is InterfaceTurnOrder:
@@ -188,24 +186,22 @@ func _new_interface(
 				project.game.rules.random_turn_order_enabled
 		)
 	elif new_interface is InterfaceWorldLimits:
-		(new_interface as InterfaceWorldLimits).setup(
-				project.game.world.limits()
-		)
+		var interface := new_interface as InterfaceWorldLimits
+		interface.world_limits = project.game.world.limits()
 	elif new_interface is InterfaceBackgroundColor:
-		(new_interface as InterfaceBackgroundColor).setup(project.game.world)
+		var interface := new_interface as InterfaceBackgroundColor
+		interface.world = project.game.world
 	elif new_interface is InterfaceDecorationList:
-		var list_interface := new_interface as InterfaceDecorationList
-		list_interface.decorations = project.game.world.decorations
-		list_interface.project_textures = project.textures
-		list_interface.item_selected.connect(
-				_open_decoration_edit_interface.bind(
-						project, editor_settings
-				)
+		var interface := new_interface as InterfaceDecorationList
+		interface.decorations = project.game.world.decorations
+		interface.project_textures = project.textures
+		interface.item_selected.connect(
+				_open_decoration_edit_interface.bind(project, editor_settings)
 		)
 	elif new_interface is InterfaceProvinceList:
-		var list_interface := new_interface as InterfaceProvinceList
-		list_interface.setup(project.game.world.provinces)
-		list_interface.item_selected.connect(
+		var interface := new_interface as InterfaceProvinceList
+		interface.provinces = project.game.world.provinces
+		interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
 		)
 
@@ -217,9 +213,7 @@ func _open_country_edit_interface(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	var country: Country = (
-			project.game.countries.country_from_id(country_id)
-	)
+	var country: Country = project.game.countries.country_from_id(country_id)
 	if country == null:
 		push_error("Country doesn't exist.")
 		return
@@ -449,12 +443,8 @@ func _on_player_duplicated(
 	# Create undo_redo action
 	# (don't execute it since we already added the player)
 	undo_redo.create_action("Duplicate player")
-	undo_redo.add_do_method(
-			project.game.game_players.add.bind(new_player)
-	)
-	undo_redo.add_undo_method(
-			project.game.game_players.remove.bind(new_player)
-	)
+	undo_redo.add_do_method(project.game.game_players.add.bind(new_player))
+	undo_redo.add_undo_method(project.game.game_players.remove.bind(new_player))
 	undo_redo.commit_action(false)
 
 	_open_player_edit_interface(new_player.id, project, editor_settings)

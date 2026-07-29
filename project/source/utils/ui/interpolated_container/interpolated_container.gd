@@ -125,6 +125,12 @@ var _children_sizes_end: Array[Vector2] = []
 var _interp_progress_factor: float = 0.0
 var _skip_next_reorder: bool = false
 
+## Tracks children that were just added to the tree.
+## Used to skip animation for their initial placement,
+## preventing them from animating from their default layout rect
+## (often the container's full rect) to their target position.
+var _new_children: Array[Control] = []
+
 ## If non-null, it means this node's parent is this [ScrollContainer].
 var _parent_scroll: ScrollContainer = null
 var _scroll_horizontal_before: int = 0
@@ -271,6 +277,13 @@ func _notification(what: int) -> void:
 ## during [method _sort_children] to set their target position.
 func fit_interpolated(child: Control, rect: Rect2) -> void:
 	var child_index: int = child.get_index()
+
+	# New children should be fit in the rect
+	# BEFORE setting their starting transform.
+	if child in _new_children:
+		fit_child_in_rect(child, rect)
+		_new_children.erase(child)
+
 	var child_start_xform: Transform2D = child.get_global_transform()
 	child_start_xform.origin += child_start_xform.basis_xform(child.size * 0.5)
 
@@ -370,12 +383,17 @@ func _insert_child_in_other(
 
 func _on_child_entered_tree(child: Node) -> void:
 	if child is Control:
-		(child as Control).gui_input.connect(_on_child_gui_input.bind(child))
+		var child_control := child as Control
+		child_control.gui_input.connect(_on_child_gui_input.bind(child))
+		_new_children.append(child_control)
+
+	set_process(false)
 
 
 func _on_child_exiting_tree(child: Node) -> void:
 	if child is Control:
 		(child as Control).gui_input.disconnect(_on_child_gui_input)
+		_new_children.erase(child)
 
 
 func _on_child_gui_input(event: InputEvent, child: Control) -> void:
