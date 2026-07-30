@@ -221,10 +221,9 @@ static func _add_starting_armies(game: Game) -> void:
 		):
 			continue
 
-		Army.quick_setup(
-				game,
-				game.rules.starting_army_size.value,
+		Army.Factory.new(game).new_army(
 				province.owner_country,
-				province.id
+				province.id,
+				game.rules.starting_army_size.value
 		)
 		already_supplied_countries.append(province.owner_country)

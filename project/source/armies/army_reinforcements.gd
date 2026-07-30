@@ -45,11 +45,6 @@ static func apply(game: Game, province: Province) -> void:
 		return
 
 	# Couldn't find a valid army to reinforce. Create a new army.
-	Army.quick_setup(
-			game,
-			reinforcements_size,
-			province.owner_country,
-			province.id,
-			-1,
-			1
+	Army.Factory.new(game).new_army(
+			province.owner_country, province.id, reinforcements_size, -1, 1
 	)

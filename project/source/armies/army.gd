@@ -10,7 +10,7 @@ class_name Army
 
 signal allegiance_changed(country: Country)
 ## Always emitted when the province changes.
-signal province_changed(this_army: Army)
+signal province_changed(this: Army)
 ## Emitted only when using [method Army.move_to_province].
 ## Teleportation does not trigger this signal.
 ## Emitted after province_changed.
@@ -50,43 +50,6 @@ var _movements_made: int = 0:
 	set(value):
 		_movements_made = value
 		movements_made_changed.emit(_movements_made)
-
-
-## Utility function that does all the setup work.
-## Automatically adds the army to the game.
-## It is recommended to use this when creating a new army.
-## May return null if the army could not be created.
-## Use -1 for the id if you don't want to provide a specific one.
-static func quick_setup(
-		game: Game,
-		army_size: int,
-		owner_country_: Country,
-		province_id_: int,
-		id_: int = -1,
-		movements_made_: int = 0,
-) -> Army:
-	var minimum_army_size: int = game.rules.minimum_army_size.value
-	if army_size < minimum_army_size:
-		push_error(
-				"Tried to create an army, ",
-				"but its size is smaller than the minimum allowed."
-		)
-		return null
-
-	var army := Army.new()
-	army.id = id_
-	army._army_size = ArmySize.new(
-			army_size,
-			minimum_army_size,
-			game.rules.maximum_army_size.value
-	)
-	army.owner_country = owner_country_
-	army._province_id = province_id_
-	army._movements_made = movements_made_
-
-	game.turn.playing_country_changed.connect(army._on_playing_country_changed)
-	game.world.armies.add(army)
-	return army
 
 
 func destroy() -> void:
@@ -202,3 +165,44 @@ static func population_cost(troop_count: int, rules: GameRules) -> int:
 func _on_playing_country_changed(country: Country) -> void:
 	if country == owner_country:
 		_movements_made = 0
+
+
+## Does the setup required when creating a new instance.
+class Factory:
+	var _game: Game
+
+	func _init(game: Game) -> void:
+		_game = game
+
+	## Automatically creates and adds a new army to the game.
+	## Returns the new army.
+	## Leave the id to -1 to give it a new unique id.
+	func new_army(
+			owner_country: Country,
+			province_id: int,
+			army_size: int = _game.rules.minimum_army_size.value,
+			id: int = -1,
+			movements_made: int = 0
+	) -> Army:
+		var army := Army.new()
+		army.id = id
+		army.owner_country = owner_country
+		army._army_size = ArmySize.new(
+				_game.rules.minimum_army_size.value,
+				_game.rules.minimum_army_size.value,
+				_game.rules.maximum_army_size.value
+		)
+		army._province_id = province_id
+		army._movements_made = movements_made
+
+		_game.turn.playing_country_changed.connect(
+				army._on_playing_country_changed
+		)
+		_game.world.armies.add(army)
+
+		# Set the army size at the very end,
+		# so that if the army size is less than the minimum size,
+		# the army gets destroyed and removed from the game.
+		army.size().value = army_size
+
+		return army

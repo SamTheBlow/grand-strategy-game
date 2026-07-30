@@ -73,11 +73,10 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	var number_of_clones: int = _troop_partition.size() - 1
 	for i in number_of_clones:
 		# Create the new army
-		var _army_clone: Army = Army.quick_setup(
-				game,
-				_troop_partition[i + 1],
+		Army.Factory.new(game).new_army(
 				army.owner_country,
 				army.province_id(),
+				_troop_partition[i + 1],
 				_new_army_ids[i]
 		)
 

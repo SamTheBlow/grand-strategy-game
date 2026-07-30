@@ -88,11 +88,6 @@ static func _load_army_from_raw_data(raw_data: Variant, game: Game) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _MOVEMENTS_KEY):
 		movements_made = ParseUtils.dictionary_int(raw_dict, _MOVEMENTS_KEY)
 
-	Army.quick_setup(
-			game,
-			army_size,
-			owner_country,
-			province_id,
-			id,
-			movements_made
+	Army.Factory.new(game).new_army(
+			owner_country, province_id, army_size, id, movements_made
 	)

@@ -60,11 +60,10 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 			return
 
 	# Otherwise, create a new army instead.
-	var _army: Army = Army.quick_setup(
-			game,
-			_number_of_troops,
+	Army.Factory.new(game).new_army(
 			province.owner_country,
 			province.id,
+			_number_of_troops,
 			_new_army_id
 	)
 
