@@ -31,9 +31,9 @@ func _ready() -> void:
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
 	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
+	_load_settings()
 	_settings.refresh()
 
-	_load_settings()
 	_preview.country = country
 
 
