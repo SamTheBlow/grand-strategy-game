@@ -23,8 +23,8 @@ func _init(provinces: Provinces, armies: Armies) -> void:
 	for army in armies.list():
 		_on_army_added(army)
 
-	armies.army_added.connect(_on_army_added)
-	armies.army_removed.connect(_on_army_removed)
+	armies.added.connect(_on_army_added)
+	armies.removed.connect(_on_army_removed)
 
 
 func in_province_id(province_id: int) -> ArmiesInProvince:
@@ -63,7 +63,7 @@ func _on_province_removed(province: Province) -> void:
 	for i in armies_in_province.list.size():
 		var army_to_remove: Army = armies_in_province.list[-1]
 		armies_in_province.remove(army_to_remove)
-		_armies.remove_army(army_to_remove)
+		_armies.remove(army_to_remove)
 
 
 func _on_army_added(army: Army) -> void:
@@ -84,6 +84,6 @@ func _on_army_removed(army: Army) -> void:
 ## If the army's province doesn't exist, removes the army.
 func _on_army_province_changed(army: Army) -> void:
 	if not _map.has(army.province_id()):
-		_armies.remove_army(army)
+		_armies.remove(army)
 		return
 	_map[army.province_id()].add(army)

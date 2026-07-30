@@ -16,8 +16,8 @@ func _init(
 	for army in armies.list():
 		_connect_army(army)
 
-	armies.army_added.connect(_connect_army)
-	armies.army_removed.connect(_disconnect_army)
+	armies.added.connect(_connect_army)
+	armies.removed.connect(_disconnect_army)
 
 
 ## Checks for [Battles] that need to occur in given [Army]'s [Province].

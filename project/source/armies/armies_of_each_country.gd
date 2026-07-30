@@ -20,8 +20,8 @@ func _init(countries: Countries, armies: Armies) -> void:
 
 	for army in armies.list():
 		_add_army(army)
-	armies.army_added.connect(_add_army)
-	armies.army_removed.connect(_remove_army)
+	armies.added.connect(_add_army)
+	armies.removed.connect(_remove_army)
 
 
 func _add_country(country: Country) -> void:
@@ -39,7 +39,7 @@ func _remove_country(country: Country, armies: Armies) -> void:
 
 	# Remove all of the country's armies from the game
 	for army: Army in dictionary[country].list.duplicate():
-		armies.remove_army(army)
+		armies.remove(army)
 
 	dictionary.erase(country)
 

@@ -127,13 +127,13 @@ func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
 
 
 func _connect_signals() -> void:
-	_armies.army_added.connect(_add_army)
-	_armies.army_removed.connect(_remove_army)
+	_armies.added.connect(_add_army)
+	_armies.removed.connect(_remove_army)
 
 
 func _disconnect_signals() -> void:
-	_armies.army_added.disconnect(_add_army)
-	_armies.army_removed.disconnect(_remove_army)
+	_armies.added.disconnect(_add_army)
+	_armies.removed.disconnect(_remove_army)
 
 
 ## If the army visuals are deleted from elsewhere,

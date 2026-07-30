@@ -1,12 +1,15 @@
 class_name Armies
 ## An encapsulated list of [Army] objects.
-## Provides utility functions for manipulating the list and
-## for accessing a specific [Army] or a specific subset of the list.
 
-signal army_added(army: Army)
-signal army_removed(army: Army)
+signal added(army: Army)
+signal removed(army: Army)
 
-var _list: Array[Army] = []
+## Maps each army to its unique id.
+var _list: Dictionary[int, Army] = {}
+
+## The order in which the items are in the list.
+var _order: Array[int] = []
+
 var _unique_id_system := UniqueIdSystem.new()
 
 
@@ -16,41 +19,56 @@ var _unique_id_system := UniqueIdSystem.new()
 ## No effect if given army's id is already in use,
 ## or if given army is already in the list.
 func add(army: Army) -> void:
-	if _list.has(army):
-		push_warning("Army is already in the list.")
-		return
-	if not _unique_id_system.is_id_valid(army.id):
-		army.id = _unique_id_system.new_unique_id()
-	elif not _unique_id_system.is_id_available(army.id):
-		push_warning("Army id is already in use. (id: " + str(army.id) + ")")
-		return
-	else:
-		_unique_id_system.claim_id(army.id)
-
-	army.size().became_too_small.connect(remove_army.bind(army))
-	_list.append(army)
-	army_added.emit(army)
+	_add(army)
 
 
 ## No effect if given army is not in the list.
-func remove_army(army: Army) -> void:
-	if not _list.has(army):
+func remove(army: Army) -> void:
+	if not _list.has(army.id):
 		push_warning("Army is not in the list.")
 		return
 
-	army.size().became_too_small.disconnect(remove_army)
-	_list.erase(army)
-	army_removed.emit(army)
+	army.size().became_too_small.disconnect(remove)
+	_list.erase(army.id)
+	_order.erase(army.id)
+
+	# We have to unclaim the id because, if we want to bring this army
+	# back in the list later with the same id, the id needs to not be in use.
+	_unique_id_system.unclaim_id(army.id)
+
+	removed.emit(army)
+
+
+## Removes given army, using given [UndoRedo] system.
+## Ensures that when we undo, everything is exactly as it was before.
+func undo_redo_remove(army: Army, undo_redo: UndoRedo) -> void:
+	undo_redo.create_action("Delete army")
+	undo_redo.add_do_method(remove.bind(army))
+
+	# Ensure the army's position in the list is restored on undo
+	var position_index: int = _order.find(army.id)
+	undo_redo.add_undo_method(_add.bind(army, position_index))
+
+	undo_redo.commit_action()
+
+
+## Returns null if there is no army with given id.
+func army_from_id(id: int) -> Army:
+	return _list[id] if _list.has(id) else null
 
 
 ## Returns a new copy of the list.
 func list() -> Array[Army]:
-	return _list.duplicate()
+	var output: Array[Army] = []
+	for id in _order:
+		output.append(_list[id])
+	return output
 
 
 ## Resets all internal data.
 func reset() -> void:
-	_list = []
+	_list.clear()
+	_order.clear()
 	_unique_id_system = UniqueIdSystem.new()
 
 
@@ -75,18 +93,34 @@ func merge_armies(
 					)
 			):
 				army2.size().value += army1.size().value
-				remove_army(army1)
+				remove(army1)
 				break
-
-
-## Returns the [Army] that has given id.
-## If there is no such army, returns [code]null[/code].
-func army_from_id(id: int) -> Army:
-	for army in _list:
-		if army.id == id:
-			return army
-	return null
 
 
 func id_system() -> UniqueIdSystem:
 	return _unique_id_system
+
+
+## Keeps the insertion index a private feature.
+func _add(army: Army, insertion_index: int = -1) -> void:
+	if _list.has(army.id):
+		push_warning("Army is already in the list.")
+		return
+	if not _unique_id_system.is_id_valid(army.id):
+		army.id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(army.id):
+		push_warning("Army id is already in use. (id: " + str(army.id) + ")")
+		return
+	else:
+		_unique_id_system.claim_id(army.id)
+
+	_list[army.id] = army
+
+	if insertion_index < 0 or insertion_index >= _order.size():
+		_order.append(army.id)
+	else:
+		_order.insert(insertion_index, army.id)
+
+	army.size().became_too_small.connect(remove.bind(army))
+
+	added.emit(army)
