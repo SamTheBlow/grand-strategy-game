@@ -1,6 +1,6 @@
 class_name ArmiesOfEachCountry
-## Provides a dictionary where each [Country] is assigned
-## a list of all armies controlled by that country ([ArmiesOfCountry]).
+## Provides a dictionary where each [Country] is mapped to
+## a list of all armies controlled by that country.
 
 ## All countries in the game are guaranteed to be in this dictionary,
 ## so no need to check if the dictionary has some country.
@@ -14,17 +14,17 @@ var dictionary: Dictionary[Country, ArmiesOfCountry] = {
 
 func _init(countries: Countries, armies: Armies) -> void:
 	for country in countries.list():
-		_on_country_added(country)
-	countries.added.connect(_on_country_added)
-	countries.removed.connect(_on_country_removed.bind(armies))
+		_add_country(country)
+	countries.added.connect(_add_country)
+	countries.removed.connect(_remove_country.bind(armies))
 
 	for army in armies.list():
-		_on_army_added(army)
-	armies.army_added.connect(_on_army_added)
-	armies.army_removed.connect(_on_army_removed)
+		_add_army(army)
+	armies.army_added.connect(_add_army)
+	armies.army_removed.connect(_remove_army)
 
 
-func _on_country_added(country: Country) -> void:
+func _add_country(country: Country) -> void:
 	if dictionary.has(country):
 		push_error("Country is already in the list.")
 		return
@@ -32,7 +32,7 @@ func _on_country_added(country: Country) -> void:
 	dictionary[country] = ArmiesOfCountry.new()
 
 
-func _on_country_removed(country: Country, armies: Armies) -> void:
+func _remove_country(country: Country, armies: Armies) -> void:
 	if not dictionary.has(country):
 		push_error("Country is not in the list.")
 		return
@@ -44,14 +44,28 @@ func _on_country_removed(country: Country, armies: Armies) -> void:
 	dictionary.erase(country)
 
 
-func _on_army_added(army: Army) -> void:
-	dictionary[army.owner_country].add(army)
-	army.allegiance_changed.connect(_on_army_allegiance_changed)
+## Adds this army to the owner country's list,
+## and connects signals such that when allegiance changes,
+## removes this army from the list and then calls this function again
+func _add_army(army: Army) -> void:
+	dictionary[army.owner_country].list.append(army)
+	army.allegiance_changed.connect(
+			dictionary[army.owner_country].erase.bind(army).unbind(1),
+			ConnectFlags.CONNECT_ONE_SHOT
+	)
+	army.allegiance_changed.connect(
+			_add_army.bind(army).unbind(1), ConnectFlags.CONNECT_ONE_SHOT
+	)
 
 
-func _on_army_removed(army: Army) -> void:
-	dictionary[army.owner_country].remove(army)
+func _remove_army(army: Army) -> void:
+	army.allegiance_changed.disconnect(dictionary[army.owner_country].erase)
+	army.allegiance_changed.disconnect(_add_army)
+	dictionary[army.owner_country].erase(army)
 
 
-func _on_army_allegiance_changed(army: Army) -> void:
-	dictionary[army.owner_country].add(army)
+class ArmiesOfCountry:
+	var list: Array[Army] = []
+	# This is so that disconnecting the signal works
+	func erase(value: Army) -> void:
+		list.erase(value)
