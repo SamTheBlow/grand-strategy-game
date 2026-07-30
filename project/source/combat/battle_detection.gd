@@ -14,8 +14,10 @@ func _init(
 	_armies_in_each_province = armies_in_each_province
 
 	for army in armies.list():
-		_on_army_added(army)
-	armies.army_added.connect(_on_army_added)
+		_connect_army(army)
+
+	armies.army_added.connect(_connect_army)
+	armies.army_removed.connect(_disconnect_army)
 
 
 ## Checks for [Battles] that need to occur in given [Army]'s [Province].
@@ -32,9 +34,9 @@ func _resolve_battles(army: Army) -> void:
 			_battle.apply(army, other_army)
 
 
-func _on_army_added(army: Army) -> void:
-	army.province_changed.connect(_on_army_province_changed)
+func _connect_army(army: Army) -> void:
+	army.province_changed.connect(_resolve_battles)
 
 
-func _on_army_province_changed(army: Army) -> void:
-	_resolve_battles(army)
+func _disconnect_army(army: Army) -> void:
+	army.province_changed.disconnect(_resolve_battles)
