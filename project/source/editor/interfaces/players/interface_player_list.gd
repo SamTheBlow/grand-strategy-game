@@ -18,8 +18,8 @@ func _ready() -> void:
 	for game_player in game_players.list():
 		_add_element(game_player)
 
-	game_players.player_added.connect(_on_player_added)
-	game_players.player_removed.connect(_on_player_removed)
+	game_players.added.connect(_on_player_added)
+	game_players.removed.connect(_on_player_removed)
 
 
 func _add_element(game_player: GamePlayer) -> void:
@@ -57,9 +57,11 @@ func _on_element_pressed(element: EditorPlayerListElement) -> void:
 	item_selected.emit(element.game_player.id)
 
 
-func _on_player_added(game_player: GamePlayer, position_index: int) -> void:
+func _on_player_added(game_player: GamePlayer) -> void:
 	_add_element(game_player)
-	_element_container.move_child(_nodes[game_player.id], position_index)
+	_element_container.move_child(
+			_nodes[game_player.id], game_players.find(game_player)
+	)
 
 
 func _on_player_removed(game_player: GamePlayer) -> void:

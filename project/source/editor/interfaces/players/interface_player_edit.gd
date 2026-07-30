@@ -15,12 +15,12 @@ var game_player := GamePlayer.new()
 var game_players: GamePlayers = null:
 	set(value):
 		if game_players != null:
-			game_players.player_removed.disconnect(_on_player_removed)
+			game_players.removed.disconnect(_on_player_removed)
 
 		game_players = value
 
 		if game_players != null:
-			game_players.player_removed.connect(_on_player_removed)
+			game_players.removed.connect(_on_player_removed)
 
 @onready var _settings := %Settings as ItemVoidNode
 

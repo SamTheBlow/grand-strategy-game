@@ -43,12 +43,12 @@ var countries: Countries:
 var players: GamePlayers:
 	set(value):
 		if players != null:
-			players.player_added.disconnect(_on_player_added)
-			players.player_removed.disconnect(_on_player_removed)
+			players.added.disconnect(_on_player_added)
+			players.removed.disconnect(_on_player_removed)
 		players = value
 		_refresh_list()
-		players.player_added.connect(_on_player_added)
-		players.player_removed.connect(_on_player_removed)
+		players.added.connect(_on_player_added)
+		players.removed.connect(_on_player_removed)
 
 ## Allows showing with an arrow whose turn it is to play.
 ## May be null, in which case this feature is disabled.
@@ -225,7 +225,7 @@ func _on_order_changed(
 			new_element_index += 1
 
 
-func _on_player_added(player: GamePlayer, _player_index: int) -> void:
+func _on_player_added(player: GamePlayer) -> void:
 	if player.is_spectating():
 		return
 

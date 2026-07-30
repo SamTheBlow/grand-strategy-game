@@ -2,11 +2,12 @@ class_name GamePlayers
 ## An encapsulated list of [GamePlayer] nodes.
 ## Provides useful functions and signals.
 
-signal player_added(game_player: GamePlayer, position_index: int)
-signal player_removed(game_player: GamePlayer)
+signal added(game_player: GamePlayer)
+signal removed(game_player: GamePlayer)
 signal username_changed(game_player: GamePlayer)
 
 var _list: Array[GamePlayer] = []
+
 var _unique_id_system := UniqueIdSystem.new()
 
 
@@ -25,7 +26,7 @@ func remove(player: GamePlayer) -> void:
 
 	player.username_changed.disconnect(_on_username_changed)
 	_list.erase(player)
-	player_removed.emit(player)
+	removed.emit(player)
 
 
 ## Removes a player, using given [UndoRedo] system.
@@ -161,7 +162,7 @@ func _add(
 	else:
 		_list.insert(insertion_index, player)
 
-	player_added.emit(player, _list.find(player))
+	added.emit(player)
 
 
 # TODO move this to a different class
