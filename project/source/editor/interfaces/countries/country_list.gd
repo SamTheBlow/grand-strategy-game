@@ -12,7 +12,7 @@ var country_factory: Country.Factory
 
 
 func _ready() -> void:
-	_country_list.countries = countries
+	_country_list.setup(countries, false)
 	_country_list.country_selected.connect(_on_country_selected)
 
 

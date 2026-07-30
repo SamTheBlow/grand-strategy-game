@@ -349,8 +349,8 @@ func _on_country_select_pressed(item_country: ItemCountry) -> void:
 	var country_select_popup := (
 			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
 	)
+	country_select_popup.setup(_current_project.game.countries, true)
 	country_select_popup.country_selected.connect(item_country.set_value)
-	country_select_popup.setup(_current_project.game.countries)
 	popup.contents_node = country_select_popup
 	_popup_container.add_child(popup)
 
