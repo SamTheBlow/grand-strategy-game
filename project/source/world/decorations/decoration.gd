@@ -41,13 +41,9 @@ var color := Color.WHITE:
 		changed.emit(self)
 
 
-func texture_2d(project_textures: ProjectTextures) -> Texture2D:
-	return texture.texture(project_textures, DEFAULT_TEXTURE)
-
-
 ## Takes a [Sprite2D] and applies this decoration's data to it.
-func apply_to_sprite(sprite: Sprite2D, textures: ProjectTextures) -> void:
-	sprite.texture = texture_2d(textures)
+func apply_to_sprite(sprite: Sprite2D) -> void:
+	sprite.texture = texture.texture(DEFAULT_TEXTURE)
 	sprite.flip_h = flip_h
 	sprite.flip_v = flip_v
 	sprite.position = position
@@ -57,11 +53,9 @@ func apply_to_sprite(sprite: Sprite2D, textures: ProjectTextures) -> void:
 
 
 ## Takes a [TextureRect] and changes its data to look like this decoration.
-func apply_preview(
-		texture_rect: TextureRect, textures: ProjectTextures
-) -> void:
+func apply_preview(texture_rect: TextureRect) -> void:
 	# Position is not applied. Scale is changed but keeps aspect ratio.
-	texture_rect.texture = texture_2d(textures)
+	texture_rect.texture = texture.texture(DEFAULT_TEXTURE)
 	texture_rect.flip_h = flip_h
 	texture_rect.flip_v = flip_v
 	texture_rect.rotation_degrees = rotation_degrees

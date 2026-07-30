@@ -33,6 +33,12 @@ static func from_raw_data(
 ) -> ProjectMetadata:
 	var output := ProjectMetadata.new()
 
+	# Use a dummy instance to avoid registering the textures
+	# in the actual project textures.
+	var dummy_textures := (
+			ProjectTextures.new(StringRef.new(project_absolute_path))
+	)
+
 	if raw_data is not Dictionary:
 		return output
 	var raw_dict: Dictionary = raw_data
@@ -47,17 +53,15 @@ static func from_raw_data(
 
 		# Internal resource
 		if icon_string.begins_with(ExposedResources.INTERNAL_PREFIX):
-			output._icon = ProjectMetadata.IconInternal.new(icon_string)
-		
+			output.icon = TextureInternal.new(icon_string)
+
 		# File path
 		else:
-			output._icon = ProjectMetadata.IconFromFilePath.new(
-					icon_string, project_absolute_path
-			)
+			output.icon = TextureFromFilePath.new(icon_string, dummy_textures)
 	elif ParseUtils.dictionary_has_array(raw_dict, _ICON_KEY):
 		# Image data
 		var image_data := PackedByteArray(raw_dict[_ICON_KEY])
-		output._icon = ProjectMetadata.IconFromImageData.new(image_data)
+		output.icon = TextureFromImageData.new(image_data, dummy_textures)
 
 	# Custom settings
 	if ParseUtils.dictionary_has_dictionary(raw_dict, _SETTINGS_KEY):
@@ -82,15 +86,24 @@ static func to_raw_dict(
 	if metadata.project_name != "":
 		output.get_or_add(_NAME_KEY, metadata.project_name)
 
-	var icon_raw_data: Variant = metadata._icon.to_raw_data(include_file_paths)
-	if not (
-			icon_raw_data == null
-			or is_same(icon_raw_data, "")
-			or ParseUtils.is_empty_array(icon_raw_data)
-	):
-		output.get_or_add(_ICON_KEY, icon_raw_data)
+	if metadata.icon_texture() != ProjectMetadata.DEFAULT_PROJECT_ICON:
+		output.get_or_add(
+				_ICON_KEY, _icon_raw_data(metadata, include_file_paths)
+		)
 
 	if not metadata.settings.is_empty():
 		output.get_or_add(_SETTINGS_KEY, metadata.settings)
 
 	return output
+
+
+## Avoids saving the icon as an id
+static func _icon_raw_data(
+		metadata: ProjectMetadata, include_file_paths: bool
+) -> Variant:
+	if metadata.icon is TextureFromFilePath and include_file_paths:
+		return (metadata.icon as TextureFromFilePath).relative_path()
+	elif metadata.icon is TextureInternal:
+		return metadata.icon.to_raw_data()
+	else:
+		return TextureFromImageData.to_image_data(metadata.icon_texture())

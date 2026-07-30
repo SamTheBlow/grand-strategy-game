@@ -5,24 +5,13 @@ var _image_data: PackedByteArray
 
 
 ## Given array is never edited, so no need to create a duplicate.
-func _init(image_data: PackedByteArray) -> void:
+func _init(
+		image_data: PackedByteArray, project_textures: ProjectTextures
+) -> void:
 	_image_data = image_data
 
-
-func texture(
-		textures: ProjectTextures, fallback_texture: Texture2D = null
-) -> Texture2D:
-	if _id < 0:
-		_id = textures.new_id_from_image_data(_image_data)
-
-	return super(textures, fallback_texture)
-
-
-func to_raw_data() -> Variant:
-	if _id < 0:
-		return Array(_image_data)
-
-	return super()
+	_project_textures = project_textures
+	_id = _project_textures.new_id_from_image_data(_image_data)
 
 
 ## Loads the texture using given image data and returns it.

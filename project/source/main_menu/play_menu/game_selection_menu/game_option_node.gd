@@ -79,7 +79,7 @@ func _update_info() -> void:
 	if not is_node_ready():
 		return
 
-	_icon_texture.texture = meta_bundle.metadata.icon()
+	_icon_texture.texture = meta_bundle.metadata.icon_texture()
 	_name_label.text = meta_bundle.metadata.project_name_or_default()
 	_file_path_label.text = meta_bundle.project_absolute_path
 	settings.metadata = meta_bundle.metadata

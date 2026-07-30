@@ -6,7 +6,9 @@ const _TEXTURE_SELECT_POPUP_SCENE: PackedScene = preload("uid://cffc06lk8bb0f")
 @export var _popup_container: Control
 
 
-func _open_popup(item_texture: ItemTexture) -> void:
+func _open_popup(
+		item_texture: ItemTexture, project_textures: ProjectTextures
+) -> void:
 	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
 	var texture_select_popup := (
 			_TEXTURE_SELECT_POPUP_SCENE.instantiate() as TextureSelectPopup
@@ -14,10 +16,7 @@ func _open_popup(item_texture: ItemTexture) -> void:
 	texture_select_popup.texture_selected.connect(
 			_on_texture_selected.bind(item_texture)
 	)
-	if item_texture.project_textures != null:
-		texture_select_popup.project_absolute_path = (
-				item_texture.project_textures.project_absolute_path_ref()
-		)
+	texture_select_popup.project_textures = project_textures
 	popup.contents_node = texture_select_popup
 	_popup_container.add_child(popup)
 

@@ -13,7 +13,7 @@ enum Tab {
 	IMPORTED_TEXTURES = 2,
 }
 
-var project_absolute_path := StringRef.new()
+var project_textures: ProjectTextures
 
 var _map: Dictionary[Tab, IndexedTextures] = {
 	Tab.BASE_TEXTURES: IndexedTextures.new(),
@@ -47,17 +47,13 @@ func buttons() -> Array[String]:
 
 func _add_file(tab: Tab, file: String) -> void:
 	var project_texture: ProjectTexture
-	var texture: Texture2D
-
 	if file.begins_with(ExposedResources.INTERNAL_PREFIX):
 		project_texture = TextureInternal.new(file)
-		texture = project_texture.texture(null)
 	else:
-		project_texture = TextureFromFilePath.new(file, project_absolute_path)
-		texture = ProjectTextures.texture_from_path(file)
+		project_texture = TextureFromFilePath.new(file, project_textures)
 
 	_map[tab].add(project_texture)
-	_tab_item_list(tab).add_item("", texture)
+	_tab_item_list(tab).add_item("", project_texture.texture())
 
 
 func _tab_item_list(tab: Tab) -> ItemList:
@@ -111,7 +107,7 @@ func _on_texture_imported(path: String, texture: Texture2D) -> void:
 
 	imported_textures.list[path] = texture
 	_map[Tab.IMPORTED_TEXTURES].add(
-			TextureFromFilePath.new(path, project_absolute_path)
+			TextureFromFilePath.new(path, project_textures)
 	)
 	_tab_item_list(Tab.IMPORTED_TEXTURES).add_item("", texture)
 

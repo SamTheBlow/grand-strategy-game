@@ -17,9 +17,7 @@ var value: ProjectTexture = ProjectTexture.none():
 			value_changed.emit(self)
 
 ## May be null.
-var project_textures: ProjectTextures
-## May be null.
-var fallback_texture: Texture2D
+var fallback_texture: Texture2D = null
 
 
 func request_popup() -> void:
@@ -27,6 +25,4 @@ func request_popup() -> void:
 
 
 func texture() -> Texture2D:
-	if project_textures == null:
-		return null
-	return value.texture(project_textures, fallback_texture)
+	return value.texture(fallback_texture)

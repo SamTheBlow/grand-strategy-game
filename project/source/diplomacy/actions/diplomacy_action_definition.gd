@@ -32,13 +32,13 @@ extends Resource
 ## Affects the target country's relationship with the source country.
 @export var their_outcome_data: Dictionary = {}
 
-var _texture: TextureInternal 
+var _texture: TextureInternal
 
 
 func icon() -> Texture2D:
 	if _texture == null:
 		_texture = TextureInternal.new(icon_texture)
-	return _texture.texture(null, preload("uid://dlk4vjy5lgeuu"))
+	return _texture.texture(preload("uid://dlk4vjy5lgeuu"))
 
 
 func apply_action_data(

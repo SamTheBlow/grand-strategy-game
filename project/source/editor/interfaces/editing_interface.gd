@@ -2,7 +2,9 @@ class_name EditingInterface
 extends Control
 ## Opens and closes interfaces for the user to use in the editor.
 
-signal texture_popup_requested(item_texture: ItemTexture)
+signal texture_popup_requested(
+		item_texture: ItemTexture, project_textures: ProjectTextures
+)
 signal country_select_pressed(item_country: ItemCountry)
 signal country_interface_opened(country: Country)
 signal country_interface_closed()
@@ -162,7 +164,9 @@ func _new_interface(
 	if new_interface is InterfaceProjectInfo:
 		var interface := new_interface as InterfaceProjectInfo
 		interface.project = project
-		interface.texture_popup_requested.connect(texture_popup_requested.emit)
+		interface.texture_popup_requested.connect(
+				texture_popup_requested.emit.bind(project.textures)
+		)
 	elif new_interface is InterfaceRNG:
 		var interface := new_interface as InterfaceRNG
 		interface.game_rng = project.game.rng
@@ -194,7 +198,6 @@ func _new_interface(
 	elif new_interface is InterfaceDecorationList:
 		var interface := new_interface as InterfaceDecorationList
 		interface.decorations = project.game.world.decorations
-		interface.project_textures = project.textures
 		interface.item_selected.connect(
 				_open_decoration_edit_interface.bind(project, editor_settings)
 		)
@@ -295,9 +298,10 @@ func _open_decoration_edit_interface(
 	new_interface.duplicate_pressed.connect(
 			_on_world_decoration_duplicated.bind(project, editor_settings)
 	)
-	new_interface.texture_popup_requested.connect(texture_popup_requested.emit)
+	new_interface.texture_popup_requested.connect(
+			texture_popup_requested.emit.bind(project.textures)
+	)
 	new_interface.world_decoration = world_decoration
-	new_interface.project_textures = project.textures
 	new_interface.world_decorations = project.game.world.decorations
 	open_interface(new_interface)
 

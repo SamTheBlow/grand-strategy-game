@@ -58,7 +58,7 @@ static func _decoration_from_raw(
 		# Id
 		var id: int = ParseUtils.dictionary_int(raw_dict, _TEXTURE_KEY)
 		project_textures.claim_id(id)
-		decoration.texture = TextureFromId.new(id)
+		decoration.texture = TextureFromId.new(id, project_textures)
 	elif ParseUtils.dictionary_has_string(raw_dict, _TEXTURE_KEY):
 		var texture_string: String = raw_dict[_TEXTURE_KEY]
 
@@ -68,13 +68,14 @@ static func _decoration_from_raw(
 
 		# File path
 		else:
-			decoration.texture = TextureFromFilePath.new(
-					texture_string,
-					project_textures.project_absolute_path_ref()
+			decoration.texture = (
+					TextureFromFilePath.new(texture_string, project_textures)
 			)
 	elif ParseUtils.dictionary_has_array(raw_dict, _TEXTURE_KEY):
 		# Image data
-		decoration.texture = TextureFromImageData.new(raw_dict[_TEXTURE_KEY])
+		decoration.texture = TextureFromImageData.new(
+				raw_dict[_TEXTURE_KEY], project_textures
+		)
 
 	if ParseUtils.dictionary_has_bool(raw_dict, _FLIP_H_KEY):
 		decoration.flip_h = raw_dict[_FLIP_H_KEY]

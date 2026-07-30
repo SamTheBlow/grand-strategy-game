@@ -17,15 +17,15 @@ var project_name: String = "":
 		project_name = value
 		name_changed.emit()
 
+var icon: ProjectTexture = ProjectTexture.none():
+	set(value):
+		if icon == value:
+			return
+		icon = value
+		icon_changed.emit()
+
 ## Keys must be of type String, values may be any "raw" type.
 var settings: Dictionary = {}
-
-var _icon: Icon = Icon.none():
-	set(value):
-		if _icon == value:
-			return
-		_icon = value
-		icon_changed.emit()
 
 
 ## Returns the default project name if the current project name is empty.
@@ -33,9 +33,9 @@ func project_name_or_default() -> String:
 	return project_name if project_name != "" else DEFAULT_PROJECT_NAME
 
 
-## Returns the project's icon.
-func icon() -> Texture2D:
-	return _icon.texture if _icon.texture != null else DEFAULT_PROJECT_ICON
+## Returns the project's icon texture, with default icon fallback.
+func icon_texture() -> Texture2D:
+	return icon.texture(DEFAULT_PROJECT_ICON)
 
 
 ## Emits a signal.
@@ -71,66 +71,7 @@ func to_raw_dict(include_file_paths: bool) -> Dictionary:
 ## Updates all internal values to match given metadata.
 func copy_metadata(metadata: ProjectMetadata) -> void:
 	project_name = metadata.project_name
-	_icon = metadata._icon
+	icon = metadata.icon
 	settings = metadata.settings
 
 	state_updated.emit(self)
-
-
-@abstract class Icon:
-	var texture: Texture2D = null
-
-	@abstract func to_raw_data(include_file_paths: bool) -> Variant
-
-	static func none() -> Icon:
-		return IconNone.new()
-
-
-class IconNone extends Icon:
-	func to_raw_data(_include_file_paths: bool = false) -> Variant:
-		return null
-
-
-class IconInternal extends Icon:
-	var _keyword: String
-
-	func _init(keyword: String) -> void:
-		_keyword = keyword
-		texture = preload("uid://doda8npdqckhw").texture_with_keyword(_keyword)
-
-	func to_raw_data(_include_file_paths: bool = false) -> Variant:
-		return _keyword
-
-
-class IconFromFilePath extends Icon:
-	var _icon_relative_path: String
-
-	func _init(
-			icon_relative_path: String, project_absolute_path: String
-	) -> void:
-		_icon_relative_path = icon_relative_path
-		texture = ProjectTextures.texture_from_relative_path(
-				project_absolute_path, _icon_relative_path
-		)
-
-	func relative_path() -> String:
-		return _icon_relative_path
-
-	func to_raw_data(include_file_paths: bool) -> Variant:
-		if include_file_paths:
-			return _icon_relative_path
-		else:
-			if texture == null:
-				return null
-			return Array(TextureFromImageData.to_image_data(texture))
-
-
-class IconFromImageData extends Icon:
-	var _image_data: Array
-
-	func _init(image_data: PackedByteArray) -> void:
-		_image_data = Array(image_data)
-		texture = TextureFromImageData.from_image_data(image_data)
-
-	func to_raw_data(_include_file_paths: bool = false) -> Variant:
-		return _image_data

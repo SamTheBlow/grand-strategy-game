@@ -7,7 +7,6 @@ signal item_selected(decoration: WorldDecoration)
 const _ELEMENT_SCENE := preload("uid://gwjmb35fowhg") as PackedScene
 
 var decorations: WorldDecorations
-var project_textures: ProjectTextures
 
 ## Maps decorations to their corresponding node for quick access.
 var _nodes: Dictionary[WorldDecoration, WorldDecorationListElement] = {}
@@ -34,7 +33,6 @@ func _add_element(world_decoration: WorldDecoration) -> void:
 
 	var element := _ELEMENT_SCENE.instantiate() as WorldDecorationListElement
 	element.world_decoration = world_decoration
-	element.project_textures = project_textures
 
 	element.pressed.connect(_on_element_pressed)
 	_element_container.add_child(element)

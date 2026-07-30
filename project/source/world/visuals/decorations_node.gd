@@ -4,7 +4,6 @@ extends Node2D
 
 var _is_setup: bool = false
 var _world_decorations: WorldDecorations
-var _project_textures: ProjectTextures
 
 ## Maps a world decoration to its corresponding sprite.
 var _map: Dictionary[WorldDecoration, Sprite2D] = {}
@@ -15,12 +14,11 @@ func _ready() -> void:
 		_update()
 
 
-func setup(decorations: WorldDecorations, textures: ProjectTextures) -> void:
+func setup(decorations: WorldDecorations) -> void:
 	if _is_setup and is_node_ready():
 		_disconnect_signals()
 
 	_world_decorations = decorations
-	_project_textures = textures
 	_is_setup = true
 
 	if is_node_ready():
@@ -38,7 +36,7 @@ func _update() -> void:
 
 func _add(decoration: WorldDecoration) -> void:
 	var sprite := Sprite2D.new()
-	decoration.apply_to_sprite(sprite, _project_textures)
+	decoration.apply_to_sprite(sprite)
 	_map[decoration] = sprite
 	add_child(sprite)
 	decoration.changed.connect(_on_decoration_changed)
@@ -73,4 +71,4 @@ func _on_decoration_removed(decoration: WorldDecoration) -> void:
 
 
 func _on_decoration_changed(decoration: WorldDecoration) -> void:
-	decoration.apply_to_sprite(_map[decoration], _project_textures)
+	decoration.apply_to_sprite(_map[decoration])

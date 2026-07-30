@@ -11,9 +11,7 @@ func _init(keyword: String) -> void:
 	_texture = preload("uid://doda8npdqckhw").texture_with_keyword(_keyword)
 
 
-func texture(
-		_textures: ProjectTextures, fallback_texture: Texture2D = null
-) -> Texture2D:
+func texture(fallback_texture: Texture2D = null) -> Texture2D:
 	return _texture if _texture != null else fallback_texture
 
 

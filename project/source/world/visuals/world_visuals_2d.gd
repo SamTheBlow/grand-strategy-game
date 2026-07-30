@@ -54,7 +54,7 @@ func _update() -> void:
 
 	_auto_arrow_input.game = project.game
 
-	_decorations_node.setup(world.decorations, project.textures)
+	_decorations_node.setup(world.decorations)
 	_update_decoration_visibility()
 
 	_auto_arrow_container.setup(project.game.countries)

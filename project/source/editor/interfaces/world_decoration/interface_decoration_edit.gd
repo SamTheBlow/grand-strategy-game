@@ -17,8 +17,6 @@ var world_decoration: WorldDecoration:
 		_refresh_preview()
 		world_decoration.changed.connect(_refresh_preview)
 
-var project_textures: ProjectTextures
-
 ## This interface automatically closes
 ## if its decoration is removed from this decorations list.
 ## May be null, in which case this feature is not used.
@@ -60,7 +58,6 @@ func _process(_delta: float) -> void:
 func _load_settings() -> void:
 	# Texture
 	var item_texture := _settings.item.child_items[0] as ItemTexture
-	item_texture.project_textures = project_textures
 	item_texture.fallback_texture = WorldDecoration.DEFAULT_TEXTURE
 	item_texture.value = world_decoration.texture
 	item_texture.value_changed.connect(_on_texture_value_changed)
@@ -112,7 +109,7 @@ func _load_settings() -> void:
 func _refresh_preview(_world_decoration: WorldDecoration = null) -> void:
 	if not is_node_ready():
 		return
-	world_decoration.apply_preview(_preview_rect, project_textures)
+	world_decoration.apply_preview(_preview_rect)
 
 
 func _apply_undo_redo_action(

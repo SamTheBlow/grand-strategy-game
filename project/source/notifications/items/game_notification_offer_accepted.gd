@@ -33,7 +33,7 @@ func action_id() -> int:
 
 
 func icon() -> Texture2D:
-	return _icon.texture(null, preload("uid://dlk4vjy5lgeuu"))
+	return _icon.texture(preload("uid://dlk4vjy5lgeuu"))
 
 
 func description() -> String:

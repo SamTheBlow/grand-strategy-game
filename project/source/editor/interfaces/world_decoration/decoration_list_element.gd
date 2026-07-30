@@ -18,8 +18,6 @@ var world_decoration: WorldDecoration:
 		_refresh()
 		world_decoration.changed.connect(_refresh)
 
-var project_textures: ProjectTextures
-
 @onready var _decoration_preview := %DecorationPreview as TextureRect
 @onready var _position_label := %PositionLabel as Label
 
@@ -40,7 +38,7 @@ func _process(_delta: float) -> void:
 func _refresh(_world_decoration: WorldDecoration = null) -> void:
 	if not is_node_ready():
 		return
-	world_decoration.apply_preview(_decoration_preview, project_textures)
+	world_decoration.apply_preview(_decoration_preview)
 	_position_label.text = str(world_decoration.position)
 
 
