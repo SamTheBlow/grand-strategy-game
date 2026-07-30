@@ -37,8 +37,19 @@ func _ready() -> void:
 	for file in EXPOSED_RESOURCES.openmoji_textures():
 		_add_file(Tab.OPENMOJI, ExposedResources.INTERNAL_PREFIX + file)
 
+	# Populate the ImportedTextures resource
+	# with this project's imported textures
+	for file_path in project_textures.external_file_paths():
+		if IMPORTED_TEXTURES.list.has(file_path):
+			continue
+
+		var texture_id: int = project_textures.new_id_from_file_path(file_path)
+		var texture_2d := project_textures.texture_from_id(texture_id)
+		if texture_2d != null:
+			IMPORTED_TEXTURES.list.get_or_add(file_path, texture_2d)
+
 	for file in IMPORTED_TEXTURES.list:
-		_add_file(Tab.IMPORTED_TEXTURES,  file)
+		_add_file(Tab.IMPORTED_TEXTURES, file)
 
 
 func buttons() -> Array[String]:

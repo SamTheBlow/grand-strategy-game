@@ -7,6 +7,8 @@ class_name ProjectTextures
 var _id_map: Dictionary[int, Texture2D] = {}
 ## Maps each absolute file path to its associated texture id.
 var _file_map: Dictionary[String, int] = {}
+## Keeps track of files that are not internal resources.
+var _external_file_paths: Array[String] = []
 
 var _project_absolute_path: StringRef
 var _unique_id_system := UniqueIdSystem.new()
@@ -43,6 +45,12 @@ func claim_id_with_file_path(id: int, absolute_file_path: String) -> void:
 	_id_map[id] = texture_from_path(absolute_file_path)
 	_file_map[absolute_file_path] = id
 
+	if (
+		absolute_file_path not in _external_file_paths
+		and not absolute_file_path.begins_with(ExposedResources.INTERNAL_PREFIX)
+	):
+		_external_file_paths.append(absolute_file_path)
+
 
 ## Loads texture using given image data and assigns it given id.
 func claim_id_with_image_data(id: int, image_data: PackedByteArray) -> void:
@@ -60,9 +68,8 @@ func new_id_from_file_path(absolute_file_path: String) -> int:
 	if _file_map.has(absolute_file_path):
 		return _file_map[absolute_file_path]
 
-	var id: int = _unique_id_system.new_unique_id()
-	_id_map[id] = texture_from_path(absolute_file_path)
-	_file_map[absolute_file_path] = id
+	var id: int = _unique_id_system.new_unique_id(false)
+	claim_id_with_file_path(id, absolute_file_path)
 	return id
 
 
@@ -82,6 +89,11 @@ func texture_from_id(id: int) -> Texture2D:
 
 	push_warning("There doesn't exist a texture with id: ", id)
 	return null
+
+
+## Returns a new copy of the list of files that are not internal resources.
+func external_file_paths() -> Array[String]:
+	return _external_file_paths.duplicate()
 
 
 ## Returns a reference to the project's absolute path.
