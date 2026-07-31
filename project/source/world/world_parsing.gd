@@ -58,7 +58,9 @@ static func to_raw_dict(world: GameWorld) -> Dictionary:
 	var output: Dictionary = {}
 
 	# Armies
-	var armies_data: Array = ArmyParsing.to_raw_array(world.armies.list())
+	var armies_data: Array = ArmyParsing.to_raw_array(
+			world.armies.list(), world.armies_in_each_province
+	)
 	if not armies_data.is_empty():
 		output.merge({ _ARMIES_KEY: armies_data })
 

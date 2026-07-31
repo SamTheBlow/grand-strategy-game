@@ -6,6 +6,7 @@ const _TEXTURE_KEY: String = "texture"
 const _OWNER_ID_KEY: String = "owner_country_id"
 const _SIZE_KEY: String = "army_size"
 const _PROVINCE_ID_KEY: String = "province_id"
+const _ARRIVAL_INDEX_KEY: String = "arrival_index"
 const _MOVEMENTS_KEY: String = "number_of_movements_made"
 
 
@@ -26,11 +27,23 @@ static func load_from_raw_data(
 		return
 	var raw_array: Array = raw_data
 
-	for army_data: Variant in raw_array:
-		_load_army_from_raw_data(army_data, game, project_textures)
+	# Create the armies in arrival order within each province.
+	# This entries array uses a custom format for performance reasons.
+	var entries: Array = _entries_in_arrival_order(raw_array)
+	for entry: Array in entries:
+		_load_army_from_raw_dict(entry[1], game, project_textures)
 
 
-static func to_raw_array(armies_list: Array[Army]) -> Array:
+static func to_raw_array(
+		armies_list: Array[Army], armies_in_each_province: ArmiesInEachProvince
+) -> Array:
+	# Map each army to its position in its province's army list.
+	# This is done before iterating over armies, for performance reasons.
+	var arrival_indices: Dictionary[Army, int] = {}
+	for province_armies: ArmiesInProvince in armies_in_each_province.values():
+		for i in province_armies.list.size():
+			arrival_indices[province_armies.list[i]] = i
+
 	var output: Array = []
 
 	for army in armies_list:
@@ -53,6 +66,10 @@ static func to_raw_array(armies_list: Array[Army]) -> Array:
 		if army.province_id() != -1:
 			army_data.merge({ _PROVINCE_ID_KEY: army.province_id() })
 
+			# Arrival index (the army's position in the province)
+			if arrival_indices.has(army) and arrival_indices[army] != 0:
+				army_data.merge({ _ARRIVAL_INDEX_KEY: arrival_indices[army] })
+
 		# Movements made
 		if army.movements_made() != 0:
 			army_data.merge({ _MOVEMENTS_KEY: army.movements_made() })
@@ -62,13 +79,9 @@ static func to_raw_array(armies_list: Array[Army]) -> Array:
 	return output
 
 
-static func _load_army_from_raw_data(
-		raw_data: Variant, game: Game, project_textures: ProjectTextures
+static func _load_army_from_raw_dict(
+		raw_dict: Dictionary, game: Game, project_textures: ProjectTextures
 ) -> void:
-	if raw_data is not Dictionary:
-		return
-	var raw_dict: Dictionary = raw_data
-
 	# Army id (mandatory)
 	if not ParseUtils.dictionary_has_number(raw_dict, _ID_KEY):
 		return
@@ -116,3 +129,31 @@ static func _load_army_from_raw_data(
 			owner_country, province_id, army_size, id, movements_made
 	)
 	new_army.texture = texture
+
+
+## Returns entries of given array sorted in army arrival order in a province.
+## Discards input entries that aren't a [Dictionary].
+##
+## Each returned entry is an array with two elements:
+## the first element is the order key (you can ignore it),
+## the second element is the army raw dictionary.
+static func _entries_in_arrival_order(raw_array: Array) -> Array:
+	var entries: Array = []
+	entries.resize(raw_array.size())
+
+	for i in raw_array.size():
+		if raw_array[i] is not Dictionary:
+			continue
+		var raw_dict := raw_array[i] as Dictionary
+
+		var order_key: int = i
+		if ParseUtils.dictionary_has_number(raw_dict, _ARRIVAL_INDEX_KEY):
+			var arrival_index: int = (
+					ParseUtils.dictionary_int(raw_dict, _ARRIVAL_INDEX_KEY)
+			)
+			order_key = arrival_index * (1 << 31) + i
+
+		entries[i] = [order_key, raw_dict]
+
+	entries.sort()
+	return entries
