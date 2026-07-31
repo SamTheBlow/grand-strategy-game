@@ -27,7 +27,9 @@ static func load_from_raw_data(
 	ProvinceParsing.load_from_raw_data(raw_dict.get(_PROVINCES_KEY), game)
 
 	# Armies
-	ArmyParsing.load_from_raw_data(raw_dict.get(_ARMIES_KEY), game)
+	ArmyParsing.load_from_raw_data(
+			raw_dict.get(_ARMIES_KEY), game, project_textures
+	)
 
 	# World limits
 	game.world._limits = WorldLimitsParsing.from_raw_data(

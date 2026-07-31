@@ -2,6 +2,8 @@ class_name ArmyVisuals2D
 extends Node2D
 ## An [Army]'s visuals for a 2D world map.
 
+const _DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
+
 var army: Army
 
 ## Stops animations and updates tint when the playing country changes.
@@ -16,6 +18,8 @@ func _ready() -> void:
 	# Give this node a unique meaningful name
 	name = "Army" + str(army.id)
 
+	_refresh_army_texture()
+	army.texture_changed.connect(_refresh_army_texture)
 	_refresh_army_color()
 	army.allegiance_changed.connect(_refresh_army_color.unbind(1))
 	_refresh_army_size()
@@ -51,6 +55,20 @@ func move_to(new_position: Vector2) -> void:
 
 	if _animation.is_playing():
 		position = _old_position
+
+
+func _refresh_army_texture() -> void:
+	_army_sprite.texture = army.texture.texture(_DEFAULT_TEXTURE)
+
+	var width: float = _army_sprite.texture.get_width()
+	var height: float = _army_sprite.texture.get_height()
+
+	var scale_ratio: float = 1.0
+	if width != 0.0 and height != 0.0:
+		scale_ratio = minf(64.0 / width, 64.0 / height)
+
+	_army_sprite.scale = Vector2.ONE * scale_ratio
+	_army_sprite.offset.y = -0.5 * height
 
 
 func _refresh_army_color() -> void:

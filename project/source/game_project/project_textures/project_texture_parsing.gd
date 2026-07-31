@@ -1,5 +1,6 @@
 class_name ProjectTextureParsing
 ## Parses raw data from/to [ProjectTextures].
+## Also parses raw data to an individual [ProjectTexture].
 
 const _ID_KEY: String = "id"
 const _FILE_PATH_KEY: String = "file_path"
@@ -18,7 +19,7 @@ static func from_raw_data(
 	var raw_array: Array = raw_data
 
 	for texture_data: Variant in raw_array:
-		_load_texture_from_raw_data(texture_data, project_textures)
+		_register_texture_from_raw_data(texture_data, project_textures)
 
 	return project_textures
 
@@ -84,7 +85,37 @@ static func to_raw_array(
 	return output
 
 
-static func _load_texture_from_raw_data(
+## Always succeeds. Ignores unrecognized data.
+## When data is invalid, uses the default value instead.
+static func texture_from_raw_data(
+		raw_data: Variant, project_textures: ProjectTextures
+) -> ProjectTexture:
+	if raw_data == null:
+		return ProjectTexture.none()
+	elif ParseUtils.is_number(raw_data):
+		# Id
+		var id: int = ParseUtils.number_as_int(raw_data)
+		project_textures.claim_id(id)
+		return TextureFromId.new(id, project_textures)
+	elif raw_data is String:
+		var texture_string := raw_data as String
+
+		# Internal texture
+		if texture_string.begins_with(ExposedResources.INTERNAL_PREFIX):
+			return TextureInternal.new(texture_string)
+
+		# File path
+		else:
+			return TextureFromFilePath.new(texture_string, project_textures)
+	elif raw_data is Array:
+		# Image data
+		return TextureFromImageData.new(raw_data as Array, project_textures)
+	else:
+		return ProjectTexture.none()
+
+
+## Registers a project texture from data found in the project textures data.
+static func _register_texture_from_raw_data(
 		raw_data: Variant, project_textures: ProjectTextures
 ) -> void:
 	if raw_data is not Dictionary:

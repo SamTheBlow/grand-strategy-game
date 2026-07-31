@@ -54,28 +54,9 @@ static func _decoration_from_raw(
 	var decoration := WorldDecoration.new()
 
 	# Texture
-	if ParseUtils.dictionary_has_number(raw_dict, _TEXTURE_KEY):
-		# Id
-		var id: int = ParseUtils.dictionary_int(raw_dict, _TEXTURE_KEY)
-		project_textures.claim_id(id)
-		decoration.texture = TextureFromId.new(id, project_textures)
-	elif ParseUtils.dictionary_has_string(raw_dict, _TEXTURE_KEY):
-		var texture_string: String = raw_dict[_TEXTURE_KEY]
-
-		# Internal texture
-		if texture_string.begins_with(ExposedResources.INTERNAL_PREFIX):
-			decoration.texture = TextureInternal.new(texture_string)
-
-		# File path
-		else:
-			decoration.texture = (
-					TextureFromFilePath.new(texture_string, project_textures)
-			)
-	elif ParseUtils.dictionary_has_array(raw_dict, _TEXTURE_KEY):
-		# Image data
-		decoration.texture = TextureFromImageData.new(
-				raw_dict[_TEXTURE_KEY], project_textures
-		)
+	decoration.texture = ProjectTextureParsing.texture_from_raw_data(
+			raw_dict.get(_TEXTURE_KEY), project_textures
+	)
 
 	if ParseUtils.dictionary_has_bool(raw_dict, _FLIP_H_KEY):
 		decoration.flip_h = raw_dict[_FLIP_H_KEY]

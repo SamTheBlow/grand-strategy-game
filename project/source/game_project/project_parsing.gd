@@ -95,9 +95,11 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 
 
 static func _game_project(
-		raw_dict: Dictionary, project_absolute_path: String
+		raw_dict: Dictionary, file_path: String
 ) -> GameProject:
-	var game_project := GameProject.new(project_absolute_path)
+	var game_project := GameProject.new(
+			ProjectSettings.globalize_path(file_path)
+	)
 
 	# Load the textures
 	game_project.textures = ProjectTextureParsing.from_raw_data(
