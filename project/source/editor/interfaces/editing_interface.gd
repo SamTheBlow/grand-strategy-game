@@ -23,6 +23,7 @@ enum InterfaceType {
 	BACKGROUND_COLOR,
 	DECORATION_LIST,
 	PROVINCE_LIST,
+	ARMY_LIST,
 }
 
 ## The root node of each scene is an [AppEditorInterface].
@@ -38,6 +39,7 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
 	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
 	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
+	InterfaceType.ARMY_LIST: preload("uid://l2nhdgg0p4oo"),
 }
 
 ## This will be given to all new interfaces.
@@ -207,6 +209,14 @@ func _new_interface(
 		interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
 		)
+	elif new_interface is InterfaceArmyList:
+		var interface := new_interface as InterfaceArmyList
+		interface.armies = project.game.world.armies
+		interface.army_factory = Army.Factory.new(project.game)
+		interface.playing_country = PlayingCountry.new(project.game)
+		interface.item_selected.connect(
+				_open_army_edit_interface.bind(project, editor_settings)
+		)
 
 	return new_interface
 
@@ -304,6 +314,36 @@ func _open_decoration_edit_interface(
 	new_interface.world_decoration = world_decoration
 	new_interface.world_decorations = project.game.world.decorations
 	open_interface(new_interface)
+
+
+func _open_army_edit_interface(
+		army_id: int, project: GameProject, editor_settings: AppEditorSettings
+) -> void:
+	var army: Army = project.game.world.armies.army_from_id(army_id)
+	if army == null:
+		push_error("Army doesn't exist.")
+		return
+
+	var edit_interface := _new_interface(
+			preload("uid://n04sb8kke04h"), project, editor_settings
+	) as InterfaceArmyEdit
+	edit_interface.closed.connect(open_new_interface.bind(
+			InterfaceType.ARMY_LIST, project, editor_settings
+	))
+	edit_interface.delete_pressed.connect(
+			_on_army_deleted.bind(project.game.world.armies)
+	)
+	edit_interface.duplicate_pressed.connect(
+			_on_army_duplicated.bind(project, editor_settings)
+	)
+	edit_interface.texture_popup_requested.connect(
+			texture_popup_requested.emit.bind(project.textures)
+	)
+	edit_interface.country_select_pressed.connect(country_select_pressed.emit)
+	edit_interface.army = army
+	edit_interface.playing_country = PlayingCountry.new(project.game)
+	edit_interface.armies = project.game.world.armies
+	open_interface(edit_interface)
 
 
 func _on_world_decoration_deleted(
@@ -452,6 +492,37 @@ func _on_player_duplicated(
 	undo_redo.commit_action(false)
 
 	_open_player_edit_interface(new_player.id, project, editor_settings)
+
+
+func _on_army_deleted(army: Army, armies: Armies) -> void:
+	undo_redo.create_action("Delete army")
+	undo_redo.add_do_method(armies.remove.bind(army))
+	undo_redo.add_undo_method(armies.add.bind(army))
+	undo_redo.commit_action()
+
+
+func _on_army_duplicated(
+		army: Army, project: GameProject, editor_settings: AppEditorSettings
+) -> void:
+	# Create duplicate
+	var new_army := Army.Factory.new(project.game).new_army(
+			army.owner_country,
+			army.province_id(),
+			army.size().value,
+			-1,
+			army.movements_made()
+	)
+	new_army.texture = army.texture
+
+	# Create undo_redo action
+	# (don't execute it since army setup already added the army)
+	undo_redo.create_action("Duplicate army")
+	undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
+	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
+	undo_redo.commit_action(false)
+
+	# Open interface to edit the new army
+	_open_army_edit_interface(new_army.id, project, editor_settings)
 
 
 func _on_country_relationships_opened(
