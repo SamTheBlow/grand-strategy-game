@@ -2,19 +2,49 @@ class_name ProjectImport
 extends Node
 ## Loads [ProjectMetadata] from some file/files/directory.
 
-## Emitted whenever a project is successfully imported.
+signal saved_game_imported(metadata_bundle: MetadataBundle)
 signal project_imported(metadata_bundle: MetadataBundle)
 
 
-func _import_from_path(path: String) -> void:
-	var parse_result := MetadataBundle.from_path(path)
+func _ready() -> void:
+	# We need to wait for other nodes in the scene to be ready
+	_import_saved_games.call_deferred()
+
+
+func _import_saved_games() -> void:
+	const USER_DIR: String = "user://"
+
+	var dir_access: DirAccess = DirAccess.open(USER_DIR)
+	if dir_access == null:
+		return
+
+	var user_absolute_path: String = ProjectSettings.globalize_path(USER_DIR)
+	for file_path in dir_access.get_files():
+		var absolute_file_path: String = user_absolute_path.path_join(file_path)
+
+		if not ProjectParsing.is_project(absolute_file_path):
+			continue
+
+		var parse_result := MetadataBundle.from_path(absolute_file_path)
+		if parse_result.error:
+			continue
+
+		saved_game_imported.emit(parse_result.result)
+
+
+func _import_from_path(absolute_file_path: String) -> void:
+	if not ProjectParsing.is_project(absolute_file_path):
+		return
+
+	var parse_result := MetadataBundle.from_path(absolute_file_path)
 	if parse_result.error:
 		return
+
 	project_imported.emit(parse_result.result)
 
 
-## Recursively searches for JSON files in given directory path.
-## When a JSON file is found, imports that file.
+## Recursively searches for project files in given directory path.
+## When a project file is found, imports that file.
 func _scan_dir(dir: String) -> void:
 	var dir_access := DirAccess.open(dir)
 

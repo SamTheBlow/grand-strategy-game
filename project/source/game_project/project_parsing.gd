@@ -94,6 +94,30 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 	return output
 
 
+## Returns true if given file is (most likely) a project.
+static func is_project(absolute_file_path: String) -> bool:
+	var file_json := FileJSON.new()
+	file_json.load_json(absolute_file_path)
+	if file_json.error:
+		return false
+	var raw_data: Variant = file_json.result
+
+	if raw_data is not Dictionary:
+		return false
+	var raw_dict := raw_data as Dictionary
+
+	# Check version
+	if not raw_dict.has(_VERSION_KEY):
+		return false
+	if raw_dict[_VERSION_KEY] is not String:
+		return false
+	var version: String = raw_dict[_VERSION_KEY]
+	if version != _SAVE_DATA_VERSION:
+		return false
+
+	return true
+
+
 static func _game_project(
 		raw_dict: Dictionary, file_path: String
 ) -> GameProject:

@@ -12,10 +12,12 @@ signal project_loaded(project: GameProject)
 var _selected_project: GameOptionNode = null
 
 @onready var _builtin_games := %BuiltInGames as Collapsible
+@onready var _saved_games := %SavedGames as Collapsible
 @onready var _imported_games := %ImportedGames as Collapsible
 
 
 func _ready() -> void:
+	_saved_games.hide()
 	_imported_games.hide()
 
 	for project_file_path in _builtin_game_file_paths:
@@ -40,6 +42,8 @@ func _add_project(
 	option_node.meta_bundle = meta_bundle
 	option_node.selected.connect(_on_project_selected)
 	container_node.add_node(option_node)
+	container_node.visible = true
+	container_node.expand.call_deferred()
 
 	if select_project:
 		_select_project(option_node)
@@ -80,8 +84,9 @@ func _on_project_selected(option_node: GameOptionNode) -> void:
 	_select_project(option_node)
 
 
+func _on_save_file_imported(meta_bundle: MetadataBundle) -> void:
+	_add_project(meta_bundle, _saved_games, false)
+
+
 func _on_project_imported(meta_bundle: MetadataBundle) -> void:
-	_imported_games.show()
 	_add_project(meta_bundle, _imported_games, true)
-	await get_tree().process_frame
-	_imported_games.expand()
