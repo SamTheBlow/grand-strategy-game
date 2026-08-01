@@ -331,7 +331,9 @@ func _open_army_edit_interface(
 			InterfaceType.ARMY_LIST, project, editor_settings
 	))
 	edit_interface.delete_pressed.connect(
-			_on_army_deleted.bind(project.game.world.armies)
+			project.game.world.armies.undo_redo_remove.bind(
+					undo_redo, project.game.world.armies_in_each_province
+			)
 	)
 	edit_interface.duplicate_pressed.connect(
 			_on_army_duplicated.bind(project, editor_settings)
@@ -492,13 +494,6 @@ func _on_player_duplicated(
 	undo_redo.commit_action(false)
 
 	_open_player_edit_interface(new_player.id, project, editor_settings)
-
-
-func _on_army_deleted(army: Army, armies: Armies) -> void:
-	undo_redo.create_action("Delete army")
-	undo_redo.add_do_method(armies.remove.bind(army))
-	undo_redo.add_undo_method(armies.add.bind(army))
-	undo_redo.commit_action()
 
 
 func _on_army_duplicated(

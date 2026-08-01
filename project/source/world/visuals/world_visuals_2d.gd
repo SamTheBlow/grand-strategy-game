@@ -50,7 +50,9 @@ func _update() -> void:
 	map_mode_setup.overlay_created.connect(overlay_created.emit)
 	map_mode_setup.setup(self)
 
-	_army_visuals_setup.setup(world.armies, playing_country)
+	_army_visuals_setup.setup(
+			world.armies, playing_country, world.armies_in_each_province
+	)
 
 	_auto_arrow_input.game = project.game
 

@@ -41,15 +41,39 @@ func remove(army: Army) -> void:
 
 ## Removes given army, using given [UndoRedo] system.
 ## Ensures that when we undo, everything is exactly as it was before.
-func undo_redo_remove(army: Army, undo_redo: UndoRedo) -> void:
+func undo_redo_remove(
+		army: Army,
+		undo_redo: UndoRedo,
+		armies_in_each_province: ArmiesInEachProvince
+) -> void:
 	undo_redo.create_action("Delete army")
 	undo_redo.add_do_method(remove.bind(army))
 
-	# Ensure the army's position in the list is restored on undo
-	var position_index: int = _order.find(army.id)
-	undo_redo.add_undo_method(_add.bind(army, position_index))
+	# Ensure the army's position in this list is restored on undo.
+	var order_index: int = _order.find(army.id)
+	undo_redo.add_undo_method(_add.bind(army, order_index))
+
+	# Ensure the army's position in its province's list is restored on undo.
+	if army.province_id() != -1:
+		var province_index: int = (
+				armies_in_each_province
+				.in_province_id(army.province_id()).list.find(army)
+		)
+		undo_redo.add_undo_method(_restore_province_position.bind(
+				army, province_index, armies_in_each_province
+		))
 
 	undo_redo.commit_action()
+
+
+func _restore_province_position(
+		army: Army,
+		province_index: int,
+		armies_in_each_province: ArmiesInEachProvince
+) -> void:
+	armies_in_each_province.in_province_id(army.province_id()).move_army(
+			army, province_index
+	)
 
 
 ## Returns null if there is no army with given id.

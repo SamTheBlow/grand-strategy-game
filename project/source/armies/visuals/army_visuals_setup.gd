@@ -9,6 +9,8 @@ const _ARMY_VISUALS_SCENE := preload("uid://eso260jnknd4") as PackedScene
 var _is_setup: bool = false
 var _armies: Armies
 var _playing_country: PlayingCountry
+## Used to make the army stack order match the internal data.
+var _armies_in_each_province: ArmiesInEachProvince
 
 ## Each army mapped to its visuals.
 var _map: Dictionary[Army, ArmyVisuals2D] = {}
@@ -22,12 +24,17 @@ func _ready() -> void:
 		_update()
 
 
-func setup(armies: Armies, playing_country: PlayingCountry) -> void:
+func setup(
+		armies: Armies,
+		playing_country: PlayingCountry,
+		armies_in_each_province: ArmiesInEachProvince
+) -> void:
 	if _is_setup and is_node_ready():
 		_disconnect_signals()
 
 	_armies = armies
 	_playing_country = playing_country
+	_armies_in_each_province = armies_in_each_province
 
 	_is_setup = true
 
@@ -126,14 +133,23 @@ func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
 	NodeUtils.delete_node(army_visuals)
 
 
+func _move_army_in_stack(army: Army, position_index: int) -> void:
+	var province_visuals: ProvinceVisuals2D = (
+			_provinces_container.visuals_of(army.province_id())
+	)
+	province_visuals.move_army(_map[army], position_index)
+
+
 func _connect_signals() -> void:
 	_armies.added.connect(_add_army)
 	_armies.removed.connect(_remove_army)
+	_armies_in_each_province.army_reordered.connect(_move_army_in_stack)
 
 
 func _disconnect_signals() -> void:
 	_armies.added.disconnect(_add_army)
 	_armies.removed.disconnect(_remove_army)
+	_armies_in_each_province.army_reordered.disconnect(_move_army_in_stack)
 
 
 ## If the army visuals are deleted from elsewhere,

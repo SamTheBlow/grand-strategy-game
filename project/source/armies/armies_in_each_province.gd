@@ -3,6 +3,8 @@ class_name ArmiesInEachProvince
 ##
 ## See also: [ArmiesInProvince]
 
+signal army_reordered(army: Army, position_index: int)
+
 var _armies: Armies
 
 ## All provinces in the game are guaranteed to be in this dictionary.
@@ -13,6 +15,8 @@ var _map: Dictionary[int, ArmiesInProvince] = { -1: ArmiesInProvince.new() }
 
 func _init(provinces: Provinces, armies: Armies) -> void:
 	_armies = armies
+
+	_map[-1].army_reordered.connect(army_reordered.emit)
 
 	for province in provinces.list():
 		_on_province_added(province)
@@ -48,6 +52,7 @@ func values() -> Array[ArmiesInProvince]:
 
 func _on_province_added(province: Province) -> void:
 	_map[province.id] = ArmiesInProvince.new()
+	_map[province.id].army_reordered.connect(army_reordered.emit)
 
 
 func _on_province_removed(province: Province) -> void:
@@ -57,6 +62,7 @@ func _on_province_removed(province: Province) -> void:
 
 	# Immediately remove the province from the list.
 	var armies_in_province: ArmiesInProvince = _map[province.id]
+	_map[province.id].army_reordered.disconnect(army_reordered.emit)
 	_map.erase(province.id)
 
 	# Remove all armies that were on that province, one by one.

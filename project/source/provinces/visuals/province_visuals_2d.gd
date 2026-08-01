@@ -52,6 +52,10 @@ func add_army(army_visuals: ArmyVisuals2D) -> void:
 	_army_stack.add_child(army_visuals)
 
 
+func move_army(army_visuals: ArmyVisuals2D, position_index: int) -> void:
+	_army_stack.move_child(army_visuals, position_index)
+
+
 func highlight_selected() -> void:
 	_outlined_polygon.outline_settings = _outline_selected
 

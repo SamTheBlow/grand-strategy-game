@@ -7,6 +7,9 @@ class_name ArmiesInProvince
 ## It's for performance reasons. Those things are handled by a separate class.
 ## See [ArmiesInProvinceSystem].
 
+## Emitted when an army is moved within the list.
+signal army_reordered(army: Army, position_index: int)
+
 # TODO figure out how to expose the list without creating a new copy
 # and while also preventing array manipulation from the outside.
 # Creating copies of very large arrays is slow.
@@ -21,16 +24,25 @@ var list: Array[Army] = []
 ## Please use this, do not manipulate the array directly.
 func add(army: Army) -> void:
 	list.append(army)
-	army.province_changed.connect(_on_army_province_changed)
+	army.province_changed.connect(remove)
 
 
 ## Removes given army from the list.
 ## Please use this, do not manipulate the array directly.
 func remove(army: Army) -> void:
 	list.erase(army)
-	army.province_changed.disconnect(_on_army_province_changed)
+	army.province_changed.disconnect(remove)
 
 
-## Removes the army from the list. (The army moved out of the province.)
-func _on_army_province_changed(army: Army) -> void:
-	remove(army)
+## Moves given army to given index in the list.
+func move_army(army: Army, index: int) -> void:
+	if not list.has(army):
+		push_error("Army is not in the list.")
+		return
+
+	if index == list.find(army):
+		return
+
+	list.erase(army)
+	list.insert(index, army)
+	army_reordered.emit(army, index)
