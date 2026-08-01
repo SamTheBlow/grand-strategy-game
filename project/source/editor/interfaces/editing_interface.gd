@@ -122,7 +122,11 @@ func open_province_edit_interface(
 			InterfaceType.PROVINCE_LIST, project, editor_settings
 	))
 	province_interface.delete_pressed.connect(
-			project.game.world.provinces.undo_redo_remove.bind(undo_redo)
+			project.game.world.provinces.undo_redo_remove.bind(
+					undo_redo,
+					project.game.world.armies,
+					project.game.world.armies_in_each_province
+			)
 	)
 	province_interface.duplicate_pressed.connect(
 			_on_province_duplicated.bind(project, editor_settings)
@@ -239,7 +243,11 @@ func _open_country_edit_interface(
 	))
 	edit_interface.delete_pressed.connect(
 			project.game.countries.undo_redo_remove.bind(
-					undo_redo, project.game.world.provinces
+					undo_redo,
+					project.game.world.provinces,
+					project.game.world.armies,
+					project.game.world.armies_of_each_country,
+					project.game.world.armies_in_each_province
 			)
 	)
 	edit_interface.duplicate_pressed.connect(

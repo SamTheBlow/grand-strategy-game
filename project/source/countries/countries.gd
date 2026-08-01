@@ -94,7 +94,12 @@ func position_of(country_id: int) -> int:
 ## Removes a country, using given [UndoRedo] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(
-		country: Country, undo_redo: UndoRedo, provinces: Provinces
+		country: Country,
+		undo_redo: UndoRedo,
+		provinces: Provinces,
+		armies: Armies,
+		armies_of_each_country: ArmiesOfEachCountry,
+		armies_in_each_province: ArmiesInEachProvince
 ) -> void:
 	# Save relationships state before removal
 	var raw_relationships: Array = (
@@ -107,6 +112,14 @@ func undo_redo_remove(
 		var other: Country = _list[other_id]
 		if other.relationships.list.has(country):
 			referencing_country_ids.append(other.id)
+
+	# Save all of this country's armies and their positions
+	var armies_with_positions: Array[ArmyWithPositions] = (
+			armies.list_with_positions(
+					armies_of_each_country.dictionary[country].list,
+					armies_in_each_province
+			)
+	)
 
 	undo_redo.create_action("Delete country")
 	undo_redo.add_do_method(remove.bind(country.id))
@@ -128,6 +141,11 @@ func undo_redo_remove(
 	undo_redo.add_undo_method(
 			_restore_ownership.bind(country, province_id_list, provinces)
 	)
+
+	# Ensure the country's armies are restored on undo
+	undo_redo.add_undo_method(armies.add_list_with_positions.bind(
+			armies_with_positions, armies_in_each_province
+	))
 
 	undo_redo.commit_action()
 

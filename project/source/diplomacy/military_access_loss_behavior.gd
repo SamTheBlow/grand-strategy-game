@@ -28,6 +28,7 @@ func _init(game: Game) -> void:
 
 
 func _on_country_added(country: Country) -> void:
+	print("Hi")
 	country.relationships.relationship_created.connect(
 			_on_relationship_created
 	)

@@ -66,14 +66,57 @@ func undo_redo_remove(
 	undo_redo.commit_action()
 
 
-func _restore_province_position(
-		army: Army,
-		province_index: int,
+## Returns a list of given armies along with their position in
+## this list as well as their position in their province's army list.
+func list_with_positions(
+		army_list: Array[Army], armies_in_each_province: ArmiesInEachProvince
+) -> Array[ArmyWithPositions]:
+	var output: Array[ArmyWithPositions] = []
+
+	for army in army_list:
+		var order_index: int = _order.find(army.id)
+		var province_index: int = (
+				armies_in_each_province
+				.in_province_id(army.province_id()).list.find(army)
+		)
+		output.append(ArmyWithPositions.new(army, order_index, province_index))
+
+	return output
+
+
+## Adds each army in given list, inserted at given position in this list,
+## and inserted at given position in the province's army list.
+func add_list_with_positions(
+		armies_with_positions: Array[ArmyWithPositions],
 		armies_in_each_province: ArmiesInEachProvince
 ) -> void:
-	armies_in_each_province.in_province_id(army.province_id()).move_army(
-			army, province_index
+	# Add each army to this list in the correct order.
+	# At the same time, build a mapping of each province to its armies.
+	armies_with_positions.sort_custom(
+			func(a: ArmyWithPositions, b: ArmyWithPositions) -> bool:
+				return a.armies_index < b.armies_index
 	)
+	var armies_of_province: Dictionary[int, Array] = {}
+	for army_with_positions in armies_with_positions:
+		_add(army_with_positions.army, army_with_positions.armies_index)
+
+		var province_id: int = army_with_positions.army.province_id()
+		if not armies_of_province.has(province_id):
+			armies_of_province[province_id] = []
+		armies_of_province[province_id].append(army_with_positions)
+
+	# For each province, move each army to the correct position in the list.
+	for province_id in armies_of_province:
+		var province_armies: Array = armies_of_province[province_id]
+		province_armies.sort_custom(
+				func(a: ArmyWithPositions, b: ArmyWithPositions) -> bool:
+					return a.province_index < b.province_index
+		)
+		for army_with_positions: ArmyWithPositions in province_armies:
+			armies_in_each_province.in_province_id(province_id).move_army(
+					army_with_positions.army,
+					army_with_positions.province_index
+			)
 
 
 ## Returns null if there is no army with given id.
@@ -148,3 +191,13 @@ func _add(army: Army, insertion_index: int = -1) -> void:
 	army.size().became_too_small.connect(remove.bind(army))
 
 	added.emit(army)
+
+
+func _restore_province_position(
+		army: Army,
+		province_index: int,
+		armies_in_each_province: ArmiesInEachProvince
+) -> void:
+	armies_in_each_province.in_province_id(army.province_id()).move_army(
+			army, province_index
+	)

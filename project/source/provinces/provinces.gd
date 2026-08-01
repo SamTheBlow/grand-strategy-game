@@ -53,7 +53,20 @@ func remove(province_id: int) -> void:
 
 ## Removes a province, using given [UndoRedo] system.
 ## Ensures that when we undo, everything is exactly as it was before.
-func undo_redo_remove(province: Province, undo_redo: UndoRedo) -> void:
+func undo_redo_remove(
+		province: Province,
+		undo_redo: UndoRedo,
+		armies: Armies,
+		armies_in_each_province: ArmiesInEachProvince
+) -> void:
+	# Save this province's armies and their positions
+	var armies_with_positions: Array[ArmyWithPositions] = (
+			armies.list_with_positions(
+					armies_in_each_province.in_province_id(province.id).list,
+					armies_in_each_province
+			)
+	)
+
 	undo_redo.create_action("Delete province")
 	undo_redo.add_do_method(remove.bind(province.id))
 
@@ -71,6 +84,11 @@ func undo_redo_remove(province: Province, undo_redo: UndoRedo) -> void:
 			undo_redo.add_undo_method(
 					other_province.add_link.bind(province.id)
 			)
+
+	# Ensure the province's armies are restored on undo
+	undo_redo.add_undo_method(armies.add_list_with_positions.bind(
+			armies_with_positions, armies_in_each_province
+	))
 
 	undo_redo.commit_action()
 
