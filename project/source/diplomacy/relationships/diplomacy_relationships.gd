@@ -55,6 +55,11 @@ func with_country(country: Country) -> DiplomacyRelationship:
 	return list[country]
 
 
+## Clears all data in this instance.
+func clear() -> void:
+	list.clear()
+
+
 ## Returns a new dictionary containing the default data for
 ## new relationships, depending on the given game rules.
 static func _new_default_data(rules: GameRules) -> Dictionary:

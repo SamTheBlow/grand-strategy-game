@@ -44,22 +44,31 @@ static func load_from_country_data(raw_data: Variant, game: Game) -> void:
 		)
 
 
-## Always succeeds.
-## Ignores unrecognized data.
+## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func from_raw_data(
 		raw_data: Variant, game: Game, country: Country
 ) -> DiplomacyRelationships:
 	var output := DiplomacyRelationships.new(game, country)
+	load_from_raw_data(output, raw_data)
+	return output
+
+
+## Loads given raw data into given [DiplomacyRelationships].
+## Clears any existing data beforehand.
+static func load_from_raw_data(
+		relationships: DiplomacyRelationships, raw_data: Variant
+) -> void:
+	relationships.clear()
 
 	if raw_data is not Array:
-		return output
+		return
 	var raw_array: Array = raw_data
 
 	for element_data: Variant in raw_array:
-		_load_relationship_from_raw_data(element_data, game, output)
-
-	return output
+		_load_relationship_from_raw_data(
+				element_data, relationships._game, relationships
+		)
 
 
 static func _load_relationship_from_raw_data(

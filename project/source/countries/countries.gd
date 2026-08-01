@@ -159,8 +159,8 @@ func _restore_relationships(
 		referencing_country_ids: Array[int]
 ) -> void:
 	# Restore own relationships
-	country.relationships = DiplomacyRelationshipParsing.from_raw_data(
-			raw_relationships, country.relationships._game, country
+	DiplomacyRelationshipParsing.load_from_raw_data(
+			country.relationships, raw_relationships
 	)
 
 	# Restore references from other countries
