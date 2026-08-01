@@ -1,9 +1,12 @@
 [gd_scene format=3 uid="uid://dc67eps16xpfs"]
 
 [ext_resource type="Script" uid="uid://dbhyo6pq1e8pl" path="res://source/editor/interfaces/turn_order/turn_order_element.gd" id="1_ayfo2"]
+[ext_resource type="Texture2D" uid="uid://cvnhtmyd15do8" path="res://assets/formkit/up.svg" id="2_kmtic"]
+[ext_resource type="Texture2D" uid="uid://clrqew1jeeekg" path="res://assets/formkit/down.svg" id="3_kud55"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="4_wwchb"]
 
 [node name="TurnOrderElement" type="Control" unique_id=197246767]
-custom_minimum_size = Vector2(0, 48)
+custom_minimum_size = Vector2(0, 40)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -32,7 +35,7 @@ grow_vertical = 2
 theme_override_constants/separation = 0
 
 [node name="Control" type="Control" parent="HBoxContainer" unique_id=1083089706]
-custom_minimum_size = Vector2(32, 0)
+custom_minimum_size = Vector2(80, 0)
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 2
@@ -40,76 +43,73 @@ mouse_filter = 2
 [node name="UpControl" type="Control" parent="HBoxContainer/Control" unique_id=183217444]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -18.0
+offset_right = -18.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="UpButton" type="Button" parent="HBoxContainer/Control/UpControl" unique_id=1811780713]
+[node name="UpButton" type="Button" parent="HBoxContainer/Control/UpControl" unique_id=1089882281]
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 4.0
-offset_top = 4.0
-offset_right = -2.0
-offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="HBoxContainer/Control/UpControl" unique_id=198375723]
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/Control/UpControl/UpButton" unique_id=1048992902]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = 0.1
+anchor_right = 0.9
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "↑"
-horizontal_alignment = 1
-vertical_alignment = 1
+texture = ExtResource("2_kmtic")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="Control2" type="Control" parent="HBoxContainer" unique_id=272212822]
-custom_minimum_size = Vector2(32, 0)
-layout_mode = 2
-mouse_filter = 2
-
-[node name="DownControl" type="Control" parent="HBoxContainer/Control2" unique_id=502410015]
+[node name="DownControl" type="Control" parent="HBoxContainer/Control" unique_id=502410015]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 18.0
+offset_right = 18.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 mouse_filter = 2
 
-[node name="DownButton" type="Button" parent="HBoxContainer/Control2/DownControl" unique_id=1579177260]
+[node name="DownButton" type="Button" parent="HBoxContainer/Control/DownControl" unique_id=1579177260]
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(40, 40)
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 4.0
-offset_right = -4.0
-offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 
-[node name="Label" type="Label" parent="HBoxContainer/Control2/DownControl" unique_id=523141844]
+[node name="TextureRect" type="TextureRect" parent="HBoxContainer/Control/DownControl/DownButton" unique_id=1225418234]
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
+anchors_preset = -1
+anchor_left = 0.1
+anchor_right = 0.9
 anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "↓"
-horizontal_alignment = 1
-vertical_alignment = 1
+texture = ExtResource("3_kud55")
+expand_mode = 1
+stretch_mode = 5
 
 [node name="Spacing" type="Control" parent="HBoxContainer" unique_id=1847024643]
 custom_minimum_size = Vector2(32, 0)
@@ -124,5 +124,18 @@ theme_override_font_sizes/font_size = 16
 text = "Item Name"
 vertical_alignment = 1
 
+[node name="CountryButton" parent="." unique_id=855787205 instance=ExtResource("4_wwchb")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.1
+anchor_bottom = 0.9
+grow_horizontal = 0
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 0.5
+is_button_enabled = false
+
 [connection signal="pressed" from="HBoxContainer/Control/UpControl/UpButton" to="." method="_on_up_button_pressed"]
-[connection signal="pressed" from="HBoxContainer/Control2/DownControl/DownButton" to="." method="_on_down_button_pressed"]
+[connection signal="pressed" from="HBoxContainer/Control/DownControl/DownButton" to="." method="_on_down_button_pressed"]

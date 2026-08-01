@@ -5,7 +5,7 @@ extends Control
 signal up_pressed()
 signal down_pressed()
 
-var id: int = -1
+var country: Country
 
 ## The display label text.
 var label_text: String = "":
@@ -16,9 +16,11 @@ var label_text: String = "":
 @onready var _up_control := %UpControl as Control
 @onready var _down_control := %DownControl as Control
 @onready var _name_label := %NameLabel as Label
+@onready var _country_button := %CountryButton as CountryButton
 
 
 func _ready() -> void:
+	_country_button.country = country
 	_refresh_name()
 
 

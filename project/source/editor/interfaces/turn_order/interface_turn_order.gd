@@ -44,7 +44,7 @@ func _update_visibility() -> void:
 
 func _add_element(country: Country) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as EditorTurnOrderElement
-	element.id = country.id
+	element.country = country
 	element.label_text = country.name_or_default()
 	element.up_pressed.connect(_on_element_up_pressed.bind(element))
 	element.down_pressed.connect(_on_element_down_pressed.bind(element))
@@ -112,15 +112,15 @@ func _on_item_value_changed(_item: PropertyTreeItem) -> void:
 
 func _on_drag_ended(moved_node: Node) -> void:
 	var element := moved_node as EditorTurnOrderElement
-	_reorder(element.id, element.get_index())
+	_reorder(element.country.id, element.get_index())
 
 
 func _on_element_up_pressed(element: EditorTurnOrderElement) -> void:
-	_reorder(element.id, element.get_index() - 1)
+	_reorder(element.country.id, element.get_index() - 1)
 
 
 func _on_element_down_pressed(element: EditorTurnOrderElement) -> void:
-	_reorder(element.id, element.get_index() + 1)
+	_reorder(element.country.id, element.get_index() + 1)
 
 
 func _on_country_added(country: Country) -> void:
