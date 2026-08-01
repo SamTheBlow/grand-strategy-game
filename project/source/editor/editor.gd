@@ -65,6 +65,10 @@ var _undo_redo_saved_version: int = 1
 @onready var _popup_container := %PopupContainer as Control
 @onready var _save_dialog := %SaveDialog as FileDialog
 
+## The army input node of currently loaded world.
+## May be null if the world is not loaded.
+var _army_visuals_input: ArmyVisualsInput
+
 
 func _init() -> void:
 	_open_new_project()
@@ -104,6 +108,18 @@ func _setup_project() -> void:
 	)
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
 	_editing_interface.undo_redo = _undo_redo
+
+	# Setup for army mouse interactions
+	_army_visuals_input = ArmyVisualsInput.new()
+	_army_visuals_input.army_selected.connect(
+			_editing_interface.open_army_edit_interface.bind(
+					_current_project, editor_settings
+			)
+	)
+	_army_visuals_input.army_deselected.connect(
+			_editing_interface.close_interface
+	)
+	_world_setup.world().add_child(_army_visuals_input)
 
 	# Give the [UndoRedo] system to the editor map mode
 	# TODO this is ugly!!!
@@ -374,3 +390,19 @@ func _on_country_interface_closed() -> void:
 	_world_setup.world().map_mode_setup.set_map_mode(
 			MapModeSetup.MapMode.POLITICAL
 	)
+
+
+func _on_army_interface_opened(army: Army) -> void:
+	_army_visuals_input.set_selected_army(army)
+
+
+func _on_army_interface_closed() -> void:
+	_army_visuals_input.set_selected_army(null)
+
+
+func _on_army_list_item_hovered(army: Army) -> void:
+	_army_visuals_input.set_hovered_army(army)
+
+
+func _on_army_list_item_unhovered() -> void:
+	_army_visuals_input.set_hovered_army(null)

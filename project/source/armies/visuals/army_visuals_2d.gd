@@ -2,7 +2,25 @@ class_name ArmyVisuals2D
 extends Node2D
 ## An [Army]'s visuals for a 2D world map.
 
+signal clicked()
+signal mouse_entered()
+signal mouse_exited()
+
 const DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
+
+## If true, this army will eat inputs and emit input-related signals.
+@export var is_input_enabled: bool = false:
+	set(value):
+		is_input_enabled = value
+		_refresh_input_filter()
+
+@export_group("Outline types")
+## Outline used when no other outline is used.
+@export var _outline_none: OutlineSettings
+## Outline used to highlight the army (e.g. when hovering it).
+@export var _outline_highlight: OutlineSettings
+## Outline used when the army is selected (e.g. while editing it).
+@export var _outline_selected: OutlineSettings
 
 var army: Army
 
@@ -16,12 +34,18 @@ var preview_container: Control
 
 @onready var _animation := %MovementAnimation as ArmyMovementAnimation2D
 @onready var _army_sprite := %ArmySprite as Sprite2D
+@onready var _control := %Control as Control
 @onready var _army_size_box := %ArmySizeBox as ArmySizeBox
+@onready var _army_outline := %ArmyOutline as OutlinedPolygon2D
 
 
 func _ready() -> void:
 	# Give this node a unique meaningful name
 	name = "Army" + str(army.id)
+
+	_refresh_input_filter()
+	_control.mouse_entered.connect(mouse_entered.emit)
+	_control.mouse_exited.connect(mouse_exited.emit)
 
 	_refresh_army_texture()
 	army.texture_changed.connect(_refresh_army_texture)
@@ -41,6 +65,7 @@ func _ready() -> void:
 
 	if is_preview:
 		z_index = 0
+		_army_outline.hide()
 		_fit_inside_preview_container()
 		preview_container.resized.connect(_fit_inside_preview_container)
 	else:
@@ -68,6 +93,54 @@ func move_to(new_position: Vector2) -> void:
 
 	if _animation.is_playing():
 		position = _old_position
+
+
+## Shows an outline around this army.
+func highlight() -> void:
+	if _army_outline != null:
+		_army_outline.outline_settings = _outline_highlight
+
+
+## Shows a stronger outline around this army.
+func highlight_selected() -> void:
+	if _army_outline != null:
+		_army_outline.outline_settings = _outline_selected
+	_control.grab_focus(true)
+
+
+## Hides the outline around this army.
+func remove_highlight() -> void:
+	if _army_outline != null:
+		_army_outline.outline_settings = _outline_none
+
+
+## Emits clicked when the left mouse button is released on this army.
+func _unhandled_input(event: InputEvent) -> void:
+	if event is not InputEventMouseButton:
+		return
+	var event_mouse_button := event as InputEventMouseButton
+	if event_mouse_button.button_index != MOUSE_BUTTON_LEFT:
+		return
+	if event_mouse_button.pressed:
+		return
+
+	if get_viewport().gui_get_hovered_control() != _control:
+		return
+
+	get_viewport().set_input_as_handled()
+	clicked.emit()
+
+
+func _refresh_input_filter() -> void:
+	if not is_node_ready():
+		return
+
+	if is_input_enabled:
+		_control.focus_mode = Control.FOCUS_ALL
+		_control.mouse_filter = Control.MOUSE_FILTER_PASS
+	else:
+		_control.focus_mode = Control.FOCUS_NONE
+		_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 
 func _refresh_army_texture() -> void:

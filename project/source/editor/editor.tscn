@@ -46,9 +46,8 @@ unique_name_in_owner = true
 layer = 3
 
 [node name="TopBarContainer" type="SubViewportContainer" parent="UILayer" unique_id=1726182058]
-anchors_preset = 15
 anchor_right = 1.0
-anchor_bottom = 1.0
+anchor_bottom = 0.075
 grow_horizontal = 2
 grow_vertical = 2
 stretch = true
@@ -71,7 +70,7 @@ mouse_filter = 1
 [node name="TopBar" type="Control" parent="UILayer/TopBarContainer/SubViewport/Control" unique_id=937602123]
 layout_mode = 1
 anchor_right = 1.0
-anchor_bottom = 0.075
+anchor_bottom = 1.0
 mouse_filter = 1
 
 [node name="ColorRect" type="ColorRect" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=831517367]
@@ -178,6 +177,10 @@ use_native_dialog = true
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="." method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="." method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="." method="_on_edit_tab_id_pressed"]
+[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="." method="_on_army_interface_closed"]
+[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="." method="_on_army_interface_opened"]
+[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="." method="_on_army_list_item_hovered"]
+[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="." method="_on_army_list_item_unhovered"]
 [connection signal="country_interface_closed" from="UILayer/EditingInterface" to="." method="_on_country_interface_closed"]
 [connection signal="country_interface_opened" from="UILayer/EditingInterface" to="." method="_on_country_interface_opened"]
 [connection signal="country_select_pressed" from="UILayer/EditingInterface" to="." method="_on_country_select_pressed"]

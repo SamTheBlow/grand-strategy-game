@@ -2,7 +2,9 @@ class_name InterfaceArmyList
 extends AppEditorInterface
 ## Shows a list of all armies for the user to edit.
 
-signal item_selected(army_id: int)
+signal item_selected(army: Army)
+signal item_hovered(army: Army)
+signal item_unhovered()
 
 const _ELEMENT_SCENE := preload("uid://c06m34xmh3nnl") as PackedScene
 
@@ -36,6 +38,12 @@ func _ready() -> void:
 	armies.removed.connect(_remove_element)
 
 
+## Ensures the army hover doesn't stick around
+## when this interface is closed or replaced.
+func _exit_tree() -> void:
+	item_unhovered.emit()
+
+
 func _refresh_add_button() -> void:
 	_add_button.disabled = (
 			_selected_province == null
@@ -54,7 +62,9 @@ func _add_element(army: Army) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as ArmyListElement
 	element.army = army
 	element.playing_country = playing_country
-	element.pressed.connect(_on_element_pressed)
+	element.pressed.connect(item_selected.emit.bind(army))
+	element.mouse_entered.connect(item_hovered.emit.bind(army))
+	element.mouse_exited.connect(item_unhovered.emit)
 
 	# Determine the position in the list to put this in
 	# (they're sorted by country alphabetical order).
@@ -104,10 +114,6 @@ func _on_add_button_pressed() -> void:
 	undo_redo.add_do_method(armies.add.bind(new_army))
 	undo_redo.add_undo_method(armies.remove.bind(new_army))
 	undo_redo.commit_action(false)
-
-
-func _on_element_pressed(element: ArmyListElement) -> void:
-	item_selected.emit(element.army.id)
 
 
 func _on_country_name_changed(country: Country) -> void:

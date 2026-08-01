@@ -2,7 +2,7 @@ class_name ArmyListElement
 extends Control
 ## A button representing an [Army].
 
-signal pressed(this: ArmyListElement)
+signal pressed()
 
 var army: Army
 var playing_country: PlayingCountry
@@ -23,4 +23,4 @@ func _refresh_country_button() -> void:
 
 
 func _on_button_pressed() -> void:
-	pressed.emit(self)
+	pressed.emit()

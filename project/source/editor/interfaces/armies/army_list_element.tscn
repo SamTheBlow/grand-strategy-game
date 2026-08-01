@@ -25,6 +25,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+mouse_filter = 1
 theme_override_styles/normal = ExtResource("2_6uon8")
 
 [node name="ArmyPreview" type="Control" parent="Button" unique_id=1589886559]
@@ -51,4 +52,4 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 is_button_enabled = false
 
-[connection signal="pressed" from="Button" to="." method="_on_button_pressed"]
+[connection signal="pressed" from="Button" to="." method="emit_signal" binds= [&"pressed"]]

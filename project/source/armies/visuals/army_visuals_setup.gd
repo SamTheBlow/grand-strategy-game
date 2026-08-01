@@ -3,6 +3,9 @@ extends Node
 ## Creates and deletes [ArmyVisuals2D] nodes for each army in given [Armies],
 ## and moves them to the correct [ProvinceVisuals2D].
 
+## Emitted after a new army's visuals have been created and added to the tree.
+signal army_visuals_created(army_visuals: ArmyVisuals2D)
+
 ## The scene's root node must extend [ArmyVisuals2D].
 const _ARMY_VISUALS_SCENE := preload("uid://eso260jnknd4") as PackedScene
 
@@ -49,6 +52,16 @@ func _update() -> void:
 		_add_army(army)
 
 	_connect_signals()
+
+
+## Returns the visuals for given army, or null if the army has no visuals.
+func visuals_of(army: Army) -> ArmyVisuals2D:
+	return _map.get(army)
+
+
+## Returns all army visuals currently on the world map.
+func all_visuals() -> Array[ArmyVisuals2D]:
+	return _map.values()
 
 
 func _add_army(army: Army) -> void:
@@ -105,6 +118,7 @@ func _assign_to_province(army: Army) -> void:
 		_armies_with_no_visuals.erase(army)
 		_map[army] = _new_army_visuals(army)
 		province_visuals.add_army(_map[army])
+		army_visuals_created.emit(_map[army])
 	else:
 		push_error("Army is not in the list.")
 

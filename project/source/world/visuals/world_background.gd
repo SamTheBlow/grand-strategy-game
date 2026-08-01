@@ -2,6 +2,7 @@ class_name WorldBackground
 extends Node2D
 ## Sets all left click input events as handled
 ## and emits a signal when left clicked.
+## Also releases focus from whichever [Control] node has focus.
 
 signal clicked()
 
@@ -17,4 +18,5 @@ func _unhandled_input(event: InputEvent) -> void:
 	get_viewport().set_input_as_handled()
 
 	if not event_mouse_button.pressed:
+		get_viewport().gui_release_focus()
 		clicked.emit()

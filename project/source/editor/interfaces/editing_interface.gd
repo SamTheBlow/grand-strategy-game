@@ -10,6 +10,10 @@ signal country_interface_opened(country: Country)
 signal country_interface_closed()
 signal province_interface_opened(province: Province)
 signal province_interface_closed()
+signal army_interface_opened(army: Army)
+signal army_interface_closed()
+signal army_list_item_hovered(army: Army)
+signal army_list_item_unhovered()
 
 enum InterfaceType {
 	PROJECT_INFO,
@@ -61,6 +65,9 @@ var _current_interface: AppEditorInterface:
 		elif _current_interface is InterfaceCountryEdit:
 			_current_interface = null
 			country_interface_closed.emit()
+		elif _current_interface is InterfaceArmyEdit:
+			_current_interface = null
+			army_interface_closed.emit()
 
 		_current_interface = value
 
@@ -138,6 +145,20 @@ func open_province_edit_interface(
 	province_interface.provinces = project.game.world.provinces
 	open_interface(province_interface)
 	province_interface_opened.emit(province)
+
+
+## Opens the interface for editing given army.
+func open_army_edit_interface(
+		army: Army, project: GameProject, editor_settings: AppEditorSettings
+) -> void:
+	# Prevent infinite loop
+	if (
+			_current_interface is InterfaceArmyEdit
+			and army == (_current_interface as InterfaceArmyEdit).army
+	):
+		return
+
+	_open_army_edit_interface(army, project, editor_settings)
 
 
 func _update_contents() -> void:
@@ -221,6 +242,8 @@ func _new_interface(
 		interface.item_selected.connect(
 				_open_army_edit_interface.bind(project, editor_settings)
 		)
+		interface.item_hovered.connect(army_list_item_hovered.emit)
+		interface.item_unhovered.connect(army_list_item_unhovered.emit)
 
 	return new_interface
 
@@ -325,13 +348,8 @@ func _open_decoration_edit_interface(
 
 
 func _open_army_edit_interface(
-		army_id: int, project: GameProject, editor_settings: AppEditorSettings
+		army: Army, project: GameProject, editor_settings: AppEditorSettings
 ) -> void:
-	var army: Army = project.game.world.armies.army_from_id(army_id)
-	if army == null:
-		push_error("Army doesn't exist.")
-		return
-
 	var edit_interface := _new_interface(
 			preload("uid://n04sb8kke04h"), project, editor_settings
 	) as InterfaceArmyEdit
@@ -354,6 +372,7 @@ func _open_army_edit_interface(
 	edit_interface.playing_country = PlayingCountry.new(project.game)
 	edit_interface.armies = project.game.world.armies
 	open_interface(edit_interface)
+	army_interface_opened.emit(army)
 
 
 func _on_world_decoration_deleted(
@@ -525,7 +544,7 @@ func _on_army_duplicated(
 	undo_redo.commit_action(false)
 
 	# Open interface to edit the new army
-	_open_army_edit_interface(new_army.id, project, editor_settings)
+	_open_army_edit_interface(new_army, project, editor_settings)
 
 
 func _on_country_relationships_opened(

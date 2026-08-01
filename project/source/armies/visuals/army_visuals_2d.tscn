@@ -4,10 +4,17 @@
 [ext_resource type="Script" uid="uid://cu6mk4b2brdh6" path="res://source/armies/visuals/army_movement_animation.gd" id="2_2gbtg"]
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="3_5ukdx"]
 [ext_resource type="Script" uid="uid://dq0mi0k7iydq" path="res://source/armies/visuals/army_size_box.gd" id="4_r42rs"]
+[ext_resource type="Resource" uid="uid://clsansdbiopc6" path="res://resources/outline_settings/outline_none.tres" id="5_3h66f"]
+[ext_resource type="Resource" uid="uid://cpywpvw4iwvdg" path="res://resources/outline_settings/outline_highlight.tres" id="6_3h66f"]
+[ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="7_3h66f"]
+[ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="8_3h66f"]
 
 [node name="ArmyVisuals2D" type="Node2D" unique_id=853084620]
 z_index = 1
 script = ExtResource("1_80ub2")
+_outline_none = ExtResource("5_3h66f")
+_outline_highlight = ExtResource("6_3h66f")
+_outline_selected = ExtResource("7_3h66f")
 
 [node name="MovementAnimation" type="Node" parent="." unique_id=2080034549 node_paths=PackedStringArray("_army_visuals")]
 unique_name_in_owner = true
@@ -22,6 +29,7 @@ texture = ExtResource("3_5ukdx")
 offset = Vector2(0, -64)
 
 [node name="Control" type="Control" parent="." unique_id=1501567451]
+unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 0
 offset_left = -32.0
@@ -56,3 +64,9 @@ theme_override_font_sizes/font_size = 12
 text = "9999999999"
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="ArmyOutline" type="Polygon2D" parent="." unique_id=1699286559]
+unique_name_in_owner = true
+color = Color(0, 0, 0, 0)
+polygon = PackedVector2Array(-34, -34, 34, -34, 34, 34, -34, 34)
+script = ExtResource("8_3h66f")
