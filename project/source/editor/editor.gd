@@ -6,7 +6,6 @@ signal exited()
 
 const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
 const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
-const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings := AppEditorSettings.new()
 
@@ -28,15 +27,12 @@ var _undo_redo: UndoRedo:
 var _undo_redo_saved_version: int = 1
 
 @onready var _menus := %Menus as EditorMenus
+@onready var _world_bridge := %WorldBridge as EditorWorldBridge
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 @onready var _save_dialog := %SaveDialog as FileDialog
-
-## The army input node of currently loaded world.
-## May be null if the world is not loaded.
-var _army_visuals_input: ArmyVisualsInput
 
 
 func _init() -> void:
@@ -46,6 +42,7 @@ func _init() -> void:
 func _ready() -> void:
 	_menus.quit_requested.connect(exited.emit)
 
+	_world_bridge.editor_settings = editor_settings
 	_world_setup.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
 	_setup_project()
@@ -73,23 +70,8 @@ func _setup_project() -> void:
 	_editing_interface.close_interface()
 
 	_world_setup.load_world(_current_project)
-	_world_setup.world().province_selection.selected_province_changed.connect(
-			_on_selected_province_changed
-	)
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
 	_editing_interface.undo_redo = _undo_redo
-
-	# Setup for army mouse interactions
-	_army_visuals_input = ArmyVisualsInput.new()
-	_army_visuals_input.army_selected.connect(
-			_editing_interface.open_army_edit_interface.bind(
-					_current_project, editor_settings
-			)
-	)
-	_army_visuals_input.army_deselected.connect(
-			_editing_interface.close_interface
-	)
-	_world_setup.world().add_child(_army_visuals_input)
 
 	# Give the [UndoRedo] system to the editor map mode
 	# TODO this is ugly!!!
@@ -153,13 +135,6 @@ func _play() -> void:
 
 
 func _open_interface(type: EditingInterface.InterfaceType) -> void:
-	if editor_settings == null:
-		return
-
-	# Deselect province
-	if _world_setup.world() != null:
-		_world_setup.world().province_selection.deselect()
-
 	_editing_interface.open_new_interface(
 			type, _current_project, editor_settings
 	)
@@ -177,81 +152,3 @@ func _on_save_dialog_file_selected(path: String) -> void:
 	_current_project.save_as(path)
 	_update_undo_redo()
 	_menus.update_menu_visibility_after_save()
-
-
-func _on_selected_province_changed(province: Province) -> void:
-	if province == null:
-		_editing_interface.close_interface()
-		return
-	_editing_interface.open_province_edit_interface(
-			province.id, _current_project, editor_settings
-	)
-
-
-func _on_province_interface_opened(province: Province) -> void:
-	# Select province
-	if _world_setup.world() != null:
-		_world_setup.world().province_selection.select(province.id)
-
-	# Show adjacencies on world map
-	_world_setup.world().map_mode_setup.set_map_mode(
-			MapModeSetup.MapMode.EDITOR_ADJACENCY
-	)
-
-
-func _on_province_interface_closed() -> void:
-	if _world_setup.world() == null:
-		return
-
-	# Deselect province
-	_world_setup.world().province_selection.deselect()
-
-	# Revert the map mode to normal
-	_world_setup.world().map_mode_setup.set_map_mode(
-			MapModeSetup.MapMode.POLITICAL
-	)
-
-
-func _on_country_select_pressed(item_country: ItemCountry) -> void:
-	# Open popup that lets you choose a country
-	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
-	var country_select_popup := (
-			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
-	)
-	country_select_popup.setup(
-			_current_project.game.countries, item_country.may_be_null()
-	)
-	country_select_popup.country_selected.connect(item_country.set_value)
-	popup.contents_node = country_select_popup
-	_popup_container.add_child(popup)
-
-
-func _on_country_interface_opened(country: Country) -> void:
-	# Change map mode
-	_world_setup.world().map_mode_setup.set_map_mode_editor_country(country)
-
-
-func _on_country_interface_closed() -> void:
-	if _world_setup.world() == null:
-		return
-
-	# Revert the map mode to normal
-	_world_setup.world().map_mode_setup.set_map_mode(
-			MapModeSetup.MapMode.POLITICAL
-	)
-
-
-func _on_army_interface_opened(army: Army) -> void:
-	_army_visuals_input.set_selected_army(army)
-
-
-func _on_army_interface_closed() -> void:
-	_army_visuals_input.set_selected_army(null)
-
-
-func _on_army_list_item_hovered(army: Army) -> void:
-	_army_visuals_input.set_hovered_army(army)
-
-
-func _on_army_list_item_unhovered() -> void:
-	_army_visuals_input.set_hovered_army(null)

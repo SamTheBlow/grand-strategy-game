@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/interfaces/editing_interface.tscn" id="7_um8he"]
 [ext_resource type="Script" uid="uid://bk2i3kq3bheo7" path="res://source/editor/texture_select_popup_setup.gd" id="8_uwkq8"]
 [ext_resource type="Script" uid="uid://c3cmj7reypqlq" path="res://source/editor/editor_menus.gd" id="9_menus"]
+[ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/editor_world_bridge.gd" id="10_world_bridge"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -14,6 +15,10 @@ script = ExtResource("1_ae8ev")
 [node name="Menus" type="Node" parent="." unique_id=1928374650]
 unique_name_in_owner = true
 script = ExtResource("9_menus")
+
+[node name="WorldBridge" type="Node" parent="." unique_id=1928374651]
+unique_name_in_owner = true
+script = ExtResource("10_world_bridge")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -189,17 +194,18 @@ use_native_dialog = true
 [connection signal="play_requested" from="Menus" to="." method="_play"]
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="." method="_save_project"]
+[connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
-[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="." method="_on_army_interface_closed"]
-[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="." method="_on_army_interface_opened"]
-[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="." method="_on_army_list_item_hovered"]
-[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="." method="_on_army_list_item_unhovered"]
-[connection signal="country_interface_closed" from="UILayer/EditingInterface" to="." method="_on_country_interface_closed"]
-[connection signal="country_interface_opened" from="UILayer/EditingInterface" to="." method="_on_country_interface_opened"]
-[connection signal="country_select_pressed" from="UILayer/EditingInterface" to="." method="_on_country_select_pressed"]
-[connection signal="province_interface_closed" from="UILayer/EditingInterface" to="." method="_on_province_interface_closed"]
-[connection signal="province_interface_opened" from="UILayer/EditingInterface" to="." method="_on_province_interface_opened"]
+[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_interface_closed"]
+[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_interface_opened"]
+[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_list_item_hovered"]
+[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_list_item_unhovered"]
+[connection signal="country_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_closed"]
+[connection signal="country_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_opened"]
+[connection signal="country_select_pressed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_select_pressed"]
+[connection signal="province_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_closed"]
+[connection signal="province_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_opened"]
 [connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
 [connection signal="file_selected" from="SaveDialog" to="." method="_on_save_dialog_file_selected"]

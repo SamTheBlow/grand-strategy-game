@@ -1,6 +1,8 @@
 class_name EditorWorldSetup
 extends Node
 
+signal loaded(project: GameProject, world_visuals: WorldVisuals2D)
+
 const _WORLD_SCENE := preload("uid://dpgoa2yg5bjcp") as PackedScene
 const _CAMERA_SCENE := preload("uid://44rygdcojakm") as PackedScene
 
@@ -63,6 +65,7 @@ func load_world(project: GameProject) -> void:
 	_world_container.add_child(new_world)
 	_current_world = new_world
 	_update_decoration_visibility()
+	loaded.emit(project, new_world)
 
 
 ## Returns null if the world is not loaded.
