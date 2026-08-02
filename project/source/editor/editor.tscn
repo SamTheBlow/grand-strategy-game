@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://c3cmj7reypqlq" path="res://source/editor/editor_menus.gd" id="9_menus"]
 [ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/editor_world_bridge.gd" id="10_world_bridge"]
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/editor_project_io.gd" id="11_project_io"]
+[ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/editor/editor_history.gd" id="12_history"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -24,6 +25,10 @@ script = ExtResource("10_world_bridge")
 [node name="ProjectIO" type="Node" parent="." unique_id=1928374652]
 unique_name_in_owner = true
 script = ExtResource("11_project_io")
+
+[node name="History" type="Node" parent="." unique_id=1928374653]
+unique_name_in_owner = true
+script = ExtResource("12_history")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -201,7 +206,10 @@ use_native_dialog = true
 [connection signal="save_requested" from="Menus" to="ProjectIO" method="_save_project"]
 [connection signal="project_loaded" from="ProjectIO" to="." method="_on_project_loaded"]
 [connection signal="project_saved" from="ProjectIO" to="." method="_on_project_saved"]
+[connection signal="initialized" from="History" to="." method="_on_history_initialized"]
+[connection signal="version_changed" from="History" to="." method="_update_window_title"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
+[connection signal="loaded" from="WorldLayer/WorldSetup" to="ProvinceSelectConditions" method="_on_world_loaded"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
