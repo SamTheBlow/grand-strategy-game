@@ -1,8 +1,6 @@
 class_name WorldVisuals2D
 extends Node2D
 
-signal overlay_created(node: Node)
-
 ## Setting this sets everything else automatically.
 var project: GameProject:
 	set(value):
@@ -47,7 +45,6 @@ func _update() -> void:
 
 	_background_color.world = world
 
-	map_mode_setup.overlay_created.connect(overlay_created.emit)
 	map_mode_setup.setup(self)
 
 	_army_visuals_setup.setup(

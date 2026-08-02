@@ -7,18 +7,15 @@ const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings: AppEditorSettings
 
+@onready var _editor_adjacency := %EditorAdjacency as MapModeEditorAdjacency
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 
-var _current_project: GameProject
 var _world_visuals: WorldVisuals2D = null
 var _army_visuals_input: ArmyVisualsInput = null
 
 
-func _on_world_loaded(
-		project: GameProject, world_visuals: WorldVisuals2D
-) -> void:
-	_current_project = project
+func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	_world_visuals = world_visuals
 
 	# Connect signals
@@ -30,7 +27,7 @@ func _on_world_loaded(
 	_army_visuals_input = ArmyVisualsInput.new()
 	_army_visuals_input.army_selected.connect(
 			_editing_interface.open_army_edit_interface.bind(
-					_current_project, editor_settings
+					_world_visuals.project, editor_settings
 			)
 	)
 	_army_visuals_input.army_deselected.connect(
@@ -38,13 +35,23 @@ func _on_world_loaded(
 	)
 	_world_visuals.add_child(_army_visuals_input)
 
+	# Setup the adjacency editor tool
+	_editor_adjacency.setup(
+			_world_visuals.province_visuals,
+			_world_visuals.province_selection,
+			PolygonEditEdgeCase.new(_world_visuals.world)
+	)
+	_world_visuals.province_visuals.unhandled_mouse_event_occured.connect(
+			_editor_adjacency._on_provinces_unhandled_mouse_event_occured
+	)
+
 
 func _on_selected_province_changed(province: Province) -> void:
 	if province == null:
 		_editing_interface.close_interface()
 		return
 	_editing_interface.open_province_edit_interface(
-			province.id, _current_project, editor_settings
+			province.id, _world_visuals.project, editor_settings
 	)
 
 
@@ -53,9 +60,8 @@ func _on_province_interface_opened(province: Province) -> void:
 	_world_visuals.province_selection.select(province.id)
 
 	# Show adjacencies on world map
-	_world_visuals.map_mode_setup.set_map_mode(
-			MapModeSetup.MapMode.EDITOR_ADJACENCY
-	)
+	_world_visuals.map_mode_setup.political.is_enabled = false
+	_editor_adjacency.is_enabled = true
 
 
 func _on_province_interface_closed() -> void:
@@ -63,7 +69,8 @@ func _on_province_interface_closed() -> void:
 	_world_visuals.province_selection.deselect()
 
 	# Revert the map mode to normal
-	_world_visuals.map_mode_setup.set_map_mode(MapModeSetup.MapMode.POLITICAL)
+	_editor_adjacency.is_enabled = false
+	_world_visuals.map_mode_setup.political.is_enabled = true
 
 
 func _on_country_select_pressed(item_country: ItemCountry) -> void:
@@ -73,7 +80,7 @@ func _on_country_select_pressed(item_country: ItemCountry) -> void:
 			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
 	)
 	country_select_popup.setup(
-			_current_project.game.countries, item_country.may_be_null()
+			_world_visuals.project.game.countries, item_country.may_be_null()
 	)
 	country_select_popup.country_selected.connect(item_country.set_value)
 	popup.contents_node = country_select_popup

@@ -28,11 +28,11 @@ func reset() -> void:
 	initialized.emit(_undo_redo)
 
 
-## Marks the current history state as saved.
-func mark_saved() -> void:
-	_saved_version = _undo_redo.get_version()
-
-
 ## Returns true if the project has unsaved changes.
 func is_dirty() -> bool:
 	return _undo_redo.get_version() != _saved_version
+
+
+## Marks the current history state as saved.
+func _mark_saved() -> void:
+	_saved_version = _undo_redo.get_version()

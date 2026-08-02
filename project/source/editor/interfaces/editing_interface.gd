@@ -47,7 +47,7 @@ const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
 }
 
 ## This will be given to all new interfaces.
-var undo_redo := UndoRedo.new()
+var _undo_redo := UndoRedo.new()
 
 var _current_interface: AppEditorInterface:
 	set(value):
@@ -130,7 +130,7 @@ func open_province_edit_interface(
 	))
 	province_interface.delete_pressed.connect(
 			project.game.world.provinces.undo_redo_remove.bind(
-					undo_redo,
+					_undo_redo,
 					project.game.world.armies,
 					project.game.world.armies_in_each_province
 			)
@@ -164,7 +164,7 @@ func open_army_edit_interface(
 func _update_contents() -> void:
 	visible = _current_interface != null
 	if _current_interface != null:
-		_current_interface.undo_redo = undo_redo
+		_current_interface.undo_redo = _undo_redo
 		_contents_container.add_child(_current_interface)
 
 
@@ -266,7 +266,7 @@ func _open_country_edit_interface(
 	))
 	edit_interface.delete_pressed.connect(
 			project.game.countries.undo_redo_remove.bind(
-					undo_redo,
+					_undo_redo,
 					project.game.world.provinces,
 					project.game.world.armies,
 					project.game.world.armies_of_each_country,
@@ -311,7 +311,7 @@ func _open_player_edit_interface(
 			InterfaceType.PLAYER_LIST, project, editor_settings
 	))
 	edit_interface.delete_pressed.connect(
-			project.game.game_players.undo_redo_remove.bind(undo_redo)
+			project.game.game_players.undo_redo_remove.bind(_undo_redo)
 	)
 	edit_interface.duplicate_pressed.connect(
 			_on_player_duplicated.bind(project, editor_settings)
@@ -358,7 +358,7 @@ func _open_army_edit_interface(
 	))
 	edit_interface.delete_pressed.connect(
 			project.game.world.armies.undo_redo_remove.bind(
-					undo_redo, project.game.world.armies_in_each_province
+					_undo_redo, project.game.world.armies_in_each_province
 			)
 	)
 	edit_interface.duplicate_pressed.connect(
@@ -375,13 +375,17 @@ func _open_army_edit_interface(
 	army_interface_opened.emit(army)
 
 
+func _on_history_initialized(undo_redo: UndoRedo) -> void:
+	_undo_redo = undo_redo
+
+
 func _on_world_decoration_deleted(
 		world_decoration: WorldDecoration, world_decorations: WorldDecorations
 ) -> void:
-	undo_redo.create_action("Delete world decoration")
-	undo_redo.add_do_method(world_decorations.remove.bind(world_decoration))
-	undo_redo.add_undo_method(world_decorations.add.bind(world_decoration))
-	undo_redo.commit_action()
+	_undo_redo.create_action("Delete world decoration")
+	_undo_redo.add_do_method(world_decorations.remove.bind(world_decoration))
+	_undo_redo.add_undo_method(world_decorations.add.bind(world_decoration))
+	_undo_redo.commit_action()
 
 
 func _on_world_decoration_duplicated(
@@ -404,14 +408,14 @@ func _on_world_decoration_duplicated(
 	new_decoration.color = world_decoration.color
 
 	# Create and apply undo_redo action
-	undo_redo.create_action("Duplicate world decoration")
-	undo_redo.add_do_method(
+	_undo_redo.create_action("Duplicate world decoration")
+	_undo_redo.add_do_method(
 			project.game.world.decorations.add.bind(new_decoration)
 	)
-	undo_redo.add_undo_method(
+	_undo_redo.add_undo_method(
 			project.game.world.decorations.remove.bind(new_decoration)
 	)
-	undo_redo.commit_action()
+	_undo_redo.commit_action()
 
 	# Open interface to edit the new decoration
 	_open_decoration_edit_interface(new_decoration, project, editor_settings)
@@ -443,14 +447,14 @@ func _on_province_duplicated(
 
 	# Create undo_redo action
 	# (don't execute it since we already added the province)
-	undo_redo.create_action("Duplicate province")
-	undo_redo.add_do_method(
+	_undo_redo.create_action("Duplicate province")
+	_undo_redo.add_do_method(
 			project.game.world.provinces.add.bind(new_province)
 	)
-	undo_redo.add_undo_method(
+	_undo_redo.add_undo_method(
 			project.game.world.provinces.remove.bind(new_province.id)
 	)
-	undo_redo.commit_action(false)
+	_undo_redo.commit_action(false)
 
 	# Open interface to edit the new province
 	open_province_edit_interface(new_province.id, project, editor_settings)
@@ -482,14 +486,14 @@ func _on_country_duplicated(
 
 	# Create undo_redo action
 	# (don't execute it since we already added the country)
-	undo_redo.create_action("Duplicate country")
-	undo_redo.add_do_method(
+	_undo_redo.create_action("Duplicate country")
+	_undo_redo.add_do_method(
 			project.game.countries.add.bind(new_country)
 	)
-	undo_redo.add_undo_method(
+	_undo_redo.add_undo_method(
 			project.game.countries.remove.bind(new_country.id)
 	)
-	undo_redo.commit_action(false)
+	_undo_redo.commit_action(false)
 
 	_open_country_edit_interface(new_country.id, project, editor_settings)
 
@@ -515,10 +519,10 @@ func _on_player_duplicated(
 
 	# Create undo_redo action
 	# (don't execute it since we already added the player)
-	undo_redo.create_action("Duplicate player")
-	undo_redo.add_do_method(project.game.game_players.add.bind(new_player))
-	undo_redo.add_undo_method(project.game.game_players.remove.bind(new_player))
-	undo_redo.commit_action(false)
+	_undo_redo.create_action("Duplicate player")
+	_undo_redo.add_do_method(project.game.game_players.add.bind(new_player))
+	_undo_redo.add_undo_method(project.game.game_players.remove.bind(new_player))
+	_undo_redo.commit_action(false)
 
 	_open_player_edit_interface(new_player.id, project, editor_settings)
 
@@ -538,10 +542,10 @@ func _on_army_duplicated(
 
 	# Create undo_redo action
 	# (don't execute it since army setup already added the army)
-	undo_redo.create_action("Duplicate army")
-	undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
-	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
-	undo_redo.commit_action(false)
+	_undo_redo.create_action("Duplicate army")
+	_undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
+	_undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
+	_undo_redo.commit_action(false)
 
 	# Open interface to edit the new army
 	_open_army_edit_interface(new_army, project, editor_settings)

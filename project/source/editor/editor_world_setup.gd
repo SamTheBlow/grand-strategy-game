@@ -2,7 +2,7 @@ class_name EditorWorldSetup
 extends Node
 ## Handles setting up a new [WorldVisuals2D].
 
-signal loaded(project: GameProject, world_visuals: WorldVisuals2D)
+signal loaded(world_visuals: WorldVisuals2D)
 
 const _WORLD_SCENE := preload("uid://dpgoa2yg5bjcp") as PackedScene
 const _CAMERA_SCENE := preload("uid://44rygdcojakm") as PackedScene
@@ -28,19 +28,14 @@ var editor_settings: AppEditorSettings:
 var _world: WorldVisuals2D
 var _camera: CustomCamera2D
 
-@onready var _world_overlay := %WorldOverlay as Node
-
-
 ## Sets up a new [WorldVisuals2D] instance.
 ## Clears existing data beforehand.
 func setup_world(project: GameProject) -> void:
 	if _world != null:
-		_world.overlay_created.disconnect(_world_overlay.add_child)
 		NodeUtils.delete_node(_world)
 
 	_world = _WORLD_SCENE.instantiate() as WorldVisuals2D
 	_world.project = project
-	_world.overlay_created.connect(_world_overlay.add_child)
 	_world_container.add_child(_world)
 
 	if _camera != null:
@@ -53,12 +48,7 @@ func setup_world(project: GameProject) -> void:
 
 	_refresh_decoration_visibility()
 
-	loaded.emit(project, _world)
-
-
-## Returns null if the world is not loaded.
-func world() -> WorldVisuals2D:
-	return _world
+	loaded.emit(_world)
 
 
 func _refresh_decoration_visibility() -> void:

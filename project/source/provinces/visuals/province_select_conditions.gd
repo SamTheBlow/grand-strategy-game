@@ -58,8 +58,8 @@ func _on_province_unhandled_mouse_event(
 		world_visuals.province_selection.select(province.id)
 
 
-func _on_world_loaded(_project: GameProject, new_world: WorldVisuals2D) -> void:
-	world_visuals = new_world
+func _on_world_loaded(new_world_visuals: WorldVisuals2D) -> void:
+	world_visuals = new_world_visuals
 
 
 class ProvinceSelectionOutcome:

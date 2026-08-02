@@ -18,27 +18,25 @@ var is_enabled: bool = false:
 			else:
 				_disconnect_signals()
 
-## The [UndoRedo] system to undo/redo changes.
-var undo_redo := UndoRedo.new()
-
 var _is_setup: bool = false
+var _province_container: ProvinceVisualsContainer2D
 var _province_selection: ProvinceSelection
 var _edge_case: PolygonEditEdgeCase
 
 ## May be null.
-var _highlighted_province: Province
+var _highlighted_province: Province = null
 var _highlighted_province_link_ids: Array[int] = []
 
+var _undo_redo := UndoRedo.new()
+
 ## May be null.
-var _world_overlay: Node:
+var _world_overlay: Node = null:
 	set(value):
 		if _world_overlay != null:
 			NodeUtils.delete_node(_world_overlay)
 		_world_overlay = value
 		if _world_overlay != null:
 			overlay_created.emit(_world_overlay)
-
-@onready var _province_container := %Provinces as ProvinceVisualsContainer2D
 
 
 func _ready() -> void:
@@ -52,12 +50,14 @@ func _exit_tree() -> void:
 
 
 func setup(
+		province_container: ProvinceVisualsContainer2D,
 		province_selection: ProvinceSelection,
 		edge_case: PolygonEditEdgeCase
 ) -> void:
 	if is_enabled and _is_setup and is_node_ready():
 		_disconnect_signals()
 
+	_province_container = province_container
 	_province_selection = province_selection
 	_edge_case = edge_case
 
@@ -73,7 +73,11 @@ func setup(
 func _update() -> void:
 	_province_container.remove_all_highlights()
 	_update_selected_province()
-	_connect_signals()
+
+	_province_selection.province_selected.connect(_update_selected_province)
+	_province_selection.province_deselected.connect(
+			_remove_highlights.unbind(1)
+	)
 
 
 func _update_selected_province(_province: Province = null) -> void:
@@ -91,7 +95,7 @@ func _update_selected_province(_province: Province = null) -> void:
 		var polygon_edit := PolygonEdit.new()
 		polygon_edit.polygon = selected_province.polygon()
 		polygon_edit.is_draw_polygon_enabled = false
-		polygon_edit.undo_redo = undo_redo
+		polygon_edit.undo_redo = _undo_redo
 		_edge_case.polygon_edit = polygon_edit
 		world_overlay.add_child(polygon_edit)
 
@@ -142,16 +146,26 @@ func _update_selected_province(_province: Province = null) -> void:
 			selected_province.linked_province_ids().duplicate()
 	)
 
-	_highlighted_province.link_added.connect(_on_link_added)
-	_highlighted_province.link_removed.connect(_on_link_removed)
-	_highlighted_province.links_reset.connect(_on_links_reset)
+	_highlighted_province.link_added.connect(_add_highlight)
+	_highlighted_province.link_removed.connect(_remove_highlight)
+	_highlighted_province.links_reset.connect(_remove_link_highlights)
+
+
+func _add_highlight(province_id: int) -> void:
+	var province_visuals: ProvinceVisuals2D = (
+			_province_container.visuals_of(province_id)
+	)
+	if province_visuals == null:
+		return
+	province_visuals.highlight_shape(false)
+	_highlighted_province_link_ids.append(province_id)
 
 
 func _remove_highlights() -> void:
 	_world_overlay = null
-	_highlighted_province.link_added.disconnect(_on_link_added)
-	_highlighted_province.link_removed.disconnect(_on_link_removed)
-	_highlighted_province.links_reset.disconnect(_on_links_reset)
+	_highlighted_province.link_added.disconnect(_add_highlight)
+	_highlighted_province.link_removed.disconnect(_remove_highlight)
+	_highlighted_province.links_reset.disconnect(_remove_link_highlights)
 	_highlighted_province = null
 	_remove_link_highlights()
 
@@ -172,34 +186,11 @@ func _remove_highlight(province_id: int) -> void:
 
 func _disconnect_signals() -> void:
 	_province_selection.province_selected.disconnect(_update_selected_province)
-	_province_selection.province_deselected.disconnect(_on_province_deselected)
+	_province_selection.province_deselected.disconnect(_remove_highlights)
 
 
-func _connect_signals() -> void:
-	_province_selection.province_selected.connect(_update_selected_province)
-	_province_selection.province_deselected.connect(_on_province_deselected)
-
-
-func _on_province_deselected(_province: Province) -> void:
-	_remove_highlights()
-
-
-func _on_link_added(province_id: int) -> void:
-	var province_visuals: ProvinceVisuals2D = (
-			_province_container.visuals_of(province_id)
-	)
-	if province_visuals == null:
-		return
-	province_visuals.highlight_shape(false)
-	_highlighted_province_link_ids.append(province_id)
-
-
-func _on_link_removed(province_id: int) -> void:
-	_remove_highlight(province_id)
-
-
-func _on_links_reset() -> void:
-	_remove_link_highlights()
+func _on_history_initialized(undo_redo: UndoRedo) -> void:
+	_undo_redo = undo_redo
 
 
 func _on_army_position_changed(
@@ -221,10 +212,12 @@ func _on_army_drag_finished(
 		return
 
 	# Note: we don't execute it since the position was already changed.
-	undo_redo.create_action("Move army in province")
-	undo_redo.add_do_property(province, &"position_army_host", end_position)
-	undo_redo.add_undo_property(province, &"position_army_host", start_position)
-	undo_redo.commit_action(false)
+	_undo_redo.create_action("Move army in province")
+	_undo_redo.add_do_property(province, &"position_army_host", end_position)
+	_undo_redo.add_undo_property(
+			province, &"position_army_host", start_position
+	)
+	_undo_redo.commit_action(false)
 
 
 func _on_fortress_drag_finished(
@@ -234,10 +227,10 @@ func _on_fortress_drag_finished(
 		return
 
 	# Note: we don't execute it since the position was already changed.
-	undo_redo.create_action("Move fortress in province")
-	undo_redo.add_do_property(province, &"position_fortress", end_position)
-	undo_redo.add_undo_property(province, &"position_fortress", start_position)
-	undo_redo.commit_action(false)
+	_undo_redo.create_action("Move fortress in province")
+	_undo_redo.add_do_property(province, &"position_fortress", end_position)
+	_undo_redo.add_undo_property(province, &"position_fortress", start_position)
+	_undo_redo.commit_action(false)
 
 
 func _on_provinces_unhandled_mouse_event_occured(
@@ -266,13 +259,13 @@ func _on_provinces_unhandled_mouse_event_occured(
 				selected_province.linked_province_ids().duplicate()
 		)
 
-		undo_redo.create_action("Reset province's linked provinces")
-		undo_redo.add_do_method(selected_province.reset_links)
+		_undo_redo.create_action("Reset province's linked provinces")
+		_undo_redo.add_do_method(selected_province.reset_links)
 		for linked_province_id in linked_province_ids:
-			undo_redo.add_undo_method(
+			_undo_redo.add_undo_method(
 					selected_province.add_link.bind(linked_province_id)
 			)
-		undo_redo.commit_action()
+		_undo_redo.commit_action()
 
 		get_viewport().set_input_as_handled()
 		return
@@ -280,21 +273,21 @@ func _on_provinces_unhandled_mouse_event_occured(
 	# Right click a province to toggle
 	# whether or not it's linked to the selected province
 	if selected_province.is_linked_to(clicked_province_id):
-		undo_redo.create_action("Remove province link")
-		undo_redo.add_do_method(
+		_undo_redo.create_action("Remove province link")
+		_undo_redo.add_do_method(
 				selected_province.remove_link.bind(clicked_province_id)
 		)
-		undo_redo.add_undo_method(
+		_undo_redo.add_undo_method(
 				selected_province.add_link.bind(clicked_province_id)
 		)
 	else:
-		undo_redo.create_action("Add province link")
-		undo_redo.add_do_method(
+		_undo_redo.create_action("Add province link")
+		_undo_redo.add_do_method(
 				selected_province.add_link.bind(clicked_province_id)
 		)
-		undo_redo.add_undo_method(
+		_undo_redo.add_undo_method(
 				selected_province.remove_link.bind(clicked_province_id)
 		)
-	undo_redo.commit_action()
+	_undo_redo.commit_action()
 
 	get_viewport().set_input_as_handled()

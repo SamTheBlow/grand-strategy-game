@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/editor_world_bridge.gd" id="10_world_bridge"]
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/editor_project_io.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/editor/editor_history.gd" id="12_history"]
+[ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/world/visuals/map_mode_editor_adjacency.gd" id="13_editor_adjacency"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -29,6 +30,10 @@ script = ExtResource("11_project_io")
 [node name="History" type="Node" parent="." unique_id=1928374653]
 unique_name_in_owner = true
 script = ExtResource("12_history")
+
+[node name="EditorAdjacency" type="Node" parent="." unique_id=1928374654]
+unique_name_in_owner = true
+script = ExtResource("13_editor_adjacency")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -205,9 +210,13 @@ use_native_dialog = true
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="ProjectIO" method="_save_project"]
 [connection signal="project_loaded" from="ProjectIO" to="." method="_on_project_loaded"]
-[connection signal="project_saved" from="ProjectIO" to="." method="_on_project_saved"]
-[connection signal="initialized" from="History" to="." method="_on_history_initialized"]
+[connection signal="project_saved" from="ProjectIO" to="." method="_update_window_title"]
+[connection signal="project_saved" from="ProjectIO" to="Menus" method="_update_visibility_after_save"]
+[connection signal="project_saved" from="ProjectIO" to="History" method="_mark_saved"]
+[connection signal="initialized" from="History" to="EditorAdjacency" method="_on_history_initialized"]
+[connection signal="initialized" from="History" to="UILayer/EditingInterface" method="_on_history_initialized"]
 [connection signal="version_changed" from="History" to="." method="_update_window_title"]
+[connection signal="overlay_created" from="EditorAdjacency" to="WorldOverlayLayer/WorldOverlay" method="add_child"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="ProvinceSelectConditions" method="_on_world_loaded"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]

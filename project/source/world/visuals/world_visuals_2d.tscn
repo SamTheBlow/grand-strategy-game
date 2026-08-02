@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://c7a7jmyes03iq" path="res://source/world/visuals/map_mode_setup.gd" id="3_1p30q"]
 [ext_resource type="Script" uid="uid://brcmtb3xah0nq" path="res://source/armies/visuals/army_visuals_setup.gd" id="4_0v0rh"]
 [ext_resource type="Script" uid="uid://ce455w5kb2t6a" path="res://source/auto_arrows/nodes/auto_arrow_container.gd" id="4_o61mm"]
-[ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/world/visuals/map_mode_editor_adjacency.gd" id="4_ubut0"]
 [ext_resource type="Script" uid="uid://dao8t8wckp433" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
 [ext_resource type="Script" uid="uid://uk0qme4tx0on" path="res://source/world/visuals/map_mode_political.gd" id="5_bd3lk"]
 [ext_resource type="Script" uid="uid://thhc4h73i8pt" path="res://source/world/visuals/map_mode_editor_country.gd" id="6_obqf8"]
@@ -27,10 +26,6 @@ script = ExtResource("3_1p30q")
 [node name="Political" type="Node" parent="MapModeSetup" unique_id=1079725585]
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
-
-[node name="EditorAdjacency" type="Node" parent="MapModeSetup" unique_id=840737747]
-unique_name_in_owner = true
-script = ExtResource("4_ubut0")
 
 [node name="EditorCountry" type="Node" parent="MapModeSetup" unique_id=351145755]
 unique_name_in_owner = true
@@ -61,6 +56,5 @@ unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
-[connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorAdjacency" method="_on_provinces_unhandled_mouse_event_occured"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorCountry" method="_on_provinces_unhandled_mouse_event_occured"]
 [connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]
