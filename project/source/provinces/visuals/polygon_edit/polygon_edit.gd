@@ -13,10 +13,10 @@ const _CURSOR_THRESHOLD: float = 6.0
 const _VERTEX_RADIUS: float = 6.0
 
 ## The color of drawn vertices.
-const _VERTEX_COLOR := Color(0.0, 0.5, 1.0, 0.5)
+const _VERTEX_COLOR := Color(0.0, 0.5, 1.0, 0.7)
 
 ## The color of drawn active (hovered) vertex.
-const _VERTEX_ACTIVE_COLOR := Color(1.0, 1.0, 1.0)
+const _VERTEX_ACTIVE_COLOR := Color.WHITE
 
 ## The color of the preview vertex that appears
 ## when the cursor hovers over the sides of the polygon.
@@ -271,14 +271,40 @@ func _drag_vertex() -> void:
 
 ## Draws a vertex at given position. Displays the index of the active vertex.
 func _draw_vertex(vertex_position: Vector2, vertex_index: int) -> void:
-	draw_circle(vertex_position, _VERTEX_RADIUS, _VERTEX_COLOR)
+	var is_active_index: bool = vertex_index == _active_index
+	const POINT_OUTLINE_THICKNESS: float = 1.0
+	const POINT_OUTLINE_RADIUS: float = (
+		_VERTEX_RADIUS + POINT_OUTLINE_THICKNESS * 0.5
+	)
+
+	# Outline
 	draw_circle(
 			vertex_position,
-			_VERTEX_RADIUS - 1.0,
-			_VERTEX_ACTIVE_COLOR
-			if vertex_index == _active_index else Color.TRANSPARENT
+			POINT_OUTLINE_RADIUS,
+			Color.BLACK,
+			false,
+			POINT_OUTLINE_THICKNESS
 	)
-	if vertex_index == _active_index:
+	# The actual circle
+	draw_circle(
+			vertex_position,
+			_VERTEX_RADIUS,
+			_VERTEX_ACTIVE_COLOR if is_active_index else _VERTEX_COLOR
+	)
+	if is_active_index:
+		# Outline
+		const TEXT_OUTLINE_THICKNESS: int = 12
+		draw_string_outline(
+				ThemeDB.get_default_theme().default_font,
+				vertex_position + Vector2(-16.0, -16.0),
+				str(vertex_index),
+				HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER,
+				32.0,
+				16,
+				TEXT_OUTLINE_THICKNESS,
+				Color.BLACK
+		)
+		# The actual text
 		draw_string(
 				ThemeDB.get_default_theme().default_font,
 				vertex_position + Vector2(-16.0, -16.0),

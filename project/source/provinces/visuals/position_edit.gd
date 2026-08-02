@@ -10,7 +10,7 @@ enum PointShape {
 	CIRCLE,
 }
 
-const _POINT_COLOR := Color(0.0, 0.5, 1.0, 0.5)
+const _POINT_COLOR := Color(0.0, 0.5, 1.0, 0.7)
 const _POINT_HOVERED_COLOR := Color.WHITE
 const _POINT_RADIUS: float = 6.0
 const _CURSOR_THRESHOLD: float = 6.0
@@ -28,9 +28,26 @@ func _init(text: String = "", point_shape := PointShape.CIRCLE) -> void:
 
 
 func _draw() -> void:
-	var smaller_radius: float = _POINT_RADIUS - 1.0
+	const POINT_OUTLINE_THICKNESS: float = 1.0
+	const POINT_OUTLINE_RADIUS: float = (
+		_POINT_RADIUS + POINT_OUTLINE_THICKNESS * 0.5
+	)
+
 	match _point_shape:
 		PointShape.SQUARE:
+			# Outline
+			draw_rect(
+					Rect2(
+							-POINT_OUTLINE_RADIUS,
+							-POINT_OUTLINE_RADIUS,
+							2.0 * POINT_OUTLINE_RADIUS,
+							2.0 * POINT_OUTLINE_RADIUS
+					),
+					Color.BLACK,
+					false,
+					POINT_OUTLINE_THICKNESS
+			)
+			# The actual square
 			draw_rect(
 					Rect2(
 							-_POINT_RADIUS,
@@ -38,34 +55,48 @@ func _draw() -> void:
 							2.0 * _POINT_RADIUS,
 							2.0 * _POINT_RADIUS
 					),
-					_POINT_COLOR
-			)
-			draw_rect(
-					Rect2(
-							-smaller_radius,
-							-smaller_radius,
-							2.0 * smaller_radius,
-							2.0 * smaller_radius
-					),
-					_POINT_HOVERED_COLOR if _is_hovered else Color.TRANSPARENT
+					_POINT_HOVERED_COLOR if _is_hovered else _POINT_COLOR
 			)
 		PointShape.CIRCLE:
-			draw_circle(Vector2.ZERO, _POINT_RADIUS, _POINT_COLOR)
+			# Outline
 			draw_circle(
 					Vector2.ZERO,
-					smaller_radius,
-					_POINT_HOVERED_COLOR if _is_hovered else Color.TRANSPARENT
+					POINT_OUTLINE_RADIUS,
+					Color.BLACK,
+					false,
+					POINT_OUTLINE_THICKNESS
+			)
+			# The actual circle
+			draw_circle(
+					Vector2.ZERO,
+					_POINT_RADIUS,
+					_POINT_HOVERED_COLOR if _is_hovered else _POINT_COLOR
 			)
 		_:
 			pass
 
 	if _is_hovered:
+		# Outline
+		const TEXT_OUTLINE_THICKNESS: int = 12
+		draw_string_outline(
+				ThemeDB.get_default_theme().default_font,
+				Vector2(-5000.0, -16.0),
+				_text,
+				HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER,
+				10000.0,
+				16,
+				TEXT_OUTLINE_THICKNESS,
+				Color.BLACK
+		)
+		# The actual text
 		draw_string(
 				ThemeDB.get_default_theme().default_font,
 				Vector2(-5000.0, -16.0),
 				_text,
 				HorizontalAlignment.HORIZONTAL_ALIGNMENT_CENTER,
-				10000.0
+				10000.0,
+				16,
+				Color.WHITE
 		)
 
 
