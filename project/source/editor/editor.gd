@@ -4,39 +4,21 @@ extends Node
 
 signal exited()
 
-const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
-const _PROJECT_LOAD_POPUP_SCENE: PackedScene = preload("uid://df5yjnsebj5np")
-
 var editor_settings := AppEditorSettings.new()
 
-var _current_project: GameProject:
-	set(value):
-		_current_project = value
-		_undo_redo = UndoRedo.new()
-		if is_node_ready():
-			_setup_project()
+var _current_project := GameProject.new()
 
-var _undo_redo: UndoRedo:
-	set(value):
-		if _undo_redo != null:
-			_undo_redo.version_changed.disconnect(_update_window_title)
-		_undo_redo = value
-		_undo_redo.version_changed.connect(_update_window_title)
+var _undo_redo: UndoRedo
 
 ## Keeps track of at what point the project was last saved.
 var _undo_redo_saved_version: int = 1
 
 @onready var _menus := %Menus as EditorMenus
 @onready var _world_bridge := %WorldBridge as EditorWorldBridge
+@onready var _project_io := %ProjectIO as EditorProjectIO
 @onready var _world_setup := %WorldSetup as EditorWorldSetup
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editing_interface := %EditingInterface as EditingInterface
-@onready var _popup_container := %PopupContainer as Control
-@onready var _save_dialog := %SaveDialog as FileDialog
-
-
-func _init() -> void:
-	_open_new_project()
 
 
 func _ready() -> void:
@@ -63,13 +45,24 @@ func _process(_delta: float) -> void:
 
 
 func _setup_project() -> void:
-	_world_setup.clear()
-	_world_limits_rect.world_limits = null
-	# We close the interface
+	# We close any currently open interface
 	# because it may be using data from the previous project.
 	_editing_interface.close_interface()
 
+	# Setup a new UndoRedo instance
+	if _undo_redo != null:
+		_undo_redo.version_changed.disconnect(_update_window_title)
+	_undo_redo = UndoRedo.new()
+	_undo_redo.version_changed.connect(_update_window_title)
+
+	# Clear existing data
+	_world_setup.clear()
+	_world_limits_rect.world_limits = null
+
+	# Setup the world visuals
 	_world_setup.load_world(_current_project)
+
+	# Give new data to nodes
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
 	_editing_interface.undo_redo = _undo_redo
 
@@ -85,6 +78,8 @@ func _setup_project() -> void:
 		push_warning("Could not get the editor adjacancy map mode")
 
 	_menus.current_project = _current_project
+	_project_io.current_project = _current_project
+
 	_update_window_title()
 
 
@@ -100,35 +95,6 @@ func _update_window_title() -> void:
 	)
 
 
-func _update_undo_redo() -> void:
-	_undo_redo_saved_version = _undo_redo.get_version()
-	_update_window_title()
-
-
-func _open_new_project() -> void:
-	_current_project = GameProject.new()
-
-
-func _open_project() -> void:
-	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
-	var project_load_popup := (
-			_PROJECT_LOAD_POPUP_SCENE.instantiate() as ProjectLoadPopup
-	)
-	project_load_popup.project_loaded.connect(_on_project_loaded)
-	popup.contents_node = project_load_popup
-	_popup_container.add_child(popup)
-
-
-## If the project doesn't have a file path assigned, opens the file dialog.
-func _save_project() -> void:
-	if _current_project.has_valid_file_path():
-		_current_project.save()
-		_update_undo_redo()
-		_menus.update_menu_visibility_after_save()
-	else:
-		_save_dialog.show()
-
-
 func _play() -> void:
 	# TODO implement
 	pass
@@ -140,15 +106,16 @@ func _open_interface(type: EditingInterface.InterfaceType) -> void:
 	)
 
 
+## Called when a new project is loaded.
+## Rebuilds the whole editor state.
 func _on_project_loaded(project: GameProject) -> void:
 	_current_project = project
+	_setup_project()
 
 
-func _on_save_dialog_file_selected(path: String) -> void:
-	# Add the file extension if the user didn't type it in
-	if not path.to_lower().ends_with(".json"):
-		path = path + ".json"
+## Called after the current project has been saved to disk.
+func _on_project_saved() -> void:
+	_undo_redo_saved_version = _undo_redo.get_version()
+	_update_window_title()
 
-	_current_project.save_as(path)
-	_update_undo_redo()
 	_menus.update_menu_visibility_after_save()
