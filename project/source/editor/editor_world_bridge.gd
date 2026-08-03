@@ -114,3 +114,11 @@ func _on_army_list_item_hovered(army: Army) -> void:
 
 func _on_army_list_item_unhovered() -> void:
 	_army_visuals_input.set_hovered_army(null)
+
+
+func _on_province_list_item_hovered(province: Province) -> void:
+	_world_visuals.province_input.set_hovered_province(province)
+
+
+func _on_province_list_item_unhovered() -> void:
+	_world_visuals.province_input.set_hovered_province(null)

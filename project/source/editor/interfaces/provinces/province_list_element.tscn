@@ -24,6 +24,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+mouse_filter = 1
 theme_override_styles/normal = ExtResource("2_6uon8")
 
 [node name="ProvincePreview" type="Control" parent="Button"]

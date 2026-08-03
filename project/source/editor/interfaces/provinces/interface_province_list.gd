@@ -3,6 +3,8 @@ extends AppEditorInterface
 ## Shows a list of all provinces for the user to edit.
 
 signal item_selected(province_id: int)
+signal item_hovered(province: Province)
+signal item_unhovered()
 
 const _ELEMENT_SCENE := preload("uid://dpv2or6jsyiwe") as PackedScene
 
@@ -22,6 +24,12 @@ func _ready() -> void:
 	provinces.removed.connect(_on_province_removed)
 
 
+## Ensures the province hover doesn't stick around
+## when this interface is closed or replaced.
+func _exit_tree() -> void:
+	item_unhovered.emit()
+
+
 func _add_element(province: Province) -> void:
 	if _nodes.has(province.id):
 		push_warning("Province already has a corresponding node.")
@@ -30,6 +38,8 @@ func _add_element(province: Province) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as ProvinceListElement
 	element.province = province
 	element.pressed.connect(_on_element_pressed)
+	element.mouse_entered.connect(item_hovered.emit.bind(province))
+	element.mouse_exited.connect(item_unhovered.emit)
 	_element_container.add_child(element)
 	_nodes[province.id] = element
 

@@ -14,6 +14,8 @@ signal army_interface_opened(army: Army)
 signal army_interface_closed()
 signal army_list_item_hovered(army: Army)
 signal army_list_item_unhovered()
+signal province_list_item_hovered(province: Province)
+signal province_list_item_unhovered()
 
 enum InterfaceType {
 	PROJECT_INFO,
@@ -234,6 +236,8 @@ func _new_interface(
 		interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
 		)
+		interface.item_hovered.connect(province_list_item_hovered.emit)
+		interface.item_unhovered.connect(province_list_item_unhovered.emit)
 	elif new_interface is InterfaceArmyList:
 		var interface := new_interface as InterfaceArmyList
 		interface.armies = project.game.world.armies

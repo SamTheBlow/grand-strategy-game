@@ -225,5 +225,7 @@ use_native_dialog = true
 [connection signal="country_select_pressed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_select_pressed"]
 [connection signal="province_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_closed"]
 [connection signal="province_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_opened"]
+[connection signal="province_list_item_hovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_list_item_hovered"]
+[connection signal="province_list_item_unhovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_list_item_unhovered"]
 [connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
 [connection signal="file_selected" from="SaveDialog" to="ProjectIO" method="_on_save_dialog_file_selected"]
