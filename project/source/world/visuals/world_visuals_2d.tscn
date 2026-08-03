@@ -3,11 +3,10 @@
 [ext_resource type="Script" uid="uid://ctu7j3g2p76du" path="res://source/world/visuals/world_visuals_2d.gd" id="1_im3sb"]
 [ext_resource type="Script" uid="uid://dd2gioc3u8jsx" path="res://source/world/visuals/background_color.gd" id="2_ofaev"]
 [ext_resource type="Script" uid="uid://yhhag4v6plx" path="res://source/world/visuals/world_background.gd" id="2_unrx0"]
-[ext_resource type="Script" uid="uid://c7a7jmyes03iq" path="res://source/world/visuals/map_mode_setup.gd" id="3_1p30q"]
 [ext_resource type="Script" uid="uid://brcmtb3xah0nq" path="res://source/armies/visuals/army_visuals_setup.gd" id="4_0v0rh"]
 [ext_resource type="Script" uid="uid://ce455w5kb2t6a" path="res://source/auto_arrows/nodes/auto_arrow_container.gd" id="4_o61mm"]
 [ext_resource type="Script" uid="uid://dao8t8wckp433" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
-[ext_resource type="Script" uid="uid://uk0qme4tx0on" path="res://source/world/visuals/map_mode_political.gd" id="5_bd3lk"]
+[ext_resource type="Script" uid="uid://47v624ihmda7" path="res://source/world/visuals/province_link_highlighter.gd" id="5_bd3lk"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 [ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
 [ext_resource type="Script" uid="uid://ck15fpk1p01qb" path="res://source/provinces/visuals/province_visuals_input.gd" id="12_pvii"]
@@ -19,11 +18,7 @@ script = ExtResource("1_im3sb")
 unique_name_in_owner = true
 script = ExtResource("2_ofaev")
 
-[node name="MapModeSetup" type="Node" parent="." unique_id=771863703]
-unique_name_in_owner = true
-script = ExtResource("3_1p30q")
-
-[node name="Political" type="Node" parent="MapModeSetup" unique_id=1079725585]
+[node name="ProvinceLinkHighlighter" type="Node" parent="." unique_id=1079725585]
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
 

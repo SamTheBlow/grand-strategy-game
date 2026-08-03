@@ -11,7 +11,7 @@ var project: GameProject:
 				ProvinceSelection.new(project.game.world.provinces)
 		)
 		if is_node_ready():
-			_update()
+			_setup()
 
 ## Automatically initialized when providing the [GameProject].
 var world: GameWorld
@@ -24,8 +24,18 @@ var province_selection: ProvinceSelection
 
 var _is_decorations_visible: bool = true
 
+## Determines which country's auto-arrows are currently shown.
+var _arrow_behavior: ArrowBehavior:
+	set(value):
+		if _arrow_behavior != null:
+			_arrow_behavior.stop()
+		_arrow_behavior = value
+		_arrow_behavior.start(_auto_arrow_input, _auto_arrow_container)
+
 @onready var _background_color := %BackgroundColor as BackgroundColor
-@onready var map_mode_setup := %MapModeSetup as MapModeSetup
+@onready var province_link_highlighter := (
+		%ProvinceLinkHighlighter as ProvinceLinkHighlighter
+)
 @onready var _army_visuals_setup := %ArmyVisualsSetup as ArmyVisualsSetup
 @onready var province_input := %ProvinceInput as ProvinceVisualsInput
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
@@ -37,21 +47,46 @@ var _is_decorations_visible: bool = true
 
 func _ready() -> void:
 	if project != null:
-		_update()
+		_setup()
 
 
-func _update() -> void:
+## Shows or hides the decorations.
+func set_decoration_visiblity(is_decorations_visible: bool) -> void:
+	_is_decorations_visible = is_decorations_visible
+	_refresh_decoration_visibility()
+
+
+## Shows the playing country's auto-arrows. This is the default game behavior.
+func show_game_arrows() -> void:
+	_arrow_behavior = ArrowBehavior.ShowPlayingCountry.new(
+			project.game, multiplayer, province_selection, playing_country
+	)
+
+
+## Shows the auto-arrows of given country.
+func show_arrows_of_country(country: Country) -> void:
+	_arrow_behavior = ArrowBehavior.ShowSpecificCountry.new(country.id)
+
+
+func _setup() -> void:
 	# We need to setup the provinces first
 	province_visuals.setup(world.provinces)
 
 	province_input.setup(province_selection)
 	province_input.province_unhovered.connect(
-			map_mode_setup.political.refresh_highlights.unbind(1)
+			province_link_highlighter.refresh_highlights.unbind(1)
 	)
 
 	_background_color.world = world
 
-	map_mode_setup.setup(self)
+	province_link_highlighter.setup(
+			world.armies,
+			world.provinces,
+			playing_country,
+			world.armies_in_each_province,
+			province_selection
+	)
+	province_link_highlighter.is_enabled = true
 
 	_army_visuals_setup.setup(
 			world.armies, playing_country, world.armies_in_each_province
@@ -60,18 +95,13 @@ func _update() -> void:
 	_auto_arrow_input.game = project.game
 
 	_decorations_node.setup(world.decorations)
-	_update_decoration_visibility()
+	_refresh_decoration_visibility()
 
 	_auto_arrow_container.setup(project.game.countries)
+	show_game_arrows()
 
 
-## Shows or hides the decorations.
-func set_decoration_visiblity(is_decorations_visible: bool) -> void:
-	_is_decorations_visible = is_decorations_visible
-	_update_decoration_visibility()
-
-
-func _update_decoration_visibility() -> void:
+func _refresh_decoration_visibility() -> void:
 	if _decorations_node == null:
 		return
 	_decorations_node.visible = _is_decorations_visible

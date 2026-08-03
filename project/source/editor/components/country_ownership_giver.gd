@@ -2,9 +2,6 @@ class_name CountryOwnershipGiver
 extends Node
 ## Gives/removes control of some province to some selected country.
 
-## This node has no effect when disabled.
-var is_enabled: bool = false
-
 ## The country to give control of provinces to.
 ## This node has no effect if this is null.
 var selected_country: Country = null
@@ -17,7 +14,7 @@ func _on_history_initialized(undo_redo: UndoRedo) -> void:
 
 
 func apply_to_province(province: Province) -> void:
-	if not is_enabled or selected_country == null:
+	if selected_country == null:
 		return
 
 	var country_before: Country = province.owner_country

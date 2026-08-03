@@ -1,7 +1,6 @@
-class_name MapModePolitical
+class_name ProvinceLinkHighlighter
 extends Node
 ## Highlights the links of currently selected [Province].
-## This is the normal usual map mode.
 
 ## This node has no effect when disabled.
 var is_enabled: bool = false:

@@ -7,7 +7,7 @@ const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings: AppEditorSettings
 
-@onready var _editor_adjacency := %EditorAdjacency as MapModeEditorAdjacency
+@onready var _province_link_editer := %ProvinceLinkEditer as ProvinceLinkEditer
 @onready var _country_giver := %CountryOwnershipGiver as CountryOwnershipGiver
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
@@ -36,21 +36,17 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	)
 	_world_visuals.add_child(_army_visuals_input)
 
-	# Setup the adjacency editor tool
-	_editor_adjacency.setup(
+	# Setup the province link editing tool
+	_province_link_editer.setup(
 			_world_visuals.province_visuals,
 			_world_visuals.province_selection,
 			PolygonEditEdgeCase.new(_world_visuals.world)
 	)
 	_world_visuals.province_visuals.province_right_clicked.connect(
-			_editor_adjacency._on_province_right_clicked
-	)
-	_world_visuals.province_input.province_unhovered.connect(
-			_editor_adjacency.refresh_highlight_links.unbind(1)
+			_province_link_editer._on_province_right_clicked
 	)
 
 	# Setup the country ownership tool
-	_world_visuals.map_mode_setup.country_giver = _country_giver
 	_world_visuals.province_visuals.province_clicked.connect(
 			_country_giver.apply_to_province
 	)
@@ -66,21 +62,13 @@ func _on_selected_province_changed(province: Province) -> void:
 
 
 func _on_province_interface_opened(province: Province) -> void:
-	# Select province
 	_world_visuals.province_selection.select(province.id)
-
-	# Show adjacencies on world map
-	_world_visuals.map_mode_setup.political.is_enabled = false
-	_editor_adjacency.is_enabled = true
+	_province_link_editer.is_enabled = true
 
 
 func _on_province_interface_closed() -> void:
-	# Deselect province
 	_world_visuals.province_selection.deselect()
-
-	# Revert the map mode to normal
-	_editor_adjacency.is_enabled = false
-	_world_visuals.map_mode_setup.political.is_enabled = true
+	_province_link_editer.is_enabled = false
 
 
 func _on_country_select_pressed(item_country: ItemCountry) -> void:
@@ -98,13 +86,20 @@ func _on_country_select_pressed(item_country: ItemCountry) -> void:
 
 
 func _on_country_interface_opened(country: Country) -> void:
-	# Change map mode
-	_world_visuals.map_mode_setup.set_map_mode_editor_country(country)
+	# While editing a country, clicking a province changes its ownership
+	_country_giver.selected_country = country
+
+	_world_visuals.province_selection.is_disabled = true
+	_world_visuals.province_link_highlighter.is_enabled = false
+	_world_visuals.show_arrows_of_country(country)
 
 
 func _on_country_interface_closed() -> void:
-	# Revert the map mode to normal
-	_world_visuals.map_mode_setup.set_map_mode(MapModeSetup.MapMode.POLITICAL)
+	_country_giver.selected_country = null
+
+	_world_visuals.province_selection.is_disabled = false
+	_world_visuals.province_link_highlighter.is_enabled = true
+	_world_visuals.show_game_arrows()
 
 
 func _on_army_interface_opened(army: Army) -> void:
