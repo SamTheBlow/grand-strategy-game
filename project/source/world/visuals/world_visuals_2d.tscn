@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://thhc4h73i8pt" path="res://source/world/visuals/map_mode_editor_country.gd" id="6_obqf8"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 [ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
+[ext_resource type="Script" uid="uid://ck15fpk1p01qb" path="res://source/provinces/visuals/province_visuals_input.gd" id="12_pvii"]
 
 [node name="WorldVisuals2D" type="Node2D" unique_id=342240876]
 script = ExtResource("1_im3sb")
@@ -47,6 +48,10 @@ script = ExtResource("2_unrx0")
 unique_name_in_owner = true
 script = ExtResource("5_4fqv4")
 
+[node name="ProvinceInput" type="Node" parent="." unique_id=1234567890]
+unique_name_in_owner = true
+script = ExtResource("12_pvii")
+
 [node name="Decorations" type="Node2D" parent="." unique_id=2090586468]
 unique_name_in_owner = true
 script = ExtResource("11_obqf8")
@@ -56,5 +61,4 @@ unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
-[connection signal="unhandled_mouse_event_occured" from="Provinces" to="MapModeSetup/EditorCountry" method="_on_provinces_unhandled_mouse_event_occured"]
-[connection signal="unhandled_mouse_event_occured" from="Provinces" to="AutoArrowInput" method="_on_provinces_unhandled_mouse_event_occured"]
+[connection signal="clicked" from="Background" to="ProvinceInput" method="_on_background_clicked"]

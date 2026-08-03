@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://c74o2ubgawogb"]
+[gd_scene format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
 [ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
@@ -16,7 +16,6 @@
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="18_a3u80"]
 [ext_resource type="Script" uid="uid://3hqfpevmvw0f" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
-[ext_resource type="Script" uid="uid://e8mqxhs7tmgj" path="res://source/provinces/visuals/province_select_conditions.gd" id="18_pfqno"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="20_446nu"]
 [ext_resource type="Script" uid="uid://db46v1wpq2gci" path="res://source/utils/ui/interface_tabs.gd" id="20_no4y5"]
 [ext_resource type="PackedScene" uid="uid://dgm1qqboe50y7" path="res://source/ui/top_bar.tscn" id="20_qfiqr"]
@@ -29,7 +28,7 @@
 [ext_resource type="Script" uid="uid://dfio0wudtxr2h" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
 [ext_resource type="PackedScene" uid="uid://bgcpn52rk3b4e" path="res://source/ui/pause_menu.tscn" id="30_enc8l"]
 
-[node name="Game" type="Node"]
+[node name="Game" type="Node" unique_id=1883659067]
 script = ExtResource("1_g7hfo")
 networking_setup_scene = ExtResource("6_b2bhm")
 troop_ui_scene = ExtResource("2_dx3sp")
@@ -44,33 +43,29 @@ country_info_scene = ExtResource("15_6f53u")
 notification_info_scene = ExtResource("16_r8lxu")
 battle = ExtResource("15_vh3er")
 
-[node name="DebugProvinceHighlight" type="Node" parent="." node_paths=PackedStringArray("_game")]
+[node name="DebugProvinceHighlight" type="Node" parent="." unique_id=1669769325 node_paths=PackedStringArray("_game")]
 script = ExtResource("18_pevj0")
 is_enabled = false
 _game = NodePath("..")
 
-[node name="ActionInput" type="Node" parent="."]
+[node name="ActionInput" type="Node" parent="." unique_id=1724995183]
 unique_name_in_owner = true
 script = ExtResource("16_724ii")
 
-[node name="ProvinceSelectConditions" type="Node" parent="."]
-unique_name_in_owner = true
-script = ExtResource("18_pfqno")
-
-[node name="WorldLayer" type="CanvasLayer" parent="."]
+[node name="WorldLayer" type="CanvasLayer" parent="." unique_id=875824408]
 follow_viewport_enabled = true
 
-[node name="WorldVisuals2D" parent="WorldLayer" instance=ExtResource("6_5jo7e")]
+[node name="WorldVisuals2D" parent="WorldLayer" unique_id=1763032019 instance=ExtResource("6_5jo7e")]
 unique_name_in_owner = true
 
-[node name="Camera" parent="." instance=ExtResource("18_a3u80")]
+[node name="Camera" parent="." unique_id=1316629976 instance=ExtResource("18_a3u80")]
 unique_name_in_owner = true
 
-[node name="UILayer" type="CanvasLayer" parent="."]
+[node name="UILayer" type="CanvasLayer" parent="." unique_id=1206372945]
 unique_name_in_owner = true
 layer = 2
 
-[node name="GameUI" type="Control" parent="UILayer"]
+[node name="GameUI" type="Control" parent="UILayer" unique_id=1014548353]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -79,7 +74,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="ComponentUI" type="Control" parent="UILayer/GameUI"]
+[node name="ComponentUI" type="Control" parent="UILayer/GameUI" unique_id=313393175]
 unique_name_in_owner = true
 anchors_preset = 0
 offset_right = 40.0
@@ -87,11 +82,11 @@ offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("25_oq116")
 
-[node name="TopBar" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
+[node name="TopBar" parent="UILayer/GameUI" unique_id=941378789 node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1
 _game = NodePath("../../..")
 
-[node name="GameNotifications" parent="UILayer/GameUI" instance=ExtResource("25_v7fg0")]
+[node name="GameNotifications" parent="UILayer/GameUI" unique_id=2015665613 instance=ExtResource("25_v7fg0")]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.1
@@ -102,12 +97,12 @@ offset_top = 16.0
 offset_right = -16.0
 offset_bottom = -16.0
 
-[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" node_paths=PackedStringArray("_game_notifications_node", "_game")]
+[node name="Setup" type="Node" parent="UILayer/GameUI/GameNotifications" unique_id=1870111099 node_paths=PackedStringArray("_game_notifications_node", "_game")]
 script = ExtResource("27_ncc6m")
 _game_notifications_node = NodePath("..")
 _game = NodePath("../../../..")
 
-[node name="RightSide" type="Control" parent="UILayer/GameUI"]
+[node name="RightSide" type="Control" parent="UILayer/GameUI" unique_id=597405433]
 layout_mode = 1
 anchor_left = 0.75
 anchor_top = 0.1
@@ -119,7 +114,7 @@ offset_right = -16.0
 offset_bottom = -16.0
 mouse_filter = 2
 
-[node name="Tabs" type="Control" parent="UILayer/GameUI/RightSide" node_paths=PackedStringArray("buttons", "corresponding_ui")]
+[node name="Tabs" type="Control" parent="UILayer/GameUI/RightSide" unique_id=1638938690 node_paths=PackedStringArray("buttons", "corresponding_ui")]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.1
@@ -133,7 +128,7 @@ script = ExtResource("20_no4y5")
 buttons = [NodePath("HBoxContainer/TurnOrderTab/TurnOrderButton"), NodePath("HBoxContainer/LobbyTab/LobbyButton")]
 corresponding_ui = [NodePath("../Content/TurnOrderList"), NodePath("../Content/LobbyList")]
 
-[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/RightSide/Tabs"]
+[node name="HBoxContainer" type="HBoxContainer" parent="UILayer/GameUI/RightSide/Tabs" unique_id=1505561044]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -141,11 +136,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="TurnOrderTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+[node name="TurnOrderTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer" unique_id=1037174424]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab" unique_id=1159110331]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -154,7 +149,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="TurnOrderButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab"]
+[node name="TurnOrderButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/TurnOrderTab" unique_id=906336688]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -165,11 +160,11 @@ theme_override_styles/normal = ExtResource("26_eobj4")
 text = "Turn Order"
 script = ExtResource("21_l7714")
 
-[node name="LobbyTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer"]
+[node name="LobbyTab" type="Control" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer" unique_id=647747632]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab" unique_id=402675550]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -178,7 +173,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.423529, 0.537255, 0.65098, 0.878431)
 
-[node name="LobbyButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab"]
+[node name="LobbyButton" type="Button" parent="UILayer/GameUI/RightSide/Tabs/HBoxContainer/LobbyTab" unique_id=379845232]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -189,7 +184,7 @@ theme_override_styles/normal = ExtResource("26_eobj4")
 text = "Lobby"
 script = ExtResource("21_l7714")
 
-[node name="Content" type="Control" parent="UILayer/GameUI/RightSide"]
+[node name="Content" type="Control" parent="UILayer/GameUI/RightSide" unique_id=1924789172]
 layout_mode = 1
 anchor_top = 0.1
 anchor_right = 1.0
@@ -200,7 +195,7 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 0.9
 mouse_filter = 2
 
-[node name="TurnOrderList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+[node name="TurnOrderList" type="Control" parent="UILayer/GameUI/RightSide/Content" unique_id=742957319]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -209,11 +204,11 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="TurnOrderList" parent="UILayer/GameUI/RightSide/Content/TurnOrderList" instance=ExtResource("22_ufuwj")]
+[node name="TurnOrderList" parent="UILayer/GameUI/RightSide/Content/TurnOrderList" unique_id=1869146232 instance=ExtResource("22_ufuwj")]
 unique_name_in_owner = true
 layout_mode = 1
 
-[node name="LobbyList" type="Control" parent="UILayer/GameUI/RightSide/Content"]
+[node name="LobbyList" type="Control" parent="UILayer/GameUI/RightSide/Content" unique_id=1370649029]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -222,20 +217,20 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PlayerList" parent="UILayer/GameUI/RightSide/Content/LobbyList" instance=ExtResource("9_pkxqv")]
+[node name="PlayerList" parent="UILayer/GameUI/RightSide/Content/LobbyList" unique_id=1269362428 instance=ExtResource("9_pkxqv")]
 unique_name_in_owner = true
 layout_mode = 1
 offset_bottom = 80.0
 is_shrunk = true
 
-[node name="ChatInterface" parent="UILayer/GameUI" instance=ExtResource("20_446nu")]
+[node name="ChatInterface" parent="UILayer/GameUI" unique_id=1873511990 instance=ExtResource("20_446nu")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.7
 anchor_right = 0.3
 
-[node name="EndTurnInterface" type="Control" parent="UILayer/GameUI" node_paths=PackedStringArray("_game")]
+[node name="EndTurnInterface" type="Control" parent="UILayer/GameUI" unique_id=258187013 node_paths=PackedStringArray("_game")]
 layout_mode = 1
 anchor_left = 0.8
 anchor_top = 0.8
@@ -244,7 +239,7 @@ anchor_bottom = 1.0
 script = ExtResource("21_fxgwm")
 _game = NodePath("../../..")
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/EndTurnInterface"]
+[node name="ColorRect" type="ColorRect" parent="UILayer/GameUI/EndTurnInterface" unique_id=1188511746]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -253,7 +248,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(1, 1, 1, 0.25098)
 
-[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/EndTurnInterface"]
+[node name="MarginContainer" type="MarginContainer" parent="UILayer/GameUI/EndTurnInterface" unique_id=1671096357]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.2
@@ -261,15 +256,15 @@ anchor_top = 0.2
 anchor_right = 0.8
 anchor_bottom = 0.8
 
-[node name="EndTurn" type="Button" parent="UILayer/GameUI/EndTurnInterface/MarginContainer"]
+[node name="EndTurn" type="Button" parent="UILayer/GameUI/EndTurnInterface/MarginContainer" unique_id=1373874670]
 layout_mode = 2
 text = "End Turn"
 
-[node name="PlayerTurnAnnouncement" parent="UILayer/GameUI" node_paths=PackedStringArray("_game") instance=ExtResource("8_e0v4f")]
+[node name="PlayerTurnAnnouncement" parent="UILayer/GameUI" unique_id=593640156 node_paths=PackedStringArray("_game") instance=ExtResource("8_e0v4f")]
 layout_mode = 1
 _game = NodePath("../../..")
 
-[node name="Popups" type="Control" parent="UILayer/GameUI"]
+[node name="Popups" type="Control" parent="UILayer/GameUI" unique_id=1662575556]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -279,10 +274,9 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="PauseMenu" parent="UILayer" instance=ExtResource("30_enc8l")]
+[node name="PauseMenu" parent="UILayer" unique_id=948035850 instance=ExtResource("30_enc8l")]
 unique_name_in_owner = true
 
-[connection signal="province_select_attempted" from="ProvinceSelectConditions" to="." method="_on_province_select_attempted"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]

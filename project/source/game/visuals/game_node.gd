@@ -84,8 +84,10 @@ func _ready() -> void:
 
 	world_visuals.project = project
 
-	(%ProvinceSelectConditions as ProvinceSelectConditions).world_visuals = (
-			world_visuals
+	# Connect the veto signal so that clicking a province can
+	# instead open the army movement popup (when applicable).
+	world_visuals.province_input.province_select_attempted.connect(
+			_on_province_select_attempted
 	)
 
 	_camera.world_limits = project.game.world.limits()
@@ -305,7 +307,7 @@ func _on_game_over(winning_country: Country) -> void:
 ## instead opens the army movement popup (when applicable)
 func _on_province_select_attempted(
 		province: Province,
-		outcome: ProvinceSelectConditions.ProvinceSelectionOutcome
+		outcome: ProvinceVisualsInput.ProvinceSelectionOutcome
 ) -> void:
 	# Only open the popup if it's your turn
 	var you: GamePlayer = game.turn.playing_players()[0]

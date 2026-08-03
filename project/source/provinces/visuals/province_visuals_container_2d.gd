@@ -2,40 +2,32 @@ class_name ProvinceVisualsContainer2D
 extends Node2D
 ## An encapsulated list of [ProvinceVisuals2D].
 
-# TODO there is probably a better way to do this
+signal province_visuals_created(province_visuals: ProvinceVisuals2D)
+
+signal province_clicked(province_visuals: ProvinceVisuals2D)
+signal province_right_clicked(
+		is_double_click: bool, province_visuals: ProvinceVisuals2D
+)
 signal province_mouse_entered(province_visuals: ProvinceVisuals2D)
 signal province_mouse_exited(province_visuals: ProvinceVisuals2D)
-signal unhandled_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-)
 
 const _PROVINCE_VISUALS_SCENE := preload("uid://cppfb8jwghnqt") as PackedScene
 
-var _is_setup: bool = false
 var _provinces: Provinces
 
-## A list of all the child nodes, for easy access.
-var _list: Array[ProvinceVisuals2D] = []
-
-## Maps a province id to its visuals, for performance reasons.
+## Maps a province id to its visuals.
 var _province_map: Dictionary[int, ProvinceVisuals2D] = {}
 
 
-func _ready() -> void:
-	if _is_setup:
-		_update()
-
-
 func setup(provinces: Provinces) -> void:
-	if _is_setup and is_node_ready():
-		_disconnect_signals()
-
 	_provinces = provinces
-
-	_is_setup = true
+	_provinces.added.connect(_add_province)
+	_provinces.removed.connect(_remove_province)
 
 	if is_node_ready():
-		_update()
+		_refresh()
+	else:
+		ready.connect(_refresh, ConnectFlags.CONNECT_ONE_SHOT)
 
 
 ## Returns null if given province doesn't have visuals.
@@ -45,69 +37,43 @@ func visuals_of(province_id: int) -> ProvinceVisuals2D:
 	return null
 
 
+## Returns all province visuals currently on the world map.
+func all_visuals() -> Array[ProvinceVisuals2D]:
+	return _province_map.values()
+
+
 func remove_all_highlights() -> void:
 	for province_id in _province_map:
 		_province_map[province_id].remove_highlight()
 
 
-func _update() -> void:
-	_clear()
+func _refresh() -> void:
+	NodeUtils.remove_all_children(self)
+	_province_map.clear()
 
 	for province in _provinces.list():
 		_add_province(province)
 
-	_connect_signals()
 
-
-## No effect if the province already has visuals.
 func _add_province(province: Province) -> void:
-	if _province_map.has(province.id):
+	if not is_node_ready():
 		return
 
-	var province_visuals := (
-			_PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
-	)
-	province_visuals.province = province
+	var visuals := _PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
+	visuals.province = province
+	visuals.clicked.connect(province_clicked.emit.bind(visuals))
+	visuals.right_clicked.connect(province_right_clicked.emit.bind(visuals))
+	visuals.mouse_entered.connect(province_mouse_entered.emit.bind(visuals))
+	visuals.mouse_exited.connect(province_mouse_exited.emit.bind(visuals))
 
-	_list.append(province_visuals)
-	_province_map[province.id] = province_visuals
-
-	province_visuals.unhandled_mouse_event_occured.connect(
-			unhandled_mouse_event_occured.emit
-	)
-	province_visuals.mouse_entered.connect(
-			province_mouse_entered.emit.bind(province_visuals)
-	)
-	province_visuals.mouse_exited.connect(
-			province_mouse_exited.emit.bind(province_visuals)
-	)
-
-	add_child(province_visuals)
+	_province_map[province.id] = visuals
+	add_child(visuals)
+	province_visuals_created.emit(visuals)
 
 
-## No effect if the province didn't have visuals.
 func _remove_province(province: Province) -> void:
-	if not _province_map.has(province.id):
+	if not is_node_ready():
 		return
-	var province_visuals: ProvinceVisuals2D = _province_map[province.id]
+
+	NodeUtils.delete_node(_province_map[province.id])
 	_province_map.erase(province.id)
-	_list.erase(province_visuals)
-	remove_child(province_visuals)
-	province_visuals.queue_free()
-
-
-## Removes all province visuals.
-func _clear() -> void:
-	NodeUtils.remove_all_children(self)
-	_list = []
-	_province_map = {}
-
-
-func _connect_signals() -> void:
-	_provinces.added.connect(_add_province)
-	_provinces.removed.connect(_remove_province)
-
-
-func _disconnect_signals() -> void:
-	_provinces.added.disconnect(_add_province)
-	_provinces.removed.disconnect(_remove_province)

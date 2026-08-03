@@ -41,8 +41,11 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 			_world_visuals.province_selection,
 			PolygonEditEdgeCase.new(_world_visuals.world)
 	)
-	_world_visuals.province_visuals.unhandled_mouse_event_occured.connect(
-			_editor_adjacency._on_provinces_unhandled_mouse_event_occured
+	_world_visuals.province_visuals.province_right_clicked.connect(
+			_editor_adjacency._on_province_right_clicked
+	)
+	_world_visuals.province_input.province_unhovered.connect(
+			_editor_adjacency.refresh_highlight_links.unbind(1)
 	)
 
 

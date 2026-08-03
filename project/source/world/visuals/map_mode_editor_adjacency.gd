@@ -133,18 +133,12 @@ func _update_selected_province(_province: Province = null) -> void:
 
 		_world_overlay = world_overlay
 
-	# Highlight all the linked provinces with the correct highlight type
-	for link_id in selected_province.linked_province_ids():
-		var link_visuals: ProvinceVisuals2D = (
-				_province_container.visuals_of(link_id)
-		)
-		if link_visuals != null:
-			link_visuals.highlight_shape(false)
-
 	_highlighted_province = selected_province
 	_highlighted_province_link_ids = (
 			selected_province.linked_province_ids().duplicate()
 	)
+
+	refresh_highlight_links()
 
 	_highlighted_province.link_added.connect(_add_highlight)
 	_highlighted_province.link_removed.connect(_remove_highlight)
@@ -157,8 +151,21 @@ func _add_highlight(province_id: int) -> void:
 	)
 	if province_visuals == null:
 		return
-	province_visuals.highlight_shape(false)
+	province_visuals.highlight()
 	_highlighted_province_link_ids.append(province_id)
+
+
+## Highlights selected province's links.
+func refresh_highlight_links() -> void:
+	if _highlighted_province == null:
+		return
+
+	for link_id in _highlighted_province.linked_province_ids():
+		var link_visuals: ProvinceVisuals2D = (
+				_province_container.visuals_of(link_id)
+		)
+		if link_visuals != null:
+			link_visuals.highlight()
 
 
 func _remove_highlights() -> void:
@@ -233,27 +240,14 @@ func _on_fortress_drag_finished(
 	_undo_redo.commit_action(false)
 
 
-func _on_provinces_unhandled_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
+func _on_province_right_clicked(
+		is_double_click: bool, province_visuals: ProvinceVisuals2D
 ) -> void:
-	if not (is_enabled and event is InputEventMouseButton):
-		return
-	var mouse_button_event := event as InputEventMouseButton
-
-	if not (
-			mouse_button_event.pressed
-			and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT
-	):
-		return
-
 	var selected_province: Province = _province_selection.selected_province()
 	var clicked_province_id: int = province_visuals.province.id
 
 	# Double right click the selected province to remove all its links
-	if (
-			mouse_button_event.double_click
-			and clicked_province_id == selected_province.id
-	):
+	if is_double_click and clicked_province_id == selected_province.id:
 		# Keep track of the linked provinces for undo/redo
 		var linked_province_ids: Array[int] = (
 				selected_province.linked_province_ids().duplicate()

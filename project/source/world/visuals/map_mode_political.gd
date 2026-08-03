@@ -1,6 +1,6 @@
 class_name MapModePolitical
 extends Node
-## Adds or removes highlight on the selected [Province] and its links.
+## Highlights the links of currently selected [Province].
 ## This is the normal usual map mode.
 
 ## This node has no effect when disabled.
@@ -9,28 +9,18 @@ var is_enabled: bool = false:
 		if is_enabled == value:
 			return
 		is_enabled = value
-		if _is_setup and is_node_ready():
-			if is_enabled:
-				_update()
-			else:
-				_disconnect_signals()
+		if _armies != null and is_node_ready():
+			refresh_highlights()
 
-var _is_setup: bool = false
 var _armies: Armies
 var _provinces: Provinces
 var _playing_country: PlayingCountry
 var _armies_in_each_province: ArmiesInEachProvince
 var _province_selection: ProvinceSelection
 
-var _highlighted_province_id: int = -1
 var _highlighted_province_link_ids: Array[int] = []
 
 @onready var _province_container := %Provinces as ProvinceVisualsContainer2D
-
-
-func _ready() -> void:
-	if is_enabled and _is_setup:
-		_update()
 
 
 func setup(
@@ -40,40 +30,29 @@ func setup(
 		armies_in_each_province: ArmiesInEachProvince,
 		province_selection: ProvinceSelection
 ) -> void:
-	if is_enabled and _is_setup and is_node_ready():
-		_disconnect_signals()
-
 	_armies = armies
 	_provinces = provinces
 	_playing_country = playing_country
 	_armies_in_each_province = armies_in_each_province
 	_province_selection = province_selection
+	_province_selection.province_selected.connect(_highlight_links)
+	_province_selection.province_deselected.connect(_clear_highlights.unbind(1))
 
-	_highlighted_province_id = -1
-	_highlighted_province_link_ids = []
-
-	_is_setup = true
-
-	if is_enabled and is_node_ready():
-		_update()
-
-
-func _update() -> void:
-	_province_container.remove_all_highlights()
-	_highlight_province(_province_selection.selected_province())
-	_connect_signals()
+	if is_node_ready():
+		refresh_highlights()
+	else:
+		ready.connect(refresh_highlights, ConnectFlags.CONNECT_ONE_SHOT)
 
 
-func _highlight_province(province: Province) -> void:
-	if province == null:
+## Highlights selected province's links.
+func refresh_highlights() -> void:
+	_clear_highlights()
+	_highlight_links(_province_selection.selected_province())
+
+
+func _highlight_links(province: Province) -> void:
+	if province == null or not is_enabled:
 		return
-
-	# Highlight the province
-	var province_visuals: ProvinceVisuals2D = (
-			_province_container.visuals_of(province.id)
-	)
-	if province_visuals != null:
-		province_visuals.highlight_selected()
 
 	# Highlight all the linked provinces with the correct highlight type
 
@@ -97,39 +76,21 @@ func _highlight_province(province: Province) -> void:
 		)
 		if link_visuals == null:
 			continue
-		link_visuals.highlight_shape(
-				has_active_army and army.can_move_to(_provinces, link_id)
-		)
 
-	_highlighted_province_id = province.id
+		if has_active_army and army.can_move_to(_provinces, link_id):
+			link_visuals.highlight_target()
+		else:
+			link_visuals.highlight()
+
 	_highlighted_province_link_ids = province.linked_province_ids().duplicate()
 
 
-func _remove_highlights() -> void:
-	_remove_highlight(_highlighted_province_id)
-	_highlighted_province_id = -1
+func _clear_highlights() -> void:
 	for province_link_id in _highlighted_province_link_ids:
-		_remove_highlight(province_link_id)
-	_highlighted_province_link_ids = []
+		var province_visuals: ProvinceVisuals2D = (
+				_province_container.visuals_of(province_link_id)
+		)
+		if province_visuals != null:
+			province_visuals.remove_highlight()
 
-
-func _remove_highlight(province_id: int) -> void:
-	var province_visuals: ProvinceVisuals2D = (
-			_province_container.visuals_of(province_id)
-	)
-	if province_visuals != null:
-		province_visuals.remove_highlight()
-
-
-func _disconnect_signals() -> void:
-	_province_selection.province_selected.disconnect(_highlight_province)
-	_province_selection.province_deselected.disconnect(_on_province_deselected)
-
-
-func _connect_signals() -> void:
-	_province_selection.province_selected.connect(_highlight_province)
-	_province_selection.province_deselected.connect(_on_province_deselected)
-
-
-func _on_province_deselected(_province: Province) -> void:
-	_remove_highlights()
+	_highlighted_province_link_ids.clear()
