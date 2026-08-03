@@ -2,8 +2,6 @@ class_name InterfaceCountryNotifications
 extends AppEditorInterface
 ## Placeholder interface for editing a [Country]'s notifications.
 
-signal closed()
-
 var country := Country.new()
 
 ## This interface automatically closes

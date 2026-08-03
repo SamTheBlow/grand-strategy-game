@@ -2,7 +2,6 @@ class_name InterfaceCountryEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Country].
 
-signal closed()
 signal delete_pressed(country: Country)
 signal duplicate_pressed(country: Country)
 signal relationships_pressed()

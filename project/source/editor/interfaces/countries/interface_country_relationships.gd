@@ -2,8 +2,6 @@ class_name InterfaceCountryRelationships
 extends AppEditorInterface
 ## Placeholder interface for editing a [Country]'s relationships.
 
-signal closed()
-
 var country := Country.new()
 
 ## This interface automatically closes

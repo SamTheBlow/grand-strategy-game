@@ -30,6 +30,13 @@ var contents_node: Node
 @onready var _popup_buttons := %Buttons as PopupButtons
 
 
+func _unhandled_input(event: InputEvent) -> void:
+	if not event.is_action_pressed(&"close_popup"):
+		return
+	queue_free()
+	get_viewport().set_input_as_handled()
+
+
 func _ready() -> void:
 	if contents_node == null:
 		return

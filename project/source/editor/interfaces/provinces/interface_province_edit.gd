@@ -2,7 +2,6 @@ class_name InterfaceProvinceEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Province].
 
-signal closed()
 signal delete_pressed(province: Province)
 signal duplicate_pressed(province: Province)
 signal country_select_pressed(item_country: ItemCountry)

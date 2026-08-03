@@ -157,15 +157,16 @@ func _ready() -> void:
 		game.start()
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"pause"):
-		_pause_menu.visible = not _pause_menu.visible
-
-
 func _exit_tree() -> void:
 	# Prevent the game from running forever in the background
 	if game != null:
 		game.turn.stop()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"pause"):
+		_pause_menu.visible = not _pause_menu.visible
+		get_viewport().set_input_as_handled()
 
 
 func _update_ui_visibility() -> void:

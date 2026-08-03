@@ -2,7 +2,6 @@ class_name InterfaceArmyEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Army].
 
-signal closed()
 signal delete_pressed(army: Army)
 signal duplicate_pressed(army: Army)
 signal texture_popup_requested(item_texture: ItemTexture)

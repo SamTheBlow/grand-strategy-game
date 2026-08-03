@@ -2,7 +2,6 @@ class_name InterfacePlayerEdit
 extends AppEditorInterface
 ## Interface for editing given [GamePlayer].
 
-signal closed()
 signal delete_pressed(game_player: GamePlayer)
 signal duplicate_pressed(game_player: GamePlayer)
 signal country_select_pressed(item_country: ItemCountry)

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://0uiaabpgiqs"]
+[gd_scene format=3 uid="uid://0uiaabpgiqs"]
 
 [ext_resource type="Script" uid="uid://71nrlclp5ovx" path="res://source/editor/interfaces/editing_interface.gd" id="1_qje5o"]
 
-[node name="EditingInterface" type="Control"]
+[node name="EditingInterface" type="Control" unique_id=513308456]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_qje5o")
 
-[node name="Panel" type="Panel" parent="."]
+[node name="Panel" type="Panel" parent="." unique_id=845609297]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -20,7 +20,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Contents" type="Control" parent="."]
+[node name="Contents" type="Control" parent="." unique_id=623911417]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -34,7 +34,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="CloseButton" type="Button" parent="."]
+[node name="CloseButton" type="Button" parent="." unique_id=758269349]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(32, 32)
 layout_mode = 1

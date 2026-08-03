@@ -2,7 +2,6 @@ class_name InterfaceWorldDecorationEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [WorldDecoration].
 
-signal closed()
 signal delete_pressed(world_decoration: WorldDecoration)
 signal duplicate_pressed(world_decoration: WorldDecoration)
 signal texture_popup_requested(item_texture: ItemTexture)

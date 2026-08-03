@@ -192,15 +192,18 @@ func _new_interface(
 
 	if new_interface is InterfaceProjectInfo:
 		var interface := new_interface as InterfaceProjectInfo
+		interface.closed.connect(close_interface)
 		interface.project = project
 		interface.texture_popup_requested.connect(
 				texture_popup_requested.emit.bind(project.textures)
 		)
 	elif new_interface is InterfaceRNG:
 		var interface := new_interface as InterfaceRNG
+		interface.closed.connect(close_interface)
 		interface.game_rng = project.game.rng
 	elif new_interface is InterfaceCountryList:
 		var interface := new_interface as InterfaceCountryList
+		interface.closed.connect(close_interface)
 		interface.countries = project.game.countries
 		interface.country_factory = Country.Factory.new(project.game)
 		interface.item_selected.connect(
@@ -208,30 +211,36 @@ func _new_interface(
 		)
 	elif new_interface is InterfacePlayerList:
 		var interface := new_interface as InterfacePlayerList
+		interface.closed.connect(close_interface)
 		interface.game_players = project.game.game_players
 		interface.item_selected.connect(
 				_open_player_edit_interface.bind(project, editor_settings)
 		)
 	elif new_interface is InterfaceTurnOrder:
 		var interface := new_interface as InterfaceTurnOrder
+		interface.closed.connect(close_interface)
 		interface.countries = project.game.countries
 		interface.item_random_turn_order = (
 				project.game.rules.random_turn_order_enabled
 		)
 	elif new_interface is InterfaceWorldLimits:
 		var interface := new_interface as InterfaceWorldLimits
+		interface.closed.connect(close_interface)
 		interface.world_limits = project.game.world.limits()
 	elif new_interface is InterfaceBackgroundColor:
 		var interface := new_interface as InterfaceBackgroundColor
+		interface.closed.connect(close_interface)
 		interface.world = project.game.world
 	elif new_interface is InterfaceDecorationList:
 		var interface := new_interface as InterfaceDecorationList
 		interface.decorations = project.game.world.decorations
+		interface.closed.connect(close_interface)
 		interface.item_selected.connect(
 				_open_decoration_edit_interface.bind(project, editor_settings)
 		)
 	elif new_interface is InterfaceProvinceList:
 		var interface := new_interface as InterfaceProvinceList
+		interface.closed.connect(close_interface)
 		interface.provinces = project.game.world.provinces
 		interface.item_selected.connect(
 				open_province_edit_interface.bind(project, editor_settings)
@@ -240,6 +249,7 @@ func _new_interface(
 		interface.item_unhovered.connect(province_list_item_unhovered.emit)
 	elif new_interface is InterfaceArmyList:
 		var interface := new_interface as InterfaceArmyList
+		interface.closed.connect(close_interface)
 		interface.armies = project.game.world.armies
 		interface.army_factory = Army.Factory.new(project.game)
 		interface.playing_country = PlayingCountry.new(project.game)
