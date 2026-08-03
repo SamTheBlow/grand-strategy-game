@@ -77,10 +77,10 @@ func set_hovered_province(province: Province) -> void:
 
 func _refresh() -> void:
 	# Connect signals of province visuals
-	for province_visuals in _province_container.all_visuals():
-		_setup_visuals(province_visuals)
-
-	_province_container.province_visuals_created.connect(_setup_visuals)
+	_province_container.province_clicked.connect(_on_province_clicked)
+	_province_container.province_mouse_entered.connect(_on_mouse_entered)
+	_province_container.province_mouse_exited.connect(_unset_hovered_province)
+	_province_container.province_tree_exited.connect(_unset_hovered_province)
 
 	# Highlight the currently selected province
 	var selected_province: Province = _province_selection.selected_province()
@@ -89,21 +89,6 @@ func _refresh() -> void:
 
 	_province_selection.province_selected.connect(_highlight_province)
 	_province_selection.province_deselected.connect(_on_deselected)
-
-
-func _setup_visuals(province_visuals: ProvinceVisuals2D) -> void:
-	province_visuals.clicked.connect(
-			_on_province_clicked.bind(province_visuals.province)
-	)
-	province_visuals.mouse_entered.connect(
-			set_hovered_province.bind(province_visuals.province)
-	)
-	province_visuals.mouse_exited.connect(
-			_unset_hovered_province.bind(province_visuals)
-	)
-	province_visuals.tree_exited.connect(
-			_unset_hovered_province.bind(province_visuals)
-	)
 
 
 func _highlight_province(province: Province) -> void:
@@ -141,6 +126,10 @@ func _on_province_clicked(province: Province) -> void:
 	province_select_attempted.emit(province, outcome)
 	if outcome.is_selected:
 		set_selected_province(province)
+
+
+func _on_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
+	set_hovered_province(province_visuals.province)
 
 
 func _on_deselected(province: Province) -> void:

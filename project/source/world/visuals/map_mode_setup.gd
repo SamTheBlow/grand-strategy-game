@@ -20,7 +20,10 @@ var _arrow_behavior: ArrowBehavior = ArrowBehaviorNone.new():
 		)
 
 @onready var political := %Political as MapModePolitical
-@onready var _node_editor_country := %EditorCountry as MapModeEditorCountry
+
+## The editor's tool that gives provinces to a country.
+## This node lives in the editor scene, so it may be null (e.g. in-game).
+var country_giver: CountryOwnershipGiver = null
 
 
 func _ready() -> void:
@@ -48,7 +51,8 @@ func set_map_mode(map_mode: MapMode) -> void:
 		MapMode.POLITICAL:
 			political.is_enabled = false
 		MapMode.EDITOR_COUNTRY:
-			_node_editor_country.is_enabled = false
+			if country_giver != null:
+				country_giver.is_enabled = false
 			_world_visuals.province_selection.is_disabled = false
 		_:
 			political.is_enabled = false
@@ -59,7 +63,9 @@ func set_map_mode(map_mode: MapMode) -> void:
 
 ## Use this to specify a country.
 func set_map_mode_editor_country(country: Country) -> void:
-	_node_editor_country.selected_country_id = country.id
+	if country_giver == null:
+		return
+	country_giver.selected_country = country
 	set_map_mode(MapMode.EDITOR_COUNTRY)
 	_arrow_behavior = ArrowBehaviorSpecificCountry.new(country.id)
 
@@ -72,7 +78,6 @@ func _update() -> void:
 			_world_visuals.world.armies_in_each_province,
 			_world_visuals.province_selection
 	)
-	_node_editor_country.setup(_world_visuals.project.game.countries)
 
 	_enable_map_mode()
 
@@ -83,7 +88,8 @@ func _enable_map_mode() -> void:
 			political.is_enabled = true
 		MapMode.EDITOR_COUNTRY:
 			_world_visuals.province_selection.is_disabled = true
-			_node_editor_country.is_enabled = true
+			if country_giver != null:
+				country_giver.is_enabled = true
 		_:
 			push_error("Unrecognized map mode.")
 			political.is_enabled = true

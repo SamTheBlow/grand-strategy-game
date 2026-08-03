@@ -8,6 +8,7 @@ const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 var editor_settings: AppEditorSettings
 
 @onready var _editor_adjacency := %EditorAdjacency as MapModeEditorAdjacency
+@onready var _country_giver := %CountryOwnershipGiver as CountryOwnershipGiver
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 
@@ -46,6 +47,12 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	)
 	_world_visuals.province_input.province_unhovered.connect(
 			_editor_adjacency.refresh_highlight_links.unbind(1)
+	)
+
+	# Setup the country ownership tool
+	_world_visuals.map_mode_setup.country_giver = _country_giver
+	_world_visuals.province_visuals.province_clicked.connect(
+			_country_giver.apply_to_province
 	)
 
 
