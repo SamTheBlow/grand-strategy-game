@@ -120,17 +120,10 @@ func _client_can_apply_changes(multiplayer_id: int) -> bool:
 	)
 
 
-func _on_provinces_unhandled_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
+func _on_province_right_clicked(
+		is_double_click: bool, province_visuals: ProvinceVisuals2D
 ) -> void:
-	if event is not InputEventMouseButton or country_to_edit_id < 0:
-		return
-	var mouse_button_event := event as InputEventMouseButton
-
-	if not (
-			mouse_button_event.pressed
-			and mouse_button_event.button_index == MOUSE_BUTTON_RIGHT
-	):
+	if country_to_edit_id < 0:
 		return
 
 	# Make sure the country to edit still exists
@@ -142,13 +135,11 @@ func _on_provinces_unhandled_mouse_event_occured(
 		return
 
 	# Double right click to remove all autoarrows in the province
-	if mouse_button_event.double_click:
+	if is_double_click:
 		_clear_province(country_to_edit, province_visuals.province.id)
 
 	# Show a preview autoarrow during right click
 	_create_preview_arrow(country_to_edit, province_visuals)
-
-	get_viewport().set_input_as_handled()
 
 
 func _on_preview_arrow_released(

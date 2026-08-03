@@ -244,6 +244,9 @@ func _on_province_right_clicked(
 		is_double_click: bool, province_visuals: ProvinceVisuals2D
 ) -> void:
 	var selected_province: Province = _province_selection.selected_province()
+	if selected_province == null:
+		return
+
 	var clicked_province_id: int = province_visuals.province.id
 
 	# Double right click the selected province to remove all its links

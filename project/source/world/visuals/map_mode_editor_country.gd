@@ -39,21 +39,8 @@ func _update() -> void:
 	_province_container.remove_all_highlights()
 
 
-func _on_provinces_unhandled_mouse_event_occured(
-		event: InputEventMouse, province_visuals: ProvinceVisuals2D
-) -> void:
-	if (
-			not is_enabled
-			or selected_country_id < 0
-			or event is not InputEventMouseButton
-	):
-		return
-
-	var mouse_button_event := event as InputEventMouseButton
-	if (
-			mouse_button_event.pressed
-			or mouse_button_event.button_index != MOUSE_BUTTON_LEFT
-	):
+func _on_province_clicked(province_visuals: ProvinceVisuals2D) -> void:
+	if not is_enabled or selected_country_id < 0:
 		return
 
 	var selected_country: Country = (
@@ -64,11 +51,8 @@ func _on_provinces_unhandled_mouse_event_occured(
 		selected_country_id = -1
 		return
 
-	# Release left click on a province to give control of it to our country
-	# or to remove control of it
+	# Release left click on a province to give/remove control of it
 	if province_visuals.province.owner_country == selected_country:
 		province_visuals.province.owner_country = null
 	else:
 		province_visuals.province.owner_country = selected_country
-
-	get_viewport().set_input_as_handled()
