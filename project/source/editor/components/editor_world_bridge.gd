@@ -7,7 +7,6 @@ const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings: AppEditorSettings
 
-@onready var _province_link_editer := %ProvinceLinkEditer as ProvinceLinkEditer
 @onready var _country_giver := %CountryOwnershipGiver as CountryOwnershipGiver
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
@@ -36,16 +35,6 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	)
 	_world_visuals.add_child(_army_visuals_input)
 
-	# Setup the province link editing tool
-	_province_link_editer.setup(
-			_world_visuals.province_visuals,
-			_world_visuals.province_selection,
-			PolygonEditEdgeCase.new(_world_visuals.world)
-	)
-	_world_visuals.province_visuals.province_right_clicked.connect(
-			_province_link_editer._on_province_right_clicked
-	)
-
 	# Setup the country ownership tool
 	_world_visuals.province_visuals.province_clicked.connect(
 			_country_giver.apply_to_province
@@ -63,12 +52,10 @@ func _on_selected_province_changed(province: Province) -> void:
 
 func _on_province_interface_opened(province: Province) -> void:
 	_world_visuals.province_selection.select(province.id)
-	_province_link_editer.is_enabled = true
 
 
 func _on_province_interface_closed() -> void:
 	_world_visuals.province_selection.deselect()
-	_province_link_editer.is_enabled = false
 
 
 func _on_country_select_pressed(item_country: ItemCountry) -> void:

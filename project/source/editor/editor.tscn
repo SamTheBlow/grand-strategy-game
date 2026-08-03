@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/editor_project_io.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/editor/components/editor_history.gd" id="12_history"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
+[ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -32,7 +33,6 @@ unique_name_in_owner = true
 script = ExtResource("12_history")
 
 [node name="ProvinceLinkEditer" type="Node" parent="." unique_id=1928374654]
-unique_name_in_owner = true
 script = ExtResource("13_editor_adjacency")
 
 [node name="CountryOwnershipGiver" type="Node" parent="." unique_id=1928374655]
@@ -64,8 +64,8 @@ script = ExtResource("6_uwkq8")
 layer = 2
 follow_viewport_enabled = true
 
-[node name="WorldOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=2123895785]
-unique_name_in_owner = true
+[node name="ProvinceOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=1598664318]
+script = ExtResource("14_province_overlay")
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=151164930]
 layer = 3
@@ -215,10 +215,12 @@ use_native_dialog = true
 [connection signal="project_saved" from="ProjectIO" to="History" method="_mark_saved"]
 [connection signal="initialized" from="History" to="ProvinceLinkEditer" method="_on_history_initialized"]
 [connection signal="initialized" from="History" to="CountryOwnershipGiver" method="_on_history_initialized"]
+[connection signal="initialized" from="History" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
 [connection signal="initialized" from="History" to="UILayer/EditingInterface" method="_on_history_initialized"]
 [connection signal="version_changed" from="History" to="." method="_update_window_title"]
-[connection signal="overlay_created" from="ProvinceLinkEditer" to="WorldOverlayLayer/WorldOverlay" method="add_child"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
+[connection signal="loaded" from="WorldLayer/WorldSetup" to="ProvinceLinkEditer" method="_on_world_loaded"]
+[connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]

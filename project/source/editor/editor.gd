@@ -36,10 +36,10 @@ func _exit_tree() -> void:
 
 
 func _setup_project() -> void:
+	_history.reset()
+
 	_world_setup.setup_world(_current_project)
 	_world_limits_rect.world_limits = _current_project.game.world.limits()
-
-	_history.reset()
 
 	_menus.current_project = _current_project
 	_project_io.current_project = _current_project
