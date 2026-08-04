@@ -86,19 +86,6 @@ func _load_settings() -> void:
 	army.movements_made_changed.connect(_on_army_movements_changed)
 
 
-func _apply_undo_redo_action(
-		description: String,
-		object: Object,
-		property_name: StringName,
-		old_value: Variant,
-		new_value: Variant
-) -> void:
-	undo_redo.create_action(description)
-	undo_redo.add_do_property(object, property_name, new_value)
-	undo_redo.add_undo_property(object, property_name, old_value)
-	undo_redo.commit_action()
-
-
 func _delete_army() -> void:
 	project.game.world.armies.undo_redo_remove(
 			army, undo_redo, project.game.world.armies_in_each_province

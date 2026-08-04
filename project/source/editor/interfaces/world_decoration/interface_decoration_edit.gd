@@ -139,18 +139,6 @@ func _apply_preview(preview_rect: TextureRect) -> void:
 	world_decoration.apply_preview(preview_rect)
 
 
-func _apply_undo_redo_action(
-		description: String,
-		property_name: StringName,
-		old_value: Variant,
-		new_value: Variant
-) -> void:
-	undo_redo.create_action(description)
-	undo_redo.add_do_property(world_decoration, property_name, new_value)
-	undo_redo.add_undo_property(world_decoration, property_name, old_value)
-	undo_redo.commit_action()
-
-
 func _on_back_button_pressed() -> void:
 	closed.emit()
 
@@ -163,6 +151,7 @@ func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
 func _on_texture_value_changed(item: ItemTexture) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's texture",
+			world_decoration,
 			&"texture",
 			world_decoration.texture,
 			item.value
@@ -172,6 +161,7 @@ func _on_texture_value_changed(item: ItemTexture) -> void:
 func _on_flip_h_value_changed(item: ItemBool) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's horizontal flip",
+			world_decoration,
 			&"flip_h",
 			world_decoration.flip_h,
 			item.value
@@ -181,6 +171,7 @@ func _on_flip_h_value_changed(item: ItemBool) -> void:
 func _on_flip_v_value_changed(item: ItemBool) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's vertical flip",
+			world_decoration,
 			&"flip_v",
 			world_decoration.flip_v,
 			item.value
@@ -190,6 +181,7 @@ func _on_flip_v_value_changed(item: ItemBool) -> void:
 func _on_position_value_changed(item: ItemVector2) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's position",
+			world_decoration,
 			&"position",
 			world_decoration.position,
 			item.get_data()
@@ -199,6 +191,7 @@ func _on_position_value_changed(item: ItemVector2) -> void:
 func _on_rotation_value_changed(item: ItemFloat) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's rotation",
+			world_decoration,
 			&"rotation_degrees",
 			world_decoration.rotation_degrees,
 			item.value
@@ -208,6 +201,7 @@ func _on_rotation_value_changed(item: ItemFloat) -> void:
 func _on_scale_value_changed(item: ItemVector2) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's scale",
+			world_decoration,
 			&"scale",
 			world_decoration.scale,
 			item.get_data()
@@ -217,6 +211,7 @@ func _on_scale_value_changed(item: ItemVector2) -> void:
 func _on_color_value_changed(item: ItemColor) -> void:
 	_apply_undo_redo_action(
 			"Change world decoration's color",
+			world_decoration,
 			&"color",
 			world_decoration.color,
 			item.value
