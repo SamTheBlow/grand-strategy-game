@@ -16,6 +16,10 @@ signal army_list_item_hovered(army: Army)
 signal army_list_item_unhovered()
 signal province_list_item_hovered(province: Province)
 signal province_list_item_unhovered()
+signal decoration_interface_opened(decoration: WorldDecoration)
+signal decoration_interface_closed()
+signal decoration_list_item_hovered(decoration: WorldDecoration)
+signal decoration_list_item_unhovered()
 
 enum InterfaceType {
 	PROJECT_INFO,
@@ -70,6 +74,9 @@ var _current_interface: AppEditorInterface:
 		elif _current_interface is InterfaceArmyEdit:
 			_current_interface = null
 			army_interface_closed.emit()
+		elif _current_interface is InterfaceWorldDecorationEdit:
+			_current_interface = null
+			decoration_interface_closed.emit()
 
 		_current_interface = value
 
@@ -163,6 +170,24 @@ func open_army_edit_interface(
 	_open_army_edit_interface(army, project, editor_settings)
 
 
+## Opens the interface for editing given world decoration.
+func open_decoration_edit_interface(
+		world_decoration: WorldDecoration,
+		project: GameProject,
+		editor_settings: AppEditorSettings
+) -> void:
+	# Prevent infinite loop
+	if (
+			_current_interface is InterfaceWorldDecorationEdit
+			and world_decoration == (
+					_current_interface as InterfaceWorldDecorationEdit
+			).world_decoration
+	):
+		return
+
+	_open_decoration_edit_interface(world_decoration, project, editor_settings)
+
+
 func _update_contents() -> void:
 	visible = _current_interface != null
 	if _current_interface != null:
@@ -238,6 +263,8 @@ func _new_interface(
 		interface.item_selected.connect(
 				_open_decoration_edit_interface.bind(project, editor_settings)
 		)
+		interface.item_hovered.connect(decoration_list_item_hovered.emit)
+		interface.item_unhovered.connect(decoration_list_item_unhovered.emit)
 	elif new_interface is InterfaceProvinceList:
 		var interface := new_interface as InterfaceProvinceList
 		interface.closed.connect(close_interface)
@@ -359,6 +386,7 @@ func _open_decoration_edit_interface(
 	new_interface.world_decoration = world_decoration
 	new_interface.world_decorations = project.game.world.decorations
 	open_interface(new_interface)
+	decoration_interface_opened.emit(world_decoration)
 
 
 func _open_army_edit_interface(

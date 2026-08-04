@@ -24,6 +24,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
+mouse_filter = 1
 theme_override_styles/normal = ExtResource("2_lblit")
 
 [node name="DecorationPreview" type="TextureRect" parent="Button" unique_id=1340207605]
@@ -37,6 +38,7 @@ anchor_bottom = 0.85
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 3
+mouse_filter = 2
 texture = ExtResource("1_lorcr")
 expand_mode = 1
 stretch_mode = 5

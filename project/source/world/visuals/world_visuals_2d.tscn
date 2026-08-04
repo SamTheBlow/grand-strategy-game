@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://dao8t8wckp433" path="res://source/provinces/visuals/province_visuals_container_2d.gd" id="5_4fqv4"]
 [ext_resource type="Script" uid="uid://47v624ihmda7" path="res://source/world/visuals/province_link_highlighter.gd" id="5_bd3lk"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
-[ext_resource type="Script" uid="uid://c4mh1ymolkw58" path="res://source/world/visuals/decorations_node.gd" id="11_obqf8"]
+[ext_resource type="Script" uid="uid://dfmftjquudalc" path="res://source/world/decorations/visuals/decoration_visuals_container_2d.gd" id="11_obqf8"]
 [ext_resource type="Script" uid="uid://ck15fpk1p01qb" path="res://source/provinces/visuals/province_visuals_input.gd" id="12_pvii"]
 
 [node name="WorldVisuals2D" type="Node2D" unique_id=342240876]

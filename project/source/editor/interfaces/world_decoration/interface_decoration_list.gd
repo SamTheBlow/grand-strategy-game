@@ -3,6 +3,8 @@ extends AppEditorInterface
 ## Shows a list of all the world decorations for the user to edit.
 
 signal item_selected(decoration: WorldDecoration)
+signal item_hovered(decoration: WorldDecoration)
+signal item_unhovered()
 
 const _ELEMENT_SCENE := preload("uid://gwjmb35fowhg") as PackedScene
 
@@ -26,6 +28,12 @@ func _ready() -> void:
 	decorations.removed.connect(_remove_element)
 
 
+## Ensures the decoration hover doesn't stick around
+## when this interface is closed or replaced.
+func _exit_tree() -> void:
+	item_unhovered.emit()
+
+
 func _add_element(world_decoration: WorldDecoration) -> void:
 	if _nodes.has(world_decoration):
 		push_warning("Decoration already has a corresponding node.")
@@ -35,6 +43,8 @@ func _add_element(world_decoration: WorldDecoration) -> void:
 	element.world_decoration = world_decoration
 
 	element.pressed.connect(_on_element_pressed)
+	element.mouse_entered.connect(item_hovered.emit.bind(world_decoration))
+	element.mouse_exited.connect(item_unhovered.emit)
 	_element_container.add_child(element)
 	_nodes[world_decoration] = element
 

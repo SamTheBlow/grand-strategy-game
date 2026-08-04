@@ -22,8 +22,6 @@ var playing_country: PlayingCountry
 ## Automatically initialized when providing the [GameProject].
 var province_selection: ProvinceSelection
 
-var _is_decorations_visible: bool = true
-
 ## Determines which country's auto-arrows are currently shown.
 var _arrow_behavior: ArrowBehavior:
 	set(value):
@@ -41,7 +39,7 @@ var _arrow_behavior: ArrowBehavior:
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
 @onready var background := %Background as WorldBackground
 @onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
-@onready var _decorations_node := %Decorations as WorldDecorationsNode
+@onready var _decorations_node := %Decorations as DecorationVisualsContainer2D
 @onready var _auto_arrow_container := %AutoArrows as AutoArrowContainer
 
 
@@ -52,8 +50,13 @@ func _ready() -> void:
 
 ## Shows or hides the decorations.
 func set_decoration_visiblity(is_decorations_visible: bool) -> void:
-	_is_decorations_visible = is_decorations_visible
-	_refresh_decoration_visibility()
+	if is_node_ready():
+		_decorations_node.visible = is_decorations_visible
+	else:
+		ready.connect(
+				set_decoration_visiblity.bind(is_decorations_visible),
+				ConnectFlags.CONNECT_ONE_SHOT
+		)
 
 
 ## Shows the playing country's auto-arrows. This is the default game behavior.
@@ -95,13 +98,6 @@ func _setup() -> void:
 	_auto_arrow_input.game = project.game
 
 	_decorations_node.setup(world.decorations)
-	_refresh_decoration_visibility()
 
 	_auto_arrow_container.setup(project.game.countries)
 	show_game_arrows()
-
-
-func _refresh_decoration_visibility() -> void:
-	if _decorations_node == null:
-		return
-	_decorations_node.visible = _is_decorations_visible

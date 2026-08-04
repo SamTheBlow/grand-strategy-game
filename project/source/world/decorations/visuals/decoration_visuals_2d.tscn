@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dkm408u40wfix"]
+
+[ext_resource type="Script" uid="uid://ckae7miiykv81" path="res://source/world/decorations/visuals/decoration_visuals_2d.gd" id="1_2dec"]
+[ext_resource type="Resource" uid="uid://clsansdbiopc6" path="res://resources/outline_settings/outline_none.tres" id="2_2dec"]
+[ext_resource type="Resource" uid="uid://cpywpvw4iwvdg" path="res://resources/outline_settings/outline_highlight.tres" id="3_2dec"]
+[ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="4_2dec"]
+[ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="5_2dec"]
+
+[node name="DecorationVisuals2D" type="Node2D" unique_id=1324881751]
+z_index = 2
+script = ExtResource("1_2dec")
+_outline_none = ExtResource("2_2dec")
+_outline_highlight = ExtResource("3_2dec")
+_outline_selected = ExtResource("4_2dec")
+
+[node name="DecorationSprite" type="Sprite2D" parent="." unique_id=87052843]
+unique_name_in_owner = true
+
+[node name="Control" type="Control" parent="." unique_id=1050357394]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="DecorationOutline" type="Polygon2D" parent="." unique_id=1320909437]
+unique_name_in_owner = true
+color = Color(0, 0, 0, 0)
+polygon = PackedVector2Array(0, 0, 0, 0, 0, 0, 0, 0)
+script = ExtResource("5_2dec")
