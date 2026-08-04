@@ -48,6 +48,18 @@ func _update_editor_settings() -> void:
 	pass
 
 
+## Duplicates given node's item so that it isn't shared between interfaces.
+func _setup_settings(settings_node: ItemVoidNode) -> void:
+	settings_node.item = settings_node.item.duplicate_deep() as PropertyTreeItem
+	_load_settings(settings_node.item)
+	settings_node.refresh()
+
+
+## Override this function in a subclass to load settings and connect signals.
+func _load_settings(_settings_item: PropertyTreeItem) -> void:
+	pass
+
+
 func _apply_undo_redo_action(
 		description: String,
 		object: Object,

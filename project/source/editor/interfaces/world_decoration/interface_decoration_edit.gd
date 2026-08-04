@@ -4,8 +4,6 @@ extends AppEditorInterface
 
 var world_decoration: WorldDecoration
 
-@onready var _settings := %Settings as ItemVoidNode
-
 
 func _ready() -> void:
 	var preview_rect := %PreviewRect as TextureRect
@@ -14,11 +12,7 @@ func _ready() -> void:
 			_apply_preview.bind(preview_rect).unbind(1)
 	)
 
-	# Create a deep copy of the settings resource,
-	# to avoid sharing it with another interface
-	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
-	_load_settings()
-	_settings.refresh()
+	_setup_settings(%Settings as ItemVoidNode)
 
 	project.game.world.decorations.removed.connect(
 			_on_world_decoration_removed
@@ -40,9 +34,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate_decoration()
 
 
-func _load_settings() -> void:
+func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Texture
-	var item_texture := _settings.item.child_items[0] as ItemTexture
+	var item_texture := settings_item.child_items[0] as ItemTexture
 	item_texture.fallback_texture = WorldDecoration.DEFAULT_TEXTURE
 	item_texture.value = world_decoration.texture
 	item_texture.value_changed.connect(_on_texture_value_changed)
@@ -50,47 +44,29 @@ func _load_settings() -> void:
 			texture_popup_requested.emit.bind(project.textures)
 	)
 	# Flip H
-	(_settings.item.child_items[1] as ItemBool).value = (
-			world_decoration.flip_h
-	)
-	(_settings.item.child_items[1] as ItemBool).value_changed.connect(
-			_on_flip_h_value_changed
-	)
+	var item_flip_h := settings_item.child_items[1] as ItemBool
+	item_flip_h.value = world_decoration.flip_h
+	item_flip_h.value_changed.connect(_on_flip_h_value_changed)
 	# Flip V
-	(_settings.item.child_items[2] as ItemBool).value = (
-			world_decoration.flip_v
-	)
-	(_settings.item.child_items[2] as ItemBool).value_changed.connect(
-			_on_flip_v_value_changed
-	)
+	var item_flip_v := settings_item.child_items[2] as ItemBool
+	item_flip_v.value = world_decoration.flip_v
+	item_flip_v.value_changed.connect(_on_flip_v_value_changed)
 	# Position
-	(_settings.item.child_items[3] as ItemVector2).set_data(
-			world_decoration.position
-	)
-	(_settings.item.child_items[3] as ItemVector2).value_changed.connect(
-			_on_position_value_changed
-	)
+	var item_position := settings_item.child_items[3] as ItemVector2
+	item_position.set_data(world_decoration.position)
+	item_position.value_changed.connect(_on_position_value_changed)
 	# Rotation
-	(_settings.item.child_items[4] as ItemFloat).value = (
-			world_decoration.rotation_degrees
-	)
-	(_settings.item.child_items[4] as ItemFloat).value_changed.connect(
-			_on_rotation_value_changed
-	)
+	var item_rotation := settings_item.child_items[4] as ItemFloat
+	item_rotation.value = world_decoration.rotation_degrees
+	item_rotation.value_changed.connect(_on_rotation_value_changed)
 	# Scale
-	(_settings.item.child_items[5] as ItemVector2).set_data(
-			world_decoration.scale
-	)
-	(_settings.item.child_items[5] as ItemVector2).value_changed.connect(
-			_on_scale_value_changed
-	)
+	var item_scale := settings_item.child_items[5] as ItemVector2
+	item_scale.set_data(world_decoration.scale)
+	item_scale.value_changed.connect(_on_scale_value_changed)
 	# Color
-	(_settings.item.child_items[6] as ItemColor).value = (
-			world_decoration.color
-	)
-	(_settings.item.child_items[6] as ItemColor).value_changed.connect(
-			_on_color_value_changed
-	)
+	var item_color := settings_item.child_items[6] as ItemColor
+	item_color.value = world_decoration.color
+	item_color.value_changed.connect(_on_color_value_changed)
 
 
 func _delete_decoration() -> void:

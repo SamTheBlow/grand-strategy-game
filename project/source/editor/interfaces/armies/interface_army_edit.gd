@@ -4,19 +4,13 @@ extends AppEditorInterface
 
 var army: Army
 
-@onready var _settings := %Settings as ItemVoidNode
-
 
 func _ready() -> void:
 	(%ArmyPreview as ArmyPreviewNode).setup(
 			army, PlayingCountry.new(project.game)
 	)
 
-	# Create a deep copy of the settings resource,
-	# to avoid sharing it with another interface
-	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
-	_load_settings()
-	_settings.refresh()
+	_setup_settings(%Settings as ItemVoidNode)
 
 	project.game.world.armies.removed.connect(_on_army_removed)
 
@@ -36,54 +30,49 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate_army()
 
 
-func _setting_texture() -> ItemTexture:
-	return _settings.item.child_items[0] as ItemTexture
-
-
-func _setting_country() -> ItemCountry:
-	return _settings.item.child_items[1] as ItemCountry
-
-
-func _setting_army_size() -> ItemInt:
-	return _settings.item.child_items[2] as ItemInt
-
-
-func _setting_movements() -> ItemInt:
-	return _settings.item.child_items[3] as ItemInt
-
-
-func _load_settings() -> void:
+func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Texture
-	var item_texture: ItemTexture = _setting_texture()
+	var item_texture := settings_item.child_items[0] as ItemTexture
 	item_texture.fallback_texture = ArmyVisuals2D.DEFAULT_TEXTURE
 	item_texture.value = army.texture
 	item_texture.value_changed.connect(_on_item_texture_changed)
 	item_texture.popup_requested.connect(
 			texture_popup_requested.emit.bind(project.textures)
 	)
-	army.texture_changed.connect(_on_army_texture_changed)
+	army.texture_changed.connect(
+			_on_army_texture_changed.bind(item_texture)
+	)
 
 	# Owner country
-	_setting_country().make_unnullable(army.owner_country)
-	_setting_country().value_changed.connect(_on_item_country_changed)
-	_setting_country().change_requested.connect(country_select_pressed.emit)
-	army.allegiance_changed.connect(_on_army_owner_changed)
+	var item_country := settings_item.child_items[1] as ItemCountry
+	item_country.make_unnullable(army.owner_country)
+	item_country.value_changed.connect(_on_item_country_changed)
+	item_country.change_requested.connect(country_select_pressed.emit)
+	army.allegiance_changed.connect(
+			_on_army_owner_changed.bind(item_country).unbind(1)
+	)
 
 	# Army size
-	_setting_army_size().has_minimum = true
-	_setting_army_size().minimum = army.size().minimum_value
-	_setting_army_size().has_maximum = army.size().has_maximum()
-	_setting_army_size().maximum = army.size().maximum_value
-	_setting_army_size().value = army.size().value
-	_setting_army_size().value_changed.connect(_on_item_size_changed)
-	army.size().changed.connect(_on_army_size_changed)
+	var item_size := settings_item.child_items[2] as ItemInt
+	item_size.has_minimum = true
+	item_size.minimum = army.size().minimum_value
+	item_size.has_maximum = army.size().has_maximum()
+	item_size.maximum = army.size().maximum_value
+	item_size.value = army.size().value
+	item_size.value_changed.connect(_on_item_size_changed)
+	army.size().changed.connect(
+			_on_army_size_changed.bind(item_size).unbind(1)
+	)
 
 	# Movements made
-	_setting_movements().has_minimum = true
-	_setting_movements().minimum = 0
-	_setting_movements().value = army.movements_made()
-	_setting_movements().value_changed.connect(_on_item_movements_changed)
-	army.movements_made_changed.connect(_on_army_movements_changed)
+	var item_movements := settings_item.child_items[3] as ItemInt
+	item_movements.has_minimum = true
+	item_movements.minimum = 0
+	item_movements.value = army.movements_made()
+	item_movements.value_changed.connect(_on_item_movements_changed)
+	army.movements_made_changed.connect(
+			_on_army_movements_changed.bind(item_movements).unbind(1)
+	)
 
 
 func _delete_army() -> void:
@@ -172,25 +161,25 @@ func _on_item_movements_changed(item: ItemInt) -> void:
 	)
 
 
-func _on_army_texture_changed() -> void:
-	_setting_texture().value_changed.disconnect(_on_item_texture_changed)
-	_setting_texture().value = army.texture
-	_setting_texture().value_changed.connect(_on_item_texture_changed)
+func _on_army_texture_changed(item: ItemTexture) -> void:
+	item.value_changed.disconnect(_on_item_texture_changed)
+	item.value = army.texture
+	item.value_changed.connect(_on_item_texture_changed)
 
 
-func _on_army_owner_changed(_country: Country) -> void:
-	_setting_country().value_changed.disconnect(_on_item_country_changed)
-	_setting_country().value = army.owner_country
-	_setting_country().value_changed.connect(_on_item_country_changed)
+func _on_army_owner_changed(item: ItemCountry) -> void:
+	item.value_changed.disconnect(_on_item_country_changed)
+	item.value = army.owner_country
+	item.value_changed.connect(_on_item_country_changed)
 
 
-func _on_army_size_changed(_new_value: int) -> void:
-	_setting_army_size().value_changed.disconnect(_on_item_size_changed)
-	_setting_army_size().value = army.size().value
-	_setting_army_size().value_changed.connect(_on_item_size_changed)
+func _on_army_size_changed(item: ItemInt) -> void:
+	item.value_changed.disconnect(_on_item_size_changed)
+	item.value = army.size().value
+	item.value_changed.connect(_on_item_size_changed)
 
 
-func _on_army_movements_changed(_movements: int) -> void:
-	_setting_movements().value_changed.disconnect(_on_item_movements_changed)
-	_setting_movements().value = army.movements_made()
-	_setting_movements().value_changed.connect(_on_item_movements_changed)
+func _on_army_movements_changed(item: ItemInt) -> void:
+	item.value_changed.disconnect(_on_item_movements_changed)
+	item.value = army.movements_made()
+	item.value_changed.connect(_on_item_movements_changed)

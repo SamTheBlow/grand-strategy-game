@@ -4,18 +4,11 @@ extends AppEditorInterface
 
 var province: Province
 
-@onready var _preview := %ProvincePreview as ProvincePreviewNode
-@onready var _settings := %Settings as ItemVoidNode
-
 
 func _ready() -> void:
-	_preview.setup(province)
+	(%ProvincePreview as ProvincePreviewNode).setup(province)
 
-	# Create a deep copy of the settings resource,
-	# to avoid sharing it with another interface
-	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
-	_load_settings()
-	_settings.refresh()
+	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.InterfaceType.PROVINCE_LIST,
@@ -33,59 +26,50 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate_province()
 
 
-func _setting_province_name() -> ItemString:
-	return _settings.item.child_items[0] as ItemString
-
-
-func _setting_country() -> ItemCountry:
-	return _settings.item.child_items[3] as ItemCountry
-
-
-func _setting_population() -> ItemInt:
-	return _settings.item.child_items[4] as ItemInt
-
-
-func _setting_income() -> ItemInt:
-	return _settings.item.child_items[5] as ItemInt
-
-
-func _setting_fortress() -> ItemBool:
-	return _settings.item.child_items[6] as ItemBool
-
-
-func _load_settings() -> void:
+func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Name
-	_setting_province_name().value = province.name
-	_setting_province_name().placeholder_text = province.default_name()
-	_setting_province_name().value_changed.connect(_on_name_value_changed)
-	province.name_changed.connect(_on_province_name_changed)
+	var item_name := settings_item.child_items[0] as ItemString
+	item_name.value = province.name
+	item_name.placeholder_text = province.default_name()
+	item_name.value_changed.connect(_on_name_value_changed)
+	province.name_changed.connect(
+			_on_province_name_changed.bind(item_name).unbind(1)
+	)
 
 	# Owner country
-	_setting_country().value = province.owner_country
-	_setting_country().value_changed.connect(_on_country_value_changed)
-	_setting_country().change_requested.connect(country_select_pressed.emit)
-	province.owner_changed.connect(_on_province_owner_changed)
+	var item_country := settings_item.child_items[3] as ItemCountry
+	item_country.value = province.owner_country
+	item_country.value_changed.connect(_on_country_value_changed)
+	item_country.change_requested.connect(country_select_pressed.emit)
+	province.owner_changed.connect(
+			_on_province_owner_changed.bind(item_country).unbind(1)
+	)
 
 	# Population
-	_setting_population().value = province.population().value
-	_setting_population().value_changed.connect(_on_population_value_changed)
+	var item_population := settings_item.child_items[4] as ItemInt
+	item_population.value = province.population().value
+	item_population.value_changed.connect(_on_population_value_changed)
 	province.population().value_changed.connect(
-			_on_province_population_changed
+			_on_province_population_changed.bind(item_population).unbind(1)
 	)
 
 	# Money income
-	_setting_income().value = province.base_money_income().value
-	_setting_income().value_changed.connect(_on_income_value_changed)
+	var item_income := settings_item.child_items[5] as ItemInt
+	item_income.value = province.base_money_income().value
+	item_income.value_changed.connect(_on_income_value_changed)
 	province.base_money_income().value_changed.connect(
-			_on_province_income_changed
+			_on_province_income_changed.bind(item_income).unbind(1)
 	)
 
 	# Has fortress
-	_setting_fortress().value = (
+	var item_fortress := settings_item.child_items[6] as ItemBool
+	item_fortress.value = (
 			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
 	)
-	_setting_fortress().value_changed.connect(_on_has_fortress_value_changed)
-	province.buildings.changed.connect(_on_province_buildings_changed)
+	item_fortress.value_changed.connect(_on_has_fortress_value_changed)
+	province.buildings.changed.connect(
+			_on_province_buildings_changed.bind(item_fortress)
+	)
 
 
 func _on_back_button_pressed() -> void:
@@ -218,23 +202,21 @@ func _on_has_fortress_value_changed(item: ItemBool) -> void:
 	undo_redo.commit_action()
 
 
-func _on_province_name_changed(_new_name: String) -> void:
-	_setting_province_name().value = province.name
+func _on_province_name_changed(item: ItemString) -> void:
+	item.value = province.name
 
 
-func _on_province_owner_changed(_changed_province: Province) -> void:
-	_setting_country().value = province.owner_country
+func _on_province_owner_changed(item: ItemCountry) -> void:
+	item.value = province.owner_country
 
 
-func _on_province_population_changed(_new_value: int) -> void:
-	_setting_population().value = province.population().value
+func _on_province_population_changed(item: ItemInt) -> void:
+	item.value = province.population().value
 
 
-func _on_province_income_changed(_new_value: int) -> void:
-	_setting_income().value = province.base_money_income().value
+func _on_province_income_changed(item: ItemInt) -> void:
+	item.value = province.base_money_income().value
 
 
-func _on_province_buildings_changed() -> void:
-	_setting_fortress().value = (
-			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
-	)
+func _on_province_buildings_changed(item: ItemBool) -> void:
+	item.value = province.buildings.number_of_type(Building.Type.FORTRESS) > 0

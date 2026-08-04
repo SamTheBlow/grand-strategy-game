@@ -4,15 +4,9 @@ extends AppEditorInterface
 
 var game_player := GamePlayer.new()
 
-@onready var _settings := %Settings as ItemVoidNode
-
 
 func _ready() -> void:
-	# Create a deep copy of the settings resource,
-	# to avoid sharing it with another interface
-	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
-	_load_settings()
-	_settings.refresh()
+	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.InterfaceType.PLAYER_LIST,
@@ -30,61 +24,54 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate_player()
 
 
-func _setting_username() -> ItemString:
-	return _settings.item.child_items[0] as ItemString
-
-
-func _setting_country() -> ItemCountry:
-	return _settings.item.child_items[1] as ItemCountry
-
-
-func _setting_is_human() -> ItemBool:
-	return _settings.item.child_items[2] as ItemBool
-
-
-func _setting_ai_type() -> ItemOptions:
-	return _settings.item.child_items[3] as ItemOptions
-
-
-func _setting_ai_personality() -> ItemOptions:
-	return _settings.item.child_items[4] as ItemOptions
-
-
-func _load_settings() -> void:
+func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Username
-	_setting_username().placeholder_text = game_player.username_or_default()
-	_setting_username().value = game_player.username
-	_setting_username().value_changed.connect(_on_item_username_changed)
-	game_player.username_changed.connect(_on_player_username_changed)
+	var item_username := settings_item.child_items[0] as ItemString
+	item_username.placeholder_text = game_player.username_or_default()
+	item_username.value = game_player.username
+	item_username.value_changed.connect(_on_item_username_changed)
+	game_player.username_changed.connect(
+			_on_player_username_changed.bind(item_username).unbind(1)
+	)
 
 	# Country
-	_setting_country().value = game_player.playing_country
-	_setting_country().value_changed.connect(_on_item_country_changed)
-	_setting_country().change_requested.connect(country_select_pressed.emit)
-	game_player.playing_country_changed.connect(_on_player_country_changed)
+	var item_country := settings_item.child_items[1] as ItemCountry
+	item_country.value = game_player.playing_country
+	item_country.value_changed.connect(_on_item_country_changed)
+	item_country.change_requested.connect(country_select_pressed.emit)
+	game_player.playing_country_changed.connect(
+			_on_player_country_changed.bind(item_country, item_username)
+	)
 
 	# Is human
-	_setting_is_human().value = game_player.is_human
-	_setting_is_human().value_changed.connect(_on_item_is_human_changed)
-	game_player.human_status_changed.connect(_on_player_is_human_changed)
+	var item_is_human := settings_item.child_items[2] as ItemBool
+	item_is_human.value = game_player.is_human
+	item_is_human.value_changed.connect(_on_item_is_human_changed)
+	game_player.human_status_changed.connect(
+			_on_player_is_human_changed.bind(item_is_human).unbind(1)
+	)
 
 	# AI type
-	_setting_ai_type().selected_index = (
-			_setting_ai_type().index_of_value(game_player.player_ai.type())
+	var item_ai_type := settings_item.child_items[3] as ItemOptions
+	item_ai_type.selected_index = (
+			item_ai_type.index_of_value(game_player.player_ai.type())
 	)
-	_setting_ai_type().value_changed.connect(_on_item_ai_type_changed)
-	game_player.ai_changed.connect(_on_player_ai_changed)
+	item_ai_type.value_changed.connect(_on_item_ai_type_changed)
 
 	# AI personality
-	_setting_ai_personality().selected_index = (
-			_setting_ai_personality().index_of_value(
-					game_player.player_ai.personality.type()
-			)
+	var item_ai_personality := settings_item.child_items[4] as ItemOptions
+	item_ai_personality.selected_index = item_ai_personality.index_of_value(
+			game_player.player_ai.personality.type()
 	)
-	_setting_ai_personality().value_changed.connect(
+	item_ai_personality.value_changed.connect(
 			_on_item_ai_personality_changed
 	)
-	game_player.player_ai.personality_changed.connect(_on_personality_changed)
+	game_player.player_ai.personality_changed.connect(
+			_on_personality_changed.bind(item_ai_personality)
+	)
+	game_player.ai_changed.connect(
+			_on_player_ai_changed.bind(item_ai_type, item_ai_personality)
+	)
 
 
 func _delete_player() -> void:
@@ -128,39 +115,38 @@ func _on_player_removed(player_removed: GamePlayer) -> void:
 		closed.emit()
 
 
-func _on_item_username_changed(_item: PropertyTreeItem) -> void:
+func _on_item_username_changed(item: ItemString) -> void:
 	_apply_undo_redo_action(
 			"Change player username",
 			game_player,
 			&"username",
 			game_player.username,
-			_setting_username().value
+			item.value
 	)
 
 
-func _on_item_country_changed(_item: PropertyTreeItem) -> void:
+func _on_item_country_changed(item: ItemCountry) -> void:
 	_apply_undo_redo_action(
 			"Change player's country",
 			game_player,
 			&"playing_country",
 			game_player.playing_country,
-			_setting_country().value
+			item.value
 	)
 
 
-func _on_item_is_human_changed(_item: PropertyTreeItem) -> void:
+func _on_item_is_human_changed(item: ItemBool) -> void:
 	_apply_undo_redo_action(
 			"Toggle whether or not player is human",
 			game_player,
 			&"is_human",
 			game_player.is_human,
-			_setting_is_human().value
+			item.value
 	)
 
 
-func _on_item_ai_type_changed(_item: PropertyTreeItem) -> void:
-	var new_value: int = _setting_ai_type().selected_value()
-	var new_ai: PlayerAI = PlayerAI.from_type(new_value)
+func _on_item_ai_type_changed(item: ItemOptions) -> void:
+	var new_ai: PlayerAI = PlayerAI.from_type(item.selected_value())
 	if new_ai == null:
 		return
 
@@ -174,9 +160,10 @@ func _on_item_ai_type_changed(_item: PropertyTreeItem) -> void:
 	undo_redo.commit_action()
 
 
-func _on_item_ai_personality_changed(_item: PropertyTreeItem) -> void:
-	var new_value: int = _setting_ai_personality().selected_value()
-	var new_personality: AIPersonality = AIPersonality.from_type(new_value)
+func _on_item_ai_personality_changed(item: ItemOptions) -> void:
+	var new_personality: AIPersonality = (
+			AIPersonality.from_type(item.selected_value())
+	)
 	if new_personality == null:
 		return
 
@@ -193,47 +180,50 @@ func _on_item_ai_personality_changed(_item: PropertyTreeItem) -> void:
 	undo_redo.commit_action()
 
 
-func _on_player_username_changed(_game_player: GamePlayer = null) -> void:
-	_setting_username().value_changed.disconnect(_on_item_username_changed)
-	_setting_username().value = game_player.username
-	_setting_username().value_changed.connect(_on_item_username_changed)
+func _on_player_username_changed(item: ItemString) -> void:
+	item.value_changed.disconnect(_on_item_username_changed)
+	item.value = game_player.username
+	item.value_changed.connect(_on_item_username_changed)
 
 
-func _on_player_country_changed() -> void:
-	_setting_country().value_changed.disconnect(_on_item_country_changed)
-	_setting_country().value = game_player.playing_country
-	_setting_country().value_changed.connect(_on_item_country_changed)
+func _on_player_country_changed(
+		item_country: ItemCountry, item_username: ItemString
+) -> void:
+	item_country.value_changed.disconnect(_on_item_country_changed)
+	item_country.value = game_player.playing_country
+	item_country.value_changed.connect(_on_item_country_changed)
 
 	# The playing country can affect the default username
-	_setting_username().placeholder_text = game_player.username_or_default()
+	item_username.placeholder_text = game_player.username_or_default()
 
 
-func _on_player_is_human_changed(_game_player: GamePlayer) -> void:
-	_setting_is_human().value_changed.disconnect(_on_item_is_human_changed)
-	_setting_is_human().value = game_player.is_human
-	_setting_is_human().value_changed.connect(_on_item_is_human_changed)
+func _on_player_is_human_changed(item: ItemBool) -> void:
+	item.value_changed.disconnect(_on_item_is_human_changed)
+	item.value = game_player.is_human
+	item.value_changed.connect(_on_item_is_human_changed)
 
 
-func _on_player_ai_changed(old_ai: PlayerAI, new_ai: PlayerAI) -> void:
-	_setting_ai_type().value_changed.disconnect(_on_item_ai_type_changed)
-	_setting_ai_type().selected_index = (
-			_setting_ai_type().index_of_value(new_ai.type())
+func _on_player_ai_changed(
+		old_ai: PlayerAI,
+		new_ai: PlayerAI,
+		item_ai_type: ItemOptions,
+		item_ai_personality: ItemOptions
+) -> void:
+	item_ai_type.value_changed.disconnect(_on_item_ai_type_changed)
+	item_ai_type.selected_index = (
+			item_ai_type.index_of_value(new_ai.type())
 	)
-	_setting_ai_type().value_changed.connect(_on_item_ai_type_changed)
+	item_ai_type.value_changed.connect(_on_item_ai_type_changed)
 
 	old_ai.personality_changed.disconnect(_on_personality_changed)
-	new_ai.personality_changed.connect(_on_personality_changed)
+	new_ai.personality_changed.connect(
+			_on_personality_changed.bind(item_ai_personality)
+	)
 
 
-func _on_personality_changed() -> void:
-	_setting_ai_personality().value_changed.disconnect(
-			_on_item_ai_personality_changed
+func _on_personality_changed(item: ItemOptions) -> void:
+	item.value_changed.disconnect(_on_item_ai_personality_changed)
+	item.selected_index = (
+			item.index_of_value(game_player.player_ai.personality.type())
 	)
-	_setting_ai_personality().selected_index = (
-			_setting_ai_personality().index_of_value(
-					game_player.player_ai.personality.type()
-			)
-	)
-	_setting_ai_personality().value_changed.connect(
-			_on_item_ai_personality_changed
-	)
+	item.value_changed.connect(_on_item_ai_personality_changed)

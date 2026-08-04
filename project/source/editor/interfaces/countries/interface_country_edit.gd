@@ -4,18 +4,11 @@ extends AppEditorInterface
 
 var country: Country
 
-@onready var _preview := %CountryButton as CountryButton
-@onready var _settings := %Settings as ItemVoidNode
-
 
 func _ready() -> void:
-	_preview.country = country
+	(%CountryButton as CountryButton).country = country
 
-	# Create a deep copy of the settings resource,
-	# to avoid sharing it with another interface
-	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
-	_load_settings()
-	_settings.refresh()
+	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.InterfaceType.COUNTRY_LIST,
@@ -33,34 +26,27 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate_country()
 
 
-func _setting_country_name() -> ItemString:
-	return _settings.item.child_items[0] as ItemString
-
-
-func _setting_country_color() -> ItemColor:
-	return _settings.item.child_items[1] as ItemColor
-
-
-func _setting_country_money() -> ItemInt:
-	return _settings.item.child_items[2] as ItemInt
-
-
-func _load_settings() -> void:
+func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Name
-	_setting_country_name().value = country.country_name
-	_setting_country_name().placeholder_text = country.default_name()
-	_setting_country_name().value_changed.connect(_on_name_changed)
-	country.name_changed.connect(_on_country_name_changed)
+	var item_name := settings_item.child_items[0] as ItemString
+	item_name.value = country.country_name
+	item_name.placeholder_text = country.default_name()
+	item_name.value_changed.connect(_on_name_changed)
+	country.name_changed.connect(_on_country_name_changed.bind(item_name))
 
 	# Color
-	_setting_country_color().value = country.color
-	_setting_country_color().value_changed.connect(_on_color_changed)
-	country.color_changed.connect(_on_country_color_changed)
+	var item_color := settings_item.child_items[1] as ItemColor
+	item_color.value = country.color
+	item_color.value_changed.connect(_on_color_changed)
+	country.color_changed.connect(_on_country_color_changed.bind(item_color))
 
 	# Amount of money
-	_setting_country_money().value = country.money
-	_setting_country_money().value_changed.connect(_on_money_changed)
-	country.money_changed.connect(_on_country_money_changed)
+	var item_money := settings_item.child_items[2] as ItemInt
+	item_money.value = country.money
+	item_money.value_changed.connect(_on_money_changed)
+	country.money_changed.connect(
+			_on_country_money_changed.bind(item_money).unbind(1)
+	)
 
 
 func _on_back_button_pressed() -> void:
@@ -168,13 +154,13 @@ func _on_money_changed(item: ItemInt) -> void:
 	)
 
 
-func _on_country_name_changed() -> void:
-	_setting_country_name().value = country.country_name
+func _on_country_name_changed(item: ItemString) -> void:
+	item.value = country.country_name
 
 
-func _on_country_color_changed() -> void:
-	_setting_country_color().value = country.color
+func _on_country_color_changed(item: ItemColor) -> void:
+	item.value = country.color
 
 
-func _on_country_money_changed(_new_amount: int) -> void:
-	_setting_country_money().value = country.money
+func _on_country_money_changed(item: ItemInt) -> void:
+	item.value = country.money
