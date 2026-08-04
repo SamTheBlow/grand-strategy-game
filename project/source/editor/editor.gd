@@ -63,7 +63,7 @@ func _play() -> void:
 	pass
 
 
-func _open_interface(type: EditingInterface.InterfaceType) -> void:
+func _open_interface(type: InterfaceNavigator.InterfaceType) -> void:
 	_editing_interface.open_new_interface(
 			type, _current_project, editor_settings
 	)

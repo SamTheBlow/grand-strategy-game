@@ -2,33 +2,15 @@ class_name InterfaceArmyEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Army].
 
-signal delete_pressed(army: Army)
-signal duplicate_pressed(army: Army)
-signal texture_popup_requested(item_texture: ItemTexture)
-signal country_select_pressed(item_country: ItemCountry)
-
 var army: Army
-var playing_country: PlayingCountry
 
-## This interface automatically closes
-## if its army is removed from this armies list.
-## May be null, in which case this feature is not used.
-var armies: Armies = null:
-	set(value):
-		if armies != null:
-			armies.removed.disconnect(_on_army_removed)
-
-		armies = value
-
-		if armies != null:
-			armies.removed.connect(_on_army_removed)
-
-@onready var _preview := %ArmyPreview as ArmyPreviewNode
 @onready var _settings := %Settings as ItemVoidNode
 
 
 func _ready() -> void:
-	_preview.setup(army, playing_country)
+	(%ArmyPreview as ArmyPreviewNode).setup(
+			army, PlayingCountry.new(project.game)
+	)
 
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
@@ -36,12 +18,22 @@ func _ready() -> void:
 	_load_settings()
 	_settings.refresh()
 
+	project.game.world.armies.removed.connect(_on_army_removed)
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"delete"):
-		delete_pressed.emit(army)
-	if Input.is_action_just_pressed(&"duplicate"):
-		duplicate_pressed.emit(army)
+	closed.connect(navigator.open_new_interface.bind(
+			InterfaceNavigator.InterfaceType.ARMY_LIST,
+			project,
+			editor_settings
+	))
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	super(event)
+
+	if event.is_action_pressed(&"delete"):
+		_delete_army()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate_army()
 
 
 func _setting_texture() -> ItemTexture:
@@ -66,7 +58,9 @@ func _load_settings() -> void:
 	item_texture.fallback_texture = ArmyVisuals2D.DEFAULT_TEXTURE
 	item_texture.value = army.texture
 	item_texture.value_changed.connect(_on_item_texture_changed)
-	item_texture.popup_requested.connect(texture_popup_requested.emit)
+	item_texture.popup_requested.connect(
+			texture_popup_requested.emit.bind(project.textures)
+	)
 	army.texture_changed.connect(_on_army_texture_changed)
 
 	# Owner country
@@ -105,6 +99,34 @@ func _apply_undo_redo_action(
 	undo_redo.commit_action()
 
 
+func _delete_army() -> void:
+	project.game.world.armies.undo_redo_remove(
+			army, undo_redo, project.game.world.armies_in_each_province
+	)
+
+
+func _duplicate_army() -> void:
+	# Create duplicate
+	var new_army: Army = Army.Factory.new(project.game).new_army(
+			army.owner_country,
+			army.province_id(),
+			army.size().value,
+			-1,
+			army.movements_made()
+	)
+	new_army.texture = army.texture
+
+	# Create undo_redo action
+	# (don't execute it since army setup already added the army)
+	undo_redo.create_action("Duplicate army")
+	undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
+	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
+	undo_redo.commit_action(false)
+
+	# Open interface to edit the new army
+	navigator.open_army_edit_interface(new_army, project, editor_settings)
+
+
 func _on_back_button_pressed() -> void:
 	closed.emit()
 
@@ -112,10 +134,6 @@ func _on_back_button_pressed() -> void:
 func _on_army_removed(army_removed: Army) -> void:
 	if army_removed == army:
 		closed.emit()
-
-
-func _on_delete_button_pressed() -> void:
-	delete_pressed.emit(army)
 
 
 func _on_item_texture_changed(item: ItemTexture) -> void:

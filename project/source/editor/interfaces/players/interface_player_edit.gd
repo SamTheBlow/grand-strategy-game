@@ -2,24 +2,7 @@ class_name InterfacePlayerEdit
 extends AppEditorInterface
 ## Interface for editing given [GamePlayer].
 
-signal delete_pressed(game_player: GamePlayer)
-signal duplicate_pressed(game_player: GamePlayer)
-signal country_select_pressed(item_country: ItemCountry)
-
 var game_player := GamePlayer.new()
-
-## This interface automatically closes
-## if its player is removed from this players list.
-## May be null, in which case this feature is not used.
-var game_players: GamePlayers = null:
-	set(value):
-		if game_players != null:
-			game_players.removed.disconnect(_on_player_removed)
-
-		game_players = value
-
-		if game_players != null:
-			game_players.removed.connect(_on_player_removed)
 
 @onready var _settings := %Settings as ItemVoidNode
 
@@ -31,12 +14,20 @@ func _ready() -> void:
 	_load_settings()
 	_settings.refresh()
 
+	closed.connect(navigator.open_new_interface.bind(
+			InterfaceNavigator.InterfaceType.PLAYER_LIST,
+			project,
+			editor_settings
+	))
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"delete"):
-		delete_pressed.emit(game_player)
-	if Input.is_action_just_pressed(&"duplicate"):
-		duplicate_pressed.emit(game_player)
+
+func _unhandled_input(event: InputEvent) -> void:
+	super(event)
+
+	if event.is_action_pressed(&"delete"):
+		_delete_player()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate_player()
 
 
 func _setting_username() -> ItemString:
@@ -109,6 +100,38 @@ func _apply_undo_redo_action(
 	undo_redo.commit_action()
 
 
+func _delete_player() -> void:
+	project.game.game_players.undo_redo_remove(game_player, undo_redo)
+
+
+func _duplicate_player() -> void:
+	# Create duplicate
+	var new_player := GamePlayer.new()
+	new_player.username = game_player.username
+	new_player.playing_country = game_player.playing_country
+	new_player.is_human = game_player.is_human
+	new_player.player_ai = PlayerAI.from_type(game_player.player_ai.type())
+	new_player.player_ai.personality = (
+			AIPersonality.from_type(game_player.player_ai.personality.type())
+	)
+
+	# We need this new player to have a new unique id
+	# assigned to it before we can create the undo_redo action
+	var game_players: GamePlayers = project.game.game_players
+	game_players.add(new_player)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the player)
+	undo_redo.create_action("Duplicate player")
+	undo_redo.add_do_method(game_players.add.bind(new_player))
+	undo_redo.add_undo_method(game_players.remove.bind(new_player))
+	undo_redo.commit_action(false)
+
+	navigator.open_player_edit_interface(
+			new_player.id, project, editor_settings
+	)
+
+
 func _on_back_button_pressed() -> void:
 	closed.emit()
 
@@ -116,10 +139,6 @@ func _on_back_button_pressed() -> void:
 func _on_player_removed(player_removed: GamePlayer) -> void:
 	if player_removed == game_player:
 		closed.emit()
-
-
-func _on_delete_button_pressed() -> void:
-	delete_pressed.emit(game_player)
 
 
 func _on_item_username_changed(_item: PropertyTreeItem) -> void:

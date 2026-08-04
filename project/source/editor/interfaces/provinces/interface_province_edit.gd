@@ -2,44 +2,35 @@ class_name InterfaceProvinceEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Province].
 
-signal delete_pressed(province: Province)
-signal duplicate_pressed(province: Province)
-signal country_select_pressed(item_country: ItemCountry)
-
-var province := Province.new()
-
-## This interface automatically closes
-## if its province is removed from this provinces list.
-## May be null, in which case this feature is not used.
-var provinces: Provinces = null:
-	set(value):
-		if provinces != null:
-			provinces.removed.disconnect(_on_province_removed)
-
-		provinces = value
-
-		if provinces != null:
-			provinces.removed.connect(_on_province_removed)
+var province: Province
 
 @onready var _preview := %ProvincePreview as ProvincePreviewNode
 @onready var _settings := %Settings as ItemVoidNode
 
 
 func _ready() -> void:
+	_preview.setup(province)
+
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
 	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
 	_load_settings()
 	_settings.refresh()
 
-	_preview.setup(province)
+	closed.connect(navigator.open_new_interface.bind(
+			InterfaceNavigator.InterfaceType.PROVINCE_LIST,
+			project,
+			editor_settings
+	))
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"delete"):
-		delete_pressed.emit(province)
-	if Input.is_action_just_pressed(&"duplicate"):
-		duplicate_pressed.emit(province)
+func _unhandled_input(event: InputEvent) -> void:
+	super(event)
+
+	if event.is_action_pressed(&"delete"):
+		_delete_province()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate_province()
 
 
 func _setting_province_name() -> ItemString:
@@ -119,8 +110,50 @@ func _on_province_removed(province_removed: Province) -> void:
 		closed.emit()
 
 
-func _on_delete_button_pressed() -> void:
-	delete_pressed.emit(province)
+func _delete_province() -> void:
+	project.game.world.provinces.undo_redo_remove(
+			province,
+			undo_redo,
+			project.game.world.armies,
+			project.game.world.armies_in_each_province
+	)
+
+
+func _duplicate_province() -> void:
+	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
+
+	# Create duplicate
+	var new_province := Province.new()
+	new_province.polygon().array = province.polygon().array.duplicate()
+	new_province.position_army_host = province.position_army_host
+	new_province.position_fortress = province.position_fortress
+	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)
+	new_province.owner_country = province.owner_country
+	new_province.population().value = province.population().value
+	new_province.base_money_income().value = province.base_money_income().value
+
+	for building in province.buildings.list():
+		new_province.buildings.add(Fortress.new(province.id))
+
+	# We need this new province to have a new unique id
+	# assigned to it before we can create the undo_redo action
+	project.game.world.provinces.add(new_province)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the province)
+	undo_redo.create_action("Duplicate province")
+	undo_redo.add_do_method(
+			project.game.world.provinces.add.bind(new_province)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.provinces.remove.bind(new_province.id)
+	)
+	undo_redo.commit_action(false)
+
+	# Open interface to edit the new province
+	navigator.open_province_edit_interface(
+			new_province.id, project, editor_settings
+	)
 
 
 func _on_name_value_changed(item: ItemString) -> void:

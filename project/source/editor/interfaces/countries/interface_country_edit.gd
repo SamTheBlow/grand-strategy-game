@@ -2,45 +2,35 @@ class_name InterfaceCountryEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [Country].
 
-signal delete_pressed(country: Country)
-signal duplicate_pressed(country: Country)
-signal relationships_pressed()
-signal notifications_pressed()
-
-var country := Country.new()
-
-## This interface automatically closes
-## if its country is removed from this countries list.
-## May be null, in which case this feature is not used.
-var countries: Countries = null:
-	set(value):
-		if countries != null:
-			countries.removed.disconnect(_on_country_removed)
-
-		countries = value
-
-		if countries != null:
-			countries.removed.connect(_on_country_removed)
+var country: Country
 
 @onready var _preview := %CountryButton as CountryButton
 @onready var _settings := %Settings as ItemVoidNode
 
 
 func _ready() -> void:
+	_preview.country = country
+
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
 	_settings.item = _settings.item.duplicate_deep() as PropertyTreeItem
 	_load_settings()
 	_settings.refresh()
 
-	_preview.country = country
+	closed.connect(navigator.open_new_interface.bind(
+			InterfaceNavigator.InterfaceType.COUNTRY_LIST,
+			project,
+			editor_settings
+	))
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"delete"):
-		delete_pressed.emit(country)
-	if Input.is_action_just_pressed(&"duplicate"):
-		duplicate_pressed.emit(country)
+func _unhandled_input(event: InputEvent) -> void:
+	super(event)
+
+	if event.is_action_pressed(&"delete"):
+		_delete_country()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate_country()
 
 
 func _setting_country_name() -> ItemString:
@@ -96,15 +86,60 @@ func _on_country_removed(country_removed: Country) -> void:
 
 
 func _on_edit_relationships_pressed() -> void:
-	relationships_pressed.emit()
+	navigator.open_country_relationships_interface(
+			country, project, editor_settings
+	)
 
 
 func _on_edit_notifications_pressed() -> void:
-	notifications_pressed.emit()
+	navigator.open_country_notifications_interface(
+			country, project, editor_settings
+	)
 
 
-func _on_delete_button_pressed() -> void:
-	delete_pressed.emit(country)
+func _delete_country() -> void:
+	project.game.countries.undo_redo_remove(
+			country,
+			undo_redo,
+			project.game.world.provinces,
+			project.game.world.armies,
+			project.game.world.armies_of_each_country,
+			project.game.world.armies_in_each_province
+	)
+
+
+func _duplicate_country() -> void:
+	# Copies everything except notifications
+	var new_country := Country.new()
+	new_country.country_name = country.country_name + " (Copy)"
+	new_country.color = country.color
+	new_country.money = country.money
+	# Create a deep duplicate by parsing to raw data and back into a new object
+	new_country.relationships = DiplomacyRelationshipParsing.from_raw_data(
+			DiplomacyRelationshipParsing.to_raw_array(country.relationships),
+			project.game,
+			new_country
+	)
+	new_country.auto_arrows = (
+			AutoArrows.from_raw_data(country.auto_arrows.to_raw_data())
+	)
+
+	# We need this new country to have a new unique id
+	# assigned to it before we can create the undo_redo action
+	project.game.countries.add(new_country)
+
+	# Create undo_redo action
+	# (don't execute it since we already added the country)
+	undo_redo.create_action("Duplicate country")
+	undo_redo.add_do_method(project.game.countries.add.bind(new_country))
+	undo_redo.add_undo_method(
+			project.game.countries.remove.bind(new_country.id)
+	)
+	undo_redo.commit_action(false)
+
+	navigator.open_country_edit_interface(
+			new_country.id, project, editor_settings
+	)
 
 
 func _on_name_changed(item: ItemString) -> void:

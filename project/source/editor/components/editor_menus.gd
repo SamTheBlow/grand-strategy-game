@@ -9,7 +9,7 @@ signal open_project_requested()
 signal save_requested()
 signal save_as_requested()
 signal play_requested()
-signal interface_requested(type: EditingInterface.InterfaceType)
+signal interface_requested(type: InterfaceNavigator.InterfaceType)
 
 const _ACTION_QUIT_EDITOR: StringName = &"quit_editor"
 const _ACTION_NEW_PROJECT: StringName = &"new_project"
@@ -140,39 +140,39 @@ func _on_project_tab_id_pressed(id: int) -> void:
 ## Called when the user clicks on one of the options
 ## in the menu bar's "Edit" tab.
 func _on_edit_tab_id_pressed(id: int) -> void:
-	var interface_type: EditingInterface.InterfaceType
+	var interface_type: InterfaceNavigator.InterfaceType
 
 	match id:
 		_EDIT_TAB_PROJECT_INFO_ID:
 			# "Project Info"
-			interface_type = EditingInterface.InterfaceType.PROJECT_INFO
+			interface_type = InterfaceNavigator.InterfaceType.PROJECT_INFO
 		_EDIT_TAB_RNG_ID:
 			# "RNG"
-			interface_type = EditingInterface.InterfaceType.RNG
+			interface_type = InterfaceNavigator.InterfaceType.RNG
 		_EDIT_TAB_COUNTRIES_ID:
 			# "Countries"
-			interface_type = EditingInterface.InterfaceType.COUNTRY_LIST
+			interface_type = InterfaceNavigator.InterfaceType.COUNTRY_LIST
 		_EDIT_TAB_PLAYERS_ID:
 			# "Players"
-			interface_type = EditingInterface.InterfaceType.PLAYER_LIST
+			interface_type = InterfaceNavigator.InterfaceType.PLAYER_LIST
 		_EDIT_TAB_TURN_ORDER_ID:
 			# "Turn Order"
-			interface_type = EditingInterface.InterfaceType.TURN_ORDER
+			interface_type = InterfaceNavigator.InterfaceType.TURN_ORDER
 		_EDIT_TAB_WORLD_LIMITS_ID:
 			# "World Limits"
-			interface_type = EditingInterface.InterfaceType.WORLD_LIMITS
+			interface_type = InterfaceNavigator.InterfaceType.WORLD_LIMITS
 		_EDIT_TAB_BACKGROUND_COLOR_ID:
 			# "Background Color"
-			interface_type = EditingInterface.InterfaceType.BACKGROUND_COLOR
+			interface_type = InterfaceNavigator.InterfaceType.BACKGROUND_COLOR
 		_EDIT_TAB_DECORATIONS_ID:
 			# "Decorations"
-			interface_type = EditingInterface.InterfaceType.DECORATION_LIST
+			interface_type = InterfaceNavigator.InterfaceType.DECORATION_LIST
 		_EDIT_TAB_PROVINCES_ID:
 			# "Provinces"
-			interface_type = EditingInterface.InterfaceType.PROVINCE_LIST
+			interface_type = InterfaceNavigator.InterfaceType.PROVINCE_LIST
 		_EDIT_TAB_ARMIES_ID:
 			# "Armies"
-			interface_type = EditingInterface.InterfaceType.ARMY_LIST
+			interface_type = InterfaceNavigator.InterfaceType.ARMY_LIST
 		_EDIT_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			return

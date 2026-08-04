@@ -1,14 +1,8 @@
 class_name InterfaceProjectInfo
 extends AppEditorInterface
 
-signal texture_popup_requested(item_texture: ItemTexture)
-
-var project: GameProject
-
 var _item_project_name := ItemString.new()
 var _item_project_icon := ItemTexture.new()
-
-@onready var _game_settings_node := %GameSettingsCategory as ItemVoidNode
 
 
 func _ready() -> void:
@@ -20,27 +14,18 @@ func _ready() -> void:
 
 	_item_project_icon.text = "Icon:"
 	_item_project_icon.fallback_texture = project.metadata.DEFAULT_PROJECT_ICON
-	_item_project_icon.popup_requested.connect(texture_popup_requested.emit)
+	_item_project_icon.popup_requested.connect(
+			texture_popup_requested.emit.bind(project.textures)
+	)
 	_item_project_icon.value = project.metadata.icon
 	_item_project_icon.value_changed.connect(_on_item_icon_changed)
 	project.metadata.icon_changed.connect(_on_project_icon_changed)
 
-	_game_settings_node.item.child_items = [
-		_item_project_name, _item_project_icon
-	]
-	_game_settings_node.refresh()
+	var game_settings := %GameSettingsCategory as ItemVoidNode
+	game_settings.item.child_items = [ _item_project_name, _item_project_icon ]
+	game_settings.refresh()
 
-
-func _on_project_name_changed() -> void:
-	_item_project_name.value_changed.disconnect(_on_item_name_changed)
-	_item_project_name.value = project.metadata.project_name
-	_item_project_name.value_changed.connect(_on_item_name_changed)
-
-
-func _on_project_icon_changed() -> void:
-	_item_project_icon.value_changed.disconnect(_on_item_icon_changed)
-	_item_project_icon.value = project.metadata.icon
-	_item_project_icon.value_changed.connect(_on_item_icon_changed)
+	closed.connect(navigator.close_interface)
 
 
 func _on_item_name_changed(_item: PropertyTreeItem) -> void:
@@ -61,3 +46,15 @@ func _on_item_icon_changed(_item: PropertyTreeItem) -> void:
 	undo_redo.add_do_property(project.metadata, &"icon", new_icon)
 	undo_redo.add_undo_property(project.metadata, &"icon", old_icon)
 	undo_redo.commit_action()
+
+
+func _on_project_name_changed() -> void:
+	_item_project_name.value_changed.disconnect(_on_item_name_changed)
+	_item_project_name.value = project.metadata.project_name
+	_item_project_name.value_changed.connect(_on_item_name_changed)
+
+
+func _on_project_icon_changed() -> void:
+	_item_project_icon.value_changed.disconnect(_on_item_icon_changed)
+	_item_project_icon.value = project.metadata.icon
+	_item_project_icon.value_changed.connect(_on_item_icon_changed)

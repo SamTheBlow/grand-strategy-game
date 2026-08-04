@@ -2,11 +2,7 @@ class_name InterfacePlayerList
 extends AppEditorInterface
 ## Shows a list of all game players for the user to edit.
 
-signal item_selected(player_id: int)
-
 const _ELEMENT_SCENE := preload("uid://1g15rgahujc") as PackedScene
-
-var game_players: GamePlayers
 
 ## Maps player ids to their corresponding node.
 var _nodes: Dictionary[int, Node] = {}
@@ -15,18 +11,16 @@ var _nodes: Dictionary[int, Node] = {}
 
 
 func _ready() -> void:
-	for game_player in game_players.list():
+	for game_player in project.game.game_players.list():
 		_add_element(game_player)
 
-	game_players.added.connect(_on_player_added)
-	game_players.removed.connect(_on_player_removed)
+	project.game.game_players.added.connect(_on_player_added)
+	project.game.game_players.removed.connect(_on_player_removed)
+
+	closed.connect(navigator.close_interface)
 
 
 func _add_element(game_player: GamePlayer) -> void:
-	if _nodes.has(game_player.id):
-		push_warning("Player already has a corresponding node.")
-		return
-
 	var element := _ELEMENT_SCENE.instantiate() as EditorPlayerListElement
 	element.game_player = game_player
 	element.pressed.connect(_on_element_pressed)
@@ -43,6 +37,7 @@ func _on_add_button_pressed() -> void:
 
 	# We need this new player to have a new unique id
 	# assigned to it before we can create the undo_redo action
+	var game_players: GamePlayers = project.game.game_players
 	game_players.add(new_player)
 
 	# Create undo_redo action
@@ -54,20 +49,19 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_element_pressed(element: EditorPlayerListElement) -> void:
-	item_selected.emit(element.game_player.id)
+	navigator.open_player_edit_interface(
+			element.game_player.id, project, editor_settings
+	)
 
 
 func _on_player_added(game_player: GamePlayer) -> void:
 	_add_element(game_player)
 	_element_container.move_child(
-			_nodes[game_player.id], game_players.find(game_player)
+			_nodes[game_player.id],
+			project.game.game_players.find(game_player)
 	)
 
 
 func _on_player_removed(game_player: GamePlayer) -> void:
-	if not _nodes.has(game_player.id):
-		push_warning("Player doesn't have a corresponding node.")
-		return
-
 	_element_container.remove_child(_nodes[game_player.id])
 	_nodes.erase(game_player.id)

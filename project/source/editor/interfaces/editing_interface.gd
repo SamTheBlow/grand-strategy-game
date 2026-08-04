@@ -21,39 +21,44 @@ signal decoration_interface_closed()
 signal decoration_list_item_hovered(decoration: WorldDecoration)
 signal decoration_list_item_unhovered()
 
-enum InterfaceType {
-	PROJECT_INFO,
-	RNG,
-	COUNTRY_LIST,
-	COUNTRY_RELATIONSHIPS,
-	COUNTRY_NOTIFICATIONS,
-	PLAYER_LIST,
-	TURN_ORDER,
-	WORLD_LIMITS,
-	BACKGROUND_COLOR,
-	DECORATION_LIST,
-	PROVINCE_LIST,
-	ARMY_LIST,
-}
-
 ## The root node of each scene is an [AppEditorInterface].
-const _INTERFACE_SCENES: Dictionary[InterfaceType, PackedScene] = {
-	InterfaceType.PROJECT_INFO: preload("uid://7k82f8lx1vpe"),
-	InterfaceType.RNG: preload("uid://dp53fawdiydun"),
-	InterfaceType.COUNTRY_LIST: preload("uid://pns3cw110b6w"),
-	InterfaceType.COUNTRY_RELATIONSHIPS: preload("uid://bxnnpjildojmj"),
-	InterfaceType.COUNTRY_NOTIFICATIONS: preload("uid://bs0hbgxgmptdv"),
-	InterfaceType.PLAYER_LIST: preload("uid://dlpstn5iyda4k"),
-	InterfaceType.TURN_ORDER: preload("uid://bgcrykgs0vh3o"),
-	InterfaceType.WORLD_LIMITS: preload("uid://cyspbdausxgwr"),
-	InterfaceType.BACKGROUND_COLOR: preload("uid://bb53mhx3u8ho8"),
-	InterfaceType.DECORATION_LIST: preload("uid://bql3bs1c3rgo3"),
-	InterfaceType.PROVINCE_LIST: preload("uid://bluif37tipwg7"),
-	InterfaceType.ARMY_LIST: preload("uid://l2nhdgg0p4oo"),
+const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.InterfaceType, PackedScene] = {
+	InterfaceNavigator.InterfaceType.PROJECT_INFO:
+		preload("uid://7k82f8lx1vpe"),
+	InterfaceNavigator.InterfaceType.RNG:
+		preload("uid://dp53fawdiydun"),
+	InterfaceNavigator.InterfaceType.COUNTRY_LIST:
+		preload("uid://pns3cw110b6w"),
+	InterfaceNavigator.InterfaceType.COUNTRY_RELATIONSHIPS:
+		preload("uid://bxnnpjildojmj"),
+	InterfaceNavigator.InterfaceType.COUNTRY_NOTIFICATIONS:
+		preload("uid://bs0hbgxgmptdv"),
+	InterfaceNavigator.InterfaceType.PLAYER_LIST:
+		preload("uid://dlpstn5iyda4k"),
+	InterfaceNavigator.InterfaceType.TURN_ORDER:
+		preload("uid://bgcrykgs0vh3o"),
+	InterfaceNavigator.InterfaceType.WORLD_LIMITS:
+		preload("uid://cyspbdausxgwr"),
+	InterfaceNavigator.InterfaceType.BACKGROUND_COLOR:
+		preload("uid://bb53mhx3u8ho8"),
+	InterfaceNavigator.InterfaceType.DECORATION_LIST:
+		preload("uid://bql3bs1c3rgo3"),
+	InterfaceNavigator.InterfaceType.PROVINCE_LIST:
+		preload("uid://bluif37tipwg7"),
+	InterfaceNavigator.InterfaceType.ARMY_LIST:
+		preload("uid://l2nhdgg0p4oo"),
 }
 
-## This will be given to all new interfaces.
-var _undo_redo := UndoRedo.new()
+const _PROVINCE_EDIT_SCENE: PackedScene = preload("uid://bafpj3jqosje7")
+const _ARMY_EDIT_SCENE: PackedScene = preload("uid://n04sb8kke04h")
+const _DECORATION_EDIT_SCENE: PackedScene = preload("uid://bfpg282qeb0rx")
+const _COUNTRY_EDIT_SCENE: PackedScene = preload("uid://ck6hme0uj2nuu")
+const _PLAYER_EDIT_SCENE: PackedScene = preload("uid://exhe7mpnu7w1")
+const _RELATIONSHIPS_EDIT_SCENE: PackedScene = preload("uid://bxnnpjildojmj")
+const _NOTIFICATIONS_EDIT_SCENE: PackedScene = preload("uid://bs0hbgxgmptdv")
+
+var _navigator := InterfaceNavigator.new(self)
+var _undo_redo: UndoRedo
 
 var _current_interface: AppEditorInterface:
 	set(value):
@@ -92,17 +97,13 @@ func _ready() -> void:
 
 ## Opens a new interface of given type.
 func open_new_interface(
-		type: InterfaceType,
+		type: InterfaceNavigator.InterfaceType,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	open_interface(_new_interface_of_type(type, project, editor_settings))
-
-
-## Opens given interface.
-## Closes the already open interface if applicable.
-func open_interface(new_interface: AppEditorInterface) -> void:
-	_current_interface = new_interface
+	var new_interface := _new_interface_of_type(type)
+	if new_interface != null:
+		_open_interface(new_interface, project, editor_settings)
 
 
 ## Has no effect if there is no interface open.
@@ -131,28 +132,11 @@ func open_province_edit_interface(
 		push_error("Province doesn't exist.")
 		return
 
-	var province_interface := _new_interface(
-			preload("uid://bafpj3jqosje7"), project, editor_settings
-	) as InterfaceProvinceEdit
-	province_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.PROVINCE_LIST, project, editor_settings
-	))
-	province_interface.delete_pressed.connect(
-			project.game.world.provinces.undo_redo_remove.bind(
-					_undo_redo,
-					project.game.world.armies,
-					project.game.world.armies_in_each_province
-			)
+	var new_interface := (
+			_PROVINCE_EDIT_SCENE.instantiate() as InterfaceProvinceEdit
 	)
-	province_interface.duplicate_pressed.connect(
-			_on_province_duplicated.bind(project, editor_settings)
-	)
-	province_interface.country_select_pressed.connect(
-			country_select_pressed.emit
-	)
-	province_interface.province = province
-	province_interface.provinces = project.game.world.provinces
-	open_interface(province_interface)
+	new_interface.province = province
+	_open_interface(new_interface, project, editor_settings)
 	province_interface_opened.emit(province)
 
 
@@ -167,7 +151,10 @@ func open_army_edit_interface(
 	):
 		return
 
-	_open_army_edit_interface(army, project, editor_settings)
+	var new_interface := _ARMY_EDIT_SCENE.instantiate() as InterfaceArmyEdit
+	new_interface.army = army
+	_open_interface(new_interface, project, editor_settings)
+	army_interface_opened.emit(army)
 
 
 ## Opens the interface for editing given world decoration.
@@ -185,111 +172,17 @@ func open_decoration_edit_interface(
 	):
 		return
 
-	_open_decoration_edit_interface(world_decoration, project, editor_settings)
+	var new_interface := (
+			_DECORATION_EDIT_SCENE.instantiate()
+			as InterfaceWorldDecorationEdit
+	)
+	new_interface.world_decoration = world_decoration
+	_open_interface(new_interface, project, editor_settings)
+	decoration_interface_opened.emit(world_decoration)
 
 
-func _update_contents() -> void:
-	visible = _current_interface != null
-	if _current_interface != null:
-		_current_interface.undo_redo = _undo_redo
-		_contents_container.add_child(_current_interface)
-
-
-## May return null if the interface scene could not be found.
-func _new_interface_of_type(
-		type: InterfaceType,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> AppEditorInterface:
-	if not _INTERFACE_SCENES.has(type):
-		push_error("Can't find the scene for this interface type.")
-		return null
-	return _new_interface(_INTERFACE_SCENES[type], project, editor_settings)
-
-
-func _new_interface(
-		interface_scene: PackedScene,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> AppEditorInterface:
-	var new_interface := interface_scene.instantiate() as AppEditorInterface
-	new_interface.editor_settings = editor_settings
-
-	if new_interface is InterfaceProjectInfo:
-		var interface := new_interface as InterfaceProjectInfo
-		interface.closed.connect(close_interface)
-		interface.project = project
-		interface.texture_popup_requested.connect(
-				texture_popup_requested.emit.bind(project.textures)
-		)
-	elif new_interface is InterfaceRNG:
-		var interface := new_interface as InterfaceRNG
-		interface.closed.connect(close_interface)
-		interface.game_rng = project.game.rng
-	elif new_interface is InterfaceCountryList:
-		var interface := new_interface as InterfaceCountryList
-		interface.closed.connect(close_interface)
-		interface.countries = project.game.countries
-		interface.country_factory = Country.Factory.new(project.game)
-		interface.item_selected.connect(
-				_open_country_edit_interface.bind(project, editor_settings)
-		)
-	elif new_interface is InterfacePlayerList:
-		var interface := new_interface as InterfacePlayerList
-		interface.closed.connect(close_interface)
-		interface.game_players = project.game.game_players
-		interface.item_selected.connect(
-				_open_player_edit_interface.bind(project, editor_settings)
-		)
-	elif new_interface is InterfaceTurnOrder:
-		var interface := new_interface as InterfaceTurnOrder
-		interface.closed.connect(close_interface)
-		interface.countries = project.game.countries
-		interface.item_random_turn_order = (
-				project.game.rules.random_turn_order_enabled
-		)
-	elif new_interface is InterfaceWorldLimits:
-		var interface := new_interface as InterfaceWorldLimits
-		interface.closed.connect(close_interface)
-		interface.world_limits = project.game.world.limits()
-	elif new_interface is InterfaceBackgroundColor:
-		var interface := new_interface as InterfaceBackgroundColor
-		interface.closed.connect(close_interface)
-		interface.world = project.game.world
-	elif new_interface is InterfaceDecorationList:
-		var interface := new_interface as InterfaceDecorationList
-		interface.decorations = project.game.world.decorations
-		interface.closed.connect(close_interface)
-		interface.item_selected.connect(
-				_open_decoration_edit_interface.bind(project, editor_settings)
-		)
-		interface.item_hovered.connect(decoration_list_item_hovered.emit)
-		interface.item_unhovered.connect(decoration_list_item_unhovered.emit)
-	elif new_interface is InterfaceProvinceList:
-		var interface := new_interface as InterfaceProvinceList
-		interface.closed.connect(close_interface)
-		interface.provinces = project.game.world.provinces
-		interface.item_selected.connect(
-				open_province_edit_interface.bind(project, editor_settings)
-		)
-		interface.item_hovered.connect(province_list_item_hovered.emit)
-		interface.item_unhovered.connect(province_list_item_unhovered.emit)
-	elif new_interface is InterfaceArmyList:
-		var interface := new_interface as InterfaceArmyList
-		interface.closed.connect(close_interface)
-		interface.armies = project.game.world.armies
-		interface.army_factory = Army.Factory.new(project.game)
-		interface.playing_country = PlayingCountry.new(project.game)
-		interface.item_selected.connect(
-				_open_army_edit_interface.bind(project, editor_settings)
-		)
-		interface.item_hovered.connect(army_list_item_hovered.emit)
-		interface.item_unhovered.connect(army_list_item_unhovered.emit)
-
-	return new_interface
-
-
-func _open_country_edit_interface(
+## Opens the interface for editing given country.
+func open_country_edit_interface(
 		country_id: int,
 		project: GameProject,
 		editor_settings: AppEditorSettings
@@ -299,41 +192,16 @@ func _open_country_edit_interface(
 		push_error("Country doesn't exist.")
 		return
 
-	var edit_interface := _new_interface(
-			preload("uid://ck6hme0uj2nuu"), project, editor_settings
-	) as InterfaceCountryEdit
-	edit_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.COUNTRY_LIST, project, editor_settings
-	))
-	edit_interface.delete_pressed.connect(
-			project.game.countries.undo_redo_remove.bind(
-					_undo_redo,
-					project.game.world.provinces,
-					project.game.world.armies,
-					project.game.world.armies_of_each_country,
-					project.game.world.armies_in_each_province
-			)
+	var new_interface := (
+			_COUNTRY_EDIT_SCENE.instantiate() as InterfaceCountryEdit
 	)
-	edit_interface.duplicate_pressed.connect(
-			_on_country_duplicated.bind(project, editor_settings)
-	)
-	edit_interface.relationships_pressed.connect(
-			_on_country_relationships_opened.bind(
-					project, editor_settings, country
-			)
-	)
-	edit_interface.notifications_pressed.connect(
-			_on_country_notifications_opened.bind(
-					project, editor_settings, country
-			)
-	)
-	edit_interface.country = country
-	edit_interface.countries = project.game.countries
-	open_interface(edit_interface)
+	new_interface.country = country
+	_open_interface(new_interface, project, editor_settings)
 	country_interface_opened.emit(country)
 
 
-func _open_player_edit_interface(
+## Opens the interface for editing given player.
+func open_player_edit_interface(
 		player_id: int,
 		project: GameProject,
 		editor_settings: AppEditorSettings
@@ -345,299 +213,83 @@ func _open_player_edit_interface(
 		push_error("Player doesn't exist.")
 		return
 
-	var edit_interface := _new_interface(
-			preload("uid://exhe7mpnu7w1"), project, editor_settings
-	) as InterfacePlayerEdit
-	edit_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.PLAYER_LIST, project, editor_settings
-	))
-	edit_interface.delete_pressed.connect(
-			project.game.game_players.undo_redo_remove.bind(_undo_redo)
+	var new_interface := (
+			_PLAYER_EDIT_SCENE.instantiate() as InterfacePlayerEdit
 	)
-	edit_interface.duplicate_pressed.connect(
-			_on_player_duplicated.bind(project, editor_settings)
-	)
-	edit_interface.country_select_pressed.connect(country_select_pressed.emit)
-	edit_interface.game_player = game_player
-	edit_interface.game_players = project.game.game_players
-	open_interface(edit_interface)
+	new_interface.game_player = game_player
+	_open_interface(new_interface, project, editor_settings)
 
 
-func _open_decoration_edit_interface(
-		world_decoration: WorldDecoration,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	var new_interface := _new_interface(
-			preload("uid://bfpg282qeb0rx"), project, editor_settings
-	) as InterfaceWorldDecorationEdit
-	new_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.DECORATION_LIST, project, editor_settings
-	))
-	new_interface.delete_pressed.connect(
-			_on_world_decoration_deleted.bind(project.game.world.decorations)
-	)
-	new_interface.duplicate_pressed.connect(
-			_on_world_decoration_duplicated.bind(project, editor_settings)
-	)
-	new_interface.texture_popup_requested.connect(
-			texture_popup_requested.emit.bind(project.textures)
-	)
-	new_interface.world_decoration = world_decoration
-	new_interface.world_decorations = project.game.world.decorations
-	open_interface(new_interface)
-	decoration_interface_opened.emit(world_decoration)
-
-
-func _open_army_edit_interface(
-		army: Army, project: GameProject, editor_settings: AppEditorSettings
-) -> void:
-	var edit_interface := _new_interface(
-			preload("uid://n04sb8kke04h"), project, editor_settings
-	) as InterfaceArmyEdit
-	edit_interface.closed.connect(open_new_interface.bind(
-			InterfaceType.ARMY_LIST, project, editor_settings
-	))
-	edit_interface.delete_pressed.connect(
-			project.game.world.armies.undo_redo_remove.bind(
-					_undo_redo, project.game.world.armies_in_each_province
-			)
-	)
-	edit_interface.duplicate_pressed.connect(
-			_on_army_duplicated.bind(project, editor_settings)
-	)
-	edit_interface.texture_popup_requested.connect(
-			texture_popup_requested.emit.bind(project.textures)
-	)
-	edit_interface.country_select_pressed.connect(country_select_pressed.emit)
-	edit_interface.army = army
-	edit_interface.playing_country = PlayingCountry.new(project.game)
-	edit_interface.armies = project.game.world.armies
-	open_interface(edit_interface)
-	army_interface_opened.emit(army)
-
-
-func _on_history_initialized(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
-
-
-func _on_world_decoration_deleted(
-		world_decoration: WorldDecoration, world_decorations: WorldDecorations
-) -> void:
-	_undo_redo.create_action("Delete world decoration")
-	_undo_redo.add_do_method(world_decorations.remove.bind(world_decoration))
-	_undo_redo.add_undo_method(world_decorations.add.bind(world_decoration))
-	_undo_redo.commit_action()
-
-
-func _on_world_decoration_duplicated(
-		world_decoration: WorldDecoration,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	const _DUPLICATE_DECORATION_OFFSET = Vector2(64.0, 64.0)
-
-	# Create duplicate
-	var new_decoration := WorldDecoration.new()
-	new_decoration.texture = world_decoration.texture
-	new_decoration.flip_h = world_decoration.flip_h
-	new_decoration.flip_v = world_decoration.flip_v
-	new_decoration.position = (
-			world_decoration.position + _DUPLICATE_DECORATION_OFFSET
-	)
-	new_decoration.rotation_degrees = world_decoration.rotation_degrees
-	new_decoration.scale = world_decoration.scale
-	new_decoration.color = world_decoration.color
-
-	# Create and apply undo_redo action
-	_undo_redo.create_action("Duplicate world decoration")
-	_undo_redo.add_do_method(
-			project.game.world.decorations.add.bind(new_decoration)
-	)
-	_undo_redo.add_undo_method(
-			project.game.world.decorations.remove.bind(new_decoration)
-	)
-	_undo_redo.commit_action()
-
-	# Open interface to edit the new decoration
-	_open_decoration_edit_interface(new_decoration, project, editor_settings)
-
-
-func _on_province_duplicated(
-		province: Province,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
-
-	# Create duplicate
-	var new_province := Province.new()
-	new_province.polygon().array = province.polygon().array.duplicate()
-	new_province.position_army_host = province.position_army_host
-	new_province.position_fortress = province.position_fortress
-	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)
-	new_province.owner_country = province.owner_country
-	new_province.population().value = province.population().value
-	new_province.base_money_income().value = province.base_money_income().value
-
-	for building in province.buildings.list():
-		new_province.buildings.add(Fortress.new(province.id))
-
-	# We need this new province to have a new unique id
-	# assigned to it before we can create the undo_redo action
-	project.game.world.provinces.add(new_province)
-
-	# Create undo_redo action
-	# (don't execute it since we already added the province)
-	_undo_redo.create_action("Duplicate province")
-	_undo_redo.add_do_method(
-			project.game.world.provinces.add.bind(new_province)
-	)
-	_undo_redo.add_undo_method(
-			project.game.world.provinces.remove.bind(new_province.id)
-	)
-	_undo_redo.commit_action(false)
-
-	# Open interface to edit the new province
-	open_province_edit_interface(new_province.id, project, editor_settings)
-
-
-func _on_country_duplicated(
+## Opens the interface for editing given country's relationships.
+func open_country_relationships_interface(
 		country: Country,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	# Copies everything except notifications
-	var new_country := Country.new()
-	new_country.country_name = country.country_name + " (Copy)"
-	new_country.color = country.color
-	new_country.money = country.money
-	# Create a deep duplicate by parsing to raw data and back into a new object
-	new_country.relationships = DiplomacyRelationshipParsing.from_raw_data(
-			DiplomacyRelationshipParsing.to_raw_array(country.relationships),
-			project.game,
-			new_country
+	var new_interface := (
+			_RELATIONSHIPS_EDIT_SCENE.instantiate()
+			as InterfaceCountryRelationships
 	)
-	new_country.auto_arrows = (
-			AutoArrows.from_raw_data(country.auto_arrows.to_raw_data())
-	)
-
-	# We need this new country to have a new unique id
-	# assigned to it before we can create the undo_redo action
-	project.game.countries.add(new_country)
-
-	# Create undo_redo action
-	# (don't execute it since we already added the country)
-	_undo_redo.create_action("Duplicate country")
-	_undo_redo.add_do_method(
-			project.game.countries.add.bind(new_country)
-	)
-	_undo_redo.add_undo_method(
-			project.game.countries.remove.bind(new_country.id)
-	)
-	_undo_redo.commit_action(false)
-
-	_open_country_edit_interface(new_country.id, project, editor_settings)
+	new_interface.country = country
+	_open_interface(new_interface, project, editor_settings)
 
 
-func _on_player_duplicated(
-		player: GamePlayer,
+## Opens the interface for editing given country's notifications.
+func open_country_notifications_interface(
+		country: Country,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	# Create duplicate
-	var new_player := GamePlayer.new()
-	new_player.username = player.username
-	new_player.playing_country = player.playing_country
-	new_player.is_human = player.is_human
-	new_player.player_ai = PlayerAI.from_type(player.player_ai.type())
-	new_player.player_ai.personality = (
-			AIPersonality.from_type(player.player_ai.personality.type())
+	var new_interface := (
+			_NOTIFICATIONS_EDIT_SCENE.instantiate()
+			as InterfaceCountryNotifications
 	)
-
-	# We need this new player to have a new unique id
-	# assigned to it before we can create the undo_redo action
-	project.game.game_players.add(new_player)
-
-	# Create undo_redo action
-	# (don't execute it since we already added the player)
-	_undo_redo.create_action("Duplicate player")
-	_undo_redo.add_do_method(project.game.game_players.add.bind(new_player))
-	_undo_redo.add_undo_method(project.game.game_players.remove.bind(new_player))
-	_undo_redo.commit_action(false)
-
-	_open_player_edit_interface(new_player.id, project, editor_settings)
+	new_interface.country = country
+	_open_interface(new_interface, project, editor_settings)
 
 
-func _on_army_duplicated(
-		army: Army, project: GameProject, editor_settings: AppEditorSettings
-) -> void:
-	# Create duplicate
-	var new_army := Army.Factory.new(project.game).new_army(
-			army.owner_country,
-			army.province_id(),
-			army.size().value,
-			-1,
-			army.movements_made()
-	)
-	new_army.texture = army.texture
-
-	# Create undo_redo action
-	# (don't execute it since army setup already added the army)
-	_undo_redo.create_action("Duplicate army")
-	_undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
-	_undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
-	_undo_redo.commit_action(false)
-
-	# Open interface to edit the new army
-	_open_army_edit_interface(new_army, project, editor_settings)
+func _update_contents() -> void:
+	visible = _current_interface != null
+	if _current_interface != null:
+		_current_interface.undo_redo = _undo_redo
+		_forward_interface_signals(_current_interface)
+		_contents_container.add_child(_current_interface)
 
 
-func _on_country_relationships_opened(
-		project: GameProject,
-		editor_settings: AppEditorSettings,
-		country: Country
-) -> void:
-	var relationships_interface := _new_interface(
-			preload("uid://bxnnpjildojmj"), project, editor_settings
-	) as InterfaceCountryRelationships
-	relationships_interface.closed.connect(
-			_on_return_to_country_interface.bind(
-					country.id, project, editor_settings
-			)
-	)
-	relationships_interface.country = country
-	relationships_interface.countries = project.game.countries
-	open_interface(relationships_interface)
-
-
-func _on_country_notifications_opened(
-		project: GameProject,
-		editor_settings: AppEditorSettings,
-		country: Country
-) -> void:
-	var notifications_interface := _new_interface(
-			preload("uid://bs0hbgxgmptdv"), project, editor_settings
-	) as InterfaceCountryNotifications
-	notifications_interface.closed.connect(
-			_on_return_to_country_interface.bind(
-					country.id, project, editor_settings
-			)
-	)
-	notifications_interface.country = country
-	notifications_interface.countries = project.game.countries
-	open_interface(notifications_interface)
-
-
-## Opens the country edit interface if the country still exists,
-## otherwise falls back to the country list interface.
-func _on_return_to_country_interface(
-		country_id: int,
+## Prepares the interface and then opens it.
+func _open_interface(
+		new_interface: AppEditorInterface,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	var country: Country = project.game.countries.country_from_id(country_id)
-	if country == null:
-		open_new_interface(InterfaceType.COUNTRY_LIST, project, editor_settings)
-	else:
-		_open_country_edit_interface(country_id, project, editor_settings)
+	new_interface.project = project
+	new_interface.editor_settings = editor_settings
+	new_interface.navigator = _navigator
+	new_interface.undo_redo = _undo_redo
+	_current_interface = new_interface
+
+
+## May return null if the interface scene could not be found.
+func _new_interface_of_type(
+		type: InterfaceNavigator.InterfaceType
+) -> AppEditorInterface:
+	if not _INTERFACE_SCENES.has(type):
+		push_error("Can't find the scene for this interface type.")
+		return null
+	return _INTERFACE_SCENES[type].instantiate() as AppEditorInterface
+
+
+## Propagates up the current interface's signals.
+func _forward_interface_signals(interface: AppEditorInterface) -> void:
+	interface.texture_popup_requested.connect(texture_popup_requested.emit)
+	interface.country_select_pressed.connect(country_select_pressed.emit)
+	interface.army_list_item_hovered.connect(army_list_item_hovered.emit)
+	interface.army_list_item_unhovered.connect(army_list_item_unhovered.emit)
+	interface.province_list_item_hovered.connect(province_list_item_hovered.emit)
+	interface.province_list_item_unhovered.connect(province_list_item_unhovered.emit)
+	interface.decoration_list_item_hovered.connect(decoration_list_item_hovered.emit)
+	interface.decoration_list_item_unhovered.connect(decoration_list_item_unhovered.emit)
+
+
+func _on_history_initialized(undo_redo: UndoRedo) -> void:
+	_undo_redo = undo_redo

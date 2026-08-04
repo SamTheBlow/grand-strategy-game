@@ -2,15 +2,7 @@ class_name InterfaceArmyList
 extends AppEditorInterface
 ## Shows a list of all armies for the user to edit.
 
-signal item_selected(army: Army)
-signal item_hovered(army: Army)
-signal item_unhovered()
-
 const _ELEMENT_SCENE := preload("uid://c06m34xmh3nnl") as PackedScene
-
-var armies: Armies
-var army_factory: Army.Factory
-var playing_country: PlayingCountry
 
 ## New armies will be placed in this province.
 ## May be null, in which case creating new armies is disabled.
@@ -31,17 +23,14 @@ var _order: Array[Army] = []
 func _ready() -> void:
 	_refresh_add_button()
 
-	for army in armies.list():
+	for army in project.game.world.armies.list():
 		_add_element(army)
 
-	armies.added.connect(_add_element)
-	armies.removed.connect(_remove_element)
+	project.game.world.armies.added.connect(_add_element)
+	project.game.world.armies.removed.connect(_remove_element)
 
-
-## Ensures the army hover doesn't stick around
-## when this interface is closed or replaced.
-func _exit_tree() -> void:
-	item_unhovered.emit()
+	closed.connect(navigator.close_interface)
+	tree_exited.connect(army_list_item_unhovered.emit)
 
 
 func _refresh_add_button() -> void:
@@ -52,19 +41,19 @@ func _refresh_add_button() -> void:
 
 
 func _add_element(army: Army) -> void:
-	if _nodes.has(army.id):
-		push_warning("Army already has a corresponding node.")
-		return
-
 	_connect_country(army.owner_country)
 	army.allegiance_changed.connect(_connect_country)
 
 	var element := _ELEMENT_SCENE.instantiate() as ArmyListElement
 	element.army = army
-	element.playing_country = playing_country
-	element.pressed.connect(item_selected.emit.bind(army))
-	element.mouse_entered.connect(item_hovered.emit.bind(army))
-	element.mouse_exited.connect(item_unhovered.emit)
+	element.playing_country = PlayingCountry.new(project.game)
+	element.pressed.connect(
+			navigator.open_army_edit_interface.bind(
+					army, project, editor_settings
+			)
+	)
+	element.mouse_entered.connect(army_list_item_hovered.emit.bind(army))
+	element.mouse_exited.connect(army_list_item_unhovered.emit)
 
 	# Determine the position in the list to put this in
 	# (they're sorted by country alphabetical order).
@@ -84,10 +73,6 @@ func _add_element(army: Army) -> void:
 
 
 func _remove_element(army: Army) -> void:
-	if not _nodes.has(army.id):
-		push_warning("Army doesn't have a corresponding node.")
-		return
-
 	army.allegiance_changed.disconnect(_connect_country)
 
 	_element_container.remove_child(_nodes[army.id])
@@ -104,15 +89,15 @@ func _on_add_button_pressed() -> void:
 	if _selected_province == null or _selected_province.owner_country == null:
 		return
 
-	var new_army: Army = army_factory.new_army(
+	var new_army: Army = Army.Factory.new(project.game).new_army(
 			_selected_province.owner_country, _selected_province.id
 	)
 
 	# Create undo_redo action
 	# (don't execute it since factory setup already added the army)
 	undo_redo.create_action("Create new army")
-	undo_redo.add_do_method(armies.add.bind(new_army))
-	undo_redo.add_undo_method(armies.remove.bind(new_army))
+	undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
+	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
 	undo_redo.commit_action(false)
 
 

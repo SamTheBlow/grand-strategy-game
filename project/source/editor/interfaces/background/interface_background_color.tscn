@@ -3,10 +3,18 @@
 [ext_resource type="Script" uid="uid://chtpvlfchuvbo" path="res://source/editor/interfaces/background/interface_background_color.gd" id="1_n4mvh"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_0l2xs"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_vpw2j"]
+[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="4_leebf"]
+
+[sub_resource type="Resource" id="Resource_u6tn0"]
+script = ExtResource("4_leebf")
+is_transparency_enabled = false
+text = "Background Color"
+metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
 
 [sub_resource type="Resource" id="Resource_n4mvh"]
 script = ExtResource("3_vpw2j")
 text = "Game settings:"
+child_items = Array[ExtResource("3_vpw2j")]([SubResource("Resource_u6tn0")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceBackgroundColor" type="Control" unique_id=194345697]

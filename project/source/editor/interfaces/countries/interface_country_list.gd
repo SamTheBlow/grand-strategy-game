@@ -1,26 +1,22 @@
 class_name InterfaceCountryList
 extends AppEditorInterface
 ## Shows a list of all countries for the user to edit.
-## The list is sorted in alphabetical order.
-
-signal item_selected(country_id: int)
-
-var countries: Countries
-var country_factory: Country.Factory
-
-@onready var _country_list := %CountryList as CountryListNode
 
 
 func _ready() -> void:
-	_country_list.setup(countries, false)
-	_country_list.country_selected.connect(_on_country_selected)
+	var country_list := %CountryList as CountryListNode
+	country_list.setup(project.game.countries, false)
+	country_list.country_selected.connect(_on_country_selected)
+
+	closed.connect(navigator.close_interface)
 
 
 func _on_add_button_pressed() -> void:
-	var new_country: Country = country_factory.new_country()
+	var new_country: Country = Country.Factory.new(project.game).new_country()
 
 	# We need this new country to have a new unique id
 	# assigned to it before we can create the undo_redo action
+	var countries: Countries = project.game.countries
 	countries.add(new_country)
 
 	# Create undo_redo action
@@ -32,4 +28,6 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_country_selected(country: Country) -> void:
-	item_selected.emit(country.id)
+	navigator.open_country_edit_interface(
+			country.id, project, editor_settings
+	)

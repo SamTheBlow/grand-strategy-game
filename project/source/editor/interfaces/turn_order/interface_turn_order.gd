@@ -4,42 +4,45 @@ extends AppEditorInterface
 
 const _ELEMENT_SCENE := preload("uid://dc67eps16xpfs") as PackedScene
 
-var countries: Countries
-var item_random_turn_order: ItemBool
-
+## Maps each country to its associated node, for quick access.
 var _country_nodes: Dictionary[int, EditorTurnOrderElement] = {}
 
-@onready var _game_settings_node := %GameSettingsCategory as ItemVoidNode
 @onready var _info_label := %InfoLabel as Control
 @onready var _list_container := %ListContainer as Control
 @onready var _element_container := %ElementContainer as InterpolatedBoxContainer
 
 
 func _ready() -> void:
-	countries.added.connect(_on_country_added)
-	countries.removed.connect(_on_country_removed)
-	countries.order_changed.connect(_on_country_order_changed)
+	project.game.countries.added.connect(_on_country_added)
+	project.game.countries.removed.connect(_on_country_removed)
+	project.game.countries.order_changed.connect(_on_country_order_changed)
 
-	item_random_turn_order.value_changed.connect(_on_item_value_changed)
+	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
+	item_rule.value_changed.connect(_on_item_value_changed)
 	_update_visibility()
-	_game_settings_node.item.child_items = [item_random_turn_order]
-	_game_settings_node.refresh()
+
+	var game_settings := %GameSettingsCategory as ItemVoidNode
+	game_settings.item.child_items = [ item_rule ]
+	game_settings.refresh()
 
 	_element_container.drag_ended.connect(_on_drag_ended)
 
 	# Setup the list nodes
-	if countries.size() == 0:
+	if project.game.countries.size() == 0:
 		_add_empty_list_label()
 	else:
-		for country in countries.list():
+		for country in project.game.countries.list():
 			_add_element(country)
 		# Now that all the elements are in, refresh their arrows
 		_refresh_arrows()
 
+	closed.connect(navigator.close_interface)
+
 
 func _update_visibility() -> void:
-	_info_label.visible = item_random_turn_order.value
-	_list_container.visible = not item_random_turn_order.value
+	var is_enabled: bool = project.game.rules.random_turn_order_enabled.value
+	_info_label.visible = is_enabled
+	_list_container.visible = not is_enabled
 
 
 func _add_element(country: Country) -> void:
@@ -64,14 +67,18 @@ func _refresh_arrows() -> void:
 
 
 func _reorder(country_id: int, new_index: int) -> void:
-	var old_index: int = countries.position_of(country_id)
+	var old_index: int = project.game.countries.position_of(country_id)
 
 	if old_index == new_index:
 		return
 
 	undo_redo.create_action("Edit country order")
-	undo_redo.add_do_method(countries.reorder.bind(country_id, new_index))
-	undo_redo.add_undo_method(countries.reorder.bind(country_id, old_index))
+	undo_redo.add_do_method(
+			project.game.countries.reorder.bind(country_id, new_index)
+	)
+	undo_redo.add_undo_method(
+			project.game.countries.reorder.bind(country_id, old_index)
+	)
 	undo_redo.commit_action()
 
 
@@ -93,9 +100,10 @@ func _remove_empty_list_label() -> void:
 
 ## Disconnects signals to avoid creating another undo_redo action
 func _set_item_value_no_signal(value: bool) -> void:
-	item_random_turn_order.value_changed.disconnect(_on_item_value_changed)
-	item_random_turn_order.value = value
-	item_random_turn_order.value_changed.connect(_on_item_value_changed)
+	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
+	item_rule.value_changed.disconnect(_on_item_value_changed)
+	item_rule.value = value
+	item_rule.value_changed.connect(_on_item_value_changed)
 
 	_update_visibility()
 
@@ -103,10 +111,10 @@ func _set_item_value_no_signal(value: bool) -> void:
 func _on_item_value_changed(_item: PropertyTreeItem) -> void:
 	_update_visibility()
 
-	var value: bool = item_random_turn_order.value
+	var is_enabled: bool = project.game.rules.random_turn_order_enabled.value
 	undo_redo.create_action("Toggle random turn order")
-	undo_redo.add_do_method(_set_item_value_no_signal.bind(value))
-	undo_redo.add_undo_method(_set_item_value_no_signal.bind(not value))
+	undo_redo.add_do_method(_set_item_value_no_signal.bind(is_enabled))
+	undo_redo.add_undo_method(_set_item_value_no_signal.bind(not is_enabled))
 	undo_redo.commit_action(false)
 
 
@@ -129,7 +137,8 @@ func _on_country_added(country: Country) -> void:
 
 	_add_element(country)
 	_element_container.move_child(
-			_country_nodes[country.id], countries.position_of(country.id)
+			_country_nodes[country.id],
+			project.game.countries.position_of(country.id)
 	)
 
 	_refresh_arrows()

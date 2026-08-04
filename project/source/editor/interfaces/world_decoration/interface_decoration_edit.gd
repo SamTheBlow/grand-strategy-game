@@ -2,41 +2,17 @@ class_name InterfaceWorldDecorationEdit
 extends AppEditorInterface
 ## The interface in which the user can edit given [WorldDecoration].
 
-signal delete_pressed(world_decoration: WorldDecoration)
-signal duplicate_pressed(world_decoration: WorldDecoration)
-signal texture_popup_requested(item_texture: ItemTexture)
+var world_decoration: WorldDecoration
 
-var world_decoration: WorldDecoration:
-	set(value):
-		if world_decoration != null:
-			world_decoration.changed.disconnect(_refresh_preview)
-
-		world_decoration = value
-
-		_refresh_preview()
-		world_decoration.changed.connect(_refresh_preview)
-
-## This interface automatically closes
-## if its decoration is removed from this decorations list.
-## May be null, in which case this feature is not used.
-var world_decorations: WorldDecorations = null:
-	set(value):
-		if world_decorations != null:
-			world_decorations.removed.disconnect(_on_world_decoration_removed)
-
-		world_decorations = value
-
-		if world_decorations != null:
-			world_decorations.removed.connect(_on_world_decoration_removed)
-
-@onready var _preview_rect := %PreviewRect as TextureRect
 @onready var _settings := %Settings as ItemVoidNode
 
 
 func _ready() -> void:
-	# This is just so that this node still works by itself in the Godot editor
-	if world_decoration == null:
-		world_decoration = WorldDecoration.new()
+	var preview_rect := %PreviewRect as TextureRect
+	_apply_preview(preview_rect)
+	world_decoration.changed.connect(
+			_apply_preview.bind(preview_rect).unbind(1)
+	)
 
 	# Create a deep copy of the settings resource,
 	# to avoid sharing it with another interface
@@ -44,14 +20,24 @@ func _ready() -> void:
 	_load_settings()
 	_settings.refresh()
 
-	_refresh_preview()
+	project.game.world.decorations.removed.connect(
+			_on_world_decoration_removed
+	)
+
+	closed.connect(navigator.open_new_interface.bind(
+			InterfaceNavigator.InterfaceType.DECORATION_LIST,
+			project,
+			editor_settings
+	))
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed(&"delete"):
-		delete_pressed.emit(world_decoration)
-	if Input.is_action_just_pressed(&"duplicate"):
-		duplicate_pressed.emit(world_decoration)
+func _unhandled_input(event: InputEvent) -> void:
+	super(event)
+
+	if event.is_action_pressed(&"delete"):
+		_delete_decoration()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate_decoration()
 
 
 func _load_settings() -> void:
@@ -60,7 +46,9 @@ func _load_settings() -> void:
 	item_texture.fallback_texture = WorldDecoration.DEFAULT_TEXTURE
 	item_texture.value = world_decoration.texture
 	item_texture.value_changed.connect(_on_texture_value_changed)
-	item_texture.popup_requested.connect(texture_popup_requested.emit)
+	item_texture.popup_requested.connect(
+			texture_popup_requested.emit.bind(project.textures)
+	)
 	# Flip H
 	(_settings.item.child_items[1] as ItemBool).value = (
 			world_decoration.flip_h
@@ -105,10 +93,50 @@ func _load_settings() -> void:
 	)
 
 
-func _refresh_preview(_world_decoration: WorldDecoration = null) -> void:
-	if not is_node_ready():
-		return
-	world_decoration.apply_preview(_preview_rect)
+func _delete_decoration() -> void:
+	undo_redo.create_action("Delete world decoration")
+	undo_redo.add_do_method(
+			project.game.world.decorations.remove.bind(world_decoration)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.decorations.add.bind(world_decoration)
+	)
+	undo_redo.commit_action()
+
+
+func _duplicate_decoration() -> void:
+	const _DUPLICATE_DECORATION_OFFSET = Vector2(64.0, 64.0)
+
+	# Create duplicate
+	var new_decoration := WorldDecoration.new()
+	new_decoration.texture = world_decoration.texture
+	new_decoration.flip_h = world_decoration.flip_h
+	new_decoration.flip_v = world_decoration.flip_v
+	new_decoration.position = (
+			world_decoration.position + _DUPLICATE_DECORATION_OFFSET
+	)
+	new_decoration.rotation_degrees = world_decoration.rotation_degrees
+	new_decoration.scale = world_decoration.scale
+	new_decoration.color = world_decoration.color
+
+	# Create and apply undo_redo action
+	undo_redo.create_action("Duplicate world decoration")
+	undo_redo.add_do_method(
+			project.game.world.decorations.add.bind(new_decoration)
+	)
+	undo_redo.add_undo_method(
+			project.game.world.decorations.remove.bind(new_decoration)
+	)
+	undo_redo.commit_action()
+
+	# Open interface to edit the new decoration
+	navigator.open_decoration_edit_interface(
+			new_decoration, project, editor_settings
+	)
+
+
+func _apply_preview(preview_rect: TextureRect) -> void:
+	world_decoration.apply_preview(preview_rect)
 
 
 func _apply_undo_redo_action(
@@ -130,10 +158,6 @@ func _on_back_button_pressed() -> void:
 func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
 	if decoration_removed == world_decoration:
 		closed.emit()
-
-
-func _on_delete_button_pressed() -> void:
-	delete_pressed.emit(world_decoration)
 
 
 func _on_texture_value_changed(item: ItemTexture) -> void:
