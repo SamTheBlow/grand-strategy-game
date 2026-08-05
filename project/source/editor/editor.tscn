@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
 [ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
+[ext_resource type="Script" uid="uid://blaw3yvrv1dvc" path="res://source/armies/visuals/army_visuals_input.gd" id="16_army_input"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -36,6 +37,10 @@ script = ExtResource("12_history")
 [node name="DecorationInput" type="Node" parent="." unique_id=1928374656]
 unique_name_in_owner = true
 script = ExtResource("15_decoration_input")
+
+[node name="ArmyInput" type="Node" parent="." unique_id=1928374657]
+unique_name_in_owner = true
+script = ExtResource("16_army_input")
 
 [node name="ProvinceLinkEditer" type="Node" parent="." unique_id=1928374654]
 script = ExtResource("13_editor_adjacency")
@@ -225,15 +230,16 @@ use_native_dialog = true
 [connection signal="version_changed" from="History" to="." method="_update_window_title"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="DecorationInput" method="_on_world_loaded"]
+[connection signal="loaded" from="WorldLayer/WorldSetup" to="ArmyInput" method="_on_world_loaded"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="ProvinceLinkEditer" method="_on_world_loaded"]
 [connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
-[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_interface_closed"]
-[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_interface_opened"]
-[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_list_item_hovered"]
-[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_army_list_item_unhovered"]
+[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="ArmyInput" method="_on_interface_closed"]
+[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="ArmyInput" method="set_selected_army"]
+[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="ArmyInput" method="set_hovered_army"]
+[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="ArmyInput" method="_on_item_unhovered"]
 [connection signal="country_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_closed"]
 [connection signal="country_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_opened"]
 [connection signal="country_select_pressed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_select_pressed"]

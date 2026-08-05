@@ -12,7 +12,6 @@ var editor_settings: AppEditorSettings
 @onready var _popup_container := %PopupContainer as Control
 
 var _world_visuals: WorldVisuals2D = null
-var _army_visuals_input: ArmyVisualsInput = null
 
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
@@ -22,18 +21,6 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	_world_visuals.province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
 	)
-
-	# Setup army input
-	_army_visuals_input = ArmyVisualsInput.new()
-	_army_visuals_input.army_selected.connect(
-			_editing_interface.open_army_edit_interface.bind(
-					_world_visuals.project, editor_settings
-			)
-	)
-	_army_visuals_input.army_deselected.connect(
-			_editing_interface.close_interface
-	)
-	_world_visuals.add_child(_army_visuals_input)
 
 	# Setup the country ownership tool
 	_world_visuals.province_visuals.province_clicked.connect(
@@ -87,22 +74,6 @@ func _on_country_interface_closed() -> void:
 	_world_visuals.province_selection.is_disabled = false
 	_world_visuals.province_link_highlighter.is_enabled = true
 	_world_visuals.show_game_arrows()
-
-
-func _on_army_interface_opened(army: Army) -> void:
-	_army_visuals_input.set_selected_army(army)
-
-
-func _on_army_interface_closed() -> void:
-	_army_visuals_input.set_selected_army(null)
-
-
-func _on_army_list_item_hovered(army: Army) -> void:
-	_army_visuals_input.set_hovered_army(army)
-
-
-func _on_army_list_item_unhovered() -> void:
-	_army_visuals_input.set_hovered_army(null)
 
 
 func _on_province_list_item_hovered(province: Province) -> void:

@@ -17,6 +17,7 @@ var _current_project := GameProject.new()
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _decoration_input := %DecorationInput as DecorationVisualsInput
+@onready var _army_input := %ArmyInput as ArmyVisualsInput
 
 
 func _ready() -> void:
@@ -26,6 +27,7 @@ func _ready() -> void:
 	_world_setup.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
 	_decoration_input.editor_settings = editor_settings
+	_army_input.editor_settings = editor_settings
 
 	_setup_project()
 
