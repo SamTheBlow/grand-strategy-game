@@ -2,19 +2,24 @@ class_name InterfaceNavigator
 ## Provides methods for opening or closing an editor interface.
 
 ## The type of interface to open.
-enum InterfaceType {
+enum Type {
 	PROJECT_INFO,
 	RNG,
 	COUNTRY_LIST,
+	COUNTRY_EDIT,
 	COUNTRY_RELATIONSHIPS,
 	COUNTRY_NOTIFICATIONS,
 	PLAYER_LIST,
+	PLAYER_EDIT,
 	TURN_ORDER,
 	WORLD_LIMITS,
 	BACKGROUND_COLOR,
 	DECORATION_LIST,
+	DECORATION_EDIT,
 	PROVINCE_LIST,
+	PROVINCE_EDIT,
 	ARMY_LIST,
+	ARMY_EDIT,
 }
 
 var _editor: EditingInterface
@@ -26,9 +31,7 @@ func _init(editor: EditingInterface) -> void:
 
 ## Opens a new interface of given type.
 func open_new_interface(
-		type: InterfaceType,
-		project: GameProject,
-		editor_settings: AppEditorSettings
+		type: Type, project: GameProject, editor_settings: AppEditorSettings
 ) -> void:
 	_editor.open_new_interface(type, project, editor_settings)
 

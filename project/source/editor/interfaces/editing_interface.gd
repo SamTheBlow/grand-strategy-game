@@ -22,40 +22,42 @@ signal decoration_list_item_hovered(decoration: WorldDecoration)
 signal decoration_list_item_unhovered()
 
 ## The root node of each scene is an [AppEditorInterface].
-const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.InterfaceType, PackedScene] = {
-	InterfaceNavigator.InterfaceType.PROJECT_INFO:
+const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
+	InterfaceNavigator.Type.PROJECT_INFO:
 		preload("uid://7k82f8lx1vpe"),
-	InterfaceNavigator.InterfaceType.RNG:
+	InterfaceNavigator.Type.RNG:
 		preload("uid://dp53fawdiydun"),
-	InterfaceNavigator.InterfaceType.COUNTRY_LIST:
+	InterfaceNavigator.Type.COUNTRY_LIST:
 		preload("uid://pns3cw110b6w"),
-	InterfaceNavigator.InterfaceType.COUNTRY_RELATIONSHIPS:
+	InterfaceNavigator.Type.COUNTRY_EDIT:
+		preload("uid://ck6hme0uj2nuu"),
+	InterfaceNavigator.Type.COUNTRY_RELATIONSHIPS:
 		preload("uid://bxnnpjildojmj"),
-	InterfaceNavigator.InterfaceType.COUNTRY_NOTIFICATIONS:
+	InterfaceNavigator.Type.COUNTRY_NOTIFICATIONS:
 		preload("uid://bs0hbgxgmptdv"),
-	InterfaceNavigator.InterfaceType.PLAYER_LIST:
+	InterfaceNavigator.Type.PLAYER_LIST:
 		preload("uid://dlpstn5iyda4k"),
-	InterfaceNavigator.InterfaceType.TURN_ORDER:
+	InterfaceNavigator.Type.PLAYER_EDIT:
+		preload("uid://exhe7mpnu7w1"),
+	InterfaceNavigator.Type.TURN_ORDER:
 		preload("uid://bgcrykgs0vh3o"),
-	InterfaceNavigator.InterfaceType.WORLD_LIMITS:
+	InterfaceNavigator.Type.WORLD_LIMITS:
 		preload("uid://cyspbdausxgwr"),
-	InterfaceNavigator.InterfaceType.BACKGROUND_COLOR:
+	InterfaceNavigator.Type.BACKGROUND_COLOR:
 		preload("uid://bb53mhx3u8ho8"),
-	InterfaceNavigator.InterfaceType.DECORATION_LIST:
+	InterfaceNavigator.Type.DECORATION_LIST:
 		preload("uid://bql3bs1c3rgo3"),
-	InterfaceNavigator.InterfaceType.PROVINCE_LIST:
+	InterfaceNavigator.Type.DECORATION_EDIT:
+		preload("uid://bfpg282qeb0rx"),
+	InterfaceNavigator.Type.PROVINCE_LIST:
 		preload("uid://bluif37tipwg7"),
-	InterfaceNavigator.InterfaceType.ARMY_LIST:
+	InterfaceNavigator.Type.PROVINCE_EDIT:
+		preload("uid://bafpj3jqosje7"),
+	InterfaceNavigator.Type.ARMY_LIST:
 		preload("uid://l2nhdgg0p4oo"),
+	InterfaceNavigator.Type.ARMY_EDIT:
+		preload("uid://n04sb8kke04h"),
 }
-
-const _PROVINCE_EDIT_SCENE: PackedScene = preload("uid://bafpj3jqosje7")
-const _ARMY_EDIT_SCENE: PackedScene = preload("uid://n04sb8kke04h")
-const _DECORATION_EDIT_SCENE: PackedScene = preload("uid://bfpg282qeb0rx")
-const _COUNTRY_EDIT_SCENE: PackedScene = preload("uid://ck6hme0uj2nuu")
-const _PLAYER_EDIT_SCENE: PackedScene = preload("uid://exhe7mpnu7w1")
-const _RELATIONSHIPS_EDIT_SCENE: PackedScene = preload("uid://bxnnpjildojmj")
-const _NOTIFICATIONS_EDIT_SCENE: PackedScene = preload("uid://bs0hbgxgmptdv")
 
 var _navigator := InterfaceNavigator.new(self)
 var _undo_redo: UndoRedo
@@ -97,7 +99,7 @@ func _ready() -> void:
 
 ## Opens a new interface of given type.
 func open_new_interface(
-		type: InterfaceNavigator.InterfaceType,
+		type: InterfaceNavigator.Type,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
@@ -133,7 +135,8 @@ func open_province_edit_interface(
 		return
 
 	var new_interface := (
-			_PROVINCE_EDIT_SCENE.instantiate() as InterfaceProvinceEdit
+			_INTERFACE_SCENES[InterfaceNavigator.Type.PROVINCE_EDIT]
+			.instantiate() as InterfaceProvinceEdit
 	)
 	new_interface.province = province
 	_open_interface(new_interface, project, editor_settings)
@@ -151,7 +154,10 @@ func open_army_edit_interface(
 	):
 		return
 
-	var new_interface := _ARMY_EDIT_SCENE.instantiate() as InterfaceArmyEdit
+	var new_interface := (
+			_INTERFACE_SCENES[InterfaceNavigator.Type.ARMY_EDIT]
+			.instantiate() as InterfaceArmyEdit
+	)
 	new_interface.army = army
 	_open_interface(new_interface, project, editor_settings)
 	army_interface_opened.emit(army)
@@ -173,8 +179,8 @@ func open_decoration_edit_interface(
 		return
 
 	var new_interface := (
-			_DECORATION_EDIT_SCENE.instantiate()
-			as InterfaceWorldDecorationEdit
+			_INTERFACE_SCENES[InterfaceNavigator.Type.DECORATION_EDIT]
+			.instantiate() as InterfaceWorldDecorationEdit
 	)
 	new_interface.world_decoration = world_decoration
 	_open_interface(new_interface, project, editor_settings)
@@ -193,7 +199,8 @@ func open_country_edit_interface(
 		return
 
 	var new_interface := (
-			_COUNTRY_EDIT_SCENE.instantiate() as InterfaceCountryEdit
+			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_EDIT]
+			.instantiate() as InterfaceCountryEdit
 	)
 	new_interface.country = country
 	_open_interface(new_interface, project, editor_settings)
@@ -214,7 +221,8 @@ func open_player_edit_interface(
 		return
 
 	var new_interface := (
-			_PLAYER_EDIT_SCENE.instantiate() as InterfacePlayerEdit
+			_INTERFACE_SCENES[InterfaceNavigator.Type.PLAYER_EDIT]
+			.instantiate() as InterfacePlayerEdit
 	)
 	new_interface.game_player = game_player
 	_open_interface(new_interface, project, editor_settings)
@@ -227,8 +235,8 @@ func open_country_relationships_interface(
 		editor_settings: AppEditorSettings
 ) -> void:
 	var new_interface := (
-			_RELATIONSHIPS_EDIT_SCENE.instantiate()
-			as InterfaceCountryRelationships
+			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_RELATIONSHIPS]
+			.instantiate() as InterfaceCountryRelationships
 	)
 	new_interface.country = country
 	_open_interface(new_interface, project, editor_settings)
@@ -241,8 +249,8 @@ func open_country_notifications_interface(
 		editor_settings: AppEditorSettings
 ) -> void:
 	var new_interface := (
-			_NOTIFICATIONS_EDIT_SCENE.instantiate()
-			as InterfaceCountryNotifications
+			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_NOTIFICATIONS]
+			.instantiate() as InterfaceCountryNotifications
 	)
 	new_interface.country = country
 	_open_interface(new_interface, project, editor_settings)
@@ -271,7 +279,7 @@ func _open_interface(
 
 ## May return null if the interface scene could not be found.
 func _new_interface_of_type(
-		type: InterfaceNavigator.InterfaceType
+		type: InterfaceNavigator.Type
 ) -> AppEditorInterface:
 	if not _INTERFACE_SCENES.has(type):
 		push_error("Can't find the scene for this interface type.")

@@ -19,9 +19,7 @@ func _ready() -> void:
 	)
 
 	closed.connect(navigator.open_new_interface.bind(
-			InterfaceNavigator.InterfaceType.DECORATION_LIST,
-			project,
-			editor_settings
+			InterfaceNavigator.Type.DECORATION_LIST, project, editor_settings
 	))
 
 

@@ -20,9 +20,7 @@ func _on_closed() -> void:
 		)
 	else:
 		navigator.open_new_interface(
-				InterfaceNavigator.InterfaceType.COUNTRY_LIST,
-				project,
-				editor_settings
+				InterfaceNavigator.Type.COUNTRY_LIST, project, editor_settings
 		)
 
 
