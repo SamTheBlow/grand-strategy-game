@@ -67,7 +67,7 @@ func _load_settings(_settings_item: PropertyTreeItem) -> void:
 	pass
 
 
-func _apply_undo_redo_action(
+func _apply_undo_redo_property(
 		description: String,
 		object: Object,
 		property_name: StringName,
@@ -77,6 +77,15 @@ func _apply_undo_redo_action(
 	undo_redo.create_action(description)
 	undo_redo.add_do_property(object, property_name, new_value)
 	undo_redo.add_undo_property(object, property_name, old_value)
+	undo_redo.commit_action()
+
+
+func _apply_undo_redo_method(
+		description: String, do_callable: Callable, undo_callable: Callable
+) -> void:
+	undo_redo.create_action(description)
+	undo_redo.add_do_method(do_callable)
+	undo_redo.add_undo_method(undo_callable)
 	undo_redo.commit_action()
 
 

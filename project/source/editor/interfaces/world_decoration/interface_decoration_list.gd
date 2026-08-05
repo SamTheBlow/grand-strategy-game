@@ -45,14 +45,11 @@ func _remove_element(world_decoration: WorldDecoration) -> void:
 
 func _on_add_button_pressed() -> void:
 	var new_item := WorldDecoration.new()
-	undo_redo.create_action("Create new world decoration")
-	undo_redo.add_do_method(
-			project.game.world.decorations.add.bind(new_item)
-	)
-	undo_redo.add_undo_method(
+	_apply_undo_redo_method(
+			"Create new world decoration",
+			project.game.world.decorations.add.bind(new_item),
 			project.game.world.decorations.remove.bind(new_item)
 	)
-	undo_redo.commit_action()
 
 
 func _on_element_pressed(element: WorldDecorationListElement) -> void:

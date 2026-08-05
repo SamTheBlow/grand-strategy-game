@@ -86,14 +86,11 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 
 
 func _delete() -> void:
-	undo_redo.create_action("Delete world decoration")
-	undo_redo.add_do_method(
-			project.game.world.decorations.remove.bind(world_decoration)
-	)
-	undo_redo.add_undo_method(
+	_apply_undo_redo_method(
+			"Delete world decoration",
+			project.game.world.decorations.remove.bind(world_decoration),
 			project.game.world.decorations.add.bind(world_decoration)
 	)
-	undo_redo.commit_action()
 
 
 func _duplicate() -> void:
@@ -112,14 +109,11 @@ func _duplicate() -> void:
 	new_decoration.color = world_decoration.color
 
 	# Create and apply undo_redo action
-	undo_redo.create_action("Duplicate world decoration")
-	undo_redo.add_do_method(
-			project.game.world.decorations.add.bind(new_decoration)
-	)
-	undo_redo.add_undo_method(
+	_apply_undo_redo_method(
+			"Duplicate world decoration",
+			project.game.world.decorations.add.bind(new_decoration),
 			project.game.world.decorations.remove.bind(new_decoration)
 	)
-	undo_redo.commit_action()
 
 	# Open interface to edit the new decoration
 	navigator.open_decoration_edit_interface(
@@ -137,7 +131,7 @@ func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
 
 
 func _on_texture_value_changed(item: ItemTexture) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's texture",
 			world_decoration,
 			&"texture",
@@ -147,7 +141,7 @@ func _on_texture_value_changed(item: ItemTexture) -> void:
 
 
 func _on_flip_h_value_changed(item: ItemBool) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's horizontal flip",
 			world_decoration,
 			&"flip_h",
@@ -157,7 +151,7 @@ func _on_flip_h_value_changed(item: ItemBool) -> void:
 
 
 func _on_flip_v_value_changed(item: ItemBool) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's vertical flip",
 			world_decoration,
 			&"flip_v",
@@ -167,7 +161,7 @@ func _on_flip_v_value_changed(item: ItemBool) -> void:
 
 
 func _on_position_value_changed(item: ItemVector2) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's position",
 			world_decoration,
 			&"position",
@@ -177,7 +171,7 @@ func _on_position_value_changed(item: ItemVector2) -> void:
 
 
 func _on_rotation_value_changed(item: ItemFloat) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's rotation",
 			world_decoration,
 			&"rotation_degrees",
@@ -187,7 +181,7 @@ func _on_rotation_value_changed(item: ItemFloat) -> void:
 
 
 func _on_scale_value_changed(item: ItemVector2) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's scale",
 			world_decoration,
 			&"scale",
@@ -197,7 +191,7 @@ func _on_scale_value_changed(item: ItemVector2) -> void:
 
 
 func _on_color_value_changed(item: ItemColor) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change world decoration's color",
 			world_decoration,
 			&"color",

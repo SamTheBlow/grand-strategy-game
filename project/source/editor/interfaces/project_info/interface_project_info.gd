@@ -32,7 +32,7 @@ func _ready() -> void:
 
 
 func _on_item_name_changed(item: PropertyTreeItem) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change project name",
 			project.metadata,
 			&"project_name",
@@ -42,7 +42,7 @@ func _on_item_name_changed(item: PropertyTreeItem) -> void:
 
 
 func _on_item_icon_changed(item: PropertyTreeItem) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change project icon",
 			project.metadata,
 			&"icon",

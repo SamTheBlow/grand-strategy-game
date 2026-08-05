@@ -17,7 +17,7 @@ func _ready() -> void:
 
 
 func _on_item_value_changed(item: ItemColor) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change background color",
 			project.game.world,
 			&"background_color",

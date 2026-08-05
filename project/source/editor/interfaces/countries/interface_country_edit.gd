@@ -101,7 +101,7 @@ func _duplicate() -> void:
 
 
 func _on_name_changed(item: ItemString) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change country name",
 			country,
 			&"country_name",
@@ -111,7 +111,7 @@ func _on_name_changed(item: ItemString) -> void:
 
 
 func _on_color_changed(item: ItemColor) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change country color",
 			country,
 			&"color",
@@ -121,7 +121,7 @@ func _on_color_changed(item: ItemColor) -> void:
 
 
 func _on_money_changed(item: ItemInt) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change country money",
 			country,
 			&"money",

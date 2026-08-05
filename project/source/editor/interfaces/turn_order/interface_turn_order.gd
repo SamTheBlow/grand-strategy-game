@@ -72,14 +72,11 @@ func _reorder(country_id: int, new_index: int) -> void:
 	if old_index == new_index:
 		return
 
-	undo_redo.create_action("Edit country order")
-	undo_redo.add_do_method(
-			project.game.countries.reorder.bind(country_id, new_index)
-	)
-	undo_redo.add_undo_method(
+	_apply_undo_redo_method(
+			"Edit country order",
+			project.game.countries.reorder.bind(country_id, new_index),
 			project.game.countries.reorder.bind(country_id, old_index)
 	)
-	undo_redo.commit_action()
 
 
 func _add_empty_list_label() -> void:

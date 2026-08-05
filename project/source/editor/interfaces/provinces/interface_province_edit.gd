@@ -113,7 +113,7 @@ func _duplicate() -> void:
 
 
 func _on_name_value_changed(item: ItemString) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change province name",
 			province,
 			&"name",
@@ -123,7 +123,7 @@ func _on_name_value_changed(item: ItemString) -> void:
 
 
 func _on_country_value_changed(item: ItemCountry) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change province owner",
 			province,
 			&"owner_country",
@@ -133,7 +133,7 @@ func _on_country_value_changed(item: ItemCountry) -> void:
 
 
 func _on_population_value_changed(item: ItemInt) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change province population",
 			province.population(),
 			&"value",
@@ -143,7 +143,7 @@ func _on_population_value_changed(item: ItemInt) -> void:
 
 
 func _on_income_value_changed(item: ItemInt) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change province money income",
 			province.base_money_income(),
 			&"value",
@@ -153,20 +153,22 @@ func _on_income_value_changed(item: ItemInt) -> void:
 
 
 func _on_has_fortress_value_changed(item: ItemBool) -> void:
-	undo_redo.create_action("Toggle province having a fortress")
+	var description: String = "Toggle province having a fortress"
+
+	var do_callable: Callable
+	var undo_callable: Callable
 	if item.value:
+		# Add fortress
 		var new_fortress := Fortress.new(province.id)
-		undo_redo.add_do_method(province.buildings.add.bind(new_fortress))
-		undo_redo.add_undo_method(province.buildings.remove.bind(new_fortress))
+		do_callable = province.buildings.add.bind(new_fortress)
+		undo_callable = province.buildings.remove.bind(new_fortress)
 	else:
+		# Remove fortress
 		var existing_fortress: Building = province.buildings._list[0]
-		undo_redo.add_do_method(
-				province.buildings.remove.bind(existing_fortress)
-		)
-		undo_redo.add_undo_method(
-				province.buildings.add.bind(existing_fortress)
-		)
-	undo_redo.commit_action()
+		do_callable = province.buildings.remove.bind(existing_fortress)
+		undo_callable = province.buildings.add.bind(existing_fortress)
+
+	_apply_undo_redo_method(description, do_callable, undo_callable)
 
 
 func _on_province_name_changed(item: ItemString) -> void:

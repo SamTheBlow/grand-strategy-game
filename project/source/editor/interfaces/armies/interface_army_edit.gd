@@ -98,7 +98,7 @@ func _on_army_removed(army_removed: Army) -> void:
 
 
 func _on_item_texture_changed(item: ItemTexture) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change army sprite",
 			army,
 			&"texture",
@@ -108,7 +108,7 @@ func _on_item_texture_changed(item: ItemTexture) -> void:
 
 
 func _on_item_country_changed(item: ItemCountry) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change army allegiance",
 			army,
 			&"owner_country",
@@ -118,7 +118,7 @@ func _on_item_country_changed(item: ItemCountry) -> void:
 
 
 func _on_item_size_changed(item: ItemInt) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change army size",
 			army.size(),
 			&"value",
@@ -128,7 +128,7 @@ func _on_item_size_changed(item: ItemInt) -> void:
 
 
 func _on_item_moves_changed(item: ItemInt) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change army movements made",
 			army,
 			&"_movements_made",

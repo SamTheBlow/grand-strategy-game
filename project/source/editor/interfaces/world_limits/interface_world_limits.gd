@@ -61,65 +61,55 @@ func _ready() -> void:
 
 
 func _on_item_mode_changed(item: ItemBool) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
+	var limits: WorldLimits = project.game.world.limits()
 	if item.value:
-		undo_redo.create_action("Enable custom world limits")
-		undo_redo.add_do_method(world_limits.enable_custom_limits)
-		undo_redo.add_undo_method(world_limits.disable_custom_limits)
-		undo_redo.commit_action()
+		_apply_undo_redo_method(
+				"Enable custom world limits",
+				limits.enable_custom_limits,
+				limits.disable_custom_limits
+		)
 	else:
-		undo_redo.create_action("Disable custom world limits")
-		undo_redo.add_do_method(world_limits.disable_custom_limits)
-		undo_redo.add_undo_method(world_limits.enable_custom_limits)
-		undo_redo.commit_action()
+		_apply_undo_redo_method(
+				"Disable custom world limits",
+				limits.disable_custom_limits,
+				limits.enable_custom_limits
+		)
 
 
 func _on_item_left_changed(item: ItemInt) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
-	undo_redo.create_action("Set custom world limits, left side")
-	undo_redo.add_do_method(
-			world_limits.set_custom_limit_left.bind(item.value)
+	var limits: WorldLimits = project.game.world.limits()
+	_apply_undo_redo_method(
+			"Set custom world limits, left side",
+			limits.set_custom_limit_left.bind(item.value),
+			limits.set_custom_limit_left.bind(limits.custom_limits.x)
 	)
-	undo_redo.add_undo_method(world_limits.set_custom_limit_left.bind(
-			world_limits.custom_limits.x
-	))
-	undo_redo.commit_action()
 
 
 func _on_item_top_changed(item: ItemInt) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
-	undo_redo.create_action("Set custom world limits, top side")
-	undo_redo.add_do_method(
-			world_limits.set_custom_limit_top.bind(item.value)
+	var limits: WorldLimits = project.game.world.limits()
+	_apply_undo_redo_method(
+			"Set custom world limits, top side",
+			limits.set_custom_limit_top.bind(item.value),
+			limits.set_custom_limit_top.bind(limits.custom_limits.y)
 	)
-	undo_redo.add_undo_method(world_limits.set_custom_limit_top.bind(
-			world_limits.custom_limits.y
-	))
-	undo_redo.commit_action()
 
 
 func _on_item_right_changed(item: ItemInt) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
-	undo_redo.create_action("Set custom world limits, right side")
-	undo_redo.add_do_method(
-			world_limits.set_custom_limit_right.bind(item.value)
+	var limits: WorldLimits = project.game.world.limits()
+	_apply_undo_redo_method(
+			"Set custom world limits, right side",
+			limits.set_custom_limit_right.bind(item.value),
+			limits.set_custom_limit_right.bind(limits.custom_limits.z)
 	)
-	undo_redo.add_undo_method(world_limits.set_custom_limit_right.bind(
-			world_limits.custom_limits.z
-	))
-	undo_redo.commit_action()
 
 
 func _on_item_bottom_changed(item: ItemInt) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
-	undo_redo.create_action("Set custom world limits, bottom side")
-	undo_redo.add_do_method(
-			world_limits.set_custom_limit_bottom.bind(item.value)
+	var limits: WorldLimits = project.game.world.limits()
+	_apply_undo_redo_method(
+			"Set custom world limits, bottom side",
+			limits.set_custom_limit_bottom.bind(item.value),
+			limits.set_custom_limit_bottom.bind(limits.custom_limits.w)
 	)
-	undo_redo.add_undo_method(world_limits.set_custom_limit_bottom.bind(
-			world_limits.custom_limits.w
-	))
-	undo_redo.commit_action()
 
 
 func _on_custom_limits_toggled(

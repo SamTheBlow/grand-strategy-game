@@ -41,7 +41,7 @@ func _refresh_item_visiblity(
 
 
 func _on_item_seed_changed(item: ItemString) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change RNG seed",
 			project.game.rng,
 			&"rng_seed",
@@ -51,7 +51,7 @@ func _on_item_seed_changed(item: ItemString) -> void:
 
 
 func _on_item_state_changed(item: ItemString) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change RNG state",
 			project.game.rng,
 			&"rng_state",

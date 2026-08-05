@@ -101,7 +101,7 @@ func _on_player_removed(player_removed: GamePlayer) -> void:
 
 
 func _on_item_username_changed(item: ItemString) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change player username",
 			game_player,
 			&"username",
@@ -111,7 +111,7 @@ func _on_item_username_changed(item: ItemString) -> void:
 
 
 func _on_item_country_changed(item: ItemCountry) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change player's country",
 			game_player,
 			&"playing_country",
@@ -121,7 +121,7 @@ func _on_item_country_changed(item: ItemCountry) -> void:
 
 
 func _on_item_is_human_changed(item: ItemBool) -> void:
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Toggle whether or not player is human",
 			game_player,
 			&"is_human",
@@ -138,7 +138,7 @@ func _on_item_ai_type_changed(item: ItemOptions) -> void:
 	var old_ai: PlayerAI = game_player.player_ai
 	new_ai.personality = old_ai.personality
 
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change AI type", game_player, &"player_ai", old_ai, new_ai
 	)
 
@@ -150,7 +150,7 @@ func _on_item_ai_personality_changed(item: ItemOptions) -> void:
 	if new_personality == null:
 		return
 
-	_apply_undo_redo_action(
+	_apply_undo_redo_property(
 			"Change AI personality",
 			game_player.player_ai,
 			&"personality",
