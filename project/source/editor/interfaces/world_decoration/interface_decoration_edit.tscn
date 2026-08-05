@@ -146,4 +146,4 @@ Ctrl+D -> Duplicate"
 vertical_alignment = 2
 
 [connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
-[connection signal="pressed" from="DeleteButton" to="." method="_delete_decoration"]
+[connection signal="pressed" from="DeleteButton" to="." method="_delete"]

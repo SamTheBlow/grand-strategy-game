@@ -38,10 +38,13 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if not event.is_action_pressed(&"editor_close_interface"):
-		return
-	get_viewport().set_input_as_handled()
-	closed.emit()
+	if event.is_action_pressed(&"editor_close_interface"):
+		get_viewport().set_input_as_handled()
+		closed.emit()
+	if event.is_action_pressed(&"delete"):
+		_delete()
+	if event.is_action_pressed(&"duplicate"):
+		_duplicate()
 
 
 func _update_editor_settings() -> void:
@@ -71,3 +74,13 @@ func _apply_undo_redo_action(
 	undo_redo.add_do_property(object, property_name, new_value)
 	undo_redo.add_undo_property(object, property_name, old_value)
 	undo_redo.commit_action()
+
+
+## Override this function to delete something.
+func _delete() -> void:
+	pass
+
+
+## Override this function to duplicate something.
+func _duplicate() -> void:
+	pass

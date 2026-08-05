@@ -17,15 +17,6 @@ func _ready() -> void:
 	))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	super(event)
-
-	if event.is_action_pressed(&"delete"):
-		_delete_country()
-	if event.is_action_pressed(&"duplicate"):
-		_duplicate_country()
-
-
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Name
 	var item_name := settings_item.child_items[0] as ItemString
@@ -70,7 +61,7 @@ func _on_edit_notifications_pressed() -> void:
 	)
 
 
-func _delete_country() -> void:
+func _delete() -> void:
 	project.game.countries.undo_redo_remove(
 			country,
 			undo_redo,
@@ -81,7 +72,7 @@ func _delete_country() -> void:
 	)
 
 
-func _duplicate_country() -> void:
+func _duplicate() -> void:
 	# Copies everything except notifications
 	var new_country := Country.new()
 	new_country.country_name = country.country_name + " (Copy)"

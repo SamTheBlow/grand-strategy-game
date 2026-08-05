@@ -17,15 +17,6 @@ func _ready() -> void:
 	))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	super(event)
-
-	if event.is_action_pressed(&"delete"):
-		_delete_province()
-	if event.is_action_pressed(&"duplicate"):
-		_duplicate_province()
-
-
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Name
 	var item_name := settings_item.child_items[0] as ItemString
@@ -81,7 +72,7 @@ func _on_province_removed(province_removed: Province) -> void:
 		closed.emit()
 
 
-func _delete_province() -> void:
+func _delete() -> void:
 	project.game.world.provinces.undo_redo_remove(
 			province,
 			undo_redo,
@@ -90,7 +81,7 @@ func _delete_province() -> void:
 	)
 
 
-func _duplicate_province() -> void:
+func _duplicate() -> void:
 	const _DUPLICATE_PROVINCE_OFFSET = Vector2(64.0, 64.0)
 
 	# Create duplicate

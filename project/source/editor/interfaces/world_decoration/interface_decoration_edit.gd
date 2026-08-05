@@ -25,15 +25,6 @@ func _ready() -> void:
 	))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	super(event)
-
-	if event.is_action_pressed(&"delete"):
-		_delete_decoration()
-	if event.is_action_pressed(&"duplicate"):
-		_duplicate_decoration()
-
-
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Texture
 	var item_texture := settings_item.child_items[0] as ItemTexture
@@ -96,7 +87,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 
-func _delete_decoration() -> void:
+func _delete() -> void:
 	undo_redo.create_action("Delete world decoration")
 	undo_redo.add_do_method(
 			project.game.world.decorations.remove.bind(world_decoration)
@@ -107,7 +98,7 @@ func _delete_decoration() -> void:
 	undo_redo.commit_action()
 
 
-func _duplicate_decoration() -> void:
+func _duplicate() -> void:
 	const _DUPLICATE_DECORATION_OFFSET = Vector2(64.0, 64.0)
 
 	# Create duplicate

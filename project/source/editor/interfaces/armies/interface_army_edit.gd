@@ -21,15 +21,6 @@ func _ready() -> void:
 	))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	super(event)
-
-	if event.is_action_pressed(&"delete"):
-		_delete_army()
-	if event.is_action_pressed(&"duplicate"):
-		_duplicate_army()
-
-
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Texture
 	var item_texture := settings_item.child_items[0] as ItemTexture
@@ -75,13 +66,13 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 
-func _delete_army() -> void:
+func _delete() -> void:
 	project.game.world.armies.undo_redo_remove(
 			army, undo_redo, project.game.world.armies_in_each_province
 	)
 
 
-func _duplicate_army() -> void:
+func _duplicate() -> void:
 	# Create duplicate
 	var new_army: Army = Army.Factory.new(project.game).new_army(
 			army.owner_country,

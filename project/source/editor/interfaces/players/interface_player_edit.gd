@@ -15,15 +15,6 @@ func _ready() -> void:
 	))
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	super(event)
-
-	if event.is_action_pressed(&"delete"):
-		_delete_player()
-	if event.is_action_pressed(&"duplicate"):
-		_duplicate_player()
-
-
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Username
 	var item_username := settings_item.child_items[0] as ItemString
@@ -74,11 +65,11 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 
-func _delete_player() -> void:
+func _delete() -> void:
 	project.game.game_players.undo_redo_remove(game_player, undo_redo)
 
 
-func _duplicate_player() -> void:
+func _duplicate() -> void:
 	# Create duplicate
 	var new_player := GamePlayer.new()
 	new_player.username = game_player.username
