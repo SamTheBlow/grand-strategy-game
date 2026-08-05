@@ -43,30 +43,57 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	item_texture.popup_requested.connect(
 			texture_popup_requested.emit.bind(project.textures)
 	)
+	world_decoration.texture_changed.connect(
+			_on_texture_changed.bind(item_texture)
+	)
+
 	# Flip H
 	var item_flip_h := settings_item.child_items[1] as ItemBool
 	item_flip_h.value = world_decoration.flip_h
 	item_flip_h.value_changed.connect(_on_flip_h_value_changed)
+	world_decoration.flip_h_changed.connect(
+			_on_flip_h_changed.bind(item_flip_h)
+	)
+
 	# Flip V
 	var item_flip_v := settings_item.child_items[2] as ItemBool
 	item_flip_v.value = world_decoration.flip_v
 	item_flip_v.value_changed.connect(_on_flip_v_value_changed)
+	world_decoration.flip_v_changed.connect(
+			_on_flip_v_changed.bind(item_flip_v)
+	)
+
 	# Position
 	var item_position := settings_item.child_items[3] as ItemVector2
 	item_position.set_data(world_decoration.position)
 	item_position.value_changed.connect(_on_position_value_changed)
+	world_decoration.position_changed.connect(
+			_on_position_changed.bind(item_position)
+	)
+
 	# Rotation
 	var item_rotation := settings_item.child_items[4] as ItemFloat
 	item_rotation.value = world_decoration.rotation_degrees
 	item_rotation.value_changed.connect(_on_rotation_value_changed)
+	world_decoration.rotation_changed.connect(
+			_on_rotation_changed.bind(item_rotation)
+	)
+
 	# Scale
 	var item_scale := settings_item.child_items[5] as ItemVector2
 	item_scale.set_data(world_decoration.scale)
 	item_scale.value_changed.connect(_on_scale_value_changed)
+	world_decoration.scale_changed.connect(
+			_on_scale_changed.bind(item_scale)
+	)
+
 	# Color
 	var item_color := settings_item.child_items[6] as ItemColor
 	item_color.value = world_decoration.color
 	item_color.value_changed.connect(_on_color_value_changed)
+	world_decoration.color_changed.connect(
+			_on_color_changed.bind(item_color)
+	)
 
 
 func _delete_decoration() -> void:
@@ -192,3 +219,45 @@ func _on_color_value_changed(item: ItemColor) -> void:
 			world_decoration.color,
 			item.value
 	)
+
+
+func _on_texture_changed(item: ItemTexture) -> void:
+	item.value_changed.disconnect(_on_texture_value_changed)
+	item.value = world_decoration.texture
+	item.value_changed.connect(_on_texture_value_changed)
+
+
+func _on_flip_h_changed(item: ItemBool) -> void:
+	item.value_changed.disconnect(_on_flip_h_value_changed)
+	item.value = world_decoration.flip_h
+	item.value_changed.connect(_on_flip_h_value_changed)
+
+
+func _on_flip_v_changed(item: ItemBool) -> void:
+	item.value_changed.disconnect(_on_flip_v_value_changed)
+	item.value = world_decoration.flip_v
+	item.value_changed.connect(_on_flip_v_value_changed)
+
+
+func _on_position_changed(item: ItemVector2) -> void:
+	item.value_changed.disconnect(_on_position_value_changed)
+	item.set_data(world_decoration.position)
+	item.value_changed.connect(_on_position_value_changed)
+
+
+func _on_rotation_changed(item: ItemFloat) -> void:
+	item.value_changed.disconnect(_on_rotation_value_changed)
+	item.value = world_decoration.rotation_degrees
+	item.value_changed.connect(_on_rotation_value_changed)
+
+
+func _on_scale_changed(item: ItemVector2) -> void:
+	item.value_changed.disconnect(_on_scale_value_changed)
+	item.set_data(world_decoration.scale)
+	item.value_changed.connect(_on_scale_value_changed)
+
+
+func _on_color_changed(item: ItemColor) -> void:
+	item.value_changed.disconnect(_on_color_value_changed)
+	item.value = world_decoration.color
+	item.value_changed.connect(_on_color_value_changed)

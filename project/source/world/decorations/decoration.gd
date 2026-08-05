@@ -2,42 +2,56 @@ class_name WorldDecoration
 ## Represents an image that's displayed at some location on the world map.
 
 signal changed(this: WorldDecoration)
+signal texture_changed()
+signal flip_h_changed()
+signal flip_v_changed()
+signal position_changed()
+signal rotation_changed()
+signal scale_changed()
+signal color_changed()
 
 const DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
 var texture: ProjectTexture = ProjectTexture.none():
 	set(value):
 		texture = value
+		texture_changed.emit()
 		changed.emit(self)
 
 var flip_h: bool = false:
 	set(value):
 		flip_h = value
+		flip_h_changed.emit()
 		changed.emit(self)
 
 var flip_v: bool = false:
 	set(value):
 		flip_v = value
+		flip_v_changed.emit()
 		changed.emit(self)
 
 var position := Vector2.ZERO:
 	set(value):
 		position = value
+		position_changed.emit()
 		changed.emit(self)
 
 var rotation_degrees: float = 0.0:
 	set(value):
 		rotation_degrees = value
+		rotation_changed.emit()
 		changed.emit(self)
 
 var scale := Vector2.ONE:
 	set(value):
 		scale = value
+		scale_changed.emit()
 		changed.emit(self)
 
 var color := Color.WHITE:
 	set(value):
 		color = value
+		color_changed.emit()
 		changed.emit(self)
 
 
