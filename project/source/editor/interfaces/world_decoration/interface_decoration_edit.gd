@@ -209,42 +209,42 @@ func _on_color_value_changed(item: ItemColor) -> void:
 
 
 func _on_texture_changed(item: ItemTexture) -> void:
-	item.value_changed.disconnect(_on_texture_value_changed)
-	item.value = world_decoration.texture
-	item.value_changed.connect(_on_texture_value_changed)
+	_set_setting_no_signal(
+			item, _on_texture_value_changed, world_decoration.texture
+	)
 
 
 func _on_flip_h_changed(item: ItemBool) -> void:
-	item.value_changed.disconnect(_on_flip_h_value_changed)
-	item.value = world_decoration.flip_h
-	item.value_changed.connect(_on_flip_h_value_changed)
+	_set_setting_no_signal(
+			item, _on_flip_h_value_changed, world_decoration.flip_h
+	)
 
 
 func _on_flip_v_changed(item: ItemBool) -> void:
-	item.value_changed.disconnect(_on_flip_v_value_changed)
-	item.value = world_decoration.flip_v
-	item.value_changed.connect(_on_flip_v_value_changed)
+	_set_setting_no_signal(
+			item, _on_flip_v_value_changed, world_decoration.flip_v
+	)
 
 
 func _on_position_changed(item: ItemVector2) -> void:
-	item.value_changed.disconnect(_on_position_value_changed)
-	item.set_data(world_decoration.position)
-	item.value_changed.connect(_on_position_value_changed)
+	_set_setting_no_signal(
+			item, _on_position_value_changed, world_decoration.position
+	)
 
 
 func _on_rotation_changed(item: ItemFloat) -> void:
-	item.value_changed.disconnect(_on_rotation_value_changed)
-	item.value = world_decoration.rotation_degrees
-	item.value_changed.connect(_on_rotation_value_changed)
+	_set_setting_no_signal(
+			item, _on_rotation_value_changed, world_decoration.rotation_degrees
+	)
 
 
 func _on_scale_changed(item: ItemVector2) -> void:
-	item.value_changed.disconnect(_on_scale_value_changed)
-	item.set_data(world_decoration.scale)
-	item.value_changed.connect(_on_scale_value_changed)
+	_set_setting_no_signal(
+			item, _on_scale_value_changed, world_decoration.scale
+	)
 
 
 func _on_color_changed(item: ItemColor) -> void:
-	item.value_changed.disconnect(_on_color_value_changed)
-	item.value = world_decoration.color
-	item.value_changed.connect(_on_color_value_changed)
+	_set_setting_no_signal(
+			item, _on_color_value_changed, world_decoration.color
+	)

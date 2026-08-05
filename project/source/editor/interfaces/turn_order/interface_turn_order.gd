@@ -98,23 +98,18 @@ func _remove_empty_list_label() -> void:
 	NodeUtils.remove_all_children(_element_container)
 
 
-## Disconnects signals to avoid creating another undo_redo action
-func _set_item_value_no_signal(value: bool) -> void:
-	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
-	item_rule.value_changed.disconnect(_on_item_value_changed)
-	item_rule.value = value
-	item_rule.value_changed.connect(_on_item_value_changed)
-
+func _on_item_value_changed(item: PropertyTreeItem) -> void:
 	_update_visibility()
 
-
-func _on_item_value_changed(_item: PropertyTreeItem) -> void:
-	_update_visibility()
-
-	var is_enabled: bool = project.game.rules.random_turn_order_enabled.value
 	undo_redo.create_action("Toggle random turn order")
-	undo_redo.add_do_method(_set_item_value_no_signal.bind(is_enabled))
-	undo_redo.add_undo_method(_set_item_value_no_signal.bind(not is_enabled))
+	undo_redo.add_do_method(_set_setting_no_signal.bind(
+			item, _on_item_value_changed, item.value
+	))
+	undo_redo.add_do_method(_update_visibility)
+	undo_redo.add_undo_method(_set_setting_no_signal.bind(
+			item, _on_item_value_changed, not item.value
+	))
+	undo_redo.add_undo_method(_update_visibility)
 	undo_redo.commit_action(false)
 
 

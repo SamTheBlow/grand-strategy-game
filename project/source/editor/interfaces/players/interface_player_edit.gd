@@ -140,11 +140,9 @@ func _on_item_ai_type_changed(item: ItemOptions) -> void:
 	var old_ai: PlayerAI = game_player.player_ai
 	new_ai.personality = old_ai.personality
 
-	# Create undo/redo action
-	undo_redo.create_action("Change AI type")
-	undo_redo.add_do_property(game_player, &"player_ai", new_ai)
-	undo_redo.add_undo_property(game_player, &"player_ai", old_ai)
-	undo_redo.commit_action()
+	_apply_undo_redo_action(
+			"Change AI type", game_player, &"player_ai", old_ai, new_ai
+	)
 
 
 func _on_item_ai_personality_changed(item: ItemOptions) -> void:
@@ -154,40 +152,36 @@ func _on_item_ai_personality_changed(item: ItemOptions) -> void:
 	if new_personality == null:
 		return
 
-	var old_personality: AIPersonality = game_player.player_ai.personality
-
-	# Create undo/redo action
-	undo_redo.create_action("Change AI personality")
-	undo_redo.add_do_property(
-			game_player.player_ai, &"personality", new_personality
+	_apply_undo_redo_action(
+			"Change AI personality",
+			game_player.player_ai,
+			&"personality",
+			game_player.player_ai.personality,
+			new_personality
 	)
-	undo_redo.add_undo_property(
-			game_player.player_ai, &"personality", old_personality
-	)
-	undo_redo.commit_action()
 
 
 func _on_player_username_changed(item: ItemString) -> void:
-	item.value_changed.disconnect(_on_item_username_changed)
-	item.value = game_player.username
-	item.value_changed.connect(_on_item_username_changed)
+	_set_setting_no_signal(
+			item, _on_item_username_changed, game_player.username
+	)
 
 
 func _on_player_country_changed(
 		item_country: ItemCountry, item_username: ItemString
 ) -> void:
-	item_country.value_changed.disconnect(_on_item_country_changed)
-	item_country.value = game_player.playing_country
-	item_country.value_changed.connect(_on_item_country_changed)
+	_set_setting_no_signal(
+			item_country, _on_item_country_changed, game_player.playing_country
+	)
 
 	# The playing country can affect the default username
 	item_username.placeholder_text = game_player.username_or_default()
 
 
 func _on_player_is_human_changed(item: ItemBool) -> void:
-	item.value_changed.disconnect(_on_item_is_human_changed)
-	item.value = game_player.is_human
-	item.value_changed.connect(_on_item_is_human_changed)
+	_set_setting_no_signal(
+			item, _on_item_is_human_changed, game_player.is_human
+	)
 
 
 func _on_player_ai_changed(
@@ -196,11 +190,11 @@ func _on_player_ai_changed(
 		item_ai_type: ItemOptions,
 		item_ai_personality: ItemOptions
 ) -> void:
-	item_ai_type.value_changed.disconnect(_on_item_ai_type_changed)
-	item_ai_type.selected_index = (
+	_set_setting_no_signal(
+			item_ai_type,
+			_on_item_ai_type_changed,
 			item_ai_type.index_of_value(new_ai.type())
 	)
-	item_ai_type.value_changed.connect(_on_item_ai_type_changed)
 
 	old_ai.personality_changed.disconnect(_on_personality_changed)
 	new_ai.personality_changed.connect(
@@ -209,8 +203,8 @@ func _on_player_ai_changed(
 
 
 func _on_personality_changed(item: ItemOptions) -> void:
-	item.value_changed.disconnect(_on_item_ai_personality_changed)
-	item.selected_index = (
+	_set_setting_no_signal(
+			item,
+			_on_item_ai_personality_changed,
 			item.index_of_value(game_player.player_ai.personality.type())
 	)
-	item.value_changed.connect(_on_item_ai_personality_changed)

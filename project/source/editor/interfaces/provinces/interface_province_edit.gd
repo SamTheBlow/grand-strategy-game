@@ -115,9 +115,6 @@ func _duplicate() -> void:
 
 
 func _on_name_value_changed(item: ItemString) -> void:
-	if province.name == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change province name",
 			province,
@@ -128,9 +125,6 @@ func _on_name_value_changed(item: ItemString) -> void:
 
 
 func _on_country_value_changed(item: ItemCountry) -> void:
-	if province.owner_country == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change province owner",
 			province,
@@ -141,9 +135,6 @@ func _on_country_value_changed(item: ItemCountry) -> void:
 
 
 func _on_population_value_changed(item: ItemInt) -> void:
-	if province.population().value == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change province population",
 			province.population(),
@@ -154,9 +145,6 @@ func _on_population_value_changed(item: ItemInt) -> void:
 
 
 func _on_income_value_changed(item: ItemInt) -> void:
-	if province.base_money_income().value == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change province money income",
 			province.base_money_income(),
@@ -167,12 +155,6 @@ func _on_income_value_changed(item: ItemInt) -> void:
 
 
 func _on_has_fortress_value_changed(item: ItemBool) -> void:
-	if (
-		(province.buildings.number_of_type(Building.Type.FORTRESS) > 0)
-		== item.value
-	):
-		return
-
 	undo_redo.create_action("Toggle province having a fortress")
 	if item.value:
 		var new_fortress := Fortress.new(province.id)
@@ -190,20 +172,30 @@ func _on_has_fortress_value_changed(item: ItemBool) -> void:
 
 
 func _on_province_name_changed(item: ItemString) -> void:
-	item.value = province.name
+	_set_setting_no_signal(item, _on_name_value_changed, province.name)
 
 
 func _on_province_owner_changed(item: ItemCountry) -> void:
-	item.value = province.owner_country
+	_set_setting_no_signal(
+			item, _on_country_value_changed, province.owner_country
+	)
 
 
 func _on_province_population_changed(item: ItemInt) -> void:
-	item.value = province.population().value
+	_set_setting_no_signal(
+			item, _on_population_value_changed, province.population().value
+	)
 
 
 func _on_province_income_changed(item: ItemInt) -> void:
-	item.value = province.base_money_income().value
+	_set_setting_no_signal(
+			item, _on_income_value_changed, province.base_money_income().value
+	)
 
 
 func _on_province_buildings_changed(item: ItemBool) -> void:
-	item.value = province.buildings.number_of_type(Building.Type.FORTRESS) > 0
+	_set_setting_no_signal(
+			item,
+			_on_has_fortress_value_changed,
+			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
+	)

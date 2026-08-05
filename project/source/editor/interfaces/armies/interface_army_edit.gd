@@ -60,7 +60,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	item_movements.has_minimum = true
 	item_movements.minimum = 0
 	item_movements.value = army.movements_made()
-	item_movements.value_changed.connect(_on_item_movements_changed)
+	item_movements.value_changed.connect(_on_item_moves_changed)
 	army.movements_made_changed.connect(
 			_on_army_movements_changed.bind(item_movements).unbind(1)
 	)
@@ -110,9 +110,6 @@ func _on_item_texture_changed(item: ItemTexture) -> void:
 
 
 func _on_item_country_changed(item: ItemCountry) -> void:
-	if army.owner_country == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change army allegiance",
 			army,
@@ -123,9 +120,6 @@ func _on_item_country_changed(item: ItemCountry) -> void:
 
 
 func _on_item_size_changed(item: ItemInt) -> void:
-	if army.size().value == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change army size",
 			army.size(),
@@ -135,10 +129,7 @@ func _on_item_size_changed(item: ItemInt) -> void:
 	)
 
 
-func _on_item_movements_changed(item: ItemInt) -> void:
-	if army.movements_made() == item.value:
-		return
-
+func _on_item_moves_changed(item: ItemInt) -> void:
 	_apply_undo_redo_action(
 			"Change army movements made",
 			army,
@@ -149,24 +140,16 @@ func _on_item_movements_changed(item: ItemInt) -> void:
 
 
 func _on_army_texture_changed(item: ItemTexture) -> void:
-	item.value_changed.disconnect(_on_item_texture_changed)
-	item.value = army.texture
-	item.value_changed.connect(_on_item_texture_changed)
+	_set_setting_no_signal(item, _on_item_texture_changed, army.texture)
 
 
 func _on_army_owner_changed(item: ItemCountry) -> void:
-	item.value_changed.disconnect(_on_item_country_changed)
-	item.value = army.owner_country
-	item.value_changed.connect(_on_item_country_changed)
+	_set_setting_no_signal(item, _on_item_country_changed, army.owner_country)
 
 
 func _on_army_size_changed(item: ItemInt) -> void:
-	item.value_changed.disconnect(_on_item_size_changed)
-	item.value = army.size().value
-	item.value_changed.connect(_on_item_size_changed)
+	_set_setting_no_signal(item, _on_item_size_changed, army.size().value)
 
 
 func _on_army_movements_changed(item: ItemInt) -> void:
-	item.value_changed.disconnect(_on_item_movements_changed)
-	item.value = army.movements_made()
-	item.value_changed.connect(_on_item_movements_changed)
+	_set_setting_no_signal(item, _on_item_moves_changed, army.movements_made())

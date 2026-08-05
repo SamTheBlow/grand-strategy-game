@@ -1,39 +1,47 @@
 class_name InterfaceWorldLimits
 extends AppEditorInterface
 
-var _item_custom_limits_enabled := ItemBool.new()
-var _item_world_limit_left := ItemInt.new()
-var _item_world_limit_right := ItemInt.new()
-var _item_world_limit_top := ItemInt.new()
-var _item_world_limit_bottom := ItemInt.new()
-
 
 func _ready() -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
 
-	_item_custom_limits_enabled.text = "Custom world limits"
-	_item_custom_limits_enabled.value = world_limits.is_custom_limits_enabled()
-	_item_custom_limits_enabled.value_changed.connect(_on_item_mode_changed)
-	world_limits.mode_changed.connect(_on_custom_limits_toggled)
+	var item_mode := ItemBool.new()
+	item_mode.text = "Custom world limits"
+	item_mode.value = world_limits.is_custom_limits_enabled()
+	item_mode.value_changed.connect(_on_item_mode_changed)
 
 	var is_disabled: bool = not world_limits.is_custom_limits_enabled()
-	_item_world_limit_left.text = "Left"
-	_item_world_limit_left.value = world_limits.limit_left()
-	_item_world_limit_left.is_disabled = is_disabled
-	_item_world_limit_left.value_changed.connect(_on_item_left_changed)
-	_item_world_limit_right.text = "Right"
-	_item_world_limit_right.value = world_limits.limit_right()
-	_item_world_limit_right.is_disabled = is_disabled
-	_item_world_limit_right.value_changed.connect(_on_item_right_changed)
-	_item_world_limit_top.text = "Top"
-	_item_world_limit_top.value = world_limits.limit_top()
-	_item_world_limit_top.is_disabled = is_disabled
-	_item_world_limit_top.value_changed.connect(_on_item_top_changed)
-	_item_world_limit_bottom.text = "Bottom"
-	_item_world_limit_bottom.value = world_limits.limit_bottom()
-	_item_world_limit_bottom.is_disabled = is_disabled
-	_item_world_limit_bottom.value_changed.connect(_on_item_bottom_changed)
-	world_limits.current_limits_changed.connect(_on_limits_changed)
+
+	var item_left := ItemInt.new()
+	item_left.text = "Left"
+	item_left.value = world_limits.limit_left()
+	item_left.is_disabled = is_disabled
+	item_left.value_changed.connect(_on_item_left_changed)
+
+	var item_top := ItemInt.new()
+	item_top.text = "Top"
+	item_top.value = world_limits.limit_top()
+	item_top.is_disabled = is_disabled
+	item_top.value_changed.connect(_on_item_top_changed)
+
+	var item_right := ItemInt.new()
+	item_right.text = "Right"
+	item_right.value = world_limits.limit_right()
+	item_right.is_disabled = is_disabled
+	item_right.value_changed.connect(_on_item_right_changed)
+
+	var item_bottom := ItemInt.new()
+	item_bottom.text = "Bottom"
+	item_bottom.value = world_limits.limit_bottom()
+	item_bottom.is_disabled = is_disabled
+	item_bottom.value_changed.connect(_on_item_bottom_changed)
+
+	world_limits.mode_changed.connect(_on_custom_limits_toggled.bind(
+			item_mode, item_left, item_top, item_right, item_bottom
+	))
+	world_limits.current_limits_changed.connect(_on_limits_changed.bind(
+			item_left, item_top, item_right, item_bottom
+	))
 
 	# Setup editor settings
 	var editor_settings_node := %EditorSettingsCategory as ItemVoidNode
@@ -45,20 +53,16 @@ func _ready() -> void:
 	# Setup game settings
 	var game_settings_node := %GameSettingsCategory as ItemVoidNode
 	game_settings_node.item.child_items = [
-		_item_custom_limits_enabled,
-		_item_world_limit_left,
-		_item_world_limit_right,
-		_item_world_limit_top,
-		_item_world_limit_bottom,
+		item_mode, item_left, item_right, item_top, item_bottom
 	]
 	game_settings_node.refresh()
 
 	closed.connect(navigator.close_interface)
 
 
-func _on_item_mode_changed(_item: PropertyTreeItem) -> void:
+func _on_item_mode_changed(item: ItemBool) -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
-	if _item_custom_limits_enabled.value:
+	if item.value:
 		undo_redo.create_action("Enable custom world limits")
 		undo_redo.add_do_method(world_limits.enable_custom_limits)
 		undo_redo.add_undo_method(world_limits.disable_custom_limits)
@@ -70,81 +74,92 @@ func _on_item_mode_changed(_item: PropertyTreeItem) -> void:
 		undo_redo.commit_action()
 
 
-func _on_item_left_changed(_item: PropertyTreeItem) -> void:
+func _on_item_left_changed(item: ItemInt) -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
 	undo_redo.create_action("Set custom world limits, left side")
-	undo_redo.add_do_method(world_limits.set_custom_limit_left.bind(
-			_item_world_limit_left.value
-	))
+	undo_redo.add_do_method(
+			world_limits.set_custom_limit_left.bind(item.value)
+	)
 	undo_redo.add_undo_method(world_limits.set_custom_limit_left.bind(
 			world_limits.custom_limits.x
 	))
 	undo_redo.commit_action()
 
 
-func _on_item_right_changed(_item: PropertyTreeItem) -> void:
-	var world_limits: WorldLimits = project.game.world.limits()
-	undo_redo.create_action("Set custom world limits, right side")
-	undo_redo.add_do_method(world_limits.set_custom_limit_right.bind(
-			_item_world_limit_right.value
-	))
-	undo_redo.add_undo_method(world_limits.set_custom_limit_right.bind(
-			world_limits.custom_limits.z
-	))
-	undo_redo.commit_action()
-
-
-func _on_item_top_changed(_item: PropertyTreeItem) -> void:
+func _on_item_top_changed(item: ItemInt) -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
 	undo_redo.create_action("Set custom world limits, top side")
-	undo_redo.add_do_method(world_limits.set_custom_limit_top.bind(
-			_item_world_limit_top.value
-	))
+	undo_redo.add_do_method(
+			world_limits.set_custom_limit_top.bind(item.value)
+	)
 	undo_redo.add_undo_method(world_limits.set_custom_limit_top.bind(
 			world_limits.custom_limits.y
 	))
 	undo_redo.commit_action()
 
 
-func _on_item_bottom_changed(_item: PropertyTreeItem) -> void:
+func _on_item_right_changed(item: ItemInt) -> void:
+	var world_limits: WorldLimits = project.game.world.limits()
+	undo_redo.create_action("Set custom world limits, right side")
+	undo_redo.add_do_method(
+			world_limits.set_custom_limit_right.bind(item.value)
+	)
+	undo_redo.add_undo_method(world_limits.set_custom_limit_right.bind(
+			world_limits.custom_limits.z
+	))
+	undo_redo.commit_action()
+
+
+func _on_item_bottom_changed(item: ItemInt) -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
 	undo_redo.create_action("Set custom world limits, bottom side")
-	undo_redo.add_do_method(world_limits.set_custom_limit_bottom.bind(
-			_item_world_limit_bottom.value
-	))
+	undo_redo.add_do_method(
+			world_limits.set_custom_limit_bottom.bind(item.value)
+	)
 	undo_redo.add_undo_method(world_limits.set_custom_limit_bottom.bind(
 			world_limits.custom_limits.w
 	))
 	undo_redo.commit_action()
 
 
-func _on_custom_limits_toggled() -> void:
+func _on_custom_limits_toggled(
+		item_custom_limits_enabled: ItemBool,
+		item_left: ItemInt,
+		item_top: ItemInt,
+		item_right: ItemInt,
+		item_bottom: ItemInt
+) -> void:
 	var world_limits: WorldLimits = project.game.world.limits()
 
-	_item_custom_limits_enabled.value_changed.disconnect(_on_item_mode_changed)
-	_item_custom_limits_enabled.value = world_limits.is_custom_limits_enabled()
-	_item_custom_limits_enabled.value_changed.connect(_on_item_mode_changed)
+	_set_setting_no_signal(
+			item_custom_limits_enabled,
+			_on_item_mode_changed,
+			world_limits.is_custom_limits_enabled()
+	)
 
 	var is_disabled: bool = not world_limits.is_custom_limits_enabled()
-	_item_world_limit_left.is_disabled = is_disabled
-	_item_world_limit_top.is_disabled = is_disabled
-	_item_world_limit_right.is_disabled = is_disabled
-	_item_world_limit_bottom.is_disabled = is_disabled
+	item_left.is_disabled = is_disabled
+	item_top.is_disabled = is_disabled
+	item_right.is_disabled = is_disabled
+	item_bottom.is_disabled = is_disabled
 
 
-func _on_limits_changed(_limits: WorldLimits = null) -> void:
-	_item_world_limit_left.value_changed.disconnect(_on_item_left_changed)
-	_item_world_limit_right.value_changed.disconnect(_on_item_right_changed)
-	_item_world_limit_top.value_changed.disconnect(_on_item_top_changed)
-	_item_world_limit_bottom.value_changed.disconnect(_on_item_bottom_changed)
-
-	var world_limits: WorldLimits = project.game.world.limits()
-	_item_world_limit_left.value = world_limits.limit_left()
-	_item_world_limit_top.value = world_limits.limit_top()
-	_item_world_limit_right.value = world_limits.limit_right()
-	_item_world_limit_bottom.value = world_limits.limit_bottom()
-
-	_item_world_limit_left.value_changed.connect(_on_item_left_changed)
-	_item_world_limit_right.value_changed.connect(_on_item_right_changed)
-	_item_world_limit_top.value_changed.connect(_on_item_top_changed)
-	_item_world_limit_bottom.value_changed.connect(_on_item_bottom_changed)
+func _on_limits_changed(
+		limits: WorldLimits,
+		item_left: ItemInt,
+		item_top: ItemInt,
+		item_right: ItemInt,
+		item_bottom: ItemInt
+) -> void:
+	_set_setting_no_signal(
+			item_left, _on_item_left_changed, limits.limit_left()
+	)
+	_set_setting_no_signal(
+			item_top, _on_item_top_changed, limits.limit_top()
+	)
+	_set_setting_no_signal(
+			item_right, _on_item_right_changed, limits.limit_right()
+	)
+	_set_setting_no_signal(
+			item_bottom, _on_item_bottom_changed, limits.limit_bottom()
+	)

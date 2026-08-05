@@ -80,6 +80,21 @@ func _apply_undo_redo_action(
 	undo_redo.commit_action()
 
 
+## Sets the value of given item without triggering given callable.
+## Prevents infinite loops and redundant undo_redo actions.
+func _set_setting_no_signal(
+		item: PropertyTreeItem, callable: Callable, value: Variant
+) -> void:
+	item.value_changed.disconnect(callable)
+	if item is ItemVector2:
+		item.set_data(value)
+	elif item is ItemOptions:
+		item.selected_index = value
+	else:
+		item.value = value
+	item.value_changed.connect(callable)
+
+
 ## Override this function to delete something.
 func _delete() -> void:
 	pass

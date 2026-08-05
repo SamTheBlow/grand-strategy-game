@@ -103,9 +103,6 @@ func _duplicate() -> void:
 
 
 func _on_name_changed(item: ItemString) -> void:
-	if country.country_name == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change country name",
 			country,
@@ -116,9 +113,6 @@ func _on_name_changed(item: ItemString) -> void:
 
 
 func _on_color_changed(item: ItemColor) -> void:
-	if country.color == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change country color",
 			country,
@@ -129,9 +123,6 @@ func _on_color_changed(item: ItemColor) -> void:
 
 
 func _on_money_changed(item: ItemInt) -> void:
-	if country.money == item.value:
-		return
-
 	_apply_undo_redo_action(
 			"Change country money",
 			country,
@@ -142,12 +133,12 @@ func _on_money_changed(item: ItemInt) -> void:
 
 
 func _on_country_name_changed(item: ItemString) -> void:
-	item.value = country.country_name
+	_set_setting_no_signal(item, _on_name_changed, country.country_name)
 
 
 func _on_country_color_changed(item: ItemColor) -> void:
-	item.value = country.color
+	_set_setting_no_signal(item, _on_color_changed, country.color)
 
 
 func _on_country_money_changed(item: ItemInt) -> void:
-	item.value = country.money
+	_set_setting_no_signal(item, _on_money_changed, country.money)
