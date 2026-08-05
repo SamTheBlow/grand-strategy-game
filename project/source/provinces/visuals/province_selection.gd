@@ -31,15 +31,18 @@ var _selected_province_id: int = -1:
 		if _selected_province_id == value:
 			return
 
-		if _selected_province_id != -1:
-			province_deselected.emit(selected_province())
+		var old_value: Province = selected_province()
+		if old_value != null:
+			province_deselected.emit(old_value)
 
 		_selected_province_id = value
 
-		if _selected_province_id != -1:
-			province_selected.emit(selected_province())
+		var new_value: Province = selected_province()
+		if new_value != null:
+			province_selected.emit(new_value)
 
-		selected_province_changed.emit(selected_province())
+		if old_value != new_value:
+			selected_province_changed.emit(new_value)
 
 
 func _init(provinces := Provinces.new()) -> void:
