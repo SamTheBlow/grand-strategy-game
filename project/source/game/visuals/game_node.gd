@@ -316,7 +316,7 @@ func _on_province_select_attempted(
 		return
 
 	var selected_province: Province = (
-			world_visuals.province_selection.selected_province()
+			world_visuals.province_selection.selected_province
 	)
 	if selected_province == null:
 		return
@@ -343,7 +343,7 @@ func _on_province_select_attempted(
 
 func _on_component_ui_button_pressed(button_id: int) -> void:
 	var selected_province: Province = (
-			world_visuals.province_selection.selected_province()
+			world_visuals.province_selection.selected_province
 	)
 	if selected_province == null:
 		return

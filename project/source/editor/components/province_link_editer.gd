@@ -21,7 +21,7 @@ func _on_province_right_clicked(
 		province_visuals: ProvinceVisuals2D,
 		province_selection: ProvinceSelection
 ) -> void:
-	var selected_province: Province = province_selection.selected_province()
+	var selected_province: Province = province_selection.selected_province
 	if selected_province == null:
 		return
 

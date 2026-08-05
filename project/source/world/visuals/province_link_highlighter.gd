@@ -46,7 +46,7 @@ func setup(
 ## Highlights selected province's links.
 func refresh_highlights() -> void:
 	_clear_highlights()
-	_highlight_links(_province_selection.selected_province())
+	_highlight_links(_province_selection.selected_province)
 
 
 func _highlight_links(province: Province) -> void:

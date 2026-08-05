@@ -51,7 +51,7 @@ func _on_selected_province_changed(province: Province) -> void:
 
 
 func _on_province_interface_opened(province: Province) -> void:
-	_world_visuals.province_selection.select(province.id)
+	_world_visuals.province_selection.select(province)
 
 
 func _on_province_interface_closed() -> void:

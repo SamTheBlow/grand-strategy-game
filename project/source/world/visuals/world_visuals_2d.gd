@@ -7,9 +7,8 @@ var project: GameProject:
 		project = value
 		world = project.game.world
 		playing_country = PlayingCountry.new(project.game)
-		province_selection = (
-				ProvinceSelection.new(project.game.world.provinces)
-		)
+		province_selection = ProvinceSelection.new()
+		world.provinces.removed.connect(province_selection.deselect)
 		if is_node_ready():
 			_setup()
 

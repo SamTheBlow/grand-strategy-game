@@ -40,7 +40,7 @@ class ShowPlayingCountry extends ArrowBehavior:
 		_container = container
 
 		# Initialize
-		_update_visibility(_province_selection.selected_province())
+		_update_visibility(_province_selection.selected_province)
 		_update_country()
 
 		# Connect signals for automatic updates

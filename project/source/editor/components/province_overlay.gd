@@ -15,7 +15,7 @@ func _refresh() -> void:
 	# Remove existing overlay
 	NodeUtils.delete_all_children(self)
 
-	var selected_province: Province = _province_selection.selected_province()
+	var selected_province: Province = _province_selection.selected_province
 	if selected_province == null:
 		return
 
