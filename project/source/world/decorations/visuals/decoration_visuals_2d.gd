@@ -98,29 +98,18 @@ func _refresh_visuals() -> void:
 	_sprite.scale = world_decoration.scale
 	_sprite.modulate = world_decoration.color
 
-	_refresh_control_size()
-	_refresh_outline_size()
+	# Refresh input area
+	var sprite_rect: Rect2 = _sprite.get_rect()
+	_control.position = sprite_rect.position
+	_control.size = sprite_rect.size
+	_control.pivot_offset = 0.5 * sprite_rect.size
+	_control.rotation = _sprite.rotation
+	_control.scale = _sprite.scale
 
-
-## The axis-aligned size of the sprite, in this node's local coordinates.
-func _sprite_size() -> Vector2:
-	return _sprite.scale * (
-			Vector2(_sprite.texture.get_width(), _sprite.texture.get_height())
-	)
-
-
-## Makes the input area match the sprite's bounding box.
-func _refresh_control_size() -> void:
-	_control.size = _sprite_size()
-	_control.position = -0.5 * _control.size
-
-
-## Makes the outline match the sprite's bounding box.
-func _refresh_outline_size() -> void:
-	var half_size: Vector2 = 0.5 * _sprite_size()
-	_outline.polygon = PackedVector2Array([
-			Vector2(-half_size.x, -half_size.y),
-			Vector2(half_size.x, -half_size.y),
-			Vector2(half_size.x, half_size.y),
-			Vector2(-half_size.x, half_size.y),
+	# Refresh outline
+	_outline.polygon = _sprite.transform * PackedVector2Array([
+			sprite_rect.position,
+			Vector2(sprite_rect.end.x, sprite_rect.position.y),
+			sprite_rect.end,
+			Vector2(sprite_rect.position.x, sprite_rect.end.y),
 	])
