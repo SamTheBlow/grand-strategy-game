@@ -26,10 +26,6 @@ func _on_closed() -> void:
 		)
 
 
-func _on_back_button_pressed() -> void:
-	closed.emit()
-
-
 func _on_country_removed(country_removed: Country) -> void:
 	if country_removed == country:
 		closed.emit()

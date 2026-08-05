@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bs0hbgxgmptdv"]
 
-[ext_resource type="Script" uid="uid://dnh8iov6ynsy8" path="res://source/editor/interfaces/countries/country_notifications.gd" id="1_n3p6d"]
+[ext_resource type="Script" uid="uid://dnh8iov6ynsy8" path="res://source/editor/interfaces/countries/interface_country_notifications.gd" id="1_n3p6d"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_f7giw"]
 
 [node name="InterfaceCountryNotifications" type="Control" unique_id=603179913]
@@ -31,4 +31,4 @@ anchor_bottom = 0.85
 layout_mode = 2
 text = "(Not currently implemented)"
 
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="close"]

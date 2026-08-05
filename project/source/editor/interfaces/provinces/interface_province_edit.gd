@@ -63,10 +63,6 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 
-func _on_back_button_pressed() -> void:
-	closed.emit()
-
-
 func _on_province_removed(province_removed: Province) -> void:
 	if province_removed == province:
 		closed.emit()

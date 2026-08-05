@@ -97,10 +97,6 @@ func _duplicate() -> void:
 	)
 
 
-func _on_back_button_pressed() -> void:
-	closed.emit()
-
-
 func _on_player_removed(player_removed: GamePlayer) -> void:
 	if player_removed == game_player:
 		closed.emit()

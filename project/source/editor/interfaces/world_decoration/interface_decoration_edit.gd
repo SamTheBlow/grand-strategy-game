@@ -133,10 +133,6 @@ func _apply_preview(preview_rect: TextureRect) -> void:
 	world_decoration.apply_preview(preview_rect)
 
 
-func _on_back_button_pressed() -> void:
-	closed.emit()
-
-
 func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
 	if decoration_removed == world_decoration:
 		closed.emit()

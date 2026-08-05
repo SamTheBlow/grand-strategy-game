@@ -94,10 +94,6 @@ func _duplicate() -> void:
 	navigator.open_army_edit_interface(new_army, project, editor_settings)
 
 
-func _on_back_button_pressed() -> void:
-	closed.emit()
-
-
 func _on_army_removed(army_removed: Army) -> void:
 	if army_removed == army:
 		closed.emit()

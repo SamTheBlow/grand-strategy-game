@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bxnnpjildojmj"]
 
-[ext_resource type="Script" uid="uid://dspc3a2nfupua" path="res://source/editor/interfaces/countries/country_relationships.gd" id="1_tv7df"]
+[ext_resource type="Script" uid="uid://dspc3a2nfupua" path="res://source/editor/interfaces/countries/interface_country_relationships.gd" id="1_tv7df"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_7h4mg"]
 
 [node name="InterfaceCountryRelationships" type="Control" unique_id=906238810]
@@ -31,4 +31,4 @@ anchor_bottom = 0.85
 layout_mode = 2
 text = "(Not currently implemented)"
 
-[connection signal="pressed" from="BackButton" to="." method="_on_back_button_pressed"]
+[connection signal="pressed" from="BackButton" to="." method="close"]

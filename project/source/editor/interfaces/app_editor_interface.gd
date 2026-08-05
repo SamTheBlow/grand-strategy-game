@@ -47,6 +47,10 @@ func _unhandled_input(event: InputEvent) -> void:
 		_duplicate()
 
 
+func close() -> void:
+	closed.emit()
+
+
 func _update_editor_settings() -> void:
 	pass
 
