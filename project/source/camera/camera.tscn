@@ -15,9 +15,8 @@ world_margin = Vector2(0.25, 0.25)
 script = ExtResource("2_vnpnf")
 _camera = NodePath("..")
 
-[node name="CameraZoom" type="Node" parent="." unique_id=98703621 node_paths=PackedStringArray("_camera")]
+[node name="CameraZoom" type="Node" parent="." unique_id=98703621]
 script = ExtResource("3_c8o64")
-_camera = NodePath("..")
 default_zoom = 0.5
 
 [node name="CameraDragMeasurement" type="Node" parent="." unique_id=696578085 node_paths=PackedStringArray("_camera", "_camera_drag")]
@@ -28,6 +27,9 @@ _camera_drag = NodePath("../CameraDrag")
 [node name="Inertia" type="Node" parent="." unique_id=639525975]
 script = ExtResource("5_vnpnf")
 
+[connection signal="zoom_limits_changed" from="." to="CameraZoom" method="set_zoom_limits"]
 [connection signal="drag_ended" from="CameraDrag" to="Inertia" method="start"]
 [connection signal="drag_started" from="CameraDrag" to="Inertia" method="stop"]
+[connection signal="pan_processed" from="CameraZoom" to="." method="translate_not_zoomed"]
+[connection signal="zoom_changed" from="CameraZoom" to="." method="set_zoom_clamped"]
 [connection signal="velocity_processed" from="Inertia" to="." method="translate_zoomed"]
