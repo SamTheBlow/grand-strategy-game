@@ -8,7 +8,7 @@ var armies := Armies.new()
 ## Do not overwrite!
 var provinces := Provinces.new()
 
-var background_color: Color = BackgroundColor.default_clear_color():
+var background_color: Color = default_clear_color():
 	set(value):
 		if background_color == value:
 			return
@@ -33,3 +33,10 @@ func _init(game: Game) -> void:
 
 func limits() -> WorldLimits:
 	return _limits
+
+
+static func default_clear_color() -> Color:
+	return ProjectSettings.get_setting(
+			"rendering/environment/defaults/default_clear_color",
+			Color(0.3, 0.3, 0.3)
+	)

@@ -50,6 +50,14 @@ script = ExtResource("11_obqf8")
 unique_name_in_owner = true
 script = ExtResource("4_o61mm")
 
+[connection signal="world_loaded" from="." to="BackgroundColor" method="_on_world_loaded"]
+[connection signal="world_loaded" from="." to="ProvinceLinkHighlighter" method="_on_world_loaded"]
+[connection signal="world_loaded" from="." to="ProvinceInput" method="_on_world_loaded"]
 [connection signal="preview_arrow_created" from="AutoArrowInput" to="AutoArrows" method="_on_preview_arrow_created"]
 [connection signal="clicked" from="Background" to="ProvinceInput" method="_on_background_clicked"]
+[connection signal="province_clicked" from="Provinces" to="ProvinceInput" method="_on_province_clicked"]
+[connection signal="province_mouse_entered" from="Provinces" to="ProvinceInput" method="_on_mouse_entered"]
+[connection signal="province_mouse_exited" from="Provinces" to="ProvinceInput" method="_unset_hovered_province"]
 [connection signal="province_right_clicked" from="Provinces" to="AutoArrowInput" method="_on_province_right_clicked"]
+[connection signal="province_tree_exited" from="Provinces" to="ProvinceInput" method="_unset_hovered_province"]
+[connection signal="province_unhovered" from="ProvinceInput" to="ProvinceLinkHighlighter" method="refresh_highlights"]

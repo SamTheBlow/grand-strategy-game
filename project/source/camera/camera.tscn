@@ -5,6 +5,7 @@
 [ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="3_c8o64"]
 [ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="4_blwgd"]
 [ext_resource type="Script" uid="uid://yq87nftyhw8w" path="res://source/utils/2d/inertia.gd" id="5_vnpnf"]
+[ext_resource type="Script" uid="uid://bxtjgucdk37te" path="res://source/camera/world_limit_wiring.gd" id="6_wlw"]
 
 [node name="Camera" type="Camera2D" unique_id=1167812477]
 limit_enabled = false
@@ -27,9 +28,14 @@ _camera_drag = NodePath("../CameraDrag")
 [node name="Inertia" type="Node" parent="." unique_id=639525975]
 script = ExtResource("5_vnpnf")
 
-[connection signal="zoom_limits_changed" from="." to="CameraZoom" method="set_zoom_limits"]
+[node name="WorldLimitWiring" type="Node" parent="." unique_id=98703622]
+script = ExtResource("6_wlw")
+
 [connection signal="drag_ended" from="CameraDrag" to="Inertia" method="start"]
 [connection signal="drag_started" from="CameraDrag" to="Inertia" method="stop"]
 [connection signal="pan_processed" from="CameraZoom" to="." method="translate_not_zoomed"]
-[connection signal="zoom_changed" from="CameraZoom" to="." method="set_zoom_clamped"]
+[connection signal="zoom_changed" from="CameraZoom" to="." method="set_zoom"]
 [connection signal="velocity_processed" from="Inertia" to="." method="translate_zoomed"]
+[connection signal="camera_moved" from="WorldLimitWiring" to="." method="move_to"]
+[connection signal="limits_changed" from="WorldLimitWiring" to="." method="set_limits"]
+[connection signal="zoom_limits_changed" from="WorldLimitWiring" to="CameraZoom" method="set_zoom_limits"]

@@ -3,7 +3,7 @@ extends Node
 ## Highlights the links of currently selected [Province].
 
 ## This node has no effect when disabled.
-var is_enabled: bool = false:
+var is_enabled: bool = true:
 	set(value):
 		if is_enabled == value:
 			return
@@ -15,32 +15,26 @@ var _armies: Armies
 var _provinces: Provinces
 var _playing_country: PlayingCountry
 var _armies_in_each_province: ArmiesInEachProvince
-var _province_selection: ProvinceSelection
+
+var _province_selection: ProvinceSelection:
+	set(value):
+		if _province_selection != null:
+			_province_selection.province_selected.disconnect(_highlight_links)
+			_province_selection.province_deselected.disconnect(
+					_clear_highlights
+			)
+
+		_province_selection = value
+
+		_province_selection.province_selected.connect(_highlight_links)
+		_province_selection.province_deselected.connect(
+				_clear_highlights.unbind(1)
+		)
+
 
 var _highlighted_province_link_ids: Array[int] = []
 
 @onready var _province_container := %Provinces as ProvinceVisualsContainer2D
-
-
-func setup(
-		armies: Armies,
-		provinces: Provinces,
-		playing_country: PlayingCountry,
-		armies_in_each_province: ArmiesInEachProvince,
-		province_selection: ProvinceSelection
-) -> void:
-	_armies = armies
-	_provinces = provinces
-	_playing_country = playing_country
-	_armies_in_each_province = armies_in_each_province
-	_province_selection = province_selection
-	_province_selection.province_selected.connect(_highlight_links)
-	_province_selection.province_deselected.connect(_clear_highlights.unbind(1))
-
-	if is_node_ready():
-		refresh_highlights()
-	else:
-		ready.connect(refresh_highlights, ConnectFlags.CONNECT_ONE_SHOT)
 
 
 ## Highlights selected province's links.
@@ -93,3 +87,16 @@ func _clear_highlights() -> void:
 			province_visuals.remove_highlight()
 
 	_highlighted_province_link_ids.clear()
+
+
+func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
+	_armies = world_visuals.world.armies
+	_provinces = world_visuals.world.provinces
+	_playing_country = world_visuals.playing_country
+	_armies_in_each_province = world_visuals.world.armies_in_each_province
+	_province_selection = world_visuals.province_selection
+
+	if is_node_ready():
+		refresh_highlights()
+	else:
+		ready.connect(refresh_highlights, ConnectFlags.CONNECT_ONE_SHOT)

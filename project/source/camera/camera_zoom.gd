@@ -6,7 +6,7 @@ extends Node
 ## https://www.youtube.com/watch?v=gpvLqLggJuk
 
 ## Emits the zoom to apply whenever its value changes.
-signal zoom_changed(zoom: float)
+signal zoom_changed(zoom: Vector2)
 
 ## Emits at a fast rate with how far to pan the camera, in world units.
 signal pan_processed(offset: Vector2)
@@ -35,7 +35,7 @@ var _current_zoom: float = default_zoom:
 		_current_zoom = new_value
 		set_physics_process(not is_equal_approx(_current_zoom, _target_zoom))
 		if not is_equal_approx(old_value, new_value):
-			zoom_changed.emit(_current_zoom)
+			zoom_changed.emit(Vector2.ONE * _current_zoom)
 
 ## How far the camera still needs to pan, in world units.
 var _movement: Vector2 = Vector2.ZERO

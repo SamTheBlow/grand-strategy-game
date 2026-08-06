@@ -4,7 +4,7 @@ extends Node
 
 ## The country to give control of provinces to.
 ## This node has no effect if this is null.
-var selected_country: Country = null
+var _selected_country: Country = null
 
 var _undo_redo := UndoRedo.new()
 
@@ -13,13 +13,18 @@ func _on_history_initialized(undo_redo: UndoRedo) -> void:
 	_undo_redo = undo_redo
 
 
+## Sets it to no country if input is empty or null.
+func set_selected_country(country: Country = null) -> void:
+	_selected_country = country
+
+
 func apply_to_province(province: Province) -> void:
-	if selected_country == null:
+	if _selected_country == null:
 		return
 
 	var country_before: Country = province.owner_country
 	var country_after: Country = (
-			null if country_before == selected_country else selected_country
+			null if country_before == _selected_country else _selected_country
 	)
 
 	_undo_redo.create_action("Change province owner")

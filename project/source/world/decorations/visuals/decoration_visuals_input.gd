@@ -4,7 +4,14 @@ extends Node
 ## - Keeps track of which decoration is currently selected
 ##   and which decoration is currently hovered.
 ## - Adds or removes highlight on decoration visuals accordingly.
-## - Opens/closes editor interface when a decoration is selected or deselected.
+## - Emits a signal when a decoration is selected or deselected.
+
+signal selected(
+		decoration: WorldDecoration,
+		project: GameProject,
+		editor_settings: EditorSettings
+)
+signal deselected()
 
 ## This is needed to open the editor interface
 var editor_settings: AppEditorSettings
@@ -18,35 +25,26 @@ var _hovered_decoration: WorldDecoration = null
 ## This is used to apply highlights
 var _decoration_container: DecorationVisualsContainer2D
 
-## This is used to open/close editor interface
-@onready var _editing_interface := %EditingInterface as EditingInterface
-
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	# Reset internal state
 	_selected_decoration = null
 	_hovered_decoration = null
 
-	# Enable input and connect signals
-	_decoration_container = (
-			world_visuals.get_node("Decorations")
-			as DecorationVisualsContainer2D
-	)
-	for decoration_visuals in _decoration_container.all_visuals():
-		_setup_visuals(decoration_visuals)
-	_decoration_container.decoration_visuals_created.connect(_setup_visuals)
-
 	# Needed for opening editor interface
 	_project = world_visuals.project
 
-	# Connect signal for deselecting when background clicked
-	var background := world_visuals.get_node("Background") as WorldBackground
-	background.clicked.connect(set_selected_decoration.bind(null))
+	# Needed to apply highlights
+	# TODO eww
+	_decoration_container = (
+			world_visuals.get_node("%Decorations")
+			as DecorationVisualsContainer2D
+	)
 
 
-## Deselects the decoration if input is null.
+## Deselects the decoration if input is empty or null.
 ## No effect if the decoration is already selected.
-func set_selected_decoration(decoration: WorldDecoration) -> void:
+func set_selected_decoration(decoration: WorldDecoration = null) -> void:
 	if decoration == _selected_decoration:
 		return
 
@@ -60,21 +58,19 @@ func set_selected_decoration(decoration: WorldDecoration) -> void:
 			else:
 				visuals.remove_highlight()
 		_selected_decoration = null
-		_editing_interface.close_interface()
+		deselected.emit()
 
 	if decoration == null:
 		return
 
 	_selected_decoration = decoration
 	_decoration_container.visuals_of(decoration).highlight_selected()
-	_editing_interface.open_decoration_edit_interface(
-			decoration, _project, editor_settings
-	)
+	selected.emit(decoration, _project, editor_settings)
 
 
-## Sets it to none if input is null.
+## Sets it to none if input is empty or null.
 ## No effect if the decoration is already the hovered one.
-func set_hovered_decoration(decoration: WorldDecoration) -> void:
+func set_hovered_decoration(decoration: WorldDecoration = null) -> void:
 	if decoration == _hovered_decoration:
 		return
 
@@ -93,14 +89,6 @@ func set_hovered_decoration(decoration: WorldDecoration) -> void:
 	_hovered_decoration = decoration
 	if decoration != _selected_decoration:
 		_decoration_container.visuals_of(decoration).highlight()
-
-
-func _on_interface_closed() -> void:
-	set_selected_decoration(null)
-
-
-func _on_item_unhovered() -> void:
-	set_hovered_decoration(null)
 
 
 func _setup_visuals(decoration_visuals: DecorationVisuals2D) -> void:

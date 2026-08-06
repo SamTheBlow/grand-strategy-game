@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
-[ext_resource type="Script" uid="uid://banactv2tgqrw" path="res://source/editor/components/editor_world_setup.gd" id="4_l7l2i"]
+[ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="4_camera"]
+[ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_world_visuals"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
 [ext_resource type="Script" uid="uid://8rkwn2f7k48f" path="res://source/editor/components/country_ownership_giver.gd" id="7_nha6u"]
 [ext_resource type="PackedScene" uid="uid://0uiaabpgiqs" path="res://source/editor/interfaces/editing_interface.tscn" id="7_um8he"]
@@ -56,19 +57,19 @@ _popup_container = NodePath("../UILayer/PopupContainer")
 [node name="WorldLayer" type="CanvasLayer" parent="." unique_id=2026811626]
 follow_viewport_enabled = true
 
-[node name="WorldSetup" type="Node" parent="WorldLayer" unique_id=75709932 node_paths=PackedStringArray("_world_container", "_camera_container")]
-unique_name_in_owner = true
-script = ExtResource("4_l7l2i")
-_world_container = NodePath("../WorldContainer")
-_camera_container = NodePath("../../CameraContainer")
-
 [node name="WorldContainer" type="Node2D" parent="WorldLayer" unique_id=1427898406]
+
+[node name="WorldVisuals2D" parent="WorldLayer/WorldContainer" unique_id=1427898407 instance=ExtResource("4_world_visuals")]
+unique_name_in_owner = true
 
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
 unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
 
 [node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
+
+[node name="Camera" parent="CameraContainer" unique_id=1466582700 instance=ExtResource("4_camera")]
+unique_name_in_owner = true
 
 [node name="WorldOverlayLayer" type="CanvasLayer" parent="." unique_id=1559674596]
 layer = 2
@@ -228,28 +229,46 @@ use_native_dialog = true
 [connection signal="initialized" from="History" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
 [connection signal="initialized" from="History" to="UILayer/EditingInterface" method="_on_history_initialized"]
 [connection signal="version_changed" from="History" to="." method="_update_window_title"]
-[connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldBridge" method="_on_world_loaded"]
-[connection signal="loaded" from="WorldLayer/WorldSetup" to="DecorationInput" method="_on_world_loaded"]
-[connection signal="loaded" from="WorldLayer/WorldSetup" to="ArmyInput" method="_on_world_loaded"]
-[connection signal="loaded" from="WorldLayer/WorldSetup" to="ProvinceLinkEditer" method="_on_world_loaded"]
-[connection signal="loaded" from="WorldLayer/WorldSetup" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
+[connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
+[connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
+[connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]
+[connection signal="selected" from="ArmyInput" to="UILayer/EditingInterface" method="open_army_edit_interface"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldBridge" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="DecorationInput" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ArmyInput" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ProvinceLinkEditer" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="CameraContainer/Camera/CameraZoom" method="reset" unbinds=1]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="CameraContainer/Camera/Inertia" method="stop" unbinds=1]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="CameraContainer/Camera/WorldLimitWiring" method="_on_world_loaded"]
+[connection signal="army_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup" to="ArmyInput" method="_setup_visuals"]
+[connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="DecorationInput" method="set_selected_decoration"]
+[connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmyInput" method="set_selected_army"]
+[connection signal="province_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="CountryOwnershipGiver" method="apply_to_province"]
+[connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
+[connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
-[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="ArmyInput" method="_on_interface_closed"]
+[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="ArmyInput" method="set_selected_army"]
 [connection signal="army_interface_opened" from="UILayer/EditingInterface" to="ArmyInput" method="set_selected_army"]
 [connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="ArmyInput" method="set_hovered_army"]
-[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="ArmyInput" method="_on_item_unhovered"]
+[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="ArmyInput" method="set_hovered_army"]
 [connection signal="country_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_closed"]
+[connection signal="country_interface_closed" from="UILayer/EditingInterface" to="CountryOwnershipGiver" method="set_selected_country"]
 [connection signal="country_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_opened"]
+[connection signal="country_interface_opened" from="UILayer/EditingInterface" to="CountryOwnershipGiver" method="set_selected_country"]
 [connection signal="country_select_pressed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_select_pressed"]
-[connection signal="decoration_interface_closed" from="UILayer/EditingInterface" to="DecorationInput" method="_on_interface_closed"]
+[connection signal="decoration_interface_closed" from="UILayer/EditingInterface" to="DecorationInput" method="set_selected_decoration"]
 [connection signal="decoration_interface_opened" from="UILayer/EditingInterface" to="DecorationInput" method="set_selected_decoration"]
 [connection signal="decoration_list_item_hovered" from="UILayer/EditingInterface" to="DecorationInput" method="set_hovered_decoration"]
-[connection signal="decoration_list_item_unhovered" from="UILayer/EditingInterface" to="DecorationInput" method="_on_item_unhovered"]
+[connection signal="decoration_list_item_unhovered" from="UILayer/EditingInterface" to="DecorationInput" method="set_hovered_decoration"]
 [connection signal="province_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_closed"]
 [connection signal="province_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_opened"]
-[connection signal="province_list_item_hovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_list_item_hovered"]
-[connection signal="province_list_item_unhovered" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_list_item_unhovered"]
+[connection signal="province_list_item_hovered" from="UILayer/EditingInterface" to="WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
+[connection signal="province_list_item_unhovered" from="UILayer/EditingInterface" to="WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
 [connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
 [connection signal="file_selected" from="SaveDialog" to="ProjectIO" method="_on_save_dialog_file_selected"]
+
+[editable path="WorldLayer/WorldContainer/WorldVisuals2D"]
+[editable path="CameraContainer/Camera"]

@@ -12,21 +12,12 @@ signal province_select_attempted(
 )
 
 ## Emitted when a province's hover outline is removed.
-signal province_unhovered(province: Province)
+signal province_unhovered()
 
 var _province_selection: ProvinceSelection = null
 var _hovered_province: Province = null
 
 @onready var _province_container := %Provinces as ProvinceVisualsContainer2D
-
-
-func setup(province_selection: ProvinceSelection) -> void:
-	_province_selection = province_selection
-
-	if is_node_ready():
-		_refresh()
-	else:
-		ready.connect(_refresh, ConnectFlags.CONNECT_ONE_SHOT)
 
 
 ## Selects given province, or deselects if input is null.
@@ -37,9 +28,9 @@ func set_selected_province(province: Province) -> void:
 	_province_selection.selected_province = province
 
 
-## Sets it to none if input is null.
+## Sets it to none if input is empty or null.
 ## No effect if province is already the hovered one.
-func set_hovered_province(province: Province) -> void:
+func set_hovered_province(province: Province = null) -> void:
 	if _province_selection == null:
 		return
 	if province == _hovered_province:
@@ -57,7 +48,7 @@ func set_hovered_province(province: Province) -> void:
 		)
 		if previous_visuals != null:
 			previous_visuals.remove_highlight()
-			province_unhovered.emit(previous_province)
+			province_unhovered.emit()
 
 	if province == null:
 		return
@@ -70,12 +61,8 @@ func set_hovered_province(province: Province) -> void:
 			visuals.highlight()
 
 
-func _refresh() -> void:
-	# Connect signals of province visuals
-	_province_container.province_clicked.connect(_on_province_clicked)
-	_province_container.province_mouse_entered.connect(_on_mouse_entered)
-	_province_container.province_mouse_exited.connect(_unset_hovered_province)
-	_province_container.province_tree_exited.connect(_unset_hovered_province)
+func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
+	_province_selection = world_visuals.province_selection
 
 	# Highlight the currently selected province
 	var selected_province: Province = _province_selection.selected_province
@@ -103,7 +90,7 @@ func _unset_hovered_province(province_visuals: ProvinceVisuals2D) -> void:
 
 	if province_visuals.province != _province_selection.selected_province:
 		province_visuals.remove_highlight()
-		province_unhovered.emit(province_visuals.province)
+		province_unhovered.emit()
 
 
 func _on_background_clicked() -> void:

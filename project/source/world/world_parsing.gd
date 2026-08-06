@@ -39,7 +39,7 @@ static func load_from_raw_data(
 	# Background color
 	game.world.background_color = ParseUtils.color_from_raw(
 			raw_dict.get(_BACKGROUND_COLOR_KEY),
-			BackgroundColor.default_clear_color()
+			GameWorld.default_clear_color()
 	)
 
 	# Decorations
@@ -77,7 +77,7 @@ static func to_raw_dict(world: GameWorld) -> Dictionary:
 		output.merge({ _LIMITS_KEY: limits_data })
 
 	# Background color
-	if world.background_color != BackgroundColor.default_clear_color():
+	if world.background_color != GameWorld.default_clear_color():
 		output.merge({
 			_BACKGROUND_COLOR_KEY: world.background_color.to_html(false)
 		})

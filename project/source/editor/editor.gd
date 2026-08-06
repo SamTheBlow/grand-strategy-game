@@ -13,7 +13,7 @@ var _current_project := GameProject.new()
 @onready var _project_io := %ProjectIO as EditorProjectIO
 @onready var _history := %History as EditorHistory
 
-@onready var _world_setup := %WorldSetup as EditorWorldSetup
+@onready var _world_visuals := %WorldVisuals2D as WorldVisuals2D
 @onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _decoration_input := %DecorationInput as DecorationVisualsInput
@@ -24,10 +24,15 @@ func _ready() -> void:
 	_menus.quit_requested.connect(exited.emit)
 
 	_world_bridge.editor_settings = editor_settings
-	_world_setup.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
 	_decoration_input.editor_settings = editor_settings
 	_army_input.editor_settings = editor_settings
+
+	# Show/hide decorations whenever the setting changes.
+	_refresh_decoration_visibility()
+	editor_settings.show_decorations.value_changed.connect(
+			_refresh_decoration_visibility.unbind(1)
+	)
 
 	_setup_project()
 
@@ -41,13 +46,9 @@ func _exit_tree() -> void:
 
 func _setup_project() -> void:
 	_history.reset()
-
-	_world_setup.setup_world(_current_project)
-	_world_limits_rect.world_limits = _current_project.game.world.limits()
-
+	_world_visuals.project = _current_project
 	_menus.current_project = _current_project
 	_project_io.current_project = _current_project
-
 	_update_window_title()
 
 
@@ -57,6 +58,12 @@ func _update_window_title() -> void:
 			dirty_indicator
 			+ _current_project.metadata.project_name_or_default() + " - "
 			+ ProjectSettings.get_setting("application/config/name", "")
+	)
+
+
+func _refresh_decoration_visibility() -> void:
+	_world_visuals.set_decoration_visiblity(
+			editor_settings.show_decorations.value
 	)
 
 

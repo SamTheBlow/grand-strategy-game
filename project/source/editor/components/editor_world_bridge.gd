@@ -7,7 +7,6 @@ const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
 var editor_settings: AppEditorSettings
 
-@onready var _country_giver := %CountryOwnershipGiver as CountryOwnershipGiver
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 
@@ -16,15 +15,8 @@ var _world_visuals: WorldVisuals2D = null
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	_world_visuals = world_visuals
-
-	# Connect signals
 	_world_visuals.province_selection.selected_province_changed.connect(
 			_on_selected_province_changed
-	)
-
-	# Setup the country ownership tool
-	_world_visuals.province_visuals.province_clicked.connect(
-			_country_giver.apply_to_province
 	)
 
 
@@ -60,25 +52,12 @@ func _on_country_select_pressed(item_country: ItemCountry) -> void:
 
 
 func _on_country_interface_opened(country: Country) -> void:
-	# While editing a country, clicking a province changes its ownership
-	_country_giver.selected_country = country
-
 	_world_visuals.province_selection.is_disabled = true
 	_world_visuals.province_link_highlighter.is_enabled = false
 	_world_visuals.show_arrows_of_country(country)
 
 
 func _on_country_interface_closed() -> void:
-	_country_giver.selected_country = null
-
 	_world_visuals.province_selection.is_disabled = false
 	_world_visuals.province_link_highlighter.is_enabled = true
 	_world_visuals.show_game_arrows()
-
-
-func _on_province_list_item_hovered(province: Province) -> void:
-	_world_visuals.province_input.set_hovered_province(province)
-
-
-func _on_province_list_item_unhovered() -> void:
-	_world_visuals.province_input.set_hovered_province(null)

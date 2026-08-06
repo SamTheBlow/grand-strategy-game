@@ -1,6 +1,9 @@
 class_name WorldVisuals2D
 extends Node2D
 
+## Emits this node when it's finished setting up for a new [GameProject].
+signal world_loaded(this: WorldVisuals2D)
+
 ## Setting this sets everything else automatically.
 var project: GameProject:
 	set(value):
@@ -11,6 +14,8 @@ var project: GameProject:
 		world.provinces.removed.connect(province_selection.deselect)
 		if is_node_ready():
 			_setup()
+		else:
+			ready.connect(_setup, ConnectFlags.CONNECT_ONE_SHOT)
 
 ## Automatically initialized when providing the [GameProject].
 var world: GameWorld
@@ -29,7 +34,6 @@ var _arrow_behavior: ArrowBehavior:
 		_arrow_behavior = value
 		_arrow_behavior.start(_auto_arrow_input, _auto_arrow_container)
 
-@onready var _background_color := %BackgroundColor as BackgroundColor
 @onready var province_link_highlighter := (
 		%ProvinceLinkHighlighter as ProvinceLinkHighlighter
 )
@@ -42,9 +46,8 @@ var _arrow_behavior: ArrowBehavior:
 @onready var _auto_arrow_container := %AutoArrows as AutoArrowContainer
 
 
-func _ready() -> void:
-	if project != null:
-		_setup()
+func set_project(new_project: GameProject) -> void:
+	project = new_project
 
 
 ## Shows or hides the decorations.
@@ -71,32 +74,15 @@ func show_arrows_of_country(country: Country) -> void:
 
 
 func _setup() -> void:
-	# We need to setup the provinces first
+	# We need to setup the visuals before emitting world_loaded
 	province_visuals.setup(world.provinces)
-
-	province_input.setup(province_selection)
-	province_input.province_unhovered.connect(
-			province_link_highlighter.refresh_highlights.unbind(1)
-	)
-
-	_background_color.world = world
-
-	province_link_highlighter.setup(
-			world.armies,
-			world.provinces,
-			playing_country,
-			world.armies_in_each_province,
-			province_selection
-	)
-	province_link_highlighter.is_enabled = true
-
+	_decorations_node.setup(world.decorations)
 	_army_visuals_setup.setup(
 			world.armies, playing_country, world.armies_in_each_province
 	)
 
 	_auto_arrow_input.game = project.game
-
-	_decorations_node.setup(world.decorations)
-
 	_auto_arrow_container.setup(project.game.countries)
 	show_game_arrows()
+
+	world_loaded.emit(self)

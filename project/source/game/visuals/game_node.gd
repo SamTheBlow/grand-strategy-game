@@ -65,7 +65,6 @@ var _player_assignment: PlayerAssignment
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
-@onready var _camera := %Camera as CustomCamera2D
 @onready var _ui_layer := %UILayer as CanvasLayer
 @onready var _component_ui_container := %ComponentUI as ComponentUIContainer
 @onready var _action_input := %ActionInput as ActionInput
@@ -83,15 +82,6 @@ func _ready() -> void:
 	_action_input.game = game
 
 	world_visuals.project = project
-
-	# Connect the veto signal so that clicking a province can
-	# instead open the army movement popup (when applicable).
-	world_visuals.province_input.province_select_attempted.connect(
-			_on_province_select_attempted
-	)
-
-	_camera.world_limits = project.game.world.limits()
-	_camera.move_to_world_center()
 
 	_component_ui_container.setup(
 			game,

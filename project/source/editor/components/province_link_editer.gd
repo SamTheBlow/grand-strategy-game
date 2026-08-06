@@ -3,6 +3,7 @@ extends Node
 ## Adds/removes a right clicked province from the selected province's links.
 ## Clears selected province's links when double right clicked.
 
+var _province_selection: ProvinceSelection
 var _undo_redo: UndoRedo
 
 
@@ -11,17 +12,13 @@ func _on_history_initialized(undo_redo: UndoRedo) -> void:
 
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
-	world_visuals.province_visuals.province_right_clicked.connect(
-			_on_province_right_clicked.bind(world_visuals.province_selection)
-	)
+	_province_selection = world_visuals.province_selection
 
 
 func _on_province_right_clicked(
-		is_double_click: bool,
-		province_visuals: ProvinceVisuals2D,
-		province_selection: ProvinceSelection
+		is_double_click: bool, province_visuals: ProvinceVisuals2D
 ) -> void:
-	var selected_province: Province = province_selection.selected_province
+	var selected_province: Province = _province_selection.selected_province
 	if selected_province == null:
 		return
 
