@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://kwgfyilqkc06" path="res://source/camera/camera_drag.gd" id="2_vnpnf"]
 [ext_resource type="Script" uid="uid://dunes7rkah8ow" path="res://source/camera/camera_zoom.gd" id="3_c8o64"]
 [ext_resource type="Script" uid="uid://hwk7xwh3peae" path="res://source/camera/camera_drag_measurement.gd" id="4_blwgd"]
-[ext_resource type="Script" uid="uid://p5wke4k284ki" path="res://source/camera/camera_inertia.gd" id="5_vnpnf"]
+[ext_resource type="Script" uid="uid://yq87nftyhw8w" path="res://source/utils/2d/inertia.gd" id="5_vnpnf"]
 
 [node name="Camera" type="Camera2D" unique_id=1167812477]
 limit_enabled = false
@@ -25,9 +25,9 @@ script = ExtResource("4_blwgd")
 _camera = NodePath("..")
 _camera_drag = NodePath("../CameraDrag")
 
-[node name="Inertia" type="Node" parent="." unique_id=639525975 node_paths=PackedStringArray("_camera")]
+[node name="Inertia" type="Node" parent="." unique_id=639525975]
 script = ExtResource("5_vnpnf")
-_camera = NodePath("..")
 
-[connection signal="drag_ended" from="CameraDrag" to="Inertia" method="_on_camera_drag_ended"]
-[connection signal="drag_started" from="CameraDrag" to="Inertia" method="_on_camera_drag_started"]
+[connection signal="drag_ended" from="CameraDrag" to="Inertia" method="start"]
+[connection signal="drag_started" from="CameraDrag" to="Inertia" method="stop"]
+[connection signal="velocity_processed" from="Inertia" to="." method="translate_zoomed"]

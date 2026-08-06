@@ -40,6 +40,13 @@ func move_to_world_center() -> void:
 	move_to(world_limits.center())
 
 
+## Translates this node by the given offset in local coordinates,
+## with the camera's zoom taken into account.
+func translate_zoomed(position_offset: Vector2) -> void:
+	position += position_offset / zoom
+	_reposition_in_bounds()
+
+
 ## Returns the given position contained within the camera limits.
 ## The camera must be in the scene tree for this function to work.
 func position_in_bounds(input_position: Vector2) -> Vector2:

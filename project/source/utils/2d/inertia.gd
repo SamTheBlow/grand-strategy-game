@@ -1,12 +1,22 @@
-class_name CameraInertia
+class_name Inertia
 extends Node
+## Tracks mouse motion and provides a decaying velocity.
+##
+## Emits [signal velocity_processed] at a fast rate with the current velocity.
+## Connect that signal to whatever node needs it and apply the velocity there.
+##
+## Use [method start] to generate velocity and [method stop] to reset velocity.
 
-@export var _camera: CustomCamera2D
+## Emits at a fast rate, only when the velocity is non-zero.
+signal velocity_processed(velocity: Vector2)
 
-## Set this to false if you don't want any inertia.
+## The number of mouse positions to keep in memory.
+const _NUMBER_OF_MOUSE_POSITIONS: int = 60
+
+## If false, velocity is always zero.
 @export var is_enabled: bool = true
 
-## Determines how quickly the inertia decays.
+## Determines how quickly the velocity decays.
 ## A value of 0 means it stops instantly.
 ## A value of 1 means it doesn't decay at all.
 @export var decay_rate: float = 0.9983
@@ -14,10 +24,9 @@ extends Node
 var _velocity := Vector2.ZERO
 
 # Keeps track of where the mouse has been going
-# so that we can calculate a weighted average for smoother inertia
-var _previous_mouse_positions: Array[Vector2] = []
-var _previous_mouse_timestamps: Array[int] = []
-var _number_of_positions: int = 60
+# so that we can calculate a weighted average for smoother inertia.
+var _previous_mouse_positions: PackedVector2Array = []
+var _previous_mouse_timestamps: PackedInt64Array = []
 
 
 func _process(_delta: float) -> void:
@@ -25,18 +34,28 @@ func _process(_delta: float) -> void:
 	# Get rid of older ones to save memory
 	_previous_mouse_positions.append(get_viewport().get_mouse_position())
 	_previous_mouse_timestamps.append(Engine.get_process_frames())
-	while _previous_mouse_positions.size() > _number_of_positions:
-		_previous_mouse_positions.pop_front()
-		_previous_mouse_timestamps.pop_front()
+	while _previous_mouse_positions.size() > _NUMBER_OF_MOUSE_POSITIONS:
+		_previous_mouse_positions.remove_at(0)
+		_previous_mouse_timestamps.remove_at(0)
 
 	if not is_enabled or _velocity.is_zero_approx():
 		_velocity = Vector2.ZERO
 
 	if _velocity != Vector2.ZERO:
-		# Move camera
-		_camera.move_to(_camera.position + _velocity / _camera.zoom)
+		# Apply velocity
+		velocity_processed.emit(_velocity)
 		# Reduce velocity
 		_velocity *= decay_rate
+
+
+## Immediately sets velocity depending on recent mouse motion.
+func start() -> void:
+	_velocity = -_mouse_motion()
+
+
+## Immediately sets velocity to zero.
+func stop() -> void:
+	_velocity = Vector2.ZERO
 
 
 # Example:
@@ -45,10 +64,10 @@ func _process(_delta: float) -> void:
 # Then the total_position_delta is (3,8)+(1,4)+(0,1)=(4,12),
 # the total_time_delta is 3+2+1=6, and so the output is (0.67, 2).
 #
-## Returns the weighted average of the previous mouse positions
+## Returns the weighted average of the previous mouse positions.
 func _mouse_motion() -> Vector2:
 	# Edge case where we haven't sampled enough positions yet
-	if _previous_mouse_positions.size() < _number_of_positions:
+	if _previous_mouse_positions.size() < _NUMBER_OF_MOUSE_POSITIONS:
 		return Vector2.ZERO
 
 	var current_mouse_position: Vector2 = get_viewport().get_mouse_position()
@@ -71,13 +90,3 @@ func _mouse_motion() -> Vector2:
 		return Vector2.ZERO
 
 	return total_position_delta / total_time_delta
-
-
-# Disables inertia the moment camera drag begins
-func _on_camera_drag_started() -> void:
-	_velocity = Vector2.ZERO
-
-
-# Enables inertia the moment camera drag ends
-func _on_camera_drag_ended() -> void:
-	_velocity = -_mouse_motion()
