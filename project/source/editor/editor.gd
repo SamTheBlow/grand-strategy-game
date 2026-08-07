@@ -7,7 +7,6 @@ signal exited()
 var editor_settings := AppEditorSettings.new()
 
 @onready var _menus := %Menus as EditorMenus
-@onready var _project_io := %ProjectIO as EditorProjectIO
 @onready var _undo_redo_node := %UndoRedo as UndoRedoNode
 @onready var _project_node := %ProjectNode as ProjectNode
 
@@ -32,10 +31,8 @@ func _ready() -> void:
 
 
 func _setup_project(project: GameProject) -> void:
-	_world_visuals.project = project
-
 	_project_node.set_project(project)
-	_project_io.current_project = project
+	_world_visuals.set_project(project)
 	_editing_interface.project = project
 
 
