@@ -238,6 +238,7 @@ use_native_dialog = true
 [connection signal="project_changed" from="ProjectNode" to="WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]
 [connection signal="project_changed" from="ProjectNode" to="UILayer/EditingInterface" method="set_project"]
 [connection signal="project_changing" from="ProjectNode" to="UndoRedo" method="reset"]
+[connection signal="project_changing" from="ProjectNode" to="WorldLayer/WorldContainer/WorldVisuals2D" method="clear"]
 [connection signal="project_changing" from="ProjectNode" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
 [connection signal="project_opened" from="ProjectOpener" to="ProjectNode" method="set_project"]

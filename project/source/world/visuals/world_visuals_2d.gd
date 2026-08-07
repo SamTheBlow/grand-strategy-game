@@ -8,9 +8,15 @@ signal world_loaded(this: WorldVisuals2D)
 var project: GameProject:
 	set(value):
 		project = value
+		province_selection = ProvinceSelection.new()
+
+		if project == null:
+			world = null
+			playing_country = null
+			return
+
 		world = project.game.world
 		playing_country = PlayingCountry.new(project.game)
-		province_selection = ProvinceSelection.new()
 		world.provinces.removed.connect(province_selection.deselect)
 		if is_node_ready():
 			_setup()
@@ -24,7 +30,7 @@ var world: GameWorld
 var playing_country: PlayingCountry
 
 ## Automatically initialized when providing the [GameProject].
-var province_selection: ProvinceSelection
+var province_selection := ProvinceSelection.new()
 
 ## Determines which country's auto-arrows are currently shown.
 var _arrow_behavior: ArrowBehavior:
@@ -32,7 +38,8 @@ var _arrow_behavior: ArrowBehavior:
 		if _arrow_behavior != null:
 			_arrow_behavior.stop()
 		_arrow_behavior = value
-		_arrow_behavior.start(_auto_arrow_input, _auto_arrow_container)
+		if _arrow_behavior != null:
+			_arrow_behavior.start(_auto_arrow_input, _auto_arrow_container)
 
 @onready var province_link_highlighter := (
 		%ProvinceLinkHighlighter as ProvinceLinkHighlighter
@@ -48,6 +55,15 @@ var _arrow_behavior: ArrowBehavior:
 
 func set_project(new_project: GameProject) -> void:
 	project = new_project
+
+
+func clear() -> void:
+	_army_visuals_setup.clear()
+	province_visuals.clear()
+	_decorations_node.clear()
+
+	project = null
+	_arrow_behavior = null
 
 
 ## Shows or hides the decorations.

@@ -19,14 +19,31 @@ var _province_map: Dictionary[int, ProvinceVisuals2D] = {}
 
 
 func setup(provinces: Provinces) -> void:
-	_provinces = provinces
-	_provinces.added.connect(_add_province)
-	_provinces.removed.connect(_remove_province)
+	if not is_node_ready():
+		ready.connect(setup.bind(provinces), ConnectFlags.CONNECT_ONE_SHOT)
+		return
 
-	if is_node_ready():
-		_refresh()
-	else:
-		ready.connect(_refresh, ConnectFlags.CONNECT_ONE_SHOT)
+	if _provinces != null:
+		_provinces.added.disconnect(_add_province)
+		_provinces.removed.disconnect(_remove_province)
+
+		# Remove all
+		NodeUtils.remove_all_children(self)
+		_province_map.clear()
+
+	_provinces = provinces
+
+	if _provinces != null:
+		# Add all
+		for province in _provinces.list():
+			_add_province(province)
+
+		_provinces.added.connect(_add_province)
+		_provinces.removed.connect(_remove_province)
+
+
+func clear() -> void:
+	setup(null)
 
 
 ## Returns null if given province doesn't have visuals.
@@ -41,18 +58,7 @@ func remove_all_highlights() -> void:
 		_province_map[province_id].remove_highlight()
 
 
-func _refresh() -> void:
-	NodeUtils.remove_all_children(self)
-	_province_map.clear()
-
-	for province in _provinces.list():
-		_add_province(province)
-
-
 func _add_province(province: Province) -> void:
-	if not is_node_ready():
-		return
-
 	var visuals := _PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
 	visuals.province = province
 	visuals.clicked.connect(province_clicked.emit.bind(visuals.province))
@@ -66,8 +72,5 @@ func _add_province(province: Province) -> void:
 
 
 func _remove_province(province: Province) -> void:
-	if not is_node_ready():
-		return
-
 	NodeUtils.delete_node(_province_map[province.id])
 	_province_map.erase(province.id)

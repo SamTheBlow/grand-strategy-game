@@ -14,27 +14,31 @@ var _map: Dictionary[WorldDecoration, DecorationVisuals2D] = {}
 
 
 func setup(decorations: WorldDecorations) -> void:
+	if not is_node_ready():
+		ready.connect(setup.bind(decorations), ConnectFlags.CONNECT_ONE_SHOT)
+		return
+
 	if _world_decorations != null:
 		_world_decorations.added.disconnect(_add)
 		_world_decorations.removed.disconnect(_remove)
 
+		# Remove all
+		NodeUtils.delete_all_children(self)
+		_map.clear()
+
 	_world_decorations = decorations
 
-	_world_decorations.added.connect(_add)
-	_world_decorations.removed.connect(_remove)
+	if _world_decorations != null:
+		# Add all
+		for decoration in _world_decorations.list():
+			_add(decoration)
 
-	if is_node_ready():
-		_refresh()
-	else:
-		ready.connect(_refresh, ConnectFlags.CONNECT_ONE_SHOT)
+		_world_decorations.added.connect(_add)
+		_world_decorations.removed.connect(_remove)
 
 
-func _refresh() -> void:
-	NodeUtils.delete_all_children(self)
-	_map.clear()
-
-	for decoration in _world_decorations.list():
-		_add(decoration)
+func clear() -> void:
+	setup(null)
 
 
 ## Returns null if the decoration has no visuals.
@@ -48,9 +52,6 @@ func all_visuals() -> Array[DecorationVisuals2D]:
 
 
 func _add(decoration: WorldDecoration) -> void:
-	if not is_node_ready():
-		return
-
 	var decoration_visuals := (
 			_DECORATION_VISUALS_SCENE.instantiate() as DecorationVisuals2D
 	)
@@ -61,8 +62,5 @@ func _add(decoration: WorldDecoration) -> void:
 
 
 func _remove(decoration: WorldDecoration) -> void:
-	if not is_node_ready():
-		return
-
 	NodeUtils.delete_node(_map[decoration])
 	_map.erase(decoration)
