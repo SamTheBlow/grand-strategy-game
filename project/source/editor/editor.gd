@@ -13,18 +13,14 @@ var _current_project := GameProject.new()
 @onready var _history := %History as EditorHistory
 
 @onready var _world_visuals := %WorldVisuals2D as WorldVisuals2D
-@onready var _world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
 @onready var _editing_interface := %EditingInterface as EditingInterface
-@onready var _decoration_input := %DecorationInput as DecorationVisualsInput
-@onready var _army_input := %ArmyInput as ArmyVisualsInput
 
 
 func _ready() -> void:
 	_menus.quit_requested.connect(exited.emit)
 
-	_world_limits_rect.editor_settings = editor_settings
-	_decoration_input.editor_settings = editor_settings
-	_army_input.editor_settings = editor_settings
+	var world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
+	world_limits_rect.editor_settings = editor_settings
 	_editing_interface.editor_settings = editor_settings
 
 	# Show/hide decorations whenever the setting changes.

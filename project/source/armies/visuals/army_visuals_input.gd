@@ -6,14 +6,8 @@ extends Node
 ## - Adds or removes highlight on army visuals accordingly.
 ## - Emits a signal when an army is selected or deselected.
 
-signal selected(
-		army: Army, project: GameProject, editor_settings: EditorSettings
-)
+signal selected(army: Army)
 signal deselected()
-
-## This is needed to open the editor interface
-var editor_settings: AppEditorSettings
-var _project: GameProject
 
 ## May be null.
 var _selected_army: Army = null
@@ -28,9 +22,6 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	# Reset internal state
 	_selected_army = null
 	_hovered_army = null
-
-	# Needed for opening editor interface
-	_project = world_visuals.project
 
 	# Needed to apply highlights
 	# TODO eww
@@ -62,7 +53,7 @@ func set_selected_army(army: Army = null) -> void:
 
 	_selected_army = army
 	_army_visuals_setup.visuals_of(army).highlight_selected()
-	selected.emit(army, _project, editor_settings)
+	selected.emit(army)
 
 
 ## Sets it to none if input is empty or null.

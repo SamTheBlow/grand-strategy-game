@@ -6,16 +6,8 @@ extends Node
 ## - Adds or removes highlight on decoration visuals accordingly.
 ## - Emits a signal when a decoration is selected or deselected.
 
-signal selected(
-		decoration: WorldDecoration,
-		project: GameProject,
-		editor_settings: EditorSettings
-)
+signal selected(decoration: WorldDecoration)
 signal deselected()
-
-## This is needed to open the editor interface
-var editor_settings: AppEditorSettings
-var _project: GameProject
 
 ## May be null.
 var _selected_decoration: WorldDecoration = null
@@ -30,9 +22,6 @@ func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	# Reset internal state
 	_selected_decoration = null
 	_hovered_decoration = null
-
-	# Needed for opening editor interface
-	_project = world_visuals.project
 
 	# Needed to apply highlights
 	# TODO eww
@@ -65,7 +54,7 @@ func set_selected_decoration(decoration: WorldDecoration = null) -> void:
 
 	_selected_decoration = decoration
 	_decoration_container.visuals_of(decoration).highlight_selected()
-	selected.emit(decoration, _project, editor_settings)
+	selected.emit(decoration)
 
 
 ## Sets it to none if input is empty or null.

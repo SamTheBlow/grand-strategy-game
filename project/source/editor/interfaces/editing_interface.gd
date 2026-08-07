@@ -91,6 +91,11 @@ var _current_interface: AppEditorInterface:
 @onready var _contents_container: Node = %Contents
 
 
+func _ready() -> void:
+	# Just in case it was set to visible in the editor
+	visible = _current_interface != null
+
+
 ## Opens a new interface of given type.
 func open_new_interface(type: InterfaceNavigator.Type) -> void:
 	_open_interface(_INTERFACE_SCENES[type].instantiate() as AppEditorInterface)
