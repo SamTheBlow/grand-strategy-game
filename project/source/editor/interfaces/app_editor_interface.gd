@@ -14,11 +14,22 @@ signal country_select_pressed(item_country: ItemCountry)
 
 signal army_list_item_hovered(army: Army)
 signal army_list_item_unhovered()
+## Requests that given army be selected.
+signal army_select_requested(army: Army)
+
 signal province_list_item_hovered(province: Province)
 signal province_list_item_unhovered()
+## Requests that given province be selected.
+signal province_select_requested(province: Province)
+
 signal decoration_list_item_hovered(decoration: WorldDecoration)
 signal decoration_list_item_unhovered()
+## Requests that given decoration be selected.
+signal decoration_select_requested(decoration: WorldDecoration)
 @warning_ignore_restore("unused_signal")
+
+## Specific signal to emit when this interface is closedd. May be empty.
+var closed_signal: Signal
 
 var project: GameProject
 

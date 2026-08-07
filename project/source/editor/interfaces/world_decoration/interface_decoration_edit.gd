@@ -115,10 +115,8 @@ func _duplicate() -> void:
 			project.game.world.decorations.remove.bind(new_decoration)
 	)
 
-	# Open interface to edit the new decoration
-	navigator.open_decoration_edit_interface(
-			new_decoration, project, editor_settings
-	)
+	# Select the new decoration for editing
+	decoration_select_requested.emit(new_decoration)
 
 
 func _apply_preview(preview_rect: TextureRect) -> void:

@@ -28,6 +28,4 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_country_selected(country: Country) -> void:
-	navigator.open_country_edit_interface(
-			country.id, project, editor_settings
-	)
+	navigator.open_country_edit_interface(country, project, editor_settings)

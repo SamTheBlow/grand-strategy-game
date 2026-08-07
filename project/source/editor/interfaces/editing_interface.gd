@@ -14,12 +14,15 @@ signal army_interface_opened(army: Army)
 signal army_interface_closed()
 signal army_list_item_hovered(army: Army)
 signal army_list_item_unhovered()
+signal army_select_requested(army: Army)
 signal province_list_item_hovered(province: Province)
 signal province_list_item_unhovered()
+signal province_select_requested(province: Province)
 signal decoration_interface_opened(decoration: WorldDecoration)
 signal decoration_interface_closed()
 signal decoration_list_item_hovered(decoration: WorldDecoration)
 signal decoration_list_item_unhovered()
+signal decoration_select_requested(decoration: WorldDecoration)
 
 ## The root node of each scene is an [AppEditorInterface].
 const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
@@ -71,19 +74,7 @@ var _current_interface: AppEditorInterface:
 			# Use queue_free() instead of immediately deleting the node
 			# so that input events still propagate through it on this frame.
 			_current_interface.queue_free()
-
-		if _current_interface is InterfaceProvinceEdit:
-			_current_interface = null
-			province_interface_closed.emit()
-		elif _current_interface is InterfaceCountryEdit:
-			_current_interface = null
-			country_interface_closed.emit()
-		elif _current_interface is InterfaceArmyEdit:
-			_current_interface = null
-			army_interface_closed.emit()
-		elif _current_interface is InterfaceWorldDecorationEdit:
-			_current_interface = null
-			decoration_interface_closed.emit()
+			_current_interface.closed_signal.emit()
 
 		_current_interface = value
 
@@ -115,30 +106,16 @@ func close_interface() -> void:
 
 ## Opens the interface for editing given province.
 func open_province_edit_interface(
-		province_id: int,
+		province: Province,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	# Prevent infinite loop
-	if (
-			_current_interface is InterfaceProvinceEdit
-			and province_id
-			== (_current_interface as InterfaceProvinceEdit).province.id
-	):
-		return
-
-	var province: Province = (
-			project.game.world.provinces.province_from_id(province_id)
-	)
-	if province == null:
-		push_error("Province doesn't exist.")
-		return
-
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.PROVINCE_EDIT]
 			.instantiate() as InterfaceProvinceEdit
 	)
 	new_interface.province = province
+	new_interface.closed_signal = province_interface_closed
 	_open_interface(new_interface, project, editor_settings)
 	province_interface_opened.emit(province)
 
@@ -147,18 +124,12 @@ func open_province_edit_interface(
 func open_army_edit_interface(
 		army: Army, project: GameProject, editor_settings: AppEditorSettings
 ) -> void:
-	# Prevent infinite loop
-	if (
-			_current_interface is InterfaceArmyEdit
-			and army == (_current_interface as InterfaceArmyEdit).army
-	):
-		return
-
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.ARMY_EDIT]
 			.instantiate() as InterfaceArmyEdit
 	)
 	new_interface.army = army
+	new_interface.closed_signal = army_interface_closed
 	_open_interface(new_interface, project, editor_settings)
 	army_interface_opened.emit(army)
 
@@ -169,57 +140,38 @@ func open_decoration_edit_interface(
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	# Prevent infinite loop
-	if (
-			_current_interface is InterfaceWorldDecorationEdit
-			and world_decoration == (
-					_current_interface as InterfaceWorldDecorationEdit
-			).world_decoration
-	):
-		return
-
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.DECORATION_EDIT]
 			.instantiate() as InterfaceWorldDecorationEdit
 	)
 	new_interface.world_decoration = world_decoration
+	new_interface.closed_signal = decoration_interface_closed
 	_open_interface(new_interface, project, editor_settings)
 	decoration_interface_opened.emit(world_decoration)
 
 
 ## Opens the interface for editing given country.
 func open_country_edit_interface(
-		country_id: int,
+		country: Country,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	var country: Country = project.game.countries.country_from_id(country_id)
-	if country == null:
-		push_error("Country doesn't exist.")
-		return
-
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_EDIT]
 			.instantiate() as InterfaceCountryEdit
 	)
 	new_interface.country = country
+	new_interface.closed_signal = country_interface_closed
 	_open_interface(new_interface, project, editor_settings)
 	country_interface_opened.emit(country)
 
 
 ## Opens the interface for editing given player.
 func open_player_edit_interface(
-		player_id: int,
+		game_player: GamePlayer,
 		project: GameProject,
 		editor_settings: AppEditorSettings
 ) -> void:
-	var game_player: GamePlayer = (
-			project.game.game_players.player_from_id(player_id)
-	)
-	if game_player == null:
-		push_error("Player doesn't exist.")
-		return
-
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.PLAYER_EDIT]
 			.instantiate() as InterfacePlayerEdit
@@ -293,10 +245,13 @@ func _forward_interface_signals(interface: AppEditorInterface) -> void:
 	interface.country_select_pressed.connect(country_select_pressed.emit)
 	interface.army_list_item_hovered.connect(army_list_item_hovered.emit)
 	interface.army_list_item_unhovered.connect(army_list_item_unhovered.emit)
+	interface.army_select_requested.connect(army_select_requested.emit)
 	interface.province_list_item_hovered.connect(province_list_item_hovered.emit)
 	interface.province_list_item_unhovered.connect(province_list_item_unhovered.emit)
+	interface.province_select_requested.connect(province_select_requested.emit)
 	interface.decoration_list_item_hovered.connect(decoration_list_item_hovered.emit)
 	interface.decoration_list_item_unhovered.connect(decoration_list_item_unhovered.emit)
+	interface.decoration_select_requested.connect(decoration_select_requested.emit)
 
 
 func _on_history_initialized(undo_redo: UndoRedo) -> void:

@@ -95,9 +95,7 @@ func _duplicate() -> void:
 	)
 	undo_redo.commit_action(false)
 
-	navigator.open_country_edit_interface(
-			new_country.id, project, editor_settings
-	)
+	navigator.open_country_edit_interface(new_country, project, editor_settings)
 
 
 func _on_name_changed(item: ItemString) -> void:

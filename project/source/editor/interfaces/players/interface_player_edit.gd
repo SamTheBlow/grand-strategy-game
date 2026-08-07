@@ -90,9 +90,7 @@ func _duplicate() -> void:
 	undo_redo.add_undo_method(game_players.remove.bind(new_player))
 	undo_redo.commit_action(false)
 
-	navigator.open_player_edit_interface(
-			new_player.id, project, editor_settings
-	)
+	navigator.open_player_edit_interface(new_player, project, editor_settings)
 
 
 func _on_player_removed(player_removed: GamePlayer) -> void:

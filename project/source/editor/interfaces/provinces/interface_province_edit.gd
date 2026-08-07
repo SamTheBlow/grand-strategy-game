@@ -106,10 +106,8 @@ func _duplicate() -> void:
 	)
 	undo_redo.commit_action(false)
 
-	# Open interface to edit the new province
-	navigator.open_province_edit_interface(
-			new_province.id, project, editor_settings
-	)
+	# Select the new province for editing
+	province_select_requested.emit(new_province)
 
 
 func _on_name_value_changed(item: ItemString) -> void:

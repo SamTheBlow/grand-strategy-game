@@ -47,11 +47,7 @@ func _add_element(army: Army) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as ArmyListElement
 	element.army = army
 	element.playing_country = PlayingCountry.new(project.game)
-	element.pressed.connect(
-			navigator.open_army_edit_interface.bind(
-					army, project, editor_settings
-			)
-	)
+	element.pressed.connect(army_select_requested.emit.bind(army))
 	element.mouse_entered.connect(army_list_item_hovered.emit.bind(army))
 	element.mouse_exited.connect(army_list_item_unhovered.emit)
 

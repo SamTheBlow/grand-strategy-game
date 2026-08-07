@@ -53,6 +53,4 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_element_pressed(element: WorldDecorationListElement) -> void:
-	navigator.open_decoration_edit_interface(
-			element.world_decoration, project, editor_settings
-	)
+	decoration_select_requested.emit(element.world_decoration)

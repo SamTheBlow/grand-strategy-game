@@ -53,9 +53,7 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_element_pressed(element: ProvinceListElement) -> void:
-	navigator.open_province_edit_interface(
-			element.province.id, project, editor_settings
-	)
+	province_select_requested.emit(element.province)
 
 
 func _on_province_added(province: Province) -> void:

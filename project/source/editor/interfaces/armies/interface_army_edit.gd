@@ -88,8 +88,8 @@ func _duplicate() -> void:
 	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
 	undo_redo.commit_action(false)
 
-	# Open interface to edit the new army
-	navigator.open_army_edit_interface(new_army, project, editor_settings)
+	# Select the new army for editing
+	army_select_requested.emit(new_army)
 
 
 func _on_army_removed(army_removed: Army) -> void:
