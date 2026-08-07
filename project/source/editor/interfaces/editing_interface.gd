@@ -64,8 +64,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 
 @export var _editor_settings: AppEditorSettings
 
-var project: GameProject
 var _navigator := InterfaceNavigator.new(self)
+var _project: GameProject
 var _undo_redo: UndoRedo
 
 var _current_interface: AppEditorInterface:
@@ -95,6 +95,14 @@ var _current_interface: AppEditorInterface:
 func _ready() -> void:
 	# Just in case it was set to visible in the editor
 	visible = _current_interface != null
+
+
+func set_project(project: GameProject) -> void:
+	_project = project
+
+
+func set_undo_redo(undo_redo: UndoRedo) -> void:
+	_undo_redo = undo_redo
 
 
 ## Opens a new interface of given type.
@@ -191,7 +199,7 @@ func _add_contents() -> void:
 
 ## Prepares the interface and then opens it.
 func _open_interface(new_interface: AppEditorInterface) -> void:
-	new_interface.project = project
+	new_interface.project = _project
 	new_interface.editor_settings = _editor_settings
 	new_interface.navigator = _navigator
 	new_interface.undo_redo = _undo_redo
@@ -211,7 +219,3 @@ func _forward_interface_signals(interface: AppEditorInterface) -> void:
 	interface.decoration_list_item_hovered.connect(decoration_list_item_hovered.emit)
 	interface.decoration_list_item_unhovered.connect(decoration_list_item_unhovered.emit)
 	interface.decoration_select_requested.connect(decoration_select_requested.emit)
-
-
-func _on_history_initialized(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo

@@ -114,11 +114,8 @@ func load_game() -> void:
 
 
 func enter_editor() -> void:
-	if current_scene is Editor:
-		return
-
-	var editor := editor_scene.instantiate() as Editor
-	editor.exited.connect(enter_main_menu)
+	var editor: Node = editor_scene.instantiate()
+	editor.tree_exited.connect(enter_main_menu)
 	current_scene = editor
 
 

@@ -2,6 +2,12 @@ class_name ProjectNode
 extends Node
 ## Holds a [GameProject]. Provides useful functions and signals.
 
+## Emits when the current project is about to change.
+## Use this signal to clear existing data.
+signal project_changing()
+## Emits when the current project has changed.
+signal project_changed(project: GameProject)
+
 signal save_dialog_requested()
 signal saved()
 
@@ -16,6 +22,7 @@ var _project: GameProject:
 		if _project != null:
 			_project.file_path_changed.disconnect(_emit_file_path_change)
 			_project.metadata.name_changed.disconnect(_emit_name_change)
+			project_changing.emit()
 
 		_project = value
 
@@ -24,6 +31,12 @@ var _project: GameProject:
 
 		_emit_name_change()
 		_project.metadata.name_changed.connect(_emit_name_change)
+
+		project_changed.emit(_project)
+
+
+func _ready() -> void:
+	_project = GameProject.new()
 
 
 func set_project(project: GameProject) -> void:

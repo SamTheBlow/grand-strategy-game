@@ -1,6 +1,5 @@
 [gd_scene format=3 uid="uid://be0pqxrjfpukm"]
 
-[ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
 [ext_resource type="Script" uid="uid://e70irgpv1usl" path="res://source/editor/editor_settings.gd" id="2_qlu2u"]
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="4_camera"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_world_visuals"]
@@ -10,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bk2i3kq3bheo7" path="res://source/editor/components/texture_select_popup_setup.gd" id="8_uwkq8"]
 [ext_resource type="Script" uid="uid://c3cmj7reypqlq" path="res://source/editor/components/editor_menus.gd" id="9_menus"]
 [ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/components/editor_world_bridge.gd" id="10_world_bridge"]
-[ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/editor_project_io.gd" id="11_project_io"]
+[ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/project_opener.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/utils/node/undo_redo_node.gd" id="12_history"]
 [ext_resource type="Script" uid="uid://b4ryou3duy3a0" path="res://source/editor/components/decoration_visibility.gd" id="12_mg3wh"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
@@ -25,7 +24,6 @@ script = ExtResource("2_qlu2u")
 metadata/_custom_type_script = "uid://e70irgpv1usl"
 
 [node name="Editor" type="Node" unique_id=1373690984]
-script = ExtResource("1_ae8ev")
 
 [node name="Menus" type="Node" parent="." unique_id=1928374650]
 script = ExtResource("9_menus")
@@ -33,19 +31,17 @@ script = ExtResource("9_menus")
 [node name="WorldBridge" type="Node" parent="." unique_id=1928374651]
 script = ExtResource("10_world_bridge")
 
-[node name="ProjectIO" type="Node" parent="." unique_id=1928374652]
-script = ExtResource("11_project_io")
-
 [node name="UndoRedo" type="Node" parent="." unique_id=1928374653]
-unique_name_in_owner = true
 script = ExtResource("12_history")
 
 [node name="WindowTitle" type="Node" parent="." unique_id=1928374658]
 script = ExtResource("17_window_title")
 
 [node name="ProjectNode" type="Node" parent="." unique_id=1928374659]
-unique_name_in_owner = true
 script = ExtResource("18_project_node")
+
+[node name="ProjectOpener" type="Node" parent="." unique_id=1928374652]
+script = ExtResource("11_project_io")
 
 [node name="DecorationInput" type="Node" parent="." unique_id=1928374656]
 script = ExtResource("15_decoration_input")
@@ -73,7 +69,6 @@ follow_viewport_enabled = true
 [node name="WorldContainer" type="Node2D" parent="WorldLayer" unique_id=1427898406]
 
 [node name="WorldVisuals2D" parent="WorldLayer/WorldContainer" unique_id=1427898407 instance=ExtResource("4_world_visuals")]
-unique_name_in_owner = true
 
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
 script = ExtResource("6_uwkq8")
@@ -228,21 +223,24 @@ access = 2
 use_native_dialog = true
 
 [connection signal="interface_requested" from="Menus" to="UILayer/EditingInterface" method="open_new_interface"]
-[connection signal="new_project_requested" from="Menus" to="ProjectIO" method="_open_new_project"]
-[connection signal="open_project_requested" from="Menus" to="ProjectIO" method="_open_project"]
-[connection signal="play_requested" from="Menus" to="." method="_play"]
-[connection signal="quit_requested" from="Menus" to="." method="exit"]
+[connection signal="new_project_requested" from="Menus" to="ProjectOpener" method="open_new_project"]
+[connection signal="open_project_requested" from="Menus" to="ProjectOpener" method="open_existing_project"]
+[connection signal="quit_requested" from="Menus" to="." method="queue_free"]
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="ProjectNode" method="save"]
 [connection signal="show_in_file_manager_requested" from="Menus" to="ProjectNode" method="show_in_file_manager"]
-[connection signal="project_loaded" from="ProjectIO" to="." method="_on_project_loaded"]
 [connection signal="initialized" from="UndoRedo" to="ProvinceLinkEditer" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="CountryOwnershipGiver" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
-[connection signal="initialized" from="UndoRedo" to="UILayer/EditingInterface" method="_on_history_initialized"]
+[connection signal="initialized" from="UndoRedo" to="UILayer/EditingInterface" method="set_undo_redo"]
 [connection signal="is_dirty_changed" from="UndoRedo" to="WindowTitle" method="set_is_dirty"]
 [connection signal="has_valid_file_path_changed" from="ProjectNode" to="Menus" method="_on_project_path_validity_changed"]
+[connection signal="project_changed" from="ProjectNode" to="WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]
+[connection signal="project_changed" from="ProjectNode" to="UILayer/EditingInterface" method="set_project"]
+[connection signal="project_changing" from="ProjectNode" to="UndoRedo" method="reset"]
+[connection signal="project_changing" from="ProjectNode" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
+[connection signal="project_opened" from="ProjectOpener" to="ProjectNode" method="set_project"]
 [connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]
