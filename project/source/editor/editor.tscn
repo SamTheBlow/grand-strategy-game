@@ -10,11 +10,13 @@
 [ext_resource type="Script" uid="uid://c3cmj7reypqlq" path="res://source/editor/components/editor_menus.gd" id="9_menus"]
 [ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/components/editor_world_bridge.gd" id="10_world_bridge"]
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/editor_project_io.gd" id="11_project_io"]
-[ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/editor/components/editor_history.gd" id="12_history"]
+[ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/utils/node/undo_redo_node.gd" id="12_history"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
 [ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
 [ext_resource type="Script" uid="uid://blaw3yvrv1dvc" path="res://source/armies/visuals/army_visuals_input.gd" id="16_army_input"]
+[ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
+[ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
@@ -24,16 +26,22 @@ unique_name_in_owner = true
 script = ExtResource("9_menus")
 
 [node name="WorldBridge" type="Node" parent="." unique_id=1928374651]
-unique_name_in_owner = true
 script = ExtResource("10_world_bridge")
 
 [node name="ProjectIO" type="Node" parent="." unique_id=1928374652]
 unique_name_in_owner = true
 script = ExtResource("11_project_io")
 
-[node name="History" type="Node" parent="." unique_id=1928374653]
+[node name="UndoRedo" type="Node" parent="." unique_id=1928374653]
 unique_name_in_owner = true
 script = ExtResource("12_history")
+
+[node name="WindowTitle" type="Node" parent="." unique_id=1928374658]
+script = ExtResource("17_window_title")
+
+[node name="ProjectNode" type="Node" parent="." unique_id=1928374659]
+unique_name_in_owner = true
+script = ExtResource("18_project_node")
 
 [node name="DecorationInput" type="Node" parent="." unique_id=1928374656]
 unique_name_in_owner = true
@@ -47,7 +55,6 @@ script = ExtResource("16_army_input")
 script = ExtResource("13_editor_adjacency")
 
 [node name="CountryOwnershipGiver" type="Node" parent="." unique_id=1928374655]
-unique_name_in_owner = true
 script = ExtResource("7_nha6u")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
@@ -221,15 +228,16 @@ use_native_dialog = true
 [connection signal="play_requested" from="Menus" to="." method="_play"]
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="ProjectIO" method="_save_project"]
+[connection signal="show_in_file_manager_requested" from="Menus" to="ProjectNode" method="show_in_file_manager"]
 [connection signal="project_loaded" from="ProjectIO" to="." method="_on_project_loaded"]
-[connection signal="project_saved" from="ProjectIO" to="." method="_update_window_title"]
-[connection signal="project_saved" from="ProjectIO" to="Menus" method="_update_visibility_after_save"]
-[connection signal="project_saved" from="ProjectIO" to="History" method="_mark_saved"]
-[connection signal="initialized" from="History" to="ProvinceLinkEditer" method="_on_history_initialized"]
-[connection signal="initialized" from="History" to="CountryOwnershipGiver" method="_on_history_initialized"]
-[connection signal="initialized" from="History" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
-[connection signal="initialized" from="History" to="UILayer/EditingInterface" method="_on_history_initialized"]
-[connection signal="version_changed" from="History" to="." method="_update_window_title"]
+[connection signal="project_saved" from="ProjectIO" to="UndoRedo" method="mark_saved"]
+[connection signal="initialized" from="UndoRedo" to="ProvinceLinkEditer" method="_on_history_initialized"]
+[connection signal="initialized" from="UndoRedo" to="CountryOwnershipGiver" method="_on_history_initialized"]
+[connection signal="initialized" from="UndoRedo" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
+[connection signal="initialized" from="UndoRedo" to="UILayer/EditingInterface" method="_on_history_initialized"]
+[connection signal="is_dirty_changed" from="UndoRedo" to="WindowTitle" method="set_is_dirty"]
+[connection signal="has_valid_file_path_changed" from="ProjectNode" to="Menus" method="_on_project_path_validity_changed"]
+[connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
 [connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]

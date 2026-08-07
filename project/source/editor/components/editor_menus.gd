@@ -8,6 +8,7 @@ signal new_project_requested()
 signal open_project_requested()
 signal save_requested()
 signal save_as_requested()
+signal show_in_file_manager_requested()
 signal play_requested()
 signal interface_requested(type: InterfaceNavigator.Type)
 
@@ -41,16 +42,6 @@ const _EDIT_TAB_DECORATIONS_ID: int = 9
 const _EDIT_TAB_PROVINCES_ID: int = 10
 const _EDIT_TAB_ARMIES_ID: int = 11
 
-## The project that is currently being edited.
-## Determines which menu options are available.
-var current_project: GameProject:
-	set(value):
-		if current_project == value:
-			return
-		current_project = value
-		if is_node_ready():
-			_update_visibility()
-
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
 
@@ -81,17 +72,10 @@ func _ready() -> void:
 	_project_tab.set_item_shortcut(_PROJECT_TAB_PLAY_ID, shortcut_play)
 
 
-## Updates the visibility for all the menu options
-func _update_visibility() -> void:
-	_update_visibility_after_save()
-
-
-## Only updates the visibility of menu options that involve saving
-func _update_visibility_after_save() -> void:
+func _on_project_path_validity_changed(has_valid_file_path: bool) -> void:
 	# "Show in File Manager"
 	_project_tab.set_item_disabled(
-			_PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID,
-			not current_project.has_valid_file_path()
+			_PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID, not has_valid_file_path
 	)
 
 
@@ -126,7 +110,7 @@ func _on_project_tab_id_pressed(id: int) -> void:
 			save_as_requested.emit()
 		_PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID:
 			# "Show in File Manager"
-			current_project.show_in_file_manager()
+			show_in_file_manager_requested.emit()
 		_PROJECT_TAB_PLAY_ID:
 			# "Play"
 			play_requested.emit()
