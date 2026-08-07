@@ -217,7 +217,7 @@ func _open_army_movement_popup(army: Army, destination: Province) -> void:
 	)
 	army_movement_popup.setup(army, game.world.provinces, destination.id)
 	army_movement_popup.confirmed.connect(_on_army_movement_confirmed)
-	army_movement_popup.tree_exited.connect(_deselect_province)
+	army_movement_popup.confirmed.connect(_deselect_province)
 	_add_popup(army_movement_popup)
 
 

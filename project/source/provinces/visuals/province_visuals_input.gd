@@ -104,13 +104,13 @@ func _on_province_clicked(province: Province) -> void:
 		_province_selection.selected_province = null
 		return
 
-	# Deselect
-	_province_selection.selected_province = null
-
-	# Select (if listeners allow it)
+	# Allow listeners to deny selection
 	var outcome := ProvinceSelectionOutcome.new()
 	province_select_attempted.emit(province, outcome)
+
 	if outcome.is_selected:
+		# Deselect first (prevents crash)
+		_province_selection.selected_province = null
 		_province_selection.selected_province = province
 
 
