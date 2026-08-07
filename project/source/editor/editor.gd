@@ -71,5 +71,6 @@ func _play() -> void:
 ## Called when a new project is loaded.
 ## Rebuilds the whole editor state.
 func _on_project_loaded(project: GameProject) -> void:
+	_editing_interface.close_interface()
 	_current_project = project
 	_setup_project()

@@ -28,14 +28,15 @@ _camera_drag = NodePath("../CameraDrag")
 [node name="Inertia" type="Node" parent="." unique_id=639525975]
 script = ExtResource("5_vnpnf")
 
-[node name="WorldLimitWiring" type="Node" parent="." unique_id=98703622]
+[node name="WorldLimitWiring" type="Node" parent="." unique_id=98703622 node_paths=PackedStringArray("_camera", "_camera_zoom", "_inertia")]
 script = ExtResource("6_wlw")
+_camera = NodePath("..")
+_camera_zoom = NodePath("../CameraZoom")
+_inertia = NodePath("../Inertia")
 
 [connection signal="drag_ended" from="CameraDrag" to="Inertia" method="start"]
 [connection signal="drag_started" from="CameraDrag" to="Inertia" method="stop"]
 [connection signal="pan_processed" from="CameraZoom" to="." method="translate_not_zoomed"]
 [connection signal="zoom_changed" from="CameraZoom" to="." method="set_zoom"]
 [connection signal="velocity_processed" from="Inertia" to="." method="translate_zoomed"]
-[connection signal="camera_moved" from="WorldLimitWiring" to="." method="move_to"]
 [connection signal="limits_changed" from="WorldLimitWiring" to="." method="set_limits"]
-[connection signal="zoom_limits_changed" from="WorldLimitWiring" to="CameraZoom" method="set_zoom_limits"]

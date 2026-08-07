@@ -1,41 +1,48 @@
 class_name WorldLimitWiring
 extends Node
 ## Provides position limits and zoom limits according to some [WorldLimits].
+## Resets the camera components when a new world is loaded.
+## Moves the camera to the center of the world map.
 
-signal camera_moved(position: Vector2)
 signal limits_changed(left: float, top: float, right: float, bottom: float)
-signal zoom_limits_changed(minimum_zoom: float, maximum_zoom: float)
 
 const _MAXIMUM_ZOOM: float = 1.0
+
+@export var _camera: CustomCamera2D
+@export var _camera_zoom: CameraZoom
+@export var _inertia: Inertia
 
 var _world_limits: WorldLimits:
 	set(value):
 		if _world_limits != null:
-			_world_limits.current_limits_changed.disconnect(_emit_values)
+			_world_limits.current_limits_changed.disconnect(_refresh)
 
 		_world_limits = value
-		_emit_values()
 
-		if _world_limits != null:
-			_world_limits.current_limits_changed.connect(_emit_values.unbind(1))
+		_refresh()
+		_world_limits.current_limits_changed.connect(_refresh.unbind(1))
 
 
 func _ready() -> void:
 	# The minimum zoom depends on the viewport size.
-	get_viewport().size_changed.connect(_emit_zoom_limits)
+	get_viewport().size_changed.connect(_refresh_zoom_limits)
 
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
+	_camera_zoom.reset()
+	_inertia.stop()
 	_world_limits = world_visuals.project.game.world.limits()
-	camera_moved.emit(_world_limits.center())
+
+	# Move camera to center of world map
+	_camera.move_to(_world_limits.center())
 
 
-func _emit_values() -> void:
-	_emit_limits()
-	_emit_zoom_limits()
+func _refresh() -> void:
+	_refresh_limits()
+	_refresh_zoom_limits()
 
 
-func _emit_limits() -> void:
+func _refresh_limits() -> void:
 	limits_changed.emit(
 			float(_world_limits.limit_left()),
 			float(_world_limits.limit_top()),
@@ -44,10 +51,10 @@ func _emit_limits() -> void:
 	)
 
 
-func _emit_zoom_limits() -> void:
+func _refresh_zoom_limits() -> void:
 	var minimum_zoom: float = _minimum_zoom()
 	var maximum_zoom: float = maxf(_MAXIMUM_ZOOM, minimum_zoom)
-	zoom_limits_changed.emit(minimum_zoom, maximum_zoom)
+	_camera_zoom.set_zoom_limits(minimum_zoom, maximum_zoom)
 
 
 ## Currently, you can zoom out such that the world takes half the screen.
