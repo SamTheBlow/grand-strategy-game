@@ -15,7 +15,7 @@ func _ready() -> void:
 	project.game.world.armies.removed.connect(_on_army_removed)
 
 	closed.connect(navigator.open_new_interface.bind(
-			InterfaceNavigator.Type.ARMY_LIST, project, editor_settings
+			InterfaceNavigator.Type.ARMY_LIST
 	))
 
 

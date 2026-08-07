@@ -49,9 +49,7 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_element_pressed(element: EditorPlayerListElement) -> void:
-	navigator.open_player_edit_interface(
-			element.game_player, project, editor_settings
-	)
+	navigator.open_player_edit_interface(element.game_player)
 
 
 func _on_player_added(game_player: GamePlayer) -> void:

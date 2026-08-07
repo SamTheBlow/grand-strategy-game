@@ -9,7 +9,7 @@ func _ready() -> void:
 	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
-			InterfaceNavigator.Type.PLAYER_LIST, project, editor_settings
+			InterfaceNavigator.Type.PLAYER_LIST
 	))
 
 
@@ -90,7 +90,7 @@ func _duplicate() -> void:
 	undo_redo.add_undo_method(game_players.remove.bind(new_player))
 	undo_redo.commit_action(false)
 
-	navigator.open_player_edit_interface(new_player, project, editor_settings)
+	navigator.open_player_edit_interface(new_player)
 
 
 func _on_player_removed(player_removed: GamePlayer) -> void:

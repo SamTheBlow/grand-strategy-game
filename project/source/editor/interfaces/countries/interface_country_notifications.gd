@@ -15,11 +15,9 @@ func _ready() -> void:
 ## or to the country list if the country no longer exists.
 func _on_closed() -> void:
 	if project.game.countries.country_from_id(country.id) != null:
-		navigator.open_country_edit_interface(country, project, editor_settings)
+		navigator.open_country_edit_interface(country)
 	else:
-		navigator.open_new_interface(
-				InterfaceNavigator.Type.COUNTRY_LIST, project, editor_settings
-		)
+		navigator.open_new_interface(InterfaceNavigator.Type.COUNTRY_LIST)
 
 
 func _on_country_removed(country_removed: Country) -> void:

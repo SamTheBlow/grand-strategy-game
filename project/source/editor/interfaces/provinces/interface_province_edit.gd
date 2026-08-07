@@ -11,7 +11,7 @@ func _ready() -> void:
 	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
-			InterfaceNavigator.Type.PROVINCE_LIST, project, editor_settings
+			InterfaceNavigator.Type.PROVINCE_LIST
 	))
 
 

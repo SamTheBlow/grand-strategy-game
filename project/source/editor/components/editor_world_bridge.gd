@@ -5,8 +5,6 @@ extends Node
 const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
 const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
 
-var editor_settings: AppEditorSettings
-
 @onready var _editing_interface := %EditingInterface as EditingInterface
 @onready var _popup_container := %PopupContainer as Control
 
@@ -24,9 +22,7 @@ func _on_selected_province_changed(province: Province) -> void:
 	if province == null:
 		_editing_interface.close_interface()
 		return
-	_editing_interface.open_province_edit_interface(
-			province, _world_visuals.project, editor_settings
-	)
+	_editing_interface.open_province_edit_interface(province)
 
 
 func _on_province_interface_opened(province: Province) -> void:

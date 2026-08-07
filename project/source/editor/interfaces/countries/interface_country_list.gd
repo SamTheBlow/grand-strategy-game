@@ -6,7 +6,7 @@ extends AppEditorInterface
 func _ready() -> void:
 	var country_list := %CountryList as CountryListNode
 	country_list.setup(project.game.countries, false)
-	country_list.country_selected.connect(_on_country_selected)
+	country_list.country_selected.connect(navigator.open_country_edit_interface)
 
 	closed.connect(navigator.close_interface)
 
@@ -25,7 +25,3 @@ func _on_add_button_pressed() -> void:
 	undo_redo.add_do_method(countries.add.bind(new_country))
 	undo_redo.add_undo_method(countries.remove.bind(new_country.id))
 	undo_redo.commit_action(false)
-
-
-func _on_country_selected(country: Country) -> void:
-	navigator.open_country_edit_interface(country, project, editor_settings)

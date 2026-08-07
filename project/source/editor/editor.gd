@@ -9,7 +9,6 @@ var editor_settings := AppEditorSettings.new()
 var _current_project := GameProject.new()
 
 @onready var _menus := %Menus as EditorMenus
-@onready var _world_bridge := %WorldBridge as EditorWorldBridge
 @onready var _project_io := %ProjectIO as EditorProjectIO
 @onready var _history := %History as EditorHistory
 
@@ -23,10 +22,10 @@ var _current_project := GameProject.new()
 func _ready() -> void:
 	_menus.quit_requested.connect(exited.emit)
 
-	_world_bridge.editor_settings = editor_settings
 	_world_limits_rect.editor_settings = editor_settings
 	_decoration_input.editor_settings = editor_settings
 	_army_input.editor_settings = editor_settings
+	_editing_interface.editor_settings = editor_settings
 
 	# Show/hide decorations whenever the setting changes.
 	_refresh_decoration_visibility()
@@ -49,6 +48,7 @@ func _setup_project() -> void:
 	_world_visuals.project = _current_project
 	_menus.current_project = _current_project
 	_project_io.current_project = _current_project
+	_editing_interface.project = _current_project
 	_update_window_title()
 
 
@@ -72,18 +72,8 @@ func _play() -> void:
 	pass
 
 
-func _open_interface(type: InterfaceNavigator.Type) -> void:
-	_editing_interface.open_new_interface(
-			type, _current_project, editor_settings
-	)
-
-
 ## Called when a new project is loaded.
 ## Rebuilds the whole editor state.
 func _on_project_loaded(project: GameProject) -> void:
-	# We close any currently open interface
-	# because it may be using data from the previous project.
-	_editing_interface.close_interface()
-
 	_current_project = project
 	_setup_project()

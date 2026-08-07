@@ -214,12 +214,13 @@ dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[connection signal="interface_requested" from="Menus" to="." method="_open_interface"]
+[connection signal="interface_requested" from="Menus" to="UILayer/EditingInterface" method="open_new_interface"]
 [connection signal="new_project_requested" from="Menus" to="ProjectIO" method="_open_new_project"]
 [connection signal="open_project_requested" from="Menus" to="ProjectIO" method="_open_project"]
 [connection signal="play_requested" from="Menus" to="." method="_play"]
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="ProjectIO" method="_save_project"]
+[connection signal="project_loaded" from="ProjectIO" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="project_loaded" from="ProjectIO" to="." method="_on_project_loaded"]
 [connection signal="project_saved" from="ProjectIO" to="." method="_update_window_title"]
 [connection signal="project_saved" from="ProjectIO" to="Menus" method="_update_visibility_after_save"]

@@ -62,6 +62,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 		preload("uid://n04sb8kke04h"),
 }
 
+var project: GameProject
+var editor_settings: AppEditorSettings
 var _navigator := InterfaceNavigator.new(self)
 var _undo_redo: UndoRedo
 
@@ -78,25 +80,20 @@ var _current_interface: AppEditorInterface:
 
 		_current_interface = value
 
-		if is_node_ready():
-			_update_contents()
+		visible = _current_interface != null
+		if _current_interface != null:
+			_forward_interface_signals(_current_interface)
+			if is_node_ready():
+				_add_contents()
+			else:
+				ready.connect(_add_contents, ConnectFlags.CONNECT_ONE_SHOT)
 
 @onready var _contents_container: Node = %Contents
 
 
-func _ready() -> void:
-	_update_contents()
-
-
 ## Opens a new interface of given type.
-func open_new_interface(
-		type: InterfaceNavigator.Type,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
-	var new_interface := _new_interface_of_type(type)
-	if new_interface != null:
-		_open_interface(new_interface, project, editor_settings)
+func open_new_interface(type: InterfaceNavigator.Type) -> void:
+	_open_interface(_INTERFACE_SCENES[type].instantiate() as AppEditorInterface)
 
 
 ## Has no effect if there is no interface open.
@@ -105,138 +102,94 @@ func close_interface() -> void:
 
 
 ## Opens the interface for editing given province.
-func open_province_edit_interface(
-		province: Province,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_province_edit_interface(province: Province) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.PROVINCE_EDIT]
 			.instantiate() as InterfaceProvinceEdit
 	)
 	new_interface.province = province
 	new_interface.closed_signal = province_interface_closed
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 	province_interface_opened.emit(province)
 
 
 ## Opens the interface for editing given army.
-func open_army_edit_interface(
-		army: Army, project: GameProject, editor_settings: AppEditorSettings
-) -> void:
+func open_army_edit_interface(army: Army) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.ARMY_EDIT]
 			.instantiate() as InterfaceArmyEdit
 	)
 	new_interface.army = army
 	new_interface.closed_signal = army_interface_closed
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 	army_interface_opened.emit(army)
 
 
 ## Opens the interface for editing given world decoration.
-func open_decoration_edit_interface(
-		world_decoration: WorldDecoration,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_decoration_edit_interface(world_decoration: WorldDecoration) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.DECORATION_EDIT]
 			.instantiate() as InterfaceWorldDecorationEdit
 	)
 	new_interface.world_decoration = world_decoration
 	new_interface.closed_signal = decoration_interface_closed
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 	decoration_interface_opened.emit(world_decoration)
 
 
 ## Opens the interface for editing given country.
-func open_country_edit_interface(
-		country: Country,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_country_edit_interface(country: Country) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_EDIT]
 			.instantiate() as InterfaceCountryEdit
 	)
 	new_interface.country = country
 	new_interface.closed_signal = country_interface_closed
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 	country_interface_opened.emit(country)
 
 
 ## Opens the interface for editing given player.
-func open_player_edit_interface(
-		game_player: GamePlayer,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_player_edit_interface(game_player: GamePlayer) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.PLAYER_EDIT]
 			.instantiate() as InterfacePlayerEdit
 	)
 	new_interface.game_player = game_player
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 
 
 ## Opens the interface for editing given country's relationships.
-func open_country_relationships_interface(
-		country: Country,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_country_relationships_interface(country: Country) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_RELATIONSHIPS]
 			.instantiate() as InterfaceCountryRelationships
 	)
 	new_interface.country = country
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 
 
 ## Opens the interface for editing given country's notifications.
-func open_country_notifications_interface(
-		country: Country,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func open_country_notifications_interface(country: Country) -> void:
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.COUNTRY_NOTIFICATIONS]
 			.instantiate() as InterfaceCountryNotifications
 	)
 	new_interface.country = country
-	_open_interface(new_interface, project, editor_settings)
+	_open_interface(new_interface)
 
 
-func _update_contents() -> void:
-	visible = _current_interface != null
-	if _current_interface != null:
-		_current_interface.undo_redo = _undo_redo
-		_forward_interface_signals(_current_interface)
-		_contents_container.add_child(_current_interface)
+func _add_contents() -> void:
+	_contents_container.add_child(_current_interface)
 
 
 ## Prepares the interface and then opens it.
-func _open_interface(
-		new_interface: AppEditorInterface,
-		project: GameProject,
-		editor_settings: AppEditorSettings
-) -> void:
+func _open_interface(new_interface: AppEditorInterface) -> void:
 	new_interface.project = project
 	new_interface.editor_settings = editor_settings
 	new_interface.navigator = _navigator
 	new_interface.undo_redo = _undo_redo
 	_current_interface = new_interface
-
-
-## May return null if the interface scene could not be found.
-func _new_interface_of_type(
-		type: InterfaceNavigator.Type
-) -> AppEditorInterface:
-	if not _INTERFACE_SCENES.has(type):
-		push_error("Can't find the scene for this interface type.")
-		return null
-	return _INTERFACE_SCENES[type].instantiate() as AppEditorInterface
 
 
 ## Propagates up the current interface's signals.

@@ -11,7 +11,7 @@ func _ready() -> void:
 	_setup_settings(%Settings as ItemVoidNode)
 
 	closed.connect(navigator.open_new_interface.bind(
-			InterfaceNavigator.Type.COUNTRY_LIST, project, editor_settings
+			InterfaceNavigator.Type.COUNTRY_LIST
 	))
 
 
@@ -44,15 +44,11 @@ func _on_country_removed(country_removed: Country) -> void:
 
 
 func _on_edit_relationships_pressed() -> void:
-	navigator.open_country_relationships_interface(
-			country, project, editor_settings
-	)
+	navigator.open_country_relationships_interface(country)
 
 
 func _on_edit_notifications_pressed() -> void:
-	navigator.open_country_notifications_interface(
-			country, project, editor_settings
-	)
+	navigator.open_country_notifications_interface(country)
 
 
 func _delete() -> void:
@@ -95,7 +91,7 @@ func _duplicate() -> void:
 	)
 	undo_redo.commit_action(false)
 
-	navigator.open_country_edit_interface(new_country, project, editor_settings)
+	navigator.open_country_edit_interface(new_country)
 
 
 func _on_name_changed(item: ItemString) -> void:
