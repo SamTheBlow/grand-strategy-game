@@ -37,6 +37,6 @@ _inertia = NodePath("../Inertia")
 [connection signal="drag_ended" from="CameraDrag" to="Inertia" method="start"]
 [connection signal="drag_started" from="CameraDrag" to="Inertia" method="stop"]
 [connection signal="pan_processed" from="CameraZoom" to="." method="translate_not_zoomed"]
-[connection signal="zoom_changed" from="CameraZoom" to="." method="set_zoom"]
+[connection signal="zoom_changed" from="CameraZoom" to="." method="zoom_to"]
 [connection signal="velocity_processed" from="Inertia" to="." method="translate_zoomed"]
 [connection signal="limits_changed" from="WorldLimitWiring" to="." method="set_limits"]

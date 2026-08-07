@@ -30,6 +30,11 @@ func set_limits(left: float, top: float, right: float, bottom: float) -> void:
 	_reposition_in_bounds()
 
 
+func zoom_to(new_zoom: Vector2) -> void:
+	zoom = new_zoom
+	_reposition_in_bounds()
+
+
 ## Returns the given position contained within the world limits.
 ## The camera must be in the scene tree for this function to work.
 func position_in_bounds(input_position: Vector2) -> Vector2:

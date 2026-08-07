@@ -51,7 +51,9 @@ var _zoom_away_from_center: bool = true
 
 func _ready() -> void:
 	# Apply default zoom provided in scene export variable
-	reset()
+	_target_zoom = default_zoom
+	_previous_target = default_zoom
+	_current_zoom = default_zoom
 
 
 func _physics_process(delta: float) -> void:
