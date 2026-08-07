@@ -99,15 +99,19 @@ func _on_background_clicked() -> void:
 
 
 func _on_province_clicked(province: Province) -> void:
+	# Clicking on an already selected province deselects it
 	if _province_selection.selected_province == province:
-		set_selected_province(null)
+		_province_selection.selected_province = null
 		return
 
-	# Allow listeners to cancel the selection
+	# Deselect
+	_province_selection.selected_province = null
+
+	# Select (if listeners allow it)
 	var outcome := ProvinceSelectionOutcome.new()
 	province_select_attempted.emit(province, outcome)
 	if outcome.is_selected:
-		set_selected_province(province)
+		_province_selection.selected_province = province
 
 
 func _on_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
