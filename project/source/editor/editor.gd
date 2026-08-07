@@ -4,9 +4,8 @@ extends Node
 
 signal exited()
 
-var editor_settings := AppEditorSettings.new()
+@export var _editor_settings: AppEditorSettings
 
-@onready var _menus := %Menus as EditorMenus
 @onready var _undo_redo_node := %UndoRedo as UndoRedoNode
 @onready var _project_node := %ProjectNode as ProjectNode
 
@@ -15,19 +14,17 @@ var editor_settings := AppEditorSettings.new()
 
 
 func _ready() -> void:
-	_menus.quit_requested.connect(exited.emit)
-
-	var world_limits_rect := %WorldLimitsRect2D as WorldLimitsRect2D
-	world_limits_rect.editor_settings = editor_settings
-	_editing_interface.editor_settings = editor_settings
-
 	# Show/hide decorations whenever the setting changes.
 	_refresh_decoration_visibility()
-	editor_settings.show_decorations.value_changed.connect(
+	_editor_settings.show_decorations.value_changed.connect(
 			_refresh_decoration_visibility.unbind(1)
 	)
 
 	_setup_project(GameProject.new())
+
+
+func exit() -> void:
+	exited.emit()
 
 
 func _setup_project(project: GameProject) -> void:
@@ -38,7 +35,7 @@ func _setup_project(project: GameProject) -> void:
 
 func _refresh_decoration_visibility() -> void:
 	_world_visuals.set_decoration_visiblity(
-			editor_settings.show_decorations.value
+			_editor_settings.show_decorations.value
 	)
 
 

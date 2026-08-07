@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://be0pqxrjfpukm"]
 
 [ext_resource type="Script" uid="uid://cc4cp3moh4vdv" path="res://source/editor/editor.gd" id="1_ae8ev"]
+[ext_resource type="Script" uid="uid://e70irgpv1usl" path="res://source/editor/editor_settings.gd" id="2_qlu2u"]
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="4_camera"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_world_visuals"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
@@ -18,8 +19,13 @@
 [ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 
+[sub_resource type="Resource" id="Resource_nmpjy"]
+script = ExtResource("2_qlu2u")
+metadata/_custom_type_script = "uid://e70irgpv1usl"
+
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
+_editor_settings = SubResource("Resource_nmpjy")
 
 [node name="Menus" type="Node" parent="." unique_id=1928374650]
 unique_name_in_owner = true
@@ -72,6 +78,7 @@ unique_name_in_owner = true
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
 unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
+_editor_settings = SubResource("Resource_nmpjy")
 
 [node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
 
@@ -203,6 +210,7 @@ visible = false
 anchors_preset = -1
 anchor_top = 0.075
 anchor_right = 0.4
+_editor_settings = SubResource("Resource_nmpjy")
 
 [node name="PopupContainer" type="Control" parent="UILayer" unique_id=1918851921]
 unique_name_in_owner = true
@@ -226,6 +234,7 @@ use_native_dialog = true
 [connection signal="new_project_requested" from="Menus" to="ProjectIO" method="_open_new_project"]
 [connection signal="open_project_requested" from="Menus" to="ProjectIO" method="_open_project"]
 [connection signal="play_requested" from="Menus" to="." method="_play"]
+[connection signal="quit_requested" from="Menus" to="." method="exit"]
 [connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
 [connection signal="save_requested" from="Menus" to="ProjectNode" method="save"]
 [connection signal="show_in_file_manager_requested" from="Menus" to="ProjectNode" method="show_in_file_manager"]
@@ -237,8 +246,6 @@ use_native_dialog = true
 [connection signal="is_dirty_changed" from="UndoRedo" to="WindowTitle" method="set_is_dirty"]
 [connection signal="has_valid_file_path_changed" from="ProjectNode" to="Menus" method="_on_project_path_validity_changed"]
 [connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
-[connection signal="save_dialog_requested" from="ProjectNode" to="SaveDialog" method="show"]
-[connection signal="saved" from="ProjectNode" to="UndoRedo" method="mark_saved"]
 [connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]

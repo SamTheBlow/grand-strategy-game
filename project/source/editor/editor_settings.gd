@@ -1,4 +1,5 @@
 class_name AppEditorSettings
+extends Resource
 ## The app's editor settings.
 ##
 ## Note: do not confuse this with the built-in class [EditorSettings].
