@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://wdt02fkojkko" path="res://source/editor/components/editor_world_bridge.gd" id="10_world_bridge"]
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/editor_project_io.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/utils/node/undo_redo_node.gd" id="12_history"]
+[ext_resource type="Script" uid="uid://b4ryou3duy3a0" path="res://source/editor/components/decoration_visibility.gd" id="12_mg3wh"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
 [ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
@@ -25,17 +26,14 @@ metadata/_custom_type_script = "uid://e70irgpv1usl"
 
 [node name="Editor" type="Node" unique_id=1373690984]
 script = ExtResource("1_ae8ev")
-_editor_settings = SubResource("Resource_nmpjy")
 
 [node name="Menus" type="Node" parent="." unique_id=1928374650]
-unique_name_in_owner = true
 script = ExtResource("9_menus")
 
 [node name="WorldBridge" type="Node" parent="." unique_id=1928374651]
 script = ExtResource("10_world_bridge")
 
 [node name="ProjectIO" type="Node" parent="." unique_id=1928374652]
-unique_name_in_owner = true
 script = ExtResource("11_project_io")
 
 [node name="UndoRedo" type="Node" parent="." unique_id=1928374653]
@@ -50,11 +48,9 @@ unique_name_in_owner = true
 script = ExtResource("18_project_node")
 
 [node name="DecorationInput" type="Node" parent="." unique_id=1928374656]
-unique_name_in_owner = true
 script = ExtResource("15_decoration_input")
 
 [node name="ArmyInput" type="Node" parent="." unique_id=1928374657]
-unique_name_in_owner = true
 script = ExtResource("16_army_input")
 
 [node name="ProvinceLinkEditer" type="Node" parent="." unique_id=1928374654]
@@ -62,6 +58,10 @@ script = ExtResource("13_editor_adjacency")
 
 [node name="CountryOwnershipGiver" type="Node" parent="." unique_id=1928374655]
 script = ExtResource("7_nha6u")
+
+[node name="DecorationVisibility" type="Node" parent="." unique_id=521376900]
+script = ExtResource("12_mg3wh")
+_editor_settings = SubResource("Resource_nmpjy")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -76,14 +76,12 @@ follow_viewport_enabled = true
 unique_name_in_owner = true
 
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
-unique_name_in_owner = true
 script = ExtResource("6_uwkq8")
 _editor_settings = SubResource("Resource_nmpjy")
 
 [node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
 
 [node name="Camera" parent="CameraContainer" unique_id=1466582700 instance=ExtResource("4_camera")]
-unique_name_in_owner = true
 
 [node name="WorldOverlayLayer" type="CanvasLayer" parent="." unique_id=1559674596]
 layer = 2
@@ -223,7 +221,6 @@ grow_vertical = 2
 mouse_filter = 2
 
 [node name="SaveDialog" type="FileDialog" parent="." unique_id=32787500]
-unique_name_in_owner = true
 initial_position = 2
 size = Vector2i(931, 500)
 dialog_hide_on_ok = true
@@ -250,6 +247,7 @@ use_native_dialog = true
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="ArmyInput" to="UILayer/EditingInterface" method="open_army_edit_interface"]
+[connection signal="changed" from="DecorationVisibility" to="WorldLayer/WorldContainer/WorldVisuals2D" method="set_decoration_visibility"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldBridge" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="DecorationInput" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ArmyInput" method="_on_world_loaded"]

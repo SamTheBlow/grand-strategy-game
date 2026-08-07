@@ -51,12 +51,12 @@ func set_project(new_project: GameProject) -> void:
 
 
 ## Shows or hides the decorations.
-func set_decoration_visiblity(is_decorations_visible: bool) -> void:
+func set_decoration_visibility(is_decorations_visible: bool) -> void:
 	if is_node_ready():
 		_decorations_node.visible = is_decorations_visible
 	else:
 		ready.connect(
-				set_decoration_visiblity.bind(is_decorations_visible),
+				set_decoration_visibility.bind(is_decorations_visible),
 				ConnectFlags.CONNECT_ONE_SHOT
 		)
 
