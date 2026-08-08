@@ -1,20 +1,11 @@
 class_name UndoRedoNode
 extends Node
-## Encapsulates an [UndoRedo] system.
-## Applies undo/redo according to user input. Provides useful signals.
+## Applies undo/redo according to user input.
+## Keeps track of dirty state.
 
-signal initialized(undo_redo: UndoRedo)
 signal is_dirty_changed(is_dirty: bool)
 
-var _undo_redo: UndoRedo:
-	set(value):
-		if _undo_redo != null:
-			_undo_redo.version_changed.disconnect(_update_is_dirty)
-
-		_undo_redo = value
-
-		_undo_redo.version_changed.connect(_update_is_dirty)
-		initialized.emit(_undo_redo)
+@export var _undo_redo: UndoRedoResource
 
 var _is_dirty: bool = false:
 	set(value):
@@ -28,9 +19,9 @@ var _is_dirty: bool = false:
 var _saved_version: int = 1
 
 
-func _init() -> void:
-	# Call the setter
-	_undo_redo = UndoRedo.new()
+func _ready() -> void:
+	_update_is_dirty()
+	_undo_redo.version_changed.connect(_update_is_dirty)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -42,9 +33,8 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
-## Resets all internal data.
 func reset() -> void:
-	_undo_redo = UndoRedo.new()
+	_undo_redo.reset()
 	_saved_version = 1
 	_is_dirty = false
 

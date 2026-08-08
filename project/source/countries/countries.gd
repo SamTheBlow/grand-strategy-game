@@ -91,11 +91,11 @@ func position_of(country_id: int) -> int:
 	return _order.find(country_id)
 
 
-## Removes a country, using given [UndoRedo] system.
+## Removes a country, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(
 		country: Country,
-		undo_redo: UndoRedo,
+		undo_redo: UndoRedoResource,
 		provinces: Provinces,
 		armies: Armies,
 		armies_of_each_country: ArmiesOfEachCountry,

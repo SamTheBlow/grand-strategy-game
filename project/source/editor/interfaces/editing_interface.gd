@@ -63,10 +63,10 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 }
 
 @export var _editor_settings: AppEditorSettings
+@export var _undo_redo: UndoRedoResource
 
 var _navigator := InterfaceNavigator.new(self)
 var _project: GameProject
-var _undo_redo: UndoRedo
 
 var _current_interface: AppEditorInterface:
 	set(value):
@@ -99,10 +99,6 @@ func _ready() -> void:
 
 func set_project(project: GameProject) -> void:
 	_project = project
-
-
-func set_undo_redo(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 ## Opens a new interface of given type.

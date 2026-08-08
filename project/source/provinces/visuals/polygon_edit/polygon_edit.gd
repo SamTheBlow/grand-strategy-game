@@ -48,8 +48,8 @@ var can_drag_entire_polygon: bool = true:
 			_create_action_drag_polygon()
 			_is_dragging = false
 
-## The [UndoRedo] system to undo/redo changes.
-var undo_redo := UndoRedo.new()
+## The [UndoRedoResource] system to undo/redo changes.
+var undo_redo: UndoRedoResource
 
 ## The index of the active (hovered) vertex.
 ## It's -1 if the cursor is not hovering over any vertex.

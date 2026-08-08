@@ -3,12 +3,9 @@ extends Node
 ## Adds/removes a right clicked province from the selected province's links.
 ## Clears selected province's links when double right clicked.
 
+@export var _undo_redo: UndoRedoResource
+
 var _province_selection: ProvinceSelection
-var _undo_redo: UndoRedo
-
-
-func _on_history_initialized(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:

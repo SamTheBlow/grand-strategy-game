@@ -29,9 +29,9 @@ func remove(player: GamePlayer) -> void:
 	removed.emit(player)
 
 
-## Removes a player, using given [UndoRedo] system.
+## Removes a player, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
-func undo_redo_remove(player: GamePlayer, undo_redo: UndoRedo) -> void:
+func undo_redo_remove(player: GamePlayer, undo_redo: UndoRedoResource) -> void:
 	if not _list.has(player):
 		return
 

@@ -39,11 +39,11 @@ func remove(army: Army) -> void:
 	removed.emit(army)
 
 
-## Removes given army, using given [UndoRedo] system.
+## Removes given army, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(
 		army: Army,
-		undo_redo: UndoRedo,
+		undo_redo: UndoRedoResource,
 		armies_in_each_province: ArmiesInEachProvince
 ) -> void:
 	undo_redo.create_action("Delete army")

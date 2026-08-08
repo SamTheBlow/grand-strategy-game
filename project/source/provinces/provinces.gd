@@ -51,11 +51,11 @@ func remove(province_id: int) -> void:
 	removed.emit(province)
 
 
-## Removes a province, using given [UndoRedo] system.
+## Removes a province, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(
 		province: Province,
-		undo_redo: UndoRedo,
+		undo_redo: UndoRedoResource,
 		armies: Armies,
 		armies_in_each_province: ArmiesInEachProvince
 ) -> void:

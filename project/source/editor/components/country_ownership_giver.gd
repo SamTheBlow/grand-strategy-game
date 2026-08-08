@@ -2,15 +2,11 @@ class_name CountryOwnershipGiver
 extends Node
 ## Gives/removes control of some province to some selected country.
 
+@export var _undo_redo: UndoRedoResource
+
 ## The country to give control of provinces to.
 ## This node has no effect if this is null.
 var _selected_country: Country = null
-
-var _undo_redo := UndoRedo.new()
-
-
-func _on_history_initialized(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 ## Sets it to no country if input is empty or null.

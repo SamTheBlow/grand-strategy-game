@@ -41,7 +41,7 @@ var editor_settings: AppEditorSettings:
 ## Allows this interface to navigate to other interfaces.
 var navigator: InterfaceNavigator
 
-var undo_redo: UndoRedo
+var undo_redo: UndoRedoResource
 
 
 func _ready() -> void:

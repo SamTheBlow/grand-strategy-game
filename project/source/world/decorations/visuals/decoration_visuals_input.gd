@@ -11,6 +11,8 @@ signal selected(decoration: WorldDecoration)
 signal deselected()
 signal draggability_changed(is_enabled: bool)
 
+@export var _undo_redo: UndoRedoResource
+
 ## This is used to apply highlights
 @export var _decoration_container: DecorationVisualsContainer2D
 
@@ -19,14 +21,7 @@ var _selected_decoration: WorldDecoration = null
 ## May be null.
 var _hovered_decoration: WorldDecoration = null
 
-var _undo_redo: UndoRedo
-
-## This is used to create the [UndoRedo] action.
 var _drag_position := Vector2.ZERO
-
-
-func set_undo_redo(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 ## Deselects the decoration if input is empty or null.

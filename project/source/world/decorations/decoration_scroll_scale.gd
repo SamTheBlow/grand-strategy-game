@@ -6,7 +6,7 @@ extends Node
 const _SCALE_FACTOR: float = 1.1
 const _INVERSE_SCALE_FACTOR: float = 1.0 / _SCALE_FACTOR
 
-var _undo_redo: UndoRedo
+@export var _undo_redo: UndoRedoResource
 
 ## May be null.
 var _selected_decoration: WorldDecoration = null:
@@ -44,10 +44,6 @@ func _input(event: InputEvent) -> void:
 	_undo_redo.commit_action()
 
 	get_viewport().set_input_as_handled()
-
-
-func set_undo_redo(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 ## Deselects if input is empty or null.

@@ -2,7 +2,7 @@ class_name ProvinceOverlay
 extends Node2D
 ## Displays an overlay for editing the currently selected province.
 
-var _undo_redo: UndoRedo
+@export var _undo_redo: UndoRedoResource
 
 var _province_selection: ProvinceSelection
 var _edge_case: PolygonEditEdgeCase
@@ -60,10 +60,6 @@ func _refresh() -> void:
 	fortress_position_edit.drag_finished.connect(
 			_on_fortress_drag_finished.bind(selected_province)
 	)
-
-
-func _on_history_initialized(undo_redo: UndoRedo) -> void:
-	_undo_redo = undo_redo
 
 
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
