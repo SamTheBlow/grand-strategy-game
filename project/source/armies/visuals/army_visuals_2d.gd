@@ -191,9 +191,13 @@ func _refresh_brightness() -> void:
 func _fit_inside_preview_container() -> void:
 	const ARMY_VISUALS_SIZE := Vector2(64.0, 64.0)
 
-	# Note: assumes the army visuals are centered around the origin
-	position = 0.5 * preview_container.size
-	scale = Vector2.ONE * minf(
+	# Assumes the origin is at the bottom-center of the visuals
+	var scale_factor: float = minf(
 			preview_container.size.x / ARMY_VISUALS_SIZE.x,
 			preview_container.size.y / ARMY_VISUALS_SIZE.y
 	)
+	position = 0.5 * (
+			preview_container.size
+			+ Vector2(0.0, ARMY_VISUALS_SIZE.y * scale_factor)
+	)
+	scale = Vector2.ONE * scale_factor
