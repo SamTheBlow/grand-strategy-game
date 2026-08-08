@@ -3,10 +3,12 @@ extends Node2D
 ## Allows dragging the currently selected world decoration with the mouse.
 
 var _undo_redo: UndoRedo
-var _decoration_container: DecorationVisualsContainer2D
 
 ## May be null.
 var _selected_decoration: WorldDecoration = null
+## May be null.
+var _hovered_decoration: WorldDecoration = null
+
 var _is_dragging: bool = false
 var _drag_start_position := Vector2.ZERO
 var _cursor_position := Vector2.ZERO
@@ -23,10 +25,7 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		# Press to start drag
 		if event_mouse_button.is_pressed():
-			var visuals: DecorationVisuals2D = (
-					_decoration_container.visuals_of(_selected_decoration)
-			)
-			if visuals != null and visuals.is_mouse_over():
+			if _hovered_decoration == _selected_decoration:
 				_is_dragging = true
 				_drag_start_position = _selected_decoration.position
 				_cursor_position = get_global_mouse_position()
@@ -64,6 +63,11 @@ func set_selected_decoration(decoration: WorldDecoration = null) -> void:
 	_selected_decoration = decoration
 
 
+## Unhovers if input is empty or null.
+func set_hovered_decoration(decoration: WorldDecoration = null) -> void:
+	_hovered_decoration = decoration
+
+
 func _create_undo_redo() -> void:
 	var start_position: Vector2 = _drag_start_position
 	var end_position: Vector2 = _selected_decoration.position
@@ -78,12 +82,3 @@ func _create_undo_redo() -> void:
 			_selected_decoration, &"position", start_position
 	)
 	_undo_redo.commit_action(false)
-
-
-func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
-	# TODO ewww
-	_decoration_container = (
-			world_visuals.get_node("%Decorations")
-			as DecorationVisualsContainer2D
-	)
-	set_selected_decoration(null)

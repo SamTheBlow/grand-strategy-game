@@ -3,6 +3,8 @@ extends Node2D
 ## An encapsulated list of [DecorationVisuals2D].
 
 signal decoration_visuals_created(decoration_visuals: DecorationVisuals2D)
+signal decoration_hovered(decoration: WorldDecoration)
+signal decoration_unhovered()
 
 ## The scene's root node must extend [DecorationVisuals2D].
 const _DECORATION_VISUALS_SCENE: PackedScene = preload("uid://dkm408u40wfix")
@@ -56,6 +58,10 @@ func _add(decoration: WorldDecoration) -> void:
 			_DECORATION_VISUALS_SCENE.instantiate() as DecorationVisuals2D
 	)
 	decoration_visuals.world_decoration = decoration
+	decoration_visuals.mouse_entered.connect(
+			decoration_hovered.emit.bind(decoration)
+	)
+	decoration_visuals.mouse_exited.connect(decoration_unhovered.emit)
 	_map[decoration] = decoration_visuals
 	add_child(decoration_visuals)
 	decoration_visuals_created.emit(decoration_visuals)
