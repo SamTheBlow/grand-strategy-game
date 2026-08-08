@@ -18,6 +18,7 @@
 [ext_resource type="Script" uid="uid://blaw3yvrv1dvc" path="res://source/armies/visuals/army_visuals_input.gd" id="16_army_input"]
 [ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
+[ext_resource type="Script" uid="uid://beyxqtfs67ujj" path="res://source/editor/components/decoration_overlay.gd" id="19_decoration_overlay"]
 
 [sub_resource type="Resource" id="Resource_nmpjy"]
 script = ExtResource("2_qlu2u")
@@ -84,6 +85,9 @@ follow_viewport_enabled = true
 
 [node name="ProvinceOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=1598664318]
 script = ExtResource("14_province_overlay")
+
+[node name="DecorationOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=989342305]
+script = ExtResource("19_decoration_overlay")
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=151164930]
 layer = 3
@@ -232,6 +236,7 @@ use_native_dialog = true
 [connection signal="initialized" from="UndoRedo" to="ProvinceLinkEditer" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="CountryOwnershipGiver" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
+[connection signal="initialized" from="UndoRedo" to="WorldOverlayLayer/DecorationOverlay" method="set_undo_redo"]
 [connection signal="initialized" from="UndoRedo" to="UILayer/EditingInterface" method="set_undo_redo"]
 [connection signal="is_dirty_changed" from="UndoRedo" to="WindowTitle" method="set_is_dirty"]
 [connection signal="has_valid_file_path_changed" from="ProjectNode" to="Menus" method="_on_project_path_validity_changed"]
@@ -242,7 +247,9 @@ use_native_dialog = true
 [connection signal="project_changing" from="ProjectNode" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
 [connection signal="project_opened" from="ProjectOpener" to="ProjectNode" method="set_project"]
+[connection signal="deselected" from="DecorationInput" to="WorldOverlayLayer/DecorationOverlay" method="set_selected_decoration"]
 [connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
+[connection signal="selected" from="DecorationInput" to="WorldOverlayLayer/DecorationOverlay" method="set_selected_decoration"]
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="ArmyInput" to="UILayer/EditingInterface" method="open_army_edit_interface"]
@@ -253,6 +260,7 @@ use_native_dialog = true
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ProvinceLinkEditer" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="CameraContainer/Camera/WorldLimitWiring" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
+[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldOverlayLayer/DecorationOverlay" method="_on_world_loaded"]
 [connection signal="army_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup" to="ArmyInput" method="_setup_visuals"]
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="DecorationInput" method="set_selected_decoration"]
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmyInput" method="set_selected_army"]

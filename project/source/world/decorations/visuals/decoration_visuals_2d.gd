@@ -42,6 +42,10 @@ func _ready() -> void:
 	world_decoration.changed.connect(_refresh_visuals.unbind(1))
 
 
+func is_mouse_over() -> bool:
+	return get_viewport().gui_get_hovered_control() == _control
+
+
 ## When clicked, emits signal and eats input
 func _unhandled_input(event: InputEvent) -> void:
 	if not is_input_enabled:
