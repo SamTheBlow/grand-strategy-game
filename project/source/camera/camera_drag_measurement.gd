@@ -9,14 +9,8 @@ extends Node
 const _MAX_DRAG_AMOUNT: float = 30.0
 
 @export var _camera: Node2D
-@export var _camera_drag: CameraDrag
 
 var _start_position := Vector2.ZERO
-
-
-func _ready() -> void:
-	_camera_drag.drag_started.connect(_on_camera_drag_started)
-	_camera_drag.drag_ended.connect(_on_camera_drag_ended)
 
 
 func _on_camera_drag_started() -> void:

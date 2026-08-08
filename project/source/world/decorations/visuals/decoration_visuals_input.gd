@@ -5,30 +5,28 @@ extends Node
 ##   and which decoration is currently hovered.
 ## - Adds or removes highlight on decoration visuals accordingly.
 ## - Emits a signal when a decoration is selected or deselected.
+## - Handles dragging the selected decoration with the mouse.
 
 signal selected(decoration: WorldDecoration)
 signal deselected()
+signal draggability_changed(is_enabled: bool)
+
+## This is used to apply highlights
+@export var _decoration_container: DecorationVisualsContainer2D
 
 ## May be null.
 var _selected_decoration: WorldDecoration = null
 ## May be null.
 var _hovered_decoration: WorldDecoration = null
 
-## This is used to apply highlights
-var _decoration_container: DecorationVisualsContainer2D
+var _undo_redo: UndoRedo
+
+## This is used to create the [UndoRedo] action.
+var _drag_position := Vector2.ZERO
 
 
-func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
-	# Reset internal state
-	_selected_decoration = null
-	_hovered_decoration = null
-
-	# Needed to apply highlights
-	# TODO eww
-	_decoration_container = (
-			world_visuals.get_node("%Decorations")
-			as DecorationVisualsContainer2D
-	)
+func set_undo_redo(undo_redo: UndoRedo) -> void:
+	_undo_redo = undo_redo
 
 
 ## Deselects the decoration if input is empty or null.
@@ -48,6 +46,7 @@ func set_selected_decoration(decoration: WorldDecoration = null) -> void:
 				visuals.remove_highlight()
 		_selected_decoration = null
 		deselected.emit()
+		draggability_changed.emit(false)
 
 	if decoration == null:
 		return
@@ -55,6 +54,7 @@ func set_selected_decoration(decoration: WorldDecoration = null) -> void:
 	_selected_decoration = decoration
 	_decoration_container.visuals_of(decoration).highlight_selected()
 	selected.emit(decoration)
+	draggability_changed.emit(_selected_decoration == _hovered_decoration)
 
 
 ## Sets it to none if input is empty or null.
@@ -71,6 +71,7 @@ func set_hovered_decoration(decoration: WorldDecoration = null) -> void:
 			if visuals != null:
 				visuals.remove_highlight()
 		_hovered_decoration = null
+		draggability_changed.emit(false)
 
 	if decoration == null:
 		return
@@ -78,6 +79,7 @@ func set_hovered_decoration(decoration: WorldDecoration = null) -> void:
 	_hovered_decoration = decoration
 	if decoration != _selected_decoration:
 		_decoration_container.visuals_of(decoration).highlight()
+	draggability_changed.emit(_selected_decoration == _hovered_decoration)
 
 
 func _setup_visuals(decoration_visuals: DecorationVisuals2D) -> void:
@@ -96,13 +98,6 @@ func _setup_visuals(decoration_visuals: DecorationVisuals2D) -> void:
 	)
 
 
-func _on_decoration_clicked(decoration: WorldDecoration) -> void:
-	if _selected_decoration == decoration:
-		set_selected_decoration(null)
-	else:
-		set_selected_decoration(decoration)
-
-
 ## We use this and not set_hovered_decoration(null),
 ## because if a different decoration got hovered and got their
 ## mouse_entered signal to trigger first, then they'd set the
@@ -111,6 +106,47 @@ func _on_decoration_clicked(decoration: WorldDecoration) -> void:
 func _unset_hovered_decoration(decoration_visuals: DecorationVisuals2D) -> void:
 	if _hovered_decoration == decoration_visuals.world_decoration:
 		_hovered_decoration = null
+		draggability_changed.emit(false)
 
 	if decoration_visuals.world_decoration != _selected_decoration:
 		decoration_visuals.remove_highlight()
+
+
+func _on_decoration_clicked(decoration: WorldDecoration) -> void:
+	if _selected_decoration == decoration:
+		set_selected_decoration(null)
+	else:
+		set_selected_decoration(decoration)
+
+
+func _on_drag_started() -> void:
+	if _selected_decoration == null:
+		return
+
+	_drag_position = _selected_decoration.position
+
+
+func _on_drag_moved(delta: Vector2) -> void:
+	if _selected_decoration == null:
+		return
+
+	_selected_decoration.position += delta
+
+
+func _on_drag_ended() -> void:
+	if _selected_decoration == null:
+		return
+
+	var start_position: Vector2 = _drag_position
+	var end_position: Vector2 = _selected_decoration.position
+
+	if start_position == end_position:
+		return
+
+	# Don't execute, it already moved
+	_undo_redo.create_action("Move world decoration")
+	_undo_redo.add_do_property(_selected_decoration, &"position", end_position)
+	_undo_redo.add_undo_property(
+			_selected_decoration, &"position", start_position
+	)
+	_undo_redo.commit_action(false)
