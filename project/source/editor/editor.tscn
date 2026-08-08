@@ -19,6 +19,7 @@
 [ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
+[ext_resource type="Script" uid="uid://61ossm26cpd3" path="res://source/world/decorations/decoration_scroll_scale.gd" id="20_decoration_scroll_scale"]
 
 [sub_resource type="Resource" id="Resource_nmpjy"]
 script = ExtResource("2_qlu2u")
@@ -47,6 +48,9 @@ script = ExtResource("11_project_io")
 [node name="DecorationInput" type="Node" parent="." unique_id=1928374656 node_paths=PackedStringArray("_decoration_container")]
 script = ExtResource("15_decoration_input")
 _decoration_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
+
+[node name="DecorationScrollScale" type="Node" parent="." unique_id=1928374660]
+script = ExtResource("20_decoration_scroll_scale")
 
 [node name="ArmyInput" type="Node" parent="." unique_id=1928374657]
 script = ExtResource("16_army_input")
@@ -238,6 +242,7 @@ use_native_dialog = true
 [connection signal="save_requested" from="Menus" to="ProjectNode" method="save"]
 [connection signal="show_in_file_manager_requested" from="Menus" to="ProjectNode" method="show_in_file_manager"]
 [connection signal="initialized" from="UndoRedo" to="DecorationInput" method="set_undo_redo"]
+[connection signal="initialized" from="UndoRedo" to="DecorationScrollScale" method="set_undo_redo"]
 [connection signal="initialized" from="UndoRedo" to="ProvinceLinkEditer" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="CountryOwnershipGiver" method="_on_history_initialized"]
 [connection signal="initialized" from="UndoRedo" to="WorldOverlayLayer/ProvinceOverlay" method="_on_history_initialized"]
@@ -251,8 +256,10 @@ use_native_dialog = true
 [connection signal="project_changing" from="ProjectNode" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
 [connection signal="project_opened" from="ProjectOpener" to="ProjectNode" method="set_project"]
+[connection signal="deselected" from="DecorationInput" to="DecorationScrollScale" method="set_selected_decoration"]
 [connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="draggability_changed" from="DecorationInput" to="WorldOverlayLayer/DecorationDragInput" method="set_is_enabled"]
+[connection signal="selected" from="DecorationInput" to="DecorationScrollScale" method="set_selected_decoration"]
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmyInput" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="ArmyInput" to="UILayer/EditingInterface" method="open_army_edit_interface"]
@@ -270,8 +277,10 @@ use_native_dialog = true
 [connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
 [connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]
+[connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationScrollScale" method="set_is_being_dragged" binds= [false]]
 [connection signal="drag_moved" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_moved"]
 [connection signal="drag_started" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_started"]
+[connection signal="drag_started" from="WorldOverlayLayer/DecorationDragInput" to="DecorationScrollScale" method="set_is_being_dragged" binds= [true]]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
 [connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
