@@ -28,6 +28,11 @@ func set_selected_province(province: Province) -> void:
 	_province_selection.selected_province = province
 
 
+## Returns null if none are hovered.
+func hovered_province() -> Province:
+	return _hovered_province
+
+
 ## Sets it to none if input is empty or null.
 ## No effect if province is already the hovered one.
 func set_hovered_province(province: Province = null) -> void:

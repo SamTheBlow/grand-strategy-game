@@ -1,4 +1,4 @@
-class_name ArmyVisualsInput
+class_name ArmySelection
 extends Node
 ## - Enables input on all army visuals.
 ## - Keeps track of which army is currently selected
@@ -9,25 +9,18 @@ extends Node
 signal selected(army: Army)
 signal deselected()
 
+## This is used to apply highlights
+@export var _army_visuals_setup: ArmyVisualsSetup
+
 ## May be null.
 var _selected_army: Army = null
 ## May be null.
 var _hovered_army: Army = null
 
-## This is used to apply highlights
-var _army_visuals_setup: ArmyVisualsSetup
 
-
-func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
-	# Reset internal state
-	_selected_army = null
-	_hovered_army = null
-
-	# Needed to apply highlights
-	# TODO eww
-	_army_visuals_setup = (
-			world_visuals.get_node("%ArmyVisualsSetup") as ArmyVisualsSetup
-	)
+## Returns null if none are selected.
+func selected_army() -> Army:
+	return _selected_army
 
 
 ## Deselects army if input is empty or null.
@@ -56,6 +49,11 @@ func set_selected_army(army: Army = null) -> void:
 	selected.emit(army)
 
 
+## Returns null if none are hovered.
+func hovered_army() -> Army:
+	return _hovered_army
+
+
 ## Sets it to none if input is empty or null.
 ## No effect if army is already the hovered one.
 func set_hovered_army(army: Army = null) -> void:
@@ -81,17 +79,16 @@ func set_hovered_army(army: Army = null) -> void:
 
 func _setup_visuals(army_visuals: ArmyVisuals2D) -> void:
 	army_visuals.is_input_enabled = true
+
+	if army_visuals.army == _selected_army:
+		army_visuals.highlight_selected()
+	elif army_visuals.army == _hovered_army:
+		army_visuals.highlight()
+
 	army_visuals.clicked.connect(_on_army_clicked.bind(army_visuals.army))
 	army_visuals.mouse_entered.connect(set_hovered_army.bind(army_visuals.army))
 	army_visuals.mouse_exited.connect(_unset_hovered_army.bind(army_visuals))
 	army_visuals.tree_exited.connect(_unset_hovered_army.bind(army_visuals))
-
-
-func _on_army_clicked(army: Army) -> void:
-	if _selected_army == army:
-		set_selected_army(null)
-	else:
-		set_selected_army(army)
 
 
 ## We use this and not set_hovered_army(null),
@@ -105,3 +102,10 @@ func _unset_hovered_army(army_visuals: ArmyVisuals2D) -> void:
 
 	if army_visuals.army != _selected_army:
 		army_visuals.remove_highlight()
+
+
+func _on_army_clicked(army: Army) -> void:
+	if _selected_army == army:
+		set_selected_army(null)
+	else:
+		set_selected_army(army)
