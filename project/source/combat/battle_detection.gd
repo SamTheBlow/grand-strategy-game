@@ -4,6 +4,9 @@ class_name BattleDetection
 var _battle: Battle
 var _armies_in_each_province: ArmiesInEachProvince
 
+var _is_enabled: bool = false:
+	set = set_is_enabled
+
 
 func _init(
 		armies: Armies,
@@ -20,9 +23,16 @@ func _init(
 	armies.removed.connect(_disconnect_army)
 
 
+func set_is_enabled(value: bool) -> void:
+	_is_enabled = value
+
+
 ## Checks for [Battles] that need to occur in given [Army]'s [Province].
 ## Makes the battles happen, when applicable.
 func _resolve_battles(army: Army) -> void:
+	if not _is_enabled:
+		return
+
 	# Armies may get removed from the list as they destroy each other,
 	# so it's important to duplicate the array.
 	var armies_in_province: Array[Army] = (

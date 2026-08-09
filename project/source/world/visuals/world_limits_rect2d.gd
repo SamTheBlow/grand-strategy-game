@@ -15,8 +15,7 @@ func _ready() -> void:
 			WorldLimits.DEFAULT_BOTTOM - WorldLimits.DEFAULT_TOP
 	)
 
-	# Prevent errors when you open this in the Godot editor
-	if _editor_settings == null:
+	if Engine.is_editor_hint():
 		return
 
 	_update_world_limits_visible(_editor_settings.show_world_limits)

@@ -96,16 +96,20 @@ func end_setup() -> void:
 	# Add province control goal component
 	var province_control_goal := ProvinceControlGoal.new(self)
 	province_control_goal.game_over.connect(end_game)
-	_components.append(province_control_goal)
+
+	# Add battle detection component
+	var battle_detection := BattleDetection.new(
+			world.armies, world.armies_in_each_province, rules.battle
+	)
+	turn.is_running_changed.connect(battle_detection.set_is_enabled)
 
 	# Add other components
 	_components.append_array([
+		province_control_goal,
+		battle_detection,
 		MilitaryAccessLossBehavior.new(self),
 		DiplomacyRelationshipAutoChanges.new(self),
 		AutoEndTurn.new(self),
-		BattleDetection.new(
-				world.armies, world.armies_in_each_province, rules.battle
-		),
 	])
 
 	turn.is_running_changed.connect(_on_is_running_changed)

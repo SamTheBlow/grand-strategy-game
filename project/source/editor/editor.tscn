@@ -282,6 +282,7 @@ use_native_dialog = true
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="DecorationInput" method="set_selected_decoration"]
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmyInput" method="set_selected_army"]
 [connection signal="province_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="CountryOwnershipGiver" method="apply_to_province"]
+[connection signal="province_right_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="ProvinceLinkEditer" method="_on_province_right_clicked"]
 [connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
 [connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]

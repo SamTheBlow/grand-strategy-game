@@ -20,7 +20,7 @@ func reset() -> void:
 
 
 func create_action(
-		name: String, merge_mode: int = 0, backward_undo_ops: bool = true
+		name: String, merge_mode: int = 0, backward_undo_ops: bool = false
 ) -> void:
 	_undo_redo.create_action(name, merge_mode, backward_undo_ops)
 
