@@ -22,7 +22,11 @@ func _on_province_right_clicked(
 	var clicked_province_id: int = province_visuals.province.id
 
 	# Double right click the selected province to remove all its links
-	if is_double_click and clicked_province_id == selected_province.id:
+	if clicked_province_id == selected_province.id:
+		# No effect when single clicking selected province
+		if not is_double_click:
+			return
+
 		# Keep track of the linked provinces for undo/redo
 		var linked_province_ids: Array[int] = (
 				selected_province.linked_province_ids().duplicate()

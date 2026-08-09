@@ -8,11 +8,10 @@ var is_enabled: bool = true:
 		if is_enabled == value:
 			return
 		is_enabled = value
-		if _armies != null and is_node_ready():
+		if _provinces != null and is_node_ready():
 			refresh_highlights()
 
 var _armies: Armies
-var _provinces: Provinces
 var _playing_country: PlayingCountry
 var _armies_in_each_province: ArmiesInEachProvince
 
@@ -31,6 +30,19 @@ var _province_selection: ProvinceSelection:
 				_clear_highlights.unbind(1)
 		)
 
+var _provinces: Provinces:
+	set(value):
+		if _provinces != null:
+			for province in _provinces.list():
+				_disconnect_link_signals(province)
+
+		_provinces = value
+
+		refresh_highlights()
+		for province in _provinces.list():
+			_connect_link_signals(province)
+		_provinces.added.connect(_connect_link_signals)
+		_provinces.removed.connect(_disconnect_link_signals)
 
 var _highlighted_province_link_ids: Array[int] = []
 
@@ -89,14 +101,33 @@ func _clear_highlights() -> void:
 	_highlighted_province_link_ids.clear()
 
 
+func _connect_link_signals(province: Province) -> void:
+	province.link_added.connect(
+			_on_province_links_changed.bind(province).unbind(1)
+	)
+	province.link_removed.connect(
+			_on_province_links_changed.bind(province).unbind(1)
+	)
+	province.links_reset.connect(
+			_on_province_links_changed.bind(province)
+	)
+
+
+func _disconnect_link_signals(province: Province) -> void:
+	province.link_added.disconnect(_on_province_links_changed)
+	province.link_removed.disconnect(_on_province_links_changed)
+	province.links_reset.disconnect(_on_province_links_changed)
+
+
+func _on_province_links_changed(province: Province) -> void:
+	if province == _province_selection.selected_province:
+		refresh_highlights()
+
+
 func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
 	_armies = world_visuals.world.armies
-	_provinces = world_visuals.world.provinces
 	_playing_country = world_visuals.playing_country
 	_armies_in_each_province = world_visuals.world.armies_in_each_province
 	_province_selection = world_visuals.province_selection
 
-	if is_node_ready():
-		refresh_highlights()
-	else:
-		ready.connect(refresh_highlights, ConnectFlags.CONNECT_ONE_SHOT)
+	_provinces = world_visuals.world.provinces
