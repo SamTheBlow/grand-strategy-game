@@ -1,10 +1,10 @@
 @tool
 class_name WorldLimitsRect2D
 extends Rect2D
-## [Rect2D] that automatically updates according to
-## given [AppEditorSettings] and given limits.
+## [Rect2D] that updates according to given settings and given limits.
 
-@export var _editor_settings: AppEditorSettings
+@export var _setting_show_limits: ItemBool
+@export var _setting_limits_color: ItemColor
 
 
 func _ready() -> void:
@@ -18,14 +18,10 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
-	_update_world_limits_visible(_editor_settings.show_world_limits.value)
-	_editor_settings.show_world_limits.value_changed.connect(
-			_update_world_limits_visible
-	)
-	_update_world_limits_color(_editor_settings.world_limits_color.value)
-	_editor_settings.world_limits_color.value_changed.connect(
-			_update_world_limits_color
-	)
+	_update_world_limits_visible(_setting_show_limits.value)
+	_setting_show_limits.value_changed.connect(_update_world_limits_visible)
+	_update_world_limits_color(_setting_limits_color.value)
+	_setting_limits_color.value_changed.connect(_update_world_limits_color)
 
 
 func set_limits(left: float, top: float, right: float, bottom: float) -> void:

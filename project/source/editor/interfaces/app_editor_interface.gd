@@ -28,24 +28,13 @@ signal decoration_list_item_unhovered()
 signal decoration_select_requested(decoration: WorldDecoration)
 @warning_ignore_restore("unused_signal")
 
-## Specific signal to emit when this interface is closedd. May be empty.
+## Specific signal to emit when this interface is closed. May be empty.
 var closed_signal: Signal
 
 var project: GameProject
-
-var editor_settings: AppEditorSettings:
-	set(value):
-		editor_settings = value
-		_update_editor_settings()
-
-## Allows this interface to navigate to other interfaces.
+var editor_settings: AppEditorSettings
 var navigator: InterfaceNavigator
-
 var undo_redo: UndoRedoResource
-
-
-func _ready() -> void:
-	_update_editor_settings()
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -60,10 +49,6 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func close() -> void:
 	closed.emit()
-
-
-func _update_editor_settings() -> void:
-	pass
 
 
 ## Duplicates given node's item so that it isn't shared between interfaces.

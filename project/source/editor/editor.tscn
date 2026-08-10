@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/project_opener.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/utils/undo_redo/undo_redo_node.gd" id="12_history"]
 [ext_resource type="Script" uid="uid://b4ryou3duy3a0" path="res://source/editor/components/decoration_visibility.gd" id="12_mg3wh"]
-[ext_resource type="Script" uid="uid://du5c60nj1uetn" path="res://source/editor/components/buildings_visibility.gd" id="13_bldvis"]
+[ext_resource type="Script" uid="uid://du5c60nj1uetn" path="res://source/editor/components/building_visibility.gd" id="13_bldvis"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
 [ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
@@ -25,10 +25,17 @@
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
 [ext_resource type="Script" uid="uid://61ossm26cpd3" path="res://source/world/decorations/decoration_scroll_scale.gd" id="20_decoration_scroll_scale"]
+[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="22_jvmd3"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
 script = ExtResource("8_u5rcp")
 metadata/_custom_type_script = "uid://cqrjsjcv4lx25"
+
+[sub_resource type="Resource" id="Resource_lqb7r"]
+script = ExtResource("17_jvmd3")
+value = true
+text = "Show on world map"
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_mu8dq"]
 script = ExtResource("17_jvmd3")
@@ -36,8 +43,25 @@ value = true
 text = "Show on world map"
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
+[sub_resource type="Resource" id="Resource_jvmd3"]
+script = ExtResource("22_jvmd3")
+value = Color(1, 0, 0, 1)
+text = "Color"
+metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
+
+[sub_resource type="Resource" id="Resource_7nee5"]
+script = ExtResource("17_jvmd3")
+value = true
+child_items_on = Array[int]([0])
+text = "Show on world map"
+child_items = Array[ExtResource("16_lqb7r")]([SubResource("Resource_jvmd3")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+
 [sub_resource type="Resource" id="Resource_nmpjy"]
 script = ExtResource("2_qlu2u")
+show_world_limits = SubResource("Resource_7nee5")
+world_limits_color = SubResource("Resource_jvmd3")
+show_decorations = SubResource("Resource_lqb7r")
 show_buildings = SubResource("Resource_mu8dq")
 metadata/_custom_type_script = "uid://e70irgpv1usl"
 
@@ -91,11 +115,12 @@ _undo_redo = SubResource("Resource_ai428")
 script = ExtResource("7_nha6u")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="DecorationVisibility" type="Node" parent="." unique_id=521376900]
+[node name="DecorationVisibility" type="Node" parent="." unique_id=521376900 node_paths=PackedStringArray("_decorations_container")]
 script = ExtResource("12_mg3wh")
-_editor_settings = SubResource("Resource_nmpjy")
+_setting = SubResource("Resource_lqb7r")
+_decorations_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
 
-[node name="BuildingsVisibility" type="Node" parent="." unique_id=521376901]
+[node name="BuildingVisibility" type="Node" parent="." unique_id=521376901]
 script = ExtResource("13_bldvis")
 _setting = SubResource("Resource_mu8dq")
 
@@ -111,8 +136,10 @@ follow_viewport_enabled = true
 [node name="WorldVisuals2D" parent="WorldLayer/WorldContainer" unique_id=1427898407 instance=ExtResource("4_world_visuals")]
 
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
+modulate = Color(1, 0, 0, 1)
 script = ExtResource("6_uwkq8")
-_editor_settings = SubResource("Resource_nmpjy")
+_setting_show_limits = SubResource("Resource_7nee5")
+_setting_limits_color = SubResource("Resource_jvmd3")
 
 [node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
 
@@ -302,7 +329,6 @@ use_native_dialog = true
 [connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
 [connection signal="deselected" from="ArmySelection" to="UILayer/EditingInterface" method="close_interface"]
 [connection signal="selected" from="ArmySelection" to="UILayer/EditingInterface" method="open_army_edit_interface"]
-[connection signal="changed" from="DecorationVisibility" to="WorldLayer/WorldContainer/WorldVisuals2D" method="set_decoration_visibility"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldBridge" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="DecorationInput" method="_on_world_loaded"]
 [connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ProvinceLinkEditer" method="_on_world_loaded"]
@@ -313,7 +339,7 @@ use_native_dialog = true
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmySelection" method="set_selected_army"]
 [connection signal="province_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="CountryOwnershipGiver" method="apply_to_province"]
 [connection signal="province_right_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="ProvinceLinkEditer" method="_on_province_right_clicked"]
-[connection signal="province_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="BuildingsVisibility" method="apply_to"]
+[connection signal="province_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="BuildingVisibility" method="apply_to"]
 [connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
 [connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]

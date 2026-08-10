@@ -1,15 +1,14 @@
 extends Node
-## Emits a signal to apply decoration visibility according to editor settings.
+## Applies decoration visibility setting to given container node.
 
-signal changed(value: bool)
-
-@export var _editor_settings: AppEditorSettings
+@export var _setting: ItemBool
+@export var _decorations_container: Node2D
 
 
 func _ready() -> void:
-	_emit_changed(_editor_settings.show_decorations.value)
-	_editor_settings.show_decorations.value_changed.connect(_emit_changed)
+	_decorations_container.visible = _setting.value
+	_setting.value_changed.connect(_set_visibility)
 
 
-func _emit_changed(value: bool) -> void:
-	changed.emit(value)
+func _set_visibility(value: bool) -> void:
+	_decorations_container.visible = value
