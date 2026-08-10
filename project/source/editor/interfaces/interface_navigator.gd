@@ -20,6 +20,7 @@ enum Type {
 	PROVINCE_EDIT,
 	ARMY_LIST,
 	ARMY_EDIT,
+	BUILDINGS,
 }
 
 var _editor: EditingInterface

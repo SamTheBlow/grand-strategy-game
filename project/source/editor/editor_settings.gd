@@ -8,6 +8,7 @@ var show_world_limits: ItemBool
 var world_limits_color: ItemColor
 
 var show_decorations: ItemBool
+@export var show_buildings: ItemBool
 
 
 func _init() -> void:

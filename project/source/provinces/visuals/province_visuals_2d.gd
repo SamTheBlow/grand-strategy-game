@@ -31,6 +31,7 @@ var _mouse_is_inside_area: bool = false
 
 @onready var _outlined_polygon := %Polygon as OutlinedPolygon2D
 @onready var _collision_shape := %CollisionShape as CollisionPolygon2D
+@onready var _buildings := %Buildings as BuildingVisuals2D
 @onready var _army_stack := %ArmyStack2D as ArmyStack2D
 
 
@@ -53,7 +54,6 @@ func _ready() -> void:
 	var _color_update := %ColorUpdate as ProvinceColorUpdate
 	_color_update.setup(province)
 
-	var _buildings := %Buildings as BuildingVisuals2D
 	_buildings.setup(province)
 
 
@@ -112,6 +112,11 @@ func highlight_target() -> void:
 ## Hides the outline around this province.
 func remove_highlight() -> void:
 	_outlined_polygon.outline_settings = _outline_none
+
+
+## Shows or hides buildings in this province.
+func set_building_visibility(setting: ItemBool) -> void:
+	_buildings.visible = setting.value
 
 
 ## Debug function that clearly highlights this province on the world map.

@@ -41,6 +41,7 @@ const _EDIT_TAB_BACKGROUND_COLOR_ID: int = 8
 const _EDIT_TAB_DECORATIONS_ID: int = 9
 const _EDIT_TAB_PROVINCES_ID: int = 10
 const _EDIT_TAB_ARMIES_ID: int = 11
+const _EDIT_TAB_BUILDINGS_ID: int = 12
 
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
@@ -157,6 +158,9 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		_EDIT_TAB_ARMIES_ID:
 			# "Armies"
 			interface_type = InterfaceNavigator.Type.ARMY_LIST
+		_EDIT_TAB_BUILDINGS_ID:
+			# "Buildings"
+			interface_type = InterfaceNavigator.Type.BUILDINGS
 		_EDIT_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			return

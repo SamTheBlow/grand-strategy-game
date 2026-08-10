@@ -60,6 +60,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 		preload("uid://l2nhdgg0p4oo"),
 	InterfaceNavigator.Type.ARMY_EDIT:
 		preload("uid://n04sb8kke04h"),
+	InterfaceNavigator.Type.BUILDINGS:
+		preload("uid://dn67kha2v6jam"),
 }
 
 @export var _editor_settings: AppEditorSettings

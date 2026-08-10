@@ -13,11 +13,14 @@
 [ext_resource type="Script" uid="uid://jth8ncwjp5xr" path="res://source/editor/components/project_opener.gd" id="11_project_io"]
 [ext_resource type="Script" uid="uid://dedoshe8ajfhf" path="res://source/utils/undo_redo/undo_redo_node.gd" id="12_history"]
 [ext_resource type="Script" uid="uid://b4ryou3duy3a0" path="res://source/editor/components/decoration_visibility.gd" id="12_mg3wh"]
+[ext_resource type="Script" uid="uid://du5c60nj1uetn" path="res://source/editor/components/buildings_visibility.gd" id="13_bldvis"]
 [ext_resource type="Script" uid="uid://b4y6v63eukdsl" path="res://source/editor/components/province_link_editer.gd" id="13_editor_adjacency"]
 [ext_resource type="Script" uid="uid://by0dxqicg8uih" path="res://source/editor/components/province_overlay.gd" id="14_province_overlay"]
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
 [ext_resource type="Script" uid="uid://ckqoendpcp3lp" path="res://source/armies/visuals/components/army_drag.gd" id="16_army_drag"]
 [ext_resource type="Script" uid="uid://e4lwb7rpq03s" path="res://source/armies/visuals/components/army_selection.gd" id="16_army_input"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="16_lqb7r"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="17_jvmd3"]
 [ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
@@ -27,8 +30,15 @@
 script = ExtResource("8_u5rcp")
 metadata/_custom_type_script = "uid://cqrjsjcv4lx25"
 
+[sub_resource type="Resource" id="Resource_mu8dq"]
+script = ExtResource("17_jvmd3")
+value = true
+text = "Show on world map"
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+
 [sub_resource type="Resource" id="Resource_nmpjy"]
 script = ExtResource("2_qlu2u")
+show_buildings = SubResource("Resource_mu8dq")
 metadata/_custom_type_script = "uid://e70irgpv1usl"
 
 [node name="Editor" type="Node" unique_id=1373690984]
@@ -84,6 +94,10 @@ _undo_redo = SubResource("Resource_ai428")
 [node name="DecorationVisibility" type="Node" parent="." unique_id=521376900]
 script = ExtResource("12_mg3wh")
 _editor_settings = SubResource("Resource_nmpjy")
+
+[node name="BuildingsVisibility" type="Node" parent="." unique_id=521376901]
+script = ExtResource("13_bldvis")
+_setting = SubResource("Resource_mu8dq")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -208,7 +222,7 @@ item_8/id = 8
 [node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
-item_count = 12
+item_count = 13
 item_0/text = "Project Info"
 item_0/id = 0
 item_1/text = "RNG"
@@ -233,6 +247,8 @@ item_10/text = "Provinces"
 item_10/id = 10
 item_11/text = "Armies"
 item_11/id = 11
+item_12/text = "Buildings"
+item_12/id = 12
 
 [node name="EditingInterface" parent="UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
 unique_name_in_owner = true
@@ -297,6 +313,7 @@ use_native_dialog = true
 [connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmySelection" method="set_selected_army"]
 [connection signal="province_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="CountryOwnershipGiver" method="apply_to_province"]
 [connection signal="province_right_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="ProvinceLinkEditer" method="_on_province_right_clicked"]
+[connection signal="province_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="BuildingsVisibility" method="apply_to"]
 [connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
 [connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]

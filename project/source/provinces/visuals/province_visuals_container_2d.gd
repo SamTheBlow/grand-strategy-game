@@ -2,6 +2,8 @@ class_name ProvinceVisualsContainer2D
 extends Node2D
 ## An encapsulated list of [ProvinceVisuals2D].
 
+signal province_visuals_created(province_visuals: ProvinceVisuals2D)
+
 signal province_clicked(province: Province)
 signal province_right_clicked(
 		is_double_click: bool, province_visuals: ProvinceVisuals2D
@@ -69,6 +71,7 @@ func _add_province(province: Province) -> void:
 
 	_province_map[province.id] = visuals
 	add_child(visuals)
+	province_visuals_created.emit(visuals)
 
 
 func _remove_province(province: Province) -> void:

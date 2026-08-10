@@ -1,0 +1,111 @@
+[gd_scene format=3 uid="uid://dn67kha2v6jam"]
+
+[ext_resource type="Script" uid="uid://b1n4hyecu2spu" path="res://source/editor/interfaces/fortresses/interface_buildings.gd" id="1_myekf"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_lulcg"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_syr23"]
+[ext_resource type="Script" uid="uid://bdskbghw7wjty" path="res://source/utils/property_tree/items/item_texture.gd" id="4_oarw6"]
+[ext_resource type="Script" uid="uid://d356ooxo4eq1k" path="res://source/utils/property_tree/items/item_float.gd" id="5_26ljx"]
+[ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="6_qkufn"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="7_sbp2l"]
+
+[sub_resource type="Resource" id="Resource_4sfkq"]
+script = ExtResource("7_sbp2l")
+value = true
+text = "Show buildings on world map"
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+
+[sub_resource type="Resource" id="Resource_4vwtr"]
+script = ExtResource("3_syr23")
+text = "Editor settings:"
+child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_4sfkq")])
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[sub_resource type="Resource" id="Resource_sprite"]
+script = ExtResource("4_oarw6")
+text = "Sprite"
+metadata/_custom_type_script = "uid://bdskbghw7wjty"
+
+[sub_resource type="Resource" id="Resource_defense"]
+script = ExtResource("5_26ljx")
+value = 0.0
+is_percentage = false
+has_minimum = false
+minimum = 0.0
+has_maximum = false
+maximum = 0.0
+suffix = ""
+text = "Defense bonus"
+metadata/_custom_type_script = "uid://d356ooxo4eq1k"
+
+[sub_resource type="Resource" id="Resource_pop_cost"]
+script = ExtResource("6_qkufn")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Population cost"
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_money_cost"]
+script = ExtResource("6_qkufn")
+value = 0
+has_minimum = false
+minimum = 0
+has_maximum = false
+maximum = 0
+text = "Money cost"
+metadata/_custom_type_script = "uid://ck4addyc1ep24"
+
+[sub_resource type="Resource" id="Resource_can_build"]
+script = ExtResource("7_sbp2l")
+child_items_on = Array[int]([0, 1])
+text = "Can be built by players"
+child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_pop_cost"), SubResource("Resource_money_cost")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+
+[sub_resource type="Resource" id="Resource_enabled"]
+script = ExtResource("7_sbp2l")
+child_items_on = Array[int]([0, 1, 2])
+text = "Enable fortresses"
+child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_sprite"), SubResource("Resource_defense"), SubResource("Resource_can_build")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+
+[sub_resource type="Resource" id="Resource_settings"]
+script = ExtResource("3_syr23")
+text = "Game settings:"
+child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_enabled")])
+metadata/_custom_type_script = "uid://dvo2mdraodovy"
+
+[node name="InterfaceBuildings" type="Control" unique_id=1982110001]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_myekf")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1982110002]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer" unique_id=1982110003]
+layout_mode = 2
+text = "Buildings are placed in a province. They may provide positive or negative effects to their owner."
+fit_content = true
+
+[node name="EditorSettings" parent="VBoxContainer" unique_id=495427571 instance=ExtResource("2_lulcg")]
+unique_name_in_owner = true
+layout_mode = 2
+item = SubResource("Resource_4vwtr")
+
+[node name="GameSettings" parent="VBoxContainer" unique_id=1982110004 instance=ExtResource("2_lulcg")]
+unique_name_in_owner = true
+layout_mode = 2
+item = SubResource("Resource_settings")
