@@ -1,67 +1,30 @@
 class_name BuildingVisuals2D
 extends Node2D
-## Adds/edits/removes building visuals to match those of given [Province].
+## Visual representation of a [Building] on a 2D world map.
 
-const _FORTRESS_VISUALS_SCENE := preload("uid://cwi4tinm2f73x") as PackedScene
+const FALLBACK_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
-var _is_setup: bool = false
-var _province: Province
+var building_data: BuildingData
 
-var _building_nodes: Array[Node2D] = []
+@onready var _sprite := %Sprite2D as Sprite2D
 
 
 func _ready() -> void:
-	if _is_setup:
-		_update()
+	_refresh_sprite(building_data.texture)
+	building_data.texture_changed.connect(_refresh_sprite)
 
 
-func setup(province: Province) -> void:
-	if _is_setup:
-		_province.position_fortress_changed.disconnect(_on_position_changed)
-		if is_node_ready():
-			_province.buildings.added.disconnect(_add_building)
-			_province.buildings.removed.disconnect(_remove_building)
+func _refresh_sprite(project_texture: ProjectTexture) -> void:
+	const TARGET_SIZE: float = 64.0
 
-	_province = province
-	_is_setup = true
+	_sprite.texture = project_texture.texture(FALLBACK_TEXTURE)
 
-	_province.position_fortress_changed.connect(_on_position_changed)
+	var width := float(_sprite.texture.get_width())
+	var height := float(_sprite.texture.get_height())
 
-	if is_node_ready():
-		_update()
+	var scale_ratio: float = 1.0
+	if width != 0.0 and height != 0.0:
+		scale_ratio = minf(TARGET_SIZE / width, TARGET_SIZE / height)
 
-
-func _update() -> void:
-	NodeUtils.delete_nodes(_building_nodes)
-	_building_nodes = []
-
-	for building in _province.buildings.list():
-		_add_building(building)
-
-	_province.buildings.added.connect(_add_building)
-	_province.buildings.removed.connect(_remove_building)
-
-
-func _add_building(building: Building) -> void:
-	if building is not Fortress:
-		push_warning("Unrecognized building type.")
-		return
-
-	var new_fortress := _FORTRESS_VISUALS_SCENE.instantiate() as Node2D
-	new_fortress.position = _province.position_fortress
-	add_child(new_fortress)
-	_building_nodes.append(new_fortress)
-
-
-func _remove_building(building: Building) -> void:
-	if building is not Fortress:
-		push_warning("Unrecognized building type.")
-		return
-
-	NodeUtils.delete_nodes(_building_nodes)
-	_building_nodes = []
-
-
-func _on_position_changed(_new_position: Vector2) -> void:
-	for building_node in _building_nodes:
-		building_node.position = _province.position_fortress
+	_sprite.scale = Vector2.ONE * scale_ratio
+	_sprite.offset.y = -0.5 * height

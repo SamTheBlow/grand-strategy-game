@@ -24,6 +24,7 @@ func _init(country: Country, province: Province, game: Game) -> void:
 	_game = game
 
 	_province.owner_changed.connect(_on_province_owner_changed)
+	_province.population().value_changed.connect(_on_population_changed)
 	_country.money_changed.connect(_on_money_changed)
 	_province.buildings.changed.connect(_on_buildings_changed)
 
@@ -35,24 +36,33 @@ func can_build() -> bool:
 
 
 func _all_conditions_are_met() -> bool:
-	if not _game.rules.build_fortress_enabled.value:
-		error_message = "The game's rules don't allow it!"
+	var fortress_data: BuildingData = _game.world.fortress_data()
+
+	if not fortress_data.can_be_built:
+		error_message = "This building can't be built by players!"
 		return false
 
 	if _province.owner_country != _country:
 		error_message = "The province is not under the country's control!"
 		return false
 
-	var fortress_price: int = _game.rules.fortress_price.value
-	if _country.money < fortress_price:
+	if _province.population().value < fortress_data.population_cost:
+		error_message = (
+				"The province doesn't have enough population! "
+				+ "It needs " + str(fortress_data.population_cost)
+				+ ", but only has " + str(_province.population().value) + "."
+		)
+		return false
+
+	if _country.money < fortress_data.money_cost:
 		error_message = (
 				"The country doesn't have enough money! "
-				+ "It needs " + str(fortress_price)
+				+ "It needs " + str(fortress_data.money_cost)
 				+ ", but only has " + str(_country.money) + "."
 		)
 		return false
 
-	if _province.buildings.number_of_type(Building.Type.FORTRESS) > 0:
+	if not _province.buildings.list().is_empty():
 		error_message = "There is already a fortress in the province."
 		return false
 
@@ -80,11 +90,13 @@ func _on_province_owner_changed(province: Province) -> void:
 	_check_condition(province.owner_country == _country)
 
 
-func _on_money_changed(money: int) -> void:
-	_check_condition(money >= _game.rules.fortress_price.value)
+func _on_population_changed(value: int) -> void:
+	_check_condition(value >= _game.world.fortress_data().population_cost)
+
+
+func _on_money_changed(value: int) -> void:
+	_check_condition(value >= _game.world.fortress_data().money_cost)
 
 
 func _on_buildings_changed() -> void:
-	_check_condition(
-			_province.buildings.number_of_type(Building.Type.FORTRESS) == 0
-	)
+	_check_condition(_province.buildings.list().is_empty())

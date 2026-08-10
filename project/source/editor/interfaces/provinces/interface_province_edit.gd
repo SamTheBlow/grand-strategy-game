@@ -56,9 +56,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 
 	# Has fortress
 	var item_fortress := settings_item.child_items[5] as ItemBool
-	item_fortress.value = (
-			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
-	)
+	item_fortress.value = not province.buildings.list().is_empty()
 	item_fortress.value_changed.connect(_on_has_fortress_value_changed)
 	province.buildings.changed.connect(
 			_on_province_buildings_changed.bind(item_fortress)
@@ -108,7 +106,7 @@ func _duplicate() -> void:
 	new_province.base_money_income().value = province.base_money_income().value
 
 	for building in province.buildings.list():
-		new_province.buildings.add(Fortress.new(province.id))
+		new_province.buildings.add(Building.new(building.data, province.id))
 
 	# We need this new province to have a new unique id
 	# assigned to it before we can create the undo_redo action
@@ -181,7 +179,9 @@ func _on_has_fortress_value_changed(new_value: bool) -> void:
 	var undo_callable: Callable
 	if new_value:
 		# Add fortress
-		var new_fortress := Fortress.new(province.id)
+		var new_fortress := (
+				Building.new(project.game.world.fortress_data(), province.id)
+		)
 		do_callable = province.buildings.add.bind(new_fortress)
 		undo_callable = province.buildings.remove.bind(new_fortress)
 	else:
@@ -220,5 +220,5 @@ func _on_province_buildings_changed(item: ItemBool) -> void:
 	_set_setting_no_signal(
 			item,
 			_on_has_fortress_value_changed,
-			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
+			not province.buildings.list().is_empty()
 	)

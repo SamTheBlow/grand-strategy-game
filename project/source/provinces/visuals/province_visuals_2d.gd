@@ -31,7 +31,7 @@ var _mouse_is_inside_area: bool = false
 
 @onready var _outlined_polygon := %Polygon as OutlinedPolygon2D
 @onready var _collision_shape := %CollisionShape as CollisionPolygon2D
-@onready var _buildings := %Buildings as BuildingVisuals2D
+@onready var _buildings := %Buildings as BuildingVisualsContainer2D
 @onready var _army_stack := %ArmyStack2D as ArmyStack2D
 
 
@@ -54,7 +54,7 @@ func _ready() -> void:
 	var _color_update := %ColorUpdate as ProvinceColorUpdate
 	_color_update.setup(province)
 
-	_buildings.setup(province)
+	_buildings.province = province
 
 
 func _unhandled_input(event: InputEvent) -> void:

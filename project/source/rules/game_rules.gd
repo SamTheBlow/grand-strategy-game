@@ -55,8 +55,6 @@ const RULE_NAMES: Array[String] = [
 	"population_growth_rate",
 	"extra_starting_population",
 	"start_with_fortress",
-	"build_fortress_enabled",
-	"fortress_price",
 	"starting_money",
 	"province_income_override_enabled",
 	"province_income_option",
@@ -141,8 +139,6 @@ var population_growth_enabled := ItemBool.new()
 var population_growth_rate := ItemFloat.new()
 var extra_starting_population := ItemInt.new()
 var start_with_fortress := ItemBool.new()
-var build_fortress_enabled := ItemBool.new()
-var fortress_price := ItemInt.new()
 var starting_money := ItemInt.new()
 var province_income_override_enabled := ItemBool.new()
 var province_income_option := ItemOptions.new()
@@ -184,7 +180,6 @@ var automatically_fight_back := ItemBool.new()
 var _category_game_over := PropertyTreeItem.new()
 var _category_recruitment := PropertyTreeItem.new()
 var _category_population := PropertyTreeItem.new()
-var _category_fortresses := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
 var _category_ai := PropertyTreeItem.new()
 var _category_ai_type := PropertyTreeItem.new()
@@ -336,18 +331,6 @@ func _init() -> void:
 
 	start_with_fortress.text = "Start with a fortress"
 	start_with_fortress.value = true
-
-	build_fortress_enabled.text = "Can be built"
-	build_fortress_enabled.value = true
-	build_fortress_enabled.child_items = [
-		fortress_price,
-	]
-	build_fortress_enabled.child_items_on = [0]
-
-	fortress_price.text = "Money cost"
-	fortress_price.minimum = 0
-	fortress_price.has_minimum = true
-	fortress_price.value = 1000
 
 	starting_money.text = "Starting money"
 	starting_money.minimum = 0
@@ -550,12 +533,6 @@ func _init() -> void:
 		extra_starting_population,
 	]
 
-	_category_fortresses.text = "Fortresses"
-	_category_fortresses.child_items = [
-		start_with_fortress,
-		build_fortress_enabled,
-	]
-
 	_category_battle.text = "Battle"
 	_category_battle.child_items = [
 		global_attacker_efficiency,
@@ -647,7 +624,7 @@ func _init() -> void:
 		_category_game_over,
 		_category_recruitment,
 		_category_population,
-		_category_fortresses,
+		start_with_fortress,
 		starting_money,
 		province_income_override_enabled,
 		minimum_army_size,

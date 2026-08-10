@@ -87,7 +87,7 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 func _try_build_fortresses(
 		game: Game, playing_country: Country
 ) -> Array[Action]:
-	if not game.rules.build_fortress_enabled.value:
+	if not game.world.fortress_data().can_be_built:
 		return []
 
 	var output: Array[Action] = []
@@ -99,7 +99,7 @@ func _try_build_fortresses(
 	var expected_money: int = playing_country.money
 	while (
 			candidates.size() > 0
-			and expected_money >= game.rules.fortress_price.value
+			and expected_money >= game.world.fortress_data().money_cost
 	):
 		# Find the most populated province
 		var most_populated: Province = null
@@ -116,7 +116,7 @@ func _try_build_fortresses(
 		)
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(most_populated.id))
-			expected_money -= game.rules.fortress_price.value
+			expected_money -= game.world.fortress_data().money_cost
 
 		candidates.erase(most_populated)
 

@@ -174,7 +174,16 @@ func _open_build_fortress_popup(province: Province) -> void:
 	build_fortress_popup.setup(
 			game.world.provinces,
 			province.id,
-			[ResourceCost.new("Money", game.rules.fortress_price.value)]
+			[
+				ResourceCost.new(
+						"Population",
+						game.world.fortress_data().population_cost
+				),
+				ResourceCost.new(
+						"Money",
+						game.world.fortress_data().money_cost
+				),
+			]
 	)
 	build_fortress_popup.confirmed.connect(_on_build_fortress_confirmed)
 	build_fortress_popup.tree_exited.connect(_deselect_province)

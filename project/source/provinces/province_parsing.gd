@@ -26,7 +26,6 @@ const _POPULATION_SIZE_KEY: String = "size"
 
 # Specific to [Building] data
 const _BUILDING_TYPE_KEY: String = "type"
-const _BUILDING_TYPE_FORTRESS: String = "fortress"
 
 
 ## NOTE: Given game's countries must already be loaded before using this.
@@ -128,10 +127,7 @@ static func to_raw_array(province_list: Array[Province]) -> Array:
 		# Buildings
 		var buildings_data: Array = []
 		for building in province.buildings.list():
-			# 4.0 backwards compatibility: building type must be a string.
-			buildings_data.append(
-					{ _BUILDING_TYPE_KEY: _BUILDING_TYPE_FORTRESS }
-			)
+			buildings_data.append({ _BUILDING_TYPE_KEY: 0 })
 		if not buildings_data.is_empty():
 			province_data.merge({ _BUILDINGS_KEY: buildings_data })
 
@@ -207,11 +203,20 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 				continue
 			var building_dict: Dictionary = building_data
 
-			if (
-					building_dict.get(_BUILDING_TYPE_KEY)
-					== _BUILDING_TYPE_FORTRESS
+			if not ParseUtils.dictionary_has_number(
+					building_dict, _BUILDING_TYPE_KEY
 			):
-				province.buildings.add(Fortress.new(province.id))
+				continue
+			var building_type: int = ParseUtils.dictionary_int(
+					building_dict, _BUILDING_TYPE_KEY
+			)
+
+			if building_type != 0:
+				continue
+
+			province.buildings.add(
+					Building.new(game.world.fortress_data(), province.id)
+			)
 
 	# Position offset (DEPRECATED)
 	var offset: Vector2 = (

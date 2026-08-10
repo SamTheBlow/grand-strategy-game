@@ -1,20 +1,38 @@
 class_name Building
-## Abstract class.
-## A building is usually, but not always, associated with a [Province].
-## There may or may not be more than one building
-## of the same type in a province.
-## It may or may not have effects on the gameplay,
-## and it may or may not be visible on the world map.
 
-enum Type {
-	NONE = 0,
-	FORTRESS = 1,
-}
+var data := BuildingData.new()
+
+var _province_id: int = -1
 
 
-## Returns the type of building.
-## Useful to identify and differentiate buildings.
-func type() -> Type:
-	if self is Fortress:
-		return Type.FORTRESS
-	return Type.NONE
+func _init(initial_data: BuildingData, province_id: int) -> void:
+	data = initial_data
+	_province_id = province_id
+
+
+## Applies the defense multiplier when a battle occurs.
+func _on_modifiers_requested(
+		modifiers: Array[Modifier], context: ModifierContext
+) -> void:
+	match context.context():
+		"attacker_efficiency":
+			# Check if defender is on same province as this building
+			var defender: Army = context.info("defending_army")
+			if _province_id == defender.province_id():
+				# New modifier
+				modifiers.append(ModifierMultiplier.new(
+						data.building_name,
+						"The building's defense multiplier (inversed).",
+						1.0 / data.defense_multiplier
+						if data.defense_multiplier != 0.0 else 1.0
+				))
+		"defender_efficiency":
+			# Check if defender is on same province as this building
+			var defender: Army = context.info("defending_army")
+			if _province_id == defender.province_id():
+				# New modifier
+				modifiers.append(ModifierMultiplier.new(
+						data.building_name,
+						"The building's defense multiplier.",
+						1.0 * data.defense_multiplier
+				))

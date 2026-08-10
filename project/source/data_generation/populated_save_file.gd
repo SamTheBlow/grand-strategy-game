@@ -42,10 +42,11 @@ static func apply(game: Game) -> void:
 		# Add a fortress, if applicable
 		if (
 				game.rules.start_with_fortress.value and is_starting_province
-				and
-				province.buildings.number_of_type(Building.Type.FORTRESS) == 0
+				and province.buildings.list().is_empty()
 		):
-			province.buildings.add(Fortress.new(province.id))
+			province.buildings.add(
+					Building.new(game.world.fortress_data(), province.id)
+			)
 
 	# Armies
 	_add_starting_armies(game)

@@ -145,7 +145,7 @@ func _update_side_node_positions(
 
 func _update_nodes_game() -> void:
 	if _game != null:
-		_left_side_nodes[0].visible = _game.rules.build_fortress_enabled.value
+		_left_side_nodes[0].visible = _game.world.fortress_data().can_be_built
 		_left_side_nodes[1].visible = _game.rules.recruitment_enabled.value
 
 		_build_fortress_button.game = _game

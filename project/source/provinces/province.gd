@@ -42,7 +42,7 @@ var position_army_host := Vector2.ZERO:
 		position_army_host = value
 		position_army_host_changed.emit(position_army_host)
 
-## Where this province's [Fortress] will be positioned.
+## Where this province's [Building] will be positioned.
 var position_fortress := Vector2(80.0, 56.0):
 	set(value):
 		if position_fortress == value:

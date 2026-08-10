@@ -317,7 +317,7 @@ func _try_build_fortresses(
 		frontline_provinces: Array[Province],
 		danger_levels: Dictionary[Province, float]
 ) -> Array[Action]:
-	if not game.rules.build_fortress_enabled.value:
+	if not game.world.fortress_data().can_be_built:
 		return []
 
 	var output: Array[Action] = []
@@ -335,7 +335,7 @@ func _try_build_fortresses(
 	var i: int = 0
 	while (
 			i < candidates.size()
-			and expected_money >= game.rules.fortress_price.value
+			and expected_money >= game.world.fortress_data().money_cost
 	):
 		# Build in that province, if possible
 		var build_conditions := FortressBuildConditions.new(
@@ -343,7 +343,7 @@ func _try_build_fortresses(
 		)
 		if build_conditions.can_build():
 			output.append(ActionBuild.new(candidates[i].id))
-			expected_money -= game.rules.fortress_price.value
+			expected_money -= game.world.fortress_data().money_cost
 
 		i += 1
 

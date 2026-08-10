@@ -6,6 +6,7 @@ const _PROVINCES_KEY: String = "provinces"
 const _BACKGROUND_COLOR_KEY: String = "background_color"
 const _DECORATIONS_KEY: String = "decorations"
 const _LIMITS_KEY: String = "limits"
+const _BUILDING_DATA_KEY: String = "building_data"
 
 
 ## NOTE: Many things in given game must be loaded before using this.
@@ -22,6 +23,12 @@ static func load_from_raw_data(
 	if raw_data is not Dictionary:
 		return
 	var raw_dict: Dictionary = raw_data
+
+	# Building data
+	game.world._building_data_list = BuildingDataParsing.from_raw_data(
+			raw_dict.get(_BUILDING_DATA_KEY),
+			project_textures
+	)
 
 	# Provinces
 	ProvinceParsing.load_from_raw_data(raw_dict.get(_PROVINCES_KEY), game)
@@ -88,5 +95,12 @@ static func to_raw_dict(world: GameWorld) -> Dictionary:
 	)
 	if not decoration_data.is_empty():
 		output.merge({ _DECORATIONS_KEY: decoration_data })
+
+	# Building data
+	var building_data: Array = (
+			BuildingDataParsing.to_raw_array(world._building_data_list)
+	)
+	if not building_data.is_empty():
+		output.merge({ _BUILDING_DATA_KEY: building_data })
 
 	return output

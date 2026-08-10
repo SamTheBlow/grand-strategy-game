@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dn67kha2v6jam"]
 
-[ext_resource type="Script" uid="uid://b1n4hyecu2spu" path="res://source/editor/interfaces/fortresses/interface_buildings.gd" id="1_myekf"]
+[ext_resource type="Script" uid="uid://b1n4hyecu2spu" path="res://source/editor/interfaces/buildings/interface_buildings.gd" id="1_myekf"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_lulcg"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_syr23"]
 [ext_resource type="Script" uid="uid://bdskbghw7wjty" path="res://source/utils/property_tree/items/item_texture.gd" id="4_oarw6"]
@@ -64,17 +64,10 @@ text = "Can be built by players"
 child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_pop_cost"), SubResource("Resource_money_cost")])
 metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
-[sub_resource type="Resource" id="Resource_enabled"]
-script = ExtResource("7_sbp2l")
-child_items_on = Array[int]([0, 1, 2])
-text = "Enable fortresses"
-child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_sprite"), SubResource("Resource_defense"), SubResource("Resource_can_build")])
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
-
 [sub_resource type="Resource" id="Resource_settings"]
 script = ExtResource("3_syr23")
 text = "Game settings:"
-child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_enabled")])
+child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_sprite"), SubResource("Resource_defense"), SubResource("Resource_can_build")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceBuildings" type="Control" unique_id=1982110001]

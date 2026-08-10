@@ -1,20 +1,14 @@
 class_name ActionBuild
 extends Action
-## Builds a [Building] of given type in given [Province].
+## Builds a fortress in given [Province].
 
 const PROVINCE_ID_KEY: String = "province_id"
-const BUILDING_TYPE_KEY: String = "building_type"
 
 var _province_id: int
-var _building_type: int
 
 
-func _init(
-		province_id: int,
-		building_type: Building.Type = Building.Type.FORTRESS
-) -> void:
+func _init(province_id: int) -> void:
 	_province_id = province_id
-	_building_type = building_type
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
@@ -37,9 +31,13 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	province.buildings.add(Fortress.new(_province_id))
+	var building := Building.new(game.world.fortress_data(), _province_id)
 
-	your_country.money -= game.rules.fortress_price.value
+	# Pay costs
+	province.population().value -= building.data.population_cost
+	your_country.money -= building.data.money_cost
+
+	province.buildings.add(building)
 
 
 ## Returns this action's raw data, for the purpose of
@@ -48,19 +46,12 @@ func raw_data() -> Dictionary:
 	return {
 		ID_KEY: BUILD,
 		PROVINCE_ID_KEY: _province_id,
-		BUILDING_TYPE_KEY: _building_type,
 	}
 
 
 ## Returns an action built with given raw data.
 static func from_raw_data(data: Dictionary) -> ActionBuild:
-	if not (
-			ParseUtils.dictionary_has_number(data, PROVINCE_ID_KEY)
-			and ParseUtils.dictionary_has_number(data, BUILDING_TYPE_KEY)
-	):
+	if not ParseUtils.dictionary_has_number(data, PROVINCE_ID_KEY):
 		return null
 
-	return ActionBuild.new(
-			ParseUtils.dictionary_int(data, PROVINCE_ID_KEY),
-			ParseUtils.dictionary_int(data, BUILDING_TYPE_KEY),
-	)
+	return ActionBuild.new(ParseUtils.dictionary_int(data, PROVINCE_ID_KEY))

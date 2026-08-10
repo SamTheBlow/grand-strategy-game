@@ -1,9 +1,9 @@
 class_name BuildFortressPopup
 extends VBoxContainer
 ## Contents for the popup that appears
-## when the user wants to build a [Fortress].
+## when the user wants to build a fortress.
 ##
-## See also: [GamePopup]
+## See also: [GamePopup], [Building]
 
 signal invalidated()
 signal confirmed(province_id: int)

@@ -7,7 +7,7 @@
 [ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="7_43ksa"]
 [ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="8_csbql"]
 [ext_resource type="Resource" uid="uid://cpywpvw4iwvdg" path="res://resources/outline_settings/outline_highlight.tres" id="8_fmvgc"]
-[ext_resource type="Script" uid="uid://caes2bq652o76" path="res://source/buildings/visuals/building_visuals_2d.gd" id="8_sp6v6"]
+[ext_resource type="Script" uid="uid://caes2bq652o76" path="res://source/buildings/visuals/building_visuals_container_2d.gd" id="8_sp6v6"]
 [ext_resource type="Resource" uid="uid://ccoex6g562wam" path="res://resources/outline_settings/outline_highlight_target.tres" id="9_r5b4e"]
 
 [node name="Province" type="Node2D" unique_id=21561836]

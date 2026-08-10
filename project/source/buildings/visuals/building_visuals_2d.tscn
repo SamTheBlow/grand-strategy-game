@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://cwi4tinm2f73x"]
+
+[ext_resource type="Script" uid="uid://ckwiodabpo3cp" path="res://source/buildings/visuals/building_visuals_2d.gd" id="1_gvpi5"]
+
+[node name="BuildingVisuals2D" type="Node2D" unique_id=1450099171]
+script = ExtResource("1_gvpi5")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=2023938414]
+unique_name_in_owner = true
