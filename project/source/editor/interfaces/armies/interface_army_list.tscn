@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://l2nhdgg0p4oo"]
 
 [ext_resource type="Script" uid="uid://cbwh24lw8junb" path="res://source/editor/interfaces/armies/interface_army_list.gd" id="1_10wi1"]
-[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_u6nya"]
 
 [node name="InterfaceArmyList" type="Control" unique_id=484485638]
 layout_mode = 3
@@ -26,23 +25,18 @@ layout_mode = 2
 text = "An army represents some kind of unit on the world map. It has an allegiance to a Country and is positioned in a Province."
 fit_content = true
 
-[node name="ButtonSection" type="Control" parent="VBoxContainer" unique_id=147919659]
+[node name="AddSection" type="Control" parent="VBoxContainer" unique_id=147919659]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="AddButton" type="Button" parent="VBoxContainer/ButtonSection" unique_id=1055426493]
-unique_name_in_owner = true
+[node name="Label" type="Label" parent="VBoxContainer/AddSection" unique_id=283388883]
 layout_mode = 1
-anchors_preset = -1
-anchor_right = 0.2
+anchors_preset = 15
+anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = 8.0
-offset_right = -8.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_font_sizes/font_size = 12
-theme_override_styles/normal = ExtResource("4_u6nya")
-text = "+ Add"
+text = "(Select a province in order to add a new army)"
 
 [node name="ItemList" type="Control" parent="VBoxContainer" unique_id=211145063]
 layout_mode = 2
@@ -64,5 +58,3 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-
-[connection signal="pressed" from="VBoxContainer/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]

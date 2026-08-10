@@ -4,8 +4,12 @@ extends AppEditorInterface
 
 var province: Province
 
+@onready var _add_army_button := %AddArmyButton as Button
+
 
 func _ready() -> void:
+	_refresh_army_button()
+
 	(%ProvincePreview as ProvincePreviewNode).setup(province)
 
 	_setup_settings(%Settings as ItemVoidNode)
@@ -26,7 +30,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 	# Owner country
-	var item_country := settings_item.child_items[3] as ItemCountry
+	var item_country := settings_item.child_items[2] as ItemCountry
 	item_country.value = province.owner_country
 	item_country.value_changed.connect(_on_country_value_changed)
 	item_country.change_requested.connect(country_select_pressed.emit)
@@ -35,7 +39,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 	# Population
-	var item_population := settings_item.child_items[4] as ItemInt
+	var item_population := settings_item.child_items[3] as ItemInt
 	item_population.value = province.population().value
 	item_population.value_changed.connect(_on_population_value_changed)
 	province.population().value_changed.connect(
@@ -43,7 +47,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 	# Money income
-	var item_income := settings_item.child_items[5] as ItemInt
+	var item_income := settings_item.child_items[4] as ItemInt
 	item_income.value = province.base_money_income().value
 	item_income.value_changed.connect(_on_income_value_changed)
 	province.base_money_income().value_changed.connect(
@@ -51,7 +55,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 	# Has fortress
-	var item_fortress := settings_item.child_items[6] as ItemBool
+	var item_fortress := settings_item.child_items[5] as ItemBool
 	item_fortress.value = (
 			province.buildings.number_of_type(Building.Type.FORTRESS) > 0
 	)
@@ -61,9 +65,24 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	)
 
 
-func _on_province_removed(province_removed: Province) -> void:
-	if province_removed == province:
-		closed.emit()
+func _refresh_army_button() -> void:
+	_add_army_button.disabled = province.owner_country == null
+
+
+func _add_new_army() -> void:
+	if province.owner_country == null:
+		return
+
+	var new_army: Army = Army.Factory.new(project.game).new_army(
+			province.owner_country, province.id
+	)
+
+	# Create undo_redo action
+	# (don't execute it since factory setup already added the army)
+	undo_redo.create_action("Create new army")
+	undo_redo.add_do_method(project.game.world.armies.add.bind(new_army))
+	undo_redo.add_undo_method(project.game.world.armies.remove.bind(new_army))
+	undo_redo.commit_action(false)
 
 
 func _delete() -> void:
@@ -108,6 +127,11 @@ func _duplicate() -> void:
 
 	# Select the new province for editing
 	province_select_requested.emit(new_province)
+
+
+func _on_province_removed(province_removed: Province) -> void:
+	if province_removed == province:
+		closed.emit()
 
 
 func _on_name_value_changed(item: ItemString) -> void:
@@ -177,6 +201,7 @@ func _on_province_owner_changed(item: ItemCountry) -> void:
 	_set_setting_no_signal(
 			item, _on_country_value_changed, province.owner_country
 	)
+	_refresh_army_button()
 
 
 func _on_province_population_changed(item: ItemInt) -> void:

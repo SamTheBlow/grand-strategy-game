@@ -15,11 +15,6 @@ script = ExtResource("6_e7r6f")
 text = "Name:"
 metadata/_custom_type_script = "uid://bk5w8y642cp21"
 
-[sub_resource type="Resource" id="Resource_4jecb"]
-script = ExtResource("5_u2f1k")
-text = "Position: drag this province to move it"
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
-
 [sub_resource type="Resource" id="Resource_rtye8"]
 script = ExtResource("5_u2f1k")
 text = "Right click on a province to toggle it"
@@ -69,7 +64,7 @@ metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 [sub_resource type="Resource" id="Resource_e7r6f"]
 script = ExtResource("5_u2f1k")
 text = "Settings:"
-child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_4jecb"), SubResource("Resource_vhvwt"), SubResource("Resource_d51jc"), SubResource("Resource_50ug6"), SubResource("Resource_6kqa5"), SubResource("Resource_wrmpg")])
+child_items = Array[ExtResource("5_u2f1k")]([SubResource("Resource_0k6te"), SubResource("Resource_vhvwt"), SubResource("Resource_d51jc"), SubResource("Resource_50ug6"), SubResource("Resource_6kqa5"), SubResource("Resource_wrmpg")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceProvinceEdit" type="Control" unique_id=613024797]
@@ -81,35 +76,44 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_qx7cx")
 
-[node name="BackButton" type="Button" parent="." unique_id=1679979919]
+[node name="TopSection" type="Control" parent="." unique_id=83445083]
+layout_mode = 1
+anchor_right = 1.0
+anchor_bottom = 0.3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="BackButton" type="Button" parent="TopSection" unique_id=1679979919]
 custom_minimum_size = Vector2(96, 32)
 layout_mode = 1
-offset_right = 64.0
+offset_right = 96.0
 offset_bottom = 32.0
 theme_override_styles/normal = ExtResource("2_t401f")
 text = "<- Back"
 
-[node name="DeleteButton" type="Button" parent="." unique_id=1324111090]
+[node name="DeleteButton" type="Button" parent="TopSection" unique_id=1324111090]
 custom_minimum_size = Vector2(48, 48)
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
-anchor_top = 0.15
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.15
-offset_left = 256.0
+anchor_bottom = 0.5
+offset_left = 103.0
+offset_right = 154.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/normal = ExtResource("2_t401f")
 text = "Delete"
 
-[node name="Control" type="Control" parent="." unique_id=384789981]
+[node name="Control" type="Control" parent="TopSection" unique_id=384789981]
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 1
+anchors_preset = 8
 anchor_left = 0.5
-anchor_top = 0.15
+anchor_top = 0.5
 anchor_right = 0.5
-anchor_bottom = 0.15
+anchor_bottom = 0.5
 offset_left = -64.0
 offset_top = -64.0
 offset_right = 64.0
@@ -117,7 +121,7 @@ offset_bottom = 64.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ProvincePreview" type="Control" parent="Control" unique_id=213050457]
+[node name="ProvincePreview" type="Control" parent="TopSection/Control" unique_id=213050457]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -128,16 +132,37 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("3_e7r6f")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1109076293]
+[node name="AddArmyButton" type="Button" parent="TopSection" unique_id=1352193363]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 32)
 layout_mode = 1
 anchors_preset = -1
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -36.0
+offset_right = 128.0
+offset_bottom = -4.0
+grow_vertical = 0
+theme_override_styles/normal = ExtResource("2_t401f")
+text = "+ Add Army"
+
+[node name="SettingsSection" type="Control" parent="." unique_id=1949296371]
+layout_mode = 1
 anchor_top = 0.3
 anchor_right = 1.0
-anchor_bottom = 0.85
+anchor_bottom = 1.0
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.7
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsSection" unique_id=1109076293]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Settings" parent="VBoxContainer" unique_id=692586107 instance=ExtResource("4_rht4m")]
+[node name="Settings" parent="SettingsSection/VBoxContainer" unique_id=692586107 instance=ExtResource("4_rht4m")]
 unique_name_in_owner = true
 layout_mode = 2
 item = SubResource("Resource_e7r6f")
@@ -145,7 +170,6 @@ item = SubResource("Resource_e7r6f")
 [node name="ShortcutsLabel" type="Label" parent="." unique_id=400323053]
 layout_mode = 1
 anchors_preset = -1
-anchor_top = 0.85
 anchor_right = 1.0
 anchor_bottom = 1.0
 theme_override_font_sizes/font_size = 12
@@ -154,5 +178,6 @@ Del -> Delete
 Ctrl+D -> Duplicate"
 vertical_alignment = 2
 
-[connection signal="pressed" from="BackButton" to="." method="close"]
-[connection signal="pressed" from="DeleteButton" to="." method="_delete"]
+[connection signal="pressed" from="TopSection/BackButton" to="." method="close"]
+[connection signal="pressed" from="TopSection/DeleteButton" to="." method="_delete"]
+[connection signal="pressed" from="TopSection/AddArmyButton" to="." method="_add_new_army"]
