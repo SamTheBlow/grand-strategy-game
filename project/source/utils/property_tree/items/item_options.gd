@@ -3,7 +3,7 @@ class_name ItemOptions
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a choice between some options.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: int)
 
 ## The index of the selection option in the options array.
 @export var selected_index: int = 0:
@@ -25,7 +25,7 @@ signal value_changed(this: PropertyTreeItem)
 			return
 
 		selected_index = new_index
-		value_changed.emit(self)
+		value_changed.emit(selected_value())
 
 ## The different options available to the user.
 @export var options: Array[String] = []

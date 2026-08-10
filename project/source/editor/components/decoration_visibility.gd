@@ -7,11 +7,9 @@ signal changed(value: bool)
 
 
 func _ready() -> void:
-	_emit_changed()
-	_editor_settings.show_decorations.value_changed.connect(
-			_emit_changed.unbind(1)
-	)
+	_emit_changed(_editor_settings.show_decorations.value)
+	_editor_settings.show_decorations.value_changed.connect(_emit_changed)
 
 
-func _emit_changed() -> void:
-	changed.emit(_editor_settings.show_decorations.value)
+func _emit_changed(value: bool) -> void:
+	changed.emit(value)

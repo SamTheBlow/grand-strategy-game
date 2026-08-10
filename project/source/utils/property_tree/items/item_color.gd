@@ -3,7 +3,7 @@ class_name ItemColor
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [Color].
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: Color)
 signal transparency_toggled(this: PropertyTreeItem)
 
 const _DEFAULT_COLOR := Color.WHITE
@@ -17,7 +17,7 @@ const _DEFAULT_COLOR := Color.WHITE
 
 		if value != new_value:
 			value = new_value
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 ## If true, the value's alpha can be any number.
 ## Otherwise, the value's alpha is always 1.0,

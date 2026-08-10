@@ -16,13 +16,13 @@ func _ready() -> void:
 	closed.connect(navigator.close_interface)
 
 
-func _on_item_value_changed(item: ItemColor) -> void:
+func _on_item_value_changed(new_value: Color) -> void:
 	_apply_undo_redo_property(
 			"Change background color",
 			project.game.world,
 			&"background_color",
 			project.game.world.background_color,
-			item.value
+			new_value
 	)
 
 

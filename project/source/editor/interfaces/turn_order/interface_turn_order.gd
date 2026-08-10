@@ -18,7 +18,7 @@ func _ready() -> void:
 	project.game.countries.order_changed.connect(_on_country_order_changed)
 
 	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
-	item_rule.value_changed.connect(_on_item_value_changed)
+	item_rule.value_changed.connect(_on_item_value_changed.bind(item_rule))
 	_update_visibility()
 
 	var game_settings := %GameSettingsCategory as ItemVoidNode
@@ -95,16 +95,16 @@ func _remove_empty_list_label() -> void:
 	NodeUtils.remove_all_children(_element_container)
 
 
-func _on_item_value_changed(item: PropertyTreeItem) -> void:
+func _on_item_value_changed(new_value: bool, item: ItemBool) -> void:
 	_update_visibility()
 
 	undo_redo.create_action("Toggle random turn order")
 	undo_redo.add_do_method(_set_setting_no_signal.bind(
-			item, _on_item_value_changed, item.value
+			item, _on_item_value_changed, new_value
 	))
 	undo_redo.add_do_method(_update_visibility)
 	undo_redo.add_undo_method(_set_setting_no_signal.bind(
-			item, _on_item_value_changed, not item.value
+			item, _on_item_value_changed, not new_value
 	))
 	undo_redo.add_undo_method(_update_visibility)
 	undo_redo.commit_action(false)

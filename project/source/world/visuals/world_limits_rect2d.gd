@@ -18,11 +18,11 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		return
 
-	_update_world_limits_visible(_editor_settings.show_world_limits)
+	_update_world_limits_visible(_editor_settings.show_world_limits.value)
 	_editor_settings.show_world_limits.value_changed.connect(
 			_update_world_limits_visible
 	)
-	_update_world_limits_color(_editor_settings.world_limits_color)
+	_update_world_limits_color(_editor_settings.world_limits_color.value)
 	_editor_settings.world_limits_color.value_changed.connect(
 			_update_world_limits_color
 	)
@@ -33,10 +33,10 @@ func set_limits(left: float, top: float, right: float, bottom: float) -> void:
 	queue_redraw()
 
 
-func _update_world_limits_visible(property: ItemBool) -> void:
-	visible = property.value
+func _update_world_limits_visible(new_value: bool) -> void:
+	visible = new_value
 
 
-func _update_world_limits_color(property: ItemColor) -> void:
-	modulate = property.value
+func _update_world_limits_color(new_value: Color) -> void:
+	modulate = new_value
 	queue_redraw()

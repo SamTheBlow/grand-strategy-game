@@ -3,7 +3,7 @@ class_name ItemInt
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains an integer value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: int)
 signal is_disabled_changed()
 
 ## Set this property in the inspector to set the default value.
@@ -20,7 +20,7 @@ var value: int = 0:
 		if has_maximum:
 			value = mini(value, maximum)
 		if value != old_value:
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 var has_minimum: bool = false:
 	set(new_bool):

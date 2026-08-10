@@ -698,7 +698,10 @@ func _connect_signals() -> void:
 			push_error("Rule is null.")
 			continue
 		if rule.has_signal(&"value_changed"):
-			rule.connect(&"value_changed", _on_rule_value_changed)
+			rule.connect(
+					&"value_changed",
+					_on_rule_value_changed.bind(rule).unbind(1)
+			)
 		else:
 			push_error('Rule does not have a "value_changed" signal.')
 

@@ -52,6 +52,6 @@ func _on_to_spin_box_value_changed(value: float) -> void:
 	item.max_value = value
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_from_spin_box.set_value_no_signal(item.min_value)
-	_to_spin_box.set_value_no_signal(item.max_value)
+func _on_item_value_changed(new_value: Vector2) -> void:
+	_from_spin_box.set_value_no_signal(new_value.x)
+	_to_spin_box.set_value_no_signal(new_value.y)

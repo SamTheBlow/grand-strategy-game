@@ -128,73 +128,73 @@ func _on_world_decoration_removed(decoration_removed: WorldDecoration) -> void:
 		closed.emit()
 
 
-func _on_texture_value_changed(item: ItemTexture) -> void:
+func _on_texture_value_changed(new_value: ProjectTexture) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's texture",
 			world_decoration,
 			&"texture",
 			world_decoration.texture,
-			item.value
+			new_value
 	)
 
 
-func _on_flip_h_value_changed(item: ItemBool) -> void:
+func _on_flip_h_value_changed(new_value: bool) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's horizontal flip",
 			world_decoration,
 			&"flip_h",
 			world_decoration.flip_h,
-			item.value
+			new_value
 	)
 
 
-func _on_flip_v_value_changed(item: ItemBool) -> void:
+func _on_flip_v_value_changed(new_value: bool) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's vertical flip",
 			world_decoration,
 			&"flip_v",
 			world_decoration.flip_v,
-			item.value
+			new_value
 	)
 
 
-func _on_position_value_changed(item: ItemVector2) -> void:
+func _on_position_value_changed(new_value: Vector2) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's position",
 			world_decoration,
 			&"position",
 			world_decoration.position,
-			item.get_data()
+			new_value
 	)
 
 
-func _on_rotation_value_changed(item: ItemFloat) -> void:
+func _on_rotation_value_changed(new_value: float) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's rotation",
 			world_decoration,
 			&"rotation_degrees",
 			world_decoration.rotation_degrees,
-			item.value
+			new_value
 	)
 
 
-func _on_scale_value_changed(item: ItemVector2) -> void:
+func _on_scale_value_changed(new_value: Vector2) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's scale",
 			world_decoration,
 			&"scale",
 			world_decoration.scale,
-			item.get_data()
+			new_value
 	)
 
 
-func _on_color_value_changed(item: ItemColor) -> void:
+func _on_color_value_changed(new_value: Color) -> void:
 	_apply_undo_redo_property(
 			"Change world decoration's color",
 			world_decoration,
 			&"color",
 			world_decoration.color,
-			item.value
+			new_value
 	)
 
 

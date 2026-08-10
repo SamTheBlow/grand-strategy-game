@@ -18,7 +18,7 @@ func _ready() -> void:
 		return
 
 	refresh()
-	item.value_changed.connect(_on_country_changed)
+	item.value_changed.connect(_update_country_info.unbind(1))
 
 
 func refresh() -> void:
@@ -40,7 +40,3 @@ func _item() -> PropertyTreeItem:
 
 func _on_change_button_pressed() -> void:
 	item.request_change()
-
-
-func _on_country_changed(_i: PropertyTreeItem) -> void:
-	_update_country_info()

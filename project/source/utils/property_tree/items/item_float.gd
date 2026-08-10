@@ -3,7 +3,7 @@ class_name ItemFloat
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a float value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: float)
 
 ## Set this property in the inspector to set the default value.
 var value: float = 0:
@@ -19,7 +19,7 @@ var value: float = 0:
 		if has_maximum:
 			value = minf(value, maximum)
 		if value != old_value:
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 ## If true, graphical interfaces will display the number as a percentage.
 var is_percentage: bool = false:

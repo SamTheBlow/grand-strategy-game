@@ -98,38 +98,38 @@ func _on_player_removed(player_removed: GamePlayer) -> void:
 		closed.emit()
 
 
-func _on_item_username_changed(item: ItemString) -> void:
+func _on_item_username_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change player username",
 			game_player,
 			&"username",
 			game_player.username,
-			item.value
+			new_value
 	)
 
 
-func _on_item_country_changed(item: ItemCountry) -> void:
+func _on_item_country_changed(new_value: Country) -> void:
 	_apply_undo_redo_property(
 			"Change player's country",
 			game_player,
 			&"playing_country",
 			game_player.playing_country,
-			item.value
+			new_value
 	)
 
 
-func _on_item_is_human_changed(item: ItemBool) -> void:
+func _on_item_is_human_changed(new_value: bool) -> void:
 	_apply_undo_redo_property(
 			"Toggle whether or not player is human",
 			game_player,
 			&"is_human",
 			game_player.is_human,
-			item.value
+			new_value
 	)
 
 
-func _on_item_ai_type_changed(item: ItemOptions) -> void:
-	var new_ai: PlayerAI = PlayerAI.from_type(item.selected_value())
+func _on_item_ai_type_changed(new_value: int) -> void:
+	var new_ai: PlayerAI = PlayerAI.from_type(new_value)
 	if new_ai == null:
 		return
 
@@ -141,10 +141,8 @@ func _on_item_ai_type_changed(item: ItemOptions) -> void:
 	)
 
 
-func _on_item_ai_personality_changed(item: ItemOptions) -> void:
-	var new_personality: AIPersonality = (
-			AIPersonality.from_type(item.selected_value())
-	)
+func _on_item_ai_personality_changed(new_value: int) -> void:
+	var new_personality: AIPersonality = AIPersonality.from_type(new_value)
 	if new_personality == null:
 		return
 

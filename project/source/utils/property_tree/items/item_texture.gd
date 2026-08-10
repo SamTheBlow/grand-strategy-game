@@ -3,7 +3,7 @@ class_name ItemTexture
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [ProjectTexture].
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: ProjectTexture)
 signal popup_requested(this: ItemTexture)
 
 var value: ProjectTexture = ProjectTexture.none():
@@ -14,7 +14,7 @@ var value: ProjectTexture = ProjectTexture.none():
 
 		if value != new_value:
 			value = new_value
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 ## May be null.
 var fallback_texture: Texture2D = null

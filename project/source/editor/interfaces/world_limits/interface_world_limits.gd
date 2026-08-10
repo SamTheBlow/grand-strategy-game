@@ -60,9 +60,9 @@ func _ready() -> void:
 	closed.connect(navigator.close_interface)
 
 
-func _on_item_mode_changed(item: ItemBool) -> void:
+func _on_item_mode_changed(new_value: bool) -> void:
 	var limits: WorldLimits = project.game.world.limits()
-	if item.value:
+	if new_value:
 		_apply_undo_redo_method(
 				"Enable custom world limits",
 				limits.enable_custom_limits,
@@ -76,38 +76,38 @@ func _on_item_mode_changed(item: ItemBool) -> void:
 		)
 
 
-func _on_item_left_changed(item: ItemInt) -> void:
+func _on_item_left_changed(new_value: int) -> void:
 	var limits: WorldLimits = project.game.world.limits()
 	_apply_undo_redo_method(
 			"Set custom world limits, left side",
-			limits.set_custom_limit_left.bind(item.value),
+			limits.set_custom_limit_left.bind(new_value),
 			limits.set_custom_limit_left.bind(limits.custom_limits.x)
 	)
 
 
-func _on_item_top_changed(item: ItemInt) -> void:
+func _on_item_top_changed(new_value: int) -> void:
 	var limits: WorldLimits = project.game.world.limits()
 	_apply_undo_redo_method(
 			"Set custom world limits, top side",
-			limits.set_custom_limit_top.bind(item.value),
+			limits.set_custom_limit_top.bind(new_value),
 			limits.set_custom_limit_top.bind(limits.custom_limits.y)
 	)
 
 
-func _on_item_right_changed(item: ItemInt) -> void:
+func _on_item_right_changed(new_value: int) -> void:
 	var limits: WorldLimits = project.game.world.limits()
 	_apply_undo_redo_method(
 			"Set custom world limits, right side",
-			limits.set_custom_limit_right.bind(item.value),
+			limits.set_custom_limit_right.bind(new_value),
 			limits.set_custom_limit_right.bind(limits.custom_limits.z)
 	)
 
 
-func _on_item_bottom_changed(item: ItemInt) -> void:
+func _on_item_bottom_changed(new_value: int) -> void:
 	var limits: WorldLimits = project.game.world.limits()
 	_apply_undo_redo_method(
 			"Set custom world limits, bottom side",
-			limits.set_custom_limit_bottom.bind(item.value),
+			limits.set_custom_limit_bottom.bind(new_value),
 			limits.set_custom_limit_bottom.bind(limits.custom_limits.w)
 	)
 

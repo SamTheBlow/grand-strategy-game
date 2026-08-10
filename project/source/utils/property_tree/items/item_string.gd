@@ -3,7 +3,7 @@ class_name ItemString
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a string value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: String)
 signal placeholder_text_changed(this: PropertyTreeItem)
 
 ## Set this property in the inspector to set the default value.
@@ -15,7 +15,7 @@ signal placeholder_text_changed(this: PropertyTreeItem)
 
 		if value != new_value:
 			value = new_value
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 ## This has no effect and can be changed even after locking the item.
 @export var placeholder_text: String = "":

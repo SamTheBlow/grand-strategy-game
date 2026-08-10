@@ -3,7 +3,7 @@ class_name ItemBool
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a boolean value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: bool)
 
 ## Set this property in the inspector to set the default value.
 @export var value: bool = false:
@@ -14,7 +14,7 @@ signal value_changed(this: PropertyTreeItem)
 
 		if value != new_value:
 			value = new_value
-			value_changed.emit(self)
+			value_changed.emit(value)
 
 ## Add to this array the index of items you want to
 ## only show when the boolean value is set to true.[br]

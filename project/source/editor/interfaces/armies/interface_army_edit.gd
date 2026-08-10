@@ -97,43 +97,43 @@ func _on_army_removed(army_removed: Army) -> void:
 		closed.emit()
 
 
-func _on_item_texture_changed(item: ItemTexture) -> void:
+func _on_item_texture_changed(new_value: ProjectTexture) -> void:
 	_apply_undo_redo_property(
 			"Change army sprite",
 			army,
 			&"texture",
 			army.texture,
-			item.value
+			new_value
 	)
 
 
-func _on_item_country_changed(item: ItemCountry) -> void:
+func _on_item_country_changed(new_value: Country) -> void:
 	_apply_undo_redo_property(
 			"Change army allegiance",
 			army,
 			&"owner_country",
 			army.owner_country,
-			item.value
+			new_value
 	)
 
 
-func _on_item_size_changed(item: ItemInt) -> void:
+func _on_item_size_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change army size",
 			army.size(),
 			&"value",
 			army.size().value,
-			item.value
+			new_value
 	)
 
 
-func _on_item_moves_changed(item: ItemInt) -> void:
+func _on_item_moves_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change army movements made",
 			army,
 			&"_movements_made",
 			army.movements_made(),
-			item.value
+			new_value
 	)
 
 

@@ -134,52 +134,52 @@ func _on_province_removed(province_removed: Province) -> void:
 		closed.emit()
 
 
-func _on_name_value_changed(item: ItemString) -> void:
+func _on_name_value_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change province name",
 			province,
 			&"name",
 			province.name,
-			item.value
+			new_value
 	)
 
 
-func _on_country_value_changed(item: ItemCountry) -> void:
+func _on_country_value_changed(new_value: Country) -> void:
 	_apply_undo_redo_property(
 			"Change province owner",
 			province,
 			&"owner_country",
 			province.owner_country,
-			item.value
+			new_value
 	)
 
 
-func _on_population_value_changed(item: ItemInt) -> void:
+func _on_population_value_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change province population",
 			province.population(),
 			&"value",
 			province.population().value,
-			item.value
+			new_value
 	)
 
 
-func _on_income_value_changed(item: ItemInt) -> void:
+func _on_income_value_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change province money income",
 			province.base_money_income(),
 			&"value",
 			province.base_money_income().value,
-			item.value
+			new_value
 	)
 
 
-func _on_has_fortress_value_changed(item: ItemBool) -> void:
+func _on_has_fortress_value_changed(new_value: bool) -> void:
 	var description: String = "Toggle province having a fortress"
 
 	var do_callable: Callable
 	var undo_callable: Callable
-	if item.value:
+	if new_value:
 		# Add fortress
 		var new_fortress := Fortress.new(province.id)
 		do_callable = province.buildings.add.bind(new_fortress)

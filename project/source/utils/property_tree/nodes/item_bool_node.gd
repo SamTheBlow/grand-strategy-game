@@ -61,6 +61,6 @@ func _on_check_box_toggled(toggled_on: bool) -> void:
 	_update_child_item_visibility()
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_check_box.set_pressed_no_signal(item.value)
+func _on_item_value_changed(new_value: bool) -> void:
+	_check_box.set_pressed_no_signal(new_value)
 	_update_child_item_visibility()

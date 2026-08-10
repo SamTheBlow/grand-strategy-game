@@ -82,7 +82,9 @@ func _update_settings_list() -> void:
 				setting.item.value = default_value
 				setting.item.text = value_text
 				_item_keys[setting.item] = key_string
-				setting.item.value_changed.connect(_on_setting_changed)
+				setting.item.value_changed.connect(
+						_on_setting_changed.bind(setting.item).unbind(1)
+				)
 				setting_node = setting
 			"int":
 				var default_value: int
@@ -99,7 +101,9 @@ func _update_settings_list() -> void:
 				setting.item.value = default_value
 				setting.item.text = value_text
 				_item_keys[setting.item] = key_string
-				setting.item.value_changed.connect(_on_setting_changed)
+				setting.item.value_changed.connect(
+						_on_setting_changed.bind(setting.item).unbind(1)
+				)
 				setting_node = setting
 			"float":
 				var default_value: float
@@ -116,7 +120,9 @@ func _update_settings_list() -> void:
 				setting.item.value = default_value
 				setting.item.text = value_text
 				_item_keys[setting.item] = key_string
-				setting.item.value_changed.connect(_on_setting_changed)
+				setting.item.value_changed.connect(
+						_on_setting_changed.bind(setting.item).unbind(1)
+				)
 				setting_node = setting
 			"options":
 				var default_value: int = 0
@@ -145,7 +151,9 @@ func _update_settings_list() -> void:
 					setting.item.options = options
 					setting.item.text = value_text
 					_item_keys[setting.item] = key_string
-					setting.item.value_changed.connect(_on_setting_changed)
+					setting.item.value_changed.connect(
+							_on_setting_changed.bind(setting.item).unbind(1)
+					)
 					setting_node = setting
 
 		if setting_node == null:

@@ -39,10 +39,10 @@ func _on_color_picker_color_changed(color: Color) -> void:
 	item.value = color
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
+func _on_item_value_changed(new_value: Color) -> void:
 	# Disconnect signal to prevent infinite loop
 	_color_picker.color_changed.disconnect(_on_color_picker_color_changed)
-	_color_picker.color = item.value
+	_color_picker.color = new_value
 	_color_picker.color_changed.connect(_on_color_picker_color_changed)
 
 

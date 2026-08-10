@@ -3,7 +3,7 @@ class_name ItemVector2
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [Vector2] value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: Vector2)
 
 var value_x: float:
 	get:
@@ -24,10 +24,10 @@ var value_y: float:
 			push_warning(_LOCKED_ITEM_MESSAGE)
 			return
 
-		var old_value: Vector2 = _value
+		if _value == new_value:
+			return
 		_value = new_value
-		if _value != old_value:
-			value_changed.emit(self)
+		value_changed.emit(_value)
 
 ## The suffix to add at the end (e.g. "10px", "10°").
 @export var suffix: String = ""

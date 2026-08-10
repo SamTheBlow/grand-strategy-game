@@ -54,8 +54,8 @@ func _on_text_changed(_text: String = "") -> void:
 		item.value_changed.connect(_on_item_value_changed)
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_line_edit.text = item.value
+func _on_item_value_changed(new_value: String) -> void:
+	_line_edit.text = new_value
 
 
 func _on_placeholder_text_changed(_input_item: PropertyTreeItem) -> void:

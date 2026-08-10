@@ -31,23 +31,23 @@ func _ready() -> void:
 	closed.connect(navigator.close_interface)
 
 
-func _on_item_name_changed(item: PropertyTreeItem) -> void:
+func _on_item_name_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change project name",
 			project.metadata,
 			&"project_name",
 			project.metadata.project_name,
-			item.value
+			new_value
 	)
 
 
-func _on_item_icon_changed(item: PropertyTreeItem) -> void:
+func _on_item_icon_changed(new_value: ProjectTexture) -> void:
 	_apply_undo_redo_property(
 			"Change project icon",
 			project.metadata,
 			&"icon",
 			project.metadata.icon,
-			item.value
+			new_value
 	)
 
 

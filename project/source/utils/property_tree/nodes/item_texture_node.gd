@@ -13,7 +13,7 @@ var item := ItemTexture.new()
 
 func _ready() -> void:
 	refresh()
-	item.value_changed.connect(_on_item_value_changed)
+	item.value_changed.connect(_refresh_texture_rect.unbind(1))
 
 
 func refresh() -> void:
@@ -29,7 +29,7 @@ func _item() -> PropertyTreeItem:
 	return item
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
+func _refresh_texture_rect() -> void:
 	_texture_rect.texture = item.texture()
 
 

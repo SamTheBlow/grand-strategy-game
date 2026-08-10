@@ -47,6 +47,6 @@ func _on_spin_box_2_value_changed(value: float) -> void:
 	item.value_y = value
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_spin_box_1.set_value_no_signal(item.value_x)
-	_spin_box_2.set_value_no_signal(item.value_y)
+func _on_item_value_changed(new_value: Vector2) -> void:
+	_spin_box_1.set_value_no_signal(new_value.x)
+	_spin_box_2.set_value_no_signal(new_value.y)

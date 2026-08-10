@@ -51,5 +51,5 @@ func _on_option_selected(selected: int) -> void:
 	item.selected_index = selected
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_option_button.select_item(item.selected_index)
+func _on_item_value_changed(new_value: int) -> void:
+	_option_button.select_item(new_value)

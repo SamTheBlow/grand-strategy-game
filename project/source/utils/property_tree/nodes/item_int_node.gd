@@ -43,8 +43,8 @@ func _on_spin_box_value_changed(value: float) -> void:
 	item.value = roundi(value)
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
-	_spin_box.set_value_no_signal(item.value)
+func _on_item_value_changed(new_value: int) -> void:
+	_spin_box.set_value_no_signal(new_value)
 
 
 func _on_is_disabled_changed() -> void:

@@ -115,8 +115,8 @@ func remove_highlight() -> void:
 
 
 ## Shows or hides buildings in this province.
-func set_building_visibility(setting: ItemBool) -> void:
-	_buildings.visible = setting.value
+func set_building_visibility(value: bool) -> void:
+	_buildings.visible = value
 
 
 ## Debug function that clearly highlights this province on the world map.

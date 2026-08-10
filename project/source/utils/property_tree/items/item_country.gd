@@ -3,7 +3,7 @@ class_name ItemCountry
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a [Country] value.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: Country)
 signal change_requested(this: ItemCountry)
 
 var value: Country = null:
@@ -18,7 +18,7 @@ var value: Country = null:
 			return
 
 		value = new_value
-		value_changed.emit(self)
+		value_changed.emit(value)
 
 var _may_be_null: bool = true
 

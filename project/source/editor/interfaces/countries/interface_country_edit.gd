@@ -94,33 +94,33 @@ func _duplicate() -> void:
 	navigator.open_country_edit_interface(new_country)
 
 
-func _on_name_changed(item: ItemString) -> void:
+func _on_name_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change country name",
 			country,
 			&"country_name",
 			country.country_name,
-			item.value
+			new_value
 	)
 
 
-func _on_color_changed(item: ItemColor) -> void:
+func _on_color_changed(new_value: Color) -> void:
 	_apply_undo_redo_property(
 			"Change country color",
 			country,
 			&"color",
 			country.color,
-			item.value
+			new_value
 	)
 
 
-func _on_money_changed(item: ItemInt) -> void:
+func _on_money_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change country money",
 			country,
 			&"money",
 			country.money,
-			item.value
+			new_value
 	)
 
 

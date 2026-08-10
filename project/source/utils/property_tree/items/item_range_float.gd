@@ -3,7 +3,7 @@ class_name ItemRangeFloat
 extends PropertyTreeItem
 ## A [PropertyTreeItem] that contains a range of float values.
 
-signal value_changed(this: PropertyTreeItem)
+signal value_changed(new_value: Vector2)
 
 var min_value: float = 0:
 	set(value):
@@ -18,7 +18,7 @@ var min_value: float = 0:
 		if max_value < min_value:
 			max_value = min_value
 		elif min_value != old_value:
-			value_changed.emit(self)
+			value_changed.emit(Vector2(min_value, max_value))
 
 var max_value: float = 0:
 	set(value):
@@ -33,7 +33,7 @@ var max_value: float = 0:
 		if max_value < min_value:
 			min_value = max_value
 		elif max_value != old_value:
-			value_changed.emit(self)
+			value_changed.emit(Vector2(min_value, max_value))
 
 var has_minimum: bool = false:
 	set(new_bool):
@@ -117,9 +117,9 @@ func set_data(data: Variant) -> void:
 	max_value = ParseUtils.number_as_float(data_array[1])
 
 
-func _on_min_value_changed(_item: PropertyTreeItem) -> void:
-	min_value = min_item.value
+func _on_min_value_changed(new_value: float) -> void:
+	min_value = new_value
 
 
-func _on_max_value_changed(_item: PropertyTreeItem) -> void:
-	max_value = max_item.value
+func _on_max_value_changed(new_value: float) -> void:
+	max_value = new_value

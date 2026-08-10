@@ -40,23 +40,23 @@ func _refresh_item_visiblity(
 	game_settings.refresh()
 
 
-func _on_item_seed_changed(item: ItemString) -> void:
+func _on_item_seed_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change RNG seed",
 			project.game.rng,
 			&"rng_seed",
 			project.game.rng.rng_seed,
-			item.value
+			new_value
 	)
 
 
-func _on_item_state_changed(item: ItemString) -> void:
+func _on_item_state_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change RNG state",
 			project.game.rng,
 			&"rng_state",
 			project.game.rng.rng_state,
-			item.value
+			new_value
 	)
 
 

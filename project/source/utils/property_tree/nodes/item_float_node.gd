@@ -51,8 +51,8 @@ func _on_spin_box_value_changed(value: float) -> void:
 		item.value = value
 
 
-func _on_item_value_changed(_input_item: PropertyTreeItem) -> void:
+func _on_item_value_changed(new_value: float) -> void:
 	if item.is_percentage:
-		_spin_box.set_value_no_signal(item.value * 100.0)
+		_spin_box.set_value_no_signal(new_value * 100.0)
 	else:
-		_spin_box.set_value_no_signal(item.value)
+		_spin_box.set_value_no_signal(new_value)
