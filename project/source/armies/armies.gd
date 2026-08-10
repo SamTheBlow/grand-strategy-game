@@ -66,33 +66,47 @@ func undo_redo_remove(
 	undo_redo.commit_action()
 
 
+## Moves given army to a different province and/or a different position.
 func undo_redo_move(
 		army: Army,
 		new_province_id: int,
+		new_stack_index: int,
 		undo_redo: UndoRedoResource,
 		armies_in_each_province: ArmiesInEachProvince,
 ) -> void:
 	var old_province_id: int = army.province_id()
-
-	# No effect if army's already there
-	if old_province_id == new_province_id:
-		return
-
-	# Get the army's position in the stack
-	var armies_in_province: ArmiesInProvince = (
+	var old_armies_in_province: ArmiesInProvince = (
 			armies_in_each_province.in_province_id(old_province_id)
 	)
-	var old_stack_index: int = armies_in_province.list.find(army)
+	var old_stack_index: int = old_armies_in_province.list.find(army)
 
-	# Create undo/redo action
-	undo_redo.create_action("Move army to a different province")
-	undo_redo.add_do_method(army.teleport_to_province.bind(new_province_id))
-	undo_redo.add_undo_method(
-			army.teleport_to_province.bind(old_province_id)
+	# Do nothing if army is already where it should be
+	if (
+			old_province_id == new_province_id
+			and old_stack_index == new_stack_index
+	):
+		return
+
+	undo_redo.create_action("Move army")
+
+	# Move to new province
+	if old_province_id != new_province_id:
+		undo_redo.add_do_method(
+				army.teleport_to_province.bind(new_province_id)
+		)
+		undo_redo.add_undo_method(
+				army.teleport_to_province.bind(old_province_id)
+		)
+
+	# Move to new position
+	undo_redo.add_do_method(
+			armies_in_each_province.in_province_id(new_province_id)
+			.move_army.bind(army, new_stack_index)
 	)
 	undo_redo.add_undo_method(
-			armies_in_province.move_army.bind(army, old_stack_index)
+			old_armies_in_province.move_army.bind(army, old_stack_index)
 	)
+
 	undo_redo.commit_action()
 
 

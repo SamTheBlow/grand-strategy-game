@@ -132,12 +132,10 @@ func _new_army_visuals(army: Army) -> ArmyVisuals2D:
 	var new_army_visuals := _ARMY_VISUALS_SCENE.instantiate() as ArmyVisuals2D
 	new_army_visuals.army = army
 	new_army_visuals.playing_country = _playing_country
-	new_army_visuals.tree_exited.connect(_on_visuals_tree_exited.bind(army))
 	return new_army_visuals
 
 
 func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
-	army_visuals.tree_exited.disconnect(_on_visuals_tree_exited)
 	NodeUtils.delete_node(army_visuals)
 
 
@@ -146,18 +144,3 @@ func _move_army_in_stack(army: Army, position_index: int) -> void:
 			_provinces_container.visuals_of(army.province_id())
 	)
 	province_visuals.move_army(_map[army], position_index)
-
-
-## If the army visuals are deleted from elsewhere,
-## update internal state and try to create new visuals for the army.
-func _on_visuals_tree_exited(army: Army) -> void:
-	if not is_inside_tree():
-		return
-
-	if not _map.has(army):
-		push_error("Army is not in the list.")
-		return
-
-	_map.erase(army)
-	_armies_with_no_visuals.append(army)
-	_assign_to_province(army)

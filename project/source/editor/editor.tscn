@@ -65,11 +65,12 @@ _undo_redo = SubResource("Resource_ai428")
 script = ExtResource("16_army_input")
 _army_visuals_setup = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup")
 
-[node name="ArmyDrag" type="Node" parent="." unique_id=1928374701 node_paths=PackedStringArray("_army_selection", "_army_visuals_list", "_province_visuals_input")]
+[node name="ArmyDrag" type="Node" parent="." unique_id=1928374701 node_paths=PackedStringArray("_army_selection", "_army_visuals_list", "_province_visuals_input", "_province_visuals_list")]
 script = ExtResource("16_army_drag")
 _army_selection = NodePath("../ArmySelection")
 _army_visuals_list = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup")
 _province_visuals_input = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput")
+_province_visuals_list = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Provinces")
 _undo_redo = SubResource("Resource_ai428")
 
 [node name="ProvinceLinkEditer" type="Node" parent="." unique_id=1928374654]

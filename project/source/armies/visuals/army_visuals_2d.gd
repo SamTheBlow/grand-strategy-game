@@ -27,6 +27,9 @@ var army: Army
 ## Stops animations and updates tint when the playing country changes.
 var playing_country: PlayingCountry
 
+## If true, only renders the outline and disables everything else.
+var is_invisible: bool = false
+
 ## When true, locks the position and scale
 ## such that the visuals fit inside given [Control]'s rect.
 var is_preview: bool = false
@@ -40,6 +43,12 @@ var preview_container: Control
 
 
 func _ready() -> void:
+	if is_invisible:
+		_army_sprite.hide()
+		_army_size_box.hide()
+		_refresh_input_filter()
+		return
+
 	# Give this node a unique meaningful name
 	name = "Army" + str(army.id)
 
@@ -105,7 +114,8 @@ func highlight() -> void:
 func highlight_selected() -> void:
 	if _army_outline != null:
 		_army_outline.outline_settings = _outline_selected
-	_control.grab_focus(true)
+	if is_input_enabled:
+		_control.grab_focus(true)
 
 
 ## Hides the outline around this army.
