@@ -14,10 +14,6 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var frontline_provinces: Array[Province] = (
 			game.world.provinces.provinces_on_frontline(player.playing_country)
 	)
-	var my_armies: Array[Army] = (
-			game.world.armies_of_each_country
-			.dictionary[player.playing_country].list
-	)
 
 	if frontline_provinces.size() == 0:
 		# No frontline! You probably won.
@@ -25,7 +21,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	# Generate pathfinding data, but only when it's worth it.
 	var pathfinding: ProvincePathfinding
-	if _is_province_pathfinding_worth_it(my_armies):
+	if _is_province_pathfinding_worth_it(game, player):
 		pathfinding = ProvincePathfinding.new(game.world.provinces)
 		pathfinding.generate(frontline_provinces)
 
@@ -72,7 +68,10 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
-	for army in my_armies:
+	for army in (
+			game.world.armies_of_each_country
+			.dictionary[player.playing_country].list
+	):
 		if army.is_able_to_move() == false:
 			continue
 
@@ -196,7 +195,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 		# This province is not on the frontline.
 
 		# Move the army towards the frontlines.
-		if _is_province_pathfinding_worth_it(my_armies):
+		if _is_province_pathfinding_worth_it(game, player):
 			_move_towards_frontlines_pathfinding(
 					result,
 					army.id,
@@ -216,8 +215,11 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	return result
 
 
-func _is_province_pathfinding_worth_it(my_armies: Array[Army]) -> bool:
-	return my_armies.size() >= 50
+func _is_province_pathfinding_worth_it(game: Game, player: GamePlayer) -> bool:
+	return (
+			game.world.armies_of_each_country
+			.dictionary[player.playing_country].list.size() >= 50
+	)
 
 
 ## Faster when you have few armies and the frontline is nearby.

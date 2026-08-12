@@ -109,10 +109,9 @@ func strength_of_countries() -> Array[float]:
 			country_score += province_score
 
 		# Score for existing armies
-		var armies_of_country: Array[Army] = (
+		for army in (
 				game.world.armies_of_each_country.dictionary[country].list
-		)
-		for army in armies_of_country:
+		):
 			country_score += (
 					SCORE_WEIGHT_EXISTING_ARMIES * army.size().value
 			)

@@ -116,7 +116,7 @@ func undo_redo_remove(
 	# Save all of this country's armies and their positions
 	var armies_with_positions: Array[ArmyWithPositions] = (
 			armies.list_with_positions(
-					armies_of_each_country.dictionary[country].list,
+					armies_of_each_country.dictionary[country].list.keys(),
 					armies_in_each_province
 			)
 	)

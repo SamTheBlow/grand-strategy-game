@@ -48,7 +48,7 @@ func _remove_country(country: Country, armies: Armies) -> void:
 ## and connects signals such that when allegiance changes,
 ## removes this army from the list and then calls this function again
 func _add_army(army: Army) -> void:
-	dictionary[army.owner_country].list.append(army)
+	dictionary[army.owner_country].list[army] = true
 	army.allegiance_changed.connect(
 			dictionary[army.owner_country].erase.bind(army).unbind(1),
 			ConnectFlags.CONNECT_ONE_SHOT
@@ -65,7 +65,8 @@ func _remove_army(army: Army) -> void:
 
 
 class ArmiesOfCountry:
-	var list: Array[Army] = []
+	## It's a dictionary for performance reasons. The bool value is irrelevant.
+	var list: Dictionary[Army, bool] = {}
 	# This is so that disconnecting the signal works
 	func erase(value: Army) -> void:
 		list.erase(value)

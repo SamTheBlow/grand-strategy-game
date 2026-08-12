@@ -11,11 +11,10 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	result.append_array(_try_build_fortresses(game, player.playing_country))
 
-	var armies_of_player: Array[Army] = (
+	if (
 			game.world.armies_of_each_country
-			.dictionary[player.playing_country].list
-	)
-	if armies_of_player.size() >= 50:
+			.dictionary[player.playing_country].list.size() >= 50
+	):
 		result.append_array(_actions_many(game, player))
 	else:
 		result.append_array(_actions_few(game, player))
