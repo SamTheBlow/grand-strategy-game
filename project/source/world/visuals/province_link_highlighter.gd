@@ -104,13 +104,16 @@ func _clear_highlights() -> void:
 
 func _connect_link_signals(province: Province) -> void:
 	province.link_added.connect(
-			_on_province_links_changed.bind(province).unbind(1)
+			_on_province_links_changed.unbind(1),
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 	province.link_removed.connect(
-			_on_province_links_changed.bind(province).unbind(1)
+			_on_province_links_changed.unbind(1),
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 	province.links_reset.connect(
-			_on_province_links_changed.bind(province)
+			_on_province_links_changed,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 
 

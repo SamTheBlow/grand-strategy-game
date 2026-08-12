@@ -87,8 +87,12 @@ func _setup_visuals(army_visuals: ArmyVisuals2D) -> void:
 
 	army_visuals.clicked.connect(_on_army_clicked.bind(army_visuals.army))
 	army_visuals.mouse_entered.connect(set_hovered_army.bind(army_visuals.army))
-	army_visuals.mouse_exited.connect(_unset_hovered_army.bind(army_visuals))
-	army_visuals.tree_exited.connect(_unset_hovered_army.bind(army_visuals))
+	army_visuals.mouse_exited.connect(
+			_unset_hovered_army, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
+	army_visuals.tree_exited.connect(
+			_unset_hovered_army, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 
 
 ## We use this and not set_hovered_army(null),

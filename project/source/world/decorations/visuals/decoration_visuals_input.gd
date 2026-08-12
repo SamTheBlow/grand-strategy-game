@@ -86,10 +86,12 @@ func _setup_visuals(decoration_visuals: DecorationVisuals2D) -> void:
 			set_hovered_decoration.bind(decoration_visuals.world_decoration)
 	)
 	decoration_visuals.mouse_exited.connect(
-			_unset_hovered_decoration.bind(decoration_visuals)
+			_unset_hovered_decoration,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 	decoration_visuals.tree_exited.connect(
-			_unset_hovered_decoration.bind(decoration_visuals)
+			_unset_hovered_decoration,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 
 

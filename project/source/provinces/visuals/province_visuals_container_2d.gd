@@ -64,10 +64,22 @@ func _add_province(province: Province) -> void:
 	var visuals := _PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
 	visuals.province = province
 	visuals.clicked.connect(province_clicked.emit.bind(visuals.province))
-	visuals.right_clicked.connect(province_right_clicked.emit.bind(visuals))
-	visuals.mouse_entered.connect(province_mouse_entered.emit.bind(visuals))
-	visuals.mouse_exited.connect(province_mouse_exited.emit.bind(visuals))
-	visuals.tree_exited.connect(province_tree_exited.emit.bind(visuals))
+	visuals.right_clicked.connect(
+			province_right_clicked.emit,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
+	visuals.mouse_entered.connect(
+			province_mouse_entered.emit,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
+	visuals.mouse_exited.connect(
+			province_mouse_exited.emit,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
+	visuals.tree_exited.connect(
+			province_tree_exited.emit,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 
 	_province_map[province.id] = visuals
 	add_child(visuals)

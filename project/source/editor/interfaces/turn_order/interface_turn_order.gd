@@ -18,7 +18,9 @@ func _ready() -> void:
 	project.game.countries.order_changed.connect(_on_country_order_changed)
 
 	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
-	item_rule.value_changed.connect(_on_item_value_changed.bind(item_rule))
+	item_rule.value_changed.connect(
+			_on_item_value_changed, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 	_update_visibility()
 
 	var game_settings := %GameSettingsCategory as ItemVoidNode
@@ -49,8 +51,12 @@ func _add_element(country: Country) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as EditorTurnOrderElement
 	element.country = country
 	element.label_text = country.name_or_default()
-	element.up_pressed.connect(_on_element_up_pressed.bind(element))
-	element.down_pressed.connect(_on_element_down_pressed.bind(element))
+	element.up_pressed.connect(
+			_on_element_up_pressed, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
+	element.down_pressed.connect(
+			_on_element_down_pressed, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 	_element_container.order_changed.connect(element.refresh_arrows)
 	_element_container.add_child(element)
 	_country_nodes[country.id] = element

@@ -26,7 +26,9 @@ func _ready() -> void:
 
 func _add_element(army: Army) -> void:
 	_connect_country(army)
-	army.allegiance_changed.connect(_connect_country.bind(army))
+	army.allegiance_changed.connect(
+			_connect_country, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 
 	var element := _ELEMENT_SCENE.instantiate() as ArmyListElement
 	element.army = army
@@ -63,7 +65,10 @@ func _remove_element(army: Army) -> void:
 func _connect_country(army: Army) -> void:
 	var country: Country = army.owner_country
 	if not country.name_changed.is_connected(_on_country_name_changed):
-		country.name_changed.connect(_on_country_name_changed.bind(country))
+		country.name_changed.connect(
+				_on_country_name_changed,
+				ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+		)
 
 
 func _on_country_name_changed(country: Country) -> void:
