@@ -140,10 +140,11 @@ func _ready() -> void:
 	add_child(game_sync)
 
 	if MultiplayerUtils.has_authority(multiplayer):
+		game.end_setup()
+
 		if players != null:
 			_player_assignment.assign_players(players.list())
 
-		game.end_setup()
 		game.start()
 
 

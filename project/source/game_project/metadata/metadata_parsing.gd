@@ -3,7 +3,6 @@ class_name MetadataParsing
 
 const _NAME_KEY: String = "name"
 const _ICON_KEY: String = "icon"
-const _SETTINGS_KEY: String = "settings"
 
 
 ## Always succeeds. Ignores unrecognized data.
@@ -63,16 +62,6 @@ static func from_raw_data(
 		var image_data := PackedByteArray(raw_dict[_ICON_KEY])
 		output.icon = TextureFromImageData.new(image_data, dummy_textures)
 
-	# Custom settings
-	if ParseUtils.dictionary_has_dictionary(raw_dict, _SETTINGS_KEY):
-		# Only load settings whose key is of type String.
-		var settings_dict: Dictionary = raw_dict[_SETTINGS_KEY]
-		for key: Variant in settings_dict:
-			if key is not String:
-				continue
-			var key_string := key as String
-			output.settings.merge({ key_string: settings_dict[key_string] })
-
 	return output
 
 
@@ -90,9 +79,6 @@ static func to_raw_dict(
 		output.get_or_add(
 				_ICON_KEY, _icon_raw_data(metadata, include_file_paths)
 		)
-
-	if not metadata.settings.is_empty():
-		output.get_or_add(_SETTINGS_KEY, metadata.settings)
 
 	return output
 

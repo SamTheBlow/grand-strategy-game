@@ -60,6 +60,11 @@
 		"icon": "%godot_icon",
 		"name": "Test map 1"
 	},
+	"components": [
+		{
+			"id": 1
+		}
+	],
 	"version": "1",
 	"world": {
 		"provinces": [

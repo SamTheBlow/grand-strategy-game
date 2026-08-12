@@ -15,13 +15,7 @@ func add_game(meta_bundle: MetadataBundle, game_id: int) -> void:
 	new_option.id = game_id
 	new_option.selected.connect(_on_project_selected)
 
-	var project_settings := (
-			preload("uid://7dfhary26tgm").instantiate() as ProjectSettingsNode
-	)
-	new_option.settings = project_settings
-
 	add_child(new_option)
-	add_child(project_settings)
 	_list.append(new_option)
 
 

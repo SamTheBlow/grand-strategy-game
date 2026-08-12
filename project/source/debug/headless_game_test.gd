@@ -39,29 +39,22 @@ func _initialize() -> void:
 	randomize()
 	_load_cmdline_args()
 
-	var game_rules := GameRules.new()
-	game_rules.turn_limit_enabled.value = true
-	game_rules.turn_limit.value = turn_limit
+	_print_with_time("Loading the game...")
 
-	_print_with_time("Generating the game...")
-
-	var parse_result := MetadataBundle.from_path(load_file_path)
-	if parse_result.error:
-		_print_with_time("[ERROR] Failed to load metadata at given file path.")
-		_is_finished = true
-		return
-
-	var generated_game: ProjectParsing.ParseResult = (
-			ProjectFromPath.generated_from(parse_result.result, game_rules)
+	var parse_result: ProjectParsing.ParseResult = (
+			ProjectFromPath.loaded_from(load_file_path)
 	)
-	if generated_game.error:
+	if parse_result.error:
 		_print_with_time(
-				"[ERROR] Failed to generate the game: "
-				+ generated_game.error_message
+				"[ERROR] Failed to load project: " + parse_result.error_message
 		)
 		_is_finished = true
 		return
-	_project = generated_game.result_project
+	_project = parse_result.result_project
+
+	# Add turn limit
+	_project.game.rules.turn_limit_enabled.value = true
+	_project.game.rules.turn_limit.value = turn_limit
 
 	_print_with_time("Running the game...")
 	_project.game.turn.turn_changed.connect(_on_turn_changed)

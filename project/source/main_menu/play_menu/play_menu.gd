@@ -65,11 +65,11 @@ func inject(
 
 
 ## Called in a separate thread.
-## Loads a new game, generates data if applicable and
-## populates the data with given generation settings.
-func _setup_game(meta_bundle: MetadataBundle, game_rules: GameRules) -> void:
-	var generated_game: ProjectParsing.ParseResult = (
-			ProjectFromPath.generated_from(meta_bundle, game_rules)
+## Loads a game, overwrites its game rules and ends its setup phase,
+## potentially triggering game generation in the process.
+func _setup_game(file_path: String, game_rules: GameRules) -> void:
+	var parse_result: ProjectParsing.ParseResult = (
+			ProjectFromPath.loaded_from(file_path)
 	)
 
 	_mutex.lock()
@@ -79,10 +79,13 @@ func _setup_game(meta_bundle: MetadataBundle, game_rules: GameRules) -> void:
 		return
 	_mutex.unlock()
 
-	if generated_game.error:
-		_on_start_game_error.call_deferred(generated_game.error_message)
+	if parse_result.error:
+		_on_start_game_error.call_deferred(parse_result.error_message)
 	else:
-		_on_start_game_ready.call_deferred(generated_game.result_project)
+		var project: GameProject = parse_result.result_project
+		project.game.rules = game_rules
+		project.game.end_setup()
+		_on_start_game_ready.call_deferred(project)
 
 
 ## Called on the main thread when the other thread is done.
@@ -106,9 +109,7 @@ func _on_start_game_error(error_message: String) -> void:
 	_chat.send_system_message("Failed to load & setup the game")
 
 
-func _on_start_game_requested(
-		meta_bundle: MetadataBundle, generation_settings: GameRules
-) -> void:
+func _on_start_game_requested(file_path: String, game_rules: GameRules) -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
 
@@ -117,7 +118,7 @@ func _on_start_game_requested(
 	_mutex.unlock()
 	_loading_screen.visible = true
 
-	_load_thread.start(_setup_game.bind(meta_bundle, generation_settings))
+	_load_thread.start(_setup_game.bind(file_path, game_rules))
 
 
 ## Called on the main thread when user presses the "Cancel" button.

@@ -1,11 +1,14 @@
-class_name PopulatedSaveFile
-## Populates given [Game] depending on its [GameRules].
-## Meant to be applied to new game instances.
-##
-## This operation always succeeds.
+class_name MiscGameGeneration
+extends GameComponent
+## Applies various changes in given [Game] according to its [GameRules].
 
 
-static func apply(game: Game) -> void:
+func _init() -> void:
+	priority_index = 1
+
+
+## Always succeeds.
+func run(game: Game) -> void:
 	# RNG
 	_overwrite_rng(game)
 
@@ -50,6 +53,10 @@ static func apply(game: Game) -> void:
 
 	# Armies
 	_add_starting_armies(game)
+
+
+func _id() -> int:
+	return 1
 
 
 ## Overwrites the RNG seed according to the game rules.

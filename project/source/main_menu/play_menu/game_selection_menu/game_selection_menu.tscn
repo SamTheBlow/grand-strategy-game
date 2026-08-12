@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0g80dnd658x4"]
+[gd_scene format=3 uid="uid://d0g80dnd658x4"]
 
 [ext_resource type="Script" uid="uid://wepngtpwwv2f" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.gd" id="1_6utl8"]
 [ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="2_qnng7"]
@@ -10,7 +10,7 @@
 color = Color(1, 1, 1, 1)
 vertical = true
 
-[node name="GameSelectionMenu" type="MarginContainer"]
+[node name="GameSelectionMenu" type="MarginContainer" unique_id=714430723]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -20,14 +20,14 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_6utl8")
 
-[node name="MenuSync" type="Node" parent="."]
+[node name="MenuSync" type="Node" parent="." unique_id=152363417]
 unique_name_in_owner = true
 script = ExtResource("2_qnng7")
 
-[node name="ProjectImport" type="Node" parent="."]
+[node name="ProjectImport" type="Node" parent="." unique_id=2098814555]
 script = ExtResource("3_dybr7")
 
-[node name="ImportDialog" type="FileDialog" parent="."]
+[node name="ImportDialog" type="FileDialog" parent="." unique_id=1318552375]
 title = "Open a File or Directory"
 initial_position = 1
 size = Vector2i(931, 500)
@@ -38,14 +38,14 @@ access = 2
 filters = PackedStringArray("*.json")
 show_hidden_files = true
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=811342161]
 layout_mode = 2
 
-[node name="BuiltInGames" type="Control" parent="HBoxContainer"]
+[node name="BuiltInGames" type="Control" parent="HBoxContainer" unique_id=664705433]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Title" type="Label" parent="HBoxContainer/BuiltInGames"]
+[node name="Title" type="Label" parent="HBoxContainer/BuiltInGames" unique_id=1055477876]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -54,7 +54,7 @@ theme_override_font_sizes/font_size = 20
 text = "Built-in games"
 vertical_alignment = 2
 
-[node name="ScrollBuiltin" type="ScrollContainer" parent="HBoxContainer/BuiltInGames"]
+[node name="ScrollBuiltin" type="ScrollContainer" parent="HBoxContainer/BuiltInGames" unique_id=31022458]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -63,13 +63,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 follow_focus = true
 
-[node name="Control" type="PanelContainer" parent="HBoxContainer/BuiltInGames/ScrollBuiltin"]
+[node name="Control" type="PanelContainer" parent="HBoxContainer/BuiltInGames/ScrollBuiltin" unique_id=1577899413]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="GameListBuiltin" type="VBoxContainer" parent="HBoxContainer/BuiltInGames/ScrollBuiltin/Control"]
+[node name="GameListBuiltin" type="VBoxContainer" parent="HBoxContainer/BuiltInGames/ScrollBuiltin/Control" unique_id=1755177248]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -78,21 +78,21 @@ theme_override_constants/separation = 8
 script = ExtResource("4_dld7m")
 builtin_games = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
 
-[node name="VSeparator" type="VSeparator" parent="HBoxContainer"]
+[node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=1656973077]
 layout_mode = 2
 theme_override_constants/separation = 64
 theme_override_styles/separator = SubResource("StyleBoxLine_5umsw")
 
-[node name="ImportedGames" type="Control" parent="HBoxContainer"]
+[node name="ImportedGames" type="Control" parent="HBoxContainer" unique_id=121281990]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Top" type="Control" parent="HBoxContainer/ImportedGames"]
+[node name="Top" type="Control" parent="HBoxContainer/ImportedGames" unique_id=2074815532]
 layout_mode = 1
 anchor_right = 1.0
 anchor_bottom = 0.075
 
-[node name="Title" type="Label" parent="HBoxContainer/ImportedGames/Top"]
+[node name="Title" type="Label" parent="HBoxContainer/ImportedGames/Top" unique_id=2127707192]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -103,7 +103,7 @@ theme_override_font_sizes/font_size = 20
 text = "Imported games"
 vertical_alignment = 2
 
-[node name="ImportButton" type="Button" parent="HBoxContainer/ImportedGames/Top"]
+[node name="ImportButton" type="Button" parent="HBoxContainer/ImportedGames/Top" unique_id=1291782078]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.8
@@ -115,7 +115,7 @@ offset_right = -4.0
 offset_bottom = -4.0
 text = "Import"
 
-[node name="ScrollImported" type="ScrollContainer" parent="HBoxContainer/ImportedGames"]
+[node name="ScrollImported" type="ScrollContainer" parent="HBoxContainer/ImportedGames" unique_id=1386224884]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -124,13 +124,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 follow_focus = true
 
-[node name="Control" type="PanelContainer" parent="HBoxContainer/ImportedGames/ScrollImported"]
+[node name="Control" type="PanelContainer" parent="HBoxContainer/ImportedGames/ScrollImported" unique_id=2000224942]
 self_modulate = Color(1, 1, 1, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="GameListImported" type="VBoxContainer" parent="HBoxContainer/ImportedGames/ScrollImported/Control"]
+[node name="GameListImported" type="VBoxContainer" parent="HBoxContainer/ImportedGames/ScrollImported/Control" unique_id=1852203822]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

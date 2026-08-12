@@ -4,7 +4,6 @@ extends Node
 ## When online, syncs...
 ## - The list of built-in games (including all of their metadata)
 ## - The list of imported games (idem)
-## - The currently selected game
 ## When leaving a server, resets the entire state to what it was before joining.
 ##
 ## See also: [RulesMenuSync]
@@ -54,11 +53,6 @@ func _connect_signals() -> void:
 			.is_connected(_on_imported_game_added)
 	):
 		active_state.imported_game_added.connect(_on_imported_game_added)
-	if (
-			not active_state.metadata_changed
-			.is_connected(_on_metadata_changed)
-	):
-		active_state.metadata_changed.connect(_on_metadata_changed)
 
 
 func _disconnect_signals() -> void:
@@ -75,11 +69,6 @@ func _disconnect_signals() -> void:
 			.is_connected(_on_imported_game_added)
 	):
 		active_state.imported_game_added.disconnect(_on_imported_game_added)
-	if (
-			active_state.metadata_changed
-			.is_connected(_on_metadata_changed)
-	):
-		active_state.metadata_changed.disconnect(_on_metadata_changed)
 
 
 ## Clients ask the server for the active state.
@@ -139,27 +128,6 @@ func _receive_new_imported_game(meta_bundle_raw_data: Variant) -> void:
 	)
 
 
-## Updates a game's metadata on clients.
-@rpc("authority", "call_remote", "reliable")
-func _receive_metadata_change(
-		game_id: int, metadata_raw_data: Dictionary
-) -> void:
-	var metadata_to_change: MetadataBundle = (
-			active_state.game_with_id(game_id)
-	)
-	if metadata_to_change == null:
-		push_error("Received an invalid game id when trying to sync.")
-		return
-
-	metadata_to_change.metadata.copy_metadata(
-			# TODO this feels hacky.
-			# We pass an empty string as the project path.
-			# It only uses it to load from file paths, but this is networking.
-			# We never include file paths. So it doesn't need the project path.
-			MetadataParsing.from_raw_data(metadata_raw_data, "")
-	)
-
-
 ## On the server, sends the newly selected game to all clients.
 func _on_selected_game_changed() -> void:
 	if MultiplayerUtils.is_server(multiplayer):
@@ -170,12 +138,6 @@ func _on_selected_game_changed() -> void:
 func _on_imported_game_added(meta_bundle: MetadataBundle) -> void:
 	if MultiplayerUtils.is_server(multiplayer):
 		_receive_new_imported_game.rpc(meta_bundle.to_raw_data(false))
-
-
-## On the server, sends the changed metadata to all clients.
-func _on_metadata_changed(game_id: int, metadata: ProjectMetadata) -> void:
-	if MultiplayerUtils.is_server(multiplayer):
-		_receive_metadata_change.rpc(game_id, metadata.to_raw_dict(false))
 
 
 ## Clients ask the server for the active state when they first join.

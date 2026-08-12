@@ -1,10 +1,9 @@
 class_name ProjectMetadata
-## Data structure.
-## Contains a project's metadata, such as its name and its file path.
+## Holds a [GameProject]'s metadata, namely its name and its icon.
 
 signal name_changed()
 signal icon_changed()
-signal setting_changed(this: ProjectMetadata)
+## Emitted when all values are changed at once.
 signal state_updated(this: ProjectMetadata)
 
 const DEFAULT_PROJECT_NAME: String = "(Unnamed project)"
@@ -24,9 +23,6 @@ var icon: ProjectTexture = ProjectTexture.none():
 		icon = value
 		icon_changed.emit()
 
-## Keys must be of type String, values may be any "raw" type.
-var settings: Dictionary = {}
-
 
 ## Returns the default project name if the current project name is empty.
 func project_name_or_default() -> String:
@@ -36,16 +32,6 @@ func project_name_or_default() -> String:
 ## Returns the project's icon texture, with default icon fallback.
 func icon_texture() -> Texture2D:
 	return icon.texture(DEFAULT_PROJECT_ICON)
-
-
-## Emits a signal.
-## Please use this rather than manually editing the settings property.
-func set_setting(key: String, value: Variant) -> void:
-	if not ParseUtils.dictionary_has_dictionary(settings, key):
-		return
-	var setting_dict: Dictionary = settings[key]
-	setting_dict[ProjectSettingsNode.KEY_VALUE] = value
-	setting_changed.emit(self)
 
 
 ## Returns a new [ProjectMetadata] instance
@@ -72,6 +58,4 @@ func to_raw_dict(include_file_paths: bool) -> Dictionary:
 func copy_metadata(metadata: ProjectMetadata) -> void:
 	project_name = metadata.project_name
 	icon = metadata.icon
-	settings = metadata.settings
-
 	state_updated.emit(self)

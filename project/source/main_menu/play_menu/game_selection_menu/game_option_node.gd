@@ -19,8 +19,6 @@ var meta_bundle := MetadataBundle.new():
 		_update_info()
 		_update_file_path_visibility()
 
-var settings := ProjectSettingsNode.new()
-
 var id: int = -1
 var _is_selected: bool = false
 
@@ -34,36 +32,27 @@ var _is_selected: bool = false
 func _ready() -> void:
 	_update_info()
 	_update_background_color()
-	_update_settings_visibility()
 	_update_file_path_visibility()
 
 
-## Adds highlight and shows the game's project settings.
 func select() -> void:
 	if _is_selected:
 		return
 
 	_is_selected = true
 	_update_background_color()
-	_update_settings_visibility()
 
 
-## Removes highlight and hides the game's project settings.
 func deselect() -> void:
 	if not _is_selected:
 		return
 
 	_is_selected = false
 	_update_background_color()
-	_update_settings_visibility()
 
 
 func _update_background_color() -> void:
 	_background_color.color = color_selected if _is_selected else color_normal
-
-
-func _update_settings_visibility() -> void:
-	settings.visible = _is_selected and not settings.is_empty()
 
 
 func _update_file_path_visibility() -> void:
@@ -82,7 +71,6 @@ func _update_info() -> void:
 	_icon_texture.texture = meta_bundle.metadata.icon_texture()
 	_name_label.text = meta_bundle.metadata.project_name_or_default()
 	_file_path_label.text = meta_bundle.project_absolute_path
-	settings.metadata = meta_bundle.metadata
 
 
 func _on_button_pressed() -> void:

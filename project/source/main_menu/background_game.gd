@@ -32,18 +32,12 @@ func _load_new_game() -> void:
 
 ## Called in a separate thread.
 func _setup_game(project_file_path: String) -> void:
-	var parse_result := MetadataBundle.from_path(project_file_path)
+	var parse_result := ProjectFromPath.loaded_from(project_file_path)
 	if parse_result.error:
-		_on_game_load_error.call_deferred("Invalid project file path")
-		return
-
-	var generated_game := ProjectFromPath.generated_from(
-			parse_result.result, GameRules.new()
-	)
-	if generated_game.error:
-		_on_game_load_error.call_deferred(generated_game.error_message)
+		_on_game_load_error.call_deferred(parse_result.error_message)
 	else:
-		_on_game_load_ready.call_deferred(generated_game.result_project)
+		parse_result.result_project.game.end_setup()
+		_on_game_load_ready.call_deferred(parse_result.result_project)
 
 
 ## Called on the main thread when the other thread is done.

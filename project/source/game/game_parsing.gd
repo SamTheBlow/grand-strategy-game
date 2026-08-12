@@ -8,6 +8,7 @@ const _TURN_KEY: String = "turn"
 const _WORLD_KEY: String = "world"
 const _COUNTRIES_KEY: String = "countries"
 const _PLAYERS_KEY: String = "players"
+const _COMPONENTS_KEY: String = "components"
 
 
 ## Always succeeds.
@@ -55,13 +56,49 @@ static func to_raw_dict(game: Game) -> Dictionary:
 	if not turn_data.is_empty():
 		output.merge({ _TURN_KEY: turn_data })
 
+	# Components
+	var components_data: Array = (
+			_components_to_raw_array(game._setup_components)
+	)
+	if not components_data.is_empty():
+		output.merge({ _COMPONENTS_KEY: components_data })
+
+	return output
+
+
+static func _components_from_raw_data(
+		raw_data: Variant
+) -> Array[GameComponent]:
+	var output: Array[GameComponent] = []
+
+	if raw_data is not Array:
+		return output
+	var raw_array := raw_data as Array
+
+	for raw_component_data: Variant in raw_array:
+		var parse_result: GameComponent.ParseResult = (
+				GameComponent.from_raw_data(raw_component_data)
+		)
+		if parse_result.error:
+			continue
+		output.append(parse_result.result_component)
+
+	return output
+
+
+static func _components_to_raw_array(components: Array[GameComponent]) -> Array:
+	var output: Array = []
+	for component in components:
+		var raw_dict: Dictionary = component.to_raw_data()
+		if not raw_dict.is_empty():
+			output.append(raw_dict)
 	return output
 
 
 class GameFromRawData extends Game:
 	func _init(raw_dict: Dictionary, project_textures: ProjectTextures) -> void:
-		# Status
-		var status: Game.GameState = (
+		# State
+		_game_state = (
 				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
 		)
 
@@ -69,7 +106,7 @@ class GameFromRawData extends Game:
 		rules = RuleParsing.from_raw_data(raw_dict.get(_RULES_KEY))
 
 		# RNG
-		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), status)
+		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), _game_state)
 
 		# Turn
 		turn = (
@@ -95,12 +132,22 @@ class GameFromRawData extends Game:
 				raw_dict.get(_WORLD_KEY), self, project_textures
 		)
 
+		# Components
+		_setup_components.append_array(GameParsing._components_from_raw_data(
+				raw_dict.get(_COMPONENTS_KEY)
+		))
+
 		super()
 
-		if status != Game.GameState.SETUP:
-			end_setup()
-			if status == Game.GameState.GAMEOVER:
-				end_game()
+		match _game_state:
+			Game.GameState.SETUP:
+				pass
+			Game.GameState.ONGOING:
+				_setup_game_past_setup()
+			Game.GameState.GAMEOVER:
+				_setup_game_past_setup()
+			_:
+				push_error("Unrecognized game state")
 
 
 class GameStateParsing:

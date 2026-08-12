@@ -44,6 +44,9 @@ var _global_modifiers: Dictionary = {}
 ## These are stored here only because they need to stay referenced.
 var _components: Array = []
 
+## Components that are run once at the end of setup phase.
+var _setup_components: Array[GameComponent] = []
+
 
 func _init() -> void:
 	modifier_request.add_provider(self)
@@ -80,6 +83,22 @@ func end_setup() -> void:
 	if _game_state != GameState.SETUP:
 		return
 
+	# Run setup components (these are only meant to run
+	# when you leave setup phase for the first time)
+	_setup_components.sort_custom(
+			func(a: GameComponent, b: GameComponent) -> bool:
+				return a.priority_index < b.priority_index
+	)
+	for setup_component in _setup_components:
+		setup_component.run(self)
+
+	_setup_game_past_setup()
+
+	_game_state = GameState.ONGOING
+
+
+## Sets up the game to be ready for playing.
+func _setup_game_past_setup() -> void:
 	rng.lock()
 	rules.lock()
 	_setup_global_modifiers()
@@ -114,11 +133,14 @@ func end_setup() -> void:
 
 	turn.is_running_changed.connect(_on_is_running_changed)
 
-	_game_state = GameState.ONGOING
-
 
 ## Starts/resumes the gameplay loop, if possible.
 func start() -> void:
+	# You can continue playing if the game's over
+	# but let's remind the user that the game is over.
+	if _game_state == GameState.GAMEOVER:
+		game_over.emit(_winning_country())
+
 	# Can't start a game with 0 players.
 	if game_players.size() == 0:
 		error_triggered.emit("Cannot start a game with 0 players.")

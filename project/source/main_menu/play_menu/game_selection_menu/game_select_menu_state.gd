@@ -7,9 +7,6 @@ signal selected_game_changed()
 signal builtin_game_added(meta_bundle: MetadataBundle)
 ## This is not emitted when updating the entire state at once.
 signal imported_game_added(meta_bundle: MetadataBundle)
-## Emitted when information inside a game's metadata is changed.
-## This is not emitted when updating the entire state at once.
-signal metadata_changed(game_id: int, metadata: ProjectMetadata)
 ## Emitted after the entire state is updated.
 signal state_changed(this: GameSelectMenuState)
 
@@ -56,7 +53,6 @@ func builtin_games() -> Array[MetadataBundle]:
 
 
 func add_builtin_game(meta_bundle: MetadataBundle) -> void:
-	meta_bundle.metadata.setting_changed.connect(_on_metadata_changed)
 	_builtin_games.append(meta_bundle)
 	builtin_game_added.emit(meta_bundle)
 
@@ -66,7 +62,6 @@ func imported_games() -> Array[MetadataBundle]:
 
 
 func add_imported_game(meta_bundle: MetadataBundle) -> void:
-	meta_bundle.metadata.setting_changed.connect(_on_metadata_changed)
 	_imported_games.append(meta_bundle)
 	imported_game_added.emit(meta_bundle)
 
@@ -119,7 +114,6 @@ func _populate_game_list(
 		var meta_bundle: MetadataBundle = (
 				MetadataBundle.from_raw_data(bundle_raw_data)
 		)
-		meta_bundle.metadata.setting_changed.connect(_on_metadata_changed)
 		game_list.append(meta_bundle)
 
 
@@ -135,7 +129,3 @@ func _id_of(metadata: ProjectMetadata) -> int:
 			return output
 		output += 1
 	return -1
-
-
-func _on_metadata_changed(metadata: ProjectMetadata) -> void:
-	metadata_changed.emit(_id_of(metadata), metadata)

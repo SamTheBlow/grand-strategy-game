@@ -35,41 +35,6 @@ static func parsed_from(raw_data: Variant, file_path: String) -> ParseResult:
 	return ResultSuccess.new(_game_project(raw_dict, file_path))
 
 
-## Same thing as parsed_from(), but does a few more things.
-## When applicable, generates the world, countries, etc.
-## Overwrites the [GameRules] with given one.
-## Populates the game (see [PopulatedSaveFile]).
-static func generated_from(
-		raw_data: Variant, meta_bundle: MetadataBundle, game_rules: GameRules
-) -> ParseResult:
-	# Load the project
-	var parse_result: ParseResult = (
-			parsed_from(raw_data, meta_bundle.project_absolute_path)
-	)
-	if parse_result.error:
-		return parse_result
-	var game_project: GameProject = parse_result.result_project
-
-	# Overwrite the settings
-	game_project.metadata.settings = meta_bundle.metadata.settings
-
-	# Overwrite the rules
-	game_project.game.rules = game_rules
-
-	# Generate data, if applicable
-	if game_project.metadata.project_name == "Random Grid World":
-		var game_generation := RandomGridWorld.new()
-		game_generation.load_settings(game_project.metadata.settings)
-		if game_generation.error:
-			return ResultError.new(game_generation.error_message)
-		game_generation.apply(game_project.game)
-
-	# Populate the game
-	PopulatedSaveFile.apply(game_project.game)
-
-	return ResultSuccess.new(game_project)
-
-
 ## Always succeeds.
 static func to_raw_data(project: GameProject) -> Dictionary:
 	var output: Dictionary = { _VERSION_KEY: _SAVE_DATA_VERSION }
