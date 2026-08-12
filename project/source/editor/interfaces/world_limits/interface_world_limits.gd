@@ -135,12 +135,12 @@ func _on_custom_limits_toggled(
 
 
 func _on_limits_changed(
-		limits: WorldLimits,
 		item_left: ItemInt,
 		item_top: ItemInt,
 		item_right: ItemInt,
 		item_bottom: ItemInt
 ) -> void:
+	var limits: WorldLimits = project.game.world.limits()
 	_set_setting_no_signal(
 			item_left, _on_item_left_changed, limits.limit_left()
 	)

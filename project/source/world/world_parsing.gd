@@ -24,6 +24,11 @@ static func load_from_raw_data(
 		return
 	var raw_dict: Dictionary = raw_data
 
+	# World limits
+	WorldLimitsParsing.load_from_raw_data(
+			raw_dict.get(_LIMITS_KEY), game.world._limits
+	)
+
 	# Building data
 	game.world._building_data_list = BuildingDataParsing.from_raw_data(
 			raw_dict.get(_BUILDING_DATA_KEY),
@@ -31,16 +36,13 @@ static func load_from_raw_data(
 	)
 
 	# Provinces
+	game.world._limits.set_automatic_update_enabled(false)
 	ProvinceParsing.load_from_raw_data(raw_dict.get(_PROVINCES_KEY), game)
+	game.world._limits.set_automatic_update_enabled(true)
 
 	# Armies
 	ArmyParsing.load_from_raw_data(
 			raw_dict.get(_ARMIES_KEY), game, project_textures
-	)
-
-	# World limits
-	game.world._limits = WorldLimitsParsing.from_raw_data(
-			raw_dict.get(_LIMITS_KEY), game.world
 	)
 
 	# Background color

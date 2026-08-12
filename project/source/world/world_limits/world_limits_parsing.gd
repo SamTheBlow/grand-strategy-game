@@ -7,17 +7,13 @@ const _LIMIT_RIGHT_KEY: String = "right"
 const _LIMIT_BOTTOM_KEY: String = "bottom"
 
 
-## NOTE: Given world's provinces must already be loaded before using this.
-##
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
-static func from_raw_data(
-		raw_data: Variant, game_world: GameWorld
-) -> WorldLimits:
-	var output := WorldLimits.new(game_world)
-
+static func load_from_raw_data(
+		raw_data: Variant, world_limits: WorldLimits
+) -> void:
 	if raw_data is not Dictionary:
-		return output
+		return
 	var raw_dict: Dictionary = raw_data
 
 	var is_empty: bool = true
@@ -43,11 +39,10 @@ static func from_raw_data(
 		is_empty = false
 
 	if is_empty:
-		return output
+		return
 
-	output.custom_limits = Vector4i(left, top, right, bottom)
-	output.enable_custom_limits()
-	return output
+	world_limits.custom_limits = Vector4i(left, top, right, bottom)
+	world_limits.enable_custom_limits()
 
 
 static func to_raw_data(world_limits: WorldLimits) -> Variant:

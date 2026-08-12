@@ -20,7 +20,7 @@ var _world_limits: WorldLimits:
 		_world_limits = value
 
 		_refresh()
-		_world_limits.current_limits_changed.connect(_refresh.unbind(1))
+		_world_limits.current_limits_changed.connect(_refresh)
 
 
 func _ready() -> void:

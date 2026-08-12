@@ -9,6 +9,8 @@ const _PADDING: int = 200
 var _current_limits: Vector4i = WorldLimits.DEFAULT_LIMITS
 var _game_world: GameWorld
 
+var _is_enabled: bool = true
+
 
 func _init(game_world: GameWorld) -> void:
 	_game_world = game_world
@@ -19,6 +21,16 @@ func _init(game_world: GameWorld) -> void:
 	_game_world.provinces.removed.connect(_on_province_removed)
 
 	_update()
+
+
+## When false, does not recalculate limits when provinces are added or removed.
+## Useful for performance reasons when adding/removing provinces in bulk.
+func set_automatic_update_enabled(is_enabled: bool) -> void:
+	if _is_enabled == is_enabled:
+		return
+	_is_enabled = is_enabled
+	if _is_enabled:
+		_update()
 
 
 func value() -> Vector4i:
@@ -74,9 +86,11 @@ func _update() -> void:
 
 func _on_province_added(province: Province) -> void:
 	province.polygon().changed.connect(_update)
-	_update()
+	if _is_enabled:
+		_update()
 
 
 func _on_province_removed(province: Province) -> void:
 	province.polygon().changed.disconnect(_update)
-	_update()
+	if _is_enabled:
+		_update()

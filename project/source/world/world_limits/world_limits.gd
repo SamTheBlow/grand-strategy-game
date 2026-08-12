@@ -2,7 +2,7 @@ class_name WorldLimits
 ## The limits of a 2D world map.
 ## Represents how far the camera can go on each side of the map.
 
-signal current_limits_changed(this: WorldLimits)
+signal current_limits_changed()
 signal custom_limits_changed(this: WorldLimits)
 ## Emitted when custom limits are enabled/disabled.
 signal mode_changed()
@@ -31,7 +31,7 @@ var _current_limits: WorldLimitsBase:
 		if _current_limits != null:
 			_current_limits.changed.disconnect(current_limits_changed.emit)
 		_current_limits = value
-		_current_limits.changed.connect(current_limits_changed.emit.bind(self))
+		_current_limits.changed.connect(current_limits_changed.emit)
 
 
 func _init(world: GameWorld) -> void:
@@ -51,7 +51,7 @@ func enable_custom_limits() -> void:
 	_custom_limits_enabled = true
 	mode_changed.emit()
 	if _old_limits != _current_limits.value():
-		current_limits_changed.emit(self)
+		current_limits_changed.emit()
 
 
 func disable_custom_limits() -> void:
@@ -62,7 +62,11 @@ func disable_custom_limits() -> void:
 	_custom_limits_enabled = false
 	mode_changed.emit()
 	if _old_limits != _current_limits.value():
-		current_limits_changed.emit(self)
+		current_limits_changed.emit()
+
+
+func set_automatic_update_enabled(is_enabled: bool) -> void:
+	_current_limits.set_automatic_update_enabled(is_enabled)
 
 
 func set_custom_limit_left(value: int) -> void:
@@ -129,6 +133,9 @@ func to_raw_data() -> Variant:
 	signal changed()
 
 	@abstract func value() -> Vector4i
+
+	func set_automatic_update_enabled(_is_enabled: bool) -> void:
+		pass
 
 
 class WorldLimitsCustom extends WorldLimitsBase:
