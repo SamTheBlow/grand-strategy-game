@@ -56,12 +56,12 @@ func undo_redo_remove(
 	# Ensure the army's position in its province's list is restored on undo.
 	if army.province_id() != -1:
 		var province_index: int = (
-				armies_in_each_province
-				.in_province_id(army.province_id()).list.find(army)
+				armies_in_each_province.dictionary[army.province_id()]
+				.mapped_list[army]
 		)
-		undo_redo.add_undo_method(_restore_province_position.bind(
-				army, province_index, armies_in_each_province
-		))
+		undo_redo.add_undo_method(
+				armies_in_each_province.move_army.bind(army, province_index)
+		)
 
 	undo_redo.commit_action()
 
@@ -75,10 +75,10 @@ func undo_redo_move(
 		armies_in_each_province: ArmiesInEachProvince,
 ) -> void:
 	var old_province_id: int = army.province_id()
-	var old_armies_in_province: ArmiesInProvince = (
-			armies_in_each_province.in_province_id(old_province_id)
+	var old_stack_index: int = (
+			armies_in_each_province.dictionary[old_province_id]
+			.mapped_list[army]
 	)
-	var old_stack_index: int = old_armies_in_province.list.find(army)
 
 	# Do nothing if army is already where it should be
 	if (
@@ -100,11 +100,10 @@ func undo_redo_move(
 
 	# Move to new position
 	undo_redo.add_do_method(
-			armies_in_each_province.in_province_id(new_province_id)
-			.move_army.bind(army, new_stack_index)
+			armies_in_each_province.move_army.bind(army, new_stack_index)
 	)
 	undo_redo.add_undo_method(
-			old_armies_in_province.move_army.bind(army, old_stack_index)
+			armies_in_each_province.move_army.bind(army, old_stack_index)
 	)
 
 	undo_redo.commit_action()
@@ -120,8 +119,8 @@ func list_with_positions(
 	for army in army_list:
 		var order_index: int = _order.find(army.id)
 		var province_index: int = (
-				armies_in_each_province
-				.in_province_id(army.province_id()).list.find(army)
+				armies_in_each_province.dictionary[army.province_id()]
+				.mapped_list[army]
 		)
 		output.append(ArmyWithPositions.new(army, order_index, province_index))
 
@@ -157,7 +156,7 @@ func add_list_with_positions(
 					return a.province_index < b.province_index
 		)
 		for army_with_positions: ArmyWithPositions in province_armies:
-			armies_in_each_province.in_province_id(province_id).move_army(
+			armies_in_each_province.move_army(
 					army_with_positions.army,
 					army_with_positions.province_index
 			)
@@ -187,10 +186,8 @@ func reset() -> void:
 ##
 ## When more than one [Army] is controlled by the same [Country]
 ## in the same [Province], it's possible to merge them into one single [Army].
-func merge_armies(
-		armies_in_province: ArmiesInProvince, playing_country: Country
-) -> void:
-	var armies_to_merge: Array[Army] = armies_in_province.list.duplicate()
+func merge_armies(army_list: Array[Army], playing_country: Country) -> void:
+	var armies_to_merge: Array[Army] = army_list.duplicate()
 	var number_of_armies: int = armies_to_merge.size()
 	for i in number_of_armies:
 		var army1: Army = armies_to_merge[i]
@@ -235,13 +232,3 @@ func _add(army: Army, insertion_index: int = -1) -> void:
 	army.size().became_too_small.connect(remove.bind(army))
 
 	added.emit(army)
-
-
-func _restore_province_position(
-		army: Army,
-		province_index: int,
-		armies_in_each_province: ArmiesInEachProvince
-) -> void:
-	armies_in_each_province.in_province_id(army.province_id()).move_army(
-			army, province_index
-	)

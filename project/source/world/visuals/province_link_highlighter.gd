@@ -62,7 +62,8 @@ func _highlight_links(province: Province) -> void:
 	# Highlight all the linked provinces with the correct highlight type
 
 	var active_armies: Array[Army] = (
-			_armies_in_each_province.in_province(province).list.duplicate()
+			_armies_in_each_province.dictionary[province.id]
+			.ordered_list.duplicate()
 	)
 	for army: Army in active_armies.duplicate():
 		if not (

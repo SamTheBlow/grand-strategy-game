@@ -323,7 +323,7 @@ func _on_province_select_attempted(
 
 	var my_active_armies_in_province: Array[Army] = (
 			game.world.armies_in_each_province
-			.in_province(selected_province).list.duplicate()
+			.dictionary[selected_province.id].ordered_list.duplicate()
 	)
 	for army: Army in my_active_armies_in_province.duplicate():
 		if not (

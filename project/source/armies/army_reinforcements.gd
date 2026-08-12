@@ -32,7 +32,8 @@ static func apply(game: Game, province: Province) -> void:
 	# Creating new armies is bad for performance.
 	# It's better to directly increase an existing army's size.
 	for army: Army in (
-			game.world.armies_in_each_province.in_province(province).list
+			game.world.armies_in_each_province.dictionary[province.id]
+			.ordered_list
 	):
 		if army.owner_country != province.owner_country:
 			continue

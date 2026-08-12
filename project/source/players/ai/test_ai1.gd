@@ -30,10 +30,10 @@ func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
 		var destination_provinces: Array[Province] = _destination_provinces(
 				province, player.playing_country, game.world.provinces
 		)
-		var armies_in_province: Array[Army] = (
-				game.world.armies_in_each_province.in_province(province).list
-		)
-		for army in armies_in_province:
+		for army in (
+				game.world.armies_in_each_province.dictionary[province.id]
+				.ordered_list
+		):
 			if army.owner_country != player.playing_country:
 				continue
 

@@ -56,8 +56,8 @@ func reset() -> void:
 func _dragged_index() -> int:
 	return (
 			_project.game.world.armies_in_each_province
-			.in_province_id(_dragged_visuals.army.province_id())
-			.list.find(_dragged_visuals.army)
+			.dictionary[_dragged_visuals.army.province_id()]
+			.mapped_list[_dragged_visuals.army]
 	)
 
 
@@ -106,12 +106,12 @@ func _remove_preview() -> void:
 
 func _calculated_preview_index(army_stack: ArmyStack2D) -> int:
 	# Get the maximum index
-	var armies_in_province: ArmiesInProvince = (
+	var army_list: Dictionary[Army, int] = (
 			_project.game.world.armies_in_each_province
-			.in_province_id(_hovered_province.id)
+			.dictionary[_hovered_province.id].mapped_list
 	)
-	var maximum_index: int = armies_in_province.list.size()
-	if armies_in_province.list.has(_dragged_visuals.army):
+	var maximum_index: int = army_list.size()
+	if army_list.has(_dragged_visuals.army):
 		maximum_index -= 1
 
 	# Prevent division by zero

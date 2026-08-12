@@ -37,12 +37,12 @@ static func load_from_raw_data(
 static func to_raw_array(
 		armies_list: Array[Army], armies_in_each_province: ArmiesInEachProvince
 ) -> Array:
-	# Map each army to its position in its province's army list.
-	# This is done before iterating over armies, for performance reasons.
+	# Merge all the mapped lists into one big list
 	var arrival_indices: Dictionary[Army, int] = {}
-	for province_armies: ArmiesInProvince in armies_in_each_province.values():
-		for i in province_armies.list.size():
-			arrival_indices[province_armies.list[i]] = i
+	for province_id in armies_in_each_province.dictionary:
+		arrival_indices.merge(
+				armies_in_each_province.dictionary[province_id].mapped_list
+		)
 
 	var output: Array = []
 

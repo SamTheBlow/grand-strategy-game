@@ -93,11 +93,10 @@ func _delete_armies(
 ) -> void:
 	for affected_country in affected_countries:
 		for province in affected_provinces:
-			var armies_in_province: Array[Army] = (
+			for army in (
 					_game.world.armies_in_each_province
-					.in_province(province).list
-			)
-			for army in armies_in_province:
+					.dictionary[province.id].ordered_list
+			):
 				if army.owner_country == affected_country:
 					army.destroy()
 
@@ -110,7 +109,7 @@ func _teleport_armies_out(
 		for affected_province in affected_provinces:
 			var armies_in_province: Array[Army] = (
 					_game.world.armies_in_each_province
-					.in_province(affected_province).list
+					.dictionary[affected_province.id].ordered_list
 			)
 			if armies_in_province.size() == 0:
 				continue
@@ -149,6 +148,6 @@ func _teleport_armies_out(
 				# TODO merge armies automatically from outside this class
 				_game.world.armies.merge_armies(
 						_game.world.armies_in_each_province
-						.in_province(province_to_move_to),
+						.dictionary[province_to_move_to.id].ordered_list,
 						_game.turn.playing_country()
 				)

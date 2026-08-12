@@ -18,7 +18,10 @@ func _update_ownership_of(province: Province) -> void:
 	var current_owner: Country = province.owner_country
 	var new_owner: Country = current_owner
 
-	for army in _game.world.armies_in_each_province.in_province(province).list:
+	for army in (
+			_game.world.armies_in_each_province.dictionary[province.id]
+			.ordered_list
+	):
 		# If the current owner has an army here,
 		# then the province can't be taken by someone else.
 		if army.owner_country == current_owner:
@@ -28,8 +31,6 @@ func _update_ownership_of(province: Province) -> void:
 		# Once we've found a new owner, we don't need to search anymore.
 		# However, we can't just break out of the loop, because we still
 		# need to check for armies owned by the current owner.
-		# WARNING assumes that armies_in_province returns the armies
-		# in order of first one arrived to last one arrived
 		if new_owner != current_owner:
 			continue
 

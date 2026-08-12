@@ -96,10 +96,10 @@ func _calculated_minimum() -> int:
 	# Because an army's size will always be at least the minimum size,
 	# if the country controls any (active) army on the province,
 	# then the minimum you can recruit will always be 0.
-	var armies_in_province: Array[Army] = (
-			_game.world.armies_in_each_province.in_province(province).list
-	)
-	for army in armies_in_province:
+	for army in (
+			_game.world.armies_in_each_province.dictionary[province.id]
+			.ordered_list
+	):
 		if army.owner_country == country and army.is_able_to_move():
 			return 0
 

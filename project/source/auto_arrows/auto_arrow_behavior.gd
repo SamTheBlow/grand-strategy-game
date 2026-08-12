@@ -30,11 +30,10 @@ static func apply(game: Game) -> void:
 		arrow_destinations[source_province].add(destination_province)
 
 	for source_province in arrow_destinations:
-		var armies_in_province: Array[Army] = (
+		for army in (
 				game.world.armies_in_each_province
-				.in_province(source_province).list
-		)
-		for army in armies_in_province:
+				.dictionary[source_province.id].ordered_list
+		):
 			if not (
 					army.owner_country == playing_country
 					and army.is_able_to_move()

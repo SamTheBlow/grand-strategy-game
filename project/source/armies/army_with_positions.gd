@@ -1,7 +1,7 @@
 class_name ArmyWithPositions
 ## Bundle class that stores an [Army]
 ## along with its index in an [Armies] list
-## and its index in an [ArmiesInProvince] list.
+## and its index in an [ArmiesInEachProvince] list.
 
 var army: Army
 var armies_index: int

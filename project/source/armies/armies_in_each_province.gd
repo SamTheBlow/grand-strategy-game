@@ -1,95 +1,95 @@
 class_name ArmiesInEachProvince
 ## Provides a list of all armies located in some given province.
-##
-## See also: [ArmiesInProvince]
 
 signal army_reordered(army: Army, position_index: int)
-
-var _armies: Armies
 
 ## All provinces in the game are guaranteed to be in this dictionary.
 ## Also, -1 is a valid key. It gives the list of
 ## all armies that are not in any province.
-var _map: Dictionary[int, ArmiesInProvince] = { -1: ArmiesInProvince.new() }
+var dictionary: Dictionary[int, ArmiesInProvince] = {
+	-1: ArmiesInProvince.new()
+}
 
 
 func _init(provinces: Provinces, armies: Armies) -> void:
-	_armies = armies
-
-	_map[-1].army_reordered.connect(army_reordered.emit)
-
 	for province in provinces.list():
-		_on_province_added(province)
-
-	provinces.added.connect(_on_province_added)
-	provinces.removed.connect(_on_province_removed)
+		_add_province(province)
+	provinces.added.connect(_add_province)
+	provinces.removed.connect(_remove_province.bind(armies))
 
 	for army in armies.list():
-		_on_army_added(army)
-
-	armies.added.connect(_on_army_added)
-	armies.removed.connect(_on_army_removed)
-
-
-func in_province_id(province_id: int) -> ArmiesInProvince:
-	if not _map.has(province_id):
-		push_error("Province is not on the list.")
-		return _map[-1]
-	return _map[province_id]
+		_add_army(army)
+	armies.added.connect(_add_army)
+	armies.removed.connect(_remove_army)
 
 
-## If given province is null,
-## returns a list of all armies that are not in any province.
-func in_province(province: Province) -> ArmiesInProvince:
-	if province == null:
-		return _map[-1]
-	return in_province_id(province.id)
+## Moves given army to given position in the list.
+func move_army(army: Army, new_index: int) -> void:
+	var armies_in_province: ArmiesInProvince = dictionary[army.province_id()]
 
-
-func values() -> Array[ArmiesInProvince]:
-	return _map.values()
-
-
-func _on_province_added(province: Province) -> void:
-	_map[province.id] = ArmiesInProvince.new()
-	_map[province.id].army_reordered.connect(army_reordered.emit)
-
-
-func _on_province_removed(province: Province) -> void:
-	if not _map.has(province.id):
-		push_error("Province is not in the list.")
+	var old_index: int = armies_in_province.mapped_list[army]
+	if old_index == new_index:
 		return
 
-	# Immediately remove the province from the list.
-	var armies_in_province: ArmiesInProvince = _map[province.id]
-	_map[province.id].army_reordered.disconnect(army_reordered.emit)
-	_map.erase(province.id)
+	armies_in_province.ordered_list.erase(army)
+	armies_in_province.ordered_list.insert(new_index, army)
 
-	# Remove all armies that were on that province, one by one.
-	for i in armies_in_province.list.size():
-		var army_to_remove: Army = armies_in_province.list[-1]
-		armies_in_province.remove(army_to_remove)
-		_armies.remove(army_to_remove)
+	# Update the values in the mapped list
+	for i: int in range(
+			mini(old_index, new_index), maxi(old_index, new_index) + 1
+	):
+		armies_in_province.mapped_list[armies_in_province.ordered_list[i]] = i
 
-
-func _on_army_added(army: Army) -> void:
-	_on_army_province_changed(army)
-	army.province_changed.connect(_on_army_province_changed)
+	army_reordered.emit(army, new_index)
 
 
-func _on_army_removed(army: Army) -> void:
-	army.province_changed.disconnect(_on_army_province_changed)
-	if not _map.has(army.province_id()):
-		return
-	_map[army.province_id()].remove(army)
+func _add_province(province: Province) -> void:
+	dictionary[province.id] = ArmiesInProvince.new()
 
 
-## Adds the army to the new province's list.
-## As for removing the army from the previous province's list,
-## the previous province's list does this by itself.
-## If the army's province doesn't exist, removes the army.
-func _on_army_province_changed(army: Army) -> void:
-	if not _map.has(army.province_id()):
-		_armies.remove(army)
-		return
-	_map[army.province_id()].add(army)
+func _remove_province(province: Province, armies: Armies) -> void:
+	# Remove all of the province's armies from the game
+	for i in dictionary[province.id].ordered_list.size():
+		armies.remove(dictionary[province.id].ordered_list[-1])
+
+	dictionary.erase(province.id)
+
+
+func _add_army(army: Army) -> void:
+	_add_army_to_list(army)
+	army.province_changed.connect(_add_army_to_list)
+
+
+func _remove_army(army: Army) -> void:
+	army.province_changed.disconnect(_add_army_to_list)
+	var armies_in_province: ArmiesInProvince = dictionary[army.province_id()]
+	army.province_changed.disconnect(armies_in_province.remove)
+	armies_in_province.remove(army)
+
+
+func _add_army_to_list(army: Army) -> void:
+	var armies_in_province: ArmiesInProvince = dictionary[army.province_id()]
+	armies_in_province.mapped_list[army] = (
+			dictionary[army.province_id()].ordered_list.size()
+	)
+	armies_in_province.ordered_list.append(army)
+	army.province_changed.connect(
+			armies_in_province.remove, ConnectFlags.CONNECT_ONE_SHOT
+	)
+
+
+class ArmiesInProvince:
+	## Defines the order in which armies are positioned in a province.
+
+	## The list, as a dictionary.
+	## The value is the army's position index.
+	## If you edit this list, you must also edit the other list.
+	var mapped_list: Dictionary[Army, int] = {}
+
+	## The list, as an ordered array.
+	## If you edit this list, you must also edit the other list.
+	var ordered_list: Array[Army] = []
+
+	func remove(army: Army) -> void:
+		mapped_list.erase(army)
+		ordered_list.erase(army)
