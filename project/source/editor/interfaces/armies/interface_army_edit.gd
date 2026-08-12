@@ -37,9 +37,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 	item_country.make_unnullable(army.owner_country)
 	item_country.value_changed.connect(_on_item_country_changed)
 	item_country.change_requested.connect(country_select_pressed.emit)
-	army.allegiance_changed.connect(
-			_on_army_owner_changed.bind(item_country).unbind(1)
-	)
+	army.allegiance_changed.connect(_on_army_owner_changed.bind(item_country))
 
 	# Army size
 	var item_size := settings_item.child_items[2] as ItemInt

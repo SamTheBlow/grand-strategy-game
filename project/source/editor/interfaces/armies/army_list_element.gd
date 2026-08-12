@@ -15,7 +15,7 @@ func _ready() -> void:
 	_preview.setup(army, playing_country)
 
 	_refresh_country_button()
-	army.allegiance_changed.connect(_refresh_country_button.unbind(1))
+	army.allegiance_changed.connect(_refresh_country_button)
 
 
 func _refresh_country_button() -> void:

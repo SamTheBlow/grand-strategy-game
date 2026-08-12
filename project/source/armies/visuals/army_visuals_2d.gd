@@ -59,7 +59,7 @@ func _ready() -> void:
 	_refresh_army_texture()
 	army.texture_changed.connect(_refresh_army_texture)
 	_refresh_army_color()
-	army.allegiance_changed.connect(_refresh_army_color.unbind(1))
+	army.allegiance_changed.connect(_refresh_army_color)
 	_refresh_army_size()
 	army.size().changed.connect(_refresh_army_size.unbind(1))
 	_refresh_animation()

@@ -44,24 +44,32 @@ func _remove_country(country: Country, armies: Armies) -> void:
 	dictionary.erase(country)
 
 
-## Adds this army to the owner country's list,
-## and connects signals such that when allegiance changes,
-## removes this army from the list and then calls this function again
 func _add_army(army: Army) -> void:
 	dictionary[army.owner_country].list[army] = true
 	army.allegiance_changed.connect(
-			dictionary[army.owner_country].erase.bind(army).unbind(1),
+			dictionary[army.owner_country].erase,
 			ConnectFlags.CONNECT_ONE_SHOT
+			| ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 	army.allegiance_changed.connect(
-			_add_army.bind(army).unbind(1), ConnectFlags.CONNECT_ONE_SHOT
+			_on_army_allegiance_changed,
+			ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
 	)
 
 
 func _remove_army(army: Army) -> void:
 	army.allegiance_changed.disconnect(dictionary[army.owner_country].erase)
-	army.allegiance_changed.disconnect(_add_army)
-	dictionary[army.owner_country].erase(army)
+	army.allegiance_changed.disconnect(_on_army_allegiance_changed)
+	dictionary[army.owner_country].list.erase(army)
+
+
+func _on_army_allegiance_changed(army: Army) -> void:
+	dictionary[army.owner_country].list[army] = true
+	army.allegiance_changed.connect(
+			dictionary[army.owner_country].erase,
+			ConnectFlags.CONNECT_ONE_SHOT
+			| ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
+	)
 
 
 class ArmiesOfCountry:

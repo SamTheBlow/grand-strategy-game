@@ -9,7 +9,7 @@ class_name Army
 ## See also: [ArmyVisuals2D]
 
 signal texture_changed()
-signal allegiance_changed(country: Country)
+signal allegiance_changed()
 ## Always emitted when the province changes.
 signal province_changed(this: Army)
 ## Emitted only when using [method Army.move_to_province].
@@ -37,7 +37,7 @@ var owner_country: Country:
 			return
 
 		owner_country = value
-		allegiance_changed.emit(owner_country)
+		allegiance_changed.emit()
 
 var _army_size := ArmySize.new()
 
