@@ -7,14 +7,15 @@ class_name ProvincesOfCountry
 ## See also: [ProvincesOfEachCountry]
 
 ## Do not directly manipulate this list! Use add() and remove() instead.
-var list: Array[Province] = []
+## This is a dictionary for performance reasons. The bool value is irrelevant.
+var list: Dictionary[Province, bool] = {}
 
 
 func add(province: Province) -> void:
 	if list.has(province):
 		push_warning("Province is already in the list.")
 		return
-	list.append(province)
+	list[province] = true
 	province.owner_changed.connect(remove)
 
 

@@ -60,11 +60,10 @@ func strength_of_countries() -> Array[float]:
 
 	for country in game.countries.list():
 		var country_score: float = 0.0
-		var provinces_of_country: Array[Province] = (
-				game.world.provinces_of_each_country.of_country(country).list
-		)
 
-		for province in provinces_of_country:
+		for province in (
+				game.world.provinces_of_each_country.of_country(country).list
+		):
 			var province_score: float = 0.0
 
 			# Score for money income

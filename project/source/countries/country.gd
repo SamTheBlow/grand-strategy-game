@@ -104,7 +104,7 @@ func neighboring_countries(
 		provinces: Provinces
 ) -> Array[Country]:
 	var list_of_neighbors: Array[Country] = []
-	for owned_province: Province in provinces_of_country.list:
+	for owned_province in provinces_of_country.list:
 		for linked_province in provinces.links_of(owned_province.id):
 			var neighbor: Country = linked_province.owner_country
 			if neighbor != self and not neighbor in list_of_neighbors:
