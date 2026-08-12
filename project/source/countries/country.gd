@@ -100,11 +100,11 @@ static func is_fighting(country_1: Country, country_2: Country) -> bool:
 ## this country neighbors unclaimed land.
 ## The returned list has no duplicates.
 func neighboring_countries(
-		provinces_of_country: ProvincesOfCountry,
+		provinces_of_each_country: ProvincesOfEachCountry,
 		provinces: Provinces
 ) -> Array[Country]:
 	var list_of_neighbors: Array[Country] = []
-	for owned_province in provinces_of_country.list:
+	for owned_province in provinces_of_each_country.dictionary[self].list:
 		for linked_province in provinces.links_of(owned_province.id):
 			var neighbor: Country = linked_province.owner_country
 			if neighbor != self and not neighbor in list_of_neighbors:
@@ -119,7 +119,8 @@ func neighboring_countries(
 ## (All neighboring countries are guaranteed to be in this list.)
 ## May contain null. Has no duplicates.
 func reachable_countries(
-		provinces_of_country: ProvincesOfCountry, provinces: Provinces
+		provinces_of_each_country: ProvincesOfEachCountry,
+		provinces: Provinces
 ) -> Array[Country]:
 	var reachable_countries_list: Array[Country] = []
 	for frontline_province in provinces.provinces_on_frontline(self):
@@ -131,7 +132,7 @@ func reachable_countries(
 			):
 				reachable_countries_list.append(reachable_country)
 
-	for neighbor in neighboring_countries(provinces_of_country, provinces):
+	for neighbor in neighboring_countries(provinces_of_each_country, provinces):
 		if not neighbor in reachable_countries_list:
 			reachable_countries_list.append(neighbor)
 

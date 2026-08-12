@@ -55,7 +55,7 @@ func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 
 	var affected_provinces: Array[Province] = (
 			_game.world.provinces_of_each_country
-			.of_country(relationship.source_country).list.keys()
+			.dictionary[relationship.source_country].list.keys()
 	)
 	_apply([relationship.recipient_country], affected_provinces)
 

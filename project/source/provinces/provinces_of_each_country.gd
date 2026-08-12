@@ -1,74 +1,75 @@
 class_name ProvincesOfEachCountry
 ## Provides a list of all provinces controlled by some given country.
-##
-## See also: [ProvincesOfCountry]
 
 ## All countries in the game are guaranteed to be in this dictionary.
 ## Also, null is a valid key. It gives the list of
 ## all provinces that don't have an owner country.
-var _map: Dictionary[Country, ProvincesOfCountry] = {
+## Do not manipulate this dictionary directly!
+var dictionary: Dictionary[Country, ProvincesOfCountry] = {
 	null: ProvincesOfCountry.new()
 }
 
 
 func _init(countries: Countries, provinces: Provinces) -> void:
 	for country in countries.list():
-		_on_country_added(country)
-	countries.added.connect(_on_country_added)
-	countries.removed.connect(_on_country_removed)
+		_add_country(country)
+	countries.added.connect(_add_country)
+	countries.removed.connect(_remove_country)
 
 	for province in provinces.list():
-		_on_province_added(province)
-	provinces.added.connect(_on_province_added)
-	provinces.removed.connect(_on_province_removed)
+		_add_province(province)
+	provinces.added.connect(_add_province)
+	provinces.removed.connect(_remove_province)
 
 
-## If input is null, returns the list of provinces with no owner.
-func of_country(country: Country) -> ProvincesOfCountry:
-	return _map[country]
-
-
-func _on_country_added(country: Country) -> void:
-	if _map.has(country):
+func _add_country(country: Country) -> void:
+	if dictionary.has(country):
 		push_error("Country is already in the list.")
 		return
 
-	_map[country] = ProvincesOfCountry.new()
+	dictionary[country] = ProvincesOfCountry.new()
 
 
-func _on_country_removed(country: Country) -> void:
-	if not _map.has(country):
+func _remove_country(country: Country) -> void:
+	if not dictionary.has(country):
 		push_error("Country is not in the list.")
 		return
 
 	# Mark all of the country's provinces as unclaimed
-	for province: Province in _map[country].list.duplicate():
+	for province: Province in dictionary[country].list.duplicate():
 		province.owner_country = null
 
-	_map.erase(country)
+	dictionary.erase(country)
 
 
-func _on_province_added(province: Province) -> void:
-	if province == null:
-		push_error("Province is null.")
-		return
-
-	_on_province_owner_changed(province)
-	province.owner_changed.connect(_on_province_owner_changed)
+func _add_province(province: Province) -> void:
+	_add_province_to_list(province)
+	province.owner_changed.connect(_add_province_to_list)
 
 
-func _on_province_removed(province: Province) -> void:
-	if not _map.has(province.owner_country):
-		push_error("Country is not on the list.")
-		return
+func _remove_province(province: Province) -> void:
+	province.owner_changed.disconnect(_add_province_to_list)
+	var provinces_of_country: ProvincesOfCountry = (
+			dictionary[province.owner_country]
+	)
+	province.owner_changed.disconnect(provinces_of_country.erase)
+	provinces_of_country.erase(province)
 
-	_map[province.owner_country].remove(province)
-	province.owner_changed.disconnect(_on_province_owner_changed)
+
+func _add_province_to_list(province: Province) -> void:
+	var provinces_of_country: ProvincesOfCountry = (
+			dictionary[province.owner_country]
+	)
+	provinces_of_country.list[province] = true
+	province.owner_changed.connect(
+			provinces_of_country.erase, ConnectFlags.CONNECT_ONE_SHOT
+	)
 
 
-func _on_province_owner_changed(province: Province) -> void:
-	if not _map.has(province.owner_country):
-		push_error("Country is not on the list.")
-		return
+class ProvincesOfCountry:
+	## It's a dictionary for performance reasons. The bool value is irrelevant.
+	var list: Dictionary[Province, bool] = {}
 
-	_map[province.owner_country].add(province)
+	# This is so that disconnecting the signal works
+	func erase(province: Province) -> void:
+		list.erase(province)
