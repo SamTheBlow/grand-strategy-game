@@ -22,6 +22,9 @@ const DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 ## Outline used when the army is selected (e.g. while editing it).
 @export var _outline_selected: OutlineSettings
 
+## May be null, in which case LOD culling is disabled.
+var lod: WorldLOD = null
+
 var army: Army
 
 ## Stops animations and updates tint when the playing country changes.
@@ -56,6 +59,10 @@ func _ready() -> void:
 	_control.mouse_entered.connect(mouse_entered.emit)
 	_control.mouse_exited.connect(mouse_exited.emit)
 
+	if lod != null:
+		_refresh_visibilities()
+		lod.changed.connect(_refresh_visibilities)
+
 	_refresh_army_texture()
 	army.texture_changed.connect(_refresh_army_texture)
 	_refresh_army_color()
@@ -68,9 +75,6 @@ func _ready() -> void:
 	army.movements_made_changed.connect(_refresh_brightness.unbind(1))
 	playing_country.changed.connect(_refresh_brightness.unbind(1))
 	_animation.is_playing_changed.connect(_refresh_brightness.unbind(1))
-
-	if army.size().maximum_value == 1:
-		_army_size_box.hide()
 
 	if is_preview:
 		z_index = 0
@@ -151,6 +155,20 @@ func _refresh_input_filter() -> void:
 	else:
 		_control.focus_mode = Control.FOCUS_NONE
 		_control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+
+func _refresh_visibilities() -> void:
+	if is_preview:
+		return
+
+	# Size box
+	_army_size_box.visible = (
+			army.size().maximum_value != 1
+			and lod.detail_level > WorldLOD.DetailLevel.MEDIUM
+	)
+
+	# Self
+	visible = lod.detail_level > WorldLOD.DetailLevel.LOW
 
 
 func _refresh_army_texture() -> void:

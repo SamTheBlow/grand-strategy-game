@@ -2,6 +2,9 @@ class_name OutlinedPolygon2D
 extends Polygon2D
 ## Draws an outline around its polygon using given [OutlineSettings].
 
+## If true, does not draw the outline.
+var is_disabled: bool = false
+
 @export var outline_settings: OutlineSettings:
 	set(value):
 		if outline_settings == value:
@@ -14,7 +17,11 @@ extends Polygon2D
 
 
 func _draw() -> void:
-	if outline_settings == null or not outline_settings.is_outline_enabled:
+	if (
+			is_disabled
+			or outline_settings == null
+		 	or not outline_settings.is_outline_enabled
+	):
 		return
 
 	_draw_outline(

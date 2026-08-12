@@ -14,6 +14,8 @@ signal province_tree_exited(province_visuals: ProvinceVisuals2D)
 
 const _PROVINCE_VISUALS_SCENE := preload("uid://cppfb8jwghnqt") as PackedScene
 
+@export var lod: WorldLOD
+
 var _provinces: Provinces
 
 ## Maps a province id to its visuals.
@@ -62,6 +64,7 @@ func remove_all_highlights() -> void:
 
 func _add_province(province: Province) -> void:
 	var visuals := _PROVINCE_VISUALS_SCENE.instantiate() as ProvinceVisuals2D
+	visuals.lod = lod
 	visuals.province = province
 	visuals.clicked.connect(province_clicked.emit.bind(visuals.province))
 	visuals.right_clicked.connect(

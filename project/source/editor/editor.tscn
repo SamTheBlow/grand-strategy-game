@@ -341,6 +341,7 @@ use_native_dialog = true
 [connection signal="province_right_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="ProvinceLinkEditer" method="_on_province_right_clicked"]
 [connection signal="province_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="BuildingVisibility" method="apply_to"]
 [connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
+[connection signal="zoom_changed" from="CameraContainer/Camera/CameraZoom" to="WorldLayer/WorldContainer/WorldVisuals2D/WorldLOD" method="_refresh"]
 [connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]
 [connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationScrollScale" method="set_is_being_dragged" binds= [false]]

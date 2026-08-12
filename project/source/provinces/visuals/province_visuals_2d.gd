@@ -20,6 +20,9 @@ signal mouse_exited()
 ## Outline used to show the province as a valid target.
 @export var _outline_target: OutlineSettings
 
+## May be null, in which case LOD culling is disabled.
+var lod: WorldLOD = null
+
 var province: Province
 
 ## When true, locks the position and scale
@@ -53,6 +56,10 @@ func _ready() -> void:
 
 	var _color_update := %ColorUpdate as ProvinceColorUpdate
 	_color_update.setup(province)
+
+	if lod != null:
+		_refresh_building_visibility()
+		lod.changed.connect(_refresh_building_visibility)
 
 	_buildings.province = province
 
@@ -208,3 +215,10 @@ func _refresh_preview() -> void:
 			- scale_ratio * (province_rect.position + 0.5 * province_rect.size)
 	)
 	scale = Vector2(scale_ratio, scale_ratio)
+
+
+func _refresh_building_visibility() -> void:
+	if is_preview:
+		return
+
+	_buildings.visible = lod.detail_level > WorldLOD.DetailLevel.LOW

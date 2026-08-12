@@ -9,6 +9,8 @@ signal army_visuals_created(army_visuals: ArmyVisuals2D)
 ## The scene's root node must extend [ArmyVisuals2D].
 const _ARMY_VISUALS_SCENE := preload("uid://eso260jnknd4") as PackedScene
 
+@export var lod: WorldLOD
+
 var _armies: Armies
 var _playing_country: PlayingCountry
 ## Used to make the army stack order match the internal data.
@@ -130,6 +132,7 @@ func _assign_to_province(army: Army) -> void:
 
 func _new_army_visuals(army: Army) -> ArmyVisuals2D:
 	var new_army_visuals := _ARMY_VISUALS_SCENE.instantiate() as ArmyVisuals2D
+	new_army_visuals.lod = lod
 	new_army_visuals.army = army
 	new_army_visuals.playing_country = _playing_country
 	return new_army_visuals

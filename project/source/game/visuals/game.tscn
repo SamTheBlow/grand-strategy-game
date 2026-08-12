@@ -279,6 +279,7 @@ unique_name_in_owner = true
 
 [connection signal="world_loaded" from="WorldLayer/WorldVisuals2D" to="Camera/WorldLimitWiring" method="_on_world_loaded"]
 [connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="." method="_on_province_select_attempted"]
+[connection signal="zoom_changed" from="Camera/CameraZoom" to="WorldLayer/WorldVisuals2D/WorldLOD" method="_refresh"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]
@@ -288,3 +289,4 @@ unique_name_in_owner = true
 [connection signal="save_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_pressed"]
 
 [editable path="WorldLayer/WorldVisuals2D"]
+[editable path="Camera"]

@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://47v624ihmda7" path="res://source/world/visuals/province_link_highlighter.gd" id="5_bd3lk"]
 [ext_resource type="Script" uid="uid://cunognrk8hl3d" path="res://source/auto_arrows/nodes/auto_arrow_input.gd" id="9_g4nb7"]
 [ext_resource type="Script" uid="uid://dfmftjquudalc" path="res://source/world/decorations/visuals/decoration_visuals_container_2d.gd" id="11_obqf8"]
+[ext_resource type="Script" uid="uid://dodsfifovx5vq" path="res://source/world/visuals/world_lod.gd" id="11_ofaev"]
 [ext_resource type="Script" uid="uid://ck15fpk1p01qb" path="res://source/provinces/visuals/province_visuals_input.gd" id="12_pvii"]
 
 [node name="WorldVisuals2D" type="Node2D" unique_id=342240876]
@@ -22,9 +23,10 @@ script = ExtResource("2_ofaev")
 unique_name_in_owner = true
 script = ExtResource("5_bd3lk")
 
-[node name="ArmyVisualsSetup" type="Node" parent="." unique_id=751048657]
+[node name="ArmyVisualsSetup" type="Node" parent="." unique_id=751048657 node_paths=PackedStringArray("lod")]
 unique_name_in_owner = true
 script = ExtResource("4_0v0rh")
+lod = NodePath("../WorldLOD")
 
 [node name="AutoArrowInput" type="Node" parent="." unique_id=266650010]
 unique_name_in_owner = true
@@ -34,9 +36,10 @@ script = ExtResource("9_g4nb7")
 unique_name_in_owner = true
 script = ExtResource("2_unrx0")
 
-[node name="Provinces" type="Node2D" parent="." unique_id=1543545158]
+[node name="Provinces" type="Node2D" parent="." unique_id=1543545158 node_paths=PackedStringArray("lod")]
 unique_name_in_owner = true
 script = ExtResource("5_4fqv4")
+lod = NodePath("../WorldLOD")
 
 [node name="ProvinceInput" type="Node" parent="." unique_id=1234567890]
 unique_name_in_owner = true
@@ -49,6 +52,10 @@ script = ExtResource("11_obqf8")
 [node name="AutoArrows" type="Node2D" parent="." unique_id=1572604340]
 unique_name_in_owner = true
 script = ExtResource("4_o61mm")
+
+[node name="WorldLOD" type="Node" parent="." unique_id=164034839]
+script = ExtResource("11_ofaev")
+metadata/_custom_type_script = "uid://dodsfifovx5vq"
 
 [connection signal="world_loaded" from="." to="BackgroundColor" method="_on_world_loaded"]
 [connection signal="world_loaded" from="." to="ProvinceLinkHighlighter" method="_on_world_loaded"]
