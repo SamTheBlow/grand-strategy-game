@@ -11,7 +11,8 @@ var _counter: int = 0
 ## A list of all the ids that are currently in use.
 ## Just because a unique id has been given out,
 ## doesn't necessarily mean that it's being used.
-var _used_numbers: Array[int] = []
+## This is a dictionary for performance reasons. The bool value is irrelevant.
+var _used_numbers: Dictionary[int, bool] = {}
 
 var _smallest_valid_number: int = 0
 
@@ -35,7 +36,7 @@ func new_unique_id(is_used: bool = true) -> int:
 		_counter += 1
 
 	if is_used:
-		_used_numbers.append(_counter)
+		_used_numbers[_counter] = true
 
 	_counter += 1
 	return _counter - 1
@@ -71,7 +72,7 @@ func is_id_valid(id: int) -> bool:
 ## To know if an id is available, use "is_id_available".
 func claim_id(id: int) -> void:
 	if is_id_available(id):
-		_used_numbers.append(id)
+		_used_numbers[id] = true
 
 
 ## Marks given id as no longer being in use.
