@@ -48,6 +48,9 @@ var _arrow_behavior: ArrowBehavior:
 @onready var province_input := %ProvinceInput as ProvinceVisualsInput
 @onready var _auto_arrow_input := %AutoArrowInput as AutoArrowInput
 @onready var background := %Background as WorldBackground
+@onready var _province_batch_render := (
+		%ProvinceBatchRender as ProvinceBatchRender
+)
 @onready var province_visuals := %Provinces as ProvinceVisualsContainer2D
 @onready var _decorations_node := %Decorations as DecorationVisualsContainer2D
 @onready var _auto_arrow_container := %AutoArrows as AutoArrowContainer
@@ -59,6 +62,7 @@ func set_project(new_project: GameProject) -> void:
 
 func clear() -> void:
 	_army_visuals_setup.clear()
+	_province_batch_render.provinces = null
 	province_visuals.clear()
 	_decorations_node.clear()
 
@@ -91,6 +95,7 @@ func show_arrows_of_country(country: Country) -> void:
 
 func _setup() -> void:
 	# We need to setup the visuals before emitting world_loaded
+	_province_batch_render.provinces = world.provinces
 	province_visuals.setup(world.provinces)
 	_decorations_node.setup(world.decorations)
 	_army_visuals_setup.setup(

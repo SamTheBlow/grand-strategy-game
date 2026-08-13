@@ -58,8 +58,8 @@ func _ready() -> void:
 	_color_update.setup(province)
 
 	if lod != null:
-		_refresh_building_visibility()
-		lod.changed.connect(_refresh_building_visibility)
+		_refresh_visibility()
+		lod.changed.connect(_refresh_visibility)
 
 	_buildings.province = province
 
@@ -217,8 +217,10 @@ func _refresh_preview() -> void:
 	scale = Vector2(scale_ratio, scale_ratio)
 
 
-func _refresh_building_visibility() -> void:
+## Shows or hides this province's polygon shape and buildings.
+func _refresh_visibility() -> void:
 	if is_preview:
 		return
 
+	_outlined_polygon.visible = lod.detail_level > WorldLOD.DetailLevel.LOW
 	_buildings.visible = lod.detail_level > WorldLOD.DetailLevel.LOW

@@ -11,6 +11,7 @@
 [ext_resource type="Script" uid="uid://dfmftjquudalc" path="res://source/world/decorations/visuals/decoration_visuals_container_2d.gd" id="11_obqf8"]
 [ext_resource type="Script" uid="uid://dodsfifovx5vq" path="res://source/world/visuals/world_lod.gd" id="11_ofaev"]
 [ext_resource type="Script" uid="uid://ck15fpk1p01qb" path="res://source/provinces/visuals/province_visuals_input.gd" id="12_pvii"]
+[ext_resource type="Script" uid="uid://0lvwsbaswwge" path="res://source/provinces/visuals/province_batch_render.gd" id="13_batch"]
 
 [node name="WorldVisuals2D" type="Node2D" unique_id=342240876]
 script = ExtResource("1_im3sb")
@@ -35,6 +36,11 @@ script = ExtResource("9_g4nb7")
 [node name="Background" type="Node2D" parent="." unique_id=1934326959]
 unique_name_in_owner = true
 script = ExtResource("2_unrx0")
+
+[node name="ProvinceBatchRender" type="Node2D" parent="." unique_id=1543545159 node_paths=PackedStringArray("lod")]
+unique_name_in_owner = true
+script = ExtResource("13_batch")
+lod = NodePath("../WorldLOD")
 
 [node name="Provinces" type="Node2D" parent="." unique_id=1543545158 node_paths=PackedStringArray("lod")]
 unique_name_in_owner = true
