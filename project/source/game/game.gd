@@ -45,8 +45,8 @@ var _global_modifiers: Dictionary = {}
 var _components: Array = []
 
 ## Components that are run once at the end of setup phase.
-## The components are mapped by their ID for quick access.
-var setup_components: Dictionary[int, GameComponent] = {}
+## The components are mapped by their KEY constant for quick access.
+var setup_components: Dictionary[String, GameComponent] = {}
 
 
 func _init() -> void:

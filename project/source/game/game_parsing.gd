@@ -57,8 +57,8 @@ static func to_raw_dict(game: Game) -> Dictionary:
 		output.merge({ _TURN_KEY: turn_data })
 
 	# Components
-	var components_data: Array = (
-			_components_to_raw_array(game.setup_components)
+	var components_data: Dictionary = (
+			_components_to_raw_dict(game.setup_components)
 	)
 	if not components_data.is_empty():
 		output.merge({ _COMPONENTS_KEY: components_data })
@@ -68,32 +68,39 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 static func _components_from_raw_data(
 		raw_data: Variant
-) -> Dictionary[int, GameComponent]:
-	var output: Dictionary[int, GameComponent] = {}
+) -> Dictionary[String, GameComponent]:
+	var output: Dictionary[String, GameComponent] = {}
 
-	if raw_data is not Array:
+	if raw_data is not Dictionary:
 		return output
-	var raw_array := raw_data as Array
+	var raw_dict := raw_data as Dictionary
 
-	for raw_component_data: Variant in raw_array:
+	for raw_key: Variant in raw_dict:
+		if raw_key is not String:
+			continue
+		var key := raw_key as String
+
+		var settings_data: Variant = raw_dict[key]
+		if settings_data is not Dictionary:
+			continue
+		var settings_dict := settings_data as Dictionary
+
 		var parse_result: GameComponent.ParseResult = (
-				GameComponent.from_raw_data(raw_component_data)
+				GameComponent.from_raw_data(key, settings_dict)
 		)
 		if parse_result.error:
 			continue
-		output[parse_result.result_component.id()] = (
-				parse_result.result_component
-		)
+		output[key] = parse_result.result_component
 
 	return output
 
 
-static func _components_to_raw_array(components: Dictionary) -> Array:
-	var output: Array = []
+static func _components_to_raw_dict(
+		components: Dictionary[String, GameComponent]
+) -> Dictionary:
+	var output: Dictionary = {}
 	for component: GameComponent in components.values():
-		var raw_dict: Dictionary = component.to_raw_data()
-		if not raw_dict.is_empty():
-			output.append(raw_dict)
+		output[component.KEY] = component.to_raw_dict()
 	return output
 
 

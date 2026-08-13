@@ -2,7 +2,7 @@ class_name PlayerCreation
 extends GameComponent
 ## Adds new players to the game to ensure all countries have an AI.
 
-const ID: int = 3
+const KEY: String = "player_creation"
 
 const _DEFAULT_AI_TYPE_KEY: String = "default_ai_type"
 const _DEFAULT_AI_PERSONALITY_KEY: String = "default_ai_personality"
@@ -13,10 +13,6 @@ var _default_ai_personality: int = AIPersonality.Type.NONE
 
 func _init() -> void:
 	priority_index = 20
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:
@@ -36,8 +32,8 @@ func run(game: Game) -> void:
 		game.game_players.add(new_player)
 
 
-func to_raw_data() -> Dictionary:
-	var output: Dictionary = { _ID_KEY: ID }
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
 	if _default_ai_type != PlayerAI.Type.NONE:
 		output[_DEFAULT_AI_TYPE_KEY] = _default_ai_type
 	if _default_ai_personality != AIPersonality.Type.NONE:

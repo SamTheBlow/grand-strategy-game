@@ -2,7 +2,7 @@ class_name AIRandomization
 extends GameComponent
 ## Randomizes the AI type and/or personality for all players in the game.
 
-const ID: int = 8
+const KEY: String = "ai_randomization"
 
 const _AI_TYPE_KEY: String = "randomize_ai_type"
 const _AI_PERSONALITY_KEY: String = "randomize_ai_personality"
@@ -13,10 +13,6 @@ var _randomize_personality: bool = false
 
 func _init() -> void:
 	priority_index = 50
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:
@@ -39,8 +35,8 @@ func run(game: Game) -> void:
 			)
 
 
-func to_raw_data() -> Dictionary:
-	var output: Dictionary = { _ID_KEY: ID }
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
 	if _randomize_type:
 		output[_AI_TYPE_KEY] = _randomize_type
 	if _randomize_personality:

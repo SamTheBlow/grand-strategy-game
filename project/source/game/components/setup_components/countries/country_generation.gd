@@ -2,7 +2,7 @@ class_name CountryGeneration
 extends GameComponent
 ## Adds new countries to given game.
 
-const ID: int = 5
+const KEY: String = "country_generation"
 
 const _NUMBER_OF_COUNTRIES_KEY: String = "number_of_countries"
 const _STARTING_MONEY_KEY: String = "starting_money"
@@ -13,10 +13,6 @@ var _starting_money: int = 0
 
 func _init() -> void:
 	priority_index = 5
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:
@@ -30,8 +26,8 @@ func run(game: Game) -> void:
 		game.countries.add(new_country)
 
 
-func to_raw_data() -> Dictionary:
-	var output: Dictionary = { _ID_KEY: ID }
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
 	if _number_of_countries != 1:
 		output[_NUMBER_OF_COUNTRIES_KEY] = _number_of_countries
 	if _starting_money != 0:

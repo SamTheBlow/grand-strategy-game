@@ -2,7 +2,7 @@ class_name MiscGameGeneration
 extends GameComponent
 ## Applies various changes to the game's provinces.
 
-const ID: int = 1
+const KEY: String = "misc_game_generation"
 
 const _RANDOMIZE_POPULATION_KEY: String = "randomize_population"
 const _EXTRA_POPULATION_KEY: String = "extra_starting_population"
@@ -19,10 +19,6 @@ var _starting_army_size: int = 0
 
 func _init() -> void:
 	priority_index = 100
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:
@@ -65,8 +61,8 @@ func run(game: Game) -> void:
 			_already_supplied_countries.append(province.owner_country)
 
 
-func to_raw_data() -> Dictionary:
-	var output: Dictionary = { _ID_KEY: ID }
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
 	if _is_population_randomized:
 		output[_RANDOMIZE_POPULATION_KEY] = _is_population_randomized
 	if _extra_starting_population != 0:

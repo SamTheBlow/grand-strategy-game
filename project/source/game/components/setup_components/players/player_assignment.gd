@@ -8,15 +8,11 @@ extends GameComponent
 ## If all countries are already assigned,
 ## then the remaining players are not assigned a country.
 
-const ID: int = 4
+const KEY: String = "player_assignment_to_country"
 
 
 func _init() -> void:
 	priority_index = 30
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:

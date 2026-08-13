@@ -1,8 +1,7 @@
 @abstract
 class_name GameComponent
 ## Base class for a script that applies arbitrary changes to some [Game].
-
-const _ID_KEY: String = "id"
+## All subclasses must implement the constant "KEY", a string.
 
 var error: bool = false
 var error_message: String = ""
@@ -12,56 +11,43 @@ var error_message: String = ""
 var priority_index: int = 0
 
 
-## This component's unique id.
-@abstract func id() -> int
-
-
 ## If an error occurs, tells so using the error and error_message properties.
 @abstract func run(_game: Game) -> void
 
 
 ## Attempts to create a new instance from given raw data.
-static func from_raw_data(raw_data: Variant) -> ParseResult:
-	if raw_data is not Dictionary:
-		return ResultError.new("Component data is not a dictionary.")
-	var raw_dict: Dictionary = raw_data
-
-	# Id (mandatory)
-	if not ParseUtils.dictionary_has_number(raw_dict, _ID_KEY):
-		return ResultError.new("Component data doesn't have a valid id.")
-	var loaded_id: int = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
-
-	match loaded_id:
-		RandomGridWorld.ID:
+static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
+	match key:
+		RandomGridWorld.KEY:
 			return _component_from_raw_data(RandomGridWorld.new(), raw_dict)
-		MiscGameGeneration.ID:
+		MiscGameGeneration.KEY:
 			return _component_from_raw_data(MiscGameGeneration.new(), raw_dict)
-		RNGOverwrite.ID:
+		RNGOverwrite.KEY:
 			return _component_from_raw_data(RNGOverwrite.new(), raw_dict)
-		PlayerCreation.ID:
+		PlayerCreation.KEY:
 			return _component_from_raw_data(PlayerCreation.new(), raw_dict)
-		PlayerAssignmentToCountry.ID:
+		PlayerAssignmentToCountry.KEY:
 			return _component_from_raw_data(
 					PlayerAssignmentToCountry.new(), raw_dict
 			)
-		CountryGeneration.ID:
+		CountryGeneration.KEY:
 			return _component_from_raw_data(CountryGeneration.new(), raw_dict)
-		CountryPlacementGeneration.ID:
+		CountryPlacementGeneration.KEY:
 			return _component_from_raw_data(
 					CountryPlacementGeneration.new(), raw_dict
 			)
-		RelationshipPresetRandomization.ID:
+		RelationshipPresetRandomization.KEY:
 			return _component_from_raw_data(
 					RelationshipPresetRandomization.new(), raw_dict
 			)
-		AIRandomization.ID:
+		AIRandomization.KEY:
 			return _component_from_raw_data(AIRandomization.new(), raw_dict)
-		TurnOrderRandomization.ID:
+		TurnOrderRandomization.KEY:
 			return _component_from_raw_data(
 					TurnOrderRandomization.new(), raw_dict
 			)
 		_:
-			return ResultError.new("Unrecognized component id: %s" % loaded_id)
+			return ResultError.new("Unrecognized component key: %s" % key)
 
 
 ## Attempts to load given component's settings using given raw data.
@@ -74,8 +60,8 @@ static func _component_from_raw_data(
 	return ResultSuccess.new(component)
 
 
-func to_raw_data() -> Variant:
-	return { _ID_KEY: id() }
+func to_raw_dict() -> Dictionary:
+	return {}
 
 
 ## If an error occurs, tells so using the error and error_message properties.

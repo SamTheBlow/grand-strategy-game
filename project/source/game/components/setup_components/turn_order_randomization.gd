@@ -2,15 +2,11 @@ class_name TurnOrderRandomization
 extends GameComponent
 ## Shuffles the country turn order.
 
-const ID: int = 9
+const KEY: String = "turn_order_randomization"
 
 
 func _init() -> void:
 	priority_index = 60
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:

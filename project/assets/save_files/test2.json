@@ -23,30 +23,23 @@
 		"icon": "%godot_icon",
 		"name": "Test map 2"
 	},
-	"components": [
-		{
-			"id": 2
-		},
-		{
-			"id": 3,
+	"components": {
+		"rng_overwrite": {},
+		"player_creation": {
 			"default_ai_type": 2,
 			"default_ai_personality": 0
 		},
-		{
-			"id": 4
-		},
-		{
-			"id": 8,
+		"player_assignment_to_country": {},
+		"ai_randomization": {
 			"randomize_ai_personality": true
 		},
-		{
-			"id": 1,
+		"misc_game_generation": {
 			"randomize_population": true,
 			"extra_starting_population": 0,
 			"start_with_fortress": true,
 			"starting_army_size": 1000
 		}
-	],
+	},
 	"version": "1",
 	"world": {
 		"provinces": [

@@ -3,15 +3,11 @@ extends GameComponent
 ## Randomizes the relationship preset between all countries.
 ## Ignores and overwrites existing relationships.
 
-const ID: int = 7
+const KEY: String = "relationship_preset_randomization"
 
 
 func _init() -> void:
 	priority_index = 40
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:

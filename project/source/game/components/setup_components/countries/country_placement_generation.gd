@@ -2,15 +2,11 @@ class_name CountryPlacementGeneration
 extends GameComponent
 ## Tries to ensure each country controls at least one province.
 
-const ID: int = 6
+const KEY: String = "country_placement_generation"
 
 
 func _init() -> void:
 	priority_index = 6
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:

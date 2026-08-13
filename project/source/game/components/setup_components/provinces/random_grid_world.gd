@@ -2,7 +2,7 @@ class_name RandomGridWorld
 extends GameComponent
 ## Generates a game's provinces with code.
 
-const ID: int = 0
+const KEY: String = "random_grid_world"
 
 const _GRID_WIDTH_KEY: String = "grid_width"
 const _GRID_HEIGHT_KEY: String = "grid_height"
@@ -21,10 +21,6 @@ var noise_threshold: float = 0.0
 
 func _init() -> void:
 	priority_index = 4
-
-
-func id() -> int:
-	return ID
 
 
 func run(game: Game) -> void:
@@ -53,8 +49,8 @@ func run(game: Game) -> void:
 			return
 
 
-func to_raw_data() -> Dictionary:
-	var output: Dictionary = { _ID_KEY: ID }
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
 	if grid_width != 1:
 		output[_GRID_WIDTH_KEY] = grid_width
 	if grid_height != 1:
