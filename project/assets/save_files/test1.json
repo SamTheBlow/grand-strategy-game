@@ -3,57 +3,68 @@
 		{
 			"color": "bf0000",
 			"country_name": "United Kingdom",
-			"id": 0.0
+			"id": 0.0,
+			"money": 1000
 		},
 		{
 			"color": "0088ff",
 			"country_name": "France",
-			"id": 1.0
+			"id": 1.0,
+			"money": 1000
 		},
 		{
 			"color": "807560",
 			"country_name": "Germany",
-			"id": 2.0
+			"id": 2.0,
+			"money": 1000
 		},
 		{
 			"color": "6080bf",
 			"country_name": "Russia",
-			"id": 3.0
+			"id": 3.0,
+			"money": 1000
 		},
 		{
 			"color": "40ff40",
 			"country_name": "Italy",
-			"id": 4.0
+			"id": 4.0,
+			"money": 1000
 		},
 		{
 			"color": "ffaa80",
 			"country_name": "Poland",
-			"id": 5.0
+			"id": 5.0,
+			"money": 1000
 		},
 		{
 			"color": "bf7060",
 			"country_name": "Switzerland",
-			"id": 6.0
+			"id": 6.0,
+			"money": 1000
 		},
 		{
 			"color": "60bf60",
 			"country_name": "Ireland",
-			"id": 7.0
+			"id": 7.0,
+			"money": 1000
 		},
 		{
 			"color": "bfffff",
 			"country_name": "Austria",
-			"id": 8.0
+			"id": 8.0,
+			"money": 1000
 		},
 		{
 			"color": "804020",
 			"country_name": "Morocco",
-			"id": 9.0
+			"id": 9.0,
+			"money": 1000
 		},
 		{
 			"color": "afbf60",
 			"country_name": "Algeria",
-			"id": 10.0
+			"id": 10.0,
+			"money": 1000
 		}
 	],
 	"meta": {
@@ -62,7 +73,26 @@
 	},
 	"components": [
 		{
-			"id": 1
+			"id": 2
+		},
+		{
+			"id": 3,
+			"default_ai_type": 2,
+			"default_ai_personality": 0
+		},
+		{
+			"id": 4
+		},
+		{
+			"id": 8,
+			"randomize_ai_personality": true
+		},
+		{
+			"id": 1,
+			"randomize_population": true,
+			"extra_starting_population": 0,
+			"start_with_fortress": true,
+			"starting_army_size": 1000
 		}
 	],
 	"version": "1",

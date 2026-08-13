@@ -54,9 +54,6 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 	var player := GamePlayer.new()
 
 	# AI type
-	# 4.0 Backwards compatibility:
-	# When the save data doesn't contain the AI type,
-	# it must be assumed to be 0.
 	var ai_type: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, _AI_TYPE_KEY):
 		var loaded_ai_type: int = (
@@ -83,18 +80,14 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 		player.username = raw_dict[_USERNAME_KEY]
 
 	# AI personality type
-	var ai_personality_type: int = (
-			game.rules.default_ai_personality_option.selected_value()
-	)
+	var ai_personality_type: int = 0
 	if ParseUtils.dictionary_has_number(raw_dict, _AI_PERSONALITY_KEY):
-		ai_personality_type = (
+		var loaded_type: int = (
 				ParseUtils.dictionary_int(raw_dict, _AI_PERSONALITY_KEY)
 		)
-	var ai_personality: AIPersonality = (
-			AIPersonality.from_type(ai_personality_type)
-	)
-	if ai_personality != null:
-		player.player_ai.personality = ai_personality
+		if loaded_type in AIPersonality.Type.values():
+			ai_personality_type = loaded_type
+	player.player_ai.personality = AIPersonality.from_type(ai_personality_type)
 
 	game.game_players.add(player, id)
 

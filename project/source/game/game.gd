@@ -45,7 +45,8 @@ var _global_modifiers: Dictionary = {}
 var _components: Array = []
 
 ## Components that are run once at the end of setup phase.
-var _setup_components: Array[GameComponent] = []
+## The components are mapped by their ID for quick access.
+var setup_components: Dictionary[int, GameComponent] = {}
 
 
 func _init() -> void:
@@ -85,11 +86,12 @@ func end_setup() -> void:
 
 	# Run setup components (these are only meant to run
 	# when you leave setup phase for the first time)
-	_setup_components.sort_custom(
+	var sorted_components: Array[GameComponent] = setup_components.values()
+	sorted_components.sort_custom(
 			func(a: GameComponent, b: GameComponent) -> bool:
 				return a.priority_index < b.priority_index
 	)
-	for setup_component in _setup_components:
+	for setup_component in sorted_components:
 		setup_component.run(self)
 
 	_setup_game_past_setup()

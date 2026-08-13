@@ -58,7 +58,7 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 	# Components
 	var components_data: Array = (
-			_components_to_raw_array(game._setup_components)
+			_components_to_raw_array(game.setup_components)
 	)
 	if not components_data.is_empty():
 		output.merge({ _COMPONENTS_KEY: components_data })
@@ -68,8 +68,8 @@ static func to_raw_dict(game: Game) -> Dictionary:
 
 static func _components_from_raw_data(
 		raw_data: Variant
-) -> Array[GameComponent]:
-	var output: Array[GameComponent] = []
+) -> Dictionary[int, GameComponent]:
+	var output: Dictionary[int, GameComponent] = {}
 
 	if raw_data is not Array:
 		return output
@@ -81,14 +81,16 @@ static func _components_from_raw_data(
 		)
 		if parse_result.error:
 			continue
-		output.append(parse_result.result_component)
+		output[parse_result.result_component.id()] = (
+				parse_result.result_component
+		)
 
 	return output
 
 
-static func _components_to_raw_array(components: Array[GameComponent]) -> Array:
+static func _components_to_raw_array(components: Dictionary) -> Array:
 	var output: Array = []
-	for component in components:
+	for component: GameComponent in components.values():
 		var raw_dict: Dictionary = component.to_raw_data()
 		if not raw_dict.is_empty():
 			output.append(raw_dict)
@@ -133,9 +135,9 @@ class GameFromRawData extends Game:
 		)
 
 		# Components
-		_setup_components.append_array(GameParsing._components_from_raw_data(
+		setup_components = GameParsing._components_from_raw_data(
 				raw_dict.get(_COMPONENTS_KEY)
-		))
+		)
 
 		super()
 

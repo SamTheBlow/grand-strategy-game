@@ -35,7 +35,6 @@ enum GameOverProvincesOwnedOption {
 const RULE_NAMES: Array[String] = [
 	"rng_seed_override_enabled",
 	"rng_seed",
-	"random_turn_order_enabled",
 	"turn_limit_enabled",
 	"turn_limit",
 	"game_over_provinces_owned_option",
@@ -50,12 +49,8 @@ const RULE_NAMES: Array[String] = [
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
-	"random_population_enabled",
 	"population_growth_enabled",
 	"population_growth_rate",
-	"extra_starting_population",
-	"start_with_fortress",
-	"starting_money",
 	"province_income_override_enabled",
 	"province_income_option",
 	"province_income_random_min",
@@ -64,14 +59,9 @@ const RULE_NAMES: Array[String] = [
 	"province_income_per_person",
 	"minimum_army_size",
 	"maximum_army_size",
-	"starting_army_size",
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
 	"battle_algorithm_option",
-	"default_ai_type",
-	"start_with_random_ai_type",
-	"default_ai_personality_option",
-	"start_with_random_ai_personality",
 	"diplomacy_presets_option",
 	"starts_with_random_relationship_preset",
 	"grants_military_access_default",
@@ -119,7 +109,6 @@ var battle: Battle = preload("uid://cuylrn1evjy6r")
 # Individual rules
 var rng_seed_override_enabled := ItemBool.new()
 var rng_seed := ItemString.new()
-var random_turn_order_enabled := ItemBool.new()
 var turn_limit_enabled := ItemBool.new()
 var turn_limit := ItemInt.new()
 var game_over_provinces_owned_option := ItemOptions.new()
@@ -134,12 +123,8 @@ var reinforcements_per_person := ItemFloat.new()
 var recruitment_enabled := ItemBool.new()
 var recruitment_money_per_unit := ItemFloat.new()
 var recruitment_population_per_unit := ItemFloat.new()
-var random_population_enabled := ItemBool.new()
 var population_growth_enabled := ItemBool.new()
 var population_growth_rate := ItemFloat.new()
-var extra_starting_population := ItemInt.new()
-var start_with_fortress := ItemBool.new()
-var starting_money := ItemInt.new()
 var province_income_override_enabled := ItemBool.new()
 var province_income_option := ItemOptions.new()
 var province_income_random_min := ItemInt.new()
@@ -148,14 +133,9 @@ var province_income_constant := ItemInt.new()
 var province_income_per_person := ItemFloat.new()
 var minimum_army_size := ItemInt.new()
 var maximum_army_size := ItemInt.new()
-var starting_army_size := ItemInt.new()
 var global_attacker_efficiency := ItemFloat.new()
 var global_defender_efficiency := ItemFloat.new()
 var battle_algorithm_option := ItemOptions.new()
-var default_ai_type := ItemInt.new()
-var start_with_random_ai_type := ItemBool.new()
-var default_ai_personality_option := ItemOptions.new()
-var start_with_random_ai_personality := ItemBool.new()
 var diplomacy_presets_option := ItemOptions.new()
 var starts_with_random_relationship_preset := ItemBool.new()
 var grants_military_access_default := ItemBool.new()
@@ -181,9 +161,6 @@ var _category_game_over := PropertyTreeItem.new()
 var _category_recruitment := PropertyTreeItem.new()
 var _category_population := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
-var _category_ai := PropertyTreeItem.new()
-var _category_ai_type := PropertyTreeItem.new()
-var _category_ai_personality := PropertyTreeItem.new()
 var _category_diplomacy := PropertyTreeItem.new()
 var _category_diplomacy_data := PropertyTreeItem.new()
 var _category_diplomacy_military_access := PropertyTreeItem.new()
@@ -212,9 +189,6 @@ func _init() -> void:
 	rng_seed.text = "Seed"
 	rng_seed.placeholder_text = "(Random)"
 	rng_seed.value = ""
-
-	random_turn_order_enabled.text = "Random turn order"
-	random_turn_order_enabled.value = false
 
 	turn_limit_enabled.text = "Turn limit"
 	turn_limit_enabled.value = false
@@ -309,9 +283,6 @@ func _init() -> void:
 	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.value = 1.0
 
-	random_population_enabled.text = "Randomize populations at the start"
-	random_population_enabled.value = true
-
 	population_growth_enabled.text = "Population growth"
 	population_growth_enabled.value = true
 	population_growth_enabled.child_items = [
@@ -323,19 +294,6 @@ func _init() -> void:
 	population_growth_rate.minimum = 0
 	population_growth_rate.has_minimum = true
 	population_growth_rate.value = 0.48
-
-	extra_starting_population.text = "Extra population in starting province"
-	extra_starting_population.minimum = 0
-	extra_starting_population.has_minimum = true
-	extra_starting_population.value = 0
-
-	start_with_fortress.text = "Start with a fortress"
-	start_with_fortress.value = true
-
-	starting_money.text = "Starting money"
-	starting_money.minimum = 0
-	starting_money.has_minimum = true
-	starting_money.value = 1000
 
 	province_income_override_enabled.text = "Enforce specific province income"
 	province_income_override_enabled.value = true
@@ -386,11 +344,6 @@ func _init() -> void:
 	maximum_army_size.has_minimum = true
 	maximum_army_size.value = -1
 
-	starting_army_size.text = "Starting army size"
-	starting_army_size.minimum = 0
-	starting_army_size.has_minimum = true
-	starting_army_size.value = 1000
-
 	global_attacker_efficiency.text = "Global attacker efficiency"
 	global_attacker_efficiency.minimum = 0
 	global_attacker_efficiency.has_minimum = true
@@ -406,29 +359,6 @@ func _init() -> void:
 		"Standard", "Algorithm 2"
 	]
 	battle_algorithm_option.selected_index = 0
-
-	default_ai_type.text = "Default AI type"
-	default_ai_type.minimum = 0
-	default_ai_type.has_minimum = true
-	default_ai_type.maximum = 2
-	default_ai_type.has_maximum = true
-	default_ai_type.value = 2
-
-	start_with_random_ai_type.text = "Players start with a random AI type"
-	start_with_random_ai_type.value = false
-
-	default_ai_personality_option.text = "Default AI personality"
-	default_ai_personality_option.options = AIPersonality.type_names()
-	default_ai_personality_option.option_value_map = AIPersonality.type_values()
-	default_ai_personality_option.selected_index = (
-			default_ai_personality_option
-			.index_of_value(AIPersonality.DEFAULT_TYPE)
-	)
-
-	start_with_random_ai_personality.text = (
-			"Players start with a random AI personality"
-	)
-	start_with_random_ai_personality.value = true
 
 	diplomacy_presets_option.text = "Default preset"
 	diplomacy_presets_option.options = [
@@ -528,9 +458,7 @@ func _init() -> void:
 
 	_category_population.text = "Population"
 	_category_population.child_items = [
-		random_population_enabled,
 		population_growth_enabled,
-		extra_starting_population,
 	]
 
 	_category_battle.text = "Battle"
@@ -538,26 +466,6 @@ func _init() -> void:
 		global_attacker_efficiency,
 		global_defender_efficiency,
 		battle_algorithm_option,
-	]
-
-	_category_ai.text = "AI"
-	_category_ai.child_items = [
-		_category_ai_type,
-		_category_ai_personality,
-	]
-
-	_category_ai_type.text = "AI type (the way it plays)"
-	_category_ai_type.child_items = [
-		default_ai_type,
-		start_with_random_ai_type,
-	]
-
-	_category_ai_personality.text = (
-			"AI personality (the way it behaves diplomatically)"
-	)
-	_category_ai_personality.child_items = [
-		default_ai_personality_option,
-		start_with_random_ai_personality,
 	]
 
 	_category_diplomacy.text = "Diplomacy"
@@ -620,18 +528,13 @@ func _init() -> void:
 
 	root_rules = [
 		rng_seed_override_enabled,
-		random_turn_order_enabled,
 		_category_game_over,
 		_category_recruitment,
 		_category_population,
-		start_with_fortress,
-		starting_money,
 		province_income_override_enabled,
 		minimum_army_size,
 		maximum_army_size,
-		starting_army_size,
 		_category_battle,
-		_category_ai,
 		_category_diplomacy,
 	]
 

@@ -94,6 +94,17 @@ func randi_range(from: int, to: int) -> int:
 	return _rng.randi_range(from, to)
 
 
+## Returns a shuffled copy of given array.
+func shuffled(array: Array) -> Array:
+	var shuffled_array: Array = array.duplicate()
+	for i in shuffled_array.size():
+		var j: int = randi() % shuffled_array.size()
+		var temp: Variant = shuffled_array[i]
+		shuffled_array[i] = shuffled_array[j]
+		shuffled_array[j] = temp
+	return shuffled_array
+
+
 ## Locks the rng_seed and rng_state values so that they can't be changed.
 func lock() -> void:
 	_is_locked = true

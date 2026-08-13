@@ -3,17 +3,20 @@
 		{
 			"color": "f00000",
 			"country_name": "Red Nation",
-			"id": 0.0
+			"id": 0.0,
+			"money": 1000
 		},
 		{
 			"color": "0088ff",
 			"country_name": "Blue Nation",
-			"id": 1.0
+			"id": 1.0,
+			"money": 1000
 		},
 		{
 			"color": "20ff20",
 			"country_name": "Green Nation",
-			"id": 2.0
+			"id": 2.0,
+			"money": 1000
 		}
 	],
 	"meta": {
@@ -22,7 +25,26 @@
 	},
 	"components": [
 		{
-			"id": 1
+			"id": 2
+		},
+		{
+			"id": 3,
+			"default_ai_type": 2,
+			"default_ai_personality": 0
+		},
+		{
+			"id": 4
+		},
+		{
+			"id": 8,
+			"randomize_ai_personality": true
+		},
+		{
+			"id": 1,
+			"randomize_population": true,
+			"extra_starting_population": 0,
+			"start_with_fortress": true,
+			"starting_army_size": 1000
 		}
 	],
 	"version": "1",

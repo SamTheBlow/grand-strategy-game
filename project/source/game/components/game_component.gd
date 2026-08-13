@@ -12,6 +12,10 @@ var error_message: String = ""
 var priority_index: int = 0
 
 
+## This component's unique id.
+@abstract func id() -> int
+
+
 ## If an error occurs, tells so using the error and error_message properties.
 @abstract func run(_game: Game) -> void
 
@@ -25,17 +29,39 @@ static func from_raw_data(raw_data: Variant) -> ParseResult:
 	# Id (mandatory)
 	if not ParseUtils.dictionary_has_number(raw_dict, _ID_KEY):
 		return ResultError.new("Component data doesn't have a valid id.")
-	var id: int = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
+	var loaded_id: int = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
 
-	match id:
-		0:
-			# RandomGridWorld
+	match loaded_id:
+		RandomGridWorld.ID:
 			return _component_from_raw_data(RandomGridWorld.new(), raw_dict)
-		1:
-			# MiscGameGeneration
+		MiscGameGeneration.ID:
 			return _component_from_raw_data(MiscGameGeneration.new(), raw_dict)
+		RNGOverwrite.ID:
+			return _component_from_raw_data(RNGOverwrite.new(), raw_dict)
+		PlayerCreation.ID:
+			return _component_from_raw_data(PlayerCreation.new(), raw_dict)
+		PlayerAssignmentToCountry.ID:
+			return _component_from_raw_data(
+					PlayerAssignmentToCountry.new(), raw_dict
+			)
+		CountryGeneration.ID:
+			return _component_from_raw_data(CountryGeneration.new(), raw_dict)
+		CountryPlacementGeneration.ID:
+			return _component_from_raw_data(
+					CountryPlacementGeneration.new(), raw_dict
+			)
+		RelationshipPresetRandomization.ID:
+			return _component_from_raw_data(
+					RelationshipPresetRandomization.new(), raw_dict
+			)
+		AIRandomization.ID:
+			return _component_from_raw_data(AIRandomization.new(), raw_dict)
+		TurnOrderRandomization.ID:
+			return _component_from_raw_data(
+					TurnOrderRandomization.new(), raw_dict
+			)
 		_:
-			return ResultError.new("Unrecognized component id: %s" % id)
+			return ResultError.new("Unrecognized component id: %s" % loaded_id)
 
 
 ## Attempts to load given component's settings using given raw data.
@@ -49,17 +75,13 @@ static func _component_from_raw_data(
 
 
 func to_raw_data() -> Variant:
-	return { _ID_KEY: _id() }
+	return { _ID_KEY: id() }
 
 
 ## If an error occurs, tells so using the error and error_message properties.
 func _load_settings(_raw_dict: Dictionary) -> void:
 	error = false
 	error_message = ""
-
-
-## This component's unique id.
-@abstract func _id() -> int
 
 
 @abstract class ParseResult:

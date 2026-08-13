@@ -4,10 +4,17 @@
 [ext_resource type="Script" uid="uid://dvbpwv2xe26tq" path="res://source/utils/ui/interpolated_container/interpolated_box_container.gd" id="2_h7hlj"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_qgm6v"]
 [ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_tyru3"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="4_tyru3"]
+
+[sub_resource type="Resource" id="Resource_1elff"]
+script = ExtResource("4_tyru3")
+text = "Random turn order"
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
 
 [sub_resource type="Resource" id="Resource_ixlfd"]
 script = ExtResource("3_tyru3")
 text = "Game settings:"
+child_items = Array[ExtResource("3_tyru3")]([SubResource("Resource_1elff")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfaceTurnOrder" type="Control" unique_id=1157126741]

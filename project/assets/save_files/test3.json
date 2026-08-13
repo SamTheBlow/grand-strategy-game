@@ -8,14 +8,40 @@
 			"id": 0,
 			"grid_width": 80,
 			"grid_height": 48,
-			"number_of_countries": 100,
 			"grid_shape": 0,
 			"use_noise": false,
 			"noise_frequency": 0.03,
 			"noise_threshold": -0.1
 		},
 		{
-			"id": 1
+			"id": 5,
+			"number_of_countries": 100,
+			"starting_money": 1000
+		},
+		{
+			"id": 6
+		},
+		{
+			"id": 2
+		},
+		{
+			"id": 3,
+			"default_ai_type": 2,
+			"default_ai_personality": 0
+		},
+		{
+			"id": 4
+		},
+		{
+			"id": 8,
+			"randomize_ai_personality": true
+		},
+		{
+			"id": 1,
+			"randomize_population": true,
+			"extra_starting_population": 0,
+			"start_with_fortress": true,
+			"starting_army_size": 1000
 		}
 	],
 	"version": "1"

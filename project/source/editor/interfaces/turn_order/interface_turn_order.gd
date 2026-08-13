@@ -7,6 +7,10 @@ const _ELEMENT_SCENE := preload("uid://dc67eps16xpfs") as PackedScene
 ## Maps each country to its associated node, for quick access.
 var _country_nodes: Dictionary[int, EditorTurnOrderElement] = {}
 
+@onready var _item_random_order := (
+		(%GameSettingsCategory as ItemVoidNode).item.child_items[0] as ItemBool
+)
+
 @onready var _info_label := %InfoLabel as Control
 @onready var _list_container := %ListContainer as Control
 @onready var _element_container := %ElementContainer as InterpolatedBoxContainer
@@ -17,15 +21,9 @@ func _ready() -> void:
 	project.game.countries.removed.connect(_on_country_removed)
 	project.game.countries.order_changed.connect(_on_country_order_changed)
 
-	var item_rule: ItemBool = project.game.rules.random_turn_order_enabled
-	item_rule.value_changed.connect(
-			_on_item_value_changed, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
-	)
+	_item_random_order.value = _is_random_turn_order_enabled()
+	_item_random_order.value_changed.connect(_on_item_value_changed)
 	_update_visibility()
-
-	var game_settings := %GameSettingsCategory as ItemVoidNode
-	game_settings.item.child_items = [ item_rule ]
-	game_settings.refresh()
 
 	_element_container.drag_ended.connect(_on_drag_ended)
 
@@ -42,9 +40,13 @@ func _ready() -> void:
 
 
 func _update_visibility() -> void:
-	var is_enabled: bool = project.game.rules.random_turn_order_enabled.value
+	var is_enabled: bool = _is_random_turn_order_enabled()
 	_info_label.visible = is_enabled
 	_list_container.visible = not is_enabled
+
+
+func _is_random_turn_order_enabled() -> bool:
+	return project.game.setup_components.has(TurnOrderRandomization.ID)
 
 
 func _add_element(country: Country) -> void:
@@ -101,19 +103,29 @@ func _remove_empty_list_label() -> void:
 	NodeUtils.remove_all_children(_element_container)
 
 
-func _on_item_value_changed(new_value: bool, item: ItemBool) -> void:
-	_update_visibility()
-
+func _on_item_value_changed(is_enabled: bool) -> void:
 	undo_redo.create_action("Toggle random turn order")
 	undo_redo.add_do_method(_set_setting_no_signal.bind(
-			item, _on_item_value_changed, new_value
+			_item_random_order, _on_item_value_changed, is_enabled
 	))
+	undo_redo.add_do_method(_set_random_turn_order.bind(is_enabled))
 	undo_redo.add_do_method(_update_visibility)
 	undo_redo.add_undo_method(_set_setting_no_signal.bind(
-			item, _on_item_value_changed, not new_value
+			_item_random_order, _on_item_value_changed, not is_enabled
 	))
+	undo_redo.add_undo_method(_set_random_turn_order.bind(not is_enabled))
 	undo_redo.add_undo_method(_update_visibility)
-	undo_redo.commit_action(false)
+	undo_redo.commit_action()
+
+
+## Adds or removes the [TurnOrderRandomization] setup component.
+func _set_random_turn_order(is_enabled: bool) -> void:
+	if is_enabled:
+		project.game.setup_components[TurnOrderRandomization.ID] = (
+				TurnOrderRandomization.new()
+		)
+	else:
+		project.game.setup_components.erase(TurnOrderRandomization.ID)
 
 
 func _on_drag_ended(moved_node: Node) -> void:

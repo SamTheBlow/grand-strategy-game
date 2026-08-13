@@ -1,237 +1,123 @@
 class_name MiscGameGeneration
 extends GameComponent
-## Applies various changes in given [Game] according to its [GameRules].
+## Applies various changes to the game's provinces.
+
+const ID: int = 1
+
+const _RANDOMIZE_POPULATION_KEY: String = "randomize_population"
+const _EXTRA_POPULATION_KEY: String = "extra_starting_population"
+const _START_WITH_FORTRESS_KEY: String = "start_with_fortress"
+const _STARTING_ARMY_SIZE_KEY: String = "starting_army_size"
+
+var _already_supplied_countries: Array[Country] = []
+
+var _is_population_randomized: bool = false
+var _extra_starting_population: int = 0
+var _is_starting_fortress_enabled: bool = false
+var _starting_army_size: int = 0
 
 
 func _init() -> void:
-	priority_index = 1
+	priority_index = 100
 
 
-## Always succeeds.
+func id() -> int:
+	return ID
+
+
 func run(game: Game) -> void:
-	# RNG
-	_overwrite_rng(game)
+	_already_supplied_countries.clear()
 
-	# Players and countries
-	_add_players(game)
-	_randomly_assign_players_to_countries(game)
-	_populate_countries(game)
-	_populate_players(game)
-
-	# Shuffle turn order
-	if game.rules.random_turn_order_enabled.value:
-		game.countries.shuffle_order(game.rng)
-
-	# Provinces
 	for province in game.world.provinces.list():
-		# Determine if this is a "starting province"
 		var is_starting_province: bool = province.owner_country != null
 
 		# Randomize population size
-		if game.rules.random_population_enabled.value:
+		if _is_population_randomized:
 			var exponential_rng: float = game.rng.randf() ** 2.0
 			province.population().value = floori(exponential_rng * 1000.0)
 
 		# Add extra starting population
 		if is_starting_province:
-			province.population().value += (
-					game.rules.extra_starting_population.value
-			)
+			province.population().value += _extra_starting_population
 
 		# Overwrite money income
 		if game.rules.province_income_override_enabled.value:
-			_overwrite_province_income(game, province)
+			province.base_money_income().value = _province_base_income(game)
 
-		# Add a fortress, if applicable
+		# Add starting fortress
 		if (
-				game.rules.start_with_fortress.value and is_starting_province
+				_is_starting_fortress_enabled and is_starting_province
 				and province.buildings.list().is_empty()
 		):
 			province.buildings.add(
 					Building.new(game.world.fortress_data(), province.id)
 			)
 
-	# Armies
-	_add_starting_armies(game)
-
-
-func _id() -> int:
-	return 1
-
-
-## Overwrites the RNG seed according to the game rules.
-static func _overwrite_rng(game: Game) -> void:
-	if not game.rules.rng_seed_override_enabled.value:
-		return
-	game.rng.rng_seed = game.rules.rng_seed.value
-
-
-## Add new players so that each country starts with an AI.
-static func _add_players(game: Game) -> void:
-	# Find which countries already have a player assigned
-	var assigned_countries: Array[Country] = []
-	for game_player in game.game_players.list():
+		# Add starting army
 		if (
-				game_player.playing_country != null
-				and (game_player.playing_country not in assigned_countries)
+				_starting_army_size >= game.rules.minimum_army_size.value
+				and is_starting_province
+				and province.owner_country not in _already_supplied_countries
 		):
-			assigned_countries.append(game_player.playing_country)
+			Army.Factory.new(game).new_army(
+					province.owner_country, province.id, _starting_army_size
+			)
+			_already_supplied_countries.append(province.owner_country)
 
-	# Create a new player for each unassigned country
-	for country in game.countries.list():
-		if country in assigned_countries:
-			continue
 
-		var new_player := GamePlayer.new()
-		new_player.playing_country = country
-		new_player.player_ai = (
-				PlayerAI.from_type(game.rules.default_ai_type.value)
+func to_raw_data() -> Dictionary:
+	var output: Dictionary = { _ID_KEY: ID }
+	if _is_population_randomized:
+		output[_RANDOMIZE_POPULATION_KEY] = _is_population_randomized
+	if _extra_starting_population != 0:
+		output[_EXTRA_POPULATION_KEY] = _extra_starting_population
+	if _is_starting_fortress_enabled:
+		output[_START_WITH_FORTRESS_KEY] = _is_starting_fortress_enabled
+	if _starting_army_size != 0:
+		output[_STARTING_ARMY_SIZE_KEY] = _starting_army_size
+	return output
+
+
+func _load_settings(raw_dict: Dictionary) -> void:
+	if ParseUtils.dictionary_has_bool(raw_dict, _RANDOMIZE_POPULATION_KEY):
+		_is_population_randomized = raw_dict[_RANDOMIZE_POPULATION_KEY] as bool
+	else:
+		_is_population_randomized = false
+
+	if ParseUtils.dictionary_has_number(raw_dict, _EXTRA_POPULATION_KEY):
+		_extra_starting_population = (
+				ParseUtils.dictionary_int(raw_dict, _EXTRA_POPULATION_KEY)
 		)
-		new_player.player_ai.personality = AIPersonality.from_type(
-				game.rules.default_ai_personality_option.selected_value()
+	else:
+		_extra_starting_population = 0
+
+	if ParseUtils.dictionary_has_bool(raw_dict, _START_WITH_FORTRESS_KEY):
+		_is_starting_fortress_enabled = (
+				raw_dict[_START_WITH_FORTRESS_KEY] as bool
 		)
-		game.game_players.add(new_player)
+	else:
+		_is_starting_fortress_enabled = false
 
-
-## If a player is already assigned to a valid country,
-## it stays assigned to that country.
-## Otherwise, assigns it a random unassigned country.
-## If all countries are already assigned,
-## then the remaining players are not assigned a country.
-static func _randomly_assign_players_to_countries(game: Game) -> void:
-	# Randomly shuffled list of countries
-	var country_list: Array[Country] = game.countries.list()
-	country_list.shuffle()
-
-	# List of players that need to be assigned a country
-	var players_to_assign: Array[GamePlayer] = game.game_players.list()
-
-	# Remove already assigned countries from the list of countries
-	# Remove already assigned players from the list of players
-	for game_player in game.game_players.list():
-		if game_player.playing_country == null:
-			continue
-
-		if game_player.playing_country in country_list:
-			country_list.erase(game_player.playing_country)
-		players_to_assign.erase(game_player)
-
-	# Assign players
-	for game_player in players_to_assign:
-		if country_list.is_empty():
-			return
-		game_player.playing_country = country_list.pop_back()
-
-
-static func _populate_countries(game: Game) -> void:
-	var is_relationship_preset_randomized: bool = (
-			game.rules.is_diplomacy_presets_enabled()
-			and game.rules.starts_with_random_relationship_preset.value
-	)
-
-	var countries: Array[Country] = game.countries.list()
-	for i in countries.size():
-		# Starting money
-		countries[i].money = game.rules.starting_money.value
-
-		# Relationships
-		if is_relationship_preset_randomized:
-			_randomize_relationship_presets(i, game)
-
-
-## Ignores and overwrites existing data.
-## "i" is the index of the country to randomize. This function is optimized
-## such that we only need to iterate through the countries once.
-static func _randomize_relationship_presets(i: int, game: Game) -> void:
-	var countries: Array[Country] = game.countries.list()
-	for j in range(i + 1, countries.size()):
-		var relationship: DiplomacyRelationship = (
-				countries[i].relationships.with_country(countries[j])
+	if ParseUtils.dictionary_has_number(raw_dict, _STARTING_ARMY_SIZE_KEY):
+		_starting_army_size = (
+				ParseUtils.dictionary_int(raw_dict, _STARTING_ARMY_SIZE_KEY)
 		)
-		var reverse_relationship: DiplomacyRelationship = (
-				countries[j].relationships.with_country(countries[i])
-		)
-		var random_preset_id: int = 1 + game.rng.randi() % 3
-		relationship._set_preset_id(random_preset_id)
-		reverse_relationship._set_preset_id(random_preset_id)
+	else:
+		_starting_army_size = 0
+
+	error = false
+	error_message = ""
 
 
-## Randomizes the AI of each player depending on the game rules.
-static func _populate_players(game: Game) -> void:
-	for game_player in game.game_players.list():
-		_apply_random_ai_type(game_player, game)
-		_apply_random_ai_personality_type(game_player, game)
-
-
-## Only overwrites the AI type when all the conditions are met.
-static func _apply_random_ai_type(player: GamePlayer, game: Game) -> void:
-	if not game.rules.start_with_random_ai_type.value:
-		return
-
-	var possible_ai_types: Array = PlayerAI.Type.values()
-	possible_ai_types.erase(PlayerAI.Type.NONE)
-	if possible_ai_types.size() == 0:
-		push_error("There is no valid AI type to randomly assign!")
-		return
-
-	var random_index: int = game.rng.randi() % possible_ai_types.size()
-	var random_ai_type: int = possible_ai_types[random_index]
-	player.player_ai = PlayerAI.from_type(random_ai_type)
-
-
-## Only overwrites the AI personality when all the conditions are met.
-static func _apply_random_ai_personality_type(
-		player: GamePlayer, game: Game
-) -> void:
-	if not game.rules.start_with_random_ai_personality.value:
-		return
-
-	var possible_personality_types: Array[int] = AIPersonality.type_values()
-	possible_personality_types.erase(AIPersonality.Type.NONE)
-	possible_personality_types.erase(AIPersonality.Type.ACCEPTS_EVERYTHING)
-	if possible_personality_types.size() == 0:
-		push_error("There is no valid personality type to randomly assign!")
-		return
-
-	var random_index: int = game.rng.randi() % possible_personality_types.size()
-	var random_personality_type: int = possible_personality_types[random_index]
-	player.player_ai.personality = (
-			AIPersonality.from_type(random_personality_type)
-	)
-
-
-## Overwrites given province's money income according to the game rules.
-static func _overwrite_province_income(game: Game, province: Province) -> void:
+## Returns province income according to the game rules.
+func _province_base_income(game: Game) -> int:
 	match game.rules.province_income_option.selected_value():
 		GameRules.ProvinceIncome.RANDOM:
-			province.base_money_income().value = game.rng.randi_range(
+			return game.rng.randi_range(
 					game.rules.province_income_random_min.value,
 					game.rules.province_income_random_max.value
 			)
 		GameRules.ProvinceIncome.CONSTANT:
-			province.base_money_income().value = (
-					game.rules.province_income_constant.value
-			)
+			return game.rules.province_income_constant.value
 		_:
-			province.base_money_income().value = 0
-
-
-## Adds armies such that it only gives one army to each country.
-static func _add_starting_armies(game: Game) -> void:
-	if game.rules.starting_army_size.value == 0:
-		return
-
-	var already_supplied_countries: Array[Country] = []
-	for province in game.world.provinces.list():
-		if (
-				province.owner_country == null or
-				province.owner_country in already_supplied_countries
-		):
-			continue
-
-		Army.Factory.new(game).new_army(
-				province.owner_country,
-				province.id,
-				game.rules.starting_army_size.value
-		)
-		already_supplied_countries.append(province.owner_country)
+			return 0
