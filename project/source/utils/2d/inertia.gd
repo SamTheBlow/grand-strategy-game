@@ -10,8 +10,8 @@ extends Node
 ## Emits at a fast rate, only when the velocity is non-zero.
 signal velocity_processed(velocity: Vector2)
 
-## The number of mouse positions to keep in memory.
-const _NUMBER_OF_MOUSE_POSITIONS: int = 60
+## The maximum number of mouse positions to keep in memory.
+const _MAX_MOUSE_POSITIONS: int = 20
 
 ## If false, velocity is always zero.
 @export var is_enabled: bool = true
@@ -19,7 +19,7 @@ const _NUMBER_OF_MOUSE_POSITIONS: int = 60
 ## Determines how quickly the velocity decays.
 ## A value of 0 means it stops instantly.
 ## A value of 1 means it doesn't decay at all.
-@export var decay_rate: float = 0.9983
+@export var decay_rate: float = 0.97
 
 var _velocity := Vector2.ZERO
 
@@ -29,14 +29,15 @@ var _previous_mouse_positions: PackedVector2Array = []
 var _previous_mouse_timestamps: PackedInt64Array = []
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	# Note down the current mouse position with timestamp
 	# Get rid of older ones to save memory
-	_previous_mouse_positions.append(get_viewport().get_mouse_position())
-	_previous_mouse_timestamps.append(Engine.get_process_frames())
-	while _previous_mouse_positions.size() > _NUMBER_OF_MOUSE_POSITIONS:
-		_previous_mouse_positions.remove_at(0)
-		_previous_mouse_timestamps.remove_at(0)
+	if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+		_previous_mouse_positions.append(get_viewport().get_mouse_position())
+		_previous_mouse_timestamps.append(Engine.get_process_frames())
+		while _previous_mouse_positions.size() > _MAX_MOUSE_POSITIONS:
+			_previous_mouse_positions.remove_at(0)
+			_previous_mouse_timestamps.remove_at(0)
 
 	if not is_enabled or _velocity.is_zero_approx():
 		_velocity = Vector2.ZERO
@@ -45,7 +46,7 @@ func _process(_delta: float) -> void:
 		# Apply velocity
 		velocity_processed.emit(_velocity)
 		# Reduce velocity
-		_velocity *= decay_rate
+		_velocity *= pow(decay_rate, 60.0 * delta)
 
 
 ## Immediately sets velocity depending on recent mouse motion.
@@ -56,6 +57,8 @@ func start() -> void:
 ## Immediately sets velocity to zero.
 func stop() -> void:
 	_velocity = Vector2.ZERO
+	_previous_mouse_positions.clear()
+	_previous_mouse_timestamps.clear()
 
 
 # Example:
@@ -66,10 +69,6 @@ func stop() -> void:
 #
 ## Returns the weighted average of the previous mouse positions.
 func _mouse_motion() -> Vector2:
-	# Edge case where we haven't sampled enough positions yet
-	if _previous_mouse_positions.size() < _NUMBER_OF_MOUSE_POSITIONS:
-		return Vector2.ZERO
-
 	var current_mouse_position: Vector2 = get_viewport().get_mouse_position()
 	var current_timestamp: int = Engine.get_process_frames()
 
