@@ -65,6 +65,9 @@ func strength_of_countries() -> Array[float]:
 			game.components.get(ProvincePopulationIncome.KEY)
 			as ProvincePopulationIncome
 	)
+	var army_reinforcements := (
+			game.components.get(ArmyReinforcements.KEY) as ArmyReinforcements
+	)
 
 	for country in game.countries.list():
 		var country_score: float = 0.0
@@ -88,25 +91,15 @@ func strength_of_countries() -> Array[float]:
 				)
 
 			# Score for reinforcements
-			if game.rules.reinforcements_enabled:
-				match game.rules.reinforcements_option.selected_value():
-					GameRules.ReinforcementsOption.RANDOM:
-						province_score += (
-								SCORE_WEIGHT_REINFORCEMENTS
-								* game.rules
-								.reinforcements_random_range.average()
+			if army_reinforcements != null:
+				province_score += (
+						SCORE_WEIGHT_REINFORCEMENTS
+						* (
+								army_reinforcements.constant_amount
+								+ province.population().value
+								* army_reinforcements.amount_per_person
 						)
-					GameRules.ReinforcementsOption.CONSTANT:
-						province_score += (
-								SCORE_WEIGHT_REINFORCEMENTS
-								* game.rules.reinforcements_constant.value
-						)
-					GameRules.ReinforcementsOption.POPULATION:
-						province_score += (
-								SCORE_WEIGHT_REINFORCEMENTS
-								* province.population().value
-								* game.rules.reinforcements_per_person.value
-						)
+				)
 
 			country_score += province_score
 

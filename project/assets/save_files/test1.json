@@ -92,6 +92,9 @@
 		},
 		"province_population_income": {
 			"per_person": 0.075
+		},
+		"army_reinforcements": {
+			"amount_per_person": 0.4
 		}
 	},
 	"version": "1",

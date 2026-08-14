@@ -11,7 +11,7 @@ var per_person: float = 0.0
 
 
 func _init() -> void:
-	priority_index = 10
+	priority_index = 12
 
 
 func register(game: Game) -> void:

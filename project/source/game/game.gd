@@ -73,7 +73,6 @@ func _init() -> void:
 		CountryRemovalCleanup.new(self),
 		AutoArrowProvinceReaction.new(self),
 		ProvinceOwnershipUpdate.new(self),
-		NewTurnEvents.new(self),
 	])
 
 

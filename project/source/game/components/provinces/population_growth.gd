@@ -14,7 +14,7 @@ var _growth_rate: float = 0.0
 
 
 func _init() -> void:
-	priority_index = 10
+	priority_index = 11
 
 
 func register(game: Game) -> void:

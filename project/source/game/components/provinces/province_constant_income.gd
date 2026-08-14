@@ -7,7 +7,7 @@ const KEY: String = "province_constant_income"
 
 
 func _init() -> void:
-	priority_index = 10
+	priority_index = 12
 
 
 func register(game: Game) -> void:

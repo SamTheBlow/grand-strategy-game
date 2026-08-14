@@ -9,12 +9,6 @@ class_name GameRules
 
 signal rule_changed(rule_name: String, rule_item: PropertyTreeItem)
 
-enum ReinforcementsOption {
-	RANDOM = 0,
-	CONSTANT = 1,
-	POPULATION = 2,
-}
-
 enum GameOverProvincesOwnedOption {
 	DISABLED = 0,
 	CONSTANT = 1,
@@ -34,12 +28,6 @@ const RULE_NAMES: Array[String] = [
 	"game_over_provinces_owned_option",
 	"game_over_provinces_owned_constant",
 	"game_over_provinces_owned_percentage",
-	"reinforcements_enabled",
-	"reinforcements_option",
-	"reinforcements_random_min",
-	"reinforcements_random_max",
-	"reinforcements_constant",
-	"reinforcements_per_person",
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
@@ -100,12 +88,6 @@ var turn_limit := ItemInt.new()
 var game_over_provinces_owned_option := ItemOptions.new()
 var game_over_provinces_owned_constant := ItemInt.new()
 var game_over_provinces_owned_percentage := ItemFloat.new()
-var reinforcements_enabled := ItemBool.new()
-var reinforcements_option := ItemOptions.new()
-var reinforcements_random_min := ItemInt.new()
-var reinforcements_random_max := ItemInt.new()
-var reinforcements_constant := ItemInt.new()
-var reinforcements_per_person := ItemFloat.new()
 var recruitment_enabled := ItemBool.new()
 var recruitment_money_per_unit := ItemFloat.new()
 var recruitment_population_per_unit := ItemFloat.new()
@@ -143,9 +125,6 @@ var _category_diplomacy_data := PropertyTreeItem.new()
 var _category_diplomacy_military_access := PropertyTreeItem.new()
 var _category_diplomacy_trespassing := PropertyTreeItem.new()
 var _category_diplomacy_fighting := PropertyTreeItem.new()
-
-# 4.0 Backwards compatibility
-var reinforcements_random_range := ItemRangeInt.new()
 
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
@@ -201,45 +180,6 @@ func _init() -> void:
 	game_over_provinces_owned_percentage.maximum = 1.0
 	game_over_provinces_owned_percentage.has_maximum = true
 	game_over_provinces_owned_percentage.value = 0.7
-
-	reinforcements_enabled.text = "Reinforcements at the start of each turn"
-	reinforcements_enabled.value = true
-	reinforcements_enabled.child_items = [
-		reinforcements_option,
-	]
-	reinforcements_enabled.child_items_on = [0]
-
-	reinforcements_option.text = "Reinforcements size"
-	reinforcements_option.options = [
-		"Random", "Constant", "Proportional to population size"
-	]
-	reinforcements_option.selected_index = 2
-	reinforcements_option.child_items = [
-		reinforcements_random_range,
-		reinforcements_constant,
-		reinforcements_per_person,
-	]
-	reinforcements_option.option_filters = [[0], [1], [2]]
-
-	reinforcements_random_min.text = "Minimum"
-	reinforcements_random_min.minimum = 0
-	reinforcements_random_min.has_minimum = true
-	reinforcements_random_min.value = 10
-
-	reinforcements_random_max.text = "Maximum"
-	reinforcements_random_max.minimum = 0
-	reinforcements_random_max.has_minimum = true
-	reinforcements_random_max.value = 40
-
-	reinforcements_constant.text = "Amount"
-	reinforcements_constant.minimum = 0
-	reinforcements_constant.has_minimum = true
-	reinforcements_constant.value = 20
-
-	reinforcements_per_person.text = "Amount per person"
-	reinforcements_per_person.minimum = 0
-	reinforcements_per_person.has_minimum = true
-	reinforcements_per_person.value = 0.4
 
 	recruitment_enabled.text = "Can recruit new armies"
 	recruitment_enabled.value = true
@@ -377,7 +317,6 @@ func _init() -> void:
 
 	_category_recruitment.text = "Recruitment"
 	_category_recruitment.child_items = [
-		reinforcements_enabled,
 		recruitment_enabled,
 	]
 
@@ -431,13 +370,6 @@ func _init() -> void:
 		can_ask_to_stop_fighting,
 		automatically_fight_back,
 	]
-
-	reinforcements_random_range.min_item = reinforcements_random_min
-	reinforcements_random_range.max_item = reinforcements_random_max
-	reinforcements_random_range.minimum = 0
-	reinforcements_random_range.has_minimum = true
-	reinforcements_random_range.min_value = 10
-	reinforcements_random_range.max_value = 40
 
 	root_rules = [
 		rng_seed_override_enabled,

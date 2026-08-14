@@ -59,6 +59,8 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(
 					ProvinceIncomeRandomization.new(), raw_dict
 			)
+		ArmyReinforcements.KEY:
+			return _component_from_raw_data(ArmyReinforcements.new(), raw_dict)
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)
 
