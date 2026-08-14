@@ -15,7 +15,12 @@ func _init() -> void:
 	priority_index = 20
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	# Find which countries don't have a player assigned
 	var unassigned_countries: Array[Country] = game.countries.list()
 	for game_player in game.game_players.list():

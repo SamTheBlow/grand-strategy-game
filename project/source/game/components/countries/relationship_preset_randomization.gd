@@ -10,7 +10,12 @@ func _init() -> void:
 	priority_index = 40
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	if not (
 			game.rules.is_diplomacy_presets_enabled()
 			and game.rules.starts_with_random_relationship_preset.value

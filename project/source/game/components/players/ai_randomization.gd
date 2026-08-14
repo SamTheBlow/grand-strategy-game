@@ -15,7 +15,12 @@ func _init() -> void:
 	priority_index = 50
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	var ai_types: Array = PlayerAI.Type.values()
 	ai_types.erase(PlayerAI.Type.NONE)
 

@@ -57,9 +57,7 @@ static func to_raw_dict(game: Game) -> Dictionary:
 		output.merge({ _TURN_KEY: turn_data })
 
 	# Components
-	var components_data: Dictionary = (
-			_components_to_raw_dict(game.setup_components)
-	)
+	var components_data: Dictionary = _components_to_raw_dict(game.components)
 	if not components_data.is_empty():
 		output.merge({ _COMPONENTS_KEY: components_data })
 
@@ -142,21 +140,11 @@ class GameFromRawData extends Game:
 		)
 
 		# Components
-		setup_components = GameParsing._components_from_raw_data(
+		components = GameParsing._components_from_raw_data(
 				raw_dict.get(_COMPONENTS_KEY)
 		)
 
 		super()
-
-		match _game_state:
-			Game.GameState.SETUP:
-				pass
-			Game.GameState.ONGOING:
-				_setup_game_past_setup()
-			Game.GameState.GAMEOVER:
-				_setup_game_past_setup()
-			_:
-				push_error("Unrecognized game state")
 
 
 class GameStateParsing:

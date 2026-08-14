@@ -6,6 +6,11 @@ signal game_started()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)
 
+## Emitted when the game's setup phase is about to end.
+## This is your chance to build the game's features
+## (e.g. random generation) before the game starts.
+signal setup_ending()
+
 enum GameState {
 	SETUP = 0,
 	ONGOING = 1,
@@ -36,6 +41,7 @@ var rng := GameRNG.new()
 var modifier_request := ModifierRequest.new()
 
 var _game_state: GameState = GameState.SETUP
+var _is_setup_for_play: bool = false
 
 ## Keys are a modifier context (String); values are a [Modifier].
 var _global_modifiers: Dictionary = {}
@@ -44,9 +50,8 @@ var _global_modifiers: Dictionary = {}
 ## These are stored here only because they need to stay referenced.
 var _components: Array = []
 
-## Components that are run once at the end of setup phase.
-## The components are mapped by their KEY constant for quick access.
-var setup_components: Dictionary[String, GameComponent] = {}
+## A list of [GameComponent]s, mapped by their KEY constant for quick access.
+var components: Dictionary[String, GameComponent] = {}
 
 
 func _init() -> void:
@@ -77,33 +82,16 @@ func state() -> GameState:
 	return _game_state
 
 
-## Sets up the game to be ready for playing,
-## and marks the game as ongoing.
-## No effect if game isn't in setup phase.
-func end_setup() -> void:
-	if _game_state != GameState.SETUP:
+## Sets up the game to be ready for playing.
+## No effect if this was already called.
+func setup_for_play() -> void:
+	if _is_setup_for_play:
 		return
 
-	# Run setup components (these are only meant to run
-	# when you leave setup phase for the first time)
-	var sorted_components: Array[GameComponent] = setup_components.values()
-	sorted_components.sort_custom(
-			func(a: GameComponent, b: GameComponent) -> bool:
-				return a.priority_index < b.priority_index
-	)
-	for setup_component in sorted_components:
-		setup_component.run(self)
-
-	_setup_game_past_setup()
-
-	_game_state = GameState.ONGOING
-
-
-## Sets up the game to be ready for playing.
-func _setup_game_past_setup() -> void:
 	rng.lock()
 	rules.lock()
 	_setup_global_modifiers()
+	_register_components()
 
 	# Add turn limit component
 	if rules.turn_limit_enabled.value:
@@ -135,9 +123,19 @@ func _setup_game_past_setup() -> void:
 
 	turn.is_running_changed.connect(_on_is_running_changed)
 
+	_is_setup_for_play = true
+
+	if _game_state == GameState.SETUP:
+		setup_ending.emit()
+		_game_state = GameState.ONGOING
+
 
 ## Starts/resumes the gameplay loop, if possible.
+## No effect if setup_for_play() has not been called yet.
 func start() -> void:
+	if not _is_setup_for_play:
+		return
+
 	# You can continue playing if the game's over
 	# but let's remind the user that the game is over.
 	if _game_state == GameState.GAMEOVER:
@@ -163,6 +161,16 @@ func end_game() -> void:
 func apply_action(action: Action) -> void:
 	action.apply_to(self, turn.playing_players()[0])
 	action_applied.emit(action)
+
+
+func _register_components() -> void:
+	var sorted_list: Array[GameComponent] = components.values()
+	sorted_list.sort_custom(
+			func(a: GameComponent, b: GameComponent) -> bool:
+				return a.priority_index < b.priority_index
+	)
+	for component in sorted_list:
+		component.register(self)
 
 
 ## Builds the game's global [Modifier]s according to the [GameRules].

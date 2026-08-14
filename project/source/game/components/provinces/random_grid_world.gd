@@ -23,7 +23,11 @@ func _init() -> void:
 	priority_index = 4
 
 
-func run(game: Game) -> void:
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	match grid_shape_option:
 		0:
 			HexGridGeneration.new().apply(

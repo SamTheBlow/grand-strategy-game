@@ -46,7 +46,7 @@ func _update_visibility() -> void:
 
 
 func _is_random_turn_order_enabled() -> bool:
-	return project.game.setup_components.has(TurnOrderRandomization.KEY)
+	return project.game.components.has(TurnOrderRandomization.KEY)
 
 
 func _add_element(country: Country) -> void:
@@ -121,11 +121,11 @@ func _on_item_value_changed(is_enabled: bool) -> void:
 ## Adds or removes the [TurnOrderRandomization] setup component.
 func _set_random_turn_order(is_enabled: bool) -> void:
 	if is_enabled:
-		project.game.setup_components[TurnOrderRandomization.KEY] = (
+		project.game.components[TurnOrderRandomization.KEY] = (
 				TurnOrderRandomization.new()
 		)
 	else:
-		project.game.setup_components.erase(TurnOrderRandomization.KEY)
+		project.game.components.erase(TurnOrderRandomization.KEY)
 
 
 func _on_drag_ended(moved_node: Node) -> void:

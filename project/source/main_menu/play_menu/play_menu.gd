@@ -84,7 +84,7 @@ func _setup_game(file_path: String, game_rules: GameRules) -> void:
 	else:
 		var project: GameProject = parse_result.result_project
 		project.game.rules = game_rules
-		project.game.end_setup()
+		project.game.setup_for_play()
 		_on_start_game_ready.call_deferred(project)
 
 

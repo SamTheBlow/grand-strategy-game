@@ -36,7 +36,7 @@ func _setup_game(project_file_path: String) -> void:
 	if parse_result.error:
 		_on_game_load_error.call_deferred(parse_result.error_message)
 	else:
-		parse_result.result_project.game.end_setup()
+		parse_result.result_project.game.setup_for_play()
 		_on_game_load_ready.call_deferred(parse_result.result_project)
 
 

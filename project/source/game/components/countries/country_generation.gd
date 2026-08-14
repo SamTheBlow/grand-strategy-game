@@ -15,7 +15,12 @@ func _init() -> void:
 	priority_index = 5
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	for i in _number_of_countries:
 		var new_country: Country = Country.Factory.new(game).new_country()
 		var color_r: float = game.rng.randf()

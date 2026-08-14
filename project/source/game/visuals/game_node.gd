@@ -140,7 +140,7 @@ func _ready() -> void:
 	add_child(game_sync)
 
 	if MultiplayerUtils.has_authority(multiplayer):
-		game.end_setup()
+		game.setup_for_play()
 
 		if players != null:
 			_player_assignment.assign_players(players.list())
@@ -443,7 +443,7 @@ func _on_exit_to_main_menu_requested() -> void:
 
 ## Clients start the game when synchronization is finished.
 func _on_player_assignment_sync_finished() -> void:
-	game.end_setup()
+	game.setup_for_play()
 	game.start()
 
 

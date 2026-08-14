@@ -11,8 +11,7 @@ var error_message: String = ""
 var priority_index: int = 0
 
 
-## If an error occurs, tells so using the error and error_message properties.
-@abstract func run(_game: Game) -> void
+@abstract func register(_game: Game) -> void
 
 
 ## Attempts to create a new instance from given raw data.

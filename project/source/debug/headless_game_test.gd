@@ -59,7 +59,7 @@ func _initialize() -> void:
 	_print_with_time("Running the game...")
 	_project.game.turn.turn_changed.connect(_on_turn_changed)
 	_project.game.game_over.connect(_on_game_over)
-	_project.game.end_setup()
+	_project.game.setup_for_play()
 	_project.game.start()
 
 

@@ -9,7 +9,12 @@ func _init() -> void:
 	priority_index = 6
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	# Get list of unassigned provinces
 	var unassigned_provinces: Array[Province] = (
 			game.world.provinces_of_each_country.dictionary[null].list.keys()

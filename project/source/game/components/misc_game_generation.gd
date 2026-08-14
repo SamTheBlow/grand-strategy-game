@@ -21,7 +21,12 @@ func _init() -> void:
 	priority_index = 100
 
 
-func run(game: Game) -> void:
+## Registers this component to run at the end of the setup phase.
+func register(game: Game) -> void:
+	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
+
+
+func _apply(game: Game) -> void:
 	_already_supplied_countries.clear()
 
 	for province in game.world.provinces.list():
