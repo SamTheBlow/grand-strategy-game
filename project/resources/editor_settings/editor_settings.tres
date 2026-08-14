@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="AppEditorSettings" format=3]
+
+[ext_resource type="Script" uid="uid://e70irgpv1usl" path="res://source/editor/settings/editor_settings.gd" id="1_settings"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_world_limits.tres" id="2_showlimits"]
+[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="3_limitscolor"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_decorations.tres" id="4_decorations"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_buildings.tres" id="5_buildings"]
+
+[resource]
+script = ExtResource("1_settings")
+show_world_limits = ExtResource("2_showlimits")
+world_limits_color = ExtResource("3_limitscolor")
+show_decorations = ExtResource("4_decorations")
+show_buildings = ExtResource("5_buildings")
+metadata/_custom_type_script = "uid://e70irgpv1usl"

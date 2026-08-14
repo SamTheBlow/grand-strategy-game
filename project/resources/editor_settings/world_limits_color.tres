@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemColor" format=3]
+
+[ext_resource type="Script" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_5b0n2"]
+[ext_resource type="Script" path="res://source/utils/property_tree/items/item_color.gd" id="1_icolor"]
+
+[resource]
+script = ExtResource("1_icolor")
+value = Color(1, 0, 0, 1)
+text = "Color"
+metadata/_custom_type_script = "uid://b51eyg5h0a7ey"

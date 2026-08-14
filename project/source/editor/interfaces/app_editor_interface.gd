@@ -32,7 +32,6 @@ signal decoration_select_requested(decoration: WorldDecoration)
 var closed_signal: Signal
 
 var project: GameProject
-var editor_settings: AppEditorSettings
 var navigator: InterfaceNavigator
 var undo_redo: UndoRedoResource
 

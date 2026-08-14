@@ -4,12 +4,6 @@ extends AppEditorInterface
 
 
 func _ready() -> void:
-	var editor_settings_node := %EditorSettings as ItemVoidNode
-	editor_settings_node.item.child_items = [
-		editor_settings.show_buildings
-	]
-	editor_settings_node.refresh()
-
 	_setup_settings(%GameSettings as ItemVoidNode)
 
 	closed.connect(navigator.close_interface)

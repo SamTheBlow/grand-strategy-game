@@ -64,7 +64,6 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 		preload("uid://dn67kha2v6jam"),
 }
 
-@export var _editor_settings: AppEditorSettings
 @export var _undo_redo: UndoRedoResource
 
 var _navigator := InterfaceNavigator.new(self)
@@ -198,7 +197,6 @@ func _add_contents() -> void:
 ## Prepares the interface and then opens it.
 func _open_interface(new_interface: AppEditorInterface) -> void:
 	new_interface.project = _project
-	new_interface.editor_settings = _editor_settings
 	new_interface.navigator = _navigator
 	new_interface.undo_redo = _undo_redo
 	_current_interface = new_interface

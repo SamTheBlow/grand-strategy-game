@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="ItemBool" format=3]
+
+[ext_resource type="Script" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_pti"]
+[ext_resource type="Script" path="res://source/utils/property_tree/items/item_bool.gd" id="2_ibool"]
+[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="3_color"]
+
+[resource]
+script = ExtResource("2_ibool")
+value = true
+child_items_on = Array[int]([0])
+text = "Show on world map"
+child_items = Array[ExtResource("1_pti")]([ExtResource("3_color")])
+metadata/_custom_type_script = "uid://dmvvf6byo3wpw"

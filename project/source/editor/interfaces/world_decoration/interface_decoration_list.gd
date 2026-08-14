@@ -11,12 +11,6 @@ var _nodes: Dictionary[WorldDecoration, WorldDecorationListElement] = {}
 
 
 func _ready() -> void:
-	var editor_settings_node := %EditorSettingsCategory as ItemVoidNode
-	editor_settings_node.item.child_items = [
-		editor_settings.show_decorations
-	]
-	editor_settings_node.refresh()
-
 	for decoration in project.game.world.decorations.list():
 		_add_element(decoration)
 
@@ -31,7 +25,9 @@ func _add_element(world_decoration: WorldDecoration) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as WorldDecorationListElement
 	element.world_decoration = world_decoration
 	element.pressed.connect(_on_element_pressed)
-	element.mouse_entered.connect(decoration_list_item_hovered.emit.bind(world_decoration))
+	element.mouse_entered.connect(
+			decoration_list_item_hovered.emit.bind(world_decoration)
+	)
 	element.mouse_exited.connect(decoration_list_item_unhovered.emit)
 	_element_container.add_child(element)
 	_nodes[world_decoration] = element

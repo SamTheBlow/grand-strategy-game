@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://be0pqxrjfpukm"]
 
-[ext_resource type="Script" uid="uid://e70irgpv1usl" path="res://source/editor/editor_settings.gd" id="2_qlu2u"]
+[ext_resource type="Script" uid="uid://dkvx1jstu5ls7" path="res://source/editor/settings/editor_settings_io.gd" id="1_7nee5"]
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="4_camera"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="4_world_visuals"]
 [ext_resource type="Script" uid="uid://biikbt0rusmly" path="res://source/world/visuals/world_limits_rect2d.gd" id="6_uwkq8"]
@@ -19,53 +19,26 @@
 [ext_resource type="Script" uid="uid://bgg0y4772j3pq" path="res://source/world/decorations/visuals/decoration_visuals_input.gd" id="15_decoration_input"]
 [ext_resource type="Script" uid="uid://ckqoendpcp3lp" path="res://source/armies/visuals/components/army_drag.gd" id="16_army_drag"]
 [ext_resource type="Script" uid="uid://e4lwb7rpq03s" path="res://source/armies/visuals/components/army_selection.gd" id="16_army_input"]
-[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="16_lqb7r"]
-[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="17_jvmd3"]
 [ext_resource type="Script" uid="uid://cqtp0sb2f4jst" path="res://source/utils/node/window_title.gd" id="17_window_title"]
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
 [ext_resource type="Script" uid="uid://61ossm26cpd3" path="res://source/world/decorations/decoration_scroll_scale.gd" id="20_decoration_scroll_scale"]
-[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="22_jvmd3"]
+[ext_resource type="Resource" path="res://resources/editor_settings/editor_settings.tres" id="23_settings"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_world_limits.tres" id="24_swl"]
+[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="25_wlc"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_decorations.tres" id="26_sd"]
+[ext_resource type="Resource" path="res://resources/editor_settings/show_buildings.tres" id="27_sb"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
 script = ExtResource("8_u5rcp")
 metadata/_custom_type_script = "uid://cqrjsjcv4lx25"
 
-[sub_resource type="Resource" id="Resource_lqb7r"]
-script = ExtResource("17_jvmd3")
-value = true
-text = "Show on world map"
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
-
-[sub_resource type="Resource" id="Resource_mu8dq"]
-script = ExtResource("17_jvmd3")
-value = true
-text = "Show on world map"
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
-
-[sub_resource type="Resource" id="Resource_jvmd3"]
-script = ExtResource("22_jvmd3")
-value = Color(1, 0, 0, 1)
-text = "Color"
-metadata/_custom_type_script = "uid://b51eyg5h0a7ey"
-
-[sub_resource type="Resource" id="Resource_7nee5"]
-script = ExtResource("17_jvmd3")
-value = true
-child_items_on = Array[int]([0])
-text = "Show on world map"
-child_items = Array[ExtResource("16_lqb7r")]([SubResource("Resource_jvmd3")])
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
-
-[sub_resource type="Resource" id="Resource_nmpjy"]
-script = ExtResource("2_qlu2u")
-show_world_limits = SubResource("Resource_7nee5")
-world_limits_color = SubResource("Resource_jvmd3")
-show_decorations = SubResource("Resource_lqb7r")
-show_buildings = SubResource("Resource_mu8dq")
-metadata/_custom_type_script = "uid://e70irgpv1usl"
-
 [node name="Editor" type="Node" unique_id=1373690984]
+
+[node name="EditorSettingsIO" type="Node" parent="." unique_id=111572785]
+script = ExtResource("1_7nee5")
+_file_path = "editor_settings"
+_editor_settings = ExtResource("23_settings")
 
 [node name="Menus" type="Node" parent="." unique_id=1928374650]
 script = ExtResource("9_menus")
@@ -117,12 +90,12 @@ _undo_redo = SubResource("Resource_ai428")
 
 [node name="DecorationVisibility" type="Node" parent="." unique_id=521376900 node_paths=PackedStringArray("_decorations_container")]
 script = ExtResource("12_mg3wh")
-_setting = SubResource("Resource_lqb7r")
+_setting = ExtResource("26_sd")
 _decorations_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
 
 [node name="BuildingVisibility" type="Node" parent="." unique_id=521376901]
 script = ExtResource("13_bldvis")
-_setting = SubResource("Resource_mu8dq")
+_setting = ExtResource("27_sb")
 
 [node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
@@ -138,8 +111,8 @@ follow_viewport_enabled = true
 [node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
 modulate = Color(1, 0, 0, 1)
 script = ExtResource("6_uwkq8")
-_setting_show_limits = SubResource("Resource_7nee5")
-_setting_limits_color = SubResource("Resource_jvmd3")
+_setting_show_limits = ExtResource("24_swl")
+_setting_limits_color = ExtResource("25_wlc")
 
 [node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
 
@@ -283,7 +256,6 @@ visible = false
 anchors_preset = -1
 anchor_top = 0.075
 anchor_right = 0.4
-_editor_settings = SubResource("Resource_nmpjy")
 _undo_redo = SubResource("Resource_ai428")
 
 [node name="PopupContainer" type="Control" parent="UILayer" unique_id=1918851921]

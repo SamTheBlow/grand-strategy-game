@@ -43,13 +43,6 @@ func _ready() -> void:
 			item_left, item_top, item_right, item_bottom
 	))
 
-	# Setup editor settings
-	var editor_settings_node := %EditorSettingsCategory as ItemVoidNode
-	editor_settings_node.item.child_items = [
-		editor_settings.show_world_limits
-	]
-	editor_settings_node.refresh()
-
 	# Setup game settings
 	var game_settings_node := %GameSettingsCategory as ItemVoidNode
 	game_settings_node.item.child_items = [

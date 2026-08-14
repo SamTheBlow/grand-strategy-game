@@ -7,17 +7,12 @@
 [ext_resource type="Script" uid="uid://d356ooxo4eq1k" path="res://source/utils/property_tree/items/item_float.gd" id="5_26ljx"]
 [ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="6_qkufn"]
 [ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="7_sbp2l"]
-
-[sub_resource type="Resource" id="Resource_4sfkq"]
-script = ExtResource("7_sbp2l")
-value = true
-text = "Show buildings on world map"
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+[ext_resource type="Resource" path="res://resources/editor_settings/show_buildings.tres" id="8_sb"]
 
 [sub_resource type="Resource" id="Resource_4vwtr"]
 script = ExtResource("3_syr23")
 text = "Editor settings:"
-child_items = Array[ExtResource("3_syr23")]([SubResource("Resource_4sfkq")])
+child_items = Array[ExtResource("3_syr23")]([ExtResource("8_sb")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [sub_resource type="Resource" id="Resource_sprite"]
