@@ -49,8 +49,6 @@ const RULE_NAMES: Array[String] = [
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
-	"population_growth_enabled",
-	"population_growth_rate",
 	"province_income_override_enabled",
 	"province_income_option",
 	"province_income_random_min",
@@ -123,8 +121,6 @@ var reinforcements_per_person := ItemFloat.new()
 var recruitment_enabled := ItemBool.new()
 var recruitment_money_per_unit := ItemFloat.new()
 var recruitment_population_per_unit := ItemFloat.new()
-var population_growth_enabled := ItemBool.new()
-var population_growth_rate := ItemFloat.new()
 var province_income_override_enabled := ItemBool.new()
 var province_income_option := ItemOptions.new()
 var province_income_random_min := ItemInt.new()
@@ -159,7 +155,6 @@ var automatically_fight_back := ItemBool.new()
 # Categories
 var _category_game_over := PropertyTreeItem.new()
 var _category_recruitment := PropertyTreeItem.new()
-var _category_population := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
 var _category_diplomacy := PropertyTreeItem.new()
 var _category_diplomacy_data := PropertyTreeItem.new()
@@ -282,18 +277,6 @@ func _init() -> void:
 	recruitment_population_per_unit.minimum = 0
 	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.value = 1.0
-
-	population_growth_enabled.text = "Population growth"
-	population_growth_enabled.value = true
-	population_growth_enabled.child_items = [
-		population_growth_rate,
-	]
-	population_growth_enabled.child_items_on = [0]
-
-	population_growth_rate.text = "Growth rate"
-	population_growth_rate.minimum = 0
-	population_growth_rate.has_minimum = true
-	population_growth_rate.value = 0.48
 
 	province_income_override_enabled.text = "Enforce specific province income"
 	province_income_override_enabled.value = true
@@ -456,11 +439,6 @@ func _init() -> void:
 		recruitment_enabled,
 	]
 
-	_category_population.text = "Population"
-	_category_population.child_items = [
-		population_growth_enabled,
-	]
-
 	_category_battle.text = "Battle"
 	_category_battle.child_items = [
 		global_attacker_efficiency,
@@ -530,7 +508,6 @@ func _init() -> void:
 		rng_seed_override_enabled,
 		_category_game_over,
 		_category_recruitment,
-		_category_population,
 		province_income_override_enabled,
 		minimum_army_size,
 		maximum_army_size,

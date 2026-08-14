@@ -86,6 +86,9 @@
 			"extra_starting_population": 0,
 			"start_with_fortress": true,
 			"starting_army_size": 1000
+		},
+		"population_growth": {
+			"growth_rate": 0.48
 		}
 	},
 	"version": "1",
