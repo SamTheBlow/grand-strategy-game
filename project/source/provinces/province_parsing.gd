@@ -119,9 +119,9 @@ static func to_raw_array(province_list: Array[Province]) -> Array:
 			})
 
 		# Money income
-		if province.base_money_income().value != 0:
+		if province.money_income().value != 0:
 			province_data.merge(
-					{ _INCOME_MONEY_KEY: province.base_money_income().value }
+					{ _INCOME_MONEY_KEY: province.money_income().value }
 			)
 
 		# Buildings
@@ -191,7 +191,7 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 
 	# Money income
 	if ParseUtils.dictionary_has_number(raw_dict, _INCOME_MONEY_KEY):
-		province.base_money_income().value = (
+		province.money_income().value = (
 				ParseUtils.dictionary_int(raw_dict, _INCOME_MONEY_KEY)
 		)
 

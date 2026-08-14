@@ -58,6 +58,14 @@ func strength_of_countries() -> Array[float]:
 
 	var strengths: Array[float] = []
 
+	var has_constant_income: bool = (
+			game.components.has(ProvinceConstantIncome.KEY)
+	)
+	var population_income := (
+			game.components.get(ProvincePopulationIncome.KEY)
+			as ProvincePopulationIncome
+	)
+
 	for country in game.countries.list():
 		var country_score: float = 0.0
 
@@ -67,23 +75,17 @@ func strength_of_countries() -> Array[float]:
 			var province_score: float = 0.0
 
 			# Score for money income
-			match game.rules.province_income_option.selected_value():
-				GameRules.ProvinceIncome.RANDOM:
-					province_score += (
-							SCORE_WEIGHT_MONEY_INCOME
-							* game.rules.province_income_random_range.average()
-					)
-				GameRules.ProvinceIncome.CONSTANT:
-					province_score += (
-							SCORE_WEIGHT_MONEY_INCOME
-							* game.rules.province_income_constant.value
-					)
-				GameRules.ProvinceIncome.POPULATION:
-					province_score += (
-							SCORE_WEIGHT_MONEY_INCOME
-							* province.population().value
-							* game.rules.province_income_per_person.value
-					)
+			if has_constant_income:
+				province_score += (
+						SCORE_WEIGHT_MONEY_INCOME
+						* province.money_income().value
+				)
+			if population_income != null:
+				province_score += (
+						SCORE_WEIGHT_MONEY_INCOME
+						* province.population().value
+						* population_income.per_person
+				)
 
 			# Score for reinforcements
 			if game.rules.reinforcements_enabled:

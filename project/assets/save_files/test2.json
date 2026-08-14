@@ -41,6 +41,9 @@
 		},
 		"population_growth": {
 			"growth_rate": 0.48
+		},
+		"province_population_income": {
+			"per_person": 0.075
 		}
 	},
 	"version": "1",

@@ -191,7 +191,7 @@ func _update_income_money() -> void:
 	if _game == null or _province_visuals == null:
 		return
 	_income_money_label_update.income_money = (
-			IncomeMoney.new(_game.rules, _province_visuals.province)
+			IncomeMoney.new(_game, _province_visuals.province)
 	)
 
 

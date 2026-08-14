@@ -46,8 +46,18 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 					TurnOrderRandomization.new(), raw_dict
 			)
 		PopulationGrowth.KEY:
+			return _component_from_raw_data(PopulationGrowth.new(), raw_dict)
+		ProvinceConstantIncome.KEY:
 			return _component_from_raw_data(
-					PopulationGrowth.new(), raw_dict
+					ProvinceConstantIncome.new(), raw_dict
+			)
+		ProvincePopulationIncome.KEY:
+			return _component_from_raw_data(
+					ProvincePopulationIncome.new(), raw_dict
+			)
+		ProvinceIncomeRandomization.KEY:
+			return _component_from_raw_data(
+					ProvinceIncomeRandomization.new(), raw_dict
 			)
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)

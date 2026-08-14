@@ -41,10 +41,6 @@ func _apply(game: Game) -> void:
 		if is_starting_province:
 			province.population().value += _extra_starting_population
 
-		# Overwrite money income
-		if game.rules.province_income_override_enabled.value:
-			province.base_money_income().value = _province_base_income(game)
-
 		# Add starting fortress
 		if (
 				_is_starting_fortress_enabled and is_starting_province
@@ -108,17 +104,3 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	error = false
 	error_message = ""
-
-
-## Returns province income according to the game rules.
-func _province_base_income(game: Game) -> int:
-	match game.rules.province_income_option.selected_value():
-		GameRules.ProvinceIncome.RANDOM:
-			return game.rng.randi_range(
-					game.rules.province_income_random_min.value,
-					game.rules.province_income_random_max.value
-			)
-		GameRules.ProvinceIncome.CONSTANT:
-			return game.rules.province_income_constant.value
-		_:
-			return 0

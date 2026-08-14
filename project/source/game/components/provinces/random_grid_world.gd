@@ -10,6 +10,7 @@ const _GRID_SHAPE_KEY: String = "grid_shape"
 const _USE_NOISE_KEY: String = "use_noise"
 const _NOISE_FREQUENCY_KEY: String = "noise_frequency"
 const _NOISE_THRESHOLD_KEY: String = "noise_threshold"
+const _PROVINCE_MONEY_INCOME_KEY: String = "province_money_income"
 
 var grid_width: int = 1
 var grid_height: int = 1
@@ -17,6 +18,7 @@ var grid_shape_option: int = 0
 var use_noise: bool = false
 var noise_frequency: float = 1.0
 var noise_threshold: float = 0.0
+var province_money_income: int = 0
 
 
 func _init() -> void:
@@ -36,7 +38,8 @@ func _apply(game: Game) -> void:
 					grid_height,
 					use_noise,
 					noise_frequency,
-					noise_threshold
+					noise_threshold,
+					province_money_income
 			)
 		1:
 			SquareGridGeneration.new().apply(
@@ -45,7 +48,8 @@ func _apply(game: Game) -> void:
 					grid_height,
 					use_noise,
 					noise_frequency,
-					noise_threshold
+					noise_threshold,
+					province_money_income
 			)
 		_:
 			error = true
@@ -67,6 +71,8 @@ func to_raw_dict() -> Dictionary:
 		output[_NOISE_FREQUENCY_KEY] = noise_frequency
 	if noise_threshold != 0.0:
 		output[_NOISE_THRESHOLD_KEY] = noise_threshold
+	if province_money_income != 0:
+		output[_PROVINCE_MONEY_INCOME_KEY] = province_money_income
 	return output
 
 
@@ -93,6 +99,11 @@ func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _NOISE_THRESHOLD_KEY):
 		noise_threshold = ParseUtils.dictionary_float(
 				raw_dict, _NOISE_THRESHOLD_KEY
+		)
+
+	if ParseUtils.dictionary_has_number(raw_dict, _PROVINCE_MONEY_INCOME_KEY):
+		province_money_income = ParseUtils.dictionary_int(
+				raw_dict, _PROVINCE_MONEY_INCOME_KEY
 		)
 
 	error = false

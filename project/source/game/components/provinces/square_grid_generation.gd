@@ -12,16 +12,24 @@ func apply(
 		grid_height: int,
 		use_noise: bool,
 		noise_frequency: float,
-		noise_threshold: float
+		noise_threshold: float,
+		province_money_income: int
 ) -> void:
 	game.world.provinces.clear()
 
 	if use_noise:
 		_generate_provinces_with_noise(
-				game, grid_width, grid_height, noise_frequency, noise_threshold
+				game,
+				grid_width,
+				grid_height,
+				noise_frequency,
+				noise_threshold,
+				province_money_income
 		)
 	else:
-		_generate_provinces_without_noise(game, grid_width, grid_height)
+		_generate_provinces_without_noise(
+				game, grid_width, grid_height, province_money_income
+		)
 
 	game.world.limits().disable_custom_limits()
 
@@ -31,7 +39,8 @@ func _generate_provinces_with_noise(
 		grid_width: int,
 		grid_height: int,
 		noise_frequency: float,
-		noise_threshold: float
+		noise_threshold: float,
+		province_money_income: int
 ) -> void:
 	# Generate perlin noise
 	var perlin_noise := FastNoiseLite.new()
@@ -56,6 +65,7 @@ func _generate_provinces_with_noise(
 					province_position + square_length * 0.5 * Vector2.ONE
 			)
 			province.position_fortress += province.position_army_host
+			province.money_income().value = province_money_income
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([
@@ -91,7 +101,10 @@ func _generate_provinces_with_noise(
 
 
 func _generate_provinces_without_noise(
-		game: Game, grid_width: int, grid_height: int
+		game: Game,
+		grid_width: int,
+		grid_height: int,
+		province_money_income: int
 ) -> void:
 	var province_id: int = 0
 	var province_position := Vector2(0.0, world_limits_margin)
@@ -105,6 +118,7 @@ func _generate_provinces_without_noise(
 					province_position + square_length * 0.5 * Vector2.ONE
 			)
 			province.position_fortress += province.position_army_host
+			province.money_income().value = province_money_income
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([

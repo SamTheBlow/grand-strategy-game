@@ -48,9 +48,9 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 
 	# Money income
 	var item_income := settings_item.child_items[4] as ItemInt
-	item_income.value = province.base_money_income().value
+	item_income.value = province.money_income().value
 	item_income.value_changed.connect(_on_income_value_changed)
-	province.base_money_income().value_changed.connect(
+	province.money_income().value_changed.connect(
 			_on_province_income_changed.bind(item_income).unbind(1)
 	)
 
@@ -103,7 +103,7 @@ func _duplicate() -> void:
 	new_province.move_relative(_DUPLICATE_PROVINCE_OFFSET)
 	new_province.owner_country = province.owner_country
 	new_province.population().value = province.population().value
-	new_province.base_money_income().value = province.base_money_income().value
+	new_province.money_income().value = province.money_income().value
 
 	for building in province.buildings.list():
 		new_province.buildings.add(Building.new(building.data, province.id))
@@ -165,9 +165,9 @@ func _on_population_value_changed(new_value: int) -> void:
 func _on_income_value_changed(new_value: int) -> void:
 	_apply_undo_redo_property(
 			"Change province money income",
-			province.base_money_income(),
+			province.money_income(),
 			&"value",
-			province.base_money_income().value,
+			province.money_income().value,
 			new_value
 	)
 
@@ -212,7 +212,7 @@ func _on_province_population_changed(item: ItemInt) -> void:
 
 func _on_province_income_changed(item: ItemInt) -> void:
 	_set_setting_no_signal(
-			item, _on_income_value_changed, province.base_money_income().value
+			item, _on_income_value_changed, province.money_income().value
 	)
 
 

@@ -15,12 +15,6 @@ enum ReinforcementsOption {
 	POPULATION = 2,
 }
 
-enum ProvinceIncome {
-	RANDOM = 0,
-	CONSTANT = 1,
-	POPULATION = 2,
-}
-
 enum GameOverProvincesOwnedOption {
 	DISABLED = 0,
 	CONSTANT = 1,
@@ -49,12 +43,6 @@ const RULE_NAMES: Array[String] = [
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
-	"province_income_override_enabled",
-	"province_income_option",
-	"province_income_random_min",
-	"province_income_random_max",
-	"province_income_constant",
-	"province_income_per_person",
 	"minimum_army_size",
 	"maximum_army_size",
 	"global_attacker_efficiency",
@@ -121,12 +109,6 @@ var reinforcements_per_person := ItemFloat.new()
 var recruitment_enabled := ItemBool.new()
 var recruitment_money_per_unit := ItemFloat.new()
 var recruitment_population_per_unit := ItemFloat.new()
-var province_income_override_enabled := ItemBool.new()
-var province_income_option := ItemOptions.new()
-var province_income_random_min := ItemInt.new()
-var province_income_random_max := ItemInt.new()
-var province_income_constant := ItemInt.new()
-var province_income_per_person := ItemFloat.new()
 var minimum_army_size := ItemInt.new()
 var maximum_army_size := ItemInt.new()
 var global_attacker_efficiency := ItemFloat.new()
@@ -164,7 +146,6 @@ var _category_diplomacy_fighting := PropertyTreeItem.new()
 
 # 4.0 Backwards compatibility
 var reinforcements_random_range := ItemRangeInt.new()
-var province_income_random_range := ItemRangeInt.new()
 
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
@@ -277,45 +258,6 @@ func _init() -> void:
 	recruitment_population_per_unit.minimum = 0
 	recruitment_population_per_unit.has_minimum = true
 	recruitment_population_per_unit.value = 1.0
-
-	province_income_override_enabled.text = "Enforce specific province income"
-	province_income_override_enabled.value = true
-	province_income_override_enabled.child_items = [
-		province_income_option,
-	]
-	province_income_override_enabled.child_items_on = [0]
-
-	province_income_option.text = "Income from provinces"
-	province_income_option.options = [
-		"Random", "Constant", "Proportional to population size"
-	]
-	province_income_option.selected_index = 2
-	province_income_option.child_items = [
-		province_income_random_range,
-		province_income_constant,
-		province_income_per_person,
-	]
-	province_income_option.option_filters = [[0], [1], [2]]
-
-	province_income_random_min.text = "Minimum"
-	province_income_random_min.minimum = 0
-	province_income_random_min.has_minimum = true
-	province_income_random_min.value = 10
-
-	province_income_random_max.text = "Maximum"
-	province_income_random_max.minimum = 0
-	province_income_random_max.has_minimum = true
-	province_income_random_max.value = 100
-
-	province_income_constant.text = "Amount"
-	province_income_constant.minimum = 0
-	province_income_constant.has_minimum = true
-	province_income_constant.value = 100
-
-	province_income_per_person.text = "Income per person"
-	province_income_per_person.minimum = 0
-	province_income_per_person.has_minimum = true
-	province_income_per_person.value = 0.075
 
 	minimum_army_size.text = "Minimum army size"
 	minimum_army_size.minimum = 1
@@ -497,18 +439,10 @@ func _init() -> void:
 	reinforcements_random_range.min_value = 10
 	reinforcements_random_range.max_value = 40
 
-	province_income_random_range.min_item = province_income_random_min
-	province_income_random_range.max_item = province_income_random_max
-	province_income_random_range.minimum = 0
-	province_income_random_range.has_minimum = true
-	province_income_random_range.min_value = 10
-	province_income_random_range.max_value = 100
-
 	root_rules = [
 		rng_seed_override_enabled,
 		_category_game_over,
 		_category_recruitment,
-		province_income_override_enabled,
 		minimum_army_size,
 		maximum_army_size,
 		_category_battle,

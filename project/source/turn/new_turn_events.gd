@@ -12,4 +12,3 @@ func _init(game: Game) -> void:
 func _on_turn_changed(_turn: int) -> void:
 	for province in _game.world.provinces.list():
 		ArmyReinforcements.apply(_game, province)
-		IncomeEachTurn.apply(_game.rules, province)

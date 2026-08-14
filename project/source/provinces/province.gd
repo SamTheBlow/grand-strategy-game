@@ -58,7 +58,7 @@ var _linked_province_ids: Array[int] = []
 var _polygon := PackedVector2ArrayWithSignals.new(default_shape())
 
 var _population := IntWithSignals.new(0, true)
-var _base_money_income := IntWithSignals.new()
+var _money_income := IntWithSignals.new()
 
 
 func _init() -> void:
@@ -143,8 +143,8 @@ func population() -> IntWithSignals:
 	return _population
 
 
-func base_money_income() -> IntWithSignals:
-	return _base_money_income
+func money_income() -> IntWithSignals:
+	return _money_income
 
 
 ## Returns true if all the following conditions are met:
