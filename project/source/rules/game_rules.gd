@@ -25,24 +25,6 @@ const RULE_NAMES: Array[String] = [
 	"global_attacker_efficiency",
 	"global_defender_efficiency",
 	"battle_algorithm_option",
-	"diplomacy_presets_option",
-	"starts_with_random_relationship_preset",
-	"grants_military_access_default",
-	"can_grant_military_access",
-	"can_revoke_military_access",
-	"can_ask_for_military_access",
-	"is_military_access_mutual",
-	"is_military_access_revoked_when_fighting",
-	"is_trespassing_default",
-	"can_enable_trespassing",
-	"can_disable_trespassing",
-	"can_ask_to_stop_trespassing",
-	"automatically_fight_trespassers",
-	"is_fighting_default",
-	"can_enable_fighting",
-	"can_disable_fighting",
-	"can_ask_to_stop_fighting",
-	"automatically_fight_back",
 ]
 
 # TODO duplicate the resources and/or change how they're loaded entirely
@@ -79,33 +61,9 @@ var maximum_army_size := ItemInt.new()
 var global_attacker_efficiency := ItemFloat.new()
 var global_defender_efficiency := ItemFloat.new()
 var battle_algorithm_option := ItemOptions.new()
-var diplomacy_presets_option := ItemOptions.new()
-var starts_with_random_relationship_preset := ItemBool.new()
-var grants_military_access_default := ItemBool.new()
-var can_grant_military_access := ItemBool.new()
-var can_revoke_military_access := ItemBool.new()
-var can_ask_for_military_access := ItemBool.new()
-var is_military_access_mutual := ItemBool.new()
-var is_military_access_revoked_when_fighting := ItemBool.new()
-var is_trespassing_default := ItemBool.new()
-var can_enable_trespassing := ItemBool.new()
-var can_disable_trespassing := ItemBool.new()
-var can_ask_to_stop_trespassing := ItemBool.new()
-var automatically_fight_trespassers := ItemBool.new()
-var is_fighting_default := ItemBool.new()
-var can_enable_fighting := ItemBool.new()
-var can_disable_fighting := ItemBool.new()
-var can_ask_to_stop_fighting := ItemBool.new()
-var automatically_fight_back := ItemBool.new()
-
 # Categories
 var _category_recruitment := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
-var _category_diplomacy := PropertyTreeItem.new()
-var _category_diplomacy_data := PropertyTreeItem.new()
-var _category_diplomacy_military_access := PropertyTreeItem.new()
-var _category_diplomacy_trespassing := PropertyTreeItem.new()
-var _category_diplomacy_fighting := PropertyTreeItem.new()
 
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
@@ -170,80 +128,6 @@ func _init() -> void:
 	]
 	battle_algorithm_option.selected_index = 0
 
-	diplomacy_presets_option.text = "Default preset"
-	diplomacy_presets_option.options = [
-		"Don't use presets", "Allied", "Neutral", "At war"
-	]
-	diplomacy_presets_option.selected_index = 2
-	diplomacy_presets_option.child_items = [
-		starts_with_random_relationship_preset,
-		starts_with_random_relationship_preset,
-		starts_with_random_relationship_preset,
-	]
-	diplomacy_presets_option.option_filters = [[], [0], [1], [2]]
-
-	starts_with_random_relationship_preset.text = (
-			"Countries start with a random relationship preset"
-	)
-	starts_with_random_relationship_preset.value = false
-
-	grants_military_access_default.text = "Grant military access by default"
-	grants_military_access_default.value = false
-
-	can_grant_military_access.text = "Can manually grant military access"
-	can_grant_military_access.value = false
-
-	can_revoke_military_access.text = "Can manually revoke military access"
-	can_revoke_military_access.value = false
-
-	can_ask_for_military_access.text = "Can ask for military access"
-	can_ask_for_military_access.value = false
-
-	is_military_access_mutual.text = (
-			"Countries automatically grant military access"
-			+ " to whoever grants it to them"
-	)
-	is_military_access_mutual.value = false
-
-	is_military_access_revoked_when_fighting.text = (
-			"Automatically revoke military access when fighting"
-	)
-	is_military_access_revoked_when_fighting.value = true
-
-	is_trespassing_default.text = "Trespass in other countries by default"
-	is_trespassing_default.value = true
-
-	can_enable_trespassing.text = "Can manually start trespassing"
-	can_enable_trespassing.value = false
-
-	can_disable_trespassing.text = "Can manually stop trespassing"
-	can_disable_trespassing.value = false
-
-	can_ask_to_stop_trespassing.text = "Can ask to stop trespassing"
-	can_ask_to_stop_trespassing.value = false
-
-	automatically_fight_trespassers.text = (
-			"Automatically start fighting trespassers"
-	)
-	automatically_fight_trespassers.value = true
-
-	is_fighting_default.text = "Fight other countries by default"
-	is_fighting_default.value = true
-
-	can_enable_fighting.text = "Can manually start fighting"
-	can_enable_fighting.value = false
-
-	can_disable_fighting.text = "Can manually stop fighting"
-	can_disable_fighting.value = false
-
-	can_ask_to_stop_fighting.text = "Can ask to stop fighting"
-	can_ask_to_stop_fighting.value = false
-
-	automatically_fight_back.text = (
-			"Countries automatically start fighting with whoever fights them"
-	)
-	automatically_fight_back.value = true
-
 	_category_recruitment.text = "Recruitment"
 	_category_recruitment.child_items = [
 		recruitment_enabled,
@@ -256,56 +140,12 @@ func _init() -> void:
 		battle_algorithm_option,
 	]
 
-	_category_diplomacy.text = "Diplomacy"
-	_category_diplomacy.child_items = [
-		diplomacy_presets_option,
-		_category_diplomacy_data,
-	]
-
-	_category_diplomacy_data.text = (
-			"Relationship data (these may be overridden by presets)"
-	)
-	_category_diplomacy_data.child_items = [
-		_category_diplomacy_military_access,
-		_category_diplomacy_trespassing,
-		_category_diplomacy_fighting,
-	]
-
-	_category_diplomacy_military_access.text = "Military access"
-	_category_diplomacy_military_access.child_items = [
-		grants_military_access_default,
-		can_grant_military_access,
-		can_revoke_military_access,
-		can_ask_for_military_access,
-		is_military_access_mutual,
-		is_military_access_revoked_when_fighting,
-	]
-
-	_category_diplomacy_trespassing.text = "Trespassing"
-	_category_diplomacy_trespassing.child_items = [
-		is_trespassing_default,
-		can_enable_trespassing,
-		can_disable_trespassing,
-		can_ask_to_stop_trespassing,
-		automatically_fight_trespassers,
-	]
-
-	_category_diplomacy_fighting.text = "Fighting"
-	_category_diplomacy_fighting.child_items = [
-		is_fighting_default,
-		can_enable_fighting,
-		can_disable_fighting,
-		can_ask_to_stop_fighting,
-		automatically_fight_back,
-	]
-
 	root_rules = [
 		rng_seed_override_enabled,
 		_category_recruitment,
 		minimum_army_size,
 		maximum_army_size,
 		_category_battle,
-		_category_diplomacy,
 	]
 
 	_connect_signals()
@@ -335,10 +175,6 @@ func copy() -> GameRules:
 func lock() -> void:
 	for rule in root_rules:
 		rule.lock()
-
-
-func is_diplomacy_presets_enabled() -> bool:
-	return diplomacy_presets_option.selected_value() != 0
 
 
 func _connect_signals() -> void:

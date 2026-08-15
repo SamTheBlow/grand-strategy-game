@@ -104,7 +104,6 @@ func setup_for_play() -> void:
 	# Add other components
 	_components.append_array([
 		battle_detection,
-		DiplomacyRelationshipAutoChanges.new(self),
 		AutoEndTurn.new(self),
 	])
 

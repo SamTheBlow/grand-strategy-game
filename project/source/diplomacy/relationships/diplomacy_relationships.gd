@@ -27,11 +27,12 @@ func add(
 		push_error("This country already has relationship data.")
 		return
 
+	var settings: DiplomacySettings = _settings()
 	var relationship := DiplomacyRelationship.new(
 			_source_country,
 			country,
-			_new_default_data(_game.rules).merged(relationship_data, true),
-			_new_base_actions(_game.rules)
+			_new_default_data(settings).merged(relationship_data, true),
+			_new_base_actions(settings)
 	)
 	relationship.diplomacy_presets = _game.rules.diplomatic_presets
 	relationship.diplomacy_actions = _game.rules.diplomatic_actions
@@ -60,51 +61,58 @@ func clear() -> void:
 	list.clear()
 
 
+## May return null.
+func _settings() -> DiplomacySettings:
+	return _game.components.get(DiplomacySettings.KEY) as DiplomacySettings
+
+
 ## Returns a new dictionary containing the default data for
-## new relationships, depending on the given game rules.
-static func _new_default_data(rules: GameRules) -> Dictionary:
-	var output: Dictionary = {
-		DiplomacyRelationship.GRANTS_MILITARY_ACCESS_KEY:
-				rules.grants_military_access_default.value,
-		DiplomacyRelationship.IS_TRESPASSING_KEY:
-				rules.is_trespassing_default.value,
-		DiplomacyRelationship.IS_FIGHTING_KEY:
-				rules.is_fighting_default.value,
+## new relationships, according to given settings.
+static func _new_default_data(settings: DiplomacySettings) -> Dictionary:
+	var grants_access: bool = false
+	var is_trespassing: bool = false
+	var is_fighting: bool = false
+	var preset_id: int = DiplomacyRelationship.PRESET_ID_DEFAULT
+	if settings != null:
+		grants_access = settings.grants_military_access_default
+		is_trespassing = settings.is_trespassing_default
+		is_fighting = settings.is_fighting_default
+		if settings.is_presets_enabled():
+			preset_id = settings.preset_option
+
+	return {
+		DiplomacyRelationship.GRANTS_MILITARY_ACCESS_KEY: grants_access,
+		DiplomacyRelationship.IS_TRESPASSING_KEY: is_trespassing,
+		DiplomacyRelationship.IS_FIGHTING_KEY: is_fighting,
+		DiplomacyRelationship.PRESET_ID_KEY: preset_id,
 	}
-
-	if rules.is_diplomacy_presets_enabled():
-		# ATTENTION: This assumes that the rule's value is the preset's id.
-		output.merge({
-			DiplomacyRelationship.PRESET_ID_KEY:
-				rules.diplomacy_presets_option.selected_value()
-		})
-
-	return output
 
 
 ## Returns a new array containing the ID of each diplomatic action
 ## that will be available to all countries by default.
-static func _new_base_actions(rules: GameRules) -> Array[int]:
+static func _new_base_actions(settings: DiplomacySettings) -> Array[int]:
 	var output: Array[int] = []
+	if settings == null:
+		return output
 
 	# ATTENTION TODO hard coded values for diplomacy action IDs
-	if rules.can_grant_military_access.value:
+	if settings.can_grant_military_access:
 		output.append(5)
-	if rules.can_revoke_military_access.value:
+	if settings.can_revoke_military_access:
 		output.append(6)
-	if rules.can_ask_for_military_access.value:
+	if settings.can_ask_for_military_access:
 		output.append(7)
-	if rules.can_enable_trespassing.value:
+	if settings.can_enable_trespassing:
 		output.append(8)
-	if rules.can_disable_trespassing.value:
+	if settings.can_disable_trespassing:
 		output.append(9)
-	if rules.can_ask_to_stop_trespassing.value:
+	if settings.can_ask_to_stop_trespassing:
 		output.append(10)
-	if rules.can_enable_fighting.value:
+	if settings.can_enable_fighting:
 		output.append(11)
-	if rules.can_disable_fighting.value:
+	if settings.can_disable_fighting:
 		output.append(12)
-	if rules.can_ask_to_stop_fighting.value:
+	if settings.can_ask_to_stop_fighting:
 		output.append(13)
 
 	return output

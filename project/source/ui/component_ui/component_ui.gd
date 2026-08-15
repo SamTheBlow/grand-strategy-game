@@ -150,8 +150,12 @@ func _update_nodes_game() -> void:
 
 		_build_fortress_button.game = _game
 		_recruit_button.game = _game
+
+		var settings := (
+				_game.components.get(DiplomacySettings.KEY) as DiplomacySettings
+		)
 		_relationship_preset_label_update.is_disabled = (
-				not _game.rules.is_diplomacy_presets_enabled()
+				settings == null or not settings.is_presets_enabled()
 		)
 
 		_update_income_money()

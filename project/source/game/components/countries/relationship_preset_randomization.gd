@@ -16,10 +16,10 @@ func register(game: Game) -> void:
 
 
 func _apply(game: Game) -> void:
-	if not (
-			game.rules.is_diplomacy_presets_enabled()
-			and game.rules.starts_with_random_relationship_preset.value
-	):
+	var settings := (
+			game.components.get(DiplomacySettings.KEY) as DiplomacySettings
+	)
+	if settings == null or not settings.is_presets_enabled():
 		return
 
 	var country_list: Array[Country] = game.countries.list()

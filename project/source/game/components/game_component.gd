@@ -69,6 +69,8 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(
 					MilitaryAccessLossBehavior.new(), raw_dict
 			)
+		DiplomacySettings.KEY:
+			return _component_from_raw_data(DiplomacySettings.new(), raw_dict)
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)
 

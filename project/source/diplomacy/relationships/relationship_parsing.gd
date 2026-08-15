@@ -142,8 +142,12 @@ static func _load_relationship_from_raw_data(
 
 
 static func to_raw_array(relationships: DiplomacyRelationships) -> Array:
+	var settings := (
+			relationships._game.components.get(DiplomacySettings.KEY)
+			as DiplomacySettings
+	)
 	var default_relationship_data: Dictionary = (
-			DiplomacyRelationships._new_default_data(relationships._game.rules)
+			DiplomacyRelationships._new_default_data(settings)
 	)
 
 	var output: Array = []
