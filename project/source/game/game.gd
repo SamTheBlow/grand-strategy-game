@@ -30,7 +30,7 @@ var game_players := GamePlayers.new()
 var turn := GameTurn.new(self)
 
 ## Do not overwrite!
-var turn_change_iteration: TurnChangeIteration
+var turn_change_iteration := TurnChangeIteration.new()
 
 ## Do not overwrite!
 var world := GameWorld.new(self)
@@ -58,8 +58,6 @@ var components: Dictionary[String, GameComponent] = {}
 
 
 func _init() -> void:
-	turn_change_iteration = TurnChangeIteration.new(self)
-
 	modifier_request.add_provider(self)
 
 	for province in world.provinces.list():
@@ -96,15 +94,6 @@ func setup_for_play() -> void:
 	rules.lock()
 	_setup_global_modifiers()
 	_register_components()
-
-	# Add turn limit component
-	if rules.turn_limit_enabled.value:
-		var turn_limit := TurnLimit.new()
-		turn_limit.final_turn = rules.turn_limit.value
-		# TODO bad code: private function
-		turn.turn_changed.connect(turn_limit._on_new_turn)
-		turn_limit.game_over.connect(end_game)
-		_components.append(turn_limit)
 
 	# Add province control goal component
 	var province_control_goal := ProvinceControlGoal.new(self)
@@ -153,7 +142,7 @@ func start() -> void:
 	turn.start()
 
 
-## Marks game over.
+## Marks game over. No effect if the game is already over.
 func end_game() -> void:
 	if _game_state != GameState.ONGOING:
 		return
@@ -175,6 +164,10 @@ func _register_components() -> void:
 	)
 	for component in sorted_list:
 		component.register(self)
+
+	# Register this last so that the turn limit check occurs first
+	# (TODO this is hacky)
+	turn_change_iteration.register(self)
 
 
 ## Builds the game's global [Modifier]s according to the [GameRules].

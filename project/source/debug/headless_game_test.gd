@@ -53,8 +53,7 @@ func _initialize() -> void:
 	_project = parse_result.result_project
 
 	# Add turn limit
-	_project.game.rules.turn_limit_enabled.value = true
-	_project.game.rules.turn_limit.value = turn_limit
+	_project.game.components[TurnLimit.KEY] = TurnLimit.new(turn_limit)
 
 	_print_with_time("Running the game...")
 	_project.game.turn.turn_changed.connect(_on_turn_changed)

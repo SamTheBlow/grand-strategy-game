@@ -4,7 +4,7 @@ class_name TurnChangeIteration
 signal turn_changed_province(province: Province)
 
 
-func _init(game: Game) -> void:
+func register(game: Game) -> void:
 	game.turn.turn_changed.connect(_on_turn_changed.bind(game).unbind(1))
 
 
