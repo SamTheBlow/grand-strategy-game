@@ -1,42 +1,62 @@
 class_name MilitaryAccessLossBehavior
-## Class responsible for what to do when military access is lost.
+extends GameComponent
+## Handles what to do to armies that lose military access in a province.
 ##
-## No setup needed.
+## Option 0: no effect. (Default)
+## Option 1: delete the armies.
+## Option 2: teleport the armies to the nearest valid location.
+
+const KEY: String = "military_access_loss_behavior"
+
+const _OPTION_KEY: String = "option"
+
+## What to do to the armies that lose military access.
+## 0 = no effect, 1 = delete them, 2 = teleport them out.
+var option: int = 0
 
 var _game: Game
 
 
-## Note that given game must already have its countries and world loaded.
-func _init(game: Game) -> void:
+func _init() -> void:
+	priority_index = 0
+
+
+func register(game: Game) -> void:
 	_game = game
 
-	if game.countries == null:
-		push_error("Countries is null.")
-		return
-	if game.world == null:
-		push_error("World is null.")
-		return
-
 	for country in game.countries.list():
-		_on_country_added(country)
+		_connect_country(country)
 
-	game.countries.added.connect(_on_country_added)
-	game.countries.removed.connect(_on_country_removed)
+	game.countries.added.connect(_connect_country)
+	game.countries.removed.connect(_disconnect_country)
 	game.world.provinces.province_owner_changed.connect(
 			_on_province_owner_changed
 	)
 
 
-func _on_country_added(country: Country) -> void:
-	country.relationships.relationship_created.connect(
-			_on_relationship_created
-	)
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
+	if option != 0:
+		output[_OPTION_KEY] = option
+	return output
 
 
-func _on_country_removed(country: Country) -> void:
-	country.relationships.relationship_created.disconnect(
-			_on_relationship_created
-	)
+func _load_settings(raw_dict: Dictionary) -> void:
+	if ParseUtils.dictionary_has_number(raw_dict, _OPTION_KEY):
+		option = clampi(ParseUtils.dictionary_int(raw_dict, _OPTION_KEY), 0, 2)
+	else:
+		option = 0
+
+	error = false
+	error_message = ""
+
+
+func _connect_country(country: Country) -> void:
+	country.relationships.relationship_created.connect(_connect_relationship)
+
+
+func _disconnect_country(country: Country) -> void:
+	country.relationships.relationship_created.disconnect(_connect_relationship)
 	for other_country in country.relationships.list:
 		(
 				country.relationships.list[other_country]
@@ -45,38 +65,14 @@ func _on_country_removed(country: Country) -> void:
 		)
 
 
-func _on_relationship_created(relationship: DiplomacyRelationship) -> void:
+func _connect_relationship(relationship: DiplomacyRelationship) -> void:
 	relationship.military_access_changed.connect(_on_military_access_changed)
 
 
-func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
-	if relationship.grants_military_access():
-		return
-
-	var affected_provinces: Array[Province] = (
-			_game.world.provinces_of_each_country
-			.dictionary[relationship.source_country].list.keys()
-	)
-	_apply([relationship.recipient_country], affected_provinces)
-
-
-func _on_province_owner_changed(province: Province) -> void:
-	var affected_countries: Array[Country] = []
-	for country in _game.countries.list():
-		if not country.has_permission_to_move_into_country(
-				province.owner_country
-		):
-			affected_countries.append(country)
-
-	_apply(affected_countries, [province])
-
-
 func _apply(
-		affected_countries: Array[Country],
-		affected_provinces: Array[Province]
+		affected_countries: Array[Country], affected_provinces: Array[Province]
 ) -> void:
-	# TODO bad code: hard coded values
-	match _game.rules.military_access_loss_behavior_option.selected_value():
+	match option:
 		0:
 			pass
 		1:
@@ -88,8 +84,7 @@ func _apply(
 
 
 func _delete_armies(
-		affected_countries: Array[Country],
-		affected_provinces: Array[Province]
+		affected_countries: Array[Country], affected_provinces: Array[Province]
 ) -> void:
 	for affected_country in affected_countries:
 		for province in affected_provinces:
@@ -102,8 +97,7 @@ func _delete_armies(
 
 
 func _teleport_armies_out(
-		affected_countries: Array[Country],
-		affected_provinces: Array[Province]
+		affected_countries: Array[Country], affected_provinces: Array[Province]
 ) -> void:
 	for affected_country in affected_countries:
 		for affected_province in affected_provinces:
@@ -151,3 +145,25 @@ func _teleport_armies_out(
 						.dictionary[province_to_move_to.id].ordered_list,
 						_game.turn.playing_country()
 				)
+
+
+func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
+	if relationship.grants_military_access():
+		return
+
+	var affected_provinces: Array[Province] = (
+			_game.world.provinces_of_each_country
+			.dictionary[relationship.source_country].list.keys()
+	)
+	_apply([relationship.recipient_country], affected_provinces)
+
+
+func _on_province_owner_changed(province: Province) -> void:
+	var affected_countries: Array[Country] = []
+	for country in _game.countries.list():
+		if not country.has_permission_to_move_into_country(
+				province.owner_country
+		):
+			affected_countries.append(country)
+
+	_apply(affected_countries, [province])

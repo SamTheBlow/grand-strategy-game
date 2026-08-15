@@ -33,7 +33,6 @@ const RULE_NAMES: Array[String] = [
 	"can_ask_for_military_access",
 	"is_military_access_mutual",
 	"is_military_access_revoked_when_fighting",
-	"military_access_loss_behavior_option",
 	"is_trespassing_default",
 	"can_enable_trespassing",
 	"can_disable_trespassing",
@@ -88,7 +87,6 @@ var can_revoke_military_access := ItemBool.new()
 var can_ask_for_military_access := ItemBool.new()
 var is_military_access_mutual := ItemBool.new()
 var is_military_access_revoked_when_fighting := ItemBool.new()
-var military_access_loss_behavior_option := ItemOptions.new()
 var is_trespassing_default := ItemBool.new()
 var can_enable_trespassing := ItemBool.new()
 var can_disable_trespassing := ItemBool.new()
@@ -212,16 +210,6 @@ func _init() -> void:
 	)
 	is_military_access_revoked_when_fighting.value = true
 
-	military_access_loss_behavior_option.text = (
-			"What to do to armies that no longer have military access"
-	)
-	military_access_loss_behavior_option.options = [
-		"No effect",
-		"Delete the armies",
-		"Teleport the armies to the nearest valid location",
-	]
-	military_access_loss_behavior_option.selected_index = 0
-
 	is_trespassing_default.text = "Trespass in other countries by default"
 	is_trespassing_default.value = true
 
@@ -291,7 +279,6 @@ func _init() -> void:
 		can_ask_for_military_access,
 		is_military_access_mutual,
 		is_military_access_revoked_when_fighting,
-		military_access_loss_behavior_option,
 	]
 
 	_category_diplomacy_trespassing.text = "Trespassing"

@@ -65,6 +65,10 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(TurnLimit.new(), raw_dict)
 		ProvinceControlGoal.KEY:
 			return _component_from_raw_data(ProvinceControlGoal.new(), raw_dict)
+		MilitaryAccessLossBehavior.KEY:
+			return _component_from_raw_data(
+					MilitaryAccessLossBehavior.new(), raw_dict
+			)
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)
 
