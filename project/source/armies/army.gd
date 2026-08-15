@@ -154,20 +154,6 @@ func is_trespassing(provinces: Provinces) -> bool:
 	)
 
 
-## How much in-game money it would cost to recruit given troop count.
-static func money_cost(troop_count: int, rules: GameRules) -> int:
-	return ResourceCost.new(
-			"Money", rules.recruitment_money_per_unit.value
-	).cost_fori(troop_count)
-
-
-## How much [Population] it would cost to recruit given troop count.
-static func population_cost(troop_count: int, rules: GameRules) -> int:
-	return ResourceCost.new(
-			"Population", rules.recruitment_population_per_unit.value
-	).cost_fori(troop_count)
-
-
 func _on_playing_country_changed(country: Country) -> void:
 	if country == owner_country:
 		_movements_made = 0

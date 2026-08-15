@@ -17,9 +17,6 @@ signal rule_changed(rule_name: String, rule_item: PropertyTreeItem)
 const RULE_NAMES: Array[String] = [
 	"rng_seed_override_enabled",
 	"rng_seed",
-	"recruitment_enabled",
-	"recruitment_money_per_unit",
-	"recruitment_population_per_unit",
 	"minimum_army_size",
 	"maximum_army_size",
 	"global_attacker_efficiency",
@@ -53,16 +50,12 @@ var battle: Battle = preload("uid://cuylrn1evjy6r")
 # Individual rules
 var rng_seed_override_enabled := ItemBool.new()
 var rng_seed := ItemString.new()
-var recruitment_enabled := ItemBool.new()
-var recruitment_money_per_unit := ItemFloat.new()
-var recruitment_population_per_unit := ItemFloat.new()
 var minimum_army_size := ItemInt.new()
 var maximum_army_size := ItemInt.new()
 var global_attacker_efficiency := ItemFloat.new()
 var global_defender_efficiency := ItemFloat.new()
 var battle_algorithm_option := ItemOptions.new()
 # Categories
-var _category_recruitment := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
 
 ## The rule items that are not a subrule of any other rule.
@@ -83,24 +76,6 @@ func _init() -> void:
 	rng_seed.text = "Seed"
 	rng_seed.placeholder_text = "(Random)"
 	rng_seed.value = ""
-
-	recruitment_enabled.text = "Can recruit new armies"
-	recruitment_enabled.value = true
-	recruitment_enabled.child_items = [
-		recruitment_money_per_unit,
-		recruitment_population_per_unit,
-	]
-	recruitment_enabled.child_items_on = [0, 1]
-
-	recruitment_money_per_unit.text = "Money cost per unit"
-	recruitment_money_per_unit.minimum = 0
-	recruitment_money_per_unit.has_minimum = true
-	recruitment_money_per_unit.value = 0.1
-
-	recruitment_population_per_unit.text = "Population cost per unit"
-	recruitment_population_per_unit.minimum = 0
-	recruitment_population_per_unit.has_minimum = true
-	recruitment_population_per_unit.value = 1.0
 
 	minimum_army_size.text = "Minimum army size"
 	minimum_army_size.minimum = 1
@@ -128,11 +103,6 @@ func _init() -> void:
 	]
 	battle_algorithm_option.selected_index = 0
 
-	_category_recruitment.text = "Recruitment"
-	_category_recruitment.child_items = [
-		recruitment_enabled,
-	]
-
 	_category_battle.text = "Battle"
 	_category_battle.child_items = [
 		global_attacker_efficiency,
@@ -142,7 +112,6 @@ func _init() -> void:
 
 	root_rules = [
 		rng_seed_override_enabled,
-		_category_recruitment,
 		minimum_army_size,
 		maximum_army_size,
 		_category_battle,

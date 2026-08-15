@@ -193,6 +193,10 @@ func _open_build_fortress_popup(province: Province) -> void:
 
 ## Opens the popup that appears when you want to recruit a new army.
 func _open_recruitment_popup(province: Province) -> void:
+	var recruitment: ArmyRecruitment = ArmyRecruitment.in_game(game)
+	if recruitment == null:
+		return
+
 	var recruitment_popup := (
 			recruitment_scene.instantiate() as RecruitmentPopup
 	)
@@ -203,14 +207,8 @@ func _open_recruitment_popup(province: Province) -> void:
 			game.world.provinces,
 			province.id,
 			[
-				ResourceCost.new(
-						"Population",
-						game.rules.recruitment_population_per_unit.value
-				),
-				ResourceCost.new(
-						"Money",
-						game.rules.recruitment_money_per_unit.value
-				)
+				ResourceCost.new("Population", recruitment.population_per_unit),
+				ResourceCost.new("Money", recruitment.money_per_unit)
 			],
 			recruitment_limits.minimum(),
 			recruitment_limits.maximum()

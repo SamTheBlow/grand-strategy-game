@@ -19,6 +19,11 @@ func _init(province_id: int, number_of_troops: int, new_army_id: int) -> void:
 
 
 func apply_to(game: Game, player: GamePlayer) -> void:
+	var recruitment: ArmyRecruitment = ArmyRecruitment.in_game(game)
+	if recruitment == null:
+		push_warning("Tried to recruit troops, but recruitment is disabled!")
+		return
+
 	var your_country: Country = player.playing_country
 	var province: Province = (
 			game.world.provinces.province_from_id(_province_id)
@@ -46,9 +51,9 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	your_country.money -= Army.money_cost(_number_of_troops, game.rules)
+	your_country.money -= recruitment.money_cost(_number_of_troops)
 	province.population().value -= (
-			Army.population_cost(_number_of_troops, game.rules)
+			recruitment.population_cost(_number_of_troops)
 	)
 
 	# If you already have an active army in this province, increase its size.

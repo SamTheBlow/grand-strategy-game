@@ -107,6 +107,10 @@
 		},
 		"relationship_preset_default": {
 			"preset_id": 2
+		},
+		"army_recruitment": {
+			"money_per_unit": 0.1,
+			"population_per_unit": 1.0
 		}
 	},
 	"version": "1",
