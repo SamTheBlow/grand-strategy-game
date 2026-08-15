@@ -9,12 +9,6 @@ class_name GameRules
 
 signal rule_changed(rule_name: String, rule_item: PropertyTreeItem)
 
-enum GameOverProvincesOwnedOption {
-	DISABLED = 0,
-	CONSTANT = 1,
-	PERCENTAGE = 2,
-}
-
 ## All of the individual rules.
 ## They must all point to a property in this class of type [PropertyTreeItem],
 ## and all of these [PropertyTreeItem]s must have a "value" property
@@ -23,9 +17,6 @@ enum GameOverProvincesOwnedOption {
 const RULE_NAMES: Array[String] = [
 	"rng_seed_override_enabled",
 	"rng_seed",
-	"game_over_provinces_owned_option",
-	"game_over_provinces_owned_constant",
-	"game_over_provinces_owned_percentage",
 	"recruitment_enabled",
 	"recruitment_money_per_unit",
 	"recruitment_population_per_unit",
@@ -81,9 +72,6 @@ var battle: Battle = preload("uid://cuylrn1evjy6r")
 # Individual rules
 var rng_seed_override_enabled := ItemBool.new()
 var rng_seed := ItemString.new()
-var game_over_provinces_owned_option := ItemOptions.new()
-var game_over_provinces_owned_constant := ItemInt.new()
-var game_over_provinces_owned_percentage := ItemFloat.new()
 var recruitment_enabled := ItemBool.new()
 var recruitment_money_per_unit := ItemFloat.new()
 var recruitment_population_per_unit := ItemFloat.new()
@@ -113,7 +101,6 @@ var can_ask_to_stop_fighting := ItemBool.new()
 var automatically_fight_back := ItemBool.new()
 
 # Categories
-var _category_game_over := PropertyTreeItem.new()
 var _category_recruitment := PropertyTreeItem.new()
 var _category_battle := PropertyTreeItem.new()
 var _category_diplomacy := PropertyTreeItem.new()
@@ -140,32 +127,6 @@ func _init() -> void:
 	rng_seed.text = "Seed"
 	rng_seed.placeholder_text = "(Random)"
 	rng_seed.value = ""
-
-	game_over_provinces_owned_option.text = "Number of controlled provinces"
-	game_over_provinces_owned_option.options = [
-		"Disabled",
-		"Constant",
-		"Percentage of world",
-	]
-	game_over_provinces_owned_option.selected_index = 2
-	game_over_provinces_owned_option.child_items = [
-		game_over_provinces_owned_constant,
-		game_over_provinces_owned_percentage,
-	]
-	game_over_provinces_owned_option.option_filters = [[], [0], [1]]
-
-	game_over_provinces_owned_constant.text = "Amount"
-	game_over_provinces_owned_constant.minimum = 0
-	game_over_provinces_owned_constant.has_minimum = true
-	game_over_provinces_owned_constant.value = 40
-
-	game_over_provinces_owned_percentage.text = "Percentage"
-	game_over_provinces_owned_percentage.is_percentage = true
-	game_over_provinces_owned_percentage.minimum = 0.0
-	game_over_provinces_owned_percentage.has_minimum = true
-	game_over_provinces_owned_percentage.maximum = 1.0
-	game_over_provinces_owned_percentage.has_maximum = true
-	game_over_provinces_owned_percentage.value = 0.7
 
 	recruitment_enabled.text = "Can recruit new armies"
 	recruitment_enabled.value = true
@@ -295,11 +256,6 @@ func _init() -> void:
 	)
 	automatically_fight_back.value = true
 
-	_category_game_over.text = "Game Over conditions"
-	_category_game_over.child_items = [
-		game_over_provinces_owned_option,
-	]
-
 	_category_recruitment.text = "Recruitment"
 	_category_recruitment.child_items = [
 		recruitment_enabled,
@@ -358,7 +314,6 @@ func _init() -> void:
 
 	root_rules = [
 		rng_seed_override_enabled,
-		_category_game_over,
 		_category_recruitment,
 		minimum_army_size,
 		maximum_army_size,

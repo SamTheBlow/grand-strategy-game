@@ -40,6 +40,9 @@
 		},
 		"army_reinforcements": {
 			"amount_per_person": 0.4
+		},
+		"province_control_goal": {
+			"province_percentage": 0.7
 		}
 	},
 	"version": "1"

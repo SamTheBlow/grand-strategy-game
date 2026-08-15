@@ -95,10 +95,6 @@ func setup_for_play() -> void:
 	_setup_global_modifiers()
 	_register_components()
 
-	# Add province control goal component
-	var province_control_goal := ProvinceControlGoal.new(self)
-	province_control_goal.game_over.connect(end_game)
-
 	# Add battle detection component
 	var battle_detection := BattleDetection.new(
 			world.armies, world.armies_in_each_province, rules.battle
@@ -107,7 +103,6 @@ func setup_for_play() -> void:
 
 	# Add other components
 	_components.append_array([
-		province_control_goal,
 		battle_detection,
 		MilitaryAccessLossBehavior.new(self),
 		DiplomacyRelationshipAutoChanges.new(self),
