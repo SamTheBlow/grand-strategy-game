@@ -11,6 +11,10 @@ var _list: Array[GamePlayer] = []
 var _unique_id_system := UniqueIdSystem.new()
 
 
+func _init(countries: Countries) -> void:
+	countries.removed.connect(_on_country_removed)
+
+
 ## Note that this overwrites the player's id.
 ## If you want the player to use a specific id, pass it as an argument.
 ##
@@ -163,6 +167,15 @@ func _add(
 		_list.insert(insertion_index, player)
 
 	added.emit(player)
+
+
+# TODO move this to a different class
+## When a country is removed from the game,
+## any player who was controlling that country is also removed from the game.
+func _on_country_removed(country: Country) -> void:
+	for player in _list:
+		if player.playing_country == country:
+			player.playing_country = null
 
 
 # TODO move this to a different class

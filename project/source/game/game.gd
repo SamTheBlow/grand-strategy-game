@@ -17,11 +17,10 @@ enum GameState {
 	GAMEOVER = 2,
 }
 
-## Be careful: you must include all of the game's countries on this list.
 ## Do not overwrite!
 var countries := Countries.new()
 
-var game_players := GamePlayers.new()
+var game_players := GamePlayers.new(countries)
 
 var turn := GameTurn.new(self)
 
@@ -80,7 +79,6 @@ func _init() -> void:
 	world.provinces.building_removed.connect(modifier_request.remove_provider)
 
 	_components.append_array([
-		CountryRemovalCleanup.new(self),
 		AutoArrowProvinceReaction.new(self),
 		ProvinceOwnershipUpdate.new(self),
 	])

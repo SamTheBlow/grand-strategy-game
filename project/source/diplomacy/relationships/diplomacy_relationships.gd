@@ -14,6 +14,7 @@ var list: Dictionary[Country, DiplomacyRelationship] = {}
 func _init(game: Game, country: Country) -> void:
 	_game = game
 	_source_country = country
+	game.countries.removed.connect(_on_country_removed)
 
 
 ## Creates a new relationship with given data and adds it to the list.
@@ -112,3 +113,10 @@ static func _new_base_actions(settings: DiplomacySettings) -> Array[int]:
 		output.append(13)
 
 	return output
+
+
+func _on_country_removed(country: Country) -> void:
+	if country == _source_country:
+		clear()
+	else:
+		list.erase(country)

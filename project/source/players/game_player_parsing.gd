@@ -16,7 +16,7 @@ const _AI_PERSONALITY_KEY: String = "ai_personality_type"
 ## Always succeeds. Ignores unrecognized data.
 ## Players with invalid data are not added.
 static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
-	game.game_players = GamePlayers.new()
+	game.game_players = GamePlayers.new(game.countries)
 
 	if raw_data is not Array:
 		return
