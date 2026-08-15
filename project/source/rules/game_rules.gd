@@ -19,9 +19,6 @@ const RULE_NAMES: Array[String] = [
 	"rng_seed",
 	"minimum_army_size",
 	"maximum_army_size",
-	"global_attacker_efficiency",
-	"global_defender_efficiency",
-	"battle_algorithm_option",
 ]
 
 # TODO duplicate the resources and/or change how they're loaded entirely
@@ -45,18 +42,12 @@ var diplomatic_actions := DiplomacyActionDefinitions.new([
 	load("uid://bp5csoje1ocde") as DiplomacyActionDefinition,
 	load("uid://dvdfnj3lic55") as DiplomacyActionDefinition,
 ])
-var battle: Battle = preload("uid://cuylrn1evjy6r")
 
 # Individual rules
 var rng_seed_override_enabled := ItemBool.new()
 var rng_seed := ItemString.new()
 var minimum_army_size := ItemInt.new()
 var maximum_army_size := ItemInt.new()
-var global_attacker_efficiency := ItemFloat.new()
-var global_defender_efficiency := ItemFloat.new()
-var battle_algorithm_option := ItemOptions.new()
-# Categories
-var _category_battle := PropertyTreeItem.new()
 
 ## The rule items that are not a subrule of any other rule.
 ## All of the rules should be recursively contained within these root rules.
@@ -87,34 +78,10 @@ func _init() -> void:
 	maximum_army_size.has_minimum = true
 	maximum_army_size.value = -1
 
-	global_attacker_efficiency.text = "Global attacker efficiency"
-	global_attacker_efficiency.minimum = 0
-	global_attacker_efficiency.has_minimum = true
-	global_attacker_efficiency.value = 0.9
-
-	global_defender_efficiency.text = "Global defender efficiency"
-	global_defender_efficiency.minimum = 0
-	global_defender_efficiency.has_minimum = true
-	global_defender_efficiency.value = 1.0
-
-	battle_algorithm_option.text = "Algorithm"
-	battle_algorithm_option.options = [
-		"Standard", "Algorithm 2"
-	]
-	battle_algorithm_option.selected_index = 0
-
-	_category_battle.text = "Battle"
-	_category_battle.child_items = [
-		global_attacker_efficiency,
-		global_defender_efficiency,
-		battle_algorithm_option,
-	]
-
 	root_rules = [
 		rng_seed_override_enabled,
 		minimum_army_size,
 		maximum_army_size,
-		_category_battle,
 	]
 
 	_connect_signals()

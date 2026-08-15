@@ -1,0 +1,123 @@
+class_name Combat
+extends GameComponent
+## Enables combat between opposing armies. Holds relevant settings.
+
+const KEY: String = "combat"
+
+const _ATTACKER_EFFICIENCY_KEY: String = "global_attacker_efficiency"
+const _DEFENDER_EFFICIENCY_KEY: String = "global_defender_efficiency"
+const _ALGORITHM_ID_KEY: String = "algorithm_id"
+
+const _ATTACKER_EFFICIENCY_CONTEXT: String = "attacker_efficiency"
+const _DEFENDER_EFFICIENCY_CONTEXT: String = "defender_efficiency"
+
+var global_attacker_efficiency: float = 1.0
+var global_defender_efficiency: float = 1.0
+
+## Which battle algorithm is used to resolve battles.
+## 0 = Standard, 1 = Algorithm 2.
+var algorithm_id: int = 0
+
+var _game: Game
+var _battle: Battle = preload("uid://cuylrn1evjy6r")
+
+
+func _init() -> void:
+	priority_index = 0
+
+
+func register(game: Game) -> void:
+	_game = game
+
+	game.modifier_request.add_provider(self)
+
+	_battle.algorithm_id = algorithm_id
+	_battle.modifier_request = game.modifier_request
+
+	for army in game.world.armies.list():
+		_connect_army(army)
+	game.world.armies.added.connect(_connect_army)
+	game.world.armies.removed.connect(_disconnect_army)
+
+
+func to_raw_dict() -> Dictionary:
+	var output: Dictionary = {}
+	if global_attacker_efficiency != 1.0:
+		output[_ATTACKER_EFFICIENCY_KEY] = global_attacker_efficiency
+	if global_defender_efficiency != 1.0:
+		output[_DEFENDER_EFFICIENCY_KEY] = global_defender_efficiency
+	if algorithm_id != 0:
+		output[_ALGORITHM_ID_KEY] = algorithm_id
+	return output
+
+
+func _load_settings(raw_dict: Dictionary) -> void:
+	if ParseUtils.dictionary_has_number(raw_dict, _ATTACKER_EFFICIENCY_KEY):
+		global_attacker_efficiency = ParseUtils.dictionary_float(
+				raw_dict, _ATTACKER_EFFICIENCY_KEY
+		)
+	else:
+		global_attacker_efficiency = 1.0
+
+	if ParseUtils.dictionary_has_number(raw_dict, _DEFENDER_EFFICIENCY_KEY):
+		global_defender_efficiency = ParseUtils.dictionary_float(
+				raw_dict, _DEFENDER_EFFICIENCY_KEY
+		)
+	else:
+		global_defender_efficiency = 1.0
+
+	if ParseUtils.dictionary_has_number(raw_dict, _ALGORITHM_ID_KEY):
+		algorithm_id = ParseUtils.dictionary_int(
+				raw_dict, _ALGORITHM_ID_KEY
+		)
+	else:
+		algorithm_id = 0
+
+	error = false
+	error_message = ""
+
+
+func _connect_army(army: Army) -> void:
+	army.province_changed.connect(_resolve_battles)
+
+
+func _disconnect_army(army: Army) -> void:
+	army.province_changed.disconnect(_resolve_battles)
+
+
+## Checks for [Battles] that need to occur in given [Army]'s [Province].
+## Makes the battles happen, when applicable.
+func _resolve_battles(army: Army) -> void:
+	if not _game.turn.is_running():
+		return
+
+	# Armies may get removed from the list as they destroy each other,
+	# so it's important to duplicate the array.
+	var armies_in_province: Array[Army] = (
+			_game.world.armies_in_each_province.dictionary[army.province_id()]
+			.ordered_list.duplicate()
+	)
+	for other_army in armies_in_province:
+		if Country.is_fighting(army.owner_country, other_army.owner_country):
+			_battle.apply(army, other_army)
+
+
+## Adds this module's global efficiency modifiers to the request when asked.
+func _on_modifiers_requested(
+		modifiers: Array[Modifier], context: ModifierContext
+) -> void:
+	match context.context():
+		_ATTACKER_EFFICIENCY_CONTEXT:
+			if global_attacker_efficiency != 1.0:
+				modifiers.append(ModifierMultiplier.new(
+						"Base Modifier",
+						"Attackers all have this modifier by default.",
+						global_attacker_efficiency
+				))
+		_DEFENDER_EFFICIENCY_CONTEXT:
+			if global_defender_efficiency != 1.0:
+				modifiers.append(ModifierMultiplier.new(
+						"Base Modifier",
+						"Defenders all have this modifier by default.",
+						global_defender_efficiency
+				))

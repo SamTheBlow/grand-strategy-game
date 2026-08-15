@@ -6,7 +6,7 @@ extends Resource
 @export var _context_attacker_efficiency: ModifierContext
 @export var _context_defender_efficiency: ModifierContext
 
-var battle_algorithm_option: int = 0
+var algorithm_id: int = 0
 var modifier_request: ModifierRequest
 
 var _both_armies_survived: bool = true
@@ -14,13 +14,13 @@ var _both_armies_survived: bool = true
 
 func apply(attacking_army: Army, defending_army: Army) -> void:
 	#print("A battle is about to begin!")
-	#print("Algorithm: ", battle_algorithm_option)
+	#print("Algorithm: ", algorithm_id)
 
 	_context_attacker_efficiency._defending_army = defending_army
 	_context_defender_efficiency._defending_army = defending_army
 
 	var damage_dealt: Array[int] = []
-	match battle_algorithm_option:
+	match algorithm_id:
 		0:
 			damage_dealt = _algorithm_0(attacking_army, defending_army)
 		1:

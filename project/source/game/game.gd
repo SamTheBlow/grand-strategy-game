@@ -46,9 +46,6 @@ var modifier_request := ModifierRequest.new()
 var _game_state: GameState = GameState.SETUP
 var _is_setup_for_play: bool = false
 
-## Keys are a modifier context (String); values are a [Modifier].
-var _global_modifiers: Dictionary = {}
-
 ## Objects which we never need to access.
 ## These are stored here only because they need to stay referenced.
 var _components: Array = []
@@ -58,16 +55,9 @@ var components: Dictionary[String, GameComponent] = {}
 
 
 func _init() -> void:
-	modifier_request.add_provider(self)
-
 	for province in world.provinces.list():
 		for building in province.buildings.list():
 			modifier_request.add_provider(building)
-
-	rules.battle.battle_algorithm_option = (
-			rules.battle_algorithm_option.selected_value()
-	)
-	rules.battle.modifier_request = modifier_request
 
 	world.provinces.building_added.connect(modifier_request.add_provider)
 	world.provinces.building_removed.connect(modifier_request.remove_provider)
@@ -92,18 +82,10 @@ func setup_for_play() -> void:
 
 	rng.lock()
 	rules.lock()
-	_setup_global_modifiers()
 	_register_components()
-
-	# Add battle detection component
-	var battle_detection := BattleDetection.new(
-			world.armies, world.armies_in_each_province, rules.battle
-	)
-	turn.is_running_changed.connect(battle_detection.set_is_enabled)
 
 	# Add other components
 	_components.append_array([
-		battle_detection,
 		AutoEndTurn.new(self),
 	])
 
@@ -163,27 +145,6 @@ func _register_components() -> void:
 	turn_change_iteration.register(self)
 
 
-## Builds the game's global [Modifier]s according to the [GameRules].
-func _setup_global_modifiers() -> void:
-	_global_modifiers = {}
-	if rules.global_attacker_efficiency.value != 1.0:
-		_global_modifiers["attacker_efficiency"] = (
-				ModifierMultiplier.new(
-						"Base Modifier",
-						"Attackers all have this modifier by default.",
-						rules.global_attacker_efficiency.value
-				)
-		)
-	if rules.global_defender_efficiency.value != 1.0:
-		_global_modifiers["defender_efficiency"] = (
-				ModifierMultiplier.new(
-						"Base Modifier",
-						"Defenders all have this modifier by default.",
-						rules.global_defender_efficiency.value
-				)
-		)
-
-
 ## Used to determine the winner when the game ends.
 ## Currently returns the country that controls the most provinces.
 ## Returns null if the game has no countries.
@@ -209,13 +170,3 @@ func _winning_country() -> Country:
 func _on_is_running_changed(is_running: bool) -> void:
 	if is_running:
 		game_started.emit()
-
-
-## This object is itself a provider for the [ModifierRequest] system.
-## It provides the game's global [Modifier]s.
-func _on_modifiers_requested(
-		modifiers_: Array[Modifier],
-		context: ModifierContext
-) -> void:
-	if _global_modifiers.has(context.context()):
-		modifiers_.append(_global_modifiers[context.context()])
