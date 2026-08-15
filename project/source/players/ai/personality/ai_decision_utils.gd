@@ -17,11 +17,6 @@ func _init(game_: Game = null) -> void:
 	game = game_
 
 
-## May return null.
-func _diplomacy_settings() -> DiplomacySettings:
-	return game.components.get(DiplomacySettings.KEY) as DiplomacySettings
-
-
 ## Returns a new copy of the list.
 func action_list() -> Array[Action]:
 	return _action_list.duplicate()
@@ -134,16 +129,16 @@ func make_peace_with(country: Country) -> void:
 	if game == null:
 		return
 
-	var settings: DiplomacySettings = _diplomacy_settings()
-	if settings == null:
-		return
+	var relationship: DiplomacyRelationship = (
+			game.turn.playing_country().relationships.with_country(country)
+	)
 
 	# ATTENTION TODO hard coded diplomatic action IDs
-	if settings.is_presets_enabled():
+	if relationship.action_is_available(2):
 		_add_action_diplomacy(ActionDiplomacy.new(2, country.id))
-	if settings.can_ask_to_stop_trespassing:
+	if relationship.action_is_available(10):
 		_add_action_diplomacy(ActionDiplomacy.new(10, country.id))
-	if settings.can_ask_to_stop_fighting:
+	if relationship.action_is_available(13):
 		_add_action_diplomacy(ActionDiplomacy.new(13, country.id))
 
 
@@ -151,14 +146,14 @@ func make_alliance_with(country: Country) -> void:
 	if game == null:
 		return
 
-	var settings: DiplomacySettings = _diplomacy_settings()
-	if settings == null:
-		return
+	var relationship: DiplomacyRelationship = (
+			game.turn.playing_country().relationships.with_country(country)
+	)
 
 	# TASK hard coded diplomatic action IDs
-	if settings.is_presets_enabled():
+	if relationship.action_is_available(3):
 		_add_action_diplomacy(ActionDiplomacy.new(3, country.id))
-	if settings.can_ask_for_military_access:
+	if relationship.action_is_available(7):
 		_add_action_diplomacy(ActionDiplomacy.new(7, country.id))
 
 
@@ -166,14 +161,14 @@ func break_alliance_with(country: Country) -> void:
 	if game == null:
 		return
 
-	var settings: DiplomacySettings = _diplomacy_settings()
-	if settings == null:
-		return
+	var relationship: DiplomacyRelationship = (
+			game.turn.playing_country().relationships.with_country(country)
+	)
 
 	# TASK hard coded diplomatic action IDs
-	if settings.is_presets_enabled():
+	if relationship.action_is_available(4):
 		_add_action_diplomacy(ActionDiplomacy.new(4, country.id))
-	if settings.can_revoke_military_access:
+	if relationship.action_is_available(6):
 		_add_action_diplomacy(ActionDiplomacy.new(6, country.id))
 
 
@@ -181,16 +176,16 @@ func declare_war_to(country: Country) -> void:
 	if game == null:
 		return
 
-	var settings: DiplomacySettings = _diplomacy_settings()
-	if settings == null:
-		return
+	var relationship: DiplomacyRelationship = (
+			game.turn.playing_country().relationships.with_country(country)
+	)
 
 	# TASK hard coded diplomatic action IDs
-	if settings.is_presets_enabled():
+	if relationship.action_is_available(1):
 		_add_action_diplomacy(ActionDiplomacy.new(1, country.id))
-	if settings.can_enable_trespassing:
+	if relationship.action_is_available(8):
 		_add_action_diplomacy(ActionDiplomacy.new(8, country.id))
-	if settings.can_enable_fighting:
+	if relationship.action_is_available(11):
 		_add_action_diplomacy(ActionDiplomacy.new(11, country.id))
 
 

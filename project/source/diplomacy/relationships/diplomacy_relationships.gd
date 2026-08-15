@@ -72,19 +72,15 @@ static func _new_default_data(settings: DiplomacySettings) -> Dictionary:
 	var grants_access: bool = false
 	var is_trespassing: bool = false
 	var is_fighting: bool = false
-	var preset_id: int = DiplomacyRelationship.PRESET_ID_DEFAULT
 	if settings != null:
 		grants_access = settings.grants_military_access_default
 		is_trespassing = settings.is_trespassing_default
 		is_fighting = settings.is_fighting_default
-		if settings.is_presets_enabled():
-			preset_id = settings.preset_option
 
 	return {
 		DiplomacyRelationship.GRANTS_MILITARY_ACCESS_KEY: grants_access,
 		DiplomacyRelationship.IS_TRESPASSING_KEY: is_trespassing,
 		DiplomacyRelationship.IS_FIGHTING_KEY: is_fighting,
-		DiplomacyRelationship.PRESET_ID_KEY: preset_id,
 	}
 
 

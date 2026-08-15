@@ -55,9 +55,6 @@ func _refresh() -> void:
 
 	_header.country = country
 	_header.country_to_relate_to = playing_country
-	_header.is_relationship_presets_disabled = (
-			_is_relationship_presets_disabled(game)
-	)
 
 	_money_label.text = "Money: $" + str(country.money)
 
@@ -66,13 +63,6 @@ func _refresh() -> void:
 	_relationship_with_player.game = game
 
 	_populate_countries()
-
-
-func _is_relationship_presets_disabled(game: Game) -> bool:
-	var settings := (
-			game.components.get(DiplomacySettings.KEY) as DiplomacySettings
-	)
-	return settings == null or not settings.is_presets_enabled()
 
 
 func _disconnect_relationship_info_signal() -> void:
@@ -133,9 +123,6 @@ func _populate_countries() -> void:
 		)
 		relationship_node.country = other_country
 		relationship_node.country_to_relate_to = country
-		relationship_node.is_relationship_presets_disabled = (
-				_is_relationship_presets_disabled(game)
-		)
 		relationship_node.button_press_outcome = (
 				_on_relationship_button_pressed
 		)

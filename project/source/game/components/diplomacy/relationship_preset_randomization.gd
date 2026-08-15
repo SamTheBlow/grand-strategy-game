@@ -16,12 +16,6 @@ func register(game: Game) -> void:
 
 
 func _apply(game: Game) -> void:
-	var settings := (
-			game.components.get(DiplomacySettings.KEY) as DiplomacySettings
-	)
-	if settings == null or not settings.is_presets_enabled():
-		return
-
 	var country_list: Array[Country] = game.countries.list()
 	var number_of_countries: int = game.countries.size()
 	for i in number_of_countries:

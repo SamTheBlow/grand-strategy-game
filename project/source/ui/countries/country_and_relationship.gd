@@ -15,22 +15,18 @@ extends Control
 		if is_node_ready():
 			_country_button.custom_minimum_size = button_minimum_size
 
-var is_relationship_presets_disabled: bool = true:
-	set(value):
-		is_relationship_presets_disabled = value
-		_refresh_preset_label(0)
-
 ## May be null.
 var country: Country = null:
 	set(value):
 		country = value
 		_refresh_country_info()
-		_refresh_preset_label(1)
+		_refresh_preset_label()
 
-var country_to_relate_to: Country:
+## May be null.
+var country_to_relate_to: Country = null:
 	set(value):
 		country_to_relate_to = value
-		_refresh_preset_label(2)
+		_refresh_preset_label()
 
 ## Set here the function that you want to call when the button is pressed.
 ## The function must take one parameter of type [Country], and no return value.
@@ -86,19 +82,16 @@ func _update_is_button_enabled() -> void:
 	_country_button.is_button_enabled = is_button_enabled
 
 
-## Thing to refresh:
-## -1 -> (Everything)
-##  0 -> is_disabled
-##  1 -> country
-##  2 -> country_to_relate_to
-func _refresh_preset_label(thing_to_refresh: int = -1) -> void:
+func _refresh_preset_label() -> void:
 	if not is_node_ready():
 		return
 
-	if thing_to_refresh == -1 or thing_to_refresh == 0:
-		_label_update.is_disabled = is_relationship_presets_disabled
-		_preset_root.visible = not is_relationship_presets_disabled
-	if thing_to_refresh == -1 or thing_to_refresh == 1:
-		_label_update.country = country
-	if thing_to_refresh == -1 or thing_to_refresh == 2:
-		_label_update.country_to_relate_to = country_to_relate_to
+	_label_update.country = country
+	_label_update.country_to_relate_to = country_to_relate_to
+	_preset_root.visible = (
+			country != null
+			and country_to_relate_to != null
+			and country != country_to_relate_to
+			and country.relationships.with_country(country_to_relate_to)
+			.is_preset()
+	)

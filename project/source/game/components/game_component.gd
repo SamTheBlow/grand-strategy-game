@@ -71,6 +71,10 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			)
 		DiplomacySettings.KEY:
 			return _component_from_raw_data(DiplomacySettings.new(), raw_dict)
+		RelationshipPresetDefault.KEY:
+			return _component_from_raw_data(
+					RelationshipPresetDefault.new(), raw_dict
+			)
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)
 

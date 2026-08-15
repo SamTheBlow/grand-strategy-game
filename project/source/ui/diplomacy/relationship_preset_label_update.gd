@@ -4,18 +4,14 @@ extends Node
 
 @export var label: RelationshipPresetLabel
 
-var is_disabled: bool = false:
-	set(value):
-		is_disabled = value
-		_refresh()
-
 ## May be null.
 var country: Country = null:
 	set(value):
 		country = value
 		_refresh()
 
-var country_to_relate_to: Country:
+## May be null.
+var country_to_relate_to: Country = null:
 	set(value):
 		country_to_relate_to = value
 		_refresh()
@@ -30,14 +26,17 @@ func _refresh() -> void:
 		return
 
 	if (
-			is_disabled
-			or country == null
+			country == null
 			or country_to_relate_to == null
 			or country == country_to_relate_to
 	):
 		label.relationship = null
 		return
 
-	label.relationship = (
+	var relationship: DiplomacyRelationship = (
 			country.relationships.with_country(country_to_relate_to)
 	)
+	if relationship.is_preset():
+		label.relationship = relationship
+	else:
+		label.relationship = null

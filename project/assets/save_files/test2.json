@@ -50,6 +50,15 @@
 		},
 		"province_control_goal": {
 			"province_percentage": 0.7
+		},
+		"diplomacy_settings": {
+			"auto_mutual_access": true,
+			"auto_fight_trespassers": true,
+			"auto_revoke_access": true,
+			"auto_fight_back": true
+		},
+		"relationship_preset_default": {
+			"preset_id": 2
 		}
 	},
 	"version": "1",

@@ -71,6 +71,12 @@ func preset() -> DiplomacyPreset:
 	return diplomacy_presets.preset_from_id(_preset_id())
 
 
+## Returns true when this relationship
+## is currently under a valid registered [DiplomacyPreset].
+func is_preset() -> bool:
+	return diplomacy_presets.is_id_valid(_preset_id())
+
+
 ## If true, the country grants explicit permission to the recipient
 ## to move their armies into their provinces.
 func grants_military_access() -> bool:

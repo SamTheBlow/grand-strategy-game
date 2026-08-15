@@ -25,8 +25,6 @@ const _CAN_ENABLE_FIGHTING_KEY: String = "can_enable_fighting"
 const _CAN_DISABLE_FIGHTING_KEY: String = "can_disable_fighting"
 const _CAN_ASK_STOP_FIGHTING_KEY: String = "can_ask_to_stop_fighting"
 
-const _PRESET_OPTION_KEY: String = "preset_option"
-
 ## Countries automatically grant military access to whoever grants it to them.
 var auto_mutual_access: bool = false
 ## Countries automatically start fighting who trespasses in their territory.
@@ -51,19 +49,11 @@ var can_enable_fighting: bool = false
 var can_disable_fighting: bool = false
 var can_ask_to_stop_fighting: bool = false
 
-## The preset to apply to new relationships by default.
-## 0 = don't use presets, 1 = allied, 2 = neutral, 3 = at war.
-var preset_option: int = 0
-
 var _game: Game
 
 
 func _init() -> void:
 	priority_index = 0
-
-
-func is_presets_enabled() -> bool:
-	return preset_option != 0
 
 
 func register(game: Game) -> void:
@@ -111,8 +101,6 @@ func to_raw_dict() -> Dictionary:
 		output[_CAN_DISABLE_FIGHTING_KEY] = true
 	if can_ask_to_stop_fighting:
 		output[_CAN_ASK_STOP_FIGHTING_KEY] = true
-	if preset_option != 0:
-		output[_PRESET_OPTION_KEY] = preset_option
 	return output
 
 
@@ -142,9 +130,6 @@ func _load_settings(raw_dict: Dictionary) -> void:
 	can_ask_to_stop_fighting = (
 			_bool_data(raw_dict, _CAN_ASK_STOP_FIGHTING_KEY)
 	)
-
-	if ParseUtils.dictionary_has_number(raw_dict, _PRESET_OPTION_KEY):
-		preset_option = ParseUtils.dictionary_int(raw_dict, _PRESET_OPTION_KEY)
 
 	error = false
 	error_message = ""
