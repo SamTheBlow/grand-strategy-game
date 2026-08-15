@@ -196,7 +196,7 @@ static func _action_definition(
 		var action_id: int = (
 				ParseUtils.dictionary_int(raw_dict, _DIPLOMACY_ACTION_ID_KEY)
 		)
-		output = game.rules.diplomatic_actions.action_from_id(action_id)
+		output = game.diplomatic_actions.action_from_id(action_id)
 
 	return output
 

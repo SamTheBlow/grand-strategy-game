@@ -3,6 +3,8 @@ class_name GameWorld
 
 signal background_color_changed(new_color: Color)
 
+var army_data := ArmyData.new()
+
 ## Do not overwrite!
 var armies := Armies.new()
 ## Do not overwrite!

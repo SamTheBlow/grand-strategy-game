@@ -8,10 +8,9 @@ signal game_started(project: GameProject)
 
 @export var networking_interface_scene: PackedScene
 
-var _players: Players
-var _game_menu_state: GameSelectMenuState
-var _game_rules: GameRules
-var _chat: Chat
+var game_menu_state: GameSelectMenuState
+var players: Players
+var chat: Chat
 
 var _load_thread := Thread.new()
 var _mutex := Mutex.new()
@@ -29,20 +28,19 @@ func _ready() -> void:
 			networking_interface_scene.instantiate() as NetworkingInterface
 	)
 	networking_interface.message_sent.connect(
-			_chat._on_networking_interface_message_sent
+			chat._on_networking_interface_message_sent
 	)
 
-	_chat_interface.chat_data = _chat.chat_data
-	_chat.connect_chat_interface(_chat_interface)
+	_chat_interface.chat_data = chat.chat_data
+	chat.connect_chat_interface(_chat_interface)
 
-	_lobby.players = _players
-	_lobby.game_menu_state = _game_menu_state
-	_lobby.game_rules = _game_rules
+	_lobby.game_menu_state = game_menu_state
+	_lobby.players = players
 	_lobby.networking_interface = networking_interface
 
 
-func _process(_delta: float) -> void:
-	if Input.is_action_just_pressed("ui_cancel"):
+func _input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"ui_cancel"):
 		exited.emit()
 
 
@@ -51,23 +49,10 @@ func _exit_tree() -> void:
 		_load_thread.wait_to_finish()
 
 
-## Dependency injection
-func inject(
-		players: Players,
-		game_menu_state: GameSelectMenuState,
-		game_rules: GameRules,
-		chat: Chat,
-) -> void:
-	_players = players
-	_game_menu_state = game_menu_state
-	_game_rules = game_rules
-	_chat = chat
-
-
 ## Called in a separate thread.
-## Loads a game, overwrites its game rules and ends its setup phase,
+## Loads a game, overwrites its seed and ends its setup phase,
 ## potentially triggering game generation in the process.
-func _setup_game(file_path: String, game_rules: GameRules) -> void:
+func _setup_game(file_path: String, rng_seed: String) -> void:
 	var parse_result: ProjectParsing.ParseResult = (
 			ProjectFromPath.loaded_from(file_path)
 	)
@@ -83,7 +68,14 @@ func _setup_game(file_path: String, game_rules: GameRules) -> void:
 		_on_start_game_error.call_deferred(parse_result.error_message)
 	else:
 		var project: GameProject = parse_result.result_project
-		project.game.rules = game_rules
+
+		# Overwrite seed
+		if (
+				project.game.state() == Game.GameState.SETUP
+				and project.game.rng.rng_seed == ""
+		):
+			project.game.rng.rng_seed = rng_seed
+
 		project.game.setup_for_play()
 		_on_start_game_ready.call_deferred(project)
 
@@ -106,10 +98,10 @@ func _on_start_game_error(error_message: String) -> void:
 	_loading_screen.visible = false
 
 	push_warning("Failed to load & setup game: ", error_message)
-	_chat.send_system_message("Failed to load & setup the game")
+	chat.send_system_message("Failed to load & setup the game")
 
 
-func _on_start_game_requested(file_path: String, game_rules: GameRules) -> void:
+func _on_start_game_requested(file_path: String, rng_seed: String) -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
 
@@ -118,7 +110,7 @@ func _on_start_game_requested(file_path: String, game_rules: GameRules) -> void:
 	_mutex.unlock()
 	_loading_screen.visible = true
 
-	_load_thread.start(_setup_game.bind(file_path, game_rules))
+	_load_thread.start(_setup_game.bind(file_path, rng_seed))
 
 
 ## Called on the main thread when user presses the "Cancel" button.

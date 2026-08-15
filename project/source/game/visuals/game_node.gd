@@ -53,7 +53,7 @@ var chat: Chat:
 		chat.exit_to_main_menu_requested.connect(
 				_on_exit_to_main_menu_requested
 		)
-		chat.rules_requested.connect(_on_chat_rules_requested)
+		chat.seed_requested.connect(_on_seed_requested)
 
 ## If false, the entire UI is hidden.
 var is_ui_visible: bool = true:
@@ -456,13 +456,8 @@ func _on_new_human_player_requested(game_player: GamePlayer) -> void:
 		_receive_add_player_and_assign.rpc_id(1, game_player.id)
 
 
-func _on_chat_rules_requested() -> void:
-	var lines: Array[String] = []
-	lines.append("This game's rules:")
-	for rule_name in GameRules.RULE_NAMES:
-		var rule_data: Variant = game.rules.rule_with_name(rule_name).get_data()
-		lines.append("-> " + rule_name + ": " + str(rule_data))
-	chat.send_system_message_multiline(lines)
+func _on_seed_requested() -> void:
+	chat.send_system_message("Seed: " + project.game.rng.rng_seed)
 
 
 func _on_country_button_pressed(country: Country) -> void:

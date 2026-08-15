@@ -16,11 +16,7 @@ enum Type {
 	ACCEPTS_EVERYTHING = 7,
 }
 
-## The type to be used by default in game rules and such.
-const DEFAULT_TYPE: Type = Type.NONE
 
-
-## Used for the game rules.
 static func type_names() -> Array[String]:
 	return [
 		"None",
@@ -34,7 +30,6 @@ static func type_names() -> Array[String]:
 	]
 
 
-## Used for the game rules.
 static func type_values() -> Array[int]:
 	var output: Array[int] = []
 	for value: Variant in Type.values():

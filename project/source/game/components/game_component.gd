@@ -21,8 +21,6 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(RandomGridWorld.new(), raw_dict)
 		MiscGameGeneration.KEY:
 			return _component_from_raw_data(MiscGameGeneration.new(), raw_dict)
-		RNGOverwrite.KEY:
-			return _component_from_raw_data(RNGOverwrite.new(), raw_dict)
 		PlayerCreation.KEY:
 			return _component_from_raw_data(PlayerCreation.new(), raw_dict)
 		PlayerAssignmentToCountry.KEY:

@@ -9,7 +9,7 @@ const _AI_TYPE_KEY: String = "ai_type"
 const _AI_PERSONALITY_KEY: String = "ai_personality_type"
 
 
-## NOTE: Given game's rules and countries must already be loaded.
+## NOTE: Given game's countries must already be loaded.
 ##
 ## Resets given game's [GamePlayers] and adds players to it using given data.
 ##

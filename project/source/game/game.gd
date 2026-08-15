@@ -17,16 +17,12 @@ enum GameState {
 	GAMEOVER = 2,
 }
 
-## Note: the game's rules must not change after the game started.
-var rules := GameRules.new()
-
 ## Be careful: you must include all of the game's countries on this list.
 ## Do not overwrite!
 var countries := Countries.new()
 
 var game_players := GamePlayers.new()
 
-## You must initialize the "rules" property before you initialize this one.
 var turn := GameTurn.new(self)
 
 ## Do not overwrite!
@@ -52,6 +48,27 @@ var _components: Array = []
 
 ## A list of [GameComponent]s, mapped by their KEY constant for quick access.
 var components: Dictionary[String, GameComponent] = {}
+
+var diplomatic_presets := DiplomacyPresets.new([
+	load("uid://coqnkgbae8r7r").duplicate_deep() as DiplomacyPreset,
+	load("uid://c8mdgpc7c41f5").duplicate_deep() as DiplomacyPreset,
+	load("uid://drsaelw08l4l5").duplicate_deep() as DiplomacyPreset,
+])
+var diplomatic_actions := DiplomacyActionDefinitions.new([
+	load("uid://i0e1lhoyfteg").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://c3kj2ppbkeuk6").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://yw0vmi0myodt").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://bke4orh12nfe5").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://d1vcmgrvxolht").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://bw7wow17qy2hc").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://j3xl6wxmu3el").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://cf45nbq3o1no7").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://mqdrxwhb0kie").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://cjxq7pod7pt0u").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://1xq5bfaikpwu").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://bp5csoje1ocde").duplicate_deep() as DiplomacyActionDefinition,
+	load("uid://dvdfnj3lic55").duplicate_deep() as DiplomacyActionDefinition,
+])
 
 
 func _init() -> void:
@@ -81,7 +98,6 @@ func setup_for_play() -> void:
 		return
 
 	rng.lock()
-	rules.lock()
 	_register_components()
 
 	# Add other components

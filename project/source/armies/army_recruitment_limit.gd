@@ -93,7 +93,7 @@ func _calculated_minimum() -> int:
 		if army.owner_country == country and army.is_able_to_move():
 			return 0
 
-	return _game.rules.minimum_army_size.value
+	return _game.world.army_data.minimum_size
 
 
 func _calculated_maximum() -> int:

@@ -52,7 +52,7 @@ func _apply(game: Game) -> void:
 
 		# Add starting army
 		if (
-				_starting_army_size >= game.rules.minimum_army_size.value
+				_starting_army_size >= game.world.army_data.minimum_size
 				and is_starting_province
 				and province.owner_country not in _already_supplied_countries
 		):

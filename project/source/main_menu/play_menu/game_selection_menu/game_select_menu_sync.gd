@@ -5,8 +5,6 @@ extends Node
 ## - The list of built-in games (including all of their metadata)
 ## - The list of imported games (idem)
 ## When leaving a server, resets the entire state to what it was before joining.
-##
-## See also: [RulesMenuSync]
 
 ## Emitted on clients when the client receives a new state from the server,
 ## in which case this signal will pass a new instance of [GameSelectMenuState].

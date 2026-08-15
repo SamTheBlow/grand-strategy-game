@@ -95,7 +95,7 @@ func _update_is_disabled() -> void:
 			_army_recruit_limits == null
 			or not MultiplayerUtils.has_gameplay_authority(multiplayer, player)
 			or _army_recruit_limits.maximum()
-			< game.rules.minimum_army_size.value
+			< game.world.army_data.minimum_size
 	)
 
 

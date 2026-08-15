@@ -63,7 +63,7 @@ func _apply_to_province(province: Province, game: Game) -> void:
 		return
 
 	# Don't create a new army if it's too small.
-	if reinforcements_size < game.rules.minimum_army_size.value:
+	if reinforcements_size < game.world.army_data.minimum_size:
 		return
 
 	# Couldn't find a valid army to reinforce. Create a new army.

@@ -2,7 +2,6 @@ class_name GameParsing
 ## Parses raw data from/to a [Game].
 
 const _STATUS_KEY: String = "status"
-const _RULES_KEY: String = "rules"
 const _RNG_KEY: String = "rng"
 const _TURN_KEY: String = "turn"
 const _WORLD_KEY: String = "world"
@@ -25,11 +24,6 @@ static func to_raw_dict(game: Game) -> Dictionary:
 	var status_data: Array = GameStateParsing.to_raw_data(game.state())
 	if not status_data.is_empty():
 		output.merge({ _STATUS_KEY: status_data[0] })
-
-	# Rules
-	var rules_data: Dictionary = RuleParsing.to_raw_dict(game.rules)
-	if not rules_data.is_empty():
-		output.merge({ _RULES_KEY: rules_data })
 
 	# RNG
 	var rng_data: Dictionary = RNGParsing.to_raw_dict(game.rng)
@@ -108,9 +102,6 @@ class GameFromRawData extends Game:
 		_game_state = (
 				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
 		)
-
-		# Rules
-		rules = RuleParsing.from_raw_data(raw_dict.get(_RULES_KEY))
 
 		# RNG
 		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), _game_state)

@@ -111,7 +111,7 @@ static func _load_army_from_raw_dict(
 	# Army size (optional, defaults to the minimum army size)
 	# Note: if army size is smaller than the minimum,
 	# the army is immediately destroyed upon creation.
-	var army_size: int = game.rules.minimum_army_size.value
+	var army_size: int = game.world.army_data.minimum_size
 	if ParseUtils.dictionary_has_number(raw_dict, _SIZE_KEY):
 		army_size = ParseUtils.dictionary_int(raw_dict, _SIZE_KEY)
 

@@ -2,6 +2,7 @@ class_name WorldParsing
 ## Parses raw data from/to a [GameWorld].
 
 const _ARMIES_KEY: String = "armies"
+const _ARMY_DATA_KEY: String = "army_data"
 const _PROVINCES_KEY: String = "provinces"
 const _BACKGROUND_COLOR_KEY: String = "background_color"
 const _DECORATIONS_KEY: String = "decorations"
@@ -35,6 +36,11 @@ static func load_from_raw_data(
 			project_textures
 	)
 
+	# Army data
+	game.world.army_data = (
+			ArmyDataParsing.from_raw_data(raw_dict.get(_ARMY_DATA_KEY))
+	)
+
 	# Provinces
 	game.world._limits.set_automatic_update_enabled(false)
 	ProvinceParsing.load_from_raw_data(raw_dict.get(_PROVINCES_KEY), game)
@@ -65,6 +71,13 @@ static func load_from_raw_data(
 
 static func to_raw_dict(world: GameWorld) -> Dictionary:
 	var output: Dictionary = {}
+
+	# Army data
+	var army_data: Dictionary = (
+			ArmyDataParsing.to_raw_dict(world.army_data)
+	)
+	if not army_data.is_empty():
+		output.merge({ _ARMY_DATA_KEY: army_data })
 
 	# Armies
 	var armies_data: Array = ArmyParsing.to_raw_array(

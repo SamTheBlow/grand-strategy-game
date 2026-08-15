@@ -172,7 +172,7 @@ class Factory:
 	func new_army(
 			owner_country: Country,
 			province_id: int,
-			army_size: int = _game.rules.minimum_army_size.value,
+			army_size: int = _game.world.army_data.minimum_size,
 			id: int = -1,
 			movements_made: int = 0
 	) -> Army:
@@ -180,9 +180,9 @@ class Factory:
 		army.id = id
 		army.owner_country = owner_country
 		army._army_size = ArmySize.new(
-				_game.rules.minimum_army_size.value,
-				_game.rules.minimum_army_size.value,
-				_game.rules.maximum_army_size.value
+				_game.world.army_data.minimum_size,
+				_game.world.army_data.minimum_size,
+				_game.world.army_data.maximum_size
 		)
 		army._province_id = province_id
 		army._movements_made = movements_made

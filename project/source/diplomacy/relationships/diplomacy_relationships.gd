@@ -34,8 +34,8 @@ func add(
 			_new_default_data(settings).merged(relationship_data, true),
 			_new_base_actions(settings)
 	)
-	relationship.diplomacy_presets = _game.rules.diplomatic_presets
-	relationship.diplomacy_actions = _game.rules.diplomatic_actions
+	relationship.diplomacy_presets = _game.diplomatic_presets
+	relationship.diplomacy_actions = _game.diplomatic_actions
 
 	list[country] = relationship
 	relationship_created.emit(relationship)

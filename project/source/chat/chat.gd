@@ -17,7 +17,7 @@ extends Node
 signal save_requested()
 signal load_requested()
 signal exit_to_main_menu_requested()
-signal rules_requested()
+signal seed_requested()
 
 @export var players: Players
 
@@ -171,7 +171,7 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 						"/save - Save the game",
 						"/load - Load the saved game",
 						"/mainmenu - Go back to the main menu (without saving!)",
-						"/rules - Get a list of this game's rules",
+						"/seed - Get this game's seed",
 				])
 			"fs":
 				var mode: int = DisplayServer.window_get_mode()
@@ -199,8 +199,8 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 				load_requested.emit()
 			"mainmenu":
 				exit_to_main_menu_requested.emit()
-			"rules":
-				rules_requested.emit()
+			"seed":
+				seed_requested.emit()
 			_:
 				send_system_message(
 						'"[color=black]' + new_text + '[/color]"'

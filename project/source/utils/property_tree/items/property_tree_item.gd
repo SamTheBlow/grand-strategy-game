@@ -22,8 +22,8 @@ var _is_locked: bool = false
 ## When an item is locked, its data cannot be changed anymore.
 func lock() -> void:
 	_is_locked = true
-	for sub_rule in child_items:
-		sub_rule.lock()
+	for child_item in child_items:
+		child_item.lock()
 
 
 ## This item's data, for the purpose of saving/loading.

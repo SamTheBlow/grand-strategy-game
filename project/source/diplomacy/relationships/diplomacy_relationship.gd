@@ -114,7 +114,7 @@ func initialize_actions(
 	_update_available_actions(current_turn)
 
 
-# TODO sort the actions in the right order (as defined in the game rules)
+# TODO sort the actions in the right order
 ## Returns the actions that are currently available to this country.
 ## The list has no duplicates.
 func available_actions() -> Array[DiplomacyAction]:

@@ -131,7 +131,7 @@ static func _load_relationship_from_raw_data(
 				)
 
 			var new_action := DiplomacyAction.new(
-					game.rules.diplomatic_actions.action_from_id(action_id),
+					game.diplomatic_actions.action_from_id(action_id),
 					turn_it_became_available,
 					turn_it_was_last_performed
 			)
