@@ -30,6 +30,9 @@ var game_players := GamePlayers.new()
 var turn := GameTurn.new(self)
 
 ## Do not overwrite!
+var turn_change_iteration: TurnChangeIteration
+
+## Do not overwrite!
 var world := GameWorld.new(self)
 
 ## The game's RNG.
@@ -55,6 +58,8 @@ var components: Dictionary[String, GameComponent] = {}
 
 
 func _init() -> void:
+	turn_change_iteration = TurnChangeIteration.new(self)
+
 	modifier_request.add_provider(self)
 
 	for province in world.provinces.list():

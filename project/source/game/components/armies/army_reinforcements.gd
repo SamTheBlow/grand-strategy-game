@@ -25,7 +25,9 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn.turn_changed.connect(_apply_reinforcements.bind(game).unbind(1))
+	game.turn_change_iteration.turn_changed_province.connect(
+			_apply_to_province.bind(game)
+	)
 
 
 func to_raw_dict() -> Dictionary:
@@ -39,12 +41,7 @@ func to_raw_dict() -> Dictionary:
 	return output
 
 
-func _apply_reinforcements(game: Game) -> void:
-	for province in game.world.provinces.list():
-		_apply_to_province(game, province)
-
-
-func _apply_to_province(game: Game, province: Province) -> void:
+func _apply_to_province(province: Province, game: Game) -> void:
 	if province.owner_country == null:
 		return
 
