@@ -29,7 +29,7 @@ func register(game: Game) -> void:
 func _apply(game: Game) -> void:
 	_already_supplied_countries.clear()
 
-	for province in game.world.provinces.list():
+	for province in game.world.provinces.list:
 		var is_starting_province: bool = province.owner_country != null
 
 		# Randomize population size

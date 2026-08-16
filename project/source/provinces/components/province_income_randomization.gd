@@ -20,7 +20,7 @@ func register(game: Game) -> void:
 
 
 func _apply(game: Game) -> void:
-	for province in game.world.provinces.list():
+	for province in game.world.provinces.list:
 		province.money_income().value = (
 				game.rng.randi_range(random_min, random_max)
 		)

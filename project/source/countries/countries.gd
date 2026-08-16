@@ -135,7 +135,7 @@ func undo_redo_remove(
 
 	# Ensure province ownership is restored on undo
 	var province_id_list: Array[int] = []
-	for province in provinces.list():
+	for province in provinces.list:
 		if province.owner_country == country:
 			province_id_list.append(province.id)
 	undo_redo.add_undo_method(
@@ -176,7 +176,7 @@ func _restore_ownership(
 		country: Country, province_id_list: Array[int], provinces: Provinces
 ) -> void:
 	for province_id in province_id_list:
-		var province: Province = provinces.province_from_id(province_id)
+		var province: Province = provinces.map.get(province_id)
 		if province == null:
 			push_error("Province doesn't exist")
 			continue

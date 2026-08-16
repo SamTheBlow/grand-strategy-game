@@ -22,7 +22,7 @@ func _update() -> void:
 		return
 	polygon_edit.can_drag_entire_polygon = (
 			_world.limits().is_custom_limits_enabled()
-			or _world.provinces.size() > 1
+			or _world.provinces.list.size() > 1
 	)
 
 

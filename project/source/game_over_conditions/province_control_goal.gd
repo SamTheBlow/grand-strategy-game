@@ -54,10 +54,9 @@ func _on_new_turn(game: Game) -> void:
 	if province_count <= 0 and province_percentage <= 0.0:
 		return
 
-	var provinces_list: Array[Province] = game.world.provinces.list()
-	var number_of_provinces: int = provinces_list.size()
+	var number_of_provinces: int = game.world.provinces.list.size()
 	var province_count_per_country: Dictionary[Country, int] = (
-			ProvinceCountPerCountry.result(provinces_list)
+			ProvinceCountPerCountry.result(game.world.provinces.list)
 	)
 	for country in province_count_per_country:
 		# Count check

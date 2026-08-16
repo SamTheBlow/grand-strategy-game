@@ -39,7 +39,7 @@ func _highlight_provinces(color: Color, province_filter: Callable) -> void:
 	if not is_enabled or _game.world_visuals.province_visuals == null:
 		return
 
-	for province in _game.game.world.provinces.list():
+	for province in _game.game.world.provinces.list:
 		(
 				_game.world_visuals.province_visuals.visuals_of(province.id)
 				.highlight_debug(color, province_filter.call(province))

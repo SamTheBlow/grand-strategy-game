@@ -25,9 +25,7 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn_change_iteration.turn_changed_province.connect(
-			_apply_to_province.bind(game)
-	)
+	game.turn.turn_changed.connect(_apply.bind(game).unbind(1))
 
 
 func to_raw_dict() -> Dictionary:
@@ -39,37 +37,6 @@ func to_raw_dict() -> Dictionary:
 	if amount_per_person != 0.0:
 		output[_AMOUNT_PER_PERSON_KEY] = amount_per_person
 	return output
-
-
-func _apply_to_province(province: Province, game: Game) -> void:
-	if province.owner_country == null:
-		return
-
-	var reinforcements_size := int(
-			(constant_amount + province.population().value * amount_per_person)
-			* ((game.rng.randf() * 2.0 - 1.0) * random_spread + 1.0)
-	)
-
-	# Creating new armies is bad for performance.
-	# It's better to directly increase an existing army's size.
-	for army: Army in (
-			game.world.armies_in_each_province.dictionary[province.id]
-			.ordered_list
-	):
-		if army.owner_country != province.owner_country:
-			continue
-
-		army.size().value += reinforcements_size
-		return
-
-	# Don't create a new army if it's too small.
-	if reinforcements_size < game.world.army_data.minimum_size:
-		return
-
-	# Couldn't find a valid army to reinforce. Create a new army.
-	Army.Factory.new(game).new_army(
-			province.owner_country, province.id, reinforcements_size, -1, 1
-	)
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
@@ -96,3 +63,43 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	error = false
 	error_message = ""
+
+
+func _apply(game: Game) -> void:
+	for province in game.world.provinces.list:
+		if province.owner_country == null:
+			continue
+
+		var reinforcements_size := int(
+				(
+						constant_amount
+						+ province.population().value * amount_per_person
+				)
+				* ((game.rng.randf() * 2.0 - 1.0) * random_spread + 1.0)
+		)
+
+		# Creating new armies is bad for performance.
+		# It's better to directly increase an existing army's size.
+		var is_existing_army_reinforced: bool = false
+		for army: Army in (
+				game.world.armies_in_each_province.dictionary[province.id]
+				.ordered_list
+		):
+			if army.owner_country == province.owner_country:
+				army.size().value += reinforcements_size
+				is_existing_army_reinforced = true
+				break
+
+		# If we couldn't find an army to reinforce, create a new one.
+		# Don't create a new army if it's too small.
+		if (
+				not is_existing_army_reinforced
+				and reinforcements_size >= game.world.army_data.minimum_size
+		):
+			Army.Factory.new(game).new_army(
+					province.owner_country,
+					province.id,
+					reinforcements_size,
+					-1,
+					1
+			)

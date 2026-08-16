@@ -116,9 +116,7 @@ func _on_game_over(winner_country: Country) -> void:
 	)
 
 	var province_count_per_country: Dictionary[Country, int] = (
-			ProvinceCountPerCountry.result(
-					_project.game.world.provinces.list()
-			)
+			ProvinceCountPerCountry.result(_project.game.world.provinces.list)
 	)
 	for country in province_count_per_country:
 		debug_text += (

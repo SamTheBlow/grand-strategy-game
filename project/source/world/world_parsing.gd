@@ -88,7 +88,7 @@ static func to_raw_dict(world: GameWorld) -> Dictionary:
 
 	# Provinces
 	var provinces_data: Array = (
-			ProvinceParsing.to_raw_array(world.provinces.list())
+			ProvinceParsing.to_raw_array(world.provinces.list)
 	)
 	if not provinces_data.is_empty():
 		output.merge({ _PROVINCES_KEY: provinces_data })

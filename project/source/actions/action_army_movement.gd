@@ -29,7 +29,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		)
 		return
 
-	if game.world.provinces.province_from_id(_destination_province_id) == null:
+	if game.world.provinces.map.get(_destination_province_id) == null:
 		push_warning(
 				"Tried to move an army to a province that doesn't exist!"
 		)

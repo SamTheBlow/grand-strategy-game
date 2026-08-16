@@ -15,7 +15,7 @@ var _is_enabled: bool = true
 func _init(game_world: GameWorld) -> void:
 	_game_world = game_world
 
-	for province in _game_world.provinces.list():
+	for province in _game_world.provinces.list:
 		province.polygon().changed.connect(_update)
 	_game_world.provinces.added.connect(_on_province_added)
 	_game_world.provinces.removed.connect(_on_province_removed)
@@ -45,7 +45,7 @@ func _update() -> void:
 	var topmost_point: float
 	var bottommost_point: float
 
-	for province in _game_world.provinces.list():
+	for province in _game_world.provinces.list:
 		for vertex in province.polygon().array:
 			var point_x: float = vertex.x
 			var point_y: float = vertex.y

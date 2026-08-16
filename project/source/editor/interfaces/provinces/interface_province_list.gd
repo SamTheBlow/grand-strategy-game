@@ -11,7 +11,7 @@ var _nodes: Dictionary[int, Node] = {}
 
 
 func _ready() -> void:
-	for province in project.game.world.provinces.list():
+	for province in project.game.world.provinces.list:
 		_add_element(province)
 
 	project.game.world.provinces.added.connect(_on_province_added)
@@ -60,7 +60,7 @@ func _on_province_added(province: Province) -> void:
 	_add_element(province)
 	_element_container.move_child(
 			_nodes[province.id],
-			project.game.world.provinces.position_of(province.id)
+			project.game.world.provinces.list.find(province)
 	)
 
 

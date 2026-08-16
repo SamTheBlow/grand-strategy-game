@@ -9,7 +9,6 @@ extends PlayerAI
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = super(game, player)
 
-	var provinces: Array[Province] = game.world.provinces.list()
 	var armies: ArmiesInEachProvince = game.world.armies_in_each_province
 	var frontline_provinces: Array[Province] = (
 			game.world.provinces.provinces_on_frontline(player.playing_country)

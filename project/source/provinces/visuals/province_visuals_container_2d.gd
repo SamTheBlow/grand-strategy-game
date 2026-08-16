@@ -39,7 +39,7 @@ func setup(provinces: Provinces) -> void:
 
 	if _provinces != null:
 		# Add all
-		for province in _provinces.list():
+		for province in _provinces.list:
 			_add_province(province)
 
 		_provinces.added.connect(_add_province)

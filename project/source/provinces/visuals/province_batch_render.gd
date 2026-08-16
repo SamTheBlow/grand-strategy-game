@@ -13,7 +13,7 @@ var provinces: Provinces = null:
 		if provinces != null:
 			provinces.added.disconnect(queue_redraw)
 			provinces.removed.disconnect(queue_redraw)
-			for province in provinces.list():
+			for province in provinces.list:
 				province.owner_changed.disconnect(queue_redraw)
 
 		provinces = value
@@ -22,7 +22,7 @@ var provinces: Provinces = null:
 		if provinces != null:
 			provinces.added.connect(queue_redraw.unbind(1))
 			provinces.removed.connect(queue_redraw.unbind(1))
-			for province in provinces.list():
+			for province in provinces.list:
 				province.owner_changed.connect(queue_redraw.unbind(1))
 
 
@@ -37,7 +37,7 @@ func _draw() -> void:
 	if provinces == null:
 		return
 
-	for province in provinces.list():
+	for province in provinces.list:
 		var country: Country = province.owner_country
 		var color: Color = (
 				DEFAULT_FILL_COLOR if country == null else country.color

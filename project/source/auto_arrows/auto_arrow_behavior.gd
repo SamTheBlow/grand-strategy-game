@@ -10,13 +10,13 @@ static func apply(game: Game) -> void:
 	# Each source province has its own list of arrow destinations.
 	var arrow_destinations: Dictionary[Province, ArrowDestinations] = {}
 	for auto_arrow in playing_country.auto_arrows.list():
-		var source_province: Province = game.world.provinces.province_from_id(
+		var source_province: Province = game.world.provinces.map.get(
 				auto_arrow.source_province_id()
 		)
 		if source_province == null:
 			continue
 		var destination_province: Province = (
-				game.world.provinces.province_from_id(
+				game.world.provinces.map.get(
 						auto_arrow.destination_province_id()
 				)
 		)

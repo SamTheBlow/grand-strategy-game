@@ -26,7 +26,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
 
-	for province in game.world.provinces.list():
+	for province in game.world.provinces.list:
 		var destination_provinces: Array[Province] = _destination_provinces(
 				province, player.playing_country, game.world.provinces
 		)
@@ -50,7 +50,7 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 
 	# Create list of destinations for the pathfinding
 	var destinations: Array[Province] = []
-	for province in game.world.provinces.list():
+	for province in game.world.provinces.list:
 		if (
 				province.owner_country == null
 				or not player.playing_country

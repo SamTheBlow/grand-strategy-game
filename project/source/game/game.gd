@@ -25,9 +25,6 @@ var game_players := GamePlayers.new(countries)
 var turn := GameTurn.new(self)
 
 ## Do not overwrite!
-var turn_change_iteration := TurnChangeIteration.new()
-
-## Do not overwrite!
 var world := GameWorld.new(self)
 
 ## The game's RNG.
@@ -67,7 +64,7 @@ var diplomatic_actions := DiplomacyActionDefinitions.new([
 
 
 func _init() -> void:
-	for province in world.provinces.list():
+	for province in world.provinces.list:
 		for building in province.buildings.list():
 			modifier_request.add_provider(building)
 	world.provinces.building_added.connect(modifier_request.add_provider)
@@ -142,17 +139,13 @@ func _register_components() -> void:
 	for component in sorted_list:
 		component.register(self)
 
-	# Register this last so that the turn limit check occurs first
-	# (TODO this is hacky)
-	turn_change_iteration.register(self)
-
 
 ## Used to determine the winner when the game ends.
 ## Currently returns the country that controls the most provinces.
 ## Returns null if the game has no countries.
 func _winning_country() -> Country:
 	var province_count_per_country: Dictionary[Country, int] = (
-			ProvinceCountPerCountry.result(world.provinces.list())
+			ProvinceCountPerCountry.result(world.provinces.list)
 	)
 
 	var winner_country: Country = null

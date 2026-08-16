@@ -33,13 +33,13 @@ var _province_selection: ProvinceSelection:
 var _provinces: Provinces:
 	set(value):
 		if _provinces != null:
-			for province in _provinces.list():
+			for province in _provinces.list:
 				_disconnect_link_signals(province)
 
 		_provinces = value
 
 		refresh_highlights()
-		for province in _provinces.list():
+		for province in _provinces.list:
 			_connect_link_signals(province)
 		_provinces.added.connect(_connect_link_signals)
 		_provinces.removed.connect(_disconnect_link_signals)

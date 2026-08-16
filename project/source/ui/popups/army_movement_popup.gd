@@ -45,7 +45,7 @@ func setup(
 func _update() -> void:
 	if (
 			_army.province(_provinces) == null
-			or _provinces.province_from_id(_destination_province_id) == null
+			or _provinces.map.get(_destination_province_id) == null
 	):
 		_is_invalid = true
 		invalidated.emit()

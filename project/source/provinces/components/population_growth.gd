@@ -18,7 +18,7 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn_change_iteration.turn_changed_province.connect(_apply_to_province)
+	game.turn.turn_changed.connect(_apply.bind(game).unbind(1))
 
 
 func to_raw_dict() -> Dictionary:
@@ -26,16 +26,6 @@ func to_raw_dict() -> Dictionary:
 	if _growth_rate != 0.0:
 		output[_GROWTH_RATE_KEY] = _growth_rate
 	return output
-
-
-func _apply_to_province(province: Province) -> void:
-	if _growth_rate == 0.0:
-		return
-	if province.population().value == 0:
-		return
-	province.population().value += int(
-			province.population().value ** _growth_rate
-	)
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
@@ -46,3 +36,12 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	error = false
 	error_message = ""
+
+
+func _apply(game: Game) -> void:
+	for province in game.world.provinces.list:
+		if _growth_rate == 0.0 or province.population().value == 0:
+			continue
+		province.population().value += int(
+				province.population().value ** _growth_rate
+		)

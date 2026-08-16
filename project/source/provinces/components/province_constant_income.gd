@@ -11,10 +11,11 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn_change_iteration.turn_changed_province.connect(_apply_to_province)
+	game.turn.turn_changed.connect(_apply.bind(game).unbind(1))
 
 
-func _apply_to_province(province: Province) -> void:
-	if province.owner_country == null:
-		return
-	province.owner_country.money += province.money_income().value
+func _apply(game: Game) -> void:
+	for province in game.world.provinces.list:
+		if province.owner_country == null:
+			continue
+		province.owner_country.money += province.money_income().value

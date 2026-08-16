@@ -15,7 +15,7 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn_change_iteration.turn_changed_province.connect(_apply_to_province)
+	game.turn.turn_changed.connect(_apply.bind(game).unbind(1))
 
 
 ## The amount of money this province generates each turn,
@@ -31,12 +31,6 @@ func to_raw_dict() -> Dictionary:
 	return output
 
 
-func _apply_to_province(province: Province) -> void:
-	if province.owner_country == null:
-		return
-	province.owner_country.money += amount_for(province)
-
-
 func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _PER_PERSON_KEY):
 		per_person = ParseUtils.dictionary_float(raw_dict, _PER_PERSON_KEY)
@@ -45,3 +39,10 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	error = false
 	error_message = ""
+
+
+func _apply(game: Game) -> void:
+	for province in game.world.provinces.list:
+		if province.owner_country == null:
+			continue
+		province.owner_country.money += amount_for(province)

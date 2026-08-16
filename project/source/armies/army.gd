@@ -72,7 +72,7 @@ func province_id() -> int:
 
 ## Returns null if there is no province with this army's province id.
 func province(provinces: Provinces) -> Province:
-	return provinces.province_from_id(_province_id)
+	return provinces.map.get(_province_id)
 
 
 ## If true, the army can still make a movement.
@@ -86,11 +86,11 @@ func is_able_to_move() -> bool:
 ## foreign territory, the army's owner must be allowed to enter.
 ## This returns true regardless of if the army is able to move at all.
 func can_move_to(provinces: Provinces, destination_province_id: int) -> bool:
-	var source_province: Province = provinces.province_from_id(_province_id)
+	var source_province: Province = provinces.map.get(_province_id)
 	if source_province == null:
 		return false
 	var destination_province: Province = (
-			provinces.province_from_id(destination_province_id)
+			provinces.map.get(destination_province_id)
 	)
 	if destination_province == null:
 		return false
@@ -121,7 +121,7 @@ func move_to_province(
 	_movements_made += 1
 	_province_id = destination_province_id
 	# We don't check for null because it's already done in can_move_to
-	moved_to_province.emit(provinces.province_from_id(destination_province_id))
+	moved_to_province.emit(provinces.map.get(destination_province_id))
 
 
 ## Moves this army to given destination province.

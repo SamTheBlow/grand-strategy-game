@@ -18,10 +18,9 @@ func _init(provinces: Provinces) -> void:
 func generate(destinations: Array[Province]) -> void:
 	paths = { null: LinkBranches.new() }
 
-	var province_list: Array[Province] = _provinces.list()
 	# Make sure all provinces are in the dictionary,
 	# even those that don't have a valid path.
-	for province in province_list:
+	for province in _provinces.list:
 		paths[province] = LinkBranches.new()
 
 	var is_not_stuck: bool = true

@@ -16,7 +16,7 @@ func _init(countries: Countries, provinces: Provinces) -> void:
 	countries.added.connect(_add_country)
 	countries.removed.connect(_remove_country)
 
-	for province in provinces.list():
+	for province in provinces.list:
 		_add_province(province)
 	provinces.added.connect(_add_province)
 	provinces.removed.connect(_remove_province)

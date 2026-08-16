@@ -46,14 +46,13 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 		_load_province_from_raw(province_data, game)
 
 	# Validate province links (needs to be done after all provinces are loaded)
-	for province_id in game.world.provinces._list:
-		var link_list: Array[int] = (
-				game.world.provinces._list[province_id]
-				.linked_province_ids()
+	for province_id in game.world.provinces.map:
+		var link_id_list: Array[int] = (
+				game.world.provinces.map[province_id].linked_province_ids()
 		)
-		for i in link_list.size():
-			if not game.world.provinces._list.has(link_list[i]):
-				link_list.remove_at(i)
+		for i in link_id_list.size():
+			if not game.world.provinces.map.has(link_id_list[i]):
+				link_id_list.remove_at(i)
 				i -= 1
 
 
