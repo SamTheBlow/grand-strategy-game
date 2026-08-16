@@ -6,8 +6,8 @@ extends PlayerAI
 ## Tries to build fortresses on the frontline where they are needed the most.
 
 
-func actions(game: Game, player: GamePlayer) -> Array[Action]:
-	var result: Array[Action] = super(game, player)
+func _actions(game: Game, player: GamePlayer, rng: GameRNG) -> Array[Action]:
+	var result: Array[Action] = personality.actions(game, player, rng)
 
 	var armies: ArmiesInEachProvince = game.world.armies_in_each_province
 	var frontline_provinces: Array[Province] = (
@@ -130,8 +130,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 					# If the province's army is small enough, attack it
 					if (
-							hostile_army_size
-							* (1.75 + game.rng.randf() * 0.5)
+							hostile_army_size * (1.75 + rng.randf() * 0.5)
 							<= army_size
 					):
 						attack_list.append(hostile_link)
@@ -141,7 +140,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 				# If the total size of all the hostile armies
 				# is too big, don't attack at all
 				if (
-						army_size * (1.75 + game.rng.randf() * 0.5)
+						army_size * (1.75 + rng.randf() * 0.5)
 						< total_hostile_army_size
 				):
 					attack_list.clear()

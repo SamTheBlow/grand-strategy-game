@@ -356,8 +356,8 @@ func weakest_country(countries: Array[Country]) -> Country:
 
 
 ## Takes an array of countries and returns one of them at random.
-func random_country(countries: Array[Country]) -> Country:
-	var random_index: int = game.rng.randi_range(0, countries.size() - 1)
+func random_country(countries: Array[Country], rng: GameRNG) -> Country:
+	var random_index: int = rng.randi_range(0, countries.size() - 1)
 	return countries[random_index]
 
 

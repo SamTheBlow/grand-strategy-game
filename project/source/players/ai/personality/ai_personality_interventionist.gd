@@ -7,7 +7,7 @@ extends AIPersonality
 ## - Tends to declare war on the enemies of its allies
 
 
-func actions(game: Game, _player: GamePlayer) -> Array[Action]:
+func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_country()
 	#print("--- Interventionist ", playing_country.name_or_default())
 

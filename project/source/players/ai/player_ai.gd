@@ -26,7 +26,12 @@ var personality := AIPersonality.from_type(AIPersonality.Type.NONE):
 
 ## This is where the AI generates its actions based on a given game state.
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
-	return personality.actions(game, player)
+	# Create a duplicate of the RNG to avoid mutating game state.
+	return _actions(game, player, game.rng.copy())
+
+
+func _actions(game: Game, player: GamePlayer, rng: GameRNG) -> Array[Action]:
+	return personality.actions(game, player, rng)
 
 
 ## Returns a new PlayerAI instance of given type.

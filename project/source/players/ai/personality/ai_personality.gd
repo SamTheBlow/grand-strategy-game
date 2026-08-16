@@ -40,7 +40,7 @@ static func type_values() -> Array[int]:
 
 
 ## This is where the AI generates its actions based on a given game state.
-func actions(_game: Game, _player: GamePlayer) -> Array[Action]:
+func actions(_game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	return []
 
 

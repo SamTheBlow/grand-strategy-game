@@ -4,7 +4,7 @@ extends AIPersonality
 ## It's not meant to be a fun/challenging opponent.
 
 
-func actions(game: Game, _player: GamePlayer) -> Array[Action]:
+func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	var decisions := AIDecisionUtils.new(game)
 	decisions.accept_all_offers()
 	return decisions.action_list()

@@ -7,7 +7,7 @@ extends AIPersonality
 ## - Tends to offer alliances and declare war at random
 
 
-func actions(game: Game, _player: GamePlayer) -> Array[Action]:
+func actions(game: Game, _player: GamePlayer, rng: GameRNG) -> Array[Action]:
 	var playing_country: Country = game.turn.playing_country()
 	#print("--- Emotional ", playing_country.name_or_default())
 
@@ -38,14 +38,14 @@ func actions(game: Game, _player: GamePlayer) -> Array[Action]:
 		#print("Candidate for random alliance/war: ", country.name_or_default())
 
 		# 4/5 chance of not doing anything
-		var is_event_happening: float = (game.rng.randi() % 5) == 0
+		var is_event_happening: float = (rng.randi() % 5) == 0
 		if not is_event_happening:
 			continue
 
 		#print("Let's ally them!")
 
 		# 1/5 chance of war instead of alliance
-		var is_event_war: bool = (game.rng.randi() % 5) == 0
+		var is_event_war: bool = (rng.randi() % 5) == 0
 
 		if is_event_war:
 			#print("...actually, I feel like going to war!")
