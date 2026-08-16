@@ -41,10 +41,6 @@ var modifier_request := ModifierRequest.new()
 var _game_state: GameState = GameState.SETUP
 var _is_setup_for_play: bool = false
 
-## Objects which we never need to access.
-## These are stored here only because they need to stay referenced.
-var _components: Array = []
-
 ## A list of [GameComponent]s, mapped by their KEY constant for quick access.
 var components: Dictionary[String, GameComponent] = {}
 
@@ -74,15 +70,11 @@ func _init() -> void:
 	for province in world.provinces.list():
 		for building in province.buildings.list():
 			modifier_request.add_provider(building)
-
 	world.provinces.building_added.connect(modifier_request.add_provider)
 	world.provinces.building_removed.connect(modifier_request.remove_provider)
 
 	AutoArrowProvinceCleanup.connect_game(self)
-
-	_components.append_array([
-		ProvinceOwnershipUpdate.new(self),
-	])
+	ProvinceOwnershipUpdate.connect_game(self)
 
 
 ## Returns the game's current state.

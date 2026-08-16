@@ -1,25 +1,22 @@
 class_name ProvinceOwnershipUpdate
 ## Updates the owner country of each province at the end of each country's turn.
 
-var _game: Game
+
+static func connect_game(game: Game) -> void:
+	game.turn.country_turn_ended.connect(_update_ownership.bind(game).unbind(1))
 
 
-func _init(game: Game) -> void:
-	_game = game
-	_game.turn.country_turn_ended.connect(_update_ownership)
+static func _update_ownership(game: Game) -> void:
+	for province in game.world.provinces.list():
+		_update_ownership_of(province, game)
 
 
-func _update_ownership(_country: Country = null) -> void:
-	for province in _game.world.provinces.list():
-		_update_ownership_of(province)
-
-
-func _update_ownership_of(province: Province) -> void:
+static func _update_ownership_of(province: Province, game: Game) -> void:
 	var current_owner: Country = province.owner_country
 	var new_owner: Country = current_owner
 
 	for army in (
-			_game.world.armies_in_each_province.dictionary[province.id]
+			game.world.armies_in_each_province.dictionary[province.id]
 			.ordered_list
 	):
 		# If the current owner has an army here,
@@ -37,7 +34,7 @@ func _update_ownership_of(province: Province) -> void:
 		# If this army is not trespassing,
 		# then it won't take control over the province.
 		# See [DiplomacyRelationship]
-		if not army.is_trespassing(_game.world.provinces):
+		if not army.is_trespassing(game.world.provinces):
 			continue
 
 		new_owner = army.owner_country
