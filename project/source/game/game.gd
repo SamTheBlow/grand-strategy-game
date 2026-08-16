@@ -98,11 +98,6 @@ func setup_for_play() -> void:
 	rng.lock()
 	_register_components()
 
-	# Add other components
-	_components.append_array([
-		AutoEndTurn.new(self),
-	])
-
 	turn.is_running_changed.connect(_on_is_running_changed)
 
 	_is_setup_for_play = true

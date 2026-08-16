@@ -31,10 +31,6 @@ var _playing_country_index: int = -1
 
 var _ai_thread := AIThread.new()
 
-# When true, doesn't play the next country's turn after the AI submits
-# their moves, and calling "start()" has no effect.
-var _is_gameplay_loop_interrupted: bool = false
-
 
 func _init(
 		game: Game, starting_turn: int = 1, playing_country_id: int = -1
@@ -88,9 +84,6 @@ func end_turn() -> void:
 ## When it's an AI's turn, creates a new thread for the AI
 ## and waits for the thread to be finished.
 func start() -> void:
-	if _is_gameplay_loop_interrupted:
-		return
-
 	# Cannot start with 0 countries.
 	# Please verify this before calling this function.
 	if _game.countries.size() == 0:
@@ -122,17 +115,22 @@ func start() -> void:
 # Stops the gameplay loop.
 # Useful when it's an AI only game and you want the game loop to end.
 func stop() -> void:
-	if _is_running:
-		_game.countries.added.disconnect(_on_country_added)
-		_game.countries.removed.disconnect(_on_country_removed)
-		_game.countries.order_changed.disconnect(_on_country_order_changed)
-		_is_running = false
-	_is_gameplay_loop_interrupted = true
+	if not _is_running:
+		return
+
+	_game.countries.added.disconnect(_on_country_added)
+	_game.countries.removed.disconnect(_on_country_removed)
+	_game.countries.order_changed.disconnect(_on_country_order_changed)
+	_is_running = false
 
 
 func _end_player_turn(player: GamePlayer) -> void:
+	if not _is_running:
+		return
+
 	# Make army movements according to [AutoArrow]s
 	if player.is_human:
+		player.human_status_changed.disconnect(_end_player_turn)
 		AutoArrowBehavior.apply(_game)
 
 	# Merge armies
@@ -179,6 +177,11 @@ func _run_gameplay_loop() -> void:
 	# If the player is an AI, play their actions in a separate thread
 	if not player.is_human:
 		_ai_thread.run(_game, player, player.player_ai)
+	# Automatically end a human player's turn if they become an AI
+	else:
+		player.human_status_changed.connect(
+				_end_player_turn, ConnectFlags.CONNECT_ONE_SHOT
+		)
 
 
 func _on_country_added(_country: Country) -> void:
@@ -202,7 +205,7 @@ func _on_country_order_changed(
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:
-	if _is_gameplay_loop_interrupted:
+	if not _is_running:
 		return
 
 	var player: GamePlayer = playing_players()[0]

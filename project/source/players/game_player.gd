@@ -20,9 +20,11 @@ var playing_country: Country = null:
 		playing_country_changed.emit()
 
 ## Note that if you are turning this player into a human, then
-## you might want to set the player_human property before setting this one
+## you might want to set the player_human property before setting this one.
 var is_human: bool = false:
 	set(value):
+		if is_human == value:
+			return
 		is_human = value
 		if not is_human:
 			player_human = null
