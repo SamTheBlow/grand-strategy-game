@@ -69,6 +69,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 	# Move armies to the frontline.
 	# Move more towards places with bigger danger.
+	var army_id_system: UniqueIdSystem = game.world.armies.id_system().copy()
 	for army in (
 			game.world.armies_of_each_country
 			.dictionary[player.playing_country].list
@@ -174,7 +175,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 
 					if is_large_enough:
 						var new_army_ids: Array[int] = (
-								game.world.armies.id_system()
+								army_id_system
 								.new_unique_ids(new_army_count, false)
 						)
 						result.append(ActionArmySplit.new(

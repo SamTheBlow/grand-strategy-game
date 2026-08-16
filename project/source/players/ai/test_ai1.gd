@@ -26,6 +26,7 @@ func actions(game: Game, player: GamePlayer) -> Array[Action]:
 func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
 	var result: Array[Action] = []
 
+	var army_id_system: UniqueIdSystem = game.world.armies.id_system().copy()
 	for province in game.world.provinces.list:
 		var destination_provinces: Array[Province] = _destination_provinces(
 				province, player.playing_country, game.world.provinces
@@ -38,7 +39,7 @@ func _actions_few(game: Game, player: GamePlayer) -> Array[Action]:
 				continue
 
 			result.append_array(_new_movement_actions(
-					army, destination_provinces, game.world.armies
+					army, destination_provinces, army_id_system
 			))
 
 	return result
@@ -65,6 +66,7 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 	province_pathfinding.generate(destinations)
 
 	# Create actions for each army
+	var army_id_system: UniqueIdSystem = game.world.armies.id_system().copy()
 	for my_army: Army in (
 			game.world.armies_of_each_country
 			.dictionary[player.playing_country].list
@@ -77,7 +79,7 @@ func _actions_many(game: Game, player: GamePlayer) -> Array[Action]:
 			provinces_to_move_to.append(link_branch.furthest_link())
 
 		result.append_array(_new_movement_actions(
-				my_army, provinces_to_move_to, game.world.armies
+				my_army, provinces_to_move_to, army_id_system
 		))
 
 	return result
@@ -123,11 +125,13 @@ func _try_build_fortresses(
 
 
 func _new_movement_actions(
-		army: Army, destination_provinces: Array[Province], armies: Armies
+		army: Army,
+		destination_provinces: Array[Province],
+		army_id_system: UniqueIdSystem
 ) -> Array[Action]:
 	var new_actions: Array[Action] = []
 
-	var army_even_split := ArmyEvenSplit.new(armies)
+	var army_even_split := ArmyEvenSplit.new(army_id_system)
 	army_even_split.apply(army, destination_provinces)
 
 	if army_even_split.action_army_split != null:

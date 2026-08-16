@@ -56,7 +56,9 @@ static func apply(game: Game) -> void:
 			# is already going to be called on all clients anyway,
 			# and the clients already have the information they need
 			# (ATTENTION) assuming the [AutoArrowNode2D]s are correctly synced
-			var army_even_split := ArmyEvenSplit.new(game.world.armies)
+			var army_even_split := (
+					ArmyEvenSplit.new(game.world.armies.id_system())
+			)
 			army_even_split.apply(
 					army, arrow_destinations[source_province].destinations
 			)

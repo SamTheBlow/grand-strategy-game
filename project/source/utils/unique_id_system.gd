@@ -56,6 +56,14 @@ func new_unique_ids(number_of_ids: int, is_used: bool = true) -> Array[int]:
 	return output
 
 
+func copy() -> UniqueIdSystem:
+	var output := UniqueIdSystem.new()
+	output._counter = _counter
+	output._used_numbers = _used_numbers.duplicate()
+	output._smallest_valid_number = _smallest_valid_number
+	return output
+
+
 ## Returns true if given id is valid and not currently in use.
 func is_id_available(id: int) -> bool:
 	return is_id_valid(id) and not _used_numbers.has(id)

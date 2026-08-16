@@ -14,11 +14,11 @@ var action_army_split: ActionArmySplit
 ## then an invalid action will be created anyway.
 var action_army_movements: Array[ActionArmyMovement] = []
 
-var _armies: Armies
+var _unique_id_system: UniqueIdSystem
 
 
-func _init(armies: Armies) -> void:
-	_armies = armies
+func _init(unique_id_system: UniqueIdSystem) -> void:
+	_unique_id_system = unique_id_system
 
 
 func apply(army: Army, destination_provinces: Array[Province]) -> void:
@@ -35,8 +35,7 @@ func apply(army: Army, destination_provinces: Array[Province]) -> void:
 	var new_army_ids: Array[int] = []
 	if number_of_targets > 1:
 		new_army_ids = (
-				_armies.id_system()
-				.new_unique_ids(number_of_targets - 1, false)
+				_unique_id_system.new_unique_ids(number_of_targets - 1, false)
 		)
 
 		# Create the partition
