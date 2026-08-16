@@ -38,25 +38,6 @@ func remove(auto_arrow: AutoArrow) -> void:
 	arrow_removed.emit(list_arrow)
 
 
-## Removes from this list all autoarrows
-## whose source province is given province.
-func remove_all_from_province(source_province_id: int) -> void:
-	for auto_arrow in list():
-		if auto_arrow.source_province_id() == source_province_id:
-			remove(auto_arrow)
-
-
-## Removes from this list all autoarrows that go from or to given province
-## (even if the province id is invalid.)
-func remove_all_with_province(province_id: int) -> void:
-	for auto_arrow in list():
-		if (
-				auto_arrow.source_province_id() == province_id
-				or auto_arrow.destination_province_id() == province_id
-		):
-			remove(auto_arrow)
-
-
 ## Returns a new copy of the list.
 func list() -> Array[AutoArrow]:
 	return _list.duplicate()

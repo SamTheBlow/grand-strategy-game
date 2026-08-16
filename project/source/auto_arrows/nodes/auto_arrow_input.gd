@@ -77,7 +77,10 @@ func _receive_remove_auto_arrow(country_id: int, arrow_data: Variant) -> void:
 #region Clearing a province
 func _clear_province(country: Country, province_id: int) -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
-		country.auto_arrows.remove_all_from_province(province_id)
+		for auto_arrow in country.auto_arrows.list():
+			if auto_arrow.source_province_id() == province_id:
+				country.auto_arrows.remove(auto_arrow)
+
 		return
 
 	_receive_clear_province.rpc_id(1, country.id, province_id)

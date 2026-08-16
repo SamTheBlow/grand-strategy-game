@@ -78,8 +78,9 @@ func _init() -> void:
 	world.provinces.building_added.connect(modifier_request.add_provider)
 	world.provinces.building_removed.connect(modifier_request.remove_provider)
 
+	AutoArrowProvinceCleanup.connect_game(self)
+
 	_components.append_array([
-		AutoArrowProvinceReaction.new(self),
 		ProvinceOwnershipUpdate.new(self),
 	])
 
