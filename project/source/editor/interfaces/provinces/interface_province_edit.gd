@@ -97,6 +97,7 @@ func _duplicate() -> void:
 
 	# Create duplicate
 	var new_province := Province.new()
+	new_province.name = province.name
 	new_province.polygon().array = province.polygon().array.duplicate()
 	new_province.position_army_host = province.position_army_host
 	new_province.position_fortress = province.position_fortress
@@ -105,12 +106,13 @@ func _duplicate() -> void:
 	new_province.population().value = province.population().value
 	new_province.money_income().value = province.money_income().value
 
-	for building in province.buildings.list():
-		new_province.buildings.add(Building.new(building.data, province.id))
-
 	# We need this new province to have a new unique id
 	# assigned to it before we can create the undo_redo action
 	project.game.world.provinces.add(new_province)
+
+	# Buildings (needs the new province id)
+	for building in province.buildings.list():
+		new_province.buildings.add(Building.new(building.data, new_province.id))
 
 	# Create undo_redo action
 	# (don't execute it since we already added the province)
