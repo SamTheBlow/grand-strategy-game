@@ -26,8 +26,16 @@ var personality := AIPersonality.from_type(AIPersonality.Type.NONE):
 
 ## This is where the AI generates its actions based on a given game state.
 func actions(game: Game, player: GamePlayer) -> Array[Action]:
-	# Create a duplicate of the RNG to avoid mutating game state.
-	return _actions(game, player, game.rng.copy())
+	# Create a duplicate of the RNG to avoid mutating game state
+	var rng_copy := GameRNGStepCounted.new(game.rng)
+	var output: Array[Action] = _actions(game, player, rng_copy)
+
+	# Advance the RNG state by however many steps the AI did
+	var step_count: int = rng_copy.step_count()
+	if step_count > 0:
+		output.append(ActionAdvanceRNG.new(step_count))
+
+	return output
 
 
 func _actions(game: Game, player: GamePlayer, rng: GameRNG) -> Array[Action]:

@@ -14,6 +14,7 @@ enum {
 	RECRUITMENT = 4,
 	DIPLOMACY = 5,
 	HANDLE_NOTIFICATION = 6,
+	ADVANCE_RNG = 7,
 }
 
 const ID_KEY: String = "id"
@@ -54,6 +55,8 @@ static func from_raw_data(data: Dictionary) -> Action:
 			return ActionDiplomacy.from_raw_data(data)
 		HANDLE_NOTIFICATION:
 			return ActionHandleNotification.from_raw_data(data)
+		ADVANCE_RNG:
+			return ActionAdvanceRNG.from_raw_data(data)
 		_:
 			push_error("Unrecognized action type.")
 			return null

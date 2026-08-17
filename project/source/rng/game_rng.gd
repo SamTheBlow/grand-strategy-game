@@ -108,11 +108,3 @@ func shuffled(array: Array) -> Array:
 ## Locks the rng_seed and rng_state values so that they can't be changed.
 func lock() -> void:
 	_is_locked = true
-
-
-func copy() -> GameRNG:
-	var output := GameRNG.new()
-	output._rng.seed = _rng.seed
-	output._rng.state = _rng.state
-	output._is_locked = _is_locked
-	return output
