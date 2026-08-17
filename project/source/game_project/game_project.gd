@@ -27,9 +27,7 @@ func set_file_path(value: String) -> void:
 
 ## In exported projects, file paths that start with "res://" are not valid.
 func has_valid_file_path() -> bool:
-	if (
+	return _absolute_file_path.value != "" and not (
 			not OS.has_feature("editor")
 			and file_path().begins_with("res://")
-	):
-		return false
-	return FileAccess.file_exists(file_path())
+	)
