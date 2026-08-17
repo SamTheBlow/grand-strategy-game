@@ -15,7 +15,7 @@ func apply(
 		use_noise: bool,
 		noise_frequency: float,
 		noise_threshold: float,
-		province_money_income: int
+		province_data: Dictionary
 ) -> void:
 	game.world.provinces.clear()
 
@@ -26,11 +26,11 @@ func apply(
 				grid_height,
 				noise_frequency,
 				noise_threshold,
-				province_money_income
+				province_data
 		)
 	else:
 		_generate_provinces_without_noise(
-				game, grid_width, grid_height, province_money_income
+				game, grid_width, grid_height, province_data
 		)
 
 	game.world.limits().disable_custom_limits()
@@ -42,7 +42,7 @@ func _generate_provinces_with_noise(
 		grid_height: int,
 		noise_frequency: float,
 		noise_threshold: float,
-		province_money_income: int
+		province_data: Dictionary
 ) -> void:
 	# Generate perlin noise
 	var perlin_noise := FastNoiseLite.new()
@@ -65,13 +65,13 @@ func _generate_provinces_with_noise(
 				continue
 
 			var province := Province.new()
+			ProvinceParsing.apply_raw_data(province, province_data, game)
 			province.id = province_id
 			province.position_army_host = (
 					province_position
 					+ 0.5 * Vector2(hexagon_width, hexagon_height)
 			)
 			province.position_fortress += province.position_army_host
-			province.money_income().value = province_money_income
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([
@@ -136,7 +136,7 @@ func _generate_provinces_without_noise(
 		game: Game,
 		grid_width: int,
 		grid_height: int,
-		province_money_income: int
+		province_data: Dictionary
 ) -> void:
 	var province_id: int = 0
 	var province_position := Vector2(0.0, world_limits_margin)
@@ -148,13 +148,13 @@ func _generate_provinces_without_noise(
 
 		for i in grid_width:
 			var province := Province.new()
+			ProvinceParsing.apply_raw_data(province, province_data, game)
 			province.id = province_id
 			province.position_army_host = (
 					province_position
 					+ 0.5 * Vector2(hexagon_width, hexagon_height)
 			)
 			province.position_fortress += province.position_army_host
-			province.money_income().value = province_money_income
 
 			# Province shape
 			province.polygon().array = PackedVector2Array([

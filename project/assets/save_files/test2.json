@@ -24,7 +24,6 @@
 		"name": "Test map 2"
 	},
 	"components": {
-		"rng_overwrite": {},
 		"player_creation": {
 			"default_ai_type": 2,
 			"default_ai_personality": 0
@@ -33,14 +32,15 @@
 		"ai_randomization": {
 			"randomize_ai_personality": true
 		},
-		"misc_game_generation": {
-			"randomize_population": true,
-			"extra_starting_population": 0,
-			"start_with_fortress": true,
-			"starting_army_size": 1000
+		"army_placement": {
+			"army_size": 1000
 		},
 		"population_growth": {
 			"growth_rate": 0.48
+		},
+		"population_randomization": {
+			"population_range_min": 0,
+			"population_range_max": 1000
 		},
 		"province_population_income": {
 			"per_person": 0.075
@@ -200,6 +200,11 @@
 			},
 			{
 				"id": 3.0,
+				"buildings": [
+					{
+						"type": 0
+					}
+				],
 				"links": [
 					1.0,
 					2.0,
@@ -1177,6 +1182,11 @@
 			},
 			{
 				"id": 28.0,
+				"buildings": [
+					{
+						"type": 0
+					}
+				],
 				"links": [
 					20.0,
 					21.0,
@@ -1407,6 +1417,11 @@
 			},
 			{
 				"id": 34.0,
+				"buildings": [
+					{
+						"type": 0
+					}
+				],
 				"links": [
 					35.0,
 					38.0,

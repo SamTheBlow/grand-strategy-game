@@ -19,8 +19,6 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 	match key:
 		RandomGridWorld.KEY:
 			return _component_from_raw_data(RandomGridWorld.new(), raw_dict)
-		MiscGameGeneration.KEY:
-			return _component_from_raw_data(MiscGameGeneration.new(), raw_dict)
 		PlayerCreation.KEY:
 			return _component_from_raw_data(PlayerCreation.new(), raw_dict)
 		PlayerAssignmentToCountry.KEY:
@@ -43,6 +41,10 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(
 					TurnOrderRandomization.new(), raw_dict
 			)
+		PopulationRandomization.KEY:
+			return _component_from_raw_data(
+					PopulationRandomization.new(), raw_dict
+			)
 		PopulationGrowth.KEY:
 			return _component_from_raw_data(PopulationGrowth.new(), raw_dict)
 		ProvinceConstantIncome.KEY:
@@ -57,6 +59,10 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			return _component_from_raw_data(
 					ProvinceIncomeRandomization.new(), raw_dict
 			)
+		ArmyPlacement.KEY:
+			return _component_from_raw_data(ArmyPlacement.new(), raw_dict)
+		BuildingPlacement.KEY:
+			return _component_from_raw_data(BuildingPlacement.new(), raw_dict)
 		ArmyReinforcements.KEY:
 			return _component_from_raw_data(ArmyReinforcements.new(), raw_dict)
 		ArmyRecruitment.KEY:

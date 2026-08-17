@@ -135,6 +135,41 @@ static func to_raw_array(province_list: Array[Province]) -> Array:
 	return output
 
 
+## Applies given raw data to given province.
+## Not all data is applied: id, links, shape, and positions are ignored.
+static func apply_raw_data(
+		province: Province, raw_data: Variant, game: Game
+) -> void:
+	if raw_data is not Dictionary:
+		return
+	var raw_dict: Dictionary = raw_data
+
+	# Name
+	if ParseUtils.dictionary_has_string(raw_dict, _NAME_KEY):
+		province.name = raw_dict[_NAME_KEY]
+
+	# Owner country
+	if ParseUtils.dictionary_has_number(raw_dict, _OWNER_ID_KEY):
+		var country_id: int = (
+				ParseUtils.dictionary_int(raw_dict, _OWNER_ID_KEY)
+		)
+		province.owner_country = game.countries.country_from_id(country_id)
+
+	# Population
+	province.population().value = (
+			_population_from_raw(raw_dict.get(_POPULATION_KEY))
+	)
+
+	# Money income
+	if ParseUtils.dictionary_has_number(raw_dict, _INCOME_MONEY_KEY):
+		province.money_income().value = (
+				ParseUtils.dictionary_int(raw_dict, _INCOME_MONEY_KEY)
+		)
+
+	# Buildings
+	_load_buildings_from_raw(province, raw_dict, game)
+
+
 static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 	if raw_data is not Dictionary:
 		return
@@ -195,27 +230,7 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 		)
 
 	# Buildings
-	if ParseUtils.dictionary_has_array(raw_dict, _BUILDINGS_KEY):
-		var raw_buildings_array: Array = raw_dict[_BUILDINGS_KEY]
-		for building_data: Variant in raw_buildings_array:
-			if building_data is not Dictionary:
-				continue
-			var building_dict: Dictionary = building_data
-
-			if not ParseUtils.dictionary_has_number(
-					building_dict, _BUILDING_TYPE_KEY
-			):
-				continue
-			var building_type: int = ParseUtils.dictionary_int(
-					building_dict, _BUILDING_TYPE_KEY
-			)
-
-			if building_type != 0:
-				continue
-
-			province.buildings.add(
-					Building.new(game.world.fortress_data(), province.id)
-			)
+	_load_buildings_from_raw(province, raw_dict, game)
 
 	# Position offset (DEPRECATED)
 	var offset: Vector2 = (
@@ -313,3 +328,23 @@ static func _population_from_raw(raw_data: Variant) -> int:
 		)
 
 	return 0
+
+
+static func _load_buildings_from_raw(
+		province: Province, raw_dict: Dictionary, game: Game
+) -> void:
+	if not ParseUtils.dictionary_has_array(raw_dict, _BUILDINGS_KEY):
+		return
+	var raw_buildings_array := raw_dict[_BUILDINGS_KEY] as Array
+	for building_data: Variant in raw_buildings_array:
+		if building_data is not Dictionary:
+			continue
+		var building_dict: Dictionary = building_data
+		if not ParseUtils.dictionary_has_number(
+				building_dict, _BUILDING_TYPE_KEY
+		):
+			continue
+		if ParseUtils.dictionary_int(building_dict, _BUILDING_TYPE_KEY) == 0:
+			province.buildings.add(
+					Building.new(game.world.fortress_data(), province.id)
+			)
