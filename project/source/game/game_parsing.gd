@@ -113,17 +113,10 @@ class GameFromRawData extends Game:
 		)
 
 		# Countries
-		var country_data: Variant = raw_dict.get(_COUNTRIES_KEY)
-		countries = CountryParsing.from_raw_data(country_data)
-
-		# Relationships
-		DiplomacyRelationshipParsing.load_from_country_data(country_data, self)
+		CountryParsing.load_from_raw_data(raw_dict.get(_COUNTRIES_KEY), self)
 
 		# Players
 		GamePlayerParsing.load_from_raw_data(raw_dict.get(_PLAYERS_KEY), self)
-
-		# Notifications
-		GameNotificationParsing.load_from_country_data(country_data, self)
 
 		# World
 		WorldParsing.load_from_raw_data(

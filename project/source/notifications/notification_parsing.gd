@@ -15,42 +15,12 @@ const _SENDER_COUNTRY_ID_KEY: String = "sender_country_id"
 const _DIPLOMACY_ACTION_ID_KEY: String = "diplomacy_action_id"
 
 
-# WARNING: this implementation assumes that the game's countries and
-# the data's countries are in the same order.
-# If you're going to use this class right after using [CountryParsing],
-# then this won't be a problem.
-## NOTE: Given game's countries have to be loaded before using this.
-##
-## Overwrites the notifications property of all countries in given game.
+## Loads given country's notifications using given raw data.
+## Deletes all existing notifications.
 ##
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
-static func load_from_country_data(
-		raw_countries_data: Variant, game: Game
-) -> void:
-	var country_list: Array[Country] = game.countries.list()
-
-	var is_data_valid: bool = true
-	var raw_countries_array: Array
-	if raw_countries_data is Array:
-		raw_countries_array = raw_countries_data
-		if raw_countries_array.size() < country_list.size():
-			is_data_valid = false
-	else:
-		is_data_valid = false
-
-	for i in country_list.size():
-		var notifications_data: Variant
-		if is_data_valid and raw_countries_array[i] is Dictionary:
-			var country_dict: Dictionary = raw_countries_array[i]
-			notifications_data = (
-					country_dict.get(CountryParsing.NOTIFICATIONS_KEY)
-			)
-
-		_load_from_raw_data(notifications_data, game, country_list[i])
-
-
-static func _load_from_raw_data(
+static func load_from_raw_data(
 		raw_data: Variant, game: Game, country: Country
 ) -> void:
 	country.notifications = GameNotifications.new()

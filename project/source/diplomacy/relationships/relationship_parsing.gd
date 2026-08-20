@@ -8,42 +8,6 @@ const _TURN_IT_BECAME_AVAILABLE_KEY: String = "turn_it_became_available"
 const _TURN_IT_WAS_LAST_PERFORMED_KEY: String = "turn_it_was_last_performed"
 
 
-# WARNING: this implementation assumes that the game's countries and
-# the data's countries are in the same order.
-# If you're going to use this class right after using [CountryParsing],
-# then this won't be a problem.
-## NOTE: Given game's countries have to be loaded before using this.
-##
-## Overwrites the relationships property of all countries in given game.
-##
-## Always succeeds. Ignores unrecognized data.
-## When data is invalid, uses the default value instead.
-static func load_from_country_data(raw_data: Variant, game: Game) -> void:
-	var country_list: Array[Country] = game.countries.list()
-
-	var is_data_valid: bool = true
-	var raw_countries_array: Array
-	if raw_data is Array:
-		raw_countries_array = raw_data
-		if raw_countries_array.size() < country_list.size():
-			is_data_valid = false
-	else:
-		is_data_valid = false
-
-	for i in country_list.size():
-		var relationships_data: Variant
-		if is_data_valid and raw_countries_array[i] is Dictionary:
-			var country_dict: Dictionary = raw_countries_array[i]
-			relationships_data = (
-					country_dict.get(CountryParsing.RELATIONSHIPS_KEY)
-			)
-
-		var country: Country = country_list[i]
-		country.relationships = from_raw_data(
-				relationships_data, game, country
-		)
-
-
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 static func from_raw_data(

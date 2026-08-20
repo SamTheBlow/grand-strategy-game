@@ -6,24 +6,40 @@ const _NAME_KEY: String = "country_name"
 const _COLOR_KEY: String = "color"
 const _MONEY_KEY: String = "money"
 const _AUTOARROWS_KEY: String = "auto_arrows"
-const RELATIONSHIPS_KEY: String = "relationships"
-const NOTIFICATIONS_KEY: String = "notifications"
+const _RELATIONSHIPS_KEY: String = "relationships"
+const _NOTIFICATIONS_KEY: String = "notifications"
 
 
 ## Always succeeds. Ignores unrecognized data.
 ## When data is invalid, uses the default value instead.
 ## Discards countries with an already-in-use id.
-static func from_raw_data(raw_data: Variant) -> Countries:
-	var countries := Countries.new()
+static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
+	game.countries = Countries.new()
 
 	if raw_data is not Array:
-		return countries
+		return
 	var raw_array: Array = raw_data
 
+	# 1st pass
+	var valid_country_data: Dictionary[Country, Dictionary] = {}
 	for country_data: Variant in raw_array:
-		_add_country_from_raw_data(countries, country_data)
+		var country: Country = _country_from_raw_data(country_data)
+		if country != null:
+			game.countries.add(country)
+			valid_country_data[country] = country_data as Dictionary
 
-	return countries
+	# 2nd pass
+	for country in game.countries.list():
+		country.relationships = DiplomacyRelationshipParsing.from_raw_data(
+				valid_country_data[country].get(_RELATIONSHIPS_KEY),
+				game,
+				country
+		)
+		GameNotificationParsing.load_from_raw_data(
+				valid_country_data[country].get(_NOTIFICATIONS_KEY),
+				game,
+				country
+		)
 
 
 static func to_raw_array(countries: Countries) -> Array:
@@ -54,14 +70,14 @@ static func _country_to_raw_dict(country: Country) -> Dictionary:
 			if country.relationships != null else []
 	)
 	if not raw_relationships.is_empty():
-		output.merge({ RELATIONSHIPS_KEY: raw_relationships })
+		output.merge({ _RELATIONSHIPS_KEY: raw_relationships })
 
 	# Notifications
 	var raw_notifications: Array = (
 			GameNotificationParsing.to_raw_array(country.notifications)
 	)
 	if not raw_notifications.is_empty():
-		output.merge({ NOTIFICATIONS_KEY: raw_notifications })
+		output.merge({ _NOTIFICATIONS_KEY: raw_notifications })
 
 	# Autoarrows
 	var auto_arrow_data: Variant = country.auto_arrows.to_raw_data()
@@ -71,17 +87,15 @@ static func _country_to_raw_dict(country: Country) -> Dictionary:
 	return output
 
 
-## No effect if data is invalid.
-static func _add_country_from_raw_data(
-		countries: Countries, raw_data: Variant
-) -> void:
+## Returns null if data is invalid.
+static func _country_from_raw_data(raw_data: Variant) -> Country:
 	if raw_data is not Dictionary:
-		return
+		return null
 	var raw_dict: Dictionary = raw_data
 
 	# Id (mandatory)
 	if not ParseUtils.dictionary_has_number(raw_dict, _ID_KEY):
-		return
+		return null
 
 	var country := Country.new()
 	country.id = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
@@ -103,7 +117,7 @@ static func _add_country_from_raw_data(
 				AutoArrows.from_raw_data(raw_dict[_AUTOARROWS_KEY])
 		)
 
-	countries.add(country)
+	return country
 
 
 static func _country_color_from_raw(raw_data: Variant) -> Color:
