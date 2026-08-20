@@ -41,6 +41,3 @@ func _load_settings(raw_dict: Dictionary) -> void:
 		army_size = maxi(0, ParseUtils.dictionary_int(raw_dict, _ARMY_SIZE_KEY))
 	else:
 		army_size = 0
-
-	error = false
-	error_message = ""

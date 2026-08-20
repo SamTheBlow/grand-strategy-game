@@ -125,12 +125,12 @@ func provinces_on_frontline(country: Country) -> Array[Province]:
 ## Keeps the insertion index a private feature.
 func _add(province: Province, insertion_index: int = -1) -> void:
 	if map.has(province.id):
-		print_debug("Province is already in the list.")
+		push_warning("Province is already in the list.")
 		return
 	if not _unique_id_system.is_id_valid(province.id):
 		province.id = _unique_id_system.new_unique_id()
 	elif not _unique_id_system.is_id_available(province.id):
-		print_debug(
+		push_warning(
 				"Province id is already in use. (id: " + str(province.id) + ")"
 		)
 		return

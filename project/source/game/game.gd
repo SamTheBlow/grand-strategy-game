@@ -2,7 +2,6 @@ class_name Game
 ## The internal state of a game.
 
 signal error_triggered(error_message: String)
-signal game_started()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)
 
@@ -88,8 +87,6 @@ func setup_for_play() -> void:
 	rng.lock()
 	_register_components()
 
-	turn.is_running_changed.connect(_on_is_running_changed)
-
 	_is_setup_for_play = true
 
 	if _game_state == GameState.SETUP:
@@ -158,10 +155,3 @@ func _winning_country() -> Country:
 			winner_country = country
 
 	return winner_country
-
-
-# Note: this is for when the gameplay loop is paused or resumed.
-# It is unrelated to the game state.
-func _on_is_running_changed(is_running: bool) -> void:
-	if is_running:
-		game_started.emit()

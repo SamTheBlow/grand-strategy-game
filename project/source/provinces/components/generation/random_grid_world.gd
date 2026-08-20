@@ -12,9 +12,14 @@ const _NOISE_FREQUENCY_KEY: String = "noise_frequency"
 const _NOISE_THRESHOLD_KEY: String = "noise_threshold"
 const _PROVINCE_DATA_KEY: String = "province_data"
 
+enum GenerationType {
+	HEX_GRID = 0,
+	SQUARE_GRID = 1,
+}
+
 var grid_width: int = 1
 var grid_height: int = 1
-var grid_shape_option: int = 0
+var grid_shape_option: int = GenerationType.HEX_GRID
 var use_noise: bool = false
 var noise_frequency: float = 1.0
 var noise_threshold: float = 0.0
@@ -33,7 +38,7 @@ func register(game: Game) -> void:
 
 func _apply(game: Game) -> void:
 	match grid_shape_option:
-		0:
+		GenerationType.HEX_GRID:
 			HexGridGeneration.new().apply(
 					game,
 					grid_width,
@@ -43,7 +48,7 @@ func _apply(game: Game) -> void:
 					noise_threshold,
 					province_data
 			)
-		1:
+		GenerationType.SQUARE_GRID:
 			SquareGridGeneration.new().apply(
 					game,
 					grid_width,
@@ -54,8 +59,7 @@ func _apply(game: Game) -> void:
 					province_data
 			)
 		_:
-			error = true
-			error_message = "Unrecognized grid shape option."
+			push_warning("Unrecognized grid shape option.")
 			return
 
 
@@ -65,7 +69,7 @@ func to_raw_dict() -> Dictionary:
 		output[_GRID_WIDTH_KEY] = grid_width
 	if grid_height != 1:
 		output[_GRID_HEIGHT_KEY] = grid_height
-	if grid_shape_option != 0:
+	if grid_shape_option != GenerationType.HEX_GRID:
 		output[_GRID_SHAPE_KEY] = grid_shape_option
 	if use_noise:
 		output[_USE_NOISE_KEY] = use_noise
@@ -80,31 +84,46 @@ func to_raw_dict() -> Dictionary:
 
 func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _GRID_WIDTH_KEY):
-		grid_width = ParseUtils.dictionary_int(raw_dict, _GRID_WIDTH_KEY)
+		grid_width = (
+				maxi(1, ParseUtils.dictionary_int(raw_dict, _GRID_WIDTH_KEY))
+		)
+	else:
+		grid_width = 1
 
 	if ParseUtils.dictionary_has_number(raw_dict, _GRID_HEIGHT_KEY):
-		grid_height = ParseUtils.dictionary_int(raw_dict, _GRID_HEIGHT_KEY)
+		grid_height = (
+				maxi(1, ParseUtils.dictionary_int(raw_dict, _GRID_HEIGHT_KEY))
+		)
+	else:
+		grid_height = 1
 
 	if ParseUtils.dictionary_has_number(raw_dict, _GRID_SHAPE_KEY):
-		grid_shape_option = ParseUtils.dictionary_int(
-				raw_dict, _GRID_SHAPE_KEY
-		)
+		grid_shape_option = ParseUtils.dictionary_int(raw_dict, _GRID_SHAPE_KEY)
+		if grid_shape_option not in GenerationType.values():
+			grid_shape_option = GenerationType.HEX_GRID
+	else:
+		grid_shape_option = GenerationType.HEX_GRID
 
 	if ParseUtils.dictionary_has_bool(raw_dict, _USE_NOISE_KEY):
 		use_noise = raw_dict[_USE_NOISE_KEY]
+	else:
+		use_noise = false
 
 	if ParseUtils.dictionary_has_number(raw_dict, _NOISE_FREQUENCY_KEY):
-		noise_frequency = ParseUtils.dictionary_float(
-				raw_dict, _NOISE_FREQUENCY_KEY
+		noise_frequency = (
+				ParseUtils.dictionary_float(raw_dict, _NOISE_FREQUENCY_KEY)
 		)
+	else:
+		noise_frequency = 1.0
 
 	if ParseUtils.dictionary_has_number(raw_dict, _NOISE_THRESHOLD_KEY):
-		noise_threshold = ParseUtils.dictionary_float(
-				raw_dict, _NOISE_THRESHOLD_KEY
+		noise_threshold = (
+				ParseUtils.dictionary_float(raw_dict, _NOISE_THRESHOLD_KEY)
 		)
+	else:
+		noise_threshold = 0.0
 
 	if ParseUtils.dictionary_has_dictionary(raw_dict, _PROVINCE_DATA_KEY):
 		province_data = raw_dict[_PROVINCE_DATA_KEY]
-
-	error = false
-	error_message = ""
+	else:
+		province_data = {}

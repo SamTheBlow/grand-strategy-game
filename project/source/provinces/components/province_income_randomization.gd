@@ -48,6 +48,3 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	if random_min > random_max:
 		random_max = random_min
-
-	error = false
-	error_message = ""

@@ -155,7 +155,9 @@ class GameStateParsing:
 			_STATE_GAMEOVER:
 				return Game.GameState.GAMEOVER
 			_:
-				push_error("Unrecognized game state!")
+				push_warning(
+						"Unrecognized game state. Defaulting to setup phase"
+				)
 				return _DEFAULT_STATE
 
 	# Returns an array with one element of type Variant.

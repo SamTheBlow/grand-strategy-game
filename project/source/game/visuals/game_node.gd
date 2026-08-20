@@ -36,6 +36,7 @@ var game: Game:
 		game = value
 		game.error_triggered.connect(_on_game_error)
 		game.game_over.connect(_on_game_over)
+		game.turn.started.connect(_on_game_started)
 
 ## Reference to external node.
 ## May be null. If null, the players list will not be fully initialized.
@@ -282,6 +283,11 @@ func _on_game_error(error_message: String) -> void:
 			"[color=dark_red]Fatal error: \"" + error_message + "\"\n"
 			+ "The game has stopped and cannot continue.[/color]"
 	)
+
+
+func _on_game_started() -> void:
+	if chat != null and MultiplayerUtils.has_authority(multiplayer):
+		chat.send_global_message("The game has started!")
 
 
 func _on_game_over(winning_country: Country) -> void:

@@ -119,6 +119,8 @@ static func _load_army_from_raw_dict(
 	var province_id: int = -1
 	if ParseUtils.dictionary_has_number(raw_dict, _PROVINCE_ID_KEY):
 		province_id = ParseUtils.dictionary_int(raw_dict, _PROVINCE_ID_KEY)
+		if not game.world.provinces.map.has(province_id):
+			province_id = -1
 
 	# Movements made (optional, defaults to 0)
 	var movements_made: int = 0
@@ -139,7 +141,6 @@ static func _load_army_from_raw_dict(
 ## the second element is the army raw dictionary.
 static func _entries_in_arrival_order(raw_array: Array) -> Array:
 	var entries: Array = []
-	entries.resize(raw_array.size())
 
 	for i in raw_array.size():
 		if raw_array[i] is not Dictionary:
@@ -148,12 +149,14 @@ static func _entries_in_arrival_order(raw_array: Array) -> Array:
 
 		var order_key: int = i
 		if ParseUtils.dictionary_has_number(raw_dict, _ARRIVAL_INDEX_KEY):
-			var arrival_index: int = (
-					ParseUtils.dictionary_int(raw_dict, _ARRIVAL_INDEX_KEY)
+			var arrival_index: int = clampi(
+					ParseUtils.dictionary_int(raw_dict, _ARRIVAL_INDEX_KEY),
+					0,
+					1 << 30
 			)
 			order_key = arrival_index * (1 << 31) + i
 
-		entries[i] = [order_key, raw_dict]
+		entries.append([order_key, raw_dict])
 
 	entries.sort()
 	return entries

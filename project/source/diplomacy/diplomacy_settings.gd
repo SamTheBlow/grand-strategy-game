@@ -131,9 +131,6 @@ func _load_settings(raw_dict: Dictionary) -> void:
 			_bool_data(raw_dict, _CAN_ASK_STOP_FIGHTING_KEY)
 	)
 
-	error = false
-	error_message = ""
-
 
 func _bool_data(raw_dict: Dictionary, key: String) -> bool:
 	if ParseUtils.dictionary_has_bool(raw_dict, key):

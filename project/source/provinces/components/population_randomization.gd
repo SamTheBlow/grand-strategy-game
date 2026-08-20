@@ -55,6 +55,3 @@ func _load_settings(raw_dict: Dictionary) -> void:
 
 	if min_value > max_value:
 		max_value = min_value
-
-	error = false
-	error_message = ""

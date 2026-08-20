@@ -19,7 +19,8 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	game.turn.turn_changed.connect(_on_new_turn.bind(game).unbind(1))
+	game.turn.started.connect(_check.bind(game))
+	game.turn.turn_changed.connect(_check.bind(game).unbind(1))
 
 
 func to_raw_dict() -> Dictionary:
@@ -34,23 +35,20 @@ func to_raw_dict() -> Dictionary:
 func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _COUNT_KEY):
 		province_count = (
-				maxi(ParseUtils.dictionary_int(raw_dict, _COUNT_KEY), 0)
+				maxi(0, ParseUtils.dictionary_int(raw_dict, _COUNT_KEY))
 		)
 	else:
 		province_count = 0
 
 	if ParseUtils.dictionary_has_number(raw_dict, _PERCENTAGE_KEY):
 		province_percentage = maxf(
-				ParseUtils.dictionary_float(raw_dict, _PERCENTAGE_KEY), 0.0
+				0.0, ParseUtils.dictionary_float(raw_dict, _PERCENTAGE_KEY)
 		)
 	else:
 		province_percentage = 0.0
 
-	error = false
-	error_message = ""
 
-
-func _on_new_turn(game: Game) -> void:
+func _check(game: Game) -> void:
 	if province_count <= 0 and province_percentage <= 0.0:
 		return
 

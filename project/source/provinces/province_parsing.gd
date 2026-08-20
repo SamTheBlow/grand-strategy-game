@@ -266,6 +266,14 @@ static func _province_shape_from_raw(raw_data: Variant) -> PackedVector2Array:
 
 	var shape: PackedVector2Array = []
 	for i in number_of_points:
+		# Avoid using [ParseUtils] here, for performance reasons
+		# Yes this means number strings are not accepted here
+		if not (
+				(shape_x_array[i] is float or shape_x_array[i] is int)
+				and (shape_y_array[i] is float or shape_y_array[i] is int)
+		):
+			return Province.default_shape()
+
 		shape.append(Vector2(shape_x_array[i], shape_y_array[i]))
 
 	return shape

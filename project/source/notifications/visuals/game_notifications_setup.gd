@@ -11,7 +11,7 @@ func _ready() -> void:
 		push_error("An export variable is null, oops.")
 		return
 
-	_game.game.game_started.connect(_update_player)
+	_game.game.turn.started.connect(_update_player)
 	_game.game.turn.playing_country_changed.connect(_update_player)
 
 

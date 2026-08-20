@@ -3,9 +3,6 @@ class_name GameComponent
 ## Base class for a script that applies arbitrary changes to some [Game].
 ## All subclasses must implement the constant "KEY", a string.
 
-var error: bool = false
-var error_message: String = ""
-
 ## Determines the order in which these components are run.
 ## Lower values run first.
 var priority_index: int = 0
@@ -16,84 +13,59 @@ var priority_index: int = 0
 
 ## Attempts to create a new instance from given raw data.
 static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
+	var component: GameComponent
+
 	match key:
 		RandomGridWorld.KEY:
-			return _component_from_raw_data(RandomGridWorld.new(), raw_dict)
+			component = RandomGridWorld.new()
 		PlayerCreation.KEY:
-			return _component_from_raw_data(PlayerCreation.new(), raw_dict)
+			component = PlayerCreation.new()
 		PlayerAssignmentToCountry.KEY:
-			return _component_from_raw_data(
-					PlayerAssignmentToCountry.new(), raw_dict
-			)
+			component = PlayerAssignmentToCountry.new()
 		CountryGeneration.KEY:
-			return _component_from_raw_data(CountryGeneration.new(), raw_dict)
+			component = CountryGeneration.new()
 		CountryPlacementGeneration.KEY:
-			return _component_from_raw_data(
-					CountryPlacementGeneration.new(), raw_dict
-			)
+			component = CountryPlacementGeneration.new()
 		RelationshipPresetRandomization.KEY:
-			return _component_from_raw_data(
-					RelationshipPresetRandomization.new(), raw_dict
-			)
+			component = RelationshipPresetRandomization.new()
 		AIRandomization.KEY:
-			return _component_from_raw_data(AIRandomization.new(), raw_dict)
+			component = AIRandomization.new()
 		TurnOrderRandomization.KEY:
-			return _component_from_raw_data(
-					TurnOrderRandomization.new(), raw_dict
-			)
+			component = TurnOrderRandomization.new()
 		PopulationRandomization.KEY:
-			return _component_from_raw_data(
-					PopulationRandomization.new(), raw_dict
-			)
+			component = PopulationRandomization.new()
 		PopulationGrowth.KEY:
-			return _component_from_raw_data(PopulationGrowth.new(), raw_dict)
+			component = PopulationGrowth.new()
 		ProvinceConstantIncome.KEY:
-			return _component_from_raw_data(
-					ProvinceConstantIncome.new(), raw_dict
-			)
+			component = ProvinceConstantIncome.new()
 		ProvincePopulationIncome.KEY:
-			return _component_from_raw_data(
-					ProvincePopulationIncome.new(), raw_dict
-			)
+			component = ProvincePopulationIncome.new()
 		ProvinceIncomeRandomization.KEY:
-			return _component_from_raw_data(
-					ProvinceIncomeRandomization.new(), raw_dict
-			)
+			component = ProvinceIncomeRandomization.new()
 		ArmyPlacement.KEY:
-			return _component_from_raw_data(ArmyPlacement.new(), raw_dict)
+			component = ArmyPlacement.new()
 		BuildingPlacement.KEY:
-			return _component_from_raw_data(BuildingPlacement.new(), raw_dict)
+			component = BuildingPlacement.new()
 		ArmyReinforcements.KEY:
-			return _component_from_raw_data(ArmyReinforcements.new(), raw_dict)
+			component = ArmyReinforcements.new()
 		ArmyRecruitment.KEY:
-			return _component_from_raw_data(ArmyRecruitment.new(), raw_dict)
+			component = ArmyRecruitment.new()
 		Combat.KEY:
-			return _component_from_raw_data(Combat.new(), raw_dict)
+			component = Combat.new()
 		TurnLimit.KEY:
-			return _component_from_raw_data(TurnLimit.new(), raw_dict)
+			component = TurnLimit.new()
 		ProvinceControlGoal.KEY:
-			return _component_from_raw_data(ProvinceControlGoal.new(), raw_dict)
+			component = ProvinceControlGoal.new()
 		MilitaryAccessLossBehavior.KEY:
-			return _component_from_raw_data(
-					MilitaryAccessLossBehavior.new(), raw_dict
-			)
+			component = MilitaryAccessLossBehavior.new()
 		DiplomacySettings.KEY:
-			return _component_from_raw_data(DiplomacySettings.new(), raw_dict)
+			component = DiplomacySettings.new()
 		RelationshipPresetDefault.KEY:
-			return _component_from_raw_data(
-					RelationshipPresetDefault.new(), raw_dict
-			)
+			component = RelationshipPresetDefault.new()
 		_:
 			return ResultError.new("Unrecognized component key: %s" % key)
 
-
-## Attempts to load given component's settings using given raw data.
-static func _component_from_raw_data(
-		component: GameComponent, raw_dict: Dictionary
-) -> ParseResult:
 	component._load_settings(raw_dict)
-	if component.error:
-		return ResultError.new(component.error_message)
 	return ResultSuccess.new(component)
 
 
@@ -101,10 +73,8 @@ func to_raw_dict() -> Dictionary:
 	return {}
 
 
-## If an error occurs, tells so using the error and error_message properties.
 func _load_settings(_raw_dict: Dictionary) -> void:
-	error = false
-	error_message = ""
+	pass
 
 
 @abstract class ParseResult:

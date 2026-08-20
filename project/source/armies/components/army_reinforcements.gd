@@ -61,9 +61,6 @@ func _load_settings(raw_dict: Dictionary) -> void:
 	else:
 		amount_per_person = 0.0
 
-	error = false
-	error_message = ""
-
 
 func _apply(game: Game) -> void:
 	for province in game.world.provinces.list:

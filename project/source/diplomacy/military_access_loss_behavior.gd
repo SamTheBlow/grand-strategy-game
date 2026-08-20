@@ -47,9 +47,6 @@ func _load_settings(raw_dict: Dictionary) -> void:
 	else:
 		option = 0
 
-	error = false
-	error_message = ""
-
 
 func _connect_country(country: Country) -> void:
 	country.relationships.relationship_created.connect(_connect_relationship)

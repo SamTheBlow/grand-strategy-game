@@ -7,8 +7,6 @@ const KEY: String = "building_placement"
 
 
 func _init() -> void:
-	# Needs to run after provinces are generated (RandomGridWorld, 4)
-	# and after countries are placed in provinces (CountryPlacementGeneration, 6).
 	priority_index = 7
 
 
@@ -25,12 +23,3 @@ func _apply(game: Game) -> void:
 		province.buildings.add(
 				Building.new(game.world.fortress_data(), province.id)
 		)
-
-
-func to_raw_dict() -> Dictionary:
-	return {}
-
-
-func _load_settings(_raw_dict: Dictionary) -> void:
-	error = false
-	error_message = ""

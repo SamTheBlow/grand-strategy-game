@@ -186,12 +186,12 @@ func _restore_ownership(
 ## Keeps the insertion index a private feature.
 func _add(country: Country, insertion_index: int = -1) -> void:
 	if _list.has(country.id):
-		print_debug("Country is already in the list.")
+		push_warning("Country is already in the list.")
 		return
 	if not _unique_id_system.is_id_valid(country.id):
 		country.id = _unique_id_system.new_unique_id()
 	elif not _unique_id_system.is_id_available(country.id):
-		print_debug(
+		push_warning(
 				"Country id is already in use. (id: " + str(country.id) + ")"
 		)
 		return

@@ -10,11 +10,11 @@ extends Control
 
 func _ready() -> void:
 	_refresh()
-	_game.game.game_started.connect(_refresh)
-	_game.game.turn.playing_country_changed.connect(_refresh)
+	_game.game.turn.is_running_changed.connect(_refresh.unbind(1))
+	_game.game.turn.playing_country_changed.connect(_refresh.unbind(1))
 
 
-func _refresh(_country: Country = null) -> void:
+func _refresh() -> void:
 	if not _game.game.turn.is_running():
 		visible = false
 		return

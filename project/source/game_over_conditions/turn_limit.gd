@@ -16,23 +16,26 @@ func _init(initial_final_turn: int = 1) -> void:
 
 
 func register(game: Game) -> void:
-	game.turn.turn_changed.connect(_on_new_turn.bind(game))
+	game.turn.started.connect(_check.bind(game))
+	game.turn.turn_changed.connect(_check.bind(game).unbind(1))
 
 
 func to_raw_dict() -> Dictionary:
-	return { _FINAL_TURN_KEY: final_turn }
+	var output: Dictionary = {}
+	if final_turn != 1:
+		output[_FINAL_TURN_KEY] = final_turn
+	return output
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _FINAL_TURN_KEY):
-		final_turn = ParseUtils.dictionary_int(raw_dict, _FINAL_TURN_KEY)
+		final_turn = (
+				maxi(1, ParseUtils.dictionary_int(raw_dict, _FINAL_TURN_KEY))
+		)
 	else:
 		final_turn = 1
 
-	error = false
-	error_message = ""
 
-
-func _on_new_turn(turn_number: int, game: Game) -> void:
-	if turn_number > final_turn:
+func _check(game: Game) -> void:
+	if game.turn.current_turn() > final_turn:
 		game.end_game()

@@ -6,6 +6,8 @@ class_name GameTurn
 # for now, assume the playing player is the first element in playing_players()
 
 signal is_running_changed(is_running: bool)
+## Emitted when the gameplay loop starts running.
+signal started()
 ## Emitted once all countries have played their turn.
 signal turn_changed(new_turn: int)
 ## Emitted when a country's turn ends, before the next country's turn begins.
@@ -21,6 +23,8 @@ var _is_running: bool = false:
 			return
 		_is_running = value
 		is_running_changed.emit(_is_running)
+		if _is_running:
+			started.emit()
 
 var _turn: int = 1
 

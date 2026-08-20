@@ -73,9 +73,6 @@ func _load_settings(raw_dict: Dictionary) -> void:
 	else:
 		algorithm_id = 0
 
-	error = false
-	error_message = ""
-
 
 func _connect_army(army: Army) -> void:
 	army.province_changed.connect(_resolve_battles)

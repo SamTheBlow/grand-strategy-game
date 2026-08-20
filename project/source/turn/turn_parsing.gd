@@ -16,7 +16,7 @@ static func from_raw_data(raw_data: Variant) -> ParseResult:
 
 	# Turn
 	if ParseUtils.dictionary_has_number(raw_dict, _TURN_KEY):
-		output.turn = ParseUtils.dictionary_int(raw_dict, _TURN_KEY)
+		output.turn = maxi(1, ParseUtils.dictionary_int(raw_dict, _TURN_KEY))
 
 	# Playing country id
 	if ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_ID_KEY):

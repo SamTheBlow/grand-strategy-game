@@ -82,7 +82,6 @@ func enter_play_menu() -> void:
 ## Sets up a new [GameNode] scene using given [GameProject].
 ## Starts the game.
 func play_game(project: GameProject) -> void:
-	project.game.game_started.connect(_on_game_started)
 	players.player_removed.connect(project.game.game_players._on_player_removed)
 	project._absolute_file_path.value = SAVE_FILE_PATH
 
@@ -228,9 +227,3 @@ func _on_sync_finished(project: GameProject) -> void:
 ## after it's done loading/generating the game.
 func _on_game_start_requested(project: GameProject) -> void:
 	play_game(project)
-
-
-## Sends a global chat message when the game starts.
-func _on_game_started() -> void:
-	if MultiplayerUtils.has_authority(multiplayer):
-		chat.send_global_message("The game has started!")

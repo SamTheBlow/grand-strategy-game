@@ -63,6 +63,3 @@ func _load_settings(raw_dict: Dictionary) -> void:
 		)
 	else:
 		population_per_unit = 0.0
-
-	error = false
-	error_message = ""
