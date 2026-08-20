@@ -6,6 +6,7 @@ class_name AIPersonality
 ## and add the relevant information in this class's enum and functions.
 
 enum Type {
+	RANDOM = -1,
 	NONE = 0,
 	INTERVENTIONIST = 1,
 	ISOLATIONIST = 2,
@@ -17,19 +18,7 @@ enum Type {
 }
 
 
-static func type_names() -> Array[String]:
-	return [
-		"None",
-		"Interventionist",
-		"Isolationist",
-		"Shy",
-		"Greedy",
-		"Emotional",
-		"Erratic",
-		"Test AI: accepts everything",
-	]
-
-
+## Returns the same list as Type.values() but as a typed array.
 static func type_values() -> Array[int]:
 	var output: Array[int] = []
 	for value: Variant in Type.values():
@@ -48,7 +37,7 @@ func actions(_game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 ## Returns null if type is not recognized.
 static func from_type(personality_type: int) -> AIPersonality:
 	match personality_type:
-		-1:
+		Type.RANDOM:
 			return RandomAIPersonality.new()
 		Type.NONE:
 			return AIPersonality.new()
@@ -73,7 +62,7 @@ static func from_type(personality_type: int) -> AIPersonality:
 ## Returns this AI's type as an int, for the purposes of saving/loading.
 func type() -> int:
 	if self is RandomAIPersonality:
-		return -1
+		return Type.RANDOM
 	elif self is AIPersonalityInterventionist:
 		return Type.INTERVENTIONIST
 	elif self is AIPersonalityIsolationist:

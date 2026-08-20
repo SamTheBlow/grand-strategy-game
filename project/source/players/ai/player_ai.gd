@@ -10,6 +10,7 @@ class_name PlayerAI
 signal personality_changed()
 
 enum Type {
+	RANDOM = -1,
 	NONE = 0,
 	TESTAI1 = 1,
 	TESTAI2 = 2,
@@ -46,7 +47,7 @@ func _actions(game: Game, player: GamePlayer, rng: GameRNG) -> Array[Action]:
 ## Returns null if type is not recognized.
 static func from_type(ai_type: int) -> PlayerAI:
 	match ai_type:
-		-1:
+		Type.RANDOM:
 			return RandomAI.new()
 		Type.NONE:
 			return PlayerAI.new()
@@ -62,7 +63,7 @@ static func from_type(ai_type: int) -> PlayerAI:
 ## Returns this AI's type as an int, for the purposes of saving/loading.
 func type() -> int:
 	if self is RandomAI:
-		return -1
+		return Type.RANDOM
 	elif self is TestAI1:
 		return Type.TESTAI1
 	elif self is TestAI2:

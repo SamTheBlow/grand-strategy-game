@@ -71,6 +71,7 @@ func _init() -> void:
 
 	AutoArrowProvinceCleanup.connect_game(self)
 	ProvinceOwnershipUpdate.connect_game(self)
+	AIRandomization.connect_game(self)
 
 
 ## Returns the game's current state.

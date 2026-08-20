@@ -1,61 +1,35 @@
 class_name AIRandomization
-extends GameComponent
-## Randomizes the AI type and/or personality for all players in the game.
-
-const KEY: String = "ai_randomization"
-
-const _AI_TYPE_KEY: String = "randomize_ai_type"
-const _AI_PERSONALITY_KEY: String = "randomize_ai_personality"
-
-var _randomize_type: bool = false
-var _randomize_personality: bool = false
+## Whenever the game starts, replaces all instances of
+## [RandomAI] and [RandomAIPersonality] with a real instance chosen at random.
+##
+## Applies whenever the game starts, not just at the end of setup phase.
+## This way you can choose at any time
+## to randomize an AI in the save file and it'll work.
 
 
-func _init() -> void:
-	priority_index = 50
+static func connect_game(game: Game) -> void:
+	game.turn.started.connect(_apply.bind(game))
 
 
-## Registers this component to run at the end of the setup phase.
-func register(game: Game) -> void:
-	game.setup_ending.connect(_apply, Object.CONNECT_APPEND_SOURCE_OBJECT)
-
-
-func _apply(game: Game) -> void:
+static func _apply(game: Game) -> void:
 	var ai_types: Array = PlayerAI.Type.values()
+	ai_types.erase(PlayerAI.Type.RANDOM)
 	ai_types.erase(PlayerAI.Type.NONE)
 
 	var ai_perso_types: Array[int] = AIPersonality.type_values()
+	ai_perso_types.erase(AIPersonality.Type.RANDOM)
 	ai_perso_types.erase(AIPersonality.Type.NONE)
 	ai_perso_types.erase(AIPersonality.Type.ACCEPTS_EVERYTHING)
 
 	for player in game.game_players.list():
-		if _randomize_type:
+		if player.player_ai is RandomAI:
+			var personality: AIPersonality = player.player_ai.personality
 			player.player_ai = PlayerAI.from_type(
 					ai_types[game.rng.randi() % ai_types.size()]
 			)
+			player.player_ai.personality = personality
 
-		if _randomize_personality:
+		if player.player_ai.personality is RandomAIPersonality:
 			player.player_ai.personality = AIPersonality.from_type(
 					ai_perso_types[game.rng.randi() % ai_perso_types.size()]
 			)
-
-
-func to_raw_dict() -> Dictionary:
-	var output: Dictionary = {}
-	if _randomize_type:
-		output[_AI_TYPE_KEY] = _randomize_type
-	if _randomize_personality:
-		output[_AI_PERSONALITY_KEY] = _randomize_personality
-	return output
-
-
-func _load_settings(raw_dict: Dictionary) -> void:
-	if ParseUtils.dictionary_has_bool(raw_dict, _AI_TYPE_KEY):
-		_randomize_type = raw_dict[_AI_TYPE_KEY] as bool
-	else:
-		_randomize_type = false
-
-	if ParseUtils.dictionary_has_bool(raw_dict, _AI_PERSONALITY_KEY):
-		_randomize_personality = raw_dict[_AI_PERSONALITY_KEY] as bool
-	else:
-		_randomize_personality = false

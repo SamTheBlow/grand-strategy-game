@@ -28,8 +28,6 @@ static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 			component = CountryPlacementGeneration.new()
 		RelationshipPresetRandomization.KEY:
 			component = RelationshipPresetRandomization.new()
-		AIRandomization.KEY:
-			component = AIRandomization.new()
 		TurnOrderRandomization.KEY:
 			component = TurnOrderRandomization.new()
 		PopulationRandomization.KEY:

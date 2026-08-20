@@ -22,9 +22,6 @@
 			"default_ai_personality": 0
 		},
 		"player_assignment_to_country": {},
-		"ai_randomization": {
-			"randomize_ai_personality": true
-		},
 		"army_placement": {
 			"army_size": 1000
 		},
