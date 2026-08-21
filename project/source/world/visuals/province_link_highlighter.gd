@@ -12,8 +12,14 @@ var is_enabled: bool = true:
 			refresh_highlights()
 
 var _armies: Armies
-var _playing_country: PlayingCountry
 var _armies_in_each_province: ArmiesInEachProvince
+
+var _playing_country: PlayingCountry:
+	set(value):
+		if _playing_country != null:
+			_playing_country.changed.disconnect(refresh_highlights)
+		_playing_country = value
+		_playing_country.changed.connect(refresh_highlights.unbind(1))
 
 var _province_selection: ProvinceSelection:
 	set(value):
