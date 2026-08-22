@@ -91,6 +91,11 @@ func position_of(country_id: int) -> int:
 	return _order.find(country_id)
 
 
+## Returns true if given country is currently in this list.
+func has(country: Country) -> bool:
+	return country != null and _list.get(country.id) == country
+
+
 ## Removes a country, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(

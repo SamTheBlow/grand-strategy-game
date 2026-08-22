@@ -8,10 +8,12 @@ signal username_changed(game_player: GamePlayer)
 
 var _list: Array[GamePlayer] = []
 
+var _countries: Countries
 var _unique_id_system := UniqueIdSystem.new()
 
 
 func _init(countries: Countries) -> void:
+	_countries = countries
 	countries.removed.connect(_on_country_removed)
 
 
@@ -145,6 +147,16 @@ func _add(
 ) -> void:
 	if _list.has(player):
 		return
+
+	if (
+			player.playing_country != null
+			and not _countries.has(player.playing_country)
+	):
+		push_warning(
+				"Player's playing country is not in the game's list. "
+				+ "Demoting the player to a spectator."
+		)
+		player.playing_country = null
 
 	var id: int = specific_id
 	if not _unique_id_system.is_id_valid(specific_id):
