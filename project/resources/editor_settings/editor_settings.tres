@@ -1,10 +1,10 @@
-[gd_resource type="Resource" script_class="AppEditorSettings" format=3]
+[gd_resource type="Resource" script_class="AppEditorSettings" uid="uid://b2m0fx1h65y72" format=3]
 
 [ext_resource type="Script" uid="uid://e70irgpv1usl" path="res://source/editor/settings/editor_settings.gd" id="1_settings"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_world_limits.tres" id="2_showlimits"]
-[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="3_limitscolor"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_decorations.tres" id="4_decorations"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_buildings.tres" id="5_buildings"]
+[ext_resource type="Resource" uid="uid://bqi0kaahyp1ue" path="res://resources/editor_settings/show_world_limits.tres" id="2_showlimits"]
+[ext_resource type="Resource" uid="uid://bsvjybsy4mret" path="res://resources/editor_settings/world_limits_color.tres" id="3_limitscolor"]
+[ext_resource type="Resource" uid="uid://b2ktv3qtliscp" path="res://resources/editor_settings/show_decorations.tres" id="4_decorations"]
+[ext_resource type="Resource" uid="uid://baipjg4i5kso1" path="res://resources/editor_settings/show_buildings.tres" id="5_buildings"]
 
 [resource]
 script = ExtResource("1_settings")

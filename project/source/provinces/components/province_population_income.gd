@@ -1,9 +1,14 @@
 class_name ProvincePopulationIncome
 extends GameComponent
-## Each turn, gives to the owner of each [Province]
-## a money income proportional to the province's population size.
+## On each turn, gives to each province's country
+## a money income proportional to the population size.
 
 const KEY: String = "province_population_income"
+const TITLE: String = "Province Population Income"
+const DESCRIPTION: String = "On each turn, gives to each province's country a money income proportional to the population size."
+const SETTINGS: Array = [
+	{ "property_name": _PER_PERSON_KEY, "text": "Income per person", "type": "float" },
+]
 
 const _PER_PERSON_KEY: String = "per_person"
 

@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemBool" format=3]
+[gd_resource type="Resource" script_class="ItemBool" uid="uid://baipjg4i5kso1" format=3]
 
-[ext_resource type="Script" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_i2hl8"]
-[ext_resource type="Script" path="res://source/utils/property_tree/items/item_bool.gd" id="1_ibool"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_i2hl8"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="1_ibool"]
 
 [resource]
 script = ExtResource("1_ibool")

@@ -2,20 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bf0ctknlrud1n" path="res://source/editor/interfaces/turn_order/interface_turn_order.gd" id="1_gikm7"]
 [ext_resource type="Script" uid="uid://dvbpwv2xe26tq" path="res://source/utils/ui/interpolated_container/interpolated_box_container.gd" id="2_h7hlj"]
-[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_qgm6v"]
-[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="3_tyru3"]
-[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="4_tyru3"]
-
-[sub_resource type="Resource" id="Resource_1elff"]
-script = ExtResource("4_tyru3")
-text = "Random turn order"
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
-
-[sub_resource type="Resource" id="Resource_ixlfd"]
-script = ExtResource("3_tyru3")
-text = "Game settings:"
-child_items = Array[ExtResource("3_tyru3")]([SubResource("Resource_1elff")])
-metadata/_custom_type_script = "uid://dvo2mdraodovy"
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceTurnOrder" type="Control" unique_id=1157126741]
 layout_mode = 3
@@ -40,25 +27,25 @@ layout_mode = 2
 text = "The turn order determines who gets to play in what order."
 fit_content = true
 
-[node name="GameSettingsCategory" parent="VBoxContainer" unique_id=2104291943 instance=ExtResource("2_qgm6v")]
-unique_name_in_owner = true
+[node name="Tabs" type="TabContainer" parent="VBoxContainer" unique_id=999001]
 layout_mode = 2
-item = SubResource("Resource_ixlfd")
+size_flags_vertical = 3
 
-[node name="InfoLabel" type="RichTextLabel" parent="VBoxContainer" unique_id=1776827248]
-unique_name_in_owner = true
-visible = false
-modulate = Color(0.8, 0.8, 0.8, 1)
-layout_mode = 2
-text = "The playing order will be shuffled once the game starts, using the game's RNG."
-fit_content = true
+[node name="List" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999002]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
 
-[node name="ListContainer" type="Control" parent="VBoxContainer" unique_id=423418537]
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/Tabs/List" unique_id=999003]
+theme_override_constants/separation = 16
+
+[node name="ListContainer" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=423418537]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ListContainer" unique_id=2005734533]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Tabs/List/Content/ListContainer" unique_id=2005734533]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -67,10 +54,19 @@ grow_horizontal = 2
 grow_vertical = 2
 follow_focus = true
 
-[node name="ElementContainer" type="Container" parent="VBoxContainer/ListContainer/ScrollContainer" unique_id=1643277881]
+[node name="ElementContainer" type="Container" parent="VBoxContainer/Tabs/List/Content/ListContainer/ScrollContainer" unique_id=1643277881]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("2_h7hlj")
 metadata/_custom_type_script = "uid://dvbpwv2xe26tq"
+
+[node name="Components" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999004]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ComponentSection" parent="VBoxContainer/Tabs/Components" instance=ExtResource("2_cs")]
+unique_name_in_owner = true

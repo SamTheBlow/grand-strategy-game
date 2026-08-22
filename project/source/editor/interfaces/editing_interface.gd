@@ -30,6 +30,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 		preload("uid://7k82f8lx1vpe"),
 	InterfaceNavigator.Type.RNG:
 		preload("uid://dp53fawdiydun"),
+	InterfaceNavigator.Type.WIN_CONDITIONS:
+		preload("uid://bi2e1mwxbqyvm"),
 	InterfaceNavigator.Type.COUNTRY_LIST:
 		preload("uid://pns3cw110b6w"),
 	InterfaceNavigator.Type.COUNTRY_EDIT:
@@ -38,6 +40,8 @@ const _INTERFACE_SCENES: Dictionary[InterfaceNavigator.Type, PackedScene] = {
 		preload("uid://bxnnpjildojmj"),
 	InterfaceNavigator.Type.COUNTRY_NOTIFICATIONS:
 		preload("uid://bs0hbgxgmptdv"),
+	InterfaceNavigator.Type.DIPLOMACY:
+		preload("uid://cishrjvsb5hvl"),
 	InterfaceNavigator.Type.PLAYER_LIST:
 		preload("uid://dlpstn5iyda4k"),
 	InterfaceNavigator.Type.PLAYER_EDIT:

@@ -1,14 +1,20 @@
 class_name PlayerCreation
 extends GameComponent
-## Adds new players to the game to ensure all countries have an AI.
+## During game setup, creates a new AI player for each country without one.
 
 const KEY: String = "player_creation"
+const TITLE: String = "Player Creation"
+const DESCRIPTION: String = "During game setup, creates a new AI player for each country without one."
+const SETTINGS: Array = [
+	{ "property_name": _DEFAULT_AI_TYPE_KEY, "text": "Default AI type", "type": "options", "options": [ "Random", "None", "Test AI 1", "Test AI 2" ], "option_map": [ -1, 0, 1, 2 ] },
+	{ "property_name": _DEFAULT_AI_PERSONALITY_KEY, "text": "Default AI personality", "type": "options", "options": [ "Random", "None", "Interventionist", "Isolationist", "Shy", "Greedy", "Emotional", "Erratic", "Accepts Everything" ], "option_map": [ -1, 0, 1, 2, 3, 4, 5, 6, 7 ] },
+]
 
 const _DEFAULT_AI_TYPE_KEY: String = "default_ai_type"
 const _DEFAULT_AI_PERSONALITY_KEY: String = "default_ai_personality"
 
-var _default_ai_type: int = PlayerAI.Type.NONE
-var _default_ai_personality: int = AIPersonality.Type.NONE
+var default_ai_type: int = PlayerAI.Type.NONE
+var default_ai_personality: int = AIPersonality.Type.NONE
 
 
 func _init() -> void:
@@ -30,39 +36,39 @@ func _apply(game: Game) -> void:
 	for country in unassigned_countries:
 		var new_player := GamePlayer.new()
 		new_player.playing_country = country
-		new_player.player_ai = PlayerAI.from_type(_default_ai_type)
+		new_player.player_ai = PlayerAI.from_type(default_ai_type)
 		new_player.player_ai.personality = (
-				AIPersonality.from_type(_default_ai_personality)
+				AIPersonality.from_type(default_ai_personality)
 		)
 		game.game_players.add(new_player)
 
 
 func to_raw_dict() -> Dictionary:
 	var output: Dictionary = {}
-	if _default_ai_type != PlayerAI.Type.NONE:
-		output[_DEFAULT_AI_TYPE_KEY] = _default_ai_type
-	if _default_ai_personality != AIPersonality.Type.NONE:
-		output[_DEFAULT_AI_PERSONALITY_KEY] = _default_ai_personality
+	if default_ai_type != PlayerAI.Type.NONE:
+		output[_DEFAULT_AI_TYPE_KEY] = default_ai_type
+	if default_ai_personality != AIPersonality.Type.NONE:
+		output[_DEFAULT_AI_PERSONALITY_KEY] = default_ai_personality
 	return output
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
 	# AI Type
 	if ParseUtils.dictionary_has_number(raw_dict, _DEFAULT_AI_TYPE_KEY):
-		_default_ai_type = (
+		default_ai_type = (
 				ParseUtils.dictionary_int(raw_dict, _DEFAULT_AI_TYPE_KEY)
 		)
-		if _default_ai_type not in PlayerAI.Type.values():
-			_default_ai_type = PlayerAI.Type.NONE
+		if default_ai_type not in PlayerAI.Type.values():
+			default_ai_type = PlayerAI.Type.NONE
 	else:
-		_default_ai_type = PlayerAI.Type.NONE
+		default_ai_type = PlayerAI.Type.NONE
 
 	# AI Personality
 	if ParseUtils.dictionary_has_number(raw_dict, _DEFAULT_AI_PERSONALITY_KEY):
-		_default_ai_personality = (
+		default_ai_personality = (
 				ParseUtils.dictionary_int(raw_dict, _DEFAULT_AI_PERSONALITY_KEY)
 		)
-		if _default_ai_personality not in AIPersonality.Type.values():
-			_default_ai_personality = AIPersonality.Type.NONE
+		if default_ai_personality not in AIPersonality.Type.values():
+			default_ai_personality = AIPersonality.Type.NONE
 	else:
-		_default_ai_personality = AIPersonality.Type.NONE
+		default_ai_personality = AIPersonality.Type.NONE

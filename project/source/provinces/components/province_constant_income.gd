@@ -1,9 +1,11 @@
 class_name ProvinceConstantIncome
 extends GameComponent
-## Each turn, gives to the owner of each [Province]
-## a constant money income according to the province's value.
+## On each turn, gives each province's money income to its country.
 
 const KEY: String = "province_constant_income"
+const TITLE: String = "Province Constant Income"
+const DESCRIPTION: String = "On each turn, gives each province's money income to its country."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

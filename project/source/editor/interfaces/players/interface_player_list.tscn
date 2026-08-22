@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://duef483ql4jj" path="res://source/editor/interfaces/players/interface_player_list.gd" id="1_qje5o"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfacePlayerList" type="Control" unique_id=1314066723]
 layout_mode = 3
@@ -26,11 +27,24 @@ layout_mode = 2
 text = "A player is what controls a country. It can be either a human or an AI."
 fit_content = true
 
-[node name="ButtonSection" type="Control" parent="VBoxContainer" unique_id=497777651]
+[node name="Tabs" type="TabContainer" parent="VBoxContainer" unique_id=999001]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="List" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999002]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/Tabs/List" unique_id=999003]
+theme_override_constants/separation = 16
+
+[node name="ButtonSection" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=497777651]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="AddButton" type="Button" parent="VBoxContainer/ButtonSection" unique_id=1119427781]
+[node name="AddButton" type="Button" parent="VBoxContainer/Tabs/List/Content/ButtonSection" unique_id=1119427781]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.2
@@ -43,11 +57,11 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = ExtResource("4_7s6pu")
 text = "+ Add"
 
-[node name="ItemList" type="Control" parent="VBoxContainer" unique_id=2056208921]
+[node name="ItemList" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=2056208921]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ItemList" unique_id=1190613890]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Tabs/List/Content/ItemList" unique_id=1190613890]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -58,10 +72,19 @@ grow_horizontal = 2
 grow_vertical = 2
 follow_focus = true
 
-[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer" unique_id=858532027]
+[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/Tabs/List/Content/ItemList/ScrollContainer" unique_id=858532027]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[connection signal="pressed" from="VBoxContainer/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]
+[node name="Components" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999004]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ComponentSection" parent="VBoxContainer/Tabs/Components" instance=ExtResource("2_cs")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="VBoxContainer/Tabs/List/Content/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]

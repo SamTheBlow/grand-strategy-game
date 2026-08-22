@@ -1,9 +1,28 @@
 class_name DiplomacySettings
 extends GameComponent
-## Holds general settings related to diplomacy.
-## Automatically applies changes to [DiplomacyRelationship]s when applicable.
+## General settings and automated behaviors related to diplomacy.
 
 const KEY: String = "diplomacy_settings"
+const TITLE: String = "Diplomacy Settings"
+const DESCRIPTION: String = "General settings and automated behaviors related to diplomacy."
+const SETTINGS: Array = [
+	{ "property_name": _MUTUAL_ACCESS_KEY, "text": "Auto mutual access", "type": "bool" },
+	{ "property_name": _FIGHT_TRESPASSERS_KEY, "text": "Auto fight trespassers", "type": "bool" },
+	{ "property_name": _REVOKE_ACCESS_KEY, "text": "Auto revoke access", "type": "bool" },
+	{ "property_name": _FIGHT_BACK_KEY, "text": "Auto fight back", "type": "bool" },
+	{ "property_name": _GRANTS_ACCESS_KEY, "text": "Grants access by default", "type": "bool" },
+	{ "property_name": _CAN_GRANT_ACCESS_KEY, "text": "Can grant access", "type": "bool" },
+	{ "property_name": _CAN_REVOKE_ACCESS_KEY, "text": "Can revoke access", "type": "bool" },
+	{ "property_name": _CAN_ASK_ACCESS_KEY, "text": "Can ask for access", "type": "bool" },
+	{ "property_name": _TRESPASSING_DEFAULT_KEY, "text": "Trespassing by default", "type": "bool" },
+	{ "property_name": _CAN_ENABLE_TRESPASSING_KEY, "text": "Can enable trespassing", "type": "bool" },
+	{ "property_name": _CAN_DISABLE_TRESPASSING_KEY, "text": "Can disable trespassing", "type": "bool" },
+	{ "property_name": _CAN_ASK_STOP_TRESPASSING_KEY, "text": "Can ask to stop trespassing", "type": "bool" },
+	{ "property_name": _FIGHTING_DEFAULT_KEY, "text": "Fighting by default", "type": "bool" },
+	{ "property_name": _CAN_ENABLE_FIGHTING_KEY, "text": "Can enable fighting", "type": "bool" },
+	{ "property_name": _CAN_DISABLE_FIGHTING_KEY, "text": "Can disable fighting", "type": "bool" },
+	{ "property_name": _CAN_ASK_STOP_FIGHTING_KEY, "text": "Can ask to stop fighting", "type": "bool" },
+]
 
 const _MUTUAL_ACCESS_KEY: String = "auto_mutual_access"
 const _FIGHT_TRESPASSERS_KEY: String = "auto_fight_trespassers"

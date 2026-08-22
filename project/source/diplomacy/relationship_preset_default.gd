@@ -1,8 +1,13 @@
 class_name RelationshipPresetDefault
 extends GameComponent
-## Gives some preset to all newly created relationships.
+## Determines the relationship preset to apply to all new relationships.
 
 const KEY: String = "relationship_preset_default"
+const TITLE: String = "Relationship Preset Default"
+const DESCRIPTION: String = "Determines the relationship preset to apply to all new relationships."
+const SETTINGS: Array = [
+	{ "property_name": _PRESET_ID_KEY, "text": "Relationship preset", "type": "preset" },
+]
 
 const _PRESET_ID_KEY: String = "preset_id"
 

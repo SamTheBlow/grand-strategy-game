@@ -7,12 +7,6 @@ const _ELEMENT_SCENE := preload("uid://dc67eps16xpfs") as PackedScene
 ## Maps each country to its associated node, for quick access.
 var _country_nodes: Dictionary[int, EditorTurnOrderElement] = {}
 
-@onready var _item_random_order := (
-		(%GameSettingsCategory as ItemVoidNode).item.child_items[0] as ItemBool
-)
-
-@onready var _info_label := %InfoLabel as Control
-@onready var _list_container := %ListContainer as Control
 @onready var _element_container := %ElementContainer as InterpolatedBoxContainer
 
 
@@ -20,10 +14,6 @@ func _ready() -> void:
 	project.game.countries.added.connect(_on_country_added)
 	project.game.countries.removed.connect(_on_country_removed)
 	project.game.countries.order_changed.connect(_on_country_order_changed)
-
-	_item_random_order.value = _is_random_turn_order_enabled()
-	_item_random_order.value_changed.connect(_on_item_value_changed)
-	_update_visibility()
 
 	_element_container.drag_ended.connect(_on_drag_ended)
 
@@ -36,17 +26,10 @@ func _ready() -> void:
 		# Now that all the elements are in, refresh their arrows
 		_refresh_arrows()
 
+	var components_section := %ComponentSection as ComponentSection
+	components_section.setup([ TurnOrderRandomization.KEY ], project, undo_redo)
+
 	closed.connect(navigator.close_interface)
-
-
-func _update_visibility() -> void:
-	var is_enabled: bool = _is_random_turn_order_enabled()
-	_info_label.visible = is_enabled
-	_list_container.visible = not is_enabled
-
-
-func _is_random_turn_order_enabled() -> bool:
-	return project.game.components.has(TurnOrderRandomization.KEY)
 
 
 func _add_element(country: Country) -> void:
@@ -89,7 +72,7 @@ func _reorder(country_id: int, new_index: int) -> void:
 
 func _add_empty_list_label() -> void:
 	var empty_list_label := Label.new()
-	empty_list_label.text = "(List is empty!)"
+	empty_list_label.text = "(There are no countries.)"
 	empty_list_label.set_anchors_preset(Control.PRESET_FULL_RECT)
 	empty_list_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	empty_list_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
@@ -101,31 +84,6 @@ func _remove_empty_list_label() -> void:
 	# Uhh yeah if we're removing the empty list label it's because
 	# it's the only child and we're about to add the 1st actual element
 	NodeUtils.remove_all_children(_element_container)
-
-
-func _on_item_value_changed(is_enabled: bool) -> void:
-	undo_redo.create_action("Toggle random turn order")
-	undo_redo.add_do_method(_set_setting_no_signal.bind(
-			_item_random_order, _on_item_value_changed, is_enabled
-	))
-	undo_redo.add_do_method(_set_random_turn_order.bind(is_enabled))
-	undo_redo.add_do_method(_update_visibility)
-	undo_redo.add_undo_method(_set_setting_no_signal.bind(
-			_item_random_order, _on_item_value_changed, not is_enabled
-	))
-	undo_redo.add_undo_method(_set_random_turn_order.bind(not is_enabled))
-	undo_redo.add_undo_method(_update_visibility)
-	undo_redo.commit_action()
-
-
-## Adds or removes the [TurnOrderRandomization] setup component.
-func _set_random_turn_order(is_enabled: bool) -> void:
-	if is_enabled:
-		project.game.components[TurnOrderRandomization.KEY] = (
-				TurnOrderRandomization.new()
-		)
-	else:
-		project.game.components.erase(TurnOrderRandomization.KEY)
 
 
 func _on_drag_ended(moved_node: Node) -> void:

@@ -1,8 +1,14 @@
 class_name ProvinceControlGoal
 extends GameComponent
-## Ends the game when any [Country] controls enough [Province]s.
+## Ends the game when a country controls enough provinces.
 
 const KEY: String = "province_control_goal"
+const TITLE: String = "Province Control Goal"
+const DESCRIPTION: String = "Ends the game when a country controls enough provinces."
+const SETTINGS: Array = [
+	{ "property_name": _COUNT_KEY, "text": "Province count", "type": "int", "min": 0 },
+	{ "property_name": _PERCENTAGE_KEY, "text": "Province percentage", "type": "float", "min": 0.0 },
+]
 
 const _COUNT_KEY: String = "province_count"
 const _PERCENTAGE_KEY: String = "province_percentage"

@@ -1,8 +1,13 @@
 class_name PopulationGrowth
 extends GameComponent
-## Makes populations grow on each new turn.
+## On each turn, makes populations grow.
 
 const KEY: String = "population_growth"
+const TITLE: String = "Population Growth"
+const DESCRIPTION: String = "On each turn, makes populations grow."
+const SETTINGS: Array = [
+	{ "property_name": _GROWTH_RATE_KEY, "text": "Growth rate", "type": "float" },
+]
 
 const _GROWTH_RATE_KEY: String = "growth_rate"
 
@@ -10,7 +15,7 @@ const _GROWTH_RATE_KEY: String = "growth_rate"
 ## - Negative values have no effect
 ## - 0.0 adds 1 population
 ## - 1.0 doubles population
-var _growth_rate: float = 0.0
+var growth_rate: float = 0.0
 
 
 func _init() -> void:
@@ -23,22 +28,22 @@ func register(game: Game) -> void:
 
 func to_raw_dict() -> Dictionary:
 	var output: Dictionary = {}
-	if _growth_rate != 0.0:
-		output[_GROWTH_RATE_KEY] = _growth_rate
+	if growth_rate != 0.0:
+		output[_GROWTH_RATE_KEY] = growth_rate
 	return output
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
 	if ParseUtils.dictionary_has_number(raw_dict, _GROWTH_RATE_KEY):
-		_growth_rate = ParseUtils.dictionary_float(raw_dict, _GROWTH_RATE_KEY)
+		growth_rate = ParseUtils.dictionary_float(raw_dict, _GROWTH_RATE_KEY)
 	else:
-		_growth_rate = 0.0
+		growth_rate = 0.0
 
 
 func _apply(game: Game) -> void:
 	for province in game.world.provinces.list:
-		if _growth_rate == 0.0 or province.population().value == 0:
+		if growth_rate == 0.0 or province.population().value == 0:
 			continue
 		province.population().value += int(
-				province.population().value ** _growth_rate
+				province.population().value ** growth_rate
 		)

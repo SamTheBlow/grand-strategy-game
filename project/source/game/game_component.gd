@@ -11,6 +11,11 @@ var priority_index: int = 0
 @abstract func register(_game: Game) -> void
 
 
+## Provides a new instance of component with given key, if key is valid.
+static func from_key(key: String) -> ParseResult:
+	return from_raw_data(key, {})
+
+
 ## Attempts to create a new instance from given raw data.
 static func from_raw_data(key: String, raw_dict: Dictionary) -> ParseResult:
 	var component: GameComponent

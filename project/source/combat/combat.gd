@@ -1,8 +1,15 @@
 class_name Combat
 extends GameComponent
-## Enables combat between opposing armies. Holds relevant settings.
+## Enables combat between opposing armies.
 
 const KEY: String = "combat"
+const TITLE: String = "Combat"
+const DESCRIPTION: String = "Enables combat between opposing armies."
+const SETTINGS: Array = [
+	{ "property_name": _ATTACKER_EFFICIENCY_KEY, "text": "Global attacker efficiency", "type": "float" },
+	{ "property_name": _DEFENDER_EFFICIENCY_KEY, "text": "Global defender efficiency", "type": "float" },
+	{ "property_name": _ALGORITHM_ID_KEY, "text": "Battle algorithm", "type": "options", "options": ["Standard", "Algorithm 2"], "option_map": [0, 1] },
+]
 
 const _ATTACKER_EFFICIENCY_KEY: String = "global_attacker_efficiency"
 const _DEFENDER_EFFICIENCY_KEY: String = "global_defender_efficiency"

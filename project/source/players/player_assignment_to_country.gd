@@ -1,14 +1,12 @@
 class_name PlayerAssignmentToCountry
 extends GameComponent
-## Assigns a random country to each (unassigned) player.
-##
-## If a player is already assigned to a valid country,
-## it stays assigned to that country.
-## Otherwise, it gets assigned to a random unassigned country.
-## If all countries are already assigned,
-## then the remaining players are not assigned a country.
+## During game setup,
+## assigns a random unassigned country to every player without one.
 
 const KEY: String = "player_assignment_to_country"
+const TITLE: String = "Player Assignment"
+const DESCRIPTION: String = "During game setup, assigns a random unassigned country to every player without one."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

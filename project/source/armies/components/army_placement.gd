@@ -1,9 +1,13 @@
 class_name ArmyPlacement
 extends GameComponent
-## During game setup, places an army of given size
-## in every province that is owned by a [Country].
+## During game setup, adds a new army in every owned province.
 
 const KEY: String = "army_placement"
+const TITLE: String = "Army Placement"
+const DESCRIPTION: String = "During game setup, adds a new army in every owned province."
+const SETTINGS: Array = [
+	{ "property_name": _ARMY_SIZE_KEY, "text": "Army size", "type": "int", "min": 0 },
+]
 
 const _ARMY_SIZE_KEY: String = "army_size"
 

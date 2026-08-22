@@ -1,8 +1,14 @@
 class_name ArmyRecruitment
 extends GameComponent
-## Enables army recruitment. Holds relevant settings.
+## Allows countries to recruit new armies.
 
 const KEY: String = "army_recruitment"
+const TITLE: String = "Army Recruitment"
+const DESCRIPTION: String = "Allows countries to recruit new armies."
+const SETTINGS: Array = [
+	{ "property_name": _MONEY_PER_UNIT_KEY, "text": "Money per unit", "type": "float", "min": 0.0 },
+	{ "property_name": _POPULATION_PER_UNIT_KEY, "text": "Population per unit", "type": "float", "min": 0.0 },
+]
 
 const _MONEY_PER_UNIT_KEY: String = "money_per_unit"
 const _POPULATION_PER_UNIT_KEY: String = "population_per_unit"

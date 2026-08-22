@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://bi2e1mwxbqyvm"]
+
+[ext_resource type="Script" uid="uid://bhp5nm3ynh8vt" path="res://source/editor/interfaces/win_conditions/interface_win_conditions.gd" id="1_s"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+
+[node name="InterfaceWinConditions" type="Control" unique_id=1973781188]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_s")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=2117047214]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer" unique_id=415934949]
+layout_mode = 2
+text = "Win conditions define how and when the game ends."
+fit_content = true
+
+[node name="ComponentSection" parent="VBoxContainer" instance=ExtResource("2_cs")]
+unique_name_in_owner = true

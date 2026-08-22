@@ -1,8 +1,11 @@
 class_name CountryPlacementGeneration
 extends GameComponent
-## Tries to ensure each country controls at least one province.
+## During game setup, tries to assign to every country one province at random.
 
 const KEY: String = "country_placement_generation"
+const TITLE: String = "Country Placement"
+const DESCRIPTION: String = "During game setup, tries to assign to every country one province at random."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

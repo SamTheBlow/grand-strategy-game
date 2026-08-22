@@ -8,6 +8,13 @@ func _ready() -> void:
 	country_list.setup(project.game.countries, false)
 	country_list.country_selected.connect(navigator.open_country_edit_interface)
 
+	const COMPONENT_KEYS: Array[String] = [
+		CountryGeneration.KEY,
+		CountryPlacementGeneration.KEY
+	]
+	var components_section := %ComponentSection as ComponentSection
+	components_section.setup(COMPONENT_KEYS, project, undo_redo)
+
 	closed.connect(navigator.close_interface)
 
 

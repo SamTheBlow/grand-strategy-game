@@ -1,14 +1,20 @@
 class_name ProvinceIncomeRandomization
 extends GameComponent
-## During game setup, randomizes the money income of each [Province].
+## During game setup, randomizes the money income of each province.
 
 const KEY: String = "province_income_randomization"
+const TITLE: String = "Province Income Randomization"
+const DESCRIPTION: String = "During game setup, randomizes the money income of each province."
+const SETTINGS: Array = [
+	{ "property_name": _MIN_VALUE_KEY, "text": "Minimum value", "type": "int" },
+	{ "property_name": _MAX_VALUE_KEY, "text": "Maximum value", "type": "int" },
+]
 
-const _RANDOM_MIN_KEY: String = "random_min"
-const _RANDOM_MAX_KEY: String = "random_max"
+const _MIN_VALUE_KEY: String = "min_value"
+const _MAX_VALUE_KEY: String = "max_value"
 
-var random_min: int = 0
-var random_max: int = 0
+var min_value: int = 0
+var max_value: int = 0
 
 
 func _init() -> void:
@@ -22,29 +28,29 @@ func register(game: Game) -> void:
 func _apply(game: Game) -> void:
 	for province in game.world.provinces.list:
 		province.money_income().value = (
-				game.rng.randi_range(random_min, random_max)
+				game.rng.randi_range(min_value, max_value)
 		)
 
 
 func to_raw_dict() -> Dictionary:
 	var output: Dictionary = {}
-	if random_min != 0:
-		output[_RANDOM_MIN_KEY] = random_min
-	if random_max != 0:
-		output[_RANDOM_MAX_KEY] = random_max
+	if min_value != 0:
+		output[_MIN_VALUE_KEY] = min_value
+	if max_value != 0:
+		output[_MAX_VALUE_KEY] = max_value
 	return output
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
-	if ParseUtils.dictionary_has_number(raw_dict, _RANDOM_MIN_KEY):
-		random_min = ParseUtils.dictionary_int(raw_dict, _RANDOM_MIN_KEY)
+	if ParseUtils.dictionary_has_number(raw_dict, _MIN_VALUE_KEY):
+		min_value = ParseUtils.dictionary_int(raw_dict, _MIN_VALUE_KEY)
 	else:
-		random_min = 0
+		min_value = 0
 
-	if ParseUtils.dictionary_has_number(raw_dict, _RANDOM_MAX_KEY):
-		random_max = ParseUtils.dictionary_int(raw_dict, _RANDOM_MAX_KEY)
+	if ParseUtils.dictionary_has_number(raw_dict, _MAX_VALUE_KEY):
+		max_value = ParseUtils.dictionary_int(raw_dict, _MAX_VALUE_KEY)
 	else:
-		random_max = 0
+		max_value = 0
 
-	if random_min > random_max:
-		random_max = random_min
+	if min_value > max_value:
+		max_value = min_value

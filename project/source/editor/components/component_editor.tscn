@@ -1,0 +1,36 @@
+[gd_scene format=3 uid="uid://c1t8lbl0uvqnm"]
+
+[ext_resource type="Script" uid="uid://28vgpul20e73" path="res://source/editor/components/component_editor.gd" id="1_ce"]
+[ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_iv"]
+
+[node name="ComponentEditor" type="VBoxContainer" unique_id=691481344]
+theme_override_constants/separation = 8
+script = ExtResource("1_ce")
+
+[node name="Header" type="HBoxContainer" parent="." unique_id=392529864]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="NameLabel" type="Label" parent="Header" unique_id=179750372]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+
+[node name="CheckBox" type="CheckBox" parent="Header" unique_id=66807415]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="DescriptionLabel" type="Label" parent="." unique_id=934729140]
+unique_name_in_owner = true
+modulate = Color(0.7, 0.7, 0.7, 1)
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="ItemNode" parent="." unique_id=818856984 instance=ExtResource("2_iv")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Separator" type="HSeparator" parent="." unique_id=1161388593]
+modulate = Color(1, 1, 1, 0.2)
+layout_mode = 2

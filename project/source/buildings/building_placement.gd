@@ -1,9 +1,11 @@
 class_name BuildingPlacement
 extends GameComponent
-## During game setup, places a fortress building in every province
-## that is owned by a [Country] and does not have any buildings yet.
+## During game setup, adds a fortress in every owned province without one.
 
 const KEY: String = "building_placement"
+const TITLE: String = "Building Placement"
+const DESCRIPTION: String = "During game setup, adds a fortress in every owned province without one."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

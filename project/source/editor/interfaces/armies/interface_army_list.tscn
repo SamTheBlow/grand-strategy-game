@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://l2nhdgg0p4oo"]
 
 [ext_resource type="Script" uid="uid://cbwh24lw8junb" path="res://source/editor/interfaces/armies/interface_army_list.gd" id="1_10wi1"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceArmyList" type="Control" unique_id=484485638]
 layout_mode = 3
@@ -25,24 +26,41 @@ layout_mode = 2
 text = "An army represents some kind of unit on the world map. It has an allegiance to a Country and is positioned in a Province."
 fit_content = true
 
-[node name="AddSection" type="Control" parent="VBoxContainer" unique_id=147919659]
+[node name="Tabs" type="TabContainer" parent="VBoxContainer" unique_id=999001]
+layout_mode = 2
+size_flags_vertical = 3
+current_tab = 0
+
+[node name="List" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999002]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+metadata/_tab_index = 0
+
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/Tabs/List" unique_id=999003]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="AddSection" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=147919659]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="Label" type="Label" parent="VBoxContainer/AddSection" unique_id=283388883]
+[node name="Label" type="Label" parent="VBoxContainer/Tabs/List/Content/AddSection" unique_id=283388883]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "(Select a province in order to add a new army)"
+text = "Select a claimed province in order to add a new army."
 
-[node name="ItemList" type="Control" parent="VBoxContainer" unique_id=211145063]
+[node name="ItemList" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=211145063]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ItemList" unique_id=1294302813]
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/Tabs/List/Content/ItemList" unique_id=1294302813]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -53,8 +71,21 @@ grow_horizontal = 2
 grow_vertical = 2
 follow_focus = true
 
-[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer" unique_id=933071843]
+[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/Tabs/List/Content/ItemList/ScrollContainer" unique_id=933071843]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+
+[node name="Components" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999004]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+metadata/_tab_index = 1
+
+[node name="ComponentSection" parent="VBoxContainer/Tabs/Components" unique_id=1397105482 instance=ExtResource("2_cs")]
+unique_name_in_owner = true
+layout_mode = 2

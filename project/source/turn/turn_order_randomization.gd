@@ -1,8 +1,11 @@
 class_name TurnOrderRandomization
 extends GameComponent
-## Shuffles the country turn order.
+## During game setup, shuffles the country turn order.
 
 const KEY: String = "turn_order_randomization"
+const TITLE: String = "Turn Order Randomization"
+const DESCRIPTION: String = "During game setup, shuffles the country turn order."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

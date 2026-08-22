@@ -17,14 +17,43 @@ func _ready() -> void:
 	for army in project.game.world.armies.list():
 		_add_element(army)
 
+	if _nodes.is_empty():
+		_add_empty_list_label()
+
 	project.game.world.armies.added.connect(_add_element)
 	project.game.world.armies.removed.connect(_remove_element)
 
 	closed.connect(navigator.close_interface)
 	tree_exited.connect(army_list_item_unhovered.emit)
 
+	const COMPONENT_KEYS: Array[String] = [
+		ArmyPlacement.KEY,
+		ArmyReinforcements.KEY,
+		ArmyRecruitment.KEY,
+		Combat.KEY
+	]
+	var components_section := %ComponentSection as ComponentSection
+	components_section.setup(COMPONENT_KEYS, project, undo_redo)
+
+
+func _add_empty_list_label() -> void:
+	var empty_list_label := Label.new()
+	empty_list_label.text = "(There are no armies.)"
+	empty_list_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	empty_list_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	empty_list_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	empty_list_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_element_container.add_child(empty_list_label)
+
+
+func _remove_empty_list_label() -> void:
+	NodeUtils.remove_all_children(_element_container)
+
 
 func _add_element(army: Army) -> void:
+	if _nodes.is_empty():
+		_remove_empty_list_label()
+
 	_connect_country(army)
 	army.allegiance_changed.connect(
 			_connect_country, ConnectFlags.CONNECT_APPEND_SOURCE_OBJECT
@@ -60,6 +89,9 @@ func _remove_element(army: Army) -> void:
 	_element_container.remove_child(_nodes[army.id])
 	_nodes.erase(army.id)
 	_order.erase(army)
+
+	if _nodes.is_empty():
+		_add_empty_list_label()
 
 
 func _connect_country(army: Army) -> void:

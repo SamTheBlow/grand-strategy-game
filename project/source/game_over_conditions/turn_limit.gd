@@ -3,6 +3,11 @@ extends GameComponent
 ## Ends the game once the final turn ends.
 
 const KEY: String = "turn_limit"
+const TITLE: String = "Turn Limit"
+const DESCRIPTION: String = "Ends the game once the final turn ends."
+const SETTINGS: Array = [
+	{ "property_name": _FINAL_TURN_KEY, "text": "Final turn", "type": "int", "min": 1 },
+]
 
 const _FINAL_TURN_KEY: String = "final_turn"
 

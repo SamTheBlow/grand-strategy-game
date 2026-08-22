@@ -24,14 +24,34 @@ func setup(countries: Countries, is_no_country_allowed: bool) -> void:
 	for country in countries.list():
 		_add_element(country)
 
+	if _nodes.is_empty():
+		_add_empty_list_label()
+
 	countries.added.connect(_add_element)
 	countries.removed.connect(_remove_element)
+
+
+func _add_empty_list_label() -> void:
+	var empty_list_label := Label.new()
+	empty_list_label.text = "(There are no countries.)"
+	empty_list_label.set_anchors_preset(Control.PRESET_FULL_RECT)
+	empty_list_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	empty_list_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	empty_list_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	_element_container.add_child(empty_list_label)
+
+
+func _remove_empty_list_label() -> void:
+	NodeUtils.remove_all_children(_element_container)
 
 
 func _add_element(new_country: Country) -> void:
 	if _nodes.has(new_country):
 		push_warning("Country already has a corresponding node.")
 		return
+
+	if _nodes.is_empty():
+		_remove_empty_list_label()
 
 	if new_country != null:
 		new_country.name_changed.connect(
@@ -72,6 +92,9 @@ func _remove_element(country: Country) -> void:
 	_element_container.remove_child(_nodes[country])
 	_nodes.erase(country)
 	_sorted_countries.erase(country)
+
+	if _nodes.is_empty():
+		_add_empty_list_label()
 
 
 func _on_element_pressed(element: CountryListElement) -> void:

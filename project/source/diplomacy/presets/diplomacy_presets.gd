@@ -4,8 +4,13 @@ class_name DiplomacyPresets
 var _list: Array[DiplomacyPreset] = []
 
 
-func _init(list: Array[DiplomacyPreset] = []) -> void:
-	_list = list
+func _init(starting_list: Array[DiplomacyPreset] = []) -> void:
+	_list = starting_list
+
+
+## Returns a new copy of the list.
+func list() -> Array[DiplomacyPreset]:
+	return _list.duplicate()
 
 
 func is_id_valid(id: int) -> bool:

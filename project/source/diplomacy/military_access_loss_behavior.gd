@@ -1,12 +1,18 @@
 class_name MilitaryAccessLossBehavior
 extends GameComponent
-## Handles what to do to armies that lose military access in a province.
+## Determines what happens to armies
+## when they lose military access to the province they are in.
 ##
 ## Option 0: no effect. (Default)
 ## Option 1: delete the armies.
 ## Option 2: teleport the armies to the nearest valid location.
 
 const KEY: String = "military_access_loss_behavior"
+const TITLE: String = "Military Access Loss Behavior"
+const DESCRIPTION: String = "Determines what happens to armies when they lose military access to the province they are in."
+const SETTINGS: Array = [
+	{ "property_name": _OPTION_KEY, "text": "Behavior", "type": "options", "options": [ "No effect", "Delete armies", "Teleport armies out" ], "option_map": [ 0, 1, 2 ] },
+]
 
 const _OPTION_KEY: String = "option"
 

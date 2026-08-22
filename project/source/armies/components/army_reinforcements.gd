@@ -1,8 +1,15 @@
 class_name ArmyReinforcements
 extends GameComponent
-## Each turn, adds additional troops in each claimed province.
+## On each turn, adds troops in every owned province.
 
 const KEY: String = "army_reinforcements"
+const TITLE: String = "Army Reinforcements"
+const DESCRIPTION: String = "On each turn, adds troops in every owned province."
+const SETTINGS: Array = [
+	{ "property_name": _CONSTANT_AMOUNT_KEY, "text": "Constant amount", "type": "int" },
+	{ "property_name": _RANDOM_SPREAD_KEY, "text": "Random spread", "type": "float", "min": 0.0, "max": 1.0 },
+	{ "property_name": _AMOUNT_PER_PERSON_KEY, "text": "Amount per person", "type": "float", "min": 0.0 },
+]
 
 const _CONSTANT_AMOUNT_KEY: String = "constant_amount"
 const _RANDOM_SPREAD_KEY: String = "random_spread"

@@ -1,9 +1,11 @@
 class_name RelationshipPresetRandomization
 extends GameComponent
-## Randomizes the relationship preset between all countries.
-## Ignores and overwrites existing relationships.
+## During game setup, randomizes the relationship preset between all countries.
 
 const KEY: String = "relationship_preset_randomization"
+const TITLE: String = "Relationship Preset Randomization"
+const DESCRIPTION: String = "During game setup, randomizes the relationship preset between all countries."
+const SETTINGS: Array = []
 
 
 func _init() -> void:

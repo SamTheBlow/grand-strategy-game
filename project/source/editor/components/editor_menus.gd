@@ -30,18 +30,20 @@ const _PROJECT_TAB_SAVE_AS_ID: int = 4
 const _PROJECT_TAB_SHOW_IN_FILE_MANAGER_ID: int = 6
 const _PROJECT_TAB_PLAY_ID: int = 8
 
-const _EDIT_TAB_SEPARATOR_IDS: Array[int] = [2, 6]
+const _EDIT_TAB_SEPARATOR_IDS: Array[int] = [3, 8]
 const _EDIT_TAB_PROJECT_INFO_ID: int = 0
 const _EDIT_TAB_RNG_ID: int = 1
-const _EDIT_TAB_COUNTRIES_ID: int = 3
-const _EDIT_TAB_PLAYERS_ID: int = 4
-const _EDIT_TAB_TURN_ORDER_ID: int = 5
-const _EDIT_TAB_WORLD_LIMITS_ID: int = 7
-const _EDIT_TAB_BACKGROUND_COLOR_ID: int = 8
-const _EDIT_TAB_DECORATIONS_ID: int = 9
-const _EDIT_TAB_PROVINCES_ID: int = 10
-const _EDIT_TAB_ARMIES_ID: int = 11
-const _EDIT_TAB_BUILDINGS_ID: int = 12
+const _EDIT_TAB_WIN_CONDITIONS_ID: int = 2
+const _EDIT_TAB_COUNTRIES_ID: int = 4
+const _EDIT_TAB_DIPLOMACY_ID: int = 5
+const _EDIT_TAB_PLAYERS_ID: int = 6
+const _EDIT_TAB_TURN_ORDER_ID: int = 7
+const _EDIT_TAB_WORLD_LIMITS_ID: int = 9
+const _EDIT_TAB_BACKGROUND_COLOR_ID: int = 10
+const _EDIT_TAB_DECORATIONS_ID: int = 11
+const _EDIT_TAB_PROVINCES_ID: int = 12
+const _EDIT_TAB_ARMIES_ID: int = 13
+const _EDIT_TAB_BUILDINGS_ID: int = 14
 
 @onready var _editor_tab := %Editor as PopupMenu
 @onready var _project_tab := %Project as PopupMenu
@@ -134,9 +136,15 @@ func _on_edit_tab_id_pressed(id: int) -> void:
 		_EDIT_TAB_RNG_ID:
 			# "RNG"
 			interface_type = InterfaceNavigator.Type.RNG
+		_EDIT_TAB_WIN_CONDITIONS_ID:
+			# "Win Conditions"
+			interface_type = InterfaceNavigator.Type.WIN_CONDITIONS
 		_EDIT_TAB_COUNTRIES_ID:
 			# "Countries"
 			interface_type = InterfaceNavigator.Type.COUNTRY_LIST
+		_EDIT_TAB_DIPLOMACY_ID:
+			# "Diplomacy"
+			interface_type = InterfaceNavigator.Type.DIPLOMACY
 		_EDIT_TAB_PLAYERS_ID:
 			# "Players"
 			interface_type = InterfaceNavigator.Type.PLAYER_LIST

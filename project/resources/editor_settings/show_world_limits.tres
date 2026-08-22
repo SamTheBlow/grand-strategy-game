@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="ItemBool" format=3]
+[gd_resource type="Resource" script_class="ItemBool" uid="uid://bqi0kaahyp1ue" format=3]
 
-[ext_resource type="Script" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_pti"]
-[ext_resource type="Script" path="res://source/utils/property_tree/items/item_bool.gd" id="2_ibool"]
-[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="3_color"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_pti"]
+[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="2_ibool"]
+[ext_resource type="Resource" uid="uid://bsvjybsy4mret" path="res://resources/editor_settings/world_limits_color.tres" id="3_color"]
 
 [resource]
 script = ExtResource("2_ibool")

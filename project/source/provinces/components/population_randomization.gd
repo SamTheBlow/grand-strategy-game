@@ -1,12 +1,17 @@
 class_name PopulationRandomization
 extends GameComponent
-## During game setup, randomizes the population
-## of each [Province] using given settings.
+## During game setup, randomizes the population size of each province.
 
 const KEY: String = "population_randomization"
+const TITLE: String = "Population Randomization"
+const DESCRIPTION: String = "During game setup, randomizes the population size of each province."
+const SETTINGS: Array = [
+	{ "property_name": _MIN_VALUE_KEY, "text": "Minimum value", "type": "int", "min": 0 },
+	{ "property_name": _MAX_VALUE_KEY, "text": "Maximum value", "type": "int", "min": 0 },
+]
 
-const _POPULATION_RANGE_MIN_KEY: String = "population_range_min"
-const _POPULATION_RANGE_MAX_KEY: String = "population_range_max"
+const _MIN_VALUE_KEY: String = "min_value"
+const _MAX_VALUE_KEY: String = "max_value"
 
 var min_value: int = 0
 var max_value: int = 0
@@ -30,25 +35,25 @@ func _apply(game: Game) -> void:
 func to_raw_dict() -> Dictionary:
 	var output: Dictionary = {}
 	if min_value >= 0:
-		output[_POPULATION_RANGE_MIN_KEY] = min_value
+		output[_MIN_VALUE_KEY] = min_value
 	if max_value >= 0:
-		output[_POPULATION_RANGE_MAX_KEY] = max_value
+		output[_MAX_VALUE_KEY] = max_value
 	return output
 
 
 func _load_settings(raw_dict: Dictionary) -> void:
-	if ParseUtils.dictionary_has_number(raw_dict, _POPULATION_RANGE_MIN_KEY):
+	if ParseUtils.dictionary_has_number(raw_dict, _MIN_VALUE_KEY):
 		min_value = maxi(
 				0,
-				ParseUtils.dictionary_int(raw_dict, _POPULATION_RANGE_MIN_KEY)
+				ParseUtils.dictionary_int(raw_dict, _MIN_VALUE_KEY)
 		)
 	else:
 		min_value = 0
 
-	if ParseUtils.dictionary_has_number(raw_dict, _POPULATION_RANGE_MAX_KEY):
+	if ParseUtils.dictionary_has_number(raw_dict, _MAX_VALUE_KEY):
 		max_value = maxi(
 				0,
-				ParseUtils.dictionary_int(raw_dict, _POPULATION_RANGE_MAX_KEY)
+				ParseUtils.dictionary_int(raw_dict, _MAX_VALUE_KEY)
 		)
 	else:
 		max_value = 0

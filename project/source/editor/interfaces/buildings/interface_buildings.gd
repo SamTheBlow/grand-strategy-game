@@ -6,6 +6,9 @@ extends AppEditorInterface
 func _ready() -> void:
 	_setup_settings(%GameSettings as ItemVoidNode)
 
+	var components_section := %ComponentSection as ComponentSection
+	components_section.setup([ BuildingPlacement.KEY ], project, undo_redo)
+
 	closed.connect(navigator.close_interface)
 
 

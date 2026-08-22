@@ -23,11 +23,11 @@
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
 [ext_resource type="Script" uid="uid://61ossm26cpd3" path="res://source/world/decorations/decoration_scroll_scale.gd" id="20_decoration_scroll_scale"]
-[ext_resource type="Resource" path="res://resources/editor_settings/editor_settings.tres" id="23_settings"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_world_limits.tres" id="24_swl"]
-[ext_resource type="Resource" path="res://resources/editor_settings/world_limits_color.tres" id="25_wlc"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_decorations.tres" id="26_sd"]
-[ext_resource type="Resource" path="res://resources/editor_settings/show_buildings.tres" id="27_sb"]
+[ext_resource type="Resource" uid="uid://b2m0fx1h65y72" path="res://resources/editor_settings/editor_settings.tres" id="23_settings"]
+[ext_resource type="Resource" uid="uid://bqi0kaahyp1ue" path="res://resources/editor_settings/show_world_limits.tres" id="24_swl"]
+[ext_resource type="Resource" uid="uid://bsvjybsy4mret" path="res://resources/editor_settings/world_limits_color.tres" id="25_wlc"]
+[ext_resource type="Resource" uid="uid://b2ktv3qtliscp" path="res://resources/editor_settings/show_decorations.tres" id="26_sd"]
+[ext_resource type="Resource" uid="uid://baipjg4i5kso1" path="res://resources/editor_settings/show_buildings.tres" id="27_sb"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
 script = ExtResource("8_u5rcp")
@@ -222,33 +222,37 @@ item_8/id = 8
 [node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
-item_count = 13
+item_count = 15
 item_0/text = "Project Info"
 item_0/id = 0
 item_1/text = "RNG"
 item_1/id = 1
+item_2/text = "Win Conditions"
 item_2/id = 2
-item_2/separator = true
-item_3/text = "Countries"
 item_3/id = 3
-item_4/text = "Players"
+item_3/separator = true
+item_4/text = "Countries"
 item_4/id = 4
-item_5/text = "Turn Order"
+item_5/text = "Diplomacy"
 item_5/id = 5
+item_6/text = "Players"
 item_6/id = 6
-item_6/separator = true
-item_7/text = "World Limits"
+item_7/text = "Turn Order"
 item_7/id = 7
-item_8/text = "Background Color"
 item_8/id = 8
-item_9/text = "Decorations"
+item_8/separator = true
+item_9/text = "World Limits"
 item_9/id = 9
-item_10/text = "Provinces"
+item_10/text = "Background Color"
 item_10/id = 10
-item_11/text = "Armies"
+item_11/text = "Decorations"
 item_11/id = 11
-item_12/text = "Buildings"
+item_12/text = "Provinces"
 item_12/id = 12
+item_13/text = "Armies"
+item_13/id = 13
+item_14/text = "Buildings"
+item_14/id = 14
 
 [node name="EditingInterface" parent="UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
 unique_name_in_owner = true

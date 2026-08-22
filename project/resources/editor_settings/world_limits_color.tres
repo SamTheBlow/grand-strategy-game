@@ -1,7 +1,7 @@
-[gd_resource type="Resource" script_class="ItemColor" format=3]
+[gd_resource type="Resource" script_class="ItemColor" uid="uid://bsvjybsy4mret" format=3]
 
-[ext_resource type="Script" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_5b0n2"]
-[ext_resource type="Script" path="res://source/utils/property_tree/items/item_color.gd" id="1_icolor"]
+[ext_resource type="Script" uid="uid://dvo2mdraodovy" path="res://source/utils/property_tree/items/property_tree_item.gd" id="1_5b0n2"]
+[ext_resource type="Script" uid="uid://b51eyg5h0a7ey" path="res://source/utils/property_tree/items/item_color.gd" id="1_icolor"]
 
 [resource]
 script = ExtResource("1_icolor")

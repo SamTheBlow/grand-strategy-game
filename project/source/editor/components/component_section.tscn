@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://ctqnl5t5vkdm"]
+
+[ext_resource type="Script" uid="uid://ukt5bdgf6owq" path="res://source/editor/components/component_section.gd" id="1_css"]
+
+[node name="ComponentSection" type="VBoxContainer" unique_id=375461186]
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+script = ExtResource("1_css")
+
+[node name="Scroll" type="ScrollContainer" parent="." unique_id=1055096288]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="Content" type="VBoxContainer" parent="Scroll" unique_id=988606757]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="Separator" type="HSeparator" parent="Scroll/Content" unique_id=1115136440]
+modulate = Color(1, 1, 1, 0.2)
+layout_mode = 2

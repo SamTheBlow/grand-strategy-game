@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://dj6yk7vw3e3r1" path="res://source/editor/interfaces/countries/country_list.gd" id="1_172jq"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
 [ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/countries/country_list/country_list.tscn" id="5_o3ftt"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceCountryList" type="Control" unique_id=180020418]
 layout_mode = 3
@@ -27,11 +28,24 @@ layout_mode = 2
 text = "A country is some political entity. It's able to take control of provinces, it manages its own resources, and it can have armies fight for it."
 fit_content = true
 
-[node name="ButtonSection" type="Control" parent="VBoxContainer" unique_id=421927637]
+[node name="Tabs" type="TabContainer" parent="VBoxContainer" unique_id=999001]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="List" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999002]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="Content" type="VBoxContainer" parent="VBoxContainer/Tabs/List" unique_id=999003]
+theme_override_constants/separation = 16
+
+[node name="ButtonSection" type="Control" parent="VBoxContainer/Tabs/List/Content" unique_id=421927637]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 
-[node name="AddButton" type="Button" parent="VBoxContainer/ButtonSection" unique_id=1907074835]
+[node name="AddButton" type="Button" parent="VBoxContainer/Tabs/List/Content/ButtonSection" unique_id=1907074835]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.2
@@ -44,8 +58,17 @@ theme_override_font_sizes/font_size = 12
 theme_override_styles/normal = ExtResource("4_7s6pu")
 text = "+ Add"
 
-[node name="CountryList" parent="VBoxContainer" unique_id=376299623 instance=ExtResource("5_o3ftt")]
+[node name="CountryList" parent="VBoxContainer/Tabs/List/Content" unique_id=376299623 instance=ExtResource("5_o3ftt")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[connection signal="pressed" from="VBoxContainer/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]
+[node name="Components" type="MarginContainer" parent="VBoxContainer/Tabs" unique_id=999004]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ComponentSection" parent="VBoxContainer/Tabs/Components" instance=ExtResource("2_cs")]
+unique_name_in_owner = true
+
+[connection signal="pressed" from="VBoxContainer/Tabs/List/Content/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]
