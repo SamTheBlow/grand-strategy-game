@@ -24,7 +24,7 @@ func _apply(game: Game) -> void:
 	)
 
 	# Go through each country and give it one unassigned province if applicable
-	for country: Country in game.countries.list():
+	for country in game.countries.list:
 		# Skip if country already has a province
 		if (
 				not game.world.provinces_of_each_country

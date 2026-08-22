@@ -18,8 +18,6 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 			decisions.relative_strength_of_countries()
 	)
 
-	var country_list: Array[Country] = game.countries.list()
-
 	var reachable_countries: Array[Country] = (
 			playing_country.reachable_countries(
 					game.world.provinces_of_each_country,
@@ -35,14 +33,14 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 
 	# Find the current enemies, if any
 	var current_enemies: Array[Country] = []
-	for country in country_list:
+	for country in game.countries.list:
 		if not country in reachable_countries:
 			decisions.make_peace_with(country)
 			continue
 
 		if playing_country.relationships.with_country(country).is_fighting():
 			var is_fighting_another_country: bool = false
-			for other_country in country_list:
+			for other_country in game.countries.list:
 				if (
 						other_country == playing_country
 						or other_country == country
@@ -93,8 +91,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	# Between the candidate enemies, pick the weakest one
 	var country_to_attack: Country = null
 	var strength_of_country_to_attack: float = 0.0
-	for i in country_list.size():
-		var candidate_enemy: Country = country_list[i]
+	for i in game.countries.list.size():
+		var candidate_enemy: Country = game.countries.list[i]
 
 		if not candidate_enemy in candidate_enemies:
 			continue

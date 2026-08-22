@@ -49,7 +49,7 @@ func _update() -> void:
 	_visible_node = null
 
 	# Create nodes for the already existing countries
-	for country in _countries.list():
+	for country in _countries.list:
 		_create_arrows_node(country)
 
 	# Connect signals for automatic updates

@@ -21,7 +21,7 @@ func setup(countries: Countries, is_no_country_allowed: bool) -> void:
 
 	if is_no_country_allowed:
 		_add_element(null)
-	for country in countries.list():
+	for country in countries.list:
 		_add_element(country)
 
 	if _nodes.is_empty():

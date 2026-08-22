@@ -89,7 +89,7 @@ func _refresh_list() -> void:
 		return
 
 	# Initialize _players_of_country
-	for country in countries.list():
+	for country in countries.list:
 		_players_of_country.append(PlayersOfCountry.new())
 
 	# Populate _players_of_country with players
@@ -97,7 +97,7 @@ func _refresh_list() -> void:
 		if player.is_spectating():
 			continue
 		_players_of_country[
-				countries.position_of(player.playing_country.id)
+				countries.list.find(player.playing_country)
 		].game_players.append(player)
 
 	# Create elements in country order
@@ -179,7 +179,7 @@ func _on_element_delete_pressed(game_player: GamePlayer) -> void:
 
 func _on_country_added(country: Country) -> void:
 	_players_of_country.insert(
-			countries.position_of(country.id), PlayersOfCountry.new()
+			countries.list.find(country), PlayersOfCountry.new()
 	)
 
 
@@ -232,7 +232,7 @@ func _on_player_added(player: GamePlayer) -> void:
 	# Determine where this new player goes in country order
 	var position_index: int = 0
 	var new_player_country_index: int = (
-			countries.position_of(player.playing_country.id)
+			countries.list.find(player.playing_country)
 	)
 	for i in _players_of_country.size():
 		position_index += _players_of_country[i].game_players.size()
@@ -248,7 +248,7 @@ func _on_player_added(player: GamePlayer) -> void:
 func _on_player_removed(player: GamePlayer) -> void:
 	# Remove this player from country order
 	_players_of_country[
-			countries.position_of(player.playing_country.id)
+			countries.list.find(player.playing_country)
 	].game_players.erase(player)
 
 	_remove_element(player)

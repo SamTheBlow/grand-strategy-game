@@ -179,7 +179,7 @@ static func _sender_country(raw_dict: Dictionary, game: Game) -> Country:
 			ParseUtils.dictionary_int(raw_dict, _SENDER_COUNTRY_ID_KEY)
 	)
 
-	return game.countries.country_from_id(sender_country_id)
+	return game.countries.map.get(sender_country_id)
 
 
 static func _game_notification_to_dict(

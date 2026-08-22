@@ -28,7 +28,7 @@ func register(game: Game) -> void:
 
 func _apply(game: Game) -> void:
 	# Find which countries don't have a player assigned
-	var unassigned_countries: Array[Country] = game.countries.list()
+	var unassigned_countries: Array[Country] = game.countries.list.duplicate()
 	for game_player in game.game_players.list():
 		unassigned_countries.erase(game_player.playing_country)
 

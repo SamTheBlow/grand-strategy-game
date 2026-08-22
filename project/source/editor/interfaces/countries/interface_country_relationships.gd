@@ -14,7 +14,7 @@ func _ready() -> void:
 ## Returns to the country edit interface,
 ## or to the country list if the country no longer exists.
 func _on_closed() -> void:
-	if project.game.countries.country_from_id(country.id) != null:
+	if project.game.countries.map.has(country.id):
 		navigator.open_country_edit_interface(country)
 	else:
 		navigator.open_new_interface(InterfaceNavigator.Type.COUNTRY_LIST)

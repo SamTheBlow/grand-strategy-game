@@ -9,7 +9,7 @@ static func connect_game(game: Game) -> void:
 
 
 static func _clean_up(province: Province, game: Game) -> void:
-	for country in game.countries.list():
+	for country in game.countries.list:
 		for auto_arrow in country.auto_arrows.list():
 			if (
 					auto_arrow.source_province_id() == province.id

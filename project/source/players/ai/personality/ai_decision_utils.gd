@@ -69,7 +69,7 @@ func strength_of_countries() -> Array[float]:
 			game.components.get(ArmyReinforcements.KEY) as ArmyReinforcements
 	)
 
-	for country in game.countries.list():
+	for country in game.countries.list:
 		var country_score: float = 0.0
 
 		for province in (
@@ -297,7 +297,7 @@ func fight_enemies_of_allies(target_country: Country) -> void:
 	if not relationship.grants_military_access():
 		return
 
-	for other_country in game.countries.list():
+	for other_country in game.countries.list:
 		if other_country in [playing_country, target_country]:
 			continue
 
@@ -331,14 +331,13 @@ func weakest_country(countries: Array[Country]) -> Country:
 	if not game:
 		return countries[0]
 
-	var country_list: Array[Country] = game.countries.list()
 	var relative_strengths: Array[float] = relative_strength_of_countries()
 
 	var output_country: Country = null
 	var weakest_strength: float = 0.0
 
-	for i in country_list.size():
-		var country: Country = country_list[i]
+	for i in game.countries.list.size():
+		var country: Country = game.countries.list[i]
 
 		if not country in countries:
 			continue

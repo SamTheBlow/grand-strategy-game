@@ -19,7 +19,7 @@ func _init() -> void:
 
 
 func register(game: Game) -> void:
-	for country in game.countries.list():
+	for country in game.countries.list:
 		country.relationships.relationship_created.connect(_apply)
 
 

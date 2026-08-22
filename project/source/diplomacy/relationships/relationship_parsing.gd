@@ -47,7 +47,7 @@ static func _load_relationship_from_raw_data(
 			raw_dict, _RECIPIENT_COUNTRY_ID_KEY
 	):
 		return
-	var recipient_country: Country = game.countries.country_from_id(
+	var recipient_country: Country = game.countries.map.get(
 			ParseUtils.dictionary_int(raw_dict, _RECIPIENT_COUNTRY_ID_KEY)
 	)
 	if recipient_country == null:

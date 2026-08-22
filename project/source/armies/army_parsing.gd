@@ -97,9 +97,7 @@ static func _load_army_from_raw_dict(
 	var owner_country_id: int = (
 			ParseUtils.dictionary_int(raw_dict, _OWNER_ID_KEY)
 	)
-	var owner_country: Country = (
-			game.countries.country_from_id(owner_country_id)
-	)
+	var owner_country: Country = game.countries.map.get(owner_country_id)
 	if owner_country == null:
 		return
 

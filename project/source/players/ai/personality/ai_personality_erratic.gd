@@ -24,8 +24,7 @@ func actions(game: Game, _player: GamePlayer, rng: GameRNG) -> Array[Action]:
 		else:
 			decisions.dismiss_offer(game_notification)
 
-	var country_list: Array[Country] = game.countries.list()
-	for country in country_list:
+	for country in game.countries.list:
 		if country == playing_country:
 			continue
 

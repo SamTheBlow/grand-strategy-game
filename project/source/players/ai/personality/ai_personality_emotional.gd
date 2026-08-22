@@ -13,8 +13,7 @@ func actions(game: Game, _player: GamePlayer, rng: GameRNG) -> Array[Action]:
 
 	var decisions := AIDecisionUtils.new(game)
 
-	var country_list: Array[Country] = game.countries.list()
-	for country in country_list:
+	for country in game.countries.list:
 		decisions.fight_enemies_of_allies(country)
 
 	for game_notification in playing_country.notifications.list():
@@ -25,7 +24,7 @@ func actions(game: Game, _player: GamePlayer, rng: GameRNG) -> Array[Action]:
 		if AIDecisionUtils.is_alliance_offer(game_notification):
 			decisions.accept_offer(game_notification)
 
-	for country in country_list:
+	for country in game.countries.list:
 		var relationship: DiplomacyRelationship = (
 				playing_country.relationships.with_country(country)
 		)

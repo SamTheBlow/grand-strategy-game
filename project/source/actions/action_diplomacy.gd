@@ -35,7 +35,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 
 ## May return null.
 func target_country(game: Game) -> Country:
-	return game.countries.country_from_id(_target_country_id)
+	return game.countries.map.get(_target_country_id)
 
 
 func diplomacy_action(relationship: DiplomacyRelationship) -> DiplomacyAction:

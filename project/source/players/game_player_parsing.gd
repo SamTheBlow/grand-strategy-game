@@ -69,7 +69,7 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 				ParseUtils.dictionary_int(raw_dict, _COUNTRY_ID_KEY)
 		)
 		if country_id >= 0:
-			player.playing_country = game.countries.country_from_id(country_id)
+			player.playing_country = game.countries.map.get(country_id)
 
 	# Is human
 	if ParseUtils.dictionary_has_bool(raw_dict, _IS_HUMAN_KEY):

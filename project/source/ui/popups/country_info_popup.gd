@@ -113,7 +113,7 @@ func _populate_countries() -> void:
 	spacing.custom_minimum_size.y = 24
 	_countries.add_child(spacing)
 
-	for other_country in game.countries.list():
+	for other_country in game.countries.list:
 		if other_country == country:
 			continue
 
@@ -138,7 +138,7 @@ func _populate_countries() -> void:
 # ATTENTION this function contains a lot of important hard coded values!
 ## Manually sets the minimum height of the country list
 func _update_country_list_height() -> void:
-	var number_of_countries: int = game_node.game.countries.size() - 1
+	var number_of_countries: int = game_node.game.countries.list.size() - 1
 	var number_of_spacing_nodes: int = 2
 
 	var total_list_height_px := float(

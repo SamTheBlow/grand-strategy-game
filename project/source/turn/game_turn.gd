@@ -58,7 +58,7 @@ func current_turn() -> int:
 ## Only use this while the gameplay loop is running.
 ## Returns null if game has not yet started.
 func playing_country() -> Country:
-	return _game.countries.country_from_id(_playing_country_id)
+	return _game.countries.map.get(_playing_country_id)
 
 
 ## Returns a list of all players whose country is the current playing country.
@@ -93,27 +93,25 @@ func end_turn() -> void:
 func start() -> void:
 	# Cannot start with 0 countries.
 	# Please verify this before calling this function.
-	if _game.countries.size() == 0:
+	if _game.countries.list.is_empty():
 		_playing_country_id = -1
 		_playing_country_index = -1
 		push_warning("Cannot start with 0 countries.")
 		return
 
 	# If playing country id is invalid, start at the first country in the list
-	elif _game.countries.country_from_id(_playing_country_id) == null:
-		_playing_country_id = _game.countries.country_from_index(0).id
+	elif not _game.countries.map.has(_playing_country_id):
+		_playing_country_id = _game.countries.list[0].id
 		_playing_country_index = 0
 
 	# Make sure country id and country index point at the same country
 	else:
-		_playing_country_index = (
-				_game.countries.position_of(_playing_country_id)
-		)
+		_refresh_index()
 
 	if not _is_running:
-		_game.countries.added.connect(_on_country_added)
+		_game.countries.added.connect(_refresh_index.unbind(1))
 		_game.countries.removed.connect(_on_country_removed)
-		_game.countries.order_changed.connect(_on_country_order_changed)
+		_game.countries.order_changed.connect(_refresh_index.unbind(3))
 		_is_running = true
 
 	# Make sure the starting country has at least one player playing it
@@ -128,9 +126,9 @@ func stop() -> void:
 	if not _is_running:
 		return
 
-	_game.countries.added.disconnect(_on_country_added)
+	_game.countries.added.disconnect(_refresh_index)
 	_game.countries.removed.disconnect(_on_country_removed)
-	_game.countries.order_changed.disconnect(_on_country_order_changed)
+	_game.countries.order_changed.disconnect(_refresh_index)
 	_is_running = false
 
 
@@ -168,7 +166,7 @@ func _refresh_playing_country() -> void:
 ## Ensures the playing country has at least one player playing it.
 ## Stops the gameplay loop if no valid country could be found.
 func _find_playing_country() -> void:
-	if _game.countries.size() == 0:
+	if _game.countries.list.is_empty():
 		_playing_country_id = -1
 		_playing_country_index = -1
 		push_warning("There are 0 countries. Stopping gameplay loop.")
@@ -176,15 +174,13 @@ func _find_playing_country() -> void:
 		return
 
 	var scanned: int = 0
-	while scanned < _game.countries.size():
-		if _playing_country_index >= _game.countries.size():
+	while scanned < _game.countries.list.size():
+		if _playing_country_index >= _game.countries.list.size():
 			_playing_country_index = 0
 			_turn += 1
 			turn_changed.emit(_turn)
 
-		_playing_country_id = (
-				_game.countries.country_from_index(_playing_country_index).id
-		)
+		_playing_country_id = _game.countries.list[_playing_country_index].id
 
 		if not playing_players().is_empty():
 			return
@@ -211,23 +207,17 @@ func _run_gameplay_loop() -> void:
 		)
 
 
-func _on_country_added(_country: Country) -> void:
-	_playing_country_index = _game.countries.position_of(_playing_country_id)
+func _refresh_index() -> void:
+	_playing_country_index = _game.countries.list.find(
+			_game.countries.map[_playing_country_id]
+	)
 
 
 func _on_country_removed(country: Country) -> void:
 	if country.id == _playing_country_id:
 		_refresh_playing_country()
 	else:
-		_playing_country_index = (
-				_game.countries.position_of(_playing_country_id)
-		)
-
-
-func _on_country_order_changed(
-		_country_id: int, _old_index: int, _new_index: int
-) -> void:
-	_playing_country_index = _game.countries.position_of(_playing_country_id)
+		_refresh_index()
 
 
 func _on_ai_finished(actions: Array[Action]) -> void:

@@ -18,10 +18,10 @@ func _ready() -> void:
 	_element_container.drag_ended.connect(_on_drag_ended)
 
 	# Setup the list nodes
-	if project.game.countries.size() == 0:
+	if project.game.countries.list.is_empty():
 		_add_empty_list_label()
 	else:
-		for country in project.game.countries.list():
+		for country in project.game.countries.list:
 			_add_element(country)
 		# Now that all the elements are in, refresh their arrows
 		_refresh_arrows()
@@ -57,16 +57,16 @@ func _refresh_arrows() -> void:
 		_country_nodes[country_id].refresh_arrows()
 
 
-func _reorder(country_id: int, new_index: int) -> void:
-	var old_index: int = project.game.countries.position_of(country_id)
+func _reorder(country: Country, new_index: int) -> void:
+	var old_index: int = project.game.countries.list.find(country)
 
-	if old_index == new_index:
+	if old_index < 0 or old_index == new_index:
 		return
 
 	_apply_undo_redo_method(
 			"Edit country order",
-			project.game.countries.reorder.bind(country_id, new_index),
-			project.game.countries.reorder.bind(country_id, old_index)
+			project.game.countries.reorder.bind(country.id, new_index),
+			project.game.countries.reorder.bind(country.id, old_index)
 	)
 
 
@@ -88,15 +88,15 @@ func _remove_empty_list_label() -> void:
 
 func _on_drag_ended(moved_node: Node) -> void:
 	var element := moved_node as EditorTurnOrderElement
-	_reorder(element.country.id, element.get_index())
+	_reorder(element.country, element.get_index())
 
 
 func _on_element_up_pressed(element: EditorTurnOrderElement) -> void:
-	_reorder(element.country.id, element.get_index() - 1)
+	_reorder(element.country, element.get_index() - 1)
 
 
 func _on_element_down_pressed(element: EditorTurnOrderElement) -> void:
-	_reorder(element.country.id, element.get_index() + 1)
+	_reorder(element.country, element.get_index() + 1)
 
 
 func _on_country_added(country: Country) -> void:
@@ -106,7 +106,7 @@ func _on_country_added(country: Country) -> void:
 	_add_element(country)
 	_element_container.move_child(
 			_country_nodes[country.id],
-			project.game.countries.position_of(country.id)
+			project.game.countries.list.find(country)
 	)
 
 	_refresh_arrows()

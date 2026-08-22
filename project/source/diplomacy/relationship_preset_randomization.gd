@@ -18,12 +18,11 @@ func register(game: Game) -> void:
 
 
 func _apply(game: Game) -> void:
-	var country_list: Array[Country] = game.countries.list()
-	var number_of_countries: int = game.countries.size()
+	var number_of_countries: int = game.countries.list.size()
 	for i in number_of_countries:
-		var country_1: Country = country_list[i]
+		var country_1: Country = game.countries.list[i]
 		for j in range(i + 1, number_of_countries):
-			var country_2: Country = country_list[j]
+			var country_2: Country = game.countries.list[j]
 			var random_preset_id: int = 1 + game.rng.randi() % 3
 			country_1.relationships.with_country(country_2)._set_preset_id(random_preset_id)
 			country_2.relationships.with_country(country_1)._set_preset_id(random_preset_id)

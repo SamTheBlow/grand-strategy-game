@@ -153,7 +153,7 @@ static func apply_raw_data(
 		var country_id: int = (
 				ParseUtils.dictionary_int(raw_dict, _OWNER_ID_KEY)
 		)
-		province.owner_country = game.countries.country_from_id(country_id)
+		province.owner_country = game.countries.map.get(country_id)
 
 	# Population
 	province.population().value = (
@@ -216,7 +216,7 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 		var country_id: int = (
 				ParseUtils.dictionary_int(raw_dict, _OWNER_ID_KEY)
 		)
-		province.owner_country = game.countries.country_from_id(country_id)
+		province.owner_country = game.countries.map.get(country_id)
 
 	# Population
 	province.population().value = (

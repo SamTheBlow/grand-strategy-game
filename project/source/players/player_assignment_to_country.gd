@@ -20,7 +20,7 @@ func register(game: Game) -> void:
 
 func _apply(game: Game) -> void:
 	# Randomly shuffled list of countries
-	var country_list: Array[Country] = game.rng.shuffled(game.countries.list())
+	var country_list: Array[Country] = game.rng.shuffled(game.countries.list)
 
 	# List of players that need to be assigned a country
 	var players_to_assign: Array[GamePlayer] = game.game_players.list()

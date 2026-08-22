@@ -19,7 +19,7 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	for country in _countries.list():
+	for country in _countries.list:
 		_connect_country_signals(country)
 	_countries.added.connect(_connect_country_signals)
 
@@ -38,7 +38,7 @@ func _on_auto_arrow_added(auto_arrow: AutoArrow, country_id: int) -> void:
 		return
 
 	# Make sure the country still exists.
-	if _countries.country_from_id(country_id) == null:
+	if _countries.map.get(country_id) == null:
 		return
 
 	_receive_auto_arrow_added.rpc(auto_arrow.to_raw_data(), country_id)
@@ -50,7 +50,7 @@ func _on_auto_arrow_removed(auto_arrow: AutoArrow, country_id: int) -> void:
 		return
 
 	# Make sure the country still exists.
-	if _countries.country_from_id(country_id) == null:
+	if _countries.map.get(country_id) == null:
 		return
 
 	_receive_auto_arrow_removed.rpc(auto_arrow.to_raw_data(), country_id)
@@ -59,7 +59,7 @@ func _on_auto_arrow_removed(auto_arrow: AutoArrow, country_id: int) -> void:
 ## Clients receive the info from the server.
 @rpc("authority", "call_remote", "reliable")
 func _receive_auto_arrow_added(arrow_data: Variant, country_id: int) -> void:
-	var country: Country = _countries.country_from_id(country_id)
+	var country: Country = _countries.map.get(country_id)
 
 	if country == null:
 		push_error("Country sent by the server doesn't exist.")
@@ -71,7 +71,7 @@ func _receive_auto_arrow_added(arrow_data: Variant, country_id: int) -> void:
 ## Clients receive the info from the server.
 @rpc("authority", "call_remote", "reliable")
 func _receive_auto_arrow_removed(arrow_data: Variant, country_id: int) -> void:
-	var country: Country = _countries.country_from_id(country_id)
+	var country: Country = _countries.map.get(country_id)
 
 	if country == null:
 		push_error("Country sent by the server doesn't exist.")

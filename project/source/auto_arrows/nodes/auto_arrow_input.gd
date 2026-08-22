@@ -38,7 +38,7 @@ func _receive_add_auto_arrow(country_id: int, arrow_data: Variant) -> void:
 		return
 
 	# Requested accepted
-	var country: Country = game.countries.country_from_id(country_id)
+	var country: Country = game.countries.map.get(country_id)
 	var auto_arrow: AutoArrow = AutoArrow.from_raw_data(arrow_data)
 	_add_auto_arrow(country, auto_arrow)
 #endregion
@@ -68,7 +68,7 @@ func _receive_remove_auto_arrow(country_id: int, arrow_data: Variant) -> void:
 		return
 
 	# Requested accepted
-	var country: Country = game.countries.country_from_id(country_id)
+	var country: Country = game.countries.map.get(country_id)
 	var auto_arrow: AutoArrow = AutoArrow.from_raw_data(arrow_data)
 	_remove_auto_arrow(country, auto_arrow)
 #endregion
@@ -101,7 +101,7 @@ func _receive_clear_province(country_id: int, province_id: int) -> void:
 		return
 
 	# Requested accepted
-	var country: Country = game.countries.country_from_id(country_id)
+	var country: Country = game.countries.map.get(country_id)
 	_clear_province(country, province_id)
 #endregion
 
@@ -130,9 +130,7 @@ func _on_province_right_clicked(
 		return
 
 	# Make sure the country to edit still exists
-	var country_to_edit: Country = (
-			game.countries.country_from_id(country_to_edit_id)
-	)
+	var country_to_edit: Country = game.countries.map.get(country_to_edit_id)
 	if country_to_edit == null:
 		country_to_edit_id = -1
 		return
@@ -146,10 +144,9 @@ func _on_province_right_clicked(
 
 
 func _on_preview_arrow_released(
-		preview_arrow: AutoArrowPreviewNode2D,
-		country_id: int
+		preview_arrow: AutoArrowPreviewNode2D, country_id: int
 ) -> void:
-	var country: Country = game.countries.country_from_id(country_id)
+	var country: Country = game.countries.map.get(country_id)
 	if country == null:
 		# Maybe the country got removed from the game
 		# while the user was using the preview arrow.

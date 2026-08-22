@@ -29,7 +29,7 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 			valid_country_data[country] = country_data as Dictionary
 
 	# 2nd pass (relationships)
-	for country in game.countries.list():
+	for country in game.countries.list:
 		country.relationships = DiplomacyRelationshipParsing.from_raw_data(
 				valid_country_data[country].get(_RELATIONSHIPS_KEY),
 				game,
@@ -37,7 +37,7 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 		)
 
 	# 3rd pass (notifications)
-	for country in game.countries.list():
+	for country in game.countries.list:
 		GameNotificationParsing.load_from_raw_data(
 				valid_country_data[country].get(_NOTIFICATIONS_KEY),
 				game,
@@ -48,8 +48,8 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 static func to_raw_array(countries: Countries) -> Array:
 	var output: Array = []
 
-	for country_id in countries._order:
-		output.append(_country_to_raw_dict(countries._list[country_id]))
+	for country in countries.list:
+		output.append(_country_to_raw_dict(country))
 
 	return output
 

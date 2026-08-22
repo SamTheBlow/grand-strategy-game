@@ -150,7 +150,7 @@ func _add(
 
 	if (
 			player.playing_country != null
-			and not _countries.has(player.playing_country)
+			and not _countries.list.has(player.playing_country)
 	):
 		push_warning(
 				"Player's playing country is not in the game's list. "

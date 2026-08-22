@@ -16,12 +16,10 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 			decisions.relative_strength_of_countries()
 	)
 
-	var country_list: Array[Country] = game.countries.list()
-
 	# Get my relative strength
 	var my_relative_strength: float = 0.0
-	for i in country_list.size():
-		if country_list[i] == playing_country:
+	for i in game.countries.list.size():
+		if game.countries.list[i] == playing_country:
 			my_relative_strength = relative_strengths[i]
 			break
 
@@ -31,8 +29,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 			game.world.provinces
 	)
 
-	for i in country_list.size():
-		var target_country: Country = country_list[i]
+	for i in game.countries.list.size():
+		var target_country: Country = game.countries.list[i]
 
 		if target_country == playing_country:
 			continue
@@ -41,8 +39,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 		var their_relative_strength: float = relative_strengths[i]
 		# Add up the strength of the country's allies
 		# (only the ones neighboring us)
-		for j in country_list.size():
-			var other_country: Country = country_list[j]
+		for j in game.countries.list.size():
+			var other_country: Country = game.countries.list[j]
 
 			if (
 					other_country == playing_country
@@ -66,8 +64,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	# Determine the country to attack among the candidates
 	var country_to_attack: Country = null
 	var strength_of_country_to_attack: float = 0.0
-	for i in country_list.size():
-		var candidate_country: Country = country_list[i]
+	for i in game.countries.list.size():
+		var candidate_country: Country = game.countries.list[i]
 
 		if not candidate_country in candidate_countries:
 			continue
@@ -96,7 +94,7 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	#)
 	#print("-----")
 
-	for country in country_list:
+	for country in game.countries.list:
 		if country == playing_country:
 			continue
 		elif country == country_to_attack:

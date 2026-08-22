@@ -24,10 +24,9 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 		sum_of_strengths += strength
 
 	# Get the playing country's strength
-	var country_list: Array[Country] = game.countries.list()
 	var my_relative_strength: float = 0.0
-	for i in country_list.size():
-		if country_list[i] == playing_country:
+	for i in game.countries.list.size():
+		if game.countries.list[i] == playing_country:
 			my_relative_strength = relative_strengths[i]
 
 	var reachable_countries: Array[Country] = (
@@ -39,8 +38,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 
 	decisions.fight_a_reachable_country(decisions.weakest_country)
 
-	for i in country_list.size():
-		var country: Country = country_list[i]
+	for i in game.countries.list.size():
+		var country: Country = game.countries.list[i]
 
 		if country == playing_country:
 			continue

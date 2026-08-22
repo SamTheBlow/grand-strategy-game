@@ -13,7 +13,7 @@ var dictionary: Dictionary[Country, ArmiesOfCountry] = {
 
 
 func _init(countries: Countries, armies: Armies) -> void:
-	for country in countries.list():
+	for country in countries.list:
 		_add_country(country)
 	countries.added.connect(_add_country)
 	countries.removed.connect(_remove_country.bind(armies))

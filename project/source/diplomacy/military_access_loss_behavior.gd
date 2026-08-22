@@ -30,7 +30,7 @@ func _init() -> void:
 func register(game: Game) -> void:
 	_game = game
 
-	for country in game.countries.list():
+	for country in game.countries.list:
 		_connect_country(country)
 
 	game.countries.added.connect(_connect_country)
@@ -163,7 +163,7 @@ func _on_military_access_changed(relationship: DiplomacyRelationship) -> void:
 
 func _on_province_owner_changed(province: Province) -> void:
 	var affected_countries: Array[Country] = []
-	for country in _game.countries.list():
+	for country in _game.countries.list:
 		if not country.has_permission_to_move_into_country(
 				province.owner_country
 		):

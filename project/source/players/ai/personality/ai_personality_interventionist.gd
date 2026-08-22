@@ -22,9 +22,8 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 	for strength in relative_strengths:
 		sum_of_strengths += strength
 
-	var country_list: Array[Country] = game.countries.list()
-	for i in country_list.size():
-		var country: Country = country_list[i]
+	for i in game.countries.list.size():
+		var country: Country = game.countries.list[i]
 
 		if country == playing_country:
 			continue
@@ -48,7 +47,7 @@ func actions(game: Game, _player: GamePlayer, _rng: GameRNG) -> Array[Action]:
 			decisions.stop_interacting_with(country)
 
 	# It's in a 2nd loop so that it's done after all the other decisions
-	for country in country_list:
+	for country in game.countries.list:
 		decisions.fight_enemies_of_allies(country)
 
 	decisions.accept_all_offers()
