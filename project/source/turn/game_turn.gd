@@ -76,6 +76,9 @@ func playing_players() -> Array[GamePlayer]:
 
 ## Ends the player's turn. Has no effect if the player is an AI.
 func end_turn() -> void:
+	if not _is_running:
+		return
+
 	var player: GamePlayer = playing_players()[0]
 
 	if not player.is_human:
@@ -157,6 +160,8 @@ func _refresh_playing_country() -> void:
 	_find_playing_country()
 	if _is_running:
 		playing_country_changed.emit(playing_country())
+	# Check again, just in case the signal causes the gameplay loop to end.
+	if _is_running:
 		_run_gameplay_loop()
 
 

@@ -3,6 +3,8 @@ class_name AutoArrowBehavior
 
 
 static func apply(game: Game) -> void:
+	if not game.turn.is_running():
+		return
 	var playing_country: Country = game.turn.playing_country()
 	var player: GamePlayer = game.turn.playing_players()[0]
 

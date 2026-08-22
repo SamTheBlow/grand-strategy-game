@@ -124,6 +124,8 @@ func end_game() -> void:
 
 
 func apply_action(action: Action) -> void:
+	if not turn.is_running():
+		return
 	action.apply_to(self, turn.playing_players()[0])
 	action_applied.emit(action)
 

@@ -189,7 +189,12 @@ func _refresh_available_actions() -> void:
 	NodeUtils.delete_all_children(_available_actions)
 	_actions_container.hide()
 
-	if country_1 == null or country_2 == null or game == null:
+	if (
+			country_1 == null
+			or country_2 == null
+			or game == null
+			or not game.turn.is_running()
+	):
 		_update_minimum_height()
 		return
 

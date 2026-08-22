@@ -317,6 +317,9 @@ func _on_province_select_attempted(
 		province: Province,
 		outcome: ProvinceVisualsInput.ProvinceSelectionOutcome
 ) -> void:
+	if not game.turn.is_running():
+		return
+
 	# Only open the popup if it's your turn
 	var you: GamePlayer = game.turn.playing_players()[0]
 	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
@@ -480,6 +483,9 @@ func _on_diplomacy_action_pressed(
 		diplomacy_action: DiplomacyAction,
 		recipient_country: Country
 ) -> void:
+	if not game.turn.is_running():
+		return
+
 	# TODO this check shouldn't be here...
 	if not MultiplayerUtils.has_gameplay_authority(
 			multiplayer, game.turn.playing_players()[0]
@@ -490,9 +496,9 @@ func _on_diplomacy_action_pressed(
 		)
 		return
 
-	_action_input.apply_action(ActionDiplomacy.new(
-			diplomacy_action.id(), recipient_country.id
-	))
+	_action_input.apply_action(
+			ActionDiplomacy.new(diplomacy_action.id(), recipient_country.id)
+	)
 
 
 func _on_notification_pressed(game_notification: GameNotification) -> void:
@@ -511,6 +517,9 @@ func _on_notification_dismissed(game_notification: GameNotification) -> void:
 func _on_notification_decision_made(
 		game_notification: GameNotification, outcome_index: int
 ) -> void:
+	if not game.turn.is_running():
+		return
+
 	# TASK this check shouldn't be here... also DRY: this is a copy/paste
 	if not MultiplayerUtils.has_gameplay_authority(
 			multiplayer, game.turn.playing_players()[0]
@@ -521,9 +530,9 @@ func _on_notification_decision_made(
 		)
 		return
 
-	_action_input.apply_action(ActionHandleNotification.new(
-			game_notification.id, outcome_index
-	))
+	_action_input.apply_action(
+			ActionHandleNotification.new(game_notification.id, outcome_index)
+	)
 
 
 func _on_pause_menu_resume_pressed() -> void:
