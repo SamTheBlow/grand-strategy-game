@@ -20,10 +20,9 @@ static func from_raw_dict(
 static func to_raw_dict(game: Game) -> Dictionary:
 	var output: Dictionary = {}
 
-	# Status
-	var status_data: Array = GameStateParsing.to_raw_data(game.state())
-	if not status_data.is_empty():
-		output.merge({ _STATUS_KEY: status_data[0] })
+	# State
+	if game.state != GameStateParsing.DEFAULT_STATE:
+		output[_STATUS_KEY] = GameStateParsing.to_raw_string(game.state)
 
 	# RNG
 	var rng_data: Dictionary = RNGParsing.to_raw_dict(game.rng)
@@ -99,12 +98,10 @@ static func _components_to_raw_dict(
 class GameFromRawData extends Game:
 	func _init(raw_dict: Dictionary, project_textures: ProjectTextures) -> void:
 		# State
-		_game_state = (
-				GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
-		)
+		state = GameStateParsing.from_raw_data(raw_dict.get(_STATUS_KEY))
 
 		# RNG
-		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), _game_state)
+		rng = RNGParsing.from_raw_data(raw_dict.get(_RNG_KEY), state)
 
 		# Turn
 		turn = (
@@ -132,15 +129,15 @@ class GameFromRawData extends Game:
 
 
 class GameStateParsing:
+	const DEFAULT_STATE: Game.GameState = Game.GameState.SETUP
 	const _STATE_SETUP: String = "setup"
 	const _STATE_ONGOING: String = "ongoing"
 	const _STATE_GAMEOVER: String = "gameover"
-	const _DEFAULT_STATE: Game.GameState = Game.GameState.SETUP
 
 	static func from_raw_data(raw_data: Variant) -> Game.GameState:
 		match raw_data:
 			null:
-				return _DEFAULT_STATE
+				return DEFAULT_STATE
 			_STATE_SETUP:
 				return Game.GameState.SETUP
 			_STATE_ONGOING:
@@ -151,21 +148,15 @@ class GameStateParsing:
 				push_warning(
 						"Unrecognized game state. Defaulting to setup phase"
 				)
-				return _DEFAULT_STATE
+				return DEFAULT_STATE
 
-	# Returns an array with one element of type Variant.
-	# Or, returns an empty array if it's the default value.
-	static func to_raw_data(game_state: Game.GameState) -> Array:
-		if game_state == _DEFAULT_STATE:
-			return []
-
+	static func to_raw_string(game_state: Game.GameState) -> String:
 		match game_state:
 			Game.GameState.SETUP:
-				return [_STATE_SETUP]
+				return _STATE_SETUP
 			Game.GameState.ONGOING:
-				return [_STATE_ONGOING]
+				return _STATE_ONGOING
 			Game.GameState.GAMEOVER:
-				return [_STATE_GAMEOVER]
+				return _STATE_GAMEOVER
 			_:
-				push_error("Unrecognized game state!")
-				return []
+				return _STATE_SETUP

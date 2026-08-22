@@ -71,7 +71,7 @@ func _setup_game(file_path: String, rng_seed: String) -> void:
 
 		# Overwrite seed
 		if (
-				project.game.state() == Game.GameState.SETUP
+				project.game.state == Game.GameState.SETUP
 				and project.game.rng.rng_seed == ""
 		):
 			project.game.rng.rng_seed = rng_seed

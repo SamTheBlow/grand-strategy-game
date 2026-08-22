@@ -2,6 +2,7 @@ class_name Game
 ## The internal state of a game.
 
 signal error_triggered(error_message: String)
+signal state_changed()
 signal game_over(winning_country: Country)
 signal action_applied(action: Action)
 
@@ -15,6 +16,15 @@ enum GameState {
 	ONGOING = 1,
 	GAMEOVER = 2,
 }
+
+## The game's current state.
+## Setting this changes state directly without triggering state change logic.
+var state: GameState = GameState.SETUP:
+	set(value):
+		if state == value:
+			return
+		state = value
+		state_changed.emit()
 
 ## Do not overwrite!
 var countries := Countries.new()
@@ -34,7 +44,6 @@ var rng := GameRNG.new()
 ## Use this to obtain or provide modifiers across the entire game.
 var modifier_request := ModifierRequest.new()
 
-var _game_state: GameState = GameState.SETUP
 var _is_setup_for_play: bool = false
 
 ## A list of [GameComponent]s, mapped by their KEY constant for quick access.
@@ -74,11 +83,6 @@ func _init() -> void:
 	AIRandomization.connect_game(self)
 
 
-## Returns the game's current state.
-func state() -> GameState:
-	return _game_state
-
-
 ## Sets up the game to be ready for playing.
 ## No effect if this was already called.
 func setup_for_play() -> void:
@@ -90,9 +94,9 @@ func setup_for_play() -> void:
 
 	_is_setup_for_play = true
 
-	if _game_state == GameState.SETUP:
+	if state == GameState.SETUP:
 		setup_ending.emit()
-		_game_state = GameState.ONGOING
+		state = GameState.ONGOING
 
 
 ## Starts/resumes the gameplay loop, if possible.
@@ -103,7 +107,7 @@ func start() -> void:
 
 	# You can continue playing if the game's over
 	# but let's remind the user that the game is over.
-	if _game_state == GameState.GAMEOVER:
+	if state == GameState.GAMEOVER:
 		game_over.emit(_winning_country())
 
 	# Can't start a game with 0 players.
@@ -116,10 +120,10 @@ func start() -> void:
 
 ## Marks game over. No effect if the game is already over.
 func end_game() -> void:
-	if _game_state != GameState.ONGOING:
+	if state != GameState.ONGOING:
 		return
 
-	_game_state = GameState.GAMEOVER
+	state = GameState.GAMEOVER
 	game_over.emit(_winning_country())
 
 
