@@ -28,13 +28,16 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 			game.countries.add(country)
 			valid_country_data[country] = country_data as Dictionary
 
-	# 2nd pass
+	# 2nd pass (relationships)
 	for country in game.countries.list():
 		country.relationships = DiplomacyRelationshipParsing.from_raw_data(
 				valid_country_data[country].get(_RELATIONSHIPS_KEY),
 				game,
 				country
 		)
+
+	# 3rd pass (notifications)
+	for country in game.countries.list():
 		GameNotificationParsing.load_from_raw_data(
 				valid_country_data[country].get(_NOTIFICATIONS_KEY),
 				game,
