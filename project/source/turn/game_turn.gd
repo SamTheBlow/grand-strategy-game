@@ -93,7 +93,7 @@ func start() -> void:
 	if _game.countries.size() == 0:
 		_playing_country_id = -1
 		_playing_country_index = -1
-		push_error("Cannot start with 0 countries.")
+		push_warning("Cannot start with 0 countries.")
 		return
 
 	# If playing country id is invalid, start at the first country in the list
@@ -113,7 +113,10 @@ func start() -> void:
 		_game.countries.order_changed.connect(_on_country_order_changed)
 		_is_running = true
 
-	_run_gameplay_loop()
+	# Make sure the starting country has at least one player playing it
+	_find_playing_country()
+	if _is_running:
+		_run_gameplay_loop()
 
 
 # Stops the gameplay loop.
@@ -146,37 +149,52 @@ func _end_player_turn(player: GamePlayer) -> void:
 		)
 
 	country_turn_ended.emit(player.playing_country)
-	_go_to_next_country()
-	_run_gameplay_loop()
-
-
-func _go_to_next_country() -> void:
 	_playing_country_index += 1
+	_refresh_playing_country()
 
-	if _playing_country_index >= _game.countries.size():
-		_playing_country_id = _game.countries.country_from_index(0).id
-		_playing_country_index = 0
 
-		_turn += 1
-		turn_changed.emit(_turn)
-	else:
+func _refresh_playing_country() -> void:
+	_find_playing_country()
+	if _is_running:
+		playing_country_changed.emit(playing_country())
+		_run_gameplay_loop()
+
+
+## Ensures the playing country has at least one player playing it.
+## Stops the gameplay loop if no valid country could be found.
+func _find_playing_country() -> void:
+	if _game.countries.size() == 0:
+		_playing_country_id = -1
+		_playing_country_index = -1
+		push_warning("There are 0 countries. Stopping gameplay loop.")
+		stop()
+		return
+
+	var scanned: int = 0
+	while scanned < _game.countries.size():
+		if _playing_country_index >= _game.countries.size():
+			_playing_country_index = 0
+			_turn += 1
+			turn_changed.emit(_turn)
+
 		_playing_country_id = (
 				_game.countries.country_from_index(_playing_country_index).id
 		)
 
-	playing_country_changed.emit(playing_country())
+		if not playing_players().is_empty():
+			return
+
+		_playing_country_index += 1
+		scanned += 1
+
+	_playing_country_id = -1
+	_playing_country_index = -1
+	push_warning("There is no playing player. Stopping gameplay loop.")
+	stop()
 
 
 func _run_gameplay_loop() -> void:
-	var players: Array[GamePlayer] = playing_players()
-
-	# Don't wait on players if there is no player playing this country
-	if players.size() == 0:
-		_go_to_next_country()
-		_run_gameplay_loop()
-		return
-
-	var player: GamePlayer = players[0]
+	var player: GamePlayer = playing_players()[0]
 
 	# If the player is an AI, play their actions in a separate thread
 	if not player.is_human:
@@ -194,8 +212,7 @@ func _on_country_added(_country: Country) -> void:
 
 func _on_country_removed(country: Country) -> void:
 	if country.id == _playing_country_id:
-		_go_to_next_country()
-		_run_gameplay_loop()
+		_refresh_playing_country()
 	else:
 		_playing_country_index = (
 				_game.countries.position_of(_playing_country_id)
