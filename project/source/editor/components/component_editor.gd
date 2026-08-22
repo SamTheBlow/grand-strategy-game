@@ -12,24 +12,25 @@ func setup(
 		project: GameProject,
 		undo_redo: UndoRedoResource
 ) -> void:
-	_component = component
+	var existing: GameComponent = project.game.components.get(component.KEY)
+	_component = existing if existing != null else component
 	_project = project
 	_undo_redo = undo_redo
 
 	var name_label := %NameLabel as Label
-	name_label.text = component.TITLE
+	name_label.text = _component.TITLE
 
 	var check_box := %CheckBox as CheckBox
-	check_box.button_pressed = _project.game.components.has(component.KEY)
+	check_box.button_pressed = _project.game.components.has(_component.KEY)
 	check_box.toggled.connect(_on_checkbox_toggled)
 
 	var description_label := %DescriptionLabel as Label
-	description_label.text = component.DESCRIPTION
+	description_label.text = _component.DESCRIPTION
 
 	var item_node := %ItemNode as ItemVoidNode
 	# Create new instance to avoid sharing the same instance
 	var item := PropertyTreeItem.new()
-	item.child_items = _new_setting_items(component)
+	item.child_items = _new_setting_items(_component)
 	item_node.item = item
 
 
