@@ -296,15 +296,18 @@ func _on_game_over(winning_country: Country) -> void:
 		await ready
 
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
-	game_over_popup.init(winning_country)
+	game_over_popup.setup(winning_country)
 	_add_popup(game_over_popup)
 
 	if chat == null:
 		return
-	chat.send_global_message(
-			"The game is over! The winner is "
-			+ winning_country.name_or_default() + "."
-	)
+	if winning_country == null:
+		chat.send_global_message("The game is over!")
+	else:
+		chat.send_global_message(
+				"The game is over! The winner is "
+				+ winning_country.name_or_default() + "."
+		)
 	chat.send_global_message("You can continue playing if you want.")
 
 

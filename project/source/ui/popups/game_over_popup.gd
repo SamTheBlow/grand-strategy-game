@@ -7,6 +7,8 @@ extends VBoxContainer
 @export var winner_label: Label
 
 
-## To be called when this node is created.
-func init(winner: Country) -> void:
-	winner_label.text = winner.name_or_default() + " wins!"
+func setup(country: Country) -> void:
+	if country == null:
+		winner_label.text = "Game Over!"
+	else:
+		winner_label.text = country.name_or_default() + " wins!"
