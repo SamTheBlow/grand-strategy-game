@@ -6,6 +6,7 @@ extends PropertyTreeNode
 @export var item: PropertyTreeItem
 
 @onready var _label := %Label as Label
+@onready var _item_container := %ItemContainer as HBoxContainer
 
 
 func _ready() -> void:
@@ -23,6 +24,7 @@ func refresh() -> void:
 	super()
 
 	_label.text = item.text
+	_item_container.visible = not item.text.is_empty()
 
 
 func _item() -> PropertyTreeItem:
