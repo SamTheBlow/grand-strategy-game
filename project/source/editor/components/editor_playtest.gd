@@ -44,6 +44,11 @@ func start_playtest() -> void:
 	_game_node.chat = main.chat
 	_game_node.exited.connect(end_playtest)
 
+	# Inform user of keyboard shortcut
+	_game_node.chat.send_system_message(
+			"Press F8 at any time to end the playtest."
+	)
+
 	# Replace editor node with game node
 	var parent_node: Node = _editor_node.get_parent()
 	parent_node.remove_child(_editor_node)
