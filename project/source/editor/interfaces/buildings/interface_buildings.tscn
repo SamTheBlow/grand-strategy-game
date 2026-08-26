@@ -8,7 +8,7 @@
 [ext_resource type="Script" uid="uid://ck4addyc1ep24" path="res://source/utils/property_tree/items/item_int.gd" id="6_qkufn"]
 [ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="7_sbp2l"]
 [ext_resource type="Resource" uid="uid://baipjg4i5kso1" path="res://resources/editor_settings/show_buildings.tres" id="8_sb"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [sub_resource type="Resource" id="Resource_4vwtr"]
 script = ExtResource("3_syr23")

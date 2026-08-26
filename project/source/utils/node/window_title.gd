@@ -11,6 +11,11 @@ var _base_title: String = (
 )
 
 
+func _enter_tree() -> void:
+	# Restore the window title when this node is re-added.
+	_refresh()
+
+
 func _exit_tree() -> void:
 	# Reset the window title when this node is removed.
 	get_window().title = _base_title

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://bi2e1mwxbqyvm"]
 
 [ext_resource type="Script" uid="uid://bhp5nm3ynh8vt" path="res://source/editor/interfaces/win_conditions/interface_win_conditions.gd" id="1_s"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceWinConditions" type="Control" unique_id=1973781188]
 layout_mode = 3

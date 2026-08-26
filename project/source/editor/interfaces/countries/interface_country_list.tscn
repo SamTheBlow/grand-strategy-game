@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://pns3cw110b6w"]
 
-[ext_resource type="Script" uid="uid://dj6yk7vw3e3r1" path="res://source/editor/interfaces/countries/country_list.gd" id="1_172jq"]
+[ext_resource type="Script" uid="uid://dj6yk7vw3e3r1" path="res://source/editor/interfaces/countries/interface_country_list.gd" id="1_172jq"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
 [ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/countries/country_list/country_list.tscn" id="5_o3ftt"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceCountryList" type="Control" unique_id=180020418]
 layout_mode = 3

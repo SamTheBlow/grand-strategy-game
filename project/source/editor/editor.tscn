@@ -23,6 +23,7 @@
 [ext_resource type="Script" uid="uid://7rql3b6b6t43" path="res://source/editor/components/project_node.gd" id="18_project_node"]
 [ext_resource type="Script" uid="uid://cq5xjq3dwohgr" path="res://source/utils/node/drag_input.gd" id="19_drag_input"]
 [ext_resource type="Script" uid="uid://61ossm26cpd3" path="res://source/world/decorations/decoration_scroll_scale.gd" id="20_decoration_scroll_scale"]
+[ext_resource type="Script" uid="uid://bu0wvk7qjqk2d" path="res://source/editor/components/editor_playtest.gd" id="21_playtest"]
 [ext_resource type="Resource" uid="uid://b2m0fx1h65y72" path="res://resources/editor_settings/editor_settings.tres" id="23_settings"]
 [ext_resource type="Resource" uid="uid://bqi0kaahyp1ue" path="res://resources/editor_settings/show_world_limits.tres" id="24_swl"]
 [ext_resource type="Resource" uid="uid://bsvjybsy4mret" path="res://resources/editor_settings/world_limits_color.tres" id="25_wlc"]
@@ -35,44 +36,51 @@ metadata/_custom_type_script = "uid://cqrjsjcv4lx25"
 
 [node name="Editor" type="Node" unique_id=1373690984]
 
-[node name="EditorSettingsIO" type="Node" parent="." unique_id=111572785]
+[node name="Playtest" type="Node" parent="." unique_id=1928374702 node_paths=PackedStringArray("_editor_node", "_project_node")]
+script = ExtResource("21_playtest")
+_editor_node = NodePath("../EditorBase")
+_project_node = NodePath("../EditorBase/ProjectNode")
+
+[node name="EditorBase" type="Node" parent="." unique_id=1657126744]
+
+[node name="EditorSettingsIO" type="Node" parent="EditorBase" unique_id=111572785]
 script = ExtResource("1_7nee5")
 _file_path = "editor_settings"
 _editor_settings = ExtResource("23_settings")
 
-[node name="Menus" type="Node" parent="." unique_id=1928374650]
+[node name="Menus" type="Node" parent="EditorBase" unique_id=1928374650]
 script = ExtResource("9_menus")
 
-[node name="WorldBridge" type="Node" parent="." unique_id=1928374651]
+[node name="WorldBridge" type="Node" parent="EditorBase" unique_id=1928374651]
 script = ExtResource("10_world_bridge")
 
-[node name="UndoRedo" type="Node" parent="." unique_id=1928374653]
+[node name="UndoRedo" type="Node" parent="EditorBase" unique_id=1928374653]
 script = ExtResource("12_history")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="WindowTitle" type="Node" parent="." unique_id=1928374658]
+[node name="WindowTitle" type="Node" parent="EditorBase" unique_id=1928374658]
 script = ExtResource("17_window_title")
 
-[node name="ProjectNode" type="Node" parent="." unique_id=1928374659]
+[node name="ProjectNode" type="Node" parent="EditorBase" unique_id=1928374659]
 script = ExtResource("18_project_node")
 
-[node name="ProjectOpener" type="Node" parent="." unique_id=1928374652]
+[node name="ProjectOpener" type="Node" parent="EditorBase" unique_id=1928374652]
 script = ExtResource("11_project_io")
 
-[node name="DecorationInput" type="Node" parent="." unique_id=1928374656 node_paths=PackedStringArray("_decoration_container")]
+[node name="DecorationInput" type="Node" parent="EditorBase" unique_id=1928374656 node_paths=PackedStringArray("_decoration_container")]
 script = ExtResource("15_decoration_input")
 _undo_redo = SubResource("Resource_ai428")
 _decoration_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
 
-[node name="DecorationScrollScale" type="Node" parent="." unique_id=1928374660]
+[node name="DecorationScrollScale" type="Node" parent="EditorBase" unique_id=1928374660]
 script = ExtResource("20_decoration_scroll_scale")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="ArmySelection" type="Node" parent="." unique_id=1928374657 node_paths=PackedStringArray("_army_visuals_setup")]
+[node name="ArmySelection" type="Node" parent="EditorBase" unique_id=1928374657 node_paths=PackedStringArray("_army_visuals_setup")]
 script = ExtResource("16_army_input")
 _army_visuals_setup = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup")
 
-[node name="ArmyDrag" type="Node" parent="." unique_id=1928374701 node_paths=PackedStringArray("_army_selection", "_army_visuals_list", "_province_visuals_input", "_province_visuals_list")]
+[node name="ArmyDrag" type="Node" parent="EditorBase" unique_id=1928374701 node_paths=PackedStringArray("_army_selection", "_army_visuals_list", "_province_visuals_input", "_province_visuals_list")]
 script = ExtResource("16_army_drag")
 _army_selection = NodePath("../ArmySelection")
 _army_visuals_list = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup")
@@ -80,66 +88,66 @@ _province_visuals_input = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/
 _province_visuals_list = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Provinces")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="ProvinceLinkEditer" type="Node" parent="." unique_id=1928374654]
+[node name="ProvinceLinkEditer" type="Node" parent="EditorBase" unique_id=1928374654]
 script = ExtResource("13_editor_adjacency")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="CountryOwnershipGiver" type="Node" parent="." unique_id=1928374655]
+[node name="CountryOwnershipGiver" type="Node" parent="EditorBase" unique_id=1928374655]
 script = ExtResource("7_nha6u")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="DecorationVisibility" type="Node" parent="." unique_id=521376900 node_paths=PackedStringArray("_decorations_container")]
+[node name="DecorationVisibility" type="Node" parent="EditorBase" unique_id=521376900 node_paths=PackedStringArray("_decorations_container")]
 script = ExtResource("12_mg3wh")
 _setting = ExtResource("26_sd")
 _decorations_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
 
-[node name="BuildingVisibility" type="Node" parent="." unique_id=521376901]
+[node name="BuildingVisibility" type="Node" parent="EditorBase" unique_id=521376901]
 script = ExtResource("13_bldvis")
 _setting = ExtResource("27_sb")
 
-[node name="TextureSelectPopupSetup" type="Node" parent="." unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
+[node name="TextureSelectPopupSetup" type="Node" parent="EditorBase" unique_id=1257705635 node_paths=PackedStringArray("_popup_container")]
 script = ExtResource("8_uwkq8")
 _popup_container = NodePath("../UILayer/PopupContainer")
 
-[node name="WorldLayer" type="CanvasLayer" parent="." unique_id=2026811626]
+[node name="WorldLayer" type="CanvasLayer" parent="EditorBase" unique_id=2026811626]
 follow_viewport_enabled = true
 
-[node name="WorldContainer" type="Node2D" parent="WorldLayer" unique_id=1427898406]
+[node name="WorldContainer" type="Node2D" parent="EditorBase/WorldLayer" unique_id=1427898406]
 
-[node name="WorldVisuals2D" parent="WorldLayer/WorldContainer" unique_id=1427898407 instance=ExtResource("4_world_visuals")]
+[node name="WorldVisuals2D" parent="EditorBase/WorldLayer/WorldContainer" unique_id=1427898407 instance=ExtResource("4_world_visuals")]
 
-[node name="WorldLimitsRect2D" type="Node2D" parent="WorldLayer" unique_id=1739909242]
+[node name="WorldLimitsRect2D" type="Node2D" parent="EditorBase/WorldLayer" unique_id=1739909242]
 modulate = Color(1, 0, 0, 1)
 script = ExtResource("6_uwkq8")
 _setting_show_limits = ExtResource("24_swl")
 _setting_limits_color = ExtResource("25_wlc")
 
-[node name="CameraContainer" type="Node2D" parent="." unique_id=1466582699]
+[node name="CameraContainer" type="Node2D" parent="EditorBase" unique_id=1466582699]
 
-[node name="Camera" parent="CameraContainer" unique_id=1466582700 instance=ExtResource("4_camera")]
+[node name="Camera" parent="EditorBase/CameraContainer" unique_id=1466582700 instance=ExtResource("4_camera")]
 
-[node name="WorldOverlayLayer" type="CanvasLayer" parent="." unique_id=1559674596]
+[node name="WorldOverlayLayer" type="CanvasLayer" parent="EditorBase" unique_id=1559674596]
 layer = 2
 follow_viewport_enabled = true
 
-[node name="ProvinceOverlay" type="Node2D" parent="WorldOverlayLayer" unique_id=1598664318]
+[node name="ProvinceOverlay" type="Node2D" parent="EditorBase/WorldOverlayLayer" unique_id=1598664318]
 script = ExtResource("14_province_overlay")
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="DecorationDragInput" type="Node" parent="WorldOverlayLayer" unique_id=989342305]
+[node name="DecorationDragInput" type="Node" parent="EditorBase/WorldOverlayLayer" unique_id=989342305]
 script = ExtResource("19_drag_input")
 is_enabled = false
 eat_input = true
 apply_camera_zoom = true
 
-[node name="ArmyDragInput" type="Node" parent="WorldOverlayLayer" unique_id=1273953873]
+[node name="ArmyDragInput" type="Node" parent="EditorBase/WorldOverlayLayer" unique_id=1273953873]
 script = ExtResource("19_drag_input")
 apply_camera_zoom = true
 
-[node name="UILayer" type="CanvasLayer" parent="." unique_id=151164930]
+[node name="UILayer" type="CanvasLayer" parent="EditorBase" unique_id=151164930]
 layer = 3
 
-[node name="TopBarContainer" type="SubViewportContainer" parent="UILayer" unique_id=1726182058]
+[node name="TopBarContainer" type="SubViewportContainer" parent="EditorBase/UILayer" unique_id=1726182058]
 anchors_preset = -1
 anchor_right = 1.0
 anchor_bottom = 0.075
@@ -147,13 +155,13 @@ grow_horizontal = 2
 grow_vertical = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="UILayer/TopBarContainer" unique_id=772250658]
+[node name="SubViewport" type="SubViewport" parent="EditorBase/UILayer/TopBarContainer" unique_id=772250658]
 transparent_bg = true
 handle_input_locally = false
 size = Vector2i(1152, 48)
 render_target_update_mode = 4
 
-[node name="Control" type="Control" parent="UILayer/TopBarContainer/SubViewport" unique_id=836868101]
+[node name="Control" type="Control" parent="EditorBase/UILayer/TopBarContainer/SubViewport" unique_id=836868101]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -162,7 +170,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="TopBar" type="Control" parent="UILayer/TopBarContainer/SubViewport/Control" unique_id=937602123]
+[node name="TopBar" type="Control" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control" unique_id=937602123]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -171,7 +179,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="ColorRect" type="ColorRect" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=831517367]
+[node name="ColorRect" type="ColorRect" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=831517367]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -180,7 +188,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="MenuBar" type="MenuBar" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=871537756]
+[node name="MenuBar" type="MenuBar" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=871537756]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
@@ -189,14 +197,14 @@ anchor_bottom = 0.5
 offset_left = 8.0
 grow_vertical = 2
 
-[node name="Editor" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1991500053]
+[node name="Editor" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1991500053]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 1
 item_0/text = "Quit"
 item_0/id = 0
 
-[node name="Project" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1888538547]
+[node name="Project" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1888538547]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 9
@@ -219,7 +227,7 @@ item_7/separator = true
 item_8/text = "Play"
 item_8/id = 8
 
-[node name="Edit" type="PopupMenu" parent="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
+[node name="Edit" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 15
@@ -254,7 +262,7 @@ item_13/id = 13
 item_14/text = "Buildings"
 item_14/id = 14
 
-[node name="EditingInterface" parent="UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
+[node name="EditingInterface" parent="EditorBase/UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
 unique_name_in_owner = true
 visible = false
 anchors_preset = -1
@@ -262,7 +270,7 @@ anchor_top = 0.075
 anchor_right = 0.4
 _undo_redo = SubResource("Resource_ai428")
 
-[node name="PopupContainer" type="Control" parent="UILayer" unique_id=1918851921]
+[node name="PopupContainer" type="Control" parent="EditorBase/UILayer" unique_id=1918851921]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 15
@@ -272,86 +280,87 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SaveDialog" type="FileDialog" parent="." unique_id=32787500]
+[node name="SaveDialog" type="FileDialog" parent="EditorBase" unique_id=32787500]
 initial_position = 2
 size = Vector2i(931, 500)
 dialog_hide_on_ok = true
 access = 2
 use_native_dialog = true
 
-[connection signal="interface_requested" from="Menus" to="UILayer/EditingInterface" method="open_new_interface"]
-[connection signal="new_project_requested" from="Menus" to="ProjectOpener" method="open_new_project"]
-[connection signal="open_project_requested" from="Menus" to="ProjectOpener" method="open_existing_project"]
-[connection signal="quit_requested" from="Menus" to="." method="queue_free"]
-[connection signal="save_as_requested" from="Menus" to="SaveDialog" method="show"]
-[connection signal="save_requested" from="Menus" to="ProjectNode" method="save"]
-[connection signal="show_in_file_manager_requested" from="Menus" to="ProjectNode" method="show_in_file_manager"]
-[connection signal="is_dirty_changed" from="UndoRedo" to="WindowTitle" method="set_is_dirty"]
-[connection signal="has_valid_file_path_changed" from="ProjectNode" to="Menus" method="_on_project_path_validity_changed"]
-[connection signal="project_changed" from="ProjectNode" to="ArmyDrag" method="set_project"]
-[connection signal="project_changed" from="ProjectNode" to="WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]
-[connection signal="project_changed" from="ProjectNode" to="UILayer/EditingInterface" method="set_project"]
-[connection signal="project_changing" from="ProjectNode" to="UndoRedo" method="reset"]
-[connection signal="project_changing" from="ProjectNode" to="WorldLayer/WorldContainer/WorldVisuals2D" method="clear"]
-[connection signal="project_changing" from="ProjectNode" to="UILayer/EditingInterface" method="close_interface"]
-[connection signal="project_name_changed" from="ProjectNode" to="WindowTitle" method="set_project_name"]
-[connection signal="save_dialog_requested" from="ProjectNode" to="SaveDialog" method="show"]
-[connection signal="saved" from="ProjectNode" to="UndoRedo" method="mark_saved"]
-[connection signal="project_opened" from="ProjectOpener" to="ProjectNode" method="set_project"]
-[connection signal="deselected" from="DecorationInput" to="DecorationScrollScale" method="set_selected_decoration"]
-[connection signal="deselected" from="DecorationInput" to="UILayer/EditingInterface" method="close_interface"]
-[connection signal="draggability_changed" from="DecorationInput" to="WorldOverlayLayer/DecorationDragInput" method="set_is_enabled"]
-[connection signal="selected" from="DecorationInput" to="DecorationScrollScale" method="set_selected_decoration"]
-[connection signal="selected" from="DecorationInput" to="UILayer/EditingInterface" method="open_decoration_edit_interface"]
-[connection signal="deselected" from="ArmySelection" to="UILayer/EditingInterface" method="close_interface"]
-[connection signal="selected" from="ArmySelection" to="UILayer/EditingInterface" method="open_army_edit_interface"]
-[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldBridge" method="_on_world_loaded"]
-[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="DecorationInput" method="_on_world_loaded"]
-[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="ProvinceLinkEditer" method="_on_world_loaded"]
-[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="CameraContainer/Camera/WorldLimitWiring" method="_on_world_loaded"]
-[connection signal="world_loaded" from="WorldLayer/WorldContainer/WorldVisuals2D" to="WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
-[connection signal="army_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup" to="ArmySelection" method="_setup_visuals"]
-[connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="DecorationInput" method="set_selected_decoration"]
-[connection signal="clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Background" to="ArmySelection" method="set_selected_army"]
-[connection signal="province_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="CountryOwnershipGiver" method="apply_to_province"]
-[connection signal="province_right_clicked" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="ProvinceLinkEditer" method="_on_province_right_clicked"]
-[connection signal="province_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="BuildingVisibility" method="apply_to"]
-[connection signal="decoration_visuals_created" from="WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="DecorationInput" method="_setup_visuals"]
-[connection signal="zoom_changed" from="CameraContainer/Camera/CameraZoom" to="WorldLayer/WorldContainer/WorldVisuals2D/WorldLOD" method="_refresh"]
-[connection signal="limits_changed" from="CameraContainer/Camera/WorldLimitWiring" to="WorldLayer/WorldLimitsRect2D" method="set_limits"]
-[connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_ended"]
-[connection signal="drag_ended" from="WorldOverlayLayer/DecorationDragInput" to="DecorationScrollScale" method="set_is_being_dragged" binds= [false]]
-[connection signal="drag_moved" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_moved"]
-[connection signal="drag_started" from="WorldOverlayLayer/DecorationDragInput" to="DecorationInput" method="_on_drag_started"]
-[connection signal="drag_started" from="WorldOverlayLayer/DecorationDragInput" to="DecorationScrollScale" method="set_is_being_dragged" binds= [true]]
-[connection signal="drag_ended" from="WorldOverlayLayer/ArmyDragInput" to="ArmyDrag" method="_on_drag_ended"]
-[connection signal="drag_moved" from="WorldOverlayLayer/ArmyDragInput" to="ArmyDrag" method="_on_drag_moved"]
-[connection signal="drag_started" from="WorldOverlayLayer/ArmyDragInput" to="ArmyDrag" method="_on_drag_started"]
-[connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="Menus" method="_on_editor_tab_id_pressed"]
-[connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="Menus" method="_on_project_tab_id_pressed"]
-[connection signal="id_pressed" from="UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="Menus" method="_on_edit_tab_id_pressed"]
-[connection signal="army_interface_closed" from="UILayer/EditingInterface" to="ArmySelection" method="set_selected_army"]
-[connection signal="army_interface_opened" from="UILayer/EditingInterface" to="ArmySelection" method="set_selected_army"]
-[connection signal="army_list_item_hovered" from="UILayer/EditingInterface" to="ArmySelection" method="set_hovered_army"]
-[connection signal="army_list_item_unhovered" from="UILayer/EditingInterface" to="ArmySelection" method="set_hovered_army"]
-[connection signal="army_select_requested" from="UILayer/EditingInterface" to="ArmySelection" method="set_selected_army"]
-[connection signal="country_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_closed"]
-[connection signal="country_interface_closed" from="UILayer/EditingInterface" to="CountryOwnershipGiver" method="set_selected_country"]
-[connection signal="country_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_interface_opened"]
-[connection signal="country_interface_opened" from="UILayer/EditingInterface" to="CountryOwnershipGiver" method="set_selected_country"]
-[connection signal="country_select_pressed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_country_select_pressed"]
-[connection signal="decoration_interface_closed" from="UILayer/EditingInterface" to="DecorationInput" method="set_selected_decoration"]
-[connection signal="decoration_interface_opened" from="UILayer/EditingInterface" to="DecorationInput" method="set_selected_decoration"]
-[connection signal="decoration_list_item_hovered" from="UILayer/EditingInterface" to="DecorationInput" method="set_hovered_decoration"]
-[connection signal="decoration_list_item_unhovered" from="UILayer/EditingInterface" to="DecorationInput" method="set_hovered_decoration"]
-[connection signal="decoration_select_requested" from="UILayer/EditingInterface" to="DecorationInput" method="set_selected_decoration"]
-[connection signal="province_interface_closed" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_closed"]
-[connection signal="province_interface_opened" from="UILayer/EditingInterface" to="WorldBridge" method="_on_province_interface_opened"]
-[connection signal="province_list_item_hovered" from="UILayer/EditingInterface" to="WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
-[connection signal="province_list_item_unhovered" from="UILayer/EditingInterface" to="WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
-[connection signal="province_select_requested" from="UILayer/EditingInterface" to="WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_selected_province"]
-[connection signal="texture_popup_requested" from="UILayer/EditingInterface" to="TextureSelectPopupSetup" method="_open_popup"]
-[connection signal="file_selected" from="SaveDialog" to="ProjectNode" method="save_as"]
+[connection signal="interface_requested" from="EditorBase/Menus" to="EditorBase/UILayer/EditingInterface" method="open_new_interface"]
+[connection signal="new_project_requested" from="EditorBase/Menus" to="EditorBase/ProjectOpener" method="open_new_project"]
+[connection signal="open_project_requested" from="EditorBase/Menus" to="EditorBase/ProjectOpener" method="open_existing_project"]
+[connection signal="play_requested" from="EditorBase/Menus" to="Playtest" method="start_playtest"]
+[connection signal="quit_requested" from="EditorBase/Menus" to="." method="queue_free"]
+[connection signal="save_as_requested" from="EditorBase/Menus" to="EditorBase/SaveDialog" method="show"]
+[connection signal="save_requested" from="EditorBase/Menus" to="EditorBase/ProjectNode" method="save"]
+[connection signal="show_in_file_manager_requested" from="EditorBase/Menus" to="EditorBase/ProjectNode" method="show_in_file_manager"]
+[connection signal="is_dirty_changed" from="EditorBase/UndoRedo" to="EditorBase/WindowTitle" method="set_is_dirty"]
+[connection signal="has_valid_file_path_changed" from="EditorBase/ProjectNode" to="EditorBase/Menus" method="_on_project_path_validity_changed"]
+[connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/ArmyDrag" method="set_project"]
+[connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]
+[connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/UILayer/EditingInterface" method="set_project"]
+[connection signal="project_changing" from="EditorBase/ProjectNode" to="EditorBase/UndoRedo" method="reset"]
+[connection signal="project_changing" from="EditorBase/ProjectNode" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" method="clear"]
+[connection signal="project_changing" from="EditorBase/ProjectNode" to="EditorBase/UILayer/EditingInterface" method="close_interface"]
+[connection signal="project_name_changed" from="EditorBase/ProjectNode" to="EditorBase/WindowTitle" method="set_project_name"]
+[connection signal="save_dialog_requested" from="EditorBase/ProjectNode" to="EditorBase/SaveDialog" method="show"]
+[connection signal="saved" from="EditorBase/ProjectNode" to="EditorBase/UndoRedo" method="mark_saved"]
+[connection signal="project_opened" from="EditorBase/ProjectOpener" to="EditorBase/ProjectNode" method="set_project"]
+[connection signal="deselected" from="EditorBase/DecorationInput" to="EditorBase/DecorationScrollScale" method="set_selected_decoration"]
+[connection signal="deselected" from="EditorBase/DecorationInput" to="EditorBase/UILayer/EditingInterface" method="close_interface"]
+[connection signal="draggability_changed" from="EditorBase/DecorationInput" to="EditorBase/WorldOverlayLayer/DecorationDragInput" method="set_is_enabled"]
+[connection signal="selected" from="EditorBase/DecorationInput" to="EditorBase/DecorationScrollScale" method="set_selected_decoration"]
+[connection signal="selected" from="EditorBase/DecorationInput" to="EditorBase/UILayer/EditingInterface" method="open_decoration_edit_interface"]
+[connection signal="deselected" from="EditorBase/ArmySelection" to="EditorBase/UILayer/EditingInterface" method="close_interface"]
+[connection signal="selected" from="EditorBase/ArmySelection" to="EditorBase/UILayer/EditingInterface" method="open_army_edit_interface"]
+[connection signal="world_loaded" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" to="EditorBase/WorldBridge" method="_on_world_loaded"]
+[connection signal="world_loaded" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" to="EditorBase/DecorationInput" method="_on_world_loaded"]
+[connection signal="world_loaded" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" to="EditorBase/ProvinceLinkEditer" method="_on_world_loaded"]
+[connection signal="world_loaded" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" to="EditorBase/CameraContainer/Camera/WorldLimitWiring" method="_on_world_loaded"]
+[connection signal="world_loaded" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" to="EditorBase/WorldOverlayLayer/ProvinceOverlay" method="_on_world_loaded"]
+[connection signal="army_visuals_created" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/ArmyVisualsSetup" to="EditorBase/ArmySelection" method="_setup_visuals"]
+[connection signal="clicked" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Background" to="EditorBase/DecorationInput" method="set_selected_decoration"]
+[connection signal="clicked" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Background" to="EditorBase/ArmySelection" method="set_selected_army"]
+[connection signal="province_clicked" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="EditorBase/CountryOwnershipGiver" method="apply_to_province"]
+[connection signal="province_right_clicked" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="EditorBase/ProvinceLinkEditer" method="_on_province_right_clicked"]
+[connection signal="province_visuals_created" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Provinces" to="EditorBase/BuildingVisibility" method="apply_to"]
+[connection signal="decoration_visuals_created" from="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/Decorations" to="EditorBase/DecorationInput" method="_setup_visuals"]
+[connection signal="zoom_changed" from="EditorBase/CameraContainer/Camera/CameraZoom" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/WorldLOD" method="_refresh"]
+[connection signal="limits_changed" from="EditorBase/CameraContainer/Camera/WorldLimitWiring" to="EditorBase/WorldLayer/WorldLimitsRect2D" method="set_limits"]
+[connection signal="drag_ended" from="EditorBase/WorldOverlayLayer/DecorationDragInput" to="EditorBase/DecorationInput" method="_on_drag_ended"]
+[connection signal="drag_ended" from="EditorBase/WorldOverlayLayer/DecorationDragInput" to="EditorBase/DecorationScrollScale" method="set_is_being_dragged" binds= [false]]
+[connection signal="drag_moved" from="EditorBase/WorldOverlayLayer/DecorationDragInput" to="EditorBase/DecorationInput" method="_on_drag_moved"]
+[connection signal="drag_started" from="EditorBase/WorldOverlayLayer/DecorationDragInput" to="EditorBase/DecorationInput" method="_on_drag_started"]
+[connection signal="drag_started" from="EditorBase/WorldOverlayLayer/DecorationDragInput" to="EditorBase/DecorationScrollScale" method="set_is_being_dragged" binds= [true]]
+[connection signal="drag_ended" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_ended"]
+[connection signal="drag_moved" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_moved"]
+[connection signal="drag_started" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_started"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="EditorBase/Menus" method="_on_editor_tab_id_pressed"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="EditorBase/Menus" method="_on_project_tab_id_pressed"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="EditorBase/Menus" method="_on_edit_tab_id_pressed"]
+[connection signal="army_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_selected_army"]
+[connection signal="army_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_selected_army"]
+[connection signal="army_list_item_hovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_hovered_army"]
+[connection signal="army_list_item_unhovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_hovered_army"]
+[connection signal="army_select_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_selected_army"]
+[connection signal="country_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_country_interface_closed"]
+[connection signal="country_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/CountryOwnershipGiver" method="set_selected_country"]
+[connection signal="country_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_country_interface_opened"]
+[connection signal="country_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/CountryOwnershipGiver" method="set_selected_country"]
+[connection signal="country_select_pressed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_country_select_pressed"]
+[connection signal="decoration_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_selected_decoration"]
+[connection signal="decoration_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_selected_decoration"]
+[connection signal="decoration_list_item_hovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_hovered_decoration"]
+[connection signal="decoration_list_item_unhovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_hovered_decoration"]
+[connection signal="decoration_select_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_selected_decoration"]
+[connection signal="province_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_province_interface_closed"]
+[connection signal="province_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_province_interface_opened"]
+[connection signal="province_list_item_hovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
+[connection signal="province_list_item_unhovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_hovered_province"]
+[connection signal="province_select_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_selected_province"]
+[connection signal="texture_popup_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/TextureSelectPopupSetup" method="_open_popup"]
+[connection signal="file_selected" from="EditorBase/SaveDialog" to="EditorBase/ProjectNode" method="save_as"]
 
-[editable path="WorldLayer/WorldContainer/WorldVisuals2D"]
-[editable path="CameraContainer/Camera"]
+[editable path="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D"]
+[editable path="EditorBase/CameraContainer/Camera"]

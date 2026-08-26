@@ -17,7 +17,7 @@ const _ACTION_NEW_PROJECT: StringName = &"new_project"
 const _ACTION_OPEN_PROJECT: StringName = &"open_project"
 const _ACTION_SAVE: StringName = &"save"
 const _ACTION_SAVE_AS: StringName = &"save_as"
-const _ACTION_PLAY_PROJECT: StringName = &"play_project"
+const _ACTION_PLAY_PROJECT: StringName = &"start_playtest"
 
 const _EDITOR_TAB_SEPARATOR_IDS: Array[int] = []
 const _EDITOR_TAB_QUIT_ID: int = 0

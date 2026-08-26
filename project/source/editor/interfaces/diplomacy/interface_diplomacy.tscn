@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://cishrjvsb5hvl"]
 
 [ext_resource type="Script" uid="uid://dllgsn0p1mj6f" path="res://source/editor/interfaces/diplomacy/interface_diplomacy.gd" id="1_s"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceDiplomacy" type="Control" unique_id=138351694]
 layout_mode = 3

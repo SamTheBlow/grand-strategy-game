@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://1ssv824ya57" path="res://source/editor/interfaces/provinces/interface_province_list.gd" id="1_10wi1"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_u6nya"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceProvinceList" type="Control" unique_id=2129529268]
 layout_mode = 3

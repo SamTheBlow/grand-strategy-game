@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://c1t8lbl0uvqnm"]
 
-[ext_resource type="Script" uid="uid://28vgpul20e73" path="res://source/editor/components/component_editor.gd" id="1_ce"]
+[ext_resource type="Script" uid="uid://28vgpul20e73" path="res://source/editor/interfaces/components/component_editor.gd" id="1_ce"]
 [ext_resource type="PackedScene" uid="uid://cintikjibl1vr" path="res://source/utils/property_tree/nodes/item_void.tscn" id="2_iv"]
 
 [node name="ComponentEditor" type="VBoxContainer" unique_id=691481344]

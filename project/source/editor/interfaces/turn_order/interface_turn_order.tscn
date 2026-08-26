@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://bf0ctknlrud1n" path="res://source/editor/interfaces/turn_order/interface_turn_order.gd" id="1_gikm7"]
 [ext_resource type="Script" uid="uid://dvbpwv2xe26tq" path="res://source/utils/ui/interpolated_container/interpolated_box_container.gd" id="2_h7hlj"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceTurnOrder" type="Control" unique_id=1157126741]
 layout_mode = 3

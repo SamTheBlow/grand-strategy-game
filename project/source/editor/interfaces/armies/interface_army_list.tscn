@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://l2nhdgg0p4oo"]
 
 [ext_resource type="Script" uid="uid://cbwh24lw8junb" path="res://source/editor/interfaces/armies/interface_army_list.gd" id="1_10wi1"]
-[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
 
 [node name="InterfaceArmyList" type="Control" unique_id=484485638]
 layout_mode = 3

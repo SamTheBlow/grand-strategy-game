@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ctqnl5t5vkdm"]
 
-[ext_resource type="Script" uid="uid://ukt5bdgf6owq" path="res://source/editor/components/component_section.gd" id="1_css"]
+[ext_resource type="Script" uid="uid://ukt5bdgf6owq" path="res://source/editor/interfaces/components/component_section.gd" id="1_css"]
 
 [node name="ComponentSection" type="VBoxContainer" unique_id=375461186]
 size_flags_vertical = 3
