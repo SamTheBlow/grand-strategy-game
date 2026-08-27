@@ -1,49 +1,171 @@
-[gd_scene load_steps=5 format=3 uid="uid://dm18hv6wm8moi"]
+[gd_scene format=3 uid="uid://dm18hv6wm8moi"]
 
-[ext_resource type="PackedScene" uid="uid://b735rxfcexqks" path="res://source/main_menu/play_menu/lobby.tscn" id="1_koaky"]
 [ext_resource type="Script" uid="uid://6v68fi70t3hh" path="res://source/main_menu/play_menu/play_menu.gd" id="1_kwhjp"]
 [ext_resource type="PackedScene" uid="uid://djw1srwh1osf6" path="res://source/networking/networking_setup_lobby.tscn" id="2_j4u0p"]
+[ext_resource type="Script" uid="uid://u0jmot6xn8fc" path="res://source/main_menu/play_menu/lobby.gd" id="3_2wlgr"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="3_uohmy"]
+[ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.tscn" id="4_ibegm"]
+[ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="5_472jr"]
 
-[node name="PlayMenu" type="Node"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gme8j"]
+
+[node name="PlayMenu" type="Node" unique_id=675220256]
 script = ExtResource("1_kwhjp")
 networking_interface_scene = ExtResource("2_j4u0p")
 
-[node name="Background" type="Control" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=1290847771]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.42000002, 0.48000005, 0.6, 1)
+
+[node name="Lobby" type="Control" parent="." unique_id=262095743]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("3_2wlgr")
 
-[node name="BackgroundColor" type="ColorRect" parent="Background"]
+[node name="HBoxContainer" type="HBoxContainer" parent="Lobby" unique_id=1217008696]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-color = Color(0.301961, 0.368627, 0.501961, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="Spacing75" type="Control" parent="Lobby/HBoxContainer" unique_id=863834249]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 75.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Lobby/HBoxContainer/Spacing75" unique_id=1264242738]
+layout_mode = 1
 anchors_preset = -1
-anchor_left = 0.05
-anchor_top = 0.05
-anchor_right = 0.95
-anchor_bottom = 0.95
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 32.0
+offset_top = 32.0
+offset_right = -16.0
+offset_bottom = -32.0
 
-[node name="Lobby" parent="MarginContainer" instance=ExtResource("1_koaky")]
+[node name="VBoxContainer" type="VBoxContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer" unique_id=1880784787]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TopRow" type="HBoxContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer" unique_id=112327765]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MainMenuButton" type="Button" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow" unique_id=1059430063]
+custom_minimum_size = Vector2(192, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Main Menu"
+
+[node name="Spacing1" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow" unique_id=405096945]
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+
+[node name="SeedLabel" type="Label" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow" unique_id=922886981]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "Seed:"
+
+[node name="Spacing2" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow" unique_id=1933306361]
+custom_minimum_size = Vector2(8, 0)
+layout_mode = 2
+
+[node name="SeedInput" type="LineEdit" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow" unique_id=707718581]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "(Random)"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer" unique_id=1307006761]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+
+[node name="PanelContainer" type="PanelContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer" unique_id=369598237]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gme8j")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer" unique_id=1400614925]
+layout_mode = 2
+
+[node name="MarginLeft" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer" unique_id=247001647]
+custom_minimum_size = Vector2(12, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer" unique_id=1365878995]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginTop" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=249737969]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="Games" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=528196772 instance=ExtResource("4_ibegm")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="ChatInterface" parent="." instance=ExtResource("3_uohmy")]
+[node name="MarginBottom" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer/VBoxContainer" unique_id=110993415]
+custom_minimum_size = Vector2(0, 12)
+layout_mode = 2
+
+[node name="MarginRight" type="Control" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer/HBoxContainer" unique_id=953857142]
+custom_minimum_size = Vector2(12, 0)
+layout_mode = 2
+
+[node name="MenuDisabled" type="ColorRect" parent="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/ScrollContainer/PanelContainer" unique_id=1556351271]
+unique_name_in_owner = true
+layout_mode = 2
+color = Color(0.25098, 0.25098, 0.25098, 0.25098)
+
+[node name="Spacing25" type="Control" parent="Lobby/HBoxContainer" unique_id=1628523280]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 25.0
+
+[node name="MarginContainer" type="MarginContainer" parent="Lobby/HBoxContainer/Spacing25" unique_id=1737680026]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 16.0
+offset_top = 32.0
+offset_right = -32.0
+offset_bottom = -32.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Lobby/HBoxContainer/Spacing25/MarginContainer" unique_id=290704160]
+layout_mode = 2
+theme_override_constants/separation = 32
+
+[node name="PlayerList" parent="Lobby/HBoxContainer/Spacing25/MarginContainer/VBoxContainer" unique_id=2044058707 instance=ExtResource("5_472jr")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StartButton" type="Button" parent="Lobby/HBoxContainer/Spacing25/MarginContainer/VBoxContainer" unique_id=1406481386]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Start Game"
+
+[node name="ChatInterface" parent="." unique_id=1140618799 instance=ExtResource("3_uohmy")]
 unique_name_in_owner = true
 anchors_preset = -1
 anchor_top = 0.7
 anchor_right = 0.3
 
-[node name="LoadingScreen" type="Control" parent="."]
+[node name="LoadingScreen" type="Control" parent="." unique_id=253975117]
 unique_name_in_owner = true
 visible = false
 layout_mode = 3
@@ -53,7 +175,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="ColorRect" parent="LoadingScreen"]
+[node name="Background" type="ColorRect" parent="LoadingScreen" unique_id=1485904056]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -62,7 +184,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.25, 0.25, 0.25, 0.247059)
 
-[node name="Contents" type="ColorRect" parent="LoadingScreen"]
+[node name="Contents" type="ColorRect" parent="LoadingScreen" unique_id=318455103]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -73,7 +195,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.25, 0.25, 0.25, 1)
 
-[node name="Label" type="Label" parent="LoadingScreen/Contents"]
+[node name="Label" type="Label" parent="LoadingScreen/Contents" unique_id=1524799738]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.4
@@ -87,7 +209,7 @@ text = "Loading..."
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Button" type="Button" parent="LoadingScreen/Contents"]
+[node name="Button" type="Button" parent="LoadingScreen/Contents" unique_id=1151150005]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -99,5 +221,6 @@ grow_vertical = 0
 theme_override_font_sizes/font_size = 28
 text = "Cancel"
 
-[connection signal="start_game_requested" from="MarginContainer/Lobby" to="." method="_on_start_game_requested"]
+[connection signal="pressed" from="Lobby/HBoxContainer/Spacing75/MarginContainer/VBoxContainer/TopRow/MainMenuButton" to="." method="close"]
+[connection signal="pressed" from="Lobby/HBoxContainer/Spacing25/MarginContainer/VBoxContainer/StartButton" to="." method="_on_start_button_pressed"]
 [connection signal="pressed" from="LoadingScreen/Contents/Button" to="." method="_on_start_game_cancelled"]

@@ -16,7 +16,9 @@ var _load_thread := Thread.new()
 var _mutex := Mutex.new()
 var _is_loading: bool = false
 
-@onready var _lobby := %Lobby as Lobby
+@onready var _seed_input := %SeedInput as LineEdit
+@onready var _games_interface := %Games as GameSelectionMenu
+@onready var _player_list := %PlayerList as PlayerList
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _loading_screen := %LoadingScreen as Control
 
@@ -34,19 +36,26 @@ func _ready() -> void:
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
 
-	_lobby.game_menu_state = game_menu_state
-	_lobby.players = players
-	_lobby.networking_interface = networking_interface
+	_games_interface.game_menu_state = game_menu_state
+	_player_list.players = players
+	_player_list.networking_interface = networking_interface
 
 
 func _input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"ui_cancel"):
-		exited.emit()
+		close()
 
 
 func _exit_tree() -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
+
+
+func close() -> void:
+	# Disconnect from online play
+	multiplayer.multiplayer_peer.close()
+
+	exited.emit()
 
 
 ## Called in a separate thread.
@@ -101,7 +110,7 @@ func _on_start_game_error(error_message: String) -> void:
 	chat.send_system_message("Failed to load & setup the game")
 
 
-func _on_start_game_requested(file_path: String, rng_seed: String) -> void:
+func _on_start_button_pressed() -> void:
 	if _load_thread.is_started():
 		_load_thread.wait_to_finish()
 
@@ -110,7 +119,10 @@ func _on_start_game_requested(file_path: String, rng_seed: String) -> void:
 	_mutex.unlock()
 	_loading_screen.visible = true
 
-	_load_thread.start(_setup_game.bind(file_path, rng_seed))
+	_load_thread.start(_setup_game.bind(
+			_games_interface.selected_game().project_absolute_path,
+			_seed_input.text
+	))
 
 
 ## Called on the main thread when user presses the "Cancel" button.

@@ -1,9 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://b65o5apaw32"]
+[gd_scene format=3 uid="uid://b65o5apaw32"]
 
 [ext_resource type="Script" uid="uid://dmh8u6kaliftf" path="res://source/main_menu/play_menu/game_selection_menu/game_option_node.gd" id="1_dcoso"]
 
-[node name="GameOption" type="Control"]
-custom_minimum_size = Vector2(0, 128)
+[node name="GameOption" type="Control" unique_id=513369932]
+custom_minimum_size = Vector2(0, 96)
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -14,7 +14,7 @@ script = ExtResource("1_dcoso")
 color_normal = Color(0.2, 0.2, 0.2, 0.313726)
 color_selected = Color(0.15, 0.15, 0.15, 0.752941)
 
-[node name="BackgroundColor" type="ColorRect" parent="."]
+[node name="BackgroundColor" type="ColorRect" parent="." unique_id=1092217695]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -24,7 +24,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="HBoxContainer" type="HBoxContainer" parent="."]
+[node name="HBoxContainer" type="HBoxContainer" parent="." unique_id=665677611]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -33,11 +33,11 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 16
 
-[node name="IconSpace" type="Control" parent="HBoxContainer"]
+[node name="IconSpace" type="Control" parent="HBoxContainer" unique_id=1871650693]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="IconTexture" type="TextureRect" parent="HBoxContainer/IconSpace"]
+[node name="IconTexture" type="TextureRect" parent="HBoxContainer/IconSpace" unique_id=548990444]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -52,12 +52,12 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="InfoSpace" type="Control" parent="HBoxContainer"]
+[node name="InfoSpace" type="Control" parent="HBoxContainer" unique_id=2126315648]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 4.0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/InfoSpace"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HBoxContainer/InfoSpace" unique_id=471464268]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -65,11 +65,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Control" type="Control" parent="HBoxContainer/InfoSpace/VBoxContainer"]
+[node name="Control" type="Control" parent="HBoxContainer/InfoSpace/VBoxContainer" unique_id=472111957]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="NameLabel" type="Label" parent="HBoxContainer/InfoSpace/VBoxContainer/Control"]
+[node name="NameLabel" type="Label" parent="HBoxContainer/InfoSpace/VBoxContainer/Control" unique_id=1236441287]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -82,12 +82,12 @@ text = "(No name)"
 vertical_alignment = 1
 clip_text = true
 
-[node name="FilePathNode" type="Control" parent="HBoxContainer/InfoSpace/VBoxContainer"]
+[node name="FilePathNode" type="Control" parent="HBoxContainer/InfoSpace/VBoxContainer" unique_id=1373186455]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="FilePathLabel" type="Label" parent="HBoxContainer/InfoSpace/VBoxContainer/FilePathNode"]
+[node name="FilePathLabel" type="Label" parent="HBoxContainer/InfoSpace/VBoxContainer/FilePathNode" unique_id=1727247567]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -100,7 +100,7 @@ text = "file path"
 vertical_alignment = 1
 clip_text = true
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1071849213]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
