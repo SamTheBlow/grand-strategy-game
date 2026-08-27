@@ -2,7 +2,7 @@ class_name ActionBuild
 extends Action
 ## Builds a fortress in given [Province].
 
-const PROVINCE_ID_KEY: String = "province_id"
+const _PROVINCE_ID_KEY: String = "province_id"
 
 var _province_id: int
 
@@ -40,18 +40,17 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	province.buildings.add(building)
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: BUILD,
-		PROVINCE_ID_KEY: _province_id,
+		_ID_KEY: BUILD,
+		_PROVINCE_ID_KEY: _province_id,
 	}
 
 
-## Returns an action built with given raw data.
-static func from_raw_data(data: Dictionary) -> ActionBuild:
-	if not ParseUtils.dictionary_has_number(data, PROVINCE_ID_KEY):
+static func from_raw_dict(raw_dict: Dictionary) -> ActionBuild:
+	if not ParseUtils.dictionary_has_number(raw_dict, _PROVINCE_ID_KEY):
 		return null
 
-	return ActionBuild.new(ParseUtils.dictionary_int(data, PROVINCE_ID_KEY))
+	return ActionBuild.new(
+			ParseUtils.dictionary_int(raw_dict, _PROVINCE_ID_KEY)
+	)

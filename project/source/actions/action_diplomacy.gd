@@ -4,8 +4,8 @@ extends Action
 ##
 ## See also: [DiplomacyAction], [DiplomacyRelationship].
 
-const DIPLOMACY_ACTION_ID_KEY: String = "diplomacy_action_id"
-const TARGET_COUNTRY_ID_KEY: String = "target_country_id"
+const _ACTION_ID_KEY: String = "diplomacy_action_id"
+const _COUNTRY_ID_KEY: String = "target_country_id"
 
 var _diplomacy_action_id: int = -1
 var _target_country_id: int = -1
@@ -49,22 +49,22 @@ func is_equivalent_to(action_diplomacy: ActionDiplomacy) -> bool:
 	) if action_diplomacy != null else false
 
 
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: DIPLOMACY,
-		DIPLOMACY_ACTION_ID_KEY: _diplomacy_action_id,
-		TARGET_COUNTRY_ID_KEY: _target_country_id,
+		_ID_KEY: DIPLOMACY,
+		_ACTION_ID_KEY: _diplomacy_action_id,
+		_COUNTRY_ID_KEY: _target_country_id,
 	}
 
 
-static func from_raw_data(data: Dictionary) -> ActionDiplomacy:
+static func from_raw_dict(raw_dict: Dictionary) -> ActionDiplomacy:
 	if not (
-			ParseUtils.dictionary_has_number(data, DIPLOMACY_ACTION_ID_KEY)
-			and ParseUtils.dictionary_has_number(data, TARGET_COUNTRY_ID_KEY)
+			ParseUtils.dictionary_has_number(raw_dict, _ACTION_ID_KEY)
+			and ParseUtils.dictionary_has_number(raw_dict, _COUNTRY_ID_KEY)
 	):
 		return null
 
 	return ActionDiplomacy.new(
-			ParseUtils.dictionary_int(data, DIPLOMACY_ACTION_ID_KEY),
-			ParseUtils.dictionary_int(data, TARGET_COUNTRY_ID_KEY),
+			ParseUtils.dictionary_int(raw_dict, _ACTION_ID_KEY),
+			ParseUtils.dictionary_int(raw_dict, _COUNTRY_ID_KEY),
 	)

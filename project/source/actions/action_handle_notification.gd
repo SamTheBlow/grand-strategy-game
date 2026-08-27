@@ -2,8 +2,8 @@ class_name ActionHandleNotification
 extends Action
 ## Handles given [GameNotification] index with given outcome index.
 
-const NOTIFICATION_ID_KEY: String = "notification_id"
-const OUTCOME_INDEX_KEY: String = "outcome_index"
+const _NOTIFICATION_ID_KEY: String = "notification_id"
+const _OUTCOME_INDEX_KEY: String = "outcome_index"
 
 var _notification_id: int
 var _outcome_index: int
@@ -42,22 +42,22 @@ func handles_the_same_notification_as(
 	)
 
 
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: HANDLE_NOTIFICATION,
-		NOTIFICATION_ID_KEY: _notification_id,
-		OUTCOME_INDEX_KEY: _outcome_index,
+		_ID_KEY: HANDLE_NOTIFICATION,
+		_NOTIFICATION_ID_KEY: _notification_id,
+		_OUTCOME_INDEX_KEY: _outcome_index,
 	}
 
 
-static func from_raw_data(data: Dictionary) -> ActionHandleNotification:
+static func from_raw_dict(raw_dict: Dictionary) -> ActionHandleNotification:
 	if not (
-			ParseUtils.dictionary_has_number(data, NOTIFICATION_ID_KEY)
-			and ParseUtils.dictionary_has_number(data, OUTCOME_INDEX_KEY)
+			ParseUtils.dictionary_has_number(raw_dict, _NOTIFICATION_ID_KEY)
+			and ParseUtils.dictionary_has_number(raw_dict, _OUTCOME_INDEX_KEY)
 	):
 		return null
 
 	return ActionHandleNotification.new(
-			ParseUtils.dictionary_int(data, NOTIFICATION_ID_KEY),
-			ParseUtils.dictionary_int(data, OUTCOME_INDEX_KEY)
+			ParseUtils.dictionary_int(raw_dict, _NOTIFICATION_ID_KEY),
+			ParseUtils.dictionary_int(raw_dict, _OUTCOME_INDEX_KEY)
 	)

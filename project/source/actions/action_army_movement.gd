@@ -2,8 +2,8 @@ class_name ActionArmyMovement
 extends Action
 ## Moves a given [Army] to a given [Province].
 
-const ARMY_ID_KEY: String = "army_id"
-const DEST_PROVINCE_ID_KEY: String = "destination_province_id"
+const _ARMY_ID_KEY: String = "army_id"
+const _PROVINCE_ID_KEY: String = "destination_province_id"
 
 var _army_id: int
 var _destination_province_id: int
@@ -52,22 +52,22 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	army.move_to_province(game.world.provinces, _destination_province_id)
 
 
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: ARMY_MOVEMENT,
-		ARMY_ID_KEY: _army_id,
-		DEST_PROVINCE_ID_KEY: _destination_province_id,
+		_ID_KEY: ARMY_MOVEMENT,
+		_ARMY_ID_KEY: _army_id,
+		_PROVINCE_ID_KEY: _destination_province_id,
 	}
 
 
-static func from_raw_data(data: Dictionary) -> ActionArmyMovement:
+static func from_raw_dict(raw_dict: Dictionary) -> ActionArmyMovement:
 	if not (
-			ParseUtils.dictionary_has_number(data, ARMY_ID_KEY)
-			and ParseUtils.dictionary_has_number(data, DEST_PROVINCE_ID_KEY)
+			ParseUtils.dictionary_has_number(raw_dict, _ARMY_ID_KEY)
+			and ParseUtils.dictionary_has_number(raw_dict, _PROVINCE_ID_KEY)
 	):
 		return null
 
 	return ActionArmyMovement.new(
-			ParseUtils.dictionary_int(data, ARMY_ID_KEY),
-			ParseUtils.dictionary_int(data, DEST_PROVINCE_ID_KEY)
+			ParseUtils.dictionary_int(raw_dict, _ARMY_ID_KEY),
+			ParseUtils.dictionary_int(raw_dict, _PROVINCE_ID_KEY)
 	)

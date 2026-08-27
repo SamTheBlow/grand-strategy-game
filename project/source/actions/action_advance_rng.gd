@@ -17,17 +17,14 @@ func apply_to(game: Game, _player: GamePlayer) -> void:
 		game.rng.randi()
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: ADVANCE_RNG,
+		_ID_KEY: ADVANCE_RNG,
 		_COUNT_KEY: _step_count,
 	}
 
 
-## Returns an action built with given raw data.
-static func from_raw_data(raw_dict: Dictionary) -> ActionAdvanceRNG:
+static func from_raw_dict(raw_dict: Dictionary) -> ActionAdvanceRNG:
 	if not ParseUtils.dictionary_has_number(raw_dict, _COUNT_KEY):
 		return null
 

@@ -25,7 +25,7 @@ func _ready() -> void:
 ## Clients receive a new [Action] from the server and apply it immediately.
 @rpc("authority", "call_remote", "reliable")
 func _receive_new_action(action_data: Dictionary) -> void:
-	var action: Action = Action.from_raw_data(action_data)
+	var action: Action = Action.from_raw_dict(action_data)
 	if action == null:
 		push_warning("Received an invalid Action from the server.")
 		return
@@ -37,4 +37,4 @@ func _on_action_applied(action: Action) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	_receive_new_action.rpc(action.raw_data())
+	_receive_new_action.rpc(action.to_raw_dict())

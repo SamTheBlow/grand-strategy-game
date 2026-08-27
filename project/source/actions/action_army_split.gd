@@ -3,9 +3,9 @@ extends Action
 ## Splits a given [Army] into two or more armies with given troop size
 ## proportions. You must provide a new unique id for each of the new armies.
 
-const ARMY_ID_KEY: String = "army_id"
-const TROOP_PARTITION_KEY: String = "troop_partition"
-const NEW_ARMY_IDS_KEY: String = "new_army_ids"
+const _ARMY_ID_KEY: String = "army_id"
+const _TROOP_PARTITION_KEY: String = "troop_partition"
+const _NEW_ARMY_IDS_KEY: String = "new_army_ids"
 
 ## The [Army] to split up.
 ## This army will be one of the resulting armies: it will not be deleted.
@@ -25,9 +25,7 @@ var _new_army_ids: Array[int]
 
 
 func _init(
-		army_id: int,
-		troop_partition: Array[int],
-		new_army_ids: Array[int]
+		army_id: int, troop_partition: Array[int], new_army_ids: Array[int]
 ) -> void:
 	_army_id = army_id
 	_troop_partition = troop_partition
@@ -84,35 +82,35 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 		army.size().value -= _troop_partition[i + 1]
 
 
-func raw_data() -> Dictionary:
+func to_raw_dict() -> Dictionary:
 	return {
-		ID_KEY: ARMY_SPLIT,
-		ARMY_ID_KEY: _army_id,
-		TROOP_PARTITION_KEY: _troop_partition,
-		NEW_ARMY_IDS_KEY: _new_army_ids,
+		_ID_KEY: ARMY_SPLIT,
+		_ARMY_ID_KEY: _army_id,
+		_TROOP_PARTITION_KEY: _troop_partition,
+		_NEW_ARMY_IDS_KEY: _new_army_ids,
 	}
 
 
-static func from_raw_data(data: Dictionary) -> ActionArmySplit:
+static func from_raw_dict(raw_dict: Dictionary) -> ActionArmySplit:
 	if not (
-			ParseUtils.dictionary_has_number(data, ARMY_ID_KEY)
-			and ParseUtils.dictionary_has_array(data, TROOP_PARTITION_KEY)
-			and ParseUtils.dictionary_has_array(data, NEW_ARMY_IDS_KEY)
+			ParseUtils.dictionary_has_number(raw_dict, _ARMY_ID_KEY)
+			and ParseUtils.dictionary_has_array(raw_dict, _TROOP_PARTITION_KEY)
+			and ParseUtils.dictionary_has_array(raw_dict, _NEW_ARMY_IDS_KEY)
 	):
 		return null
 
 	var troop_partition: Array[int] = (
-			ParseUtils.dictionary_array_int(data, TROOP_PARTITION_KEY)
+			ParseUtils.dictionary_array_int(raw_dict, _TROOP_PARTITION_KEY)
 	)
 	var new_army_ids: Array[int] = (
-			ParseUtils.dictionary_array_int(data, NEW_ARMY_IDS_KEY)
+			ParseUtils.dictionary_array_int(raw_dict, _NEW_ARMY_IDS_KEY)
 	)
 
 	if new_army_ids.size() < troop_partition.size() - 1:
 		return null
 
 	return ActionArmySplit.new(
-			ParseUtils.dictionary_int(data, ARMY_ID_KEY),
+			ParseUtils.dictionary_int(raw_dict, _ARMY_ID_KEY),
 			troop_partition,
 			new_army_ids
 	)

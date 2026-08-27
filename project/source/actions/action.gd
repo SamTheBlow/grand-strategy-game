@@ -1,11 +1,7 @@
+@abstract
 class_name Action
-## The base class for actions.
-## This base class does nothing: use subclasses to create and use actions.
-##
-## Actions are the things players do that affect the game state.
+## Base class for things players do that affect the game state.
 
-## Each action has its own identifier.
-## This is necessary for sending info between clients in online multiplayer.
 enum {
 	END_TURN = 0,
 	ARMY_SPLIT = 1,
@@ -17,46 +13,40 @@ enum {
 	ADVANCE_RNG = 7,
 }
 
-const ID_KEY: String = "id"
+const _ID_KEY: String = "id"
 
 
-# TODO Inconsistent code: some of the subclasses don't use the player property
-# and just use the game's playing player instead
-## Takes in the current game as well as the player trying to apply the action.
-func apply_to(_game: Game, _player: GamePlayer) -> void:
-	pass
+@abstract func apply_to(_game: Game, _player: GamePlayer) -> void
 
 
-## Returns this action's raw data, for the purpose of
-## transfering between network clients.
-func raw_data() -> Dictionary:
-	return {}
+## Used to transfer data between network clients.
+@abstract func to_raw_dict() -> Dictionary
 
 
-## Returns an action built with given raw data.
-## This may return null if an error occurs.
-static func from_raw_data(data: Dictionary) -> Action:
-	if not data.has(ID_KEY):
+## Returns a new instance using given raw data.
+## May return null.
+static func from_raw_dict(raw_dict: Dictionary) -> Action:
+	if not raw_dict.has(_ID_KEY):
 		push_error("Action data does not have an id.")
 		return null
 
-	match data[ID_KEY]:
+	match raw_dict[_ID_KEY]:
 		END_TURN:
-			return ActionEndTurn.from_raw_data(data)
+			return ActionEndTurn.from_raw_dict(raw_dict)
 		ARMY_SPLIT:
-			return ActionArmySplit.from_raw_data(data)
+			return ActionArmySplit.from_raw_dict(raw_dict)
 		ARMY_MOVEMENT:
-			return ActionArmyMovement.from_raw_data(data)
+			return ActionArmyMovement.from_raw_dict(raw_dict)
 		BUILD:
-			return ActionBuild.from_raw_data(data)
+			return ActionBuild.from_raw_dict(raw_dict)
 		RECRUITMENT:
-			return ActionRecruitment.from_raw_data(data)
+			return ActionRecruitment.from_raw_dict(raw_dict)
 		DIPLOMACY:
-			return ActionDiplomacy.from_raw_data(data)
+			return ActionDiplomacy.from_raw_dict(raw_dict)
 		HANDLE_NOTIFICATION:
-			return ActionHandleNotification.from_raw_data(data)
+			return ActionHandleNotification.from_raw_dict(raw_dict)
 		ADVANCE_RNG:
-			return ActionAdvanceRNG.from_raw_data(data)
+			return ActionAdvanceRNG.from_raw_dict(raw_dict)
 		_:
 			push_error("Unrecognized action type.")
 			return null
