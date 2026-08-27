@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="2_qnng7"]
 [ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="3_dybr7"]
 [ext_resource type="Script" uid="uid://bmnjcs0d2w43v" path="res://source/main_menu/play_menu/game_selection_menu/game_list_builtin.gd" id="4_dld7m"]
+[ext_resource type="Script" uid="uid://bs21gg44tsgyu" path="res://source/main_menu/play_menu/authority_button.gd" id="5_uv408"]
 [ext_resource type="Script" uid="uid://vi2y5br3ui2a" path="res://source/main_menu/play_menu/game_selection_menu/game_list_node.gd" id="7_v8jf4"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_5umsw"]
@@ -114,6 +115,7 @@ offset_top = 4.0
 offset_right = -4.0
 offset_bottom = -4.0
 text = "Import"
+script = ExtResource("5_uv408")
 
 [node name="ScrollImported" type="ScrollContainer" parent="HBoxContainer/ImportedGames" unique_id=1386224884]
 unique_name_in_owner = true

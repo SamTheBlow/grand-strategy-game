@@ -1,7 +1,6 @@
 class_name PlayMenu
 extends Node
 ## The menu that appears when clicking "Play" on the main menu.
-## Contains the [Lobby] and a [ChatInterface].
 
 signal exited()
 signal game_started(project: GameProject)
