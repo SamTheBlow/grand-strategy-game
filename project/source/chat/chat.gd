@@ -14,9 +14,6 @@ extends Node
 ## in online multiplayer, you have to use the functions provided in this
 ## class, not the functions from [ChatData].
 
-signal save_requested()
-signal load_requested()
-signal exit_to_main_menu_requested()
 signal seed_requested()
 
 @export var players: Players
@@ -168,9 +165,6 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 						"/clear - Clear the chat's contents",
 						"/about - Get the game version",
 						"The commands below only work in-game:",
-						"/save - Save the game",
-						"/load - Load the saved game",
-						"/mainmenu - Go back to the main menu (without saving!)",
 						"/seed - Get this game's seed",
 				])
 			"fs":
@@ -193,12 +187,6 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 								"application/config/version"
 						)
 				))
-			"save":
-				save_requested.emit()
-			"load":
-				load_requested.emit()
-			"mainmenu":
-				exit_to_main_menu_requested.emit()
 			"seed":
 				seed_requested.emit()
 			_:

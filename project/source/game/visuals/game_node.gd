@@ -48,12 +48,6 @@ var players: Players
 var chat: Chat:
 	set(value):
 		chat = value
-
-		chat.save_requested.connect(_on_save_requested)
-		chat.load_requested.connect(_on_load_requested)
-		chat.exit_to_main_menu_requested.connect(
-				_on_exit_to_main_menu_requested
-		)
 		chat.seed_requested.connect(_on_seed_requested)
 
 ## If false, the entire UI is hidden.
@@ -407,19 +401,6 @@ func _on_army_movement_confirmed(
 	_action_input.apply_action(
 			ActionArmyMovement.new(moving_army_id, destination_province_id)
 	)
-
-
-# Temporary feature
-func _on_load_requested() -> void:
-	if not MultiplayerUtils.has_authority(multiplayer):
-		if chat != null:
-			chat.send_system_message("Only the server can load a game!")
-		return
-
-	if chat != null:
-		chat.send_system_message("Loading the save file...")
-
-	get_parent().load_game()
 
 
 func _on_save_requested() -> void:
