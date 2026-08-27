@@ -62,10 +62,16 @@ func imported_games() -> Array[MetadataBundle]:
 
 
 func add_imported_game(meta_bundle: MetadataBundle) -> void:
-	# Avoid importing the same file twice
-	for bundle in _imported_games:
-		if bundle.project_absolute_path == meta_bundle.project_absolute_path:
-			return
+	# Avoid importing the same file twice.
+	# Note: this isn't always possible. For example,
+	# when a network client receives imported games, file path is not provided.
+	if meta_bundle.project_absolute_path != "":
+		for existing_bundle in _imported_games:
+			if (
+					existing_bundle.project_absolute_path
+					== meta_bundle.project_absolute_path
+			):
+				return
 
 	_imported_games.append(meta_bundle)
 	imported_game_added.emit(meta_bundle)
