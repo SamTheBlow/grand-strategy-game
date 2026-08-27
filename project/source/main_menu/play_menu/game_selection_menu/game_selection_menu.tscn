@@ -140,6 +140,7 @@ script = ExtResource("7_v8jf4")
 
 [connection signal="state_changed" from="MenuSync" to="." method="set_game_menu_state"]
 [connection signal="project_imported" from="ProjectImport" to="." method="_on_project_imported"]
+[connection signal="saved_game_imported" from="ProjectImport" to="." method="_on_project_imported"]
 [connection signal="dir_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_dir_selected"]
 [connection signal="file_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_file_selected"]
 [connection signal="files_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_files_selected"]
