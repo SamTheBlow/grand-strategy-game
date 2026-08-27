@@ -79,11 +79,10 @@ func register(game: Game) -> void:
 	_game = game
 
 	for country in _game.countries.list:
-		for other_country in country.relationships.list:
-			_connect_relationship(country.relationships.list[other_country])
-		country.relationships.relationship_created.connect(
-				_connect_relationship
-		)
+		_connect_country(country)
+
+	game.countries.added.connect(_connect_country)
+	game.countries.removed.connect(_disconnect_country)
 
 
 func to_raw_dict() -> Dictionary:
@@ -155,6 +154,16 @@ func _bool_data(raw_dict: Dictionary, key: String) -> bool:
 	if ParseUtils.dictionary_has_bool(raw_dict, key):
 		return raw_dict[key]
 	return false
+
+
+func _connect_country(country: Country) -> void:
+	for other_country in country.relationships.list:
+		_connect_relationship(country.relationships.list[other_country])
+	country.relationships.relationship_created.connect(_connect_relationship)
+
+
+func _disconnect_country(country: Country) -> void:
+	country.relationships.relationship_created.disconnect(_connect_relationship)
 
 
 func _connect_relationship(relationship: DiplomacyRelationship) -> void:

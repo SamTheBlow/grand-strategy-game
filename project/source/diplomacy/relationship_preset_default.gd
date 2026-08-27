@@ -20,7 +20,10 @@ func _init() -> void:
 
 func register(game: Game) -> void:
 	for country in game.countries.list:
-		country.relationships.relationship_created.connect(_apply)
+		_connect_country(country)
+
+	game.countries.added.connect(_connect_country)
+	game.countries.removed.connect(_disconnect_country)
 
 
 func to_raw_dict() -> Dictionary:
@@ -35,6 +38,14 @@ func _load_settings(raw_dict: Dictionary) -> void:
 		preset_id = ParseUtils.dictionary_int(raw_dict, _PRESET_ID_KEY)
 	else:
 		preset_id = -1
+
+
+func _connect_country(country: Country) -> void:
+	country.relationships.relationship_created.connect(_apply)
+
+
+func _disconnect_country(country: Country) -> void:
+	country.relationships.relationship_created.disconnect(_apply)
 
 
 func _apply(relationship: DiplomacyRelationship) -> void:

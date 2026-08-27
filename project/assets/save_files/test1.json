@@ -74,7 +74,7 @@
 	"components": {
 		"player_creation": {
 			"default_ai_type": 2,
-			"default_ai_personality": 0
+			"default_ai_personality": -1
 		},
 		"player_assignment_to_country": {},
 		"army_placement": {
