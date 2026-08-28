@@ -9,7 +9,6 @@
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="9_pkxqv"]
 [ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://source/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
 [ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://source/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
-[ext_resource type="PackedScene" uid="uid://2hy14ir4o0ps" path="res://source/ui/popups/country_info_popup.tscn" id="15_6f53u"]
 [ext_resource type="Script" uid="uid://ya0bvq0evpsq" path="res://source/actions/action_input.gd" id="16_724ii"]
 [ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://source/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
 [ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
@@ -26,6 +25,7 @@
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="26_eobj4"]
 [ext_resource type="Script" uid="uid://dfio0wudtxr2h" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
 [ext_resource type="PackedScene" uid="uid://bgcpn52rk3b4e" path="res://source/ui/pause_menu.tscn" id="30_enc8l"]
+[ext_resource type="Script" uid="uid://r5jofu5xjlbp" path="res://source/ui/popups/popup_container.gd" id="31_popup"]
 
 [node name="Game" type="Node" unique_id=1883659067]
 script = ExtResource("1_g7hfo")
@@ -33,12 +33,10 @@ networking_setup_scene = ExtResource("6_b2bhm")
 troop_ui_scene = ExtResource("2_dx3sp")
 player_turn_scene = ExtResource("8_e0v4f")
 player_list_scene = ExtResource("9_pkxqv")
-popup_scene = ExtResource("2_dx3sp")
 army_movement_scene = ExtResource("8_nnt8b")
 game_over_scene = ExtResource("16_mxtlx")
 build_fortress_scene = ExtResource("10_x38iu")
 recruitment_scene = ExtResource("11_rjf2g")
-country_info_scene = ExtResource("15_6f53u")
 notification_info_scene = ExtResource("16_r8lxu")
 
 [node name="DebugProvinceHighlight" type="Node" parent="." unique_id=1669769325 node_paths=PackedStringArray("_game")]
@@ -262,7 +260,7 @@ text = "End Turn"
 layout_mode = 1
 _game = NodePath("../../..")
 
-[node name="Popups" type="Control" parent="UILayer/GameUI" unique_id=1662575556]
+[node name="PopupContainer" type="Control" parent="UILayer/GameUI" unique_id=1662575556 node_paths=PackedStringArray("_game_node")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -271,6 +269,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+script = ExtResource("31_popup")
+_game_node = NodePath("../../..")
 
 [node name="PauseMenu" parent="UILayer" unique_id=948035850 instance=ExtResource("30_enc8l")]
 unique_name_in_owner = true
@@ -278,6 +278,9 @@ unique_name_in_owner = true
 [connection signal="world_loaded" from="WorldLayer/WorldVisuals2D" to="Camera/WorldLimitWiring" method="_on_world_loaded"]
 [connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="." method="_on_province_select_attempted"]
 [connection signal="zoom_changed" from="Camera/CameraZoom" to="WorldLayer/WorldVisuals2D/WorldLOD" method="_refresh"]
+[connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="." method="_on_component_ui_button_pressed"]
+[connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
+[connection signal="pressed" from="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryButton" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]
@@ -288,3 +291,4 @@ unique_name_in_owner = true
 
 [editable path="WorldLayer/WorldVisuals2D"]
 [editable path="Camera"]
+[editable path="UILayer/GameUI/TopBar"]

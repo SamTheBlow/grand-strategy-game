@@ -12,12 +12,10 @@ signal exited()
 @export var troop_ui_scene: PackedScene
 @export var player_turn_scene: PackedScene
 @export var player_list_scene: PackedScene
-@export var popup_scene: PackedScene
 @export var army_movement_scene: PackedScene
 @export var game_over_scene: PackedScene
 @export var build_fortress_scene: PackedScene
 @export var recruitment_scene: PackedScene
-@export var country_info_scene: PackedScene
 @export var notification_info_scene: PackedScene
 
 var project: GameProject:
@@ -62,7 +60,7 @@ var _player_assignment: PlayerAssignment
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
-@onready var _popups := %Popups as Control
+@onready var _popup_container := %PopupContainer as PopupContainer
 @onready var _pause_menu := %PauseMenu as Control
 
 
@@ -78,12 +76,6 @@ func _ready() -> void:
 			game,
 			world_visuals.province_visuals,
 			world_visuals.province_selection
-	)
-	_component_ui_container.button_pressed.connect(
-			_on_component_ui_button_pressed
-	)
-	_component_ui_container.country_button_pressed.connect(
-			_on_country_button_pressed
 	)
 
 	var networking_interface := (
@@ -176,7 +168,7 @@ func _open_build_fortress_popup(province: Province) -> void:
 	)
 	build_fortress_popup.confirmed.connect(_on_build_fortress_confirmed)
 	build_fortress_popup.tree_exited.connect(_deselect_province)
-	_add_popup(build_fortress_popup)
+	_popup_container.add_popup(build_fortress_popup)
 
 
 ## Opens the popup that appears when you want to recruit a new army.
@@ -203,7 +195,7 @@ func _open_recruitment_popup(province: Province) -> void:
 	)
 	recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
 	recruitment_popup.tree_exited.connect(_deselect_province)
-	_add_popup(recruitment_popup)
+	_popup_container.add_popup(recruitment_popup)
 
 
 ## Opens the popup that appears when you want to move an army.
@@ -214,14 +206,7 @@ func _open_army_movement_popup(army: Army, destination: Province) -> void:
 	army_movement_popup.setup(army, game.world.provinces, destination.id)
 	army_movement_popup.confirmed.connect(_on_army_movement_confirmed)
 	army_movement_popup.confirmed.connect(_deselect_province)
-	_add_popup(army_movement_popup)
-
-
-## Adds a new [GamePopup] to the scene tree, containing given contents.
-func _add_popup(contents: Node) -> void:
-	var popup := popup_scene.instantiate() as GamePopup
-	popup.contents_node = contents
-	_popups.add_child(popup)
+	_popup_container.add_popup(army_movement_popup)
 
 
 ## Adds a new Player and assigns it to a specific GamePlayer.
@@ -284,7 +269,7 @@ func _on_game_over(winning_country: Country) -> void:
 
 	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
 	game_over_popup.setup(winning_country)
-	_add_popup(game_over_popup)
+	_popup_container.add_popup(game_over_popup)
 
 	if chat == null:
 		return
@@ -446,14 +431,8 @@ func _on_seed_requested() -> void:
 	chat.send_system_message("Seed: " + project.game.rng.rng_seed)
 
 
-func _on_country_button_pressed(country: Country) -> void:
-	var country_info := country_info_scene.instantiate() as CountryInfoPopup
-	country_info.game_node = self
-	country_info.country = country
-	_add_popup(country_info)
-
-
-func _on_diplomacy_action_pressed(
+## Applies a diplomacy action requested from the country info popup.
+func request_diplomacy_action(
 		diplomacy_action: DiplomacyAction,
 		recipient_country: Country
 ) -> void:
@@ -481,7 +460,7 @@ func _on_notification_pressed(game_notification: GameNotification) -> void:
 	)
 	notification_info.game_notification = game_notification
 	notification_info.decision_made.connect(_on_notification_decision_made)
-	_add_popup(notification_info)
+	_popup_container.add_popup(notification_info)
 
 
 func _on_notification_dismissed(game_notification: GameNotification) -> void:

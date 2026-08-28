@@ -24,9 +24,6 @@ func _ready() -> void:
 	_game.game.turn.turn_changed.connect(_update_turn_label)
 	_game.game.turn.playing_country_changed.connect(_update_country)
 
-	# TODO bad code: private function
-	_country_button.pressed.connect(_game._on_country_button_pressed)
-
 
 ## Hides the top bar when the game is not running.
 func _update_visibility(is_game_running: bool) -> void:
