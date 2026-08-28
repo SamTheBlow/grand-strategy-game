@@ -141,11 +141,5 @@ func _calculated_maximum() -> int:
 		error_message = "There is no limit on how many you can recruit!"
 		return 0
 
-	# Takes the smallest of the limits.
-	var smallest_maximum: int = -1
-	for candidate_max in maximums:
-		if smallest_maximum == -1 or candidate_max < smallest_maximum:
-			smallest_maximum = candidate_max
-
 	error_message = ""
-	return smallest_maximum
+	return maximums.min()

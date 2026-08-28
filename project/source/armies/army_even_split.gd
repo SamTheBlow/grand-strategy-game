@@ -40,8 +40,8 @@ func apply(army: Army, destination_provinces: Array[Province]) -> void:
 
 		# Create the partition
 		var troop_partition: Array[int] = []
-		for i in number_of_targets:
-			troop_partition.append(troops_per_army)
+		troop_partition.resize(number_of_targets)
+		troop_partition.fill(troops_per_army)
 		troop_partition[0] += troop_count % number_of_targets
 
 		action_army_split = ActionArmySplit.new(
