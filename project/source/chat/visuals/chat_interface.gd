@@ -13,22 +13,13 @@ signal input_submitted(input_text: String)
 ## The data to be displayed in the chat box.
 var chat_data: ChatData:
 	set(value):
-		if chat_data:
-			chat_data.new_content_added.disconnect(
-					_on_chat_data_new_content_added
-			)
-			chat_data.content_cleared.disconnect(_on_chat_data_content_cleared)
-			chat_data.loaded.disconnect(_on_chat_data_loaded)
+		if chat_data != null:
+			chat_data.changed.disconnect(_refresh_contents)
 
 		chat_data = value
+		_refresh_contents()
 
-		chat_data.new_content_added.connect(
-				_on_chat_data_new_content_added
-		)
-		chat_data.content_cleared.connect(_on_chat_data_content_cleared)
-		chat_data.loaded.connect(_on_chat_data_loaded)
-
-		_update_chat_log()
+		chat_data.changed.connect(_refresh_contents)
 
 @onready var _chat_log := %ChatText as RichTextLabel
 @onready var _chat_input := %ChatInput as LineEdit
@@ -44,12 +35,13 @@ func _ready() -> void:
 	if not _chat_input.text_submitted.is_connected(_on_input_text_submitted):
 		_chat_input.text_submitted.connect(_on_input_text_submitted)
 
-	_update_chat_log()
+	_refresh_contents()
 
 
-func _update_chat_log() -> void:
-	if _chat_log:
-		_chat_log.text = chat_data.all_content()
+func _refresh_contents() -> void:
+	if not is_node_ready():
+		return
+	_chat_log.text = chat_data.all_content()
 
 
 func _on_input_text_submitted(input_text: String) -> void:
@@ -57,15 +49,3 @@ func _on_input_text_submitted(input_text: String) -> void:
 
 	# Clear the input field
 	_chat_input.text = ""
-
-
-func _on_chat_data_new_content_added(_new_content: String) -> void:
-	_update_chat_log()
-
-
-func _on_chat_data_content_cleared() -> void:
-	_update_chat_log()
-
-
-func _on_chat_data_loaded() -> void:
-	_update_chat_log()

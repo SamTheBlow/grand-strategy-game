@@ -3,8 +3,7 @@ class_name ChatData
 ## It is separate from [ChatInterface] so that it can persist between scenes.
 
 signal new_content_added(new_content: String)
-signal content_cleared()
-signal loaded()
+signal changed()
 
 var _content: Array[ChatMessage] = []
 
@@ -41,26 +40,11 @@ func all_content() -> String:
 	return text
 
 
-## Loads chat data from given Dictionary.
-## Useful for saving/loading and for synchronizing.
-func load_data(data: Dictionary) -> void:
-	var parser := ChatDataFromDict.new()
-	parser.parse(data)
-
-	if parser.error:
-		push_error("Error while loading chat data: " + parser.error_message)
-		return
-
-	_content = parser.result_content
-	_players = parser.result_players
-	loaded.emit()
-
-
 ## Clears all of the chat's content.
 func clear() -> void:
-	_content = []
-	_players = []
-	content_cleared.emit()
+	_content.clear()
+	_players.clear()
+	changed.emit()
 
 
 func add_raw_message(text: String) -> void:
@@ -87,6 +71,7 @@ func _add_message(user_id: int, text: String) -> void:
 	_content.append(new_chat_message)
 
 	new_content_added.emit(text)
+	changed.emit()
 
 
 ## Currently only returns the player's username.

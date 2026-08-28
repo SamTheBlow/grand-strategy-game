@@ -48,14 +48,14 @@ func _send_all_data() -> void:
 
 	_receive_all_data.rpc_id(
 			multiplayer.get_remote_sender_id(),
-			ChatDataToDict.new().parse(chat_data)
+			ChatDataParsing.to_raw_dict(chat_data)
 	)
 
 
 ## The user who requested all chat data receives it.
 @rpc("authority", "call_remote", "reliable")
-func _receive_all_data(chat_data_dict: Dictionary) -> void:
-	chat_data.load_data(chat_data_dict)
+func _receive_all_data(raw_dict: Dictionary) -> void:
+	ChatDataParsing.load_from_raw_data(raw_dict, chat_data)
 #endregion
 
 
