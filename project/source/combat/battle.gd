@@ -1,26 +1,23 @@
 class_name Battle
-extends Resource
-## This class defines the outcome of a battle between two opposing armies.
-# TODO this class is ugly, needs lots of refactoring!
+## Determines the outcome of a battle between two opposing armies.
 
-@export var _context_attacker_efficiency: ModifierContext
-@export var _context_defender_efficiency: ModifierContext
-
-var algorithm_id: int = 0
-var modifier_request: ModifierRequest
+var _algorithm_id: int = 0
+var _modifier_request: ModifierRequest
 
 var _both_armies_survived: bool = true
+
+
+func _init(algorithm_id: int, modifier_request: ModifierRequest) -> void:
+	_algorithm_id = algorithm_id
+	_modifier_request = modifier_request
 
 
 func apply(attacking_army: Army, defending_army: Army) -> void:
 	#print("A battle is about to begin!")
 	#print("Algorithm: ", algorithm_id)
 
-	_context_attacker_efficiency._defending_army = defending_army
-	_context_defender_efficiency._defending_army = defending_army
-
 	var damage_dealt: Array[int] = []
-	match algorithm_id:
+	match _algorithm_id:
 		0:
 			damage_dealt = _algorithm_0(attacking_army, defending_army)
 		1:
@@ -57,34 +54,34 @@ func apply(attacking_army: Army, defending_army: Army) -> void:
 
 
 func _algorithm_0(attacking_army: Army, defending_army: Army) -> Array[int]:
-	var attacker_efficiency: float = (
-			modifier_request.modifiers(_context_attacker_efficiency).resultf()
-	)
+	var attacker_efficiency: float = _modifier_request.modifiers(
+			ModifierRequest.Context.ATTACKER_EFFICIENCY, defending_army
+	).resultf()
 	var attacker_damage: int = floori(
 			attacking_army.size().value * attacker_efficiency
 	)
 
-	var defender_efficiency: float = (
-			modifier_request.modifiers(_context_defender_efficiency).resultf()
-	)
+	var defender_efficiency: float = _modifier_request.modifiers(
+			ModifierRequest.Context.DEFENDER_EFFICIENCY, defending_army
+	).resultf()
 	var defender_damage: int = floori(
 			defending_army.size().value * defender_efficiency
 	)
 
-	return [attacker_damage, defender_damage]
+	return [ attacker_damage, defender_damage ]
 
 
 func _algorithm_1(attacking_army: Army, defending_army: Army) -> Array[int]:
-	var attacker_efficiency: float = (
-			modifier_request.modifiers(_context_attacker_efficiency).resultf()
-	)
+	var attacker_efficiency: float = _modifier_request.modifiers(
+			ModifierRequest.Context.ATTACKER_EFFICIENCY, defending_army
+	).resultf()
 	var attacker_damage: int = floori(
 			attacking_army.size().value * attacker_efficiency
 	)
 
-	var defender_efficiency: float = (
-			modifier_request.modifiers(_context_defender_efficiency).resultf()
-	)
+	var defender_efficiency: float = _modifier_request.modifiers(
+			ModifierRequest.Context.DEFENDER_EFFICIENCY, defending_army
+	).resultf()
 	var defender_damage: int = floori(
 			defending_army.size().value * defender_efficiency
 	)
@@ -110,4 +107,4 @@ func _algorithm_1(attacking_army: Army, defending_army: Army) -> Array[int]:
 					* (attacker_kill_rate / defender_kill_rate)
 			)
 
-	return [attacker_damage, defender_damage]
+	return [ attacker_damage, defender_damage ]

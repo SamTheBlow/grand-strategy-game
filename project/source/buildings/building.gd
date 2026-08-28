@@ -12,13 +12,14 @@ func _init(initial_data: BuildingData, province_id: int) -> void:
 
 ## Applies the defense multiplier when a battle occurs.
 func _on_modifiers_requested(
-		modifiers: Array[Modifier], context: ModifierContext
+		modifiers: Array[Modifier],
+		context: ModifierRequest.Context,
+		defending_army: Army
 ) -> void:
-	match context.context():
-		"attacker_efficiency":
+	match context:
+		ModifierRequest.Context.ATTACKER_EFFICIENCY:
 			# Check if defender is on same province as this building
-			var defender: Army = context.info("defending_army")
-			if _province_id == defender.province_id():
+			if _province_id == defending_army.province_id():
 				# New modifier
 				modifiers.append(ModifierMultiplier.new(
 						data.building_name,
@@ -26,10 +27,9 @@ func _on_modifiers_requested(
 						1.0 / data.defense_multiplier
 						if data.defense_multiplier != 0.0 else 1.0
 				))
-		"defender_efficiency":
+		ModifierRequest.Context.DEFENDER_EFFICIENCY:
 			# Check if defender is on same province as this building
-			var defender: Army = context.info("defending_army")
-			if _province_id == defender.province_id():
+			if _province_id == defending_army.province_id():
 				# New modifier
 				modifiers.append(ModifierMultiplier.new(
 						data.building_name,

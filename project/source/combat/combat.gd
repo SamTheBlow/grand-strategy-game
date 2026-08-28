@@ -15,9 +15,6 @@ const _ATTACKER_EFFICIENCY_KEY: String = "global_attacker_efficiency"
 const _DEFENDER_EFFICIENCY_KEY: String = "global_defender_efficiency"
 const _ALGORITHM_ID_KEY: String = "algorithm_id"
 
-const _ATTACKER_EFFICIENCY_CONTEXT: String = "attacker_efficiency"
-const _DEFENDER_EFFICIENCY_CONTEXT: String = "defender_efficiency"
-
 var global_attacker_efficiency: float = 1.0
 var global_defender_efficiency: float = 1.0
 
@@ -26,7 +23,6 @@ var global_defender_efficiency: float = 1.0
 var algorithm_id: int = 0
 
 var _game: Game
-var _battle: Battle = preload("uid://cuylrn1evjy6r")
 
 
 func _init() -> void:
@@ -37,9 +33,6 @@ func register(game: Game) -> void:
 	_game = game
 
 	game.modifier_request.add_provider(self)
-
-	_battle.algorithm_id = algorithm_id
-	_battle.modifier_request = game.modifier_request
 
 	for army in game.world.armies.list():
 		_connect_army(army)
@@ -103,22 +96,26 @@ func _resolve_battles(army: Army) -> void:
 	)
 	for other_army in armies_in_province:
 		if Country.is_fighting(army.owner_country, other_army.owner_country):
-			_battle.apply(army, other_army)
+			Battle.new(algorithm_id, _game.modifier_request).apply(
+					army, other_army
+			)
 
 
 ## Adds this module's global efficiency modifiers to the request when asked.
 func _on_modifiers_requested(
-		modifiers: Array[Modifier], context: ModifierContext
+		modifiers: Array[Modifier],
+		context: ModifierRequest.Context,
+		_defending_army: Army
 ) -> void:
-	match context.context():
-		_ATTACKER_EFFICIENCY_CONTEXT:
+	match context:
+		ModifierRequest.Context.ATTACKER_EFFICIENCY:
 			if global_attacker_efficiency != 1.0:
 				modifiers.append(ModifierMultiplier.new(
 						"Base Modifier",
 						"Attackers all have this modifier by default.",
 						global_attacker_efficiency
 				))
-		_DEFENDER_EFFICIENCY_CONTEXT:
+		ModifierRequest.Context.DEFENDER_EFFICIENCY:
 			if global_defender_efficiency != 1.0:
 				modifiers.append(ModifierMultiplier.new(
 						"Base Modifier",

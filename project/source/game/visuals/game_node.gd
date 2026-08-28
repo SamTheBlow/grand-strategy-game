@@ -20,10 +20,6 @@ signal exited()
 @export var country_info_scene: PackedScene
 @export var notification_info_scene: PackedScene
 
-@export_group("Resources")
-## Defines the outcome of a [Battle].
-@export var battle: Battle
-
 var project: GameProject:
 	set(value):
 		project = value

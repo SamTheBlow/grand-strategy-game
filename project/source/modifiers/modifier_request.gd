@@ -7,17 +7,24 @@ class_name ModifierRequest
 ## need to be connected beforehand using add_provider().
 ## The signal sends a reference to an array of modifiers.
 ## When they receive the signal, objects can add modifiers by appending
-## their modifiers to the array. The signal also passes a ModifierContext
-## object that gives information about why modifiers are being requested.
+## their modifiers to the array. The signal also passes context data
+## that gives information about why modifiers are being requested.
 
-signal modifiers_requested(array: Array[Modifier], context: ModifierContext)
+signal modifiers_requested(
+		array: Array[Modifier], context: Context, defending_army: Army
+)
 
-const _REQUEST_METHOD_NAME: String = "_on_modifiers_requested"
+enum Context {
+	ATTACKER_EFFICIENCY,
+	DEFENDER_EFFICIENCY,
+}
+
+const _REQUEST_METHOD_NAME: StringName = &"_on_modifiers_requested"
 
 
-func modifiers(context: ModifierContext) -> ModifierList:
+func modifiers(context: Context, defending_army: Army) -> ModifierList:
 	var array: Array[Modifier] = []
-	modifiers_requested.emit(array, context)
+	modifiers_requested.emit(array, context, defending_army)
 	return ModifierList.new(array)
 
 
