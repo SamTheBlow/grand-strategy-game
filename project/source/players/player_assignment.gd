@@ -161,7 +161,16 @@ func _on_player_added(player: Player) -> void:
 
 
 func _on_player_removed(player: Player) -> void:
+	var game_player: GamePlayer = list.get(player)
 	list.erase(player)
+
+	# The game player turns into an AI.
+	# If it was a spectator, remove it from the game entirely.
+	if game_player == null:
+		return
+	game_player.is_human = false
+	if game_player.is_spectating():
+		_game_players.remove(game_player)
 
 
 func _on_player_group_added(players: Array[Player]) -> void:

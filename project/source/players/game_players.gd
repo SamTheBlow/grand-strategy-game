@@ -190,25 +190,5 @@ func _on_country_removed(country: Country) -> void:
 			player.playing_country = null
 
 
-# TODO move this to a different class
-## Finds the [GamePlayer] associated with given [Player].
-## Turns it into an AI. If it's a spectator, removes it from the list.
-func _on_player_removed(player: Player) -> void:
-	for game_player in _list:
-		if (
-				not game_player.is_human
-				or game_player.player_human == null
-				or game_player.player_human != player
-		):
-			continue
-
-		game_player.is_human = false
-
-		if game_player.is_spectating():
-			remove(game_player)
-
-		break
-
-
 func _on_username_changed(game_player: GamePlayer) -> void:
 	username_changed.emit(game_player)

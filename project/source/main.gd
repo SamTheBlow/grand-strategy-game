@@ -78,11 +78,9 @@ func enter_play_menu() -> void:
 	current_scene = play_menu
 
 
-## Assigns [Player]s to the game's [GamePlayer]s.
 ## Sets up a new [GameNode] scene using given [GameProject].
 ## Starts the game.
 func play_game(project: GameProject) -> void:
-	players.player_removed.connect(project.game.game_players._on_player_removed)
 	project._absolute_file_path.value = SAVE_FILE_PATH
 
 	var game_node := game_scene.instantiate() as GameNode
