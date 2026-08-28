@@ -23,17 +23,13 @@ var _is_loading: bool = false
 
 
 func _ready() -> void:
-	# TODO this networking interface stuff is ugly I think, shouldn't be here
-	# TODO bad code: private function
 	var networking_interface := (
 			networking_interface_scene.instantiate() as NetworkingInterface
-	)
-	networking_interface.message_sent.connect(
-			chat._on_networking_interface_message_sent
 	)
 
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
+	chat.connect_networking_interface(networking_interface)
 
 	_games_interface.game_menu_state = game_menu_state
 	_player_list.players = players

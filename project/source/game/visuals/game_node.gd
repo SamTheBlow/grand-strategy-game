@@ -92,12 +92,9 @@ func _ready() -> void:
 	var game_sync := GameSync.new(game)
 
 	if chat != null:
-		# TODO bad code: private function
-		networking_interface.message_sent.connect(
-				chat._on_networking_interface_message_sent
-		)
 		_chat_interface.chat_data = chat.chat_data
 		chat.connect_chat_interface(_chat_interface)
+		chat.connect_networking_interface(networking_interface)
 	else:
 		_chat_interface.visible = false
 

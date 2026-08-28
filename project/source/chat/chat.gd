@@ -30,9 +30,14 @@ func _ready() -> void:
 		players.player_group_removed.connect(_on_players_player_group_removed)
 
 
-## Call this to listen to a chat interface's inputs.
-func connect_chat_interface(chat_interface: ChatInterface) -> void:
-	chat_interface.input_submitted.connect(_on_chat_interface_input_submitted)
+## Listens to a chat interface's inputs.
+func connect_chat_interface(interface: ChatInterface) -> void:
+	interface.input_submitted.connect(_on_chat_interface_input_submitted)
+
+
+## Listens to a networking interface's inputs.
+func connect_networking_interface(interface: NetworkingInterface) -> void:
+	interface.message_sent.connect(send_colored_system_message)
 
 
 #region Send all data
@@ -119,6 +124,11 @@ func send_system_message(text: String) -> void:
 	chat_data.add_system_message(text)
 
 
+## Utility function to send a system message with some color applied.
+func send_colored_system_message(text: String, color: Color) -> void:
+	send_system_message("[color=#" + color.to_html() + "]" + text + "[/color]")
+
+
 ## Utility function to send a system message with multiple lines.
 func send_system_message_multiline(text_lines: Array[String]) -> void:
 	var message: String = ""
@@ -197,9 +207,3 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 	else:
 		# Not a command
 		send_human_message(new_text)
-
-
-func _on_networking_interface_message_sent(text: String, color: Color) -> void:
-	send_system_message(
-		"[color=#" + color.to_html() + "]" + text + "[/color]"
-	)
