@@ -22,6 +22,18 @@ func _input(event: InputEvent) -> void:
 		_update_pointing_position()
 
 
+## Snaps the arrow to given province when applicable.
+func snap_to(province_visuals: ProvinceVisuals2D) -> void:
+	if province_visuals.province.is_linked_to(source_province.province.id):
+		destination_province = province_visuals
+
+
+## Unsnaps the arrow from given province when applicable.
+func unsnap_from(province_visuals: ProvinceVisuals2D) -> void:
+	if province_visuals == destination_province:
+		destination_province = null
+
+
 func _release() -> void:
 	if destination_province != null:
 		released.emit(self)
@@ -36,15 +48,3 @@ func _update_pointing_position() -> void:
 
 func _is_right_click_just_released(event: InputEventMouseButton) -> bool:
 	return (not event.pressed) and event.button_index == MOUSE_BUTTON_RIGHT
-
-
-## Snaps the arrow to the province when applicable.
-func _on_province_mouse_entered(province_visuals: ProvinceVisuals2D) -> void:
-	if province_visuals.province.is_linked_to(source_province.province.id):
-		destination_province = province_visuals
-
-
-## Unsnaps the arrow from the province when applicable.
-func _on_province_mouse_exited(province_visuals: ProvinceVisuals2D) -> void:
-	if province_visuals == destination_province:
-		destination_province = null

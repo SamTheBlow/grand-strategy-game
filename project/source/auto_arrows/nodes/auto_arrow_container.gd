@@ -86,10 +86,9 @@ func _on_preview_arrow_created(
 		_create_arrows_node(country)
 	_list[country.id].add_child(preview_arrow)
 
-	# TODO bad code: private function
 	_provinces_container.province_mouse_entered.connect(
-			preview_arrow._on_province_mouse_entered
+			preview_arrow.snap_to_province
 	)
 	_provinces_container.province_mouse_exited.connect(
-			preview_arrow._on_province_mouse_exited
+			preview_arrow.unsnap_from_province
 	)
