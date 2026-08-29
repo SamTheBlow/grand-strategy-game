@@ -5,13 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="6_5jo7e"]
 [ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://source/networking/networking_setup_game.tscn" id="6_b2bhm"]
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://source/ui/player_turn_announcement.tscn" id="8_e0v4f"]
-[ext_resource type="PackedScene" uid="uid://db07kg52gllnd" path="res://source/ui/popups/army_movement_popup.tscn" id="8_nnt8b"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="9_pkxqv"]
-[ext_resource type="PackedScene" uid="uid://8rs6mtufs60s" path="res://source/ui/popups/build_fortress_popup.tscn" id="10_x38iu"]
-[ext_resource type="PackedScene" uid="uid://dmta7gru0kbr2" path="res://source/ui/popups/recruitment_popup.tscn" id="11_rjf2g"]
 [ext_resource type="Script" uid="uid://ya0bvq0evpsq" path="res://source/actions/action_input.gd" id="16_724ii"]
-[ext_resource type="PackedScene" uid="uid://cfhpg688geojo" path="res://source/ui/popups/game_over_popup.tscn" id="16_mxtlx"]
-[ext_resource type="PackedScene" uid="uid://crnnhfnswkmub" path="res://source/ui/popups/notification_info_popup.tscn" id="16_r8lxu"]
 [ext_resource type="PackedScene" uid="uid://44rygdcojakm" path="res://source/camera/camera.tscn" id="18_a3u80"]
 [ext_resource type="Script" uid="uid://3hqfpevmvw0f" path="res://source/debug/debug_province_highlight.gd" id="18_pevj0"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="20_446nu"]
@@ -33,11 +28,6 @@ networking_setup_scene = ExtResource("6_b2bhm")
 troop_ui_scene = ExtResource("2_dx3sp")
 player_turn_scene = ExtResource("8_e0v4f")
 player_list_scene = ExtResource("9_pkxqv")
-army_movement_scene = ExtResource("8_nnt8b")
-game_over_scene = ExtResource("16_mxtlx")
-build_fortress_scene = ExtResource("10_x38iu")
-recruitment_scene = ExtResource("11_rjf2g")
-notification_info_scene = ExtResource("16_r8lxu")
 
 [node name="DebugProvinceHighlight" type="Node" parent="." unique_id=1669769325 node_paths=PackedStringArray("_game")]
 script = ExtResource("18_pevj0")
@@ -281,9 +271,9 @@ unique_name_in_owner = true
 [connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="." method="_on_component_ui_button_pressed"]
 [connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
 [connection signal="pressed" from="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryButton" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
-[connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_dismissed"]
-[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="." method="_on_notification_pressed"]
-[connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="_on_end_turn_pressed"]
+[connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="confirm_notification_decision" binds= [-1]]
+[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="UILayer/GameUI/PopupContainer" method="show_notification_info"]
+[connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="confirm_end_turn"]
 [connection signal="quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_quit_pressed"]
 [connection signal="resume_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_resume_pressed"]
 [connection signal="save_and_quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_and_quit_pressed"]

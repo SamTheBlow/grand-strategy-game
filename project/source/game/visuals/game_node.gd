@@ -12,11 +12,6 @@ signal exited()
 @export var troop_ui_scene: PackedScene
 @export var player_turn_scene: PackedScene
 @export var player_list_scene: PackedScene
-@export var army_movement_scene: PackedScene
-@export var game_over_scene: PackedScene
-@export var build_fortress_scene: PackedScene
-@export var recruitment_scene: PackedScene
-@export var notification_info_scene: PackedScene
 
 var project: GameProject:
 	set(value):
@@ -140,73 +135,95 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 
 
+func confirm_end_turn() -> void:
+	_action_input.apply_action(ActionEndTurn.new())
+
+
+func confirm_build_fortress(province_id: int) -> void:
+	_action_input.apply_action(ActionBuild.new(province_id))
+
+
+func confirm_recruitment(troop_amount: int, province_id: int) -> void:
+	_action_input.apply_action(ActionRecruitment.new(
+			province_id,
+			troop_amount,
+			game.world.armies.id_system().new_unique_id(false)
+	))
+
+
+## Creates and applies army movement as a result of the user's actions.
+func confirm_army_movement(
+		army: Army,
+		number_of_troops: int,
+		destination_province_id: int
+) -> void:
+	var moving_army_id: int = army.id
+
+	# Split the army into two if needed
+	if army.size().value > number_of_troops:
+		var new_army_id: int = (
+				game.world.armies.id_system().new_unique_id(false)
+		)
+		_action_input.apply_action(ActionArmySplit.new(
+				army.id,
+				[army.size().value - number_of_troops, number_of_troops],
+				[new_army_id]
+		))
+		moving_army_id = new_army_id
+
+	_action_input.apply_action(
+			ActionArmyMovement.new(moving_army_id, destination_province_id)
+	)
+
+
+## Applies a diplomacy action requested from the country info popup.
+func confirm_diplomacy_action(
+		diplomacy_action: DiplomacyAction, recipient_country: Country
+) -> void:
+	if not game.turn.is_running():
+		return
+
+	# TODO this check shouldn't be here...
+	if not MultiplayerUtils.has_gameplay_authority(
+			multiplayer, game.turn.playing_players()[0]
+	):
+		push_warning(
+				"Tried to perform a diplomatic action, but"
+				+ " the user does not have gameplay authority!"
+		)
+		return
+
+	_action_input.apply_action(
+			ActionDiplomacy.new(diplomacy_action.id(), recipient_country.id)
+	)
+
+
+func confirm_notification_decision(
+		game_notification: GameNotification, outcome_index: int
+) -> void:
+	if not game.turn.is_running():
+		return
+
+	# TASK this check shouldn't be here... also DRY: this is a copy/paste
+	if not MultiplayerUtils.has_gameplay_authority(
+			multiplayer, game.turn.playing_players()[0]
+	):
+		push_warning(
+				"Tried to handle a game notification, but"
+				+ " the user does not have gameplay authority!"
+		)
+		return
+
+	_action_input.apply_action(
+			ActionHandleNotification.new(game_notification.id, outcome_index)
+	)
+
+
 func _update_ui_visibility() -> void:
 	if not is_node_ready():
 		return
 
 	_ui_layer.visible = is_ui_visible
-
-
-## Opens the popup that appears when you want to build a fortress.
-func _open_build_fortress_popup(province: Province) -> void:
-	var build_fortress_popup := (
-			build_fortress_scene.instantiate() as BuildFortressPopup
-	)
-	build_fortress_popup.setup(
-			game.world.provinces,
-			province.id,
-			[
-				ResourceCost.new(
-						"Population",
-						game.world.fortress_data().population_cost
-				),
-				ResourceCost.new(
-						"Money",
-						game.world.fortress_data().money_cost
-				),
-			]
-	)
-	build_fortress_popup.confirmed.connect(_on_build_fortress_confirmed)
-	build_fortress_popup.tree_exited.connect(_deselect_province)
-	_popup_container.add_popup(build_fortress_popup)
-
-
-## Opens the popup that appears when you want to recruit a new army.
-func _open_recruitment_popup(province: Province) -> void:
-	var recruitment: ArmyRecruitment = ArmyRecruitment.in_game(game)
-	if recruitment == null:
-		return
-
-	var recruitment_popup := (
-			recruitment_scene.instantiate() as RecruitmentPopup
-	)
-	var recruitment_limits := ArmyRecruitmentLimits.new(
-			game, game.turn.playing_country(), province
-	)
-	recruitment_popup.setup(
-			game.world.provinces,
-			province.id,
-			[
-				ResourceCost.new("Population", recruitment.population_per_unit),
-				ResourceCost.new("Money", recruitment.money_per_unit)
-			],
-			recruitment_limits.minimum(),
-			recruitment_limits.maximum()
-	)
-	recruitment_popup.confirmed.connect(_on_recruitment_confirmed)
-	recruitment_popup.tree_exited.connect(_deselect_province)
-	_popup_container.add_popup(recruitment_popup)
-
-
-## Opens the popup that appears when you want to move an army.
-func _open_army_movement_popup(army: Army, destination: Province) -> void:
-	var army_movement_popup := (
-			army_movement_scene.instantiate() as ArmyMovementPopup
-	)
-	army_movement_popup.setup(army, game.world.provinces, destination.id)
-	army_movement_popup.confirmed.connect(_on_army_movement_confirmed)
-	army_movement_popup.confirmed.connect(_deselect_province)
-	_popup_container.add_popup(army_movement_popup)
 
 
 ## Adds a new Player and assigns it to a specific GamePlayer.
@@ -233,10 +250,6 @@ func _add_player_and_assign(
 	var new_player: Player = players.new_player(multiplayer_id)
 	players.add_player(new_player)
 	_player_assignment.assign_player_to(new_player, game_player)
-
-
-func _deselect_province() -> void:
-	world_visuals.province_selection.deselect()
 
 
 ## The server receives a client's request to add and assign a new player.
@@ -267,9 +280,7 @@ func _on_game_over(winning_country: Country) -> void:
 	if not is_node_ready():
 		await ready
 
-	var game_over_popup := game_over_scene.instantiate() as GameOverPopup
-	game_over_popup.setup(winning_country)
-	_popup_container.add_popup(game_over_popup)
+	_popup_container.show_game_over(winning_country)
 
 	if chat == null:
 		return
@@ -319,7 +330,7 @@ func _on_province_select_attempted(
 		# one active army per province
 		var army: Army = my_active_armies_in_province[0]
 		if army.can_move_to(game.world.provinces, province.id):
-			_open_army_movement_popup(army, province)
+			_popup_container.show_army_movement(army, province)
 			outcome.is_selected = false
 
 
@@ -334,51 +345,10 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 	match button_id:
 		0:
 			# Build fortress
-			_open_build_fortress_popup(selected_province)
+			_popup_container.show_build_fortress(selected_province)
 		1:
 			# Recruitment
-			_open_recruitment_popup(selected_province)
-
-
-func _on_end_turn_pressed() -> void:
-	_action_input.apply_action(ActionEndTurn.new())
-
-
-func _on_build_fortress_confirmed(province_id: int) -> void:
-	_action_input.apply_action(ActionBuild.new(province_id))
-
-
-func _on_recruitment_confirmed(troop_amount: int, province_id: int) -> void:
-	_action_input.apply_action(ActionRecruitment.new(
-			province_id,
-			troop_amount,
-			game.world.armies.id_system().new_unique_id(false)
-	))
-
-
-## Creates and applies army movement as a result of the user's actions.
-func _on_army_movement_confirmed(
-		army: Army,
-		number_of_troops: int,
-		destination_province_id: int
-) -> void:
-	var moving_army_id: int = army.id
-
-	# Split the army into two if needed
-	if army.size().value > number_of_troops:
-		var new_army_id: int = (
-				game.world.armies.id_system().new_unique_id(false)
-		)
-		_action_input.apply_action(ActionArmySplit.new(
-				army.id,
-				[army.size().value - number_of_troops, number_of_troops],
-				[new_army_id]
-		))
-		moving_army_id = new_army_id
-
-	_action_input.apply_action(
-			ActionArmyMovement.new(moving_army_id, destination_province_id)
-	)
+			_popup_container.show_recruitment(selected_province)
 
 
 func _on_save_requested() -> void:
@@ -429,63 +399,6 @@ func _on_new_human_player_requested(game_player: GamePlayer) -> void:
 
 func _on_seed_requested() -> void:
 	chat.send_system_message("Seed: " + project.game.rng.rng_seed)
-
-
-## Applies a diplomacy action requested from the country info popup.
-func request_diplomacy_action(
-		diplomacy_action: DiplomacyAction,
-		recipient_country: Country
-) -> void:
-	if not game.turn.is_running():
-		return
-
-	# TODO this check shouldn't be here...
-	if not MultiplayerUtils.has_gameplay_authority(
-			multiplayer, game.turn.playing_players()[0]
-	):
-		push_warning(
-				"Tried to perform a diplomatic action, but"
-				+ " the user does not have gameplay authority!"
-		)
-		return
-
-	_action_input.apply_action(
-			ActionDiplomacy.new(diplomacy_action.id(), recipient_country.id)
-	)
-
-
-func _on_notification_pressed(game_notification: GameNotification) -> void:
-	var notification_info := (
-			notification_info_scene.instantiate() as NotificationInfoPopup
-	)
-	notification_info.game_notification = game_notification
-	notification_info.decision_made.connect(_on_notification_decision_made)
-	_popup_container.add_popup(notification_info)
-
-
-func _on_notification_dismissed(game_notification: GameNotification) -> void:
-	_on_notification_decision_made(game_notification, -1)
-
-
-func _on_notification_decision_made(
-		game_notification: GameNotification, outcome_index: int
-) -> void:
-	if not game.turn.is_running():
-		return
-
-	# TASK this check shouldn't be here... also DRY: this is a copy/paste
-	if not MultiplayerUtils.has_gameplay_authority(
-			multiplayer, game.turn.playing_players()[0]
-	):
-		push_warning(
-				"Tried to handle a game notification, but"
-				+ " the user does not have gameplay authority!"
-		)
-		return
-
-	_action_input.apply_action(
-			ActionHandleNotification.new(game_notification.id, outcome_index)
-	)
 
 
 func _on_pause_menu_resume_pressed() -> void:
