@@ -119,8 +119,7 @@ func _assign_to_province(army: Army) -> void:
 		return
 
 	if _map.has(army):
-		_remove_army(army)
-		_add_army(army)
+		_move_to_province(_map[army], province_visuals)
 	elif _armies_with_no_visuals.has(army):
 		_armies_with_no_visuals.erase(army)
 		_map[army] = _new_army_visuals(army)
@@ -140,6 +139,14 @@ func _new_army_visuals(army: Army) -> ArmyVisuals2D:
 
 func _delete_visuals(army_visuals: ArmyVisuals2D) -> void:
 	NodeUtils.delete_node(army_visuals)
+
+
+func _move_to_province(
+		army_visuals: ArmyVisuals2D, province_visuals: ProvinceVisuals2D
+) -> void:
+	if army_visuals.get_parent() != null:
+		army_visuals.get_parent().remove_child(army_visuals)
+	province_visuals.add_army(army_visuals)
 
 
 func _move_army_in_stack(army: Army, position_index: int) -> void:
