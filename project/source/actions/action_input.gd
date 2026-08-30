@@ -1,14 +1,14 @@
 class_name ActionInput
 extends Node
-## Applies a given [Action] to given [Game].
+## Applies some given [Action] in some given game.
 ## If you're an online client, sends the action to the server instead.
 
-var game: Game
+@export var _game_node: GameNode
 
 
 func apply_action(action: Action) -> void:
 	if MultiplayerUtils.has_authority(multiplayer):
-		game.apply_action(action)
+		_game_node.game.apply_action(action)
 	else:
 		_receive_action_request.rpc_id(1, action.to_raw_dict())
 

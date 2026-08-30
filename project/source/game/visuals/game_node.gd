@@ -51,7 +51,6 @@ var _player_assignment: PlayerAssignment
 
 @onready var _ui_layer := %UILayer as CanvasLayer
 @onready var _component_ui_container := %ComponentUI as ComponentUIContainer
-@onready var _action_input := %ActionInput as ActionInput
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
@@ -65,8 +64,6 @@ var _player_assignment: PlayerAssignment
 func _ready() -> void:
 	_update_ui_visibility()
 	_pause_menu.hide()
-
-	_action_input.game = game
 
 	world_visuals.project = project
 
@@ -136,90 +133,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(&"pause"):
 		_pause_menu.visible = not _pause_menu.visible
 		get_viewport().set_input_as_handled()
-
-
-func confirm_end_turn() -> void:
-	_action_input.apply_action(ActionEndTurn.new())
-
-
-func confirm_build_fortress(province_id: int) -> void:
-	_action_input.apply_action(ActionBuild.new(province_id))
-
-
-func confirm_recruitment(troop_amount: int, province_id: int) -> void:
-	_action_input.apply_action(ActionRecruitment.new(
-			province_id,
-			troop_amount,
-			game.world.armies.id_system().new_unique_id(false)
-	))
-
-
-## Creates and applies army movement as a result of the user's actions.
-func confirm_army_movement(
-		army: Army,
-		number_of_troops: int,
-		destination_province_id: int
-) -> void:
-	var moving_army_id: int = army.id
-
-	# Split the army into two if needed
-	if army.size().value > number_of_troops:
-		var new_army_id: int = (
-				game.world.armies.id_system().new_unique_id(false)
-		)
-		_action_input.apply_action(ActionArmySplit.new(
-				army.id,
-				[army.size().value - number_of_troops, number_of_troops],
-				[new_army_id]
-		))
-		moving_army_id = new_army_id
-
-	_action_input.apply_action(
-			ActionArmyMovement.new(moving_army_id, destination_province_id)
-	)
-
-
-## Applies a diplomacy action requested from the country info popup.
-func confirm_diplomacy_action(
-		diplomacy_action: DiplomacyAction, recipient_country: Country
-) -> void:
-	if not game.turn.is_running():
-		return
-
-	# TODO this check shouldn't be here...
-	if not MultiplayerUtils.has_gameplay_authority(
-			multiplayer, game.turn.playing_players()[0]
-	):
-		push_warning(
-				"Tried to perform a diplomatic action, but"
-				+ " the user does not have gameplay authority!"
-		)
-		return
-
-	_action_input.apply_action(
-			ActionDiplomacy.new(diplomacy_action.id(), recipient_country.id)
-	)
-
-
-func confirm_notification_decision(
-		game_notification: GameNotification, outcome_index: int
-) -> void:
-	if not game.turn.is_running():
-		return
-
-	# TASK this check shouldn't be here... also DRY: this is a copy/paste
-	if not MultiplayerUtils.has_gameplay_authority(
-			multiplayer, game.turn.playing_players()[0]
-	):
-		push_warning(
-				"Tried to handle a game notification, but"
-				+ " the user does not have gameplay authority!"
-		)
-		return
-
-	_action_input.apply_action(
-			ActionHandleNotification.new(game_notification.id, outcome_index)
-	)
 
 
 func _update_ui_visibility() -> void:

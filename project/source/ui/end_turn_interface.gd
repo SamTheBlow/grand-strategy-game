@@ -1,25 +1,31 @@
 class_name EndTurnInterface
 extends Control
+## Emits a signal with an [ActionEndTurn] when user wants to end their turn.
 ## Hides itself when it is not the user's turn to play.
-##
-## (Even though the class is named and intended for the "End Turn" button,
-## this script has no functionality specific to it.)
 
-@export var _game: GameNode
+signal action_requested(action: Action)
+
+@export var _game_node: GameNode
 
 
 func _ready() -> void:
 	_refresh()
-	_game.game.turn.is_running_changed.connect(_refresh.unbind(1))
-	_game.game.turn.playing_country_changed.connect(_refresh.unbind(1))
+	_game_node.game.turn.is_running_changed.connect(_refresh.unbind(1))
+	_game_node.game.turn.playing_country_changed.connect(_refresh.unbind(1))
+
+
+func end_turn() -> void:
+	action_requested.emit(ActionEndTurn.new())
 
 
 func _refresh() -> void:
-	if not _game.game.turn.is_running():
+	if not _game_node.game.turn.is_running():
 		visible = false
 		return
 
-	var playing_players: Array[GamePlayer] = _game.game.turn.playing_players()
+	var playing_players: Array[GamePlayer] = (
+			_game_node.game.turn.playing_players()
+	)
 	if playing_players.is_empty():
 		visible = false
 		return
