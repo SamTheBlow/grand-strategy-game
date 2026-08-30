@@ -11,7 +11,7 @@ var _list: Dictionary[int, AutoArrowsNode2D] = {}
 ## Keeps track of the currently visible arrows. May be null.
 var _visible_node: Node2D = null
 
-@onready var _provinces_container := %Provinces as ProvinceVisualsContainer2D
+@onready var _container := %Provinces as ProvinceVisualsContainer2D
 
 
 func _ready() -> void:
@@ -59,7 +59,7 @@ func _update() -> void:
 
 func _create_arrows_node(country: Country) -> void:
 	var new_node := AutoArrowsNode2D.new()
-	new_node.province_visuals_container = _provinces_container
+	new_node.province_visuals_container = _container
 	new_node.auto_arrows = country.auto_arrows
 	new_node.hide()
 
@@ -86,9 +86,5 @@ func _on_preview_arrow_created(
 		_create_arrows_node(country)
 	_list[country.id].add_child(preview_arrow)
 
-	_provinces_container.province_mouse_entered.connect(
-			preview_arrow.snap_to_province
-	)
-	_provinces_container.province_mouse_exited.connect(
-			preview_arrow.unsnap_from_province
-	)
+	_container.province_mouse_entered.connect(preview_arrow.snap_to)
+	_container.province_mouse_exited.connect(preview_arrow.unsnap_from)
