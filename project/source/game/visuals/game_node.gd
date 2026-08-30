@@ -46,8 +46,6 @@ var _player_assignment: PlayerAssignment
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
-@onready var _build_fortress_popup_factory := %BuildFortressPopupFactory as BuildFortressPopupFactory
-@onready var _recruitment_popup_factory := %RecruitmentPopupFactory as RecruitmentPopupFactory
 @onready var _game_over_popup_factory := %GameOverPopupFactory as GameOverPopupFactory
 
 
@@ -191,23 +189,6 @@ func _on_game_over(winning_country: Country) -> void:
 				+ winning_country.name_or_default() + "."
 		)
 	chat.send_global_message("You can continue playing if you want.")
-
-
-func _on_component_ui_button_pressed(button_id: int) -> void:
-	var selected_province: Province = (
-			world_visuals.province_selection.selected_province
-	)
-	if selected_province == null:
-		return
-
-	# TODO bad code: hard coded values
-	match button_id:
-		0:
-			# Build fortress
-			_build_fortress_popup_factory.show_build_fortress(selected_province)
-		1:
-			# Recruitment
-			_recruitment_popup_factory.show_recruitment(selected_province)
 
 
 func _on_save_requested() -> void:

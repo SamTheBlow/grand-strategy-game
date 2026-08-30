@@ -25,6 +25,7 @@
 [ext_resource type="Script" uid="uid://djp7u5qhe7q5e" path="res://source/ui/popups/army_movement_popup/army_movement_popup_factory.gd" id="35_am"]
 [ext_resource type="Script" uid="uid://dfa47wr801l56" path="res://source/ui/popups/game_over_popup/game_over_popup_factory.gd" id="36_go"]
 [ext_resource type="Script" uid="uid://ddjsc66vx4imc" path="res://source/ui/popups/notification_info_popup/notification_info_popup_factory.gd" id="37_ni"]
+[ext_resource type="Script" uid="uid://be0whdm3sj3hn" path="res://source/ui/component_ui/component_ui_button_handler.gd" id="38_cbh"]
 
 [node name="Game" type="Node" unique_id=1883659067]
 script = ExtResource("1_g7hfo")
@@ -45,7 +46,6 @@ follow_viewport_enabled = true
 unique_name_in_owner = true
 
 [node name="Camera" parent="." unique_id=1316629976 instance=ExtResource("18_a3u80")]
-unique_name_in_owner = true
 
 [node name="UILayer" type="CanvasLayer" parent="." unique_id=1206372945]
 unique_name_in_owner = true
@@ -67,6 +67,10 @@ offset_right = 40.0
 offset_bottom = 40.0
 mouse_filter = 2
 script = ExtResource("25_oq116")
+
+[node name="ComponentUIButtonHandler" type="Node" parent="UILayer/GameUI/ComponentUI" unique_id=2098765432 node_paths=PackedStringArray("_game_node")]
+script = ExtResource("38_cbh")
+_game_node = NodePath("../../../..")
 
 [node name="TopBar" parent="UILayer/GameUI" unique_id=941378789 node_paths=PackedStringArray("_game") instance=ExtResource("20_qfiqr")]
 layout_mode = 1
@@ -251,7 +255,6 @@ layout_mode = 1
 _game = NodePath("../../..")
 
 [node name="PopupContainer" type="Control" parent="UILayer/GameUI" unique_id=1662575556]
-unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -267,19 +270,16 @@ _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
 
 [node name="BuildFortressPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000002 node_paths=PackedStringArray("_game_node", "_popup_container")]
-unique_name_in_owner = true
 script = ExtResource("33_bf")
 _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
 
 [node name="RecruitmentPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000003 node_paths=PackedStringArray("_game_node", "_popup_container")]
-unique_name_in_owner = true
 script = ExtResource("34_re")
 _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
 
 [node name="ArmyMovementPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000004 node_paths=PackedStringArray("_game_node", "_popup_container")]
-unique_name_in_owner = true
 script = ExtResource("35_am")
 _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
@@ -295,14 +295,15 @@ _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
 
 [node name="PauseMenu" parent="UILayer" unique_id=948035850 instance=ExtResource("30_enc8l")]
-unique_name_in_owner = true
 visible = false
 
 [connection signal="world_loaded" from="WorldLayer/WorldVisuals2D" to="Camera/WorldLimitWiring" method="_on_world_loaded"]
 [connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="UILayer/GameUI/PopupContainer/ArmyMovementPopupFactory" method="check_open_popup"]
 [connection signal="zoom_changed" from="Camera/CameraZoom" to="WorldLayer/WorldVisuals2D/WorldLOD" method="_refresh"]
-[connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="." method="_on_component_ui_button_pressed"]
+[connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/ComponentUI/ComponentUIButtonHandler" method="handle_button_press"]
 [connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer/CountryInfoPopupFactory" method="show_country_info"]
+[connection signal="build_fortress_requested" from="UILayer/GameUI/ComponentUI/ComponentUIButtonHandler" to="UILayer/GameUI/PopupContainer/BuildFortressPopupFactory" method="show_build_fortress"]
+[connection signal="recruit_requested" from="UILayer/GameUI/ComponentUI/ComponentUIButtonHandler" to="UILayer/GameUI/PopupContainer/RecruitmentPopupFactory" method="show_recruitment"]
 [connection signal="pressed" from="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryButton" to="UILayer/GameUI/PopupContainer/CountryInfoPopupFactory" method="show_country_info"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="UILayer/GameUI/PopupContainer/NotificationInfoPopupFactory" method="confirm_notification_decision" binds= [-1]]
 [connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="UILayer/GameUI/PopupContainer/NotificationInfoPopupFactory" method="show_notification_info"]
