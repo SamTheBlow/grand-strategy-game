@@ -5,21 +5,15 @@ extends Node
 
 signal exited()
 
-@export_group("Scenes")
-@export var networking_setup_scene: PackedScene
-
-@export_group("UI scenes")
-@export var troop_ui_scene: PackedScene
-@export var player_turn_scene: PackedScene
-@export var player_list_scene: PackedScene
+const _NETWORKING_SETUP_SCENE: PackedScene = preload("uid://cm37jqeqg77g7")
 
 var project: GameProject:
 	set(value):
 		project = value
 		game = project.game
 
-## A reference to the project's game, for convenience. No need to set this:
-## it's set automatically when setting the project variable.
+## A reference to the project's game, for convenience.
+## Setting the project property automatically sets this property.
 var game: Game:
 	set(value):
 		game = value
@@ -27,12 +21,10 @@ var game: Game:
 		game.game_over.connect(_on_game_over)
 		game.turn.started.connect(_on_game_started)
 
-## Reference to external node.
 ## May be null. If null, the players list will not be fully initialized.
 ## Please do not leave this null unless you're going to hide the UI.
 var players: Players
 
-## Reference to external node.
 ## May be null. If null, the chat interface is hidden.
 var chat: Chat:
 	set(value):
@@ -72,7 +64,7 @@ func _ready() -> void:
 	)
 
 	var networking_interface := (
-			networking_setup_scene.instantiate() as NetworkingInterface
+			_NETWORKING_SETUP_SCENE.instantiate() as NetworkingInterface
 	)
 	var game_sync := GameSync.new(game)
 

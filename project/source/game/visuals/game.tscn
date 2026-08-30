@@ -1,9 +1,7 @@
 [gd_scene format=3 uid="uid://c74o2ubgawogb"]
 
 [ext_resource type="Script" uid="uid://5gbxtwg4rtv3" path="res://source/game/visuals/game_node.gd" id="1_g7hfo"]
-[ext_resource type="PackedScene" uid="uid://by865efl4iwy" path="res://source/ui/popups/game_popup.tscn" id="2_dx3sp"]
 [ext_resource type="PackedScene" uid="uid://dpgoa2yg5bjcp" path="res://source/world/visuals/world_visuals_2d.tscn" id="6_5jo7e"]
-[ext_resource type="PackedScene" uid="uid://cm37jqeqg77g7" path="res://source/networking/networking_setup_game.tscn" id="6_b2bhm"]
 [ext_resource type="PackedScene" uid="uid://dmt38oflf2sjf" path="res://source/ui/player_turn_announcement.tscn" id="8_e0v4f"]
 [ext_resource type="PackedScene" uid="uid://t615nfcmdn14" path="res://source/ui/player_list/player_list.tscn" id="9_pkxqv"]
 [ext_resource type="Script" uid="uid://ya0bvq0evpsq" path="res://source/actions/action_input.gd" id="16_724ii"]
@@ -30,10 +28,6 @@
 
 [node name="Game" type="Node" unique_id=1883659067]
 script = ExtResource("1_g7hfo")
-networking_setup_scene = ExtResource("6_b2bhm")
-troop_ui_scene = ExtResource("2_dx3sp")
-player_turn_scene = ExtResource("8_e0v4f")
-player_list_scene = ExtResource("9_pkxqv")
 
 [node name="DebugProvinceHighlight" type="Node" parent="." unique_id=1669769325 node_paths=PackedStringArray("_game")]
 script = ExtResource("18_pevj0")
@@ -302,6 +296,7 @@ _popup_container = NodePath("..")
 
 [node name="PauseMenu" parent="UILayer" unique_id=948035850 instance=ExtResource("30_enc8l")]
 unique_name_in_owner = true
+visible = false
 
 [connection signal="world_loaded" from="WorldLayer/WorldVisuals2D" to="Camera/WorldLimitWiring" method="_on_world_loaded"]
 [connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="." method="_on_province_select_attempted"]
