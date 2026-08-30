@@ -31,17 +31,10 @@ var chat: Chat:
 		chat = value
 		chat.seed_requested.connect(_on_seed_requested)
 
-## If false, the entire UI is hidden.
-var is_ui_visible: bool = true:
-	set(value):
-		is_ui_visible = value
-		_update_ui_visibility()
-
 var _player_assignment: PlayerAssignment
 
 @onready var world_visuals := %WorldVisuals2D as WorldVisuals2D
 
-@onready var _ui_layer := %UILayer as CanvasLayer
 @onready var _component_ui_container := %ComponentUI as ComponentUIContainer
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
@@ -49,8 +42,6 @@ var _player_assignment: PlayerAssignment
 
 
 func _ready() -> void:
-	_update_ui_visibility()
-
 	world_visuals.project = project
 
 	_component_ui_container.setup(
@@ -115,11 +106,8 @@ func _exit_tree() -> void:
 		game.turn.stop()
 
 
-func _update_ui_visibility() -> void:
-	if not is_node_ready():
-		return
-
-	_ui_layer.visible = is_ui_visible
+func set_ui_visibility(is_visible: bool) -> void:
+	(%UILayer as CanvasLayer).visible = is_visible
 
 
 ## Adds a new Player and assigns it to a specific GamePlayer.

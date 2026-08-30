@@ -49,8 +49,8 @@ func _on_game_load_ready(project: GameProject) -> void:
 	project.game.game_over.connect(_on_game_over)
 	_background_game_node = _game_scene.instantiate() as GameNode
 	_background_game_node.project = project
-	_background_game_node.is_ui_visible = false
 	_background_viewport.add_child(_background_game_node)
+	_background_game_node.set_ui_visibility(false)
 
 
 ## Called on the main thread when the other thread encounters an error.
