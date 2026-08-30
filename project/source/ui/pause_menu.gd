@@ -1,23 +1,24 @@
 class_name PauseMenu
 extends Control
 
-signal resume_pressed()
-signal save_pressed()
-signal quit_pressed()
-signal save_and_quit_pressed()
+signal save_requested()
+signal quit_requested()
 
 
-func _on_resume_button_pressed() -> void:
-	resume_pressed.emit()
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed(&"pause"):
+		visible = not visible
+		get_viewport().set_input_as_handled()
 
 
 func _on_save_button_pressed() -> void:
-	save_pressed.emit()
+	save_requested.emit()
 
 
 func _on_quit_button_pressed() -> void:
-	quit_pressed.emit()
+	quit_requested.emit()
 
 
 func _on_save_and_quit_button_pressed() -> void:
-	save_and_quit_pressed.emit()
+	save_requested.emit()
+	quit_requested.emit()

@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgcpn52rk3b4e"]
+[gd_scene format=3 uid="uid://bgcpn52rk3b4e"]
 
 [ext_resource type="Script" uid="uid://b402d1su1yx04" path="res://source/ui/pause_menu.gd" id="1_5vpx4"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="1_pseub"]
 
-[node name="PauseMenu" type="Control"]
+[node name="PauseMenu" type="Control" unique_id=277748972]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_5vpx4")
 
-[node name="Background" type="ColorRect" parent="."]
+[node name="Background" type="ColorRect" parent="." unique_id=267145956]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -21,14 +21,14 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.2509804)
 
-[node name="Box" type="Control" parent="."]
+[node name="Box" type="Control" parent="." unique_id=1428572924]
 layout_mode = 1
 anchor_left = 0.35
 anchor_top = 0.15
 anchor_right = 0.65
 anchor_bottom = 0.85
 
-[node name="ColorRect" type="ColorRect" parent="Box"]
+[node name="ColorRect" type="ColorRect" parent="Box" unique_id=1074386948]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -37,7 +37,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2625, 0.2916667, 0.35, 1)
 
-[node name="MarginContainer" type="MarginContainer" parent="Box"]
+[node name="MarginContainer" type="MarginContainer" parent="Box" unique_id=1737503605]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -49,15 +49,15 @@ offset_bottom = -32.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="Box/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="Box/MarginContainer" unique_id=789493847]
 layout_mode = 2
 
-[node name="Title" type="Control" parent="Box/MarginContainer/VBoxContainer"]
+[node name="Title" type="Control" parent="Box/MarginContainer/VBoxContainer" unique_id=568516738]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 2.0
 
-[node name="Label" type="Label" parent="Box/MarginContainer/VBoxContainer/Title"]
+[node name="Label" type="Label" parent="Box/MarginContainer/VBoxContainer/Title" unique_id=2104962784]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -69,31 +69,32 @@ text = "Game Paused"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="ResumeButton" type="Button" parent="Box/MarginContainer/VBoxContainer"]
+[node name="ResumeButton" type="Button" parent="Box/MarginContainer/VBoxContainer" unique_id=1536683042]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("1_pseub")
 text = "Resume"
 
-[node name="SaveButton" type="Button" parent="Box/MarginContainer/VBoxContainer"]
+[node name="SaveButton" type="Button" parent="Box/MarginContainer/VBoxContainer" unique_id=1399919256]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("1_pseub")
 text = "Save Game"
 
-[node name="QuitButton" type="Button" parent="Box/MarginContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="Box/MarginContainer/VBoxContainer" unique_id=663150342]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("1_pseub")
 text = "Quit"
 
-[node name="SaveAndQuitButton" type="Button" parent="Box/MarginContainer/VBoxContainer"]
+[node name="SaveAndQuitButton" type="Button" parent="Box/MarginContainer/VBoxContainer" unique_id=2069038355]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/normal = ExtResource("1_pseub")
 text = "Save & Quit"
 
-[connection signal="pressed" from="Box/MarginContainer/VBoxContainer/ResumeButton" to="." method="_on_resume_button_pressed"]
+[connection signal="ready" from="." to="." method="hide"]
+[connection signal="pressed" from="Box/MarginContainer/VBoxContainer/ResumeButton" to="." method="hide"]
 [connection signal="pressed" from="Box/MarginContainer/VBoxContainer/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="Box/MarginContainer/VBoxContainer/QuitButton" to="." method="_on_quit_button_pressed"]
 [connection signal="pressed" from="Box/MarginContainer/VBoxContainer/SaveAndQuitButton" to="." method="_on_save_and_quit_button_pressed"]

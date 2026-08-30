@@ -318,10 +318,8 @@ unique_name_in_owner = true
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/RecruitmentPopupFactory" to="ActionInput" method="apply_action"]
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/ArmyMovementPopupFactory" to="ActionInput" method="apply_action"]
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/NotificationInfoPopupFactory" to="ActionInput" method="apply_action"]
-[connection signal="quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_quit_pressed"]
-[connection signal="resume_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_resume_pressed"]
-[connection signal="save_and_quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_and_quit_pressed"]
-[connection signal="save_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_save_pressed"]
+[connection signal="quit_requested" from="UILayer/PauseMenu" to="." method="_on_exit_to_main_menu_requested"]
+[connection signal="save_requested" from="UILayer/PauseMenu" to="." method="_on_save_requested"]
 
 [editable path="WorldLayer/WorldVisuals2D"]
 [editable path="Camera"]

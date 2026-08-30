@@ -58,12 +58,10 @@ var _player_assignment: PlayerAssignment
 @onready var _recruitment_popup_factory := %RecruitmentPopupFactory as RecruitmentPopupFactory
 @onready var _army_movement_popup_factory := %ArmyMovementPopupFactory as ArmyMovementPopupFactory
 @onready var _game_over_popup_factory := %GameOverPopupFactory as GameOverPopupFactory
-@onready var _pause_menu := %PauseMenu as Control
 
 
 func _ready() -> void:
 	_update_ui_visibility()
-	_pause_menu.hide()
 
 	world_visuals.project = project
 
@@ -127,12 +125,6 @@ func _exit_tree() -> void:
 	# Prevent the game from running forever in the background
 	if game != null:
 		game.turn.stop()
-
-
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(&"pause"):
-		_pause_menu.visible = not _pause_menu.visible
-		get_viewport().set_input_as_handled()
 
 
 func _update_ui_visibility() -> void:
@@ -315,20 +307,3 @@ func _on_new_human_player_requested(game_player: GamePlayer) -> void:
 
 func _on_seed_requested() -> void:
 	chat.send_system_message("Seed: " + project.game.rng.rng_seed)
-
-
-func _on_pause_menu_resume_pressed() -> void:
-	_pause_menu.hide()
-
-
-func _on_pause_menu_save_pressed() -> void:
-	_on_save_requested()
-
-
-func _on_pause_menu_quit_pressed() -> void:
-	_on_exit_to_main_menu_requested()
-
-
-func _on_pause_menu_save_and_quit_pressed() -> void:
-	_on_save_requested()
-	_on_exit_to_main_menu_requested()
