@@ -48,7 +48,6 @@ var _player_assignment: PlayerAssignment
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
 @onready var _build_fortress_popup_factory := %BuildFortressPopupFactory as BuildFortressPopupFactory
 @onready var _recruitment_popup_factory := %RecruitmentPopupFactory as RecruitmentPopupFactory
-@onready var _army_movement_popup_factory := %ArmyMovementPopupFactory as ArmyMovementPopupFactory
 @onready var _game_over_popup_factory := %GameOverPopupFactory as GameOverPopupFactory
 
 
@@ -192,46 +191,6 @@ func _on_game_over(winning_country: Country) -> void:
 				+ winning_country.name_or_default() + "."
 		)
 	chat.send_global_message("You can continue playing if you want.")
-
-
-## When attempting to select a province,
-## instead opens the army movement popup (when applicable)
-func _on_province_select_attempted(
-		province: Province,
-		outcome: ProvinceVisualsInput.ProvinceSelectionOutcome
-) -> void:
-	if not game.turn.is_running():
-		return
-
-	# Only open the popup if it's your turn
-	var you: GamePlayer = game.turn.playing_players()[0]
-	if not MultiplayerUtils.has_gameplay_authority(multiplayer, you):
-		return
-
-	var selected_province: Province = (
-			world_visuals.province_selection.selected_province
-	)
-	if selected_province == null:
-		return
-
-	var my_active_armies_in_province: Array[Army] = (
-			game.world.armies_in_each_province
-			.dictionary[selected_province.id].ordered_list.duplicate()
-	)
-	for army: Army in my_active_armies_in_province.duplicate():
-		if not (
-				army.owner_country == game.turn.playing_country()
-				and army.is_able_to_move()
-		):
-			my_active_armies_in_province.erase(army)
-
-	if my_active_armies_in_province.size() > 0:
-		# NOTE: assumes that countries only have
-		# one active army per province
-		var army: Army = my_active_armies_in_province[0]
-		if army.can_move_to(game.world.provinces, province.id):
-			_army_movement_popup_factory.show_army_movement(army, province)
-			outcome.is_selected = false
 
 
 func _on_component_ui_button_pressed(button_id: int) -> void:

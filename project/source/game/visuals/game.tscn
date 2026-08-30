@@ -299,7 +299,7 @@ unique_name_in_owner = true
 visible = false
 
 [connection signal="world_loaded" from="WorldLayer/WorldVisuals2D" to="Camera/WorldLimitWiring" method="_on_world_loaded"]
-[connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="." method="_on_province_select_attempted"]
+[connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="UILayer/GameUI/PopupContainer/ArmyMovementPopupFactory" method="check_open_popup"]
 [connection signal="zoom_changed" from="Camera/CameraZoom" to="WorldLayer/WorldVisuals2D/WorldLOD" method="_refresh"]
 [connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="." method="_on_component_ui_button_pressed"]
 [connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer/CountryInfoPopupFactory" method="show_country_info"]
