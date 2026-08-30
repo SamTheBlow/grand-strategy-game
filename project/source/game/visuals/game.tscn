@@ -21,6 +21,12 @@
 [ext_resource type="Script" uid="uid://dfio0wudtxr2h" path="res://source/notifications/visuals/game_notifications_setup.gd" id="27_ncc6m"]
 [ext_resource type="PackedScene" uid="uid://bgcpn52rk3b4e" path="res://source/ui/pause_menu.tscn" id="30_enc8l"]
 [ext_resource type="Script" uid="uid://r5jofu5xjlbp" path="res://source/ui/popups/popup_container.gd" id="31_popup"]
+[ext_resource type="Script" uid="uid://dcjgy4cr8m3iw" path="res://source/ui/popups/country_info_popup/country_info_popup_factory.gd" id="32_ci"]
+[ext_resource type="Script" uid="uid://dd3nsq0mfgkjo" path="res://source/ui/popups/build_fortress_popup/build_fortress_popup_factory.gd" id="33_bf"]
+[ext_resource type="Script" uid="uid://s5k7ni1do58o" path="res://source/ui/popups/recruitment_popup/recruitment_popup_factory.gd" id="34_re"]
+[ext_resource type="Script" uid="uid://djp7u5qhe7q5e" path="res://source/ui/popups/army_movement_popup/army_movement_popup_factory.gd" id="35_am"]
+[ext_resource type="Script" uid="uid://dfa47wr801l56" path="res://source/ui/popups/game_over_popup/game_over_popup_factory.gd" id="36_go"]
+[ext_resource type="Script" uid="uid://ddjsc66vx4imc" path="res://source/ui/popups/notification_info_popup/notification_info_popup_factory.gd" id="37_ni"]
 
 [node name="Game" type="Node" unique_id=1883659067]
 script = ExtResource("1_g7hfo")
@@ -250,7 +256,7 @@ text = "End Turn"
 layout_mode = 1
 _game = NodePath("../../..")
 
-[node name="PopupContainer" type="Control" parent="UILayer/GameUI" unique_id=1662575556 node_paths=PackedStringArray("_game_node")]
+[node name="PopupContainer" type="Control" parent="UILayer/GameUI" unique_id=1662575556]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -260,7 +266,39 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("31_popup")
-_game_node = NodePath("../../..")
+
+[node name="CountryInfoPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000001 node_paths=PackedStringArray("game_node", "popup_container")]
+script = ExtResource("32_ci")
+game_node = NodePath("../../../..")
+popup_container = NodePath("..")
+
+[node name="BuildFortressPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000002 node_paths=PackedStringArray("game_node", "popup_container")]
+unique_name_in_owner = true
+script = ExtResource("33_bf")
+game_node = NodePath("../../../..")
+popup_container = NodePath("..")
+
+[node name="RecruitmentPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000003 node_paths=PackedStringArray("game_node", "popup_container")]
+unique_name_in_owner = true
+script = ExtResource("34_re")
+game_node = NodePath("../../../..")
+popup_container = NodePath("..")
+
+[node name="ArmyMovementPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000004 node_paths=PackedStringArray("game_node", "popup_container")]
+unique_name_in_owner = true
+script = ExtResource("35_am")
+game_node = NodePath("../../../..")
+popup_container = NodePath("..")
+
+[node name="GameOverPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000005 node_paths=PackedStringArray("popup_container")]
+unique_name_in_owner = true
+script = ExtResource("36_go")
+popup_container = NodePath("..")
+
+[node name="NotificationInfoPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000006 node_paths=PackedStringArray("game_node", "popup_container")]
+script = ExtResource("37_ni")
+game_node = NodePath("../../../..")
+popup_container = NodePath("..")
 
 [node name="PauseMenu" parent="UILayer" unique_id=948035850 instance=ExtResource("30_enc8l")]
 unique_name_in_owner = true
@@ -269,10 +307,10 @@ unique_name_in_owner = true
 [connection signal="province_select_attempted" from="WorldLayer/WorldVisuals2D/ProvinceInput" to="." method="_on_province_select_attempted"]
 [connection signal="zoom_changed" from="Camera/CameraZoom" to="WorldLayer/WorldVisuals2D/WorldLOD" method="_refresh"]
 [connection signal="button_pressed" from="UILayer/GameUI/ComponentUI" to="." method="_on_component_ui_button_pressed"]
-[connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
-[connection signal="pressed" from="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryButton" to="UILayer/GameUI/PopupContainer" method="show_country_info"]
+[connection signal="country_button_pressed" from="UILayer/GameUI/ComponentUI" to="UILayer/GameUI/PopupContainer/CountryInfoPopupFactory" method="show_country_info"]
+[connection signal="pressed" from="UILayer/GameUI/TopBar/HBoxContainer/YourCountry/MarginContainer/CountryIconAndName/CountryButton" to="UILayer/GameUI/PopupContainer/CountryInfoPopupFactory" method="show_country_info"]
 [connection signal="dismissed" from="UILayer/GameUI/GameNotifications" to="." method="confirm_notification_decision" binds= [-1]]
-[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="UILayer/GameUI/PopupContainer" method="show_notification_info"]
+[connection signal="pressed" from="UILayer/GameUI/GameNotifications" to="UILayer/GameUI/PopupContainer/NotificationInfoPopupFactory" method="show_notification_info"]
 [connection signal="pressed" from="UILayer/GameUI/EndTurnInterface/MarginContainer/EndTurn" to="." method="confirm_end_turn"]
 [connection signal="quit_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_quit_pressed"]
 [connection signal="resume_pressed" from="UILayer/PauseMenu" to="." method="_on_pause_menu_resume_pressed"]

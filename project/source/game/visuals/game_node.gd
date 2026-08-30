@@ -55,7 +55,10 @@ var _player_assignment: PlayerAssignment
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
-@onready var _popup_container := %PopupContainer as PopupContainer
+@onready var _build_fortress_popup_factory := %BuildFortressPopupFactory as BuildFortressPopupFactory
+@onready var _recruitment_popup_factory := %RecruitmentPopupFactory as RecruitmentPopupFactory
+@onready var _army_movement_popup_factory := %ArmyMovementPopupFactory as ArmyMovementPopupFactory
+@onready var _game_over_popup_factory := %GameOverPopupFactory as GameOverPopupFactory
 @onready var _pause_menu := %PauseMenu as Control
 
 
@@ -280,7 +283,7 @@ func _on_game_over(winning_country: Country) -> void:
 	if not is_node_ready():
 		await ready
 
-	_popup_container.show_game_over(winning_country)
+	_game_over_popup_factory.show_game_over(winning_country)
 
 	if chat == null:
 		return
@@ -330,7 +333,7 @@ func _on_province_select_attempted(
 		# one active army per province
 		var army: Army = my_active_armies_in_province[0]
 		if army.can_move_to(game.world.provinces, province.id):
-			_popup_container.show_army_movement(army, province)
+			_army_movement_popup_factory.show_army_movement(army, province)
 			outcome.is_selected = false
 
 
@@ -345,10 +348,10 @@ func _on_component_ui_button_pressed(button_id: int) -> void:
 	match button_id:
 		0:
 			# Build fortress
-			_popup_container.show_build_fortress(selected_province)
+			_build_fortress_popup_factory.show_build_fortress(selected_province)
 		1:
 			# Recruitment
-			_popup_container.show_recruitment(selected_province)
+			_recruitment_popup_factory.show_recruitment(selected_province)
 
 
 func _on_save_requested() -> void:
