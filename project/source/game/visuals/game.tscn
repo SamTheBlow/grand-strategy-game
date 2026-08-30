@@ -284,10 +284,10 @@ script = ExtResource("35_am")
 _game_node = NodePath("../../../..")
 _popup_container = NodePath("..")
 
-[node name="GameOverPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000005 node_paths=PackedStringArray("popup_container")]
-unique_name_in_owner = true
+[node name="GameOverPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000005 node_paths=PackedStringArray("_game_node", "_popup_container")]
 script = ExtResource("36_go")
-popup_container = NodePath("..")
+_game_node = NodePath("../../../..")
+_popup_container = NodePath("..")
 
 [node name="NotificationInfoPopupFactory" type="Node" parent="UILayer/GameUI/PopupContainer" unique_id=2000000006 node_paths=PackedStringArray("_game_node", "_popup_container")]
 script = ExtResource("37_ni")

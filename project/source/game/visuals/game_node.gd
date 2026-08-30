@@ -46,7 +46,6 @@ var _player_assignment: PlayerAssignment
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _turn_order_list := %TurnOrderList as TurnOrderList
-@onready var _game_over_popup_factory := %GameOverPopupFactory as GameOverPopupFactory
 
 
 func _ready() -> void:
@@ -173,12 +172,6 @@ func _on_game_started() -> void:
 
 
 func _on_game_over(winning_country: Country) -> void:
-	# Prevent crash
-	if not is_node_ready():
-		await ready
-
-	_game_over_popup_factory.show_game_over(winning_country)
-
 	if chat == null:
 		return
 	if winning_country == null:
