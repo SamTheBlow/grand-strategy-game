@@ -1,7 +1,6 @@
-class_name EditorMenus
-extends Node
-## The menu bar of the editor.
-## Translates raw menu button presses into signals.
+class_name EditorMenuBar
+extends MenuBar
+## Translates raw menu button presses into useful signals.
 
 signal quit_requested()
 signal new_project_requested()
@@ -45,8 +44,8 @@ const _EDIT_TAB_PROVINCES_ID: int = 12
 const _EDIT_TAB_ARMIES_ID: int = 13
 const _EDIT_TAB_BUILDINGS_ID: int = 14
 
-@onready var _editor_tab := %Editor as PopupMenu
-@onready var _project_tab := %Project as PopupMenu
+@export var _editor_tab: PopupMenu
+@export var _project_tab: PopupMenu
 
 
 func _ready() -> void:

@@ -117,7 +117,12 @@ func close_interface() -> void:
 
 
 ## Opens the interface for editing given province.
+## If input is null, closes current interface instead.
 func open_province_edit_interface(province: Province) -> void:
+	if province == null:
+		_current_interface = null
+		return
+
 	var new_interface := (
 			_INTERFACE_SCENES[InterfaceNavigator.Type.PROVINCE_EDIT]
 			.instantiate() as InterfaceProvinceEdit

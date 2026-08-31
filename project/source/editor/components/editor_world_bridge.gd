@@ -1,28 +1,19 @@
 class_name EditorWorldBridge
 extends Node
 ## Bridges the game world and the editing interface.
+# TODO turn ProvinceSelection into a Node and then get rid of this script
 
-const _GAME_POPUP_SCENE: PackedScene = preload("uid://by865efl4iwy")
-const _COUNTRY_SELECT_POPUP_SCENE: PackedScene = preload("uid://gfcp3xbnck52")
+signal selected_province_changed(province: Province)
 
-@onready var _editing_interface := %EditingInterface as EditingInterface
-@onready var _popup_container := %PopupContainer as Control
-
-var _world_visuals: WorldVisuals2D = null
+@export var _world_visuals: WorldVisuals2D
 
 
-func _on_world_loaded(world_visuals: WorldVisuals2D) -> void:
-	_world_visuals = world_visuals
-	_world_visuals.province_selection.selected_province_changed.connect(
-			_on_selected_province_changed
+## Note: we do it like this because ProvinceSelection
+## is replaced with a new instance each time a world is loaded.
+func connect_province_selection(world_visuals: WorldVisuals2D) -> void:
+	world_visuals.province_selection.selected_province_changed.connect(
+			selected_province_changed.emit
 	)
-
-
-func _on_selected_province_changed(province: Province) -> void:
-	if province == null:
-		_editing_interface.close_interface()
-		return
-	_editing_interface.open_province_edit_interface(province)
 
 
 func _on_province_interface_opened(province: Province) -> void:
@@ -31,20 +22,6 @@ func _on_province_interface_opened(province: Province) -> void:
 
 func _on_province_interface_closed() -> void:
 	_world_visuals.province_selection.deselect()
-
-
-func _on_country_select_pressed(item_country: ItemCountry) -> void:
-	# Open popup that lets you choose a country
-	var popup := _GAME_POPUP_SCENE.instantiate() as GamePopup
-	var country_select_popup := (
-			_COUNTRY_SELECT_POPUP_SCENE.instantiate() as CountrySelectPopup
-	)
-	country_select_popup.setup(
-			_world_visuals.project.game.countries, item_country.may_be_null()
-	)
-	country_select_popup.country_selected.connect(item_country.set_value)
-	popup.contents_node = country_select_popup
-	_popup_container.add_child(popup)
 
 
 func _on_country_interface_opened(country: Country) -> void:

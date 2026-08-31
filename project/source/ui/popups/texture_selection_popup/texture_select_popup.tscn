@@ -1,6 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://cffc06lk8bb0f"]
+[gd_scene format=3 uid="uid://cffc06lk8bb0f"]
 
-[ext_resource type="Script" uid="uid://cjxxph41rnkc4" path="res://source/ui/popups/texture_select_popup.gd" id="1_430ed"]
+[ext_resource type="Script" uid="uid://cjxxph41rnkc4" path="res://source/ui/popups/texture_selection_popup/texture_select_popup.gd" id="1_430ed"]
 [ext_resource type="Script" uid="uid://c6dynpagur5wa" path="res://source/ui/popups/texture_import.gd" id="2_q6loa"]
 
 [node name="TextureSelectInterface" type="VBoxContainer"]

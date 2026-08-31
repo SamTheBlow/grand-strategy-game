@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://gfcp3xbnck52"]
+[gd_scene format=3 uid="uid://gfcp3xbnck52"]
 
-[ext_resource type="Script" uid="uid://c7au4r8vhf0op" path="res://source/ui/popups/country_select_popup.gd" id="1_merek"]
+[ext_resource type="Script" uid="uid://c7au4r8vhf0op" path="res://source/ui/popups/country_selection_popup/country_select_popup.gd" id="1_merek"]
 [ext_resource type="PackedScene" uid="uid://de5y20lysfce8" path="res://source/ui/countries/country_list/country_list.tscn" id="2_v3pu8"]
 
-[node name="CountrySelectPopup" type="VBoxContainer"]
+[node name="CountrySelectPopup" type="VBoxContainer" unique_id=2121702174]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,12 +13,12 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_merek")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=858256779]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="Control"]
+[node name="ScrollContainer" type="ScrollContainer" parent="Control" unique_id=139337688]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -27,7 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="CountryList" parent="Control/ScrollContainer" instance=ExtResource("2_v3pu8")]
+[node name="CountryList" parent="Control/ScrollContainer" unique_id=1694496952 instance=ExtResource("2_v3pu8")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
