@@ -9,7 +9,7 @@ signal open_project_requested()
 signal save_requested()
 signal save_as_requested()
 signal show_in_file_manager_requested()
-signal play_requested()
+signal playtest_requested()
 signal interface_requested(type: InterfaceNavigator.Type)
 
 const _ACTION_QUIT_EDITOR: StringName = &"quit_editor"
@@ -115,8 +115,8 @@ func _on_project_tab_id_pressed(id: int) -> void:
 			# "Show in File Manager"
 			show_in_file_manager_requested.emit()
 		_PROJECT_TAB_PLAY_ID:
-			# "Play"
-			play_requested.emit()
+			# "Playtest"
+			playtest_requested.emit()
 		_PROJECT_TAB_SEPARATOR_IDS:
 			# Separators & sub menus
 			pass

@@ -29,10 +29,18 @@
 [ext_resource type="Resource" uid="uid://bsvjybsy4mret" path="res://resources/editor_settings/world_limits_color.tres" id="25_wlc"]
 [ext_resource type="Resource" uid="uid://b2ktv3qtliscp" path="res://resources/editor_settings/show_decorations.tres" id="26_sd"]
 [ext_resource type="Resource" uid="uid://baipjg4i5kso1" path="res://resources/editor_settings/show_buildings.tres" id="27_sb"]
+[ext_resource type="Texture2D" uid="uid://c1ve6bswthkg" path="res://assets/formkit/play.svg" id="29_kqq58"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
 script = ExtResource("8_u5rcp")
 metadata/_custom_type_script = "uid://cqrjsjcv4lx25"
+
+[sub_resource type="InputEventAction" id="InputEventAction_c43yy"]
+action = &"start_playtest"
+pressed = true
+
+[sub_resource type="Shortcut" id="Shortcut_kqq58"]
+events = [SubResource("InputEventAction_c43yy")]
 
 [node name="Editor" type="Node" unique_id=1373690984]
 
@@ -147,39 +155,15 @@ apply_camera_zoom = true
 [node name="UILayer" type="CanvasLayer" parent="EditorBase" unique_id=151164930]
 layer = 3
 
-[node name="TopBarContainer" type="SubViewportContainer" parent="EditorBase/UILayer" unique_id=1726182058]
-anchors_preset = -1
+[node name="TopBar" type="Control" parent="EditorBase/UILayer" unique_id=937602123]
+layout_mode = 3
 anchor_right = 1.0
 anchor_bottom = 0.075
 grow_horizontal = 2
 grow_vertical = 2
-stretch = true
-
-[node name="SubViewport" type="SubViewport" parent="EditorBase/UILayer/TopBarContainer" unique_id=772250658]
-transparent_bg = true
-handle_input_locally = false
-size = Vector2i(1152, 48)
-render_target_update_mode = 4
-
-[node name="Control" type="Control" parent="EditorBase/UILayer/TopBarContainer/SubViewport" unique_id=836868101]
-layout_mode = 3
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 mouse_filter = 1
 
-[node name="TopBar" type="Control" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control" unique_id=937602123]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 1
-
-[node name="ColorRect" type="ColorRect" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=831517367]
+[node name="ColorRect" type="ColorRect" parent="EditorBase/UILayer/TopBar" unique_id=831517367]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -188,7 +172,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.2, 0.2, 0.2, 1)
 
-[node name="MenuBar" type="MenuBar" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar" unique_id=871537756]
+[node name="MenuBar" type="MenuBar" parent="EditorBase/UILayer/TopBar" unique_id=871537756]
 layout_mode = 1
 anchors_preset = -1
 anchor_top = 0.5
@@ -197,14 +181,14 @@ anchor_bottom = 0.5
 offset_left = 8.0
 grow_vertical = 2
 
-[node name="Editor" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1991500053]
+[node name="Editor" type="PopupMenu" parent="EditorBase/UILayer/TopBar/MenuBar" unique_id=1991500053]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 1
 item_0/text = "Quit"
 item_0/id = 0
 
-[node name="Project" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1888538547]
+[node name="Project" type="PopupMenu" parent="EditorBase/UILayer/TopBar/MenuBar" unique_id=1888538547]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 9
@@ -224,10 +208,10 @@ item_6/text = "Show in File Manager"
 item_6/id = 6
 item_7/id = 7
 item_7/separator = true
-item_8/text = "Play"
+item_8/text = "Playtest"
 item_8/id = 8
 
-[node name="Edit" type="PopupMenu" parent="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar" unique_id=1564193863]
+[node name="Edit" type="PopupMenu" parent="EditorBase/UILayer/TopBar/MenuBar" unique_id=1564193863]
 unique_name_in_owner = true
 theme_override_constants/v_separation = 12
 item_count = 15
@@ -262,6 +246,23 @@ item_13/id = 13
 item_14/text = "Buildings"
 item_14/id = 14
 
+[node name="PlaytestButton" type="Button" parent="EditorBase/UILayer/TopBar" unique_id=423892679]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_right = -8.0
+grow_horizontal = 0
+grow_vertical = 2
+tooltip_text = "Playtest"
+shortcut = SubResource("Shortcut_kqq58")
+icon = ExtResource("29_kqq58")
+icon_alignment = 1
+expand_icon = true
+
 [node name="EditingInterface" parent="EditorBase/UILayer" unique_id=1556320 instance=ExtResource("7_um8he")]
 unique_name_in_owner = true
 visible = false
@@ -290,7 +291,7 @@ use_native_dialog = true
 [connection signal="interface_requested" from="EditorBase/Menus" to="EditorBase/UILayer/EditingInterface" method="open_new_interface"]
 [connection signal="new_project_requested" from="EditorBase/Menus" to="EditorBase/ProjectOpener" method="open_new_project"]
 [connection signal="open_project_requested" from="EditorBase/Menus" to="EditorBase/ProjectOpener" method="open_existing_project"]
-[connection signal="play_requested" from="EditorBase/Menus" to="Playtest" method="start_playtest"]
+[connection signal="playtest_requested" from="EditorBase/Menus" to="Playtest" method="start_playtest"]
 [connection signal="quit_requested" from="EditorBase/Menus" to="." method="queue_free"]
 [connection signal="save_as_requested" from="EditorBase/Menus" to="EditorBase/SaveDialog" method="show"]
 [connection signal="save_requested" from="EditorBase/Menus" to="EditorBase/ProjectNode" method="save"]
@@ -336,9 +337,10 @@ use_native_dialog = true
 [connection signal="drag_ended" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_ended"]
 [connection signal="drag_moved" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_moved"]
 [connection signal="drag_started" from="EditorBase/WorldOverlayLayer/ArmyDragInput" to="EditorBase/ArmyDrag" method="_on_drag_started"]
-[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Editor" to="EditorBase/Menus" method="_on_editor_tab_id_pressed"]
-[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Project" to="EditorBase/Menus" method="_on_project_tab_id_pressed"]
-[connection signal="id_pressed" from="EditorBase/UILayer/TopBarContainer/SubViewport/Control/TopBar/MenuBar/Edit" to="EditorBase/Menus" method="_on_edit_tab_id_pressed"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBar/MenuBar/Editor" to="EditorBase/Menus" method="_on_editor_tab_id_pressed"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBar/MenuBar/Project" to="EditorBase/Menus" method="_on_project_tab_id_pressed"]
+[connection signal="id_pressed" from="EditorBase/UILayer/TopBar/MenuBar/Edit" to="EditorBase/Menus" method="_on_edit_tab_id_pressed"]
+[connection signal="pressed" from="EditorBase/UILayer/TopBar/PlaytestButton" to="Playtest" method="start_playtest"]
 [connection signal="army_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_selected_army"]
 [connection signal="army_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_selected_army"]
 [connection signal="army_list_item_hovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/ArmySelection" method="set_hovered_army"]
