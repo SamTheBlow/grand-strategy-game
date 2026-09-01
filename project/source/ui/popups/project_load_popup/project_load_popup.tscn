@@ -1,0 +1,137 @@
+[gd_scene format=3 uid="uid://df5yjnsebj5np"]
+
+[ext_resource type="Script" uid="uid://wirop5ecqfqx" path="res://source/ui/popups/project_load_popup/project_load_popup.gd" id="1_ol0qo"]
+[ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="2_pg7ao"]
+[ext_resource type="Script" uid="uid://3qlhfsucikm1" path="res://source/ui/popups/project_load_popup/project_option_container.gd" id="3_n54gi"]
+[ext_resource type="Script" uid="uid://drw167mtqrx2k" path="res://source/ui/popups/project_load_popup/builtin_project_container.gd" id="4_bu71t"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v45x7"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.41960785, 0.47843137, 0.6, 1)
+
+[node name="ProjectLoadPopup" type="VBoxContainer" unique_id=1798693260]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_ol0qo")
+
+[node name="ProjectImport" type="Node" parent="." unique_id=1002445738]
+script = ExtResource("2_pg7ao")
+
+[node name="ImportDialog" type="FileDialog" parent="." unique_id=835494328]
+title = "Open a File or Directory"
+initial_position = 1
+size = Vector2i(931, 500)
+ok_button_text = "Open"
+dialog_hide_on_ok = true
+file_mode = 3
+access = 2
+filters = PackedStringArray("*.json")
+show_hidden_files = true
+
+[node name="Control" type="Control" parent="." unique_id=2024614224]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+mouse_filter = 1
+
+[node name="ImportButton" type="Button" parent="Control" unique_id=1788060264]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.2
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_vertical = 2
+text = "Import projects..."
+
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=641701653]
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer" unique_id=599732011]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="SpacingLeft" type="Control" parent="ScrollContainer/HBoxContainer" unique_id=428287460]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer/HBoxContainer" unique_id=286436054]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SavedProjects" type="FoldableContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer" unique_id=167863130 node_paths=PackedStringArray("_container")]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v45x7")
+title = "Saved Games"
+script = ExtResource("3_n54gi")
+_container = NodePath("Contents")
+
+[node name="Contents" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/SavedProjects" unique_id=1064136895]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="BuiltInProjects" type="FoldableContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer" unique_id=793943355 node_paths=PackedStringArray("_container")]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v45x7")
+title = "Built-in Games"
+script = ExtResource("4_bu71t")
+_builtin_game_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
+_container = NodePath("Contents")
+
+[node name="Contents" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/BuiltInProjects" unique_id=79803823]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="ImportedProjects" type="FoldableContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer" unique_id=1915862831 node_paths=PackedStringArray("_container")]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v45x7")
+title = "Imported Games"
+script = ExtResource("3_n54gi")
+select_when_added = true
+_container = NodePath("Contents")
+
+[node name="Contents" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" unique_id=2005811480]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="SpacingRight" type="Control" parent="ScrollContainer/HBoxContainer" unique_id=886943950]
+custom_minimum_size = Vector2(4, 0)
+layout_mode = 2
+mouse_filter = 1
+
+[connection signal="project_imported" from="ProjectImport" to="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" method="add_option"]
+[connection signal="saved_game_imported" from="ProjectImport" to="ScrollContainer/HBoxContainer/VBoxContainer/SavedProjects" method="add_option"]
+[connection signal="dir_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_dir_selected"]
+[connection signal="file_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_file_selected"]
+[connection signal="files_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_files_selected"]
+[connection signal="pressed" from="Control/ImportButton" to="ImportDialog" method="show"]
+[connection signal="ready" from="ScrollContainer/HBoxContainer/VBoxContainer/SavedProjects" to="ScrollContainer/HBoxContainer/VBoxContainer/SavedProjects" method="hide"]
+[connection signal="selected" from="ScrollContainer/HBoxContainer/VBoxContainer/SavedProjects" to="." method="_set_selected_option"]
+[connection signal="selected" from="ScrollContainer/HBoxContainer/VBoxContainer/BuiltInProjects" to="." method="_set_selected_option"]
+[connection signal="ready" from="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" to="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" method="hide"]
+[connection signal="selected" from="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" to="." method="_set_selected_option"]
