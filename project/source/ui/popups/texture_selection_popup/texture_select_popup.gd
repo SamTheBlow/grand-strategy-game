@@ -44,9 +44,9 @@ func _ready() -> void:
 			continue
 
 		var texture_id: int = project_textures.new_id_from_file_path(file_path)
-		var texture_2d := project_textures.texture_from_id(texture_id)
-		if texture_2d != null:
-			IMPORTED_TEXTURES.list.get_or_add(file_path, texture_2d)
+		var texture: Texture2D = project_textures.texture_from_id(texture_id)
+		if texture != null:
+			IMPORTED_TEXTURES.list.get_or_add(file_path, texture)
 
 	for file in IMPORTED_TEXTURES.list:
 		_add_file(Tab.IMPORTED_TEXTURES, file)
@@ -56,15 +56,15 @@ func buttons() -> Array[String]:
 	return ["Cancel", "Confirm"]
 
 
-func _add_file(tab: Tab, file: String) -> void:
-	var project_texture: ProjectTexture
-	if file.begins_with(ExposedResources.INTERNAL_PREFIX):
-		project_texture = TextureInternal.new(file)
+func _add_file(tab: Tab, file_path: String) -> void:
+	var texture: Texture2D
+	if file_path.begins_with(ExposedResources.INTERNAL_PREFIX):
+		texture = TextureInternal.new(file_path).texture()
 	else:
-		project_texture = TextureFromFilePath.new(file, project_textures)
+		texture = ProjectTextures.texture_from_path(file_path)
 
-	_map[tab].add(project_texture)
-	_tab_item_list(tab).add_item("", project_texture.texture())
+	_map[tab].add(file_path)
+	_tab_item_list(tab).add_item("", texture)
 
 
 func _tab_item_list(tab: Tab) -> ItemList:
@@ -75,11 +75,6 @@ func _tab_item_list(tab: Tab) -> ItemList:
 			return _openmoji_list
 		_:
 			return _imported_textures_list
-
-
-## May return null.
-func _texture(tab: Tab, index: int) -> ProjectTexture:
-	return _map[tab].texture_with_index(index)
 
 
 func _on_button_pressed(button_id: int) -> void:
@@ -100,13 +95,14 @@ func _on_button_pressed(button_id: int) -> void:
 	if not selected_items.is_empty():
 		selected_texture_index = selected_items[0]
 
-	var selected_texture: ProjectTexture = (
-			_texture(current_tab, selected_texture_index)
+	var project_texture: ProjectTexture = (
+			_map[current_tab].new_project_texture(
+					selected_texture_index, project_textures
+			)
 	)
-	if selected_texture == null:
+	if project_texture == null:
 		return
-
-	texture_selected.emit(selected_texture)
+	texture_selected.emit(project_texture)
 
 
 func _on_texture_imported(path: String, texture: Texture2D) -> void:
@@ -117,38 +113,32 @@ func _on_texture_imported(path: String, texture: Texture2D) -> void:
 		return
 
 	imported_textures.list[path] = texture
-	_map[Tab.IMPORTED_TEXTURES].add(
-			TextureFromFilePath.new(path, project_textures)
-	)
+	_map[Tab.IMPORTED_TEXTURES].add(path)
 	_tab_item_list(Tab.IMPORTED_TEXTURES).add_item("", texture)
 
 
 func _on_item_activated(index: int, tab: Tab) -> void:
-	var project_texture: ProjectTexture = _texture(tab, index)
-	if project_texture != null:
-		texture_selected.emit(project_texture)
-		invalidated.emit()
+	var project_texture: ProjectTexture = (
+			_map[tab].new_project_texture(index, project_textures)
+	)
+	if project_texture == null:
+		return
+	texture_selected.emit(project_texture)
+	invalidated.emit()
 
 
 class IndexedTextures:
-	var _list: Array[ProjectTexture] = []
+	var _paths: Array[String] = []
 
-	## May return null.
-	func texture_with_index(index: int) -> ProjectTexture:
-		if index < 0 or index >= _list.size():
+	## Returns null if given index is invalid.
+	func new_project_texture(
+			index: int, project_textures: ProjectTextures
+	) -> ProjectTexture:
+		if index < 0 or index >= _paths.size():
 			return null
-		return _list[index]
+		if _paths[index].begins_with(ExposedResources.INTERNAL_PREFIX):
+			return TextureInternal.new(_paths[index])
+		return TextureFromFilePath.new(_paths[index], project_textures)
 
-	func add(texture: ProjectTexture) -> void:
-		_list.append(texture)
-
-	func has(path: String) -> bool:
-		for project_texture in _list:
-			if project_texture is not TextureFromFilePath:
-				continue
-			var texture_from_file_path := (
-					project_texture as TextureFromFilePath
-			)
-			if texture_from_file_path.absolute_path() == path:
-				return true
-		return false
+	func add(path: String) -> void:
+		_paths.append(path)
