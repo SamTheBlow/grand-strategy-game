@@ -7,7 +7,6 @@ signal game_started(project: GameProject)
 
 @export var networking_interface_scene: PackedScene
 
-var game_menu_state: GameSelectMenuState
 var players: Players
 var chat: Chat
 
@@ -31,7 +30,6 @@ func _ready() -> void:
 	chat.connect_chat_interface(_chat_interface)
 	chat.connect_networking_interface(networking_interface)
 
-	_games_interface.game_menu_state = game_menu_state
 	_player_list.players = players
 	_player_list.networking_interface = networking_interface
 

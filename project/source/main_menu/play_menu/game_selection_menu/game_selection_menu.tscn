@@ -1,11 +1,11 @@
 [gd_scene format=3 uid="uid://d0g80dnd658x4"]
 
 [ext_resource type="Script" uid="uid://wepngtpwwv2f" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.gd" id="1_6utl8"]
-[ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="2_qnng7"]
 [ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="3_dybr7"]
 [ext_resource type="Script" uid="uid://bmnjcs0d2w43v" path="res://source/main_menu/play_menu/game_selection_menu/game_list_builtin.gd" id="4_dld7m"]
 [ext_resource type="Script" uid="uid://bs21gg44tsgyu" path="res://source/main_menu/play_menu/authority_button.gd" id="5_uv408"]
 [ext_resource type="Script" uid="uid://vi2y5br3ui2a" path="res://source/main_menu/play_menu/game_selection_menu/game_list_node.gd" id="7_v8jf4"]
+[ext_resource type="Resource" path="res://resources/play_menu_settings.tres" id="8_pms"]
 
 [sub_resource type="StyleBoxLine" id="StyleBoxLine_5umsw"]
 color = Color(1, 1, 1, 1)
@@ -20,10 +20,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_6utl8")
-
-[node name="MenuSync" type="Node" parent="." unique_id=152363417]
-unique_name_in_owner = true
-script = ExtResource("2_qnng7")
+_play_menu_settings = ExtResource("8_pms")
 
 [node name="ProjectImport" type="Node" parent="." unique_id=2098814555]
 script = ExtResource("3_dybr7")
@@ -140,7 +137,6 @@ size_flags_vertical = 3
 theme_override_constants/separation = 8
 script = ExtResource("7_v8jf4")
 
-[connection signal="state_changed" from="MenuSync" to="." method="set_game_menu_state"]
 [connection signal="project_imported" from="ProjectImport" to="." method="_on_project_imported"]
 [connection signal="saved_game_imported" from="ProjectImport" to="." method="_on_project_imported"]
 [connection signal="dir_selected" from="ImportDialog" to="ProjectImport" method="_on_import_dialog_dir_selected"]

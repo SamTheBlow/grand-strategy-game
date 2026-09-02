@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://crnrdp1o8i2g6" path="res://source/chat/chat.gd" id="5_66lrq"]
 [ext_resource type="PackedScene" uid="uid://be0pqxrjfpukm" path="res://source/editor/editor.tscn" id="5_c0r5p"]
 [ext_resource type="Script" uid="uid://f5af8xum3u0l" path="res://source/networking/client_auth.gd" id="6_414lx"]
+[ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="7_gmsm"]
+[ext_resource type="Resource" path="res://resources/play_menu_settings.tres" id="8_pms"]
 
 [node name="Main" type="Node" unique_id=513245806]
 script = ExtResource("1_32ieg")
@@ -15,6 +17,10 @@ main_menu_scene = ExtResource("4_sn8ov")
 play_menu_scene = ExtResource("3_sb5ma")
 game_scene = ExtResource("3_hbhxv")
 editor_scene = ExtResource("5_c0r5p")
+
+[node name="GameSelectMenuSync" type="Node" parent="." unique_id=363008695]
+script = ExtResource("7_gmsm")
+_play_menu_settings = ExtResource("8_pms")
 
 [node name="Players" type="Node" parent="." unique_id=1384331104]
 script = ExtResource("4_w8utn")
@@ -24,6 +30,5 @@ script = ExtResource("5_66lrq")
 players = NodePath("../Players")
 
 [node name="NetworkAuthentication" type="Node" parent="." unique_id=629544023 node_paths=PackedStringArray("players")]
-unique_name_in_owner = true
 script = ExtResource("6_414lx")
 players = NodePath("../Players")

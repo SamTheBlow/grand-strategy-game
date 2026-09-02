@@ -32,10 +32,9 @@ var current_scene: Node:
 		_send_scene_change_to_clients()
 
 # Things that need to persist between scenes
-var game_menu_state := GameSelectMenuState.new()
-@onready var network_authentication := %NetworkAuthentication as ClientAuth
 @onready var players := $Players as Players
 @onready var chat := $Chat as Chat
+@onready var network_authentication := $NetworkAuthentication as ClientAuth
 
 ## This is to make sure that in online games,
 ## everything is properly synchronized before starting the game.
@@ -70,7 +69,6 @@ func enter_play_menu() -> void:
 		return
 
 	var play_menu := play_menu_scene.instantiate() as PlayMenu
-	play_menu.game_menu_state = game_menu_state
 	play_menu.players = players
 	play_menu.chat = chat
 	play_menu.exited.connect(enter_main_menu)

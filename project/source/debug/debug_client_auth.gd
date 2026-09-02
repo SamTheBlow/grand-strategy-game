@@ -1,12 +1,10 @@
 extends Node
 ## Prints useful messages related to client authentication.
 ##
-## To use, add this anywhere in a scene. Within that scene, there should be a
-## node of type [AuthBase] with the unique name "NetworkAuthentication".
-## Also make sure the scene's multiplayer API
-## exists and is a [SceneMultiplayer].
+## To use, add this node anywhere in a scene and assign the export node.
+## Make sure the scene's multiplayer API exists and is a [SceneMultiplayer].
 
-@onready var _auth_node := %NetworkAuthentication as AuthBase
+@export var _auth_node: AuthBase
 
 
 func _ready() -> void:

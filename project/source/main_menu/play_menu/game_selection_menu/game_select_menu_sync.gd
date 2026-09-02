@@ -1,130 +1,99 @@
 class_name GameSelectMenuSync
 extends Node
-## Synchronizes the contents of a [GameSelectionMenu] between network clients.
+## Synchronizes a [GameSelectMenuState] between network clients.
 ## When online, syncs...
 ## - The list of built-in games (including all of their metadata)
 ## - The list of imported games (idem)
 ## When leaving a server, resets the entire state to what it was before joining.
 
-## Emitted on clients when the client receives a new state from the server,
-## in which case this signal will pass a new instance of [GameSelectMenuState].
-## Also emitted on clients when the client disconnects from a server,
-## in which case this signal will pass a reference to the user's local state.
-signal state_changed(new_state: GameSelectMenuState)
+@export var _play_menu_settings: PlayMenuSettings
 
-## This is the state that's being used by the UI.
-## Changing something in this object will affect the visuals.
-var active_state: GameSelectMenuState:
-	set(value):
-		if active_state == value:
-			return
-
-		if active_state != null:
-			active_state.selected_game_changed.disconnect(_send_selection)
-			active_state.imported_game_added.disconnect(_send_imported_game)
-
-		active_state = value
-		_send_state()
-
-		active_state.selected_game_changed.connect(_send_selection)
-		active_state.imported_game_added.connect(_send_imported_game)
+## The state that's stored in the settings resource, for convenience.
+var _active_state: GameSelectMenuState
 
 ## This is the user's personal state.
 ## It stops being the active state when joining a server.
 ## It becomes the active state again when leaving a server.
-var local_state: GameSelectMenuState
-
-## A list of clients who have subscribed to synchronization.
-## Only used by the server.
-var _subscribed_clients: Array[int] = []
+var _local_state := GameSelectMenuState.new()
 
 
 func _ready() -> void:
-	# Connected clients immediately subscribe.
-	_subscribe_to_synchronization()
-	# Clients subscribe when they join a server.
-	multiplayer.connected_to_server.connect(_subscribe_to_synchronization)
+	_active_state = _play_menu_settings.game_select_menu_state
+	_active_state.selected_game_changed.connect(_send_selection)
+	_active_state.imported_game_added.connect(_send_imported_game)
 
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	_play_menu_settings.state_changed.connect(_on_state_changed)
+	_play_menu_settings.game_select_menu_state = _local_state
 
-	# The server unsubscribes clients when they disconnect.
-	multiplayer.peer_disconnected.connect(_remove_client)
-
-
-func _subscribe_to_synchronization() -> void:
-	if not MultiplayerUtils.has_authority(multiplayer):
-		_add_client.rpc_id(1)
+	multiplayer.peer_connected.connect(_send_state_to)
+	multiplayer.server_disconnected.connect(_restore_local_state)
 
 
-## The server subscribes the sender client to menu state changes
-## and immediately sends them the current state.
-@rpc("any_peer", "call_remote", "reliable")
-func _add_client() -> void:
+## The server sends the active state to given client.
+func _send_state_to(client_id: int) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-
-	var sender_id: int = multiplayer.get_remote_sender_id()
-	_subscribed_clients.append(sender_id)
-
-	_receive_state.rpc_id(sender_id, active_state.get_raw_state(false))
+	_receive_state.rpc_id(client_id, _active_state.get_raw_state(false))
 
 
-func _remove_client(client_id: int) -> void:
-	if MultiplayerUtils.is_server(multiplayer):
-		_subscribed_clients.erase(client_id)
-
-
-## The server sends the active state to all subscribed clients.
-func _send_state() -> void:
-	if not is_node_ready() or not MultiplayerUtils.is_server(multiplayer):
+## The server sends the active state to all clients.
+func _send_state_to_all() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
 		return
-
-	for client_id in _subscribed_clients:
-		_receive_state.rpc_id(client_id, active_state.get_raw_state(false))
+	_receive_state.rpc(_active_state.get_raw_state(false))
 
 
 ## Clients receive the entire state and apply it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_state(data: Dictionary) -> void:
+func _receive_state(raw_dict: Dictionary) -> void:
 	var new_state := GameSelectMenuState.new()
-	new_state.set_raw_state(data)
-	state_changed.emit(new_state)
+	new_state.set_raw_state(raw_dict)
+	_play_menu_settings.game_select_menu_state = new_state
 
 
-## The server sends the newly selected game to all subscribed clients.
+## The server sends the newly selected game to all clients.
 func _send_selection() -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-
-	for client_id in _subscribed_clients:
-		_receive_selection.rpc_id(client_id, active_state.selected_game_id())
+	_receive_selection.rpc(_active_state.selected_game_id())
 
 
-## The server sends the new imported game to all subscribed clients.
+## The server sends the new imported game to all clients.
 func _send_imported_game(meta_bundle: MetadataBundle) -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
-
-	for client_id in _subscribed_clients:
-		_receive_imported_game.rpc_id(client_id, meta_bundle.to_raw_data(false))
+	_receive_imported_game.rpc(meta_bundle.to_raw_data(false))
 
 
 ## Clients receive the newly selected game and apply it locally.
 @rpc("authority", "call_remote", "reliable")
 func _receive_selection(game_id: int) -> void:
-	if active_state.game_with_id(game_id) == null:
+	if _active_state.game_with_id(game_id) == null:
 		push_error("Received invalid game id: ", game_id)
 		return
 
-	active_state.set_selected_game_id(game_id)
+	_active_state.set_selected_game_id(game_id)
 
 
 ## Clients receive the new imported game and add it locally.
 @rpc("authority", "call_remote", "reliable")
 func _receive_imported_game(raw_data: Variant) -> void:
-	active_state.add_imported_game(MetadataBundle.from_raw_data(raw_data))
+	_active_state.add_imported_game(MetadataBundle.from_raw_data(raw_data))
 
 
-## Resets the menu's state on disconnected clients.
-func _on_server_disconnected() -> void:
-	state_changed.emit(local_state)
+## Restore the active state to what it was before joining the server.
+func _restore_local_state() -> void:
+	_play_menu_settings.game_select_menu_state = _local_state
+
+
+func _on_state_changed(
+		old_value: GameSelectMenuState, new_value: GameSelectMenuState
+) -> void:
+	old_value.selected_game_changed.disconnect(_send_selection)
+	old_value.imported_game_added.disconnect(_send_imported_game)
+
+	_active_state = new_value
+	_send_state_to_all()
+
+	new_value.selected_game_changed.connect(_send_selection)
+	new_value.imported_game_added.connect(_send_imported_game)
