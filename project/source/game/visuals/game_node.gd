@@ -193,10 +193,9 @@ func _on_save_requested() -> void:
 
 
 func _on_exit_to_main_menu_requested() -> void:
+	# Disconnect client from server so that they can quit on their own
 	if not MultiplayerUtils.has_authority(multiplayer):
-		if chat != null:
-			chat.send_system_message("Only the server can exit to main menu!")
-		return
+		multiplayer.multiplayer_peer.close()
 
 	exited.emit()
 
