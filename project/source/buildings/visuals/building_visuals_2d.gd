@@ -11,7 +11,7 @@ var building_data: BuildingData
 
 func _ready() -> void:
 	_refresh_sprite(building_data.texture)
-	building_data.texture_changed.connect(_refresh_sprite)
+	building_data.texture_changed.connect(_refresh_sprite.unbind(2))
 
 
 func _refresh_sprite(project_texture: ProjectTexture) -> void:

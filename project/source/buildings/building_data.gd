@@ -2,7 +2,7 @@ class_name BuildingData
 ## Provides information about a building.
 
 signal name_changed(new_value: String)
-signal texture_changed(new_value: ProjectTexture)
+signal texture_changed(old_texture: ProjectTexture, new_texture: ProjectTexture)
 signal defense_multiplier_changed(new_value: float)
 signal can_be_built_changed(new_value: bool)
 signal population_cost_changed(new_value: int)
@@ -19,8 +19,9 @@ var texture: ProjectTexture = ProjectTexture.none():
 	set(value):
 		if texture == value:
 			return
+		var old_texture: ProjectTexture = texture
 		texture = value
-		texture_changed.emit(texture)
+		texture_changed.emit(old_texture, texture)
 
 var defense_multiplier: float = 1.0:
 	set(value):

@@ -2,7 +2,7 @@ class_name WorldDecoration
 ## Represents an image that's displayed at some location on the world map.
 
 signal changed(this: WorldDecoration)
-signal texture_changed()
+signal texture_changed(old_texture: ProjectTexture, new_texture: ProjectTexture)
 signal flip_h_changed()
 signal flip_v_changed()
 signal position_changed()
@@ -14,8 +14,11 @@ const DEFAULT_TEXTURE: Texture2D = preload("uid://dlk4vjy5lgeuu")
 
 var texture: ProjectTexture = ProjectTexture.none():
 	set(value):
+		if texture == value:
+			return
+		var old_texture: ProjectTexture = texture
 		texture = value
-		texture_changed.emit()
+		texture_changed.emit(old_texture, texture)
 		changed.emit(self)
 
 var flip_h: bool = false:

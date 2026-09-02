@@ -29,7 +29,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 			texture_popup_requested.emit.bind(project.textures)
 	)
 	army.texture_changed.connect(
-			_on_army_texture_changed.bind(item_texture)
+			_on_army_texture_changed.bind(item_texture).unbind(2)
 	)
 
 	# Owner country

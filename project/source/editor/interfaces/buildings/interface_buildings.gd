@@ -24,7 +24,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 			texture_popup_requested.emit.bind(project.textures)
 	)
 	fortress_data.texture_changed.connect(
-			_on_fortress_texture_changed.bind(item_texture).unbind(1)
+			_on_fortress_texture_changed.bind(item_texture).unbind(2)
 	)
 
 	# Game settings -> Defense multiplier

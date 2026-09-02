@@ -32,6 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://c1ve6bswthkg" path="res://assets/formkit/play.svg" id="29_kqq58"]
 [ext_resource type="Script" uid="uid://r5jofu5xjlbp" path="res://source/ui/popups/popup_container.gd" id="31_c43yy"]
 [ext_resource type="Script" uid="uid://44aw64luxxq2" path="res://source/ui/popups/country_selection_popup/country_select_popup_factory.gd" id="38_csf"]
+[ext_resource type="Script" uid="uid://cwo325ktis5xk" path="res://source/game_project/project_textures/project_texture_cleanup.gd" id="39_pu"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
 script = ExtResource("8_u5rcp")
@@ -72,6 +73,9 @@ script = ExtResource("17_window_title")
 [node name="ProjectNode" type="Node" parent="EditorBase" unique_id=1928374659]
 script = ExtResource("18_project_node")
 
+[node name="ProjectTextureCleanup" type="Node" parent="EditorBase" unique_id=1928374660]
+script = ExtResource("39_pu")
+
 [node name="ProjectOpener" type="Node" parent="EditorBase" unique_id=1928374652]
 script = ExtResource("11_project_io")
 
@@ -80,7 +84,7 @@ script = ExtResource("15_decoration_input")
 _undo_redo = SubResource("Resource_ai428")
 _decoration_container = NodePath("../WorldLayer/WorldContainer/WorldVisuals2D/Decorations")
 
-[node name="DecorationScrollScale" type="Node" parent="EditorBase" unique_id=1928374660]
+[node name="DecorationScrollScale" type="Node" parent="EditorBase" unique_id=434929585]
 script = ExtResource("20_decoration_scroll_scale")
 _undo_redo = SubResource("Resource_ai428")
 
@@ -293,6 +297,7 @@ use_native_dialog = true
 [connection signal="selected_province_changed" from="EditorBase/WorldBridge" to="EditorBase/UILayer/EditingInterface" method="open_province_edit_interface"]
 [connection signal="is_dirty_changed" from="EditorBase/UndoRedo" to="EditorBase/WindowTitle" method="set_is_dirty"]
 [connection signal="has_valid_file_path_changed" from="EditorBase/ProjectNode" to="EditorBase/UILayer/TopBar/MenuBar" method="_on_project_path_validity_changed"]
+[connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/ProjectTextureCleanup" method="connect_project"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/ArmyDrag" method="set_project"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/UILayer/EditingInterface" method="set_project"]

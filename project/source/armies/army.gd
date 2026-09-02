@@ -8,7 +8,7 @@ class_name Army
 ##
 ## See also: [ArmyVisuals2D]
 
-signal texture_changed()
+signal texture_changed(old_texture: ProjectTexture, new_texture: ProjectTexture)
 signal allegiance_changed()
 ## Always emitted when the province changes.
 signal province_changed(this: Army)
@@ -23,8 +23,11 @@ var id: int = -1
 
 var texture: ProjectTexture = ProjectTexture.none():
 	set(value):
+		if texture == value:
+			return
+		var old_texture: ProjectTexture = texture
 		texture = value
-		texture_changed.emit()
+		texture_changed.emit(old_texture, texture)
 
 ## The [Country] in control of this army.
 ## This must not be null! If you want an army to be unaligned,

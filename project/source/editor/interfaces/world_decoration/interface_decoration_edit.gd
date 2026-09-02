@@ -33,7 +33,7 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 			texture_popup_requested.emit.bind(project.textures)
 	)
 	world_decoration.texture_changed.connect(
-			_on_texture_changed.bind(item_texture)
+			_on_texture_changed.bind(item_texture).unbind(2)
 	)
 
 	# Flip H

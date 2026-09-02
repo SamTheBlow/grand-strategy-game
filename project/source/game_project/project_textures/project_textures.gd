@@ -10,6 +10,10 @@ var _file_map: Dictionary[String, int] = {}
 ## Keeps track of files that are not internal resources.
 var _external_file_paths: Array[String] = []
 
+## Maps unique ids to their cached data.
+var _freed_textures: Dictionary[int, Texture2D] = {}
+var _freed_paths: Dictionary[int, String] = {}
+
 var _project_absolute_path: StringRef
 var _unique_id_system := UniqueIdSystem.new()
 
@@ -68,6 +72,12 @@ func new_id_from_file_path(absolute_file_path: String) -> int:
 	if _file_map.has(absolute_file_path):
 		return _file_map[absolute_file_path]
 
+	# If a texture using this file is currently cached, reuse that texture.
+	for id in _freed_paths:
+		if _freed_paths[id] == absolute_file_path:
+			restore_freed(id)
+			return id
+
 	var id: int = _unique_id_system.new_unique_id(false)
 	claim_id_with_file_path(id, absolute_file_path)
 	return id
@@ -89,6 +99,41 @@ func texture_from_id(id: int) -> Texture2D:
 
 	push_warning("There doesn't exist a texture with id: ", id)
 	return null
+
+
+## Removes given texture from the list,
+## but keeps its data in memory so it can be reused.
+## No effect if there is no texture with given id,
+## or if it's not an external texture.
+func free_external_texture(id: int) -> void:
+	if not _id_map.has(id):
+		return
+
+	var file_path: String = ""
+	for external_file_path in _external_file_paths:
+		if _file_map[external_file_path] == id:
+			file_path = external_file_path
+			break
+	if file_path == "":
+		return
+
+	_freed_textures[id] = _id_map[id]
+	_freed_paths[id] = file_path
+	_id_map.erase(id)
+	_file_map.erase(file_path)
+	_external_file_paths.erase(file_path)
+
+
+## Adds a freed external texture back into the list.
+## No effect if there is no freed texture with given id.
+func restore_freed(id: int) -> void:
+	if not _freed_textures.has(id):
+		return
+	_id_map[id] = _freed_textures[id]
+	_file_map[_freed_paths[id]] = id
+	_external_file_paths.append(_freed_paths[id])
+	_freed_textures.erase(id)
+	_freed_paths.erase(id)
 
 
 ## Returns a new copy of the list of files that are not internal resources.

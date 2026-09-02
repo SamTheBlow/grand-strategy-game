@@ -2,7 +2,7 @@ class_name ProjectMetadata
 ## Holds a [GameProject]'s metadata, namely its name and its icon.
 
 signal name_changed()
-signal icon_changed()
+signal icon_changed(old_texture: ProjectTexture, new_texture: ProjectTexture)
 ## Emitted when all values are changed at once.
 signal state_updated(this: ProjectMetadata)
 
@@ -20,8 +20,9 @@ var icon: ProjectTexture = ProjectTexture.none():
 	set(value):
 		if icon == value:
 			return
+		var old_texture: ProjectTexture = icon
 		icon = value
-		icon_changed.emit()
+		icon_changed.emit(old_texture, icon)
 
 
 ## Returns the default project name if the current project name is empty.

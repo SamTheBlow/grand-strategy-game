@@ -64,7 +64,7 @@ func _ready() -> void:
 		lod.changed.connect(_refresh_visibilities)
 
 	_refresh_army_texture()
-	army.texture_changed.connect(_refresh_army_texture)
+	army.texture_changed.connect(_refresh_army_texture.unbind(2))
 	_refresh_army_color()
 	army.allegiance_changed.connect(_refresh_army_color)
 	_refresh_army_size()

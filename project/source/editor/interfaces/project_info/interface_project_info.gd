@@ -21,7 +21,7 @@ func _ready() -> void:
 	item_project_icon.value = project.metadata.icon
 	item_project_icon.value_changed.connect(_on_item_icon_changed)
 	project.metadata.icon_changed.connect(
-			_on_project_icon_changed.bind(item_project_icon)
+			_on_project_icon_changed.bind(item_project_icon).unbind(2)
 	)
 
 	var item_game_state := ItemOptions.new()
