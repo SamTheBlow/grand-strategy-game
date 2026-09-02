@@ -19,88 +19,71 @@ var active_state: GameSelectMenuState:
 		if active_state == value:
 			return
 
-		_disconnect_signals()
-		active_state = value
-		_connect_signals()
+		if active_state != null:
+			active_state.selected_game_changed.disconnect(_send_selection)
+			active_state.imported_game_added.disconnect(_send_imported_game)
 
-		_send_active_state_to_clients()
+		active_state = value
+		_send_state()
+
+		active_state.selected_game_changed.connect(_send_selection)
+		active_state.imported_game_added.connect(_send_imported_game)
 
 ## This is the user's personal state.
 ## It stops being the active state when joining a server.
 ## It becomes the active state again when leaving a server.
 var local_state: GameSelectMenuState
 
+## A list of clients who have subscribed to synchronization.
+## Only used by the server.
+var _subscribed_clients: Array[int] = []
+
 
 func _ready() -> void:
-	multiplayer.connected_to_server.connect(_on_connected_to_server)
+	# Connected clients immediately subscribe.
+	_subscribe_to_synchronization()
+	# Clients subscribe when they join a server.
+	multiplayer.connected_to_server.connect(_subscribe_to_synchronization)
+
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	_request_active_state()
+
+	# The server unsubscribes clients when they disconnect.
+	multiplayer.peer_disconnected.connect(_remove_client)
 
 
-func _connect_signals() -> void:
-	if active_state == null:
-		return
-
-	if (
-			not active_state.selected_game_changed
-			.is_connected(_on_selected_game_changed)
-	):
-		active_state.selected_game_changed.connect(_on_selected_game_changed)
-	if (
-			not active_state.imported_game_added
-			.is_connected(_on_imported_game_added)
-	):
-		active_state.imported_game_added.connect(_on_imported_game_added)
+func _subscribe_to_synchronization() -> void:
+	if not MultiplayerUtils.has_authority(multiplayer):
+		_add_client.rpc_id(1)
 
 
-func _disconnect_signals() -> void:
-	if active_state == null:
-		return
-
-	if (
-			active_state.selected_game_changed
-			.is_connected(_on_selected_game_changed)
-	):
-		active_state.selected_game_changed.disconnect(_on_selected_game_changed)
-	if (
-			active_state.imported_game_added
-			.is_connected(_on_imported_game_added)
-	):
-		active_state.imported_game_added.disconnect(_on_imported_game_added)
-
-
-## Clients ask the server for the active state.
-## No effect if you're not a client.
-func _request_active_state() -> void:
-	if MultiplayerUtils.has_authority(multiplayer):
-		return
-
-	_receive_request_active_state.rpc_id(1)
-
-
-## On the server, sends the active state to all clients,
-## or to one given client.
-func _send_active_state_to_clients(multiplayer_id: int = -1) -> void:
-	if (
-			not is_node_ready()
-			or not MultiplayerUtils.is_server(multiplayer)
-			or active_state == null
-	):
-		return
-
-	if multiplayer_id == -1:
-		_receive_state.rpc(active_state.get_raw_state(false))
-	else:
-		_receive_state.rpc_id(multiplayer_id, active_state.get_raw_state(false))
-
-
-## The server receives a client's request to receive the active state.
+## The server subscribes the sender client to menu state changes
+## and immediately sends them the current state.
 @rpc("any_peer", "call_remote", "reliable")
-func _receive_request_active_state() -> void:
-	_send_active_state_to_clients(multiplayer.get_remote_sender_id())
+func _add_client() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	_subscribed_clients.append(sender_id)
+
+	_receive_state.rpc_id(sender_id, active_state.get_raw_state(false))
 
 
-## Updates the entire state on clients.
+func _remove_client(client_id: int) -> void:
+	if MultiplayerUtils.is_server(multiplayer):
+		_subscribed_clients.erase(client_id)
+
+
+## The server sends the active state to all subscribed clients.
+func _send_state() -> void:
+	if not is_node_ready() or not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	for client_id in _subscribed_clients:
+		_receive_state.rpc_id(client_id, active_state.get_raw_state(false))
+
+
+## Clients receive the entire state and apply it locally.
 @rpc("authority", "call_remote", "reliable")
 func _receive_state(data: Dictionary) -> void:
 	var new_state := GameSelectMenuState.new()
@@ -108,9 +91,27 @@ func _receive_state(data: Dictionary) -> void:
 	state_changed.emit(new_state)
 
 
-## Updates the selected game on clients.
+## The server sends the newly selected game to all subscribed clients.
+func _send_selection() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	for client_id in _subscribed_clients:
+		_receive_selection.rpc_id(client_id, active_state.selected_game_id())
+
+
+## The server sends the new imported game to all subscribed clients.
+func _send_imported_game(meta_bundle: MetadataBundle) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	for client_id in _subscribed_clients:
+		_receive_imported_game.rpc_id(client_id, meta_bundle.to_raw_data(false))
+
+
+## Clients receive the newly selected game and apply it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_selected_game_id(game_id: int) -> void:
+func _receive_selection(game_id: int) -> void:
 	if active_state.game_with_id(game_id) == null:
 		push_error("Received invalid game id: ", game_id)
 		return
@@ -118,29 +119,10 @@ func _receive_selected_game_id(game_id: int) -> void:
 	active_state.set_selected_game_id(game_id)
 
 
-## Adds a new imported game to the list on clients.
+## Clients receive the new imported game and add it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_new_imported_game(meta_bundle_raw_data: Variant) -> void:
-	active_state.add_imported_game(
-			MetadataBundle.from_raw_data(meta_bundle_raw_data)
-	)
-
-
-## On the server, sends the newly selected game to all clients.
-func _on_selected_game_changed() -> void:
-	if MultiplayerUtils.is_server(multiplayer):
-		_receive_selected_game_id.rpc(active_state.selected_game_id())
-
-
-## On the server, sends the new imported game to all clients.
-func _on_imported_game_added(meta_bundle: MetadataBundle) -> void:
-	if MultiplayerUtils.is_server(multiplayer):
-		_receive_new_imported_game.rpc(meta_bundle.to_raw_data(false))
-
-
-## Clients ask the server for the active state when they first join.
-func _on_connected_to_server() -> void:
-	_request_active_state()
+func _receive_imported_game(raw_data: Variant) -> void:
+	active_state.add_imported_game(MetadataBundle.from_raw_data(raw_data))
 
 
 ## Resets the menu's state on disconnected clients.

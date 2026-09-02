@@ -13,89 +13,74 @@ extends Node
 signal sync_finished()
 
 var _player_assignment: PlayerAssignment
+var _subscribed_clients: Array[int] = []
 
 
 func _init(player_assignment: PlayerAssignment) -> void:
 	_player_assignment = player_assignment
-	_player_assignment.player_assigned.connect(_on_player_assigned)
 
 
 func _enter_tree() -> void:
 	# The node needs to have the same name across all clients,
 	# otherwise synchronization will fail.
-	name = "PlayerAssignmentSync"
+	name = &"PlayerAssignmentSync"
 
 
 func _ready() -> void:
-	# Clients ask the server for all the info.
-	if MultiplayerUtils.is_online(multiplayer) and not multiplayer.is_server():
-		_send_all_assignations.rpc_id(1)
+	# The server begins listening to changes.
+	if MultiplayerUtils.is_server(multiplayer):
+		_player_assignment.player_assigned.connect(_send_player_assignation)
+
+	# Clients inform the server that they are ready.
+	if not MultiplayerUtils.has_authority(multiplayer):
+		_add_client.rpc_id(1)
 
 
-## The server sends all existing assignations to whoever requested it.
+## The server subscribes the sender client to new assignations
+## and immediately sends them all current assignations.
 @rpc("any_peer", "call_remote", "reliable")
-func _send_all_assignations() -> void:
+func _add_client() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	var sender_id: int = multiplayer.get_remote_sender_id()
+	_subscribed_clients.append(sender_id)
+
 	var player_node_names: Array = []
 	var game_player_ids: Array = []
 	for assigned_player in _player_assignment.list:
-		if assigned_player == null:
+		if (
+				assigned_player == null
+				or _player_assignment.list[assigned_player] is not GamePlayer
+		):
 			continue
-
-		if _player_assignment.list[assigned_player] is not GamePlayer:
-			continue
-
 		player_node_names.append(assigned_player.name)
 		game_player_ids.append(_player_assignment.list[assigned_player].id)
-
-	_receive_all_assignations.rpc_id(
-			multiplayer.get_remote_sender_id(),
-			player_node_names,
-			game_player_ids
-	)
+	_receive_all.rpc_id(sender_id, player_node_names, game_player_ids)
 
 
-## Clients receive all existing player asignations and apply them locally.
+## The client receives all current assignations and applies them locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_all_assignations(
-		player_node_names: Array, game_player_ids: Array
-) -> void:
+func _receive_all(player_node_names: Array, game_player_ids: Array) -> void:
 	if player_node_names.size() != game_player_ids.size():
-		push_error(
-				"player_node_names and game_player_ids "
-				+ "don't have the same size."
-		)
+		push_error("Array size mismatch.")
 		return
 
 	_player_assignment.reset()
-
-	var number_of_assignations: int = player_node_names.size()
-	for i in number_of_assignations:
-		_receive_player_assignation(player_node_names[i], game_player_ids[i])
+	for i in player_node_names.size():
+		_receive_one(player_node_names[i], game_player_ids[i])
 
 	sync_finished.emit()
 
 
-## Clients receive a new assignation and apply it locally.
+## The server sends a player assignation to all subscribed clients.
+func _send_player_assignation(player: Player) -> void:
+	var game_player_id: int = _player_assignment.list[player].id
+	for client_id in _subscribed_clients:
+		_receive_one.rpc_id(client_id, player.name, game_player_id)
+
+
+## Clients receive a player assignation and apply it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_player_assignation(
-		player_node_name: String, game_player_id: int
-) -> void:
+func _receive_one(player_node_name: String, game_player_id: int) -> void:
 	_player_assignment.raw_assign_player_to(player_node_name, game_player_id)
-
-
-## The server informs all clients of the new assignation.
-func _on_player_assigned(player: Player) -> void:
-	if not is_node_ready() or not MultiplayerUtils.is_server(multiplayer):
-		return
-
-	# Prevent crash just in case
-	if not _player_assignment.list.has(player):
-		push_error(
-				"Received new player assignation, but "
-				+ "the player isn't on the assignation list."
-		)
-		return
-
-	_receive_player_assignation.rpc(
-			player.name, _player_assignment.list[player].id
-	)

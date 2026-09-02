@@ -1,11 +1,10 @@
 class_name AutoArrowSync
 extends Node
-## Listens to [AutoArrow]s being added or removed in given [Countries].
-## The server sends changes to all clients, and clients update accordingly.
-# TODO If arrows are added/removed before this node is ready on a client,
-# the client will never receive the info.
+## The server listens to [AutoArrow]s being added/removed in given [Countries]
+## and sends them to all subscribed clients. Clients update accordingly.
 
 var _countries: Countries
+var _subscribed_clients: Array[int] = []
 
 
 func _init(countries: Countries) -> void:
@@ -19,48 +18,53 @@ func _enter_tree() -> void:
 
 
 func _ready() -> void:
-	for country in _countries.list:
-		_connect_country_signals(country)
-	_countries.added.connect(_connect_country_signals)
+	# The server begins listening to changes.
+	if MultiplayerUtils.is_server(multiplayer):
+		for country in _countries.list:
+			_connect_country(country)
+		_countries.added.connect(_connect_country)
+		_countries.removed.connect(_disconnect_country)
+
+	# Clients inform the server that they are ready.
+	if not MultiplayerUtils.has_authority(multiplayer):
+		_add_client.rpc_id(1)
 
 
-func _connect_country_signals(country: Country) -> void:
-	country.auto_arrows.arrow_added.connect(
-			_on_auto_arrow_added.bind(country.id))
-	country.auto_arrows.arrow_removed.connect(
-			_on_auto_arrow_removed.bind(country.id)
-	)
+func _connect_country(country: Country) -> void:
+	country.auto_arrows.arrow_added.connect(_send_add.bind(country.id))
+	country.auto_arrows.arrow_removed.connect(_send_remove.bind(country.id))
 
 
-## The server sends the info to clients.
-func _on_auto_arrow_added(auto_arrow: AutoArrow, country_id: int) -> void:
+func _disconnect_country(country: Country) -> void:
+	country.auto_arrows.arrow_added.disconnect(_send_add)
+	country.auto_arrows.arrow_removed.disconnect(_send_remove)
+
+
+## The server subscribes the sender client to arrow changes.
+@rpc("any_peer", "call_remote", "reliable")
+func _add_client() -> void:
 	if not MultiplayerUtils.is_server(multiplayer):
 		return
 
-	# Make sure the country still exists.
-	if _countries.map.get(country_id) == null:
-		return
-
-	_receive_auto_arrow_added.rpc(auto_arrow.to_raw_data(), country_id)
+	_subscribed_clients.append(multiplayer.get_remote_sender_id())
 
 
-## The server sends the info to clients.
-func _on_auto_arrow_removed(auto_arrow: AutoArrow, country_id: int) -> void:
-	if not MultiplayerUtils.is_server(multiplayer):
-		return
-
-	# Make sure the country still exists.
-	if _countries.map.get(country_id) == null:
-		return
-
-	_receive_auto_arrow_removed.rpc(auto_arrow.to_raw_data(), country_id)
+## The server sends an added arrow to all subscribed clients.
+func _send_add(auto_arrow: AutoArrow, country_id: int) -> void:
+	for client_id in _subscribed_clients:
+		_receive_add.rpc_id(client_id, auto_arrow.to_raw_data(), country_id)
 
 
-## Clients receive the info from the server.
+## The server sends a removed arrow to all subscribed clients.
+func _send_remove(auto_arrow: AutoArrow, country_id: int) -> void:
+	for client_id in _subscribed_clients:
+		_receive_remove.rpc_id(client_id, auto_arrow.to_raw_data(), country_id)
+
+
+## Clients receive an added arrow and add it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_auto_arrow_added(arrow_data: Variant, country_id: int) -> void:
+func _receive_add(arrow_data: Variant, country_id: int) -> void:
 	var country: Country = _countries.map.get(country_id)
-
 	if country == null:
 		push_error("Country sent by the server doesn't exist.")
 		return
@@ -68,11 +72,10 @@ func _receive_auto_arrow_added(arrow_data: Variant, country_id: int) -> void:
 	country.auto_arrows.add(AutoArrow.from_raw_data(arrow_data))
 
 
-## Clients receive the info from the server.
+## Clients receive a removed arrow and remove it locally.
 @rpc("authority", "call_remote", "reliable")
-func _receive_auto_arrow_removed(arrow_data: Variant, country_id: int) -> void:
+func _receive_remove(arrow_data: Variant, country_id: int) -> void:
 	var country: Country = _countries.map.get(country_id)
-
 	if country == null:
 		push_error("Country sent by the server doesn't exist.")
 		return
