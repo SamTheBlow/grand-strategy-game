@@ -146,10 +146,10 @@ func _receive_add_player_and_assign(game_player_id: int) -> void:
 
 
 func _on_game_error(error_message: String) -> void:
-	if chat == null:
+	if chat == null or not MultiplayerUtils.has_authority(multiplayer):
 		return
 	chat.send_global_message(
-			"[color=dark_red]Fatal error: \"" + error_message + "\"\n"
+			"[color=dark_red]Fatal error: \"%s\"\n" % error_message
 			+ "The game has stopped and cannot continue.[/color]"
 	)
 
@@ -160,14 +160,14 @@ func _on_game_started() -> void:
 
 
 func _on_game_over(winning_country: Country) -> void:
-	if chat == null:
+	if chat == null or not MultiplayerUtils.has_authority(multiplayer):
 		return
 	if winning_country == null:
 		chat.send_global_message("The game is over!")
 	else:
 		chat.send_global_message(
-				"The game is over! The winner is "
-				+ winning_country.name_or_default() + "."
+				"The game is over! The winner is %s."
+				% winning_country.name_or_default()
 		)
 	chat.send_global_message("You can continue playing if you want.")
 
