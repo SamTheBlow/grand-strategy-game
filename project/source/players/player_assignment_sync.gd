@@ -28,12 +28,27 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	# The server begins listening to changes.
-	if MultiplayerUtils.is_server(multiplayer):
-		_player_assignment.player_assigned.connect(_send_player_assignation)
+	_start_listening()
+	multiplayer.connected_to_server.connect(_start_listening)
+	multiplayer.server_disconnected.connect(_stop_listening)
 
 	# Clients inform the server that they are ready.
 	if not MultiplayerUtils.has_authority(multiplayer):
 		_add_client.rpc_id(1)
+
+
+func _start_listening() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	_player_assignment.player_assigned.connect(_send_assignation)
+
+
+func _stop_listening() -> void:
+	# Can't use MultiplayerUtils.is_server because we've already disconnected.
+	# Instead check if the signal is connected,
+	# which can only be true if we were the server.
+	if _player_assignment.player_assigned.is_connected(_send_assignation):
+		_player_assignment.player_assigned.disconnect(_send_assignation)
 
 
 ## The server subscribes the sender client to new assignations
@@ -74,7 +89,7 @@ func _receive_all(player_node_names: Array, game_player_ids: Array) -> void:
 
 
 ## The server sends a player assignation to all subscribed clients.
-func _send_player_assignation(player: Player) -> void:
+func _send_assignation(player: Player) -> void:
 	var game_player_id: int = _player_assignment.list[player].id
 	for client_id in _subscribed_clients:
 		_receive_one.rpc_id(client_id, player.name, game_player_id)

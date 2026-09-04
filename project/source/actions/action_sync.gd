@@ -19,12 +19,27 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	# The server begins listening to changes.
-	if MultiplayerUtils.is_server(multiplayer):
-		_game.action_applied.connect(_send_action)
+	_start_listening()
+	multiplayer.connected_to_server.connect(_start_listening)
+	multiplayer.server_disconnected.connect(_stop_listening)
 
 	# Clients inform the server that they are ready.
 	if not MultiplayerUtils.has_authority(multiplayer):
 		_add_client.rpc_id(1)
+
+
+func _start_listening() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	_game.action_applied.connect(_send_action)
+
+
+func _stop_listening() -> void:
+	# Can't use MultiplayerUtils.is_server because we've already disconnected.
+	# Instead check if the signal is connected,
+	# which can only be true if we were the server.
+	if _game.action_applied.is_connected(_send_action):
+		_game.action_applied.disconnect(_send_action)
 
 
 ## The server subscribes the sender client to new actions.

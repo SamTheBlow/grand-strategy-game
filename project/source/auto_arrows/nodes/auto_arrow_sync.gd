@@ -19,15 +19,34 @@ func _enter_tree() -> void:
 
 func _ready() -> void:
 	# The server begins listening to changes.
-	if MultiplayerUtils.is_server(multiplayer):
-		for country in _countries.list:
-			_connect_country(country)
-		_countries.added.connect(_connect_country)
-		_countries.removed.connect(_disconnect_country)
+	_start_listening()
+	multiplayer.connected_to_server.connect(_start_listening)
+	multiplayer.server_disconnected.connect(_stop_listening)
 
 	# Clients inform the server that they are ready.
 	if not MultiplayerUtils.has_authority(multiplayer):
 		_add_client.rpc_id(1)
+
+
+func _start_listening() -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+	for country in _countries.list:
+		_connect_country(country)
+	_countries.added.connect(_connect_country)
+	_countries.removed.connect(_disconnect_country)
+
+
+func _stop_listening() -> void:
+	# Can't use MultiplayerUtils.is_server because we've already disconnected.
+	# Instead check if the signal is connected,
+	# which can only be true if we were the server.
+	if not _countries.added.is_connected(_connect_country):
+		return
+	for country in _countries.list:
+		_disconnect_country(country)
+	_countries.added.disconnect(_connect_country)
+	_countries.removed.disconnect(_disconnect_country)
 
 
 func _connect_country(country: Country) -> void:
