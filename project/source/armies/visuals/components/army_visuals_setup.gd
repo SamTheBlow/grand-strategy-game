@@ -104,6 +104,10 @@ func _remove_all_armies() -> void:
 
 
 func _assign_to_province(army: Army) -> void:
+	# Return early if army is no longer in the list (e.g. destroyed in combat)
+	if _armies.army_from_id(army.id) == null:
+		return
+
 	var province_visuals: ProvinceVisuals2D = (
 			_provinces_container.visuals_of(army.province_id())
 	)
