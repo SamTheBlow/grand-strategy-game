@@ -22,7 +22,8 @@ func _init(game: Game, country: Country) -> void:
 func add(
 		country: Country,
 		relationship_data: Dictionary = {},
-		available_actions: Array[DiplomacyAction] = []
+		available_actions: Array[DiplomacyAction] = [],
+		actions_available_from_start: bool = false
 ) -> void:
 	if list.has(country):
 		push_error("This country already has relationship data.")
@@ -41,7 +42,8 @@ func add(
 	list[country] = relationship
 	relationship_created.emit(relationship)
 	relationship.initialize_actions(
-			_game.turn.current_turn(), available_actions
+			available_actions,
+			1 if actions_available_from_start else _game.turn.current_turn()
 	)
 
 

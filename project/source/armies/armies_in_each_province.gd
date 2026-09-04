@@ -33,12 +33,9 @@ func move_army(army: Army, new_index: int) -> void:
 
 	armies_in_province.ordered_list.erase(army)
 	armies_in_province.ordered_list.insert(new_index, army)
-
-	# Update the values in the mapped list
-	for i: int in range(
+	armies_in_province.update_index_values(
 			mini(old_index, new_index), maxi(old_index, new_index) + 1
-	):
-		armies_in_province.mapped_list[armies_in_province.ordered_list[i]] = i
+	)
 
 	army_reordered.emit(army, new_index)
 
@@ -91,5 +88,11 @@ class ArmiesInProvince:
 	var ordered_list: Array[Army] = []
 
 	func remove(army: Army) -> void:
+		var removed_index: int = mapped_list[army]
 		mapped_list.erase(army)
 		ordered_list.erase(army)
+		update_index_values(removed_index, ordered_list.size())
+
+	func update_index_values(start_index: int, end_index: int) -> void:
+		for i: int in range(start_index, end_index):
+			mapped_list[ordered_list[i]] = i

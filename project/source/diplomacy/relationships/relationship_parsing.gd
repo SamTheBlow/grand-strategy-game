@@ -102,7 +102,9 @@ static func _load_relationship_from_raw_data(
 			available_actions.append(new_action)
 
 	# Add the new relationship to the list
-	relationships.add(recipient_country, relationship_data, available_actions)
+	relationships.add(
+			recipient_country, relationship_data, available_actions, true
+	)
 
 
 static func to_raw_array(relationships: DiplomacyRelationships) -> Array:

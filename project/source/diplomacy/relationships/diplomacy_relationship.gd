@@ -107,11 +107,11 @@ func is_fighting() -> bool:
 
 ## Call this once after loading to initialize the list of available actions.
 func initialize_actions(
-		current_turn: int,
-		starting_available_actions: Array[DiplomacyAction] = []
+		starting_available_actions: Array[DiplomacyAction],
+		turn_it_became_available: int
 ) -> void:
 	_available_actions = starting_available_actions
-	_update_available_actions(current_turn)
+	_update_available_actions(turn_it_became_available)
 
 
 # TODO sort the actions in the right order
@@ -157,9 +157,7 @@ func apply_action_data(data: Dictionary, current_turn: int) -> void:
 	_update_available_actions(current_turn)
 
 
-## Needs the current turn for providing time stamps in new actions.
-## Some actions may only be performed after some number of turns.
-func _update_available_actions(current_turn: int) -> void:
+func _update_available_actions(turn_it_became_available: int) -> void:
 	var new_available_actions: Array[DiplomacyAction] = []
 
 	# It's important here that we iterate through
@@ -224,7 +222,7 @@ func _update_available_actions(current_turn: int) -> void:
 		else:
 			new_available_actions.append(DiplomacyAction.new(
 					diplomacy_actions.action_from_id(action_id),
-					current_turn
+					turn_it_became_available
 			))
 		used_ids.append(action_id)
 
