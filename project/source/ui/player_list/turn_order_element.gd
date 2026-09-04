@@ -1,18 +1,8 @@
-@tool
 class_name TurnOrderElement
 extends Control
-## Class for a [Player] as displayed in the [TurnOrderList] interface.
-## This interface allows the user to rename the player,
-## and to turn it into either a local human or an AI.
-## It also shows with an arrow if it's this player's turn to play.
-## The circular buttons only appear when the mouse hovers over the box
-## (except when renaming a player).
-## [br][br]
-## To use, you'll need to call "init()" and set the "player" property.
-## You also have to set the "turn" property if you want the arrow to appear.
-## [br][br]
-## For this to work, you need to make sure that the mouse filter
-## in the scene's Control nodes is set to "Pass".
+## Displays information about given [GamePlayer].
+## Allows the user to rename the player and to toggle between human and AI.
+## If applicable, shows with an arrow if it's this player's turn to play.
 
 signal new_player_requested(game_player: GamePlayer)
 signal delete_pressed(game_player: GamePlayer)
@@ -26,90 +16,86 @@ var player: GamePlayer:
 	set(value):
 		if player != null:
 			player.human_status_changed.disconnect(_on_human_status_changed)
-			player.username_changed.disconnect(_on_username_changed)
+			player.username_changed.disconnect(_refresh_username_label)
+			player.player_human_changed.disconnect(_on_human_status_changed)
 			if player.is_human and player.player_human != null:
-				player.player_human.sync_finished.disconnect(
-						_on_player_sync_finished
-				)
+				player.player_human.sync_finished.disconnect(_refresh)
+				player.player_human.multiplayer_id_changed.disconnect(_refresh)
 
 		player = value
-		_update_appearance()
+		_refresh()
 
-		if player != null:
-			player.human_status_changed.connect(_on_human_status_changed)
-			player.username_changed.connect(_on_username_changed)
-			if player.is_human and player.player_human != null:
-				player.player_human.sync_finished.connect(
-						_on_player_sync_finished
-				)
+		player.human_status_changed.connect(_on_human_status_changed.unbind(1))
+		player.username_changed.connect(_refresh_username_label.unbind(1))
+		player.player_human_changed.connect(_on_human_status_changed)
 
-## May be null.
+## May be null,
+## in which case the arrow that shows whose turn it is will not appear.
 var turn: GameTurn = null:
 	set(value):
 		if turn != null:
-			turn.playing_country_changed.disconnect(_update_turn_indicator)
+			turn.playing_country_changed.disconnect(_refresh_turn_arrow)
 
 		turn = value
-		_update_turn_indicator()
+		_refresh_turn_arrow()
 
 		if turn != null:
-			turn.playing_country_changed.connect(_update_turn_indicator)
+			turn.playing_country_changed.connect(_refresh_turn_arrow.unbind(1))
 
 ## This is for when you want to prevent the user from removing
 ## a [Player] when it's their last local player.
 var is_the_only_local_human: bool = false:
 	set(value):
 		is_the_only_local_human = value
-		_update_remove_button_visibility()
+		if is_node_ready():
+			_refresh_remove_button()
 
 var _is_renaming: bool = false:
 	set(value):
 		_is_renaming = value
-		username_label.visible = not _is_renaming
-		username_edit.visible = _is_renaming
+		_username_label.visible = not _is_renaming
+		_username_edit.visible = _is_renaming
 		if _is_renaming:
-			username_line_edit.text = ""
-			username_line_edit.grab_focus()
+			_username_line_edit.text = ""
+			_username_line_edit.grab_focus()
 		else:
 			_submit_username_change()
-		circle_buttons.visible = _is_renaming or _is_mouse_inside()
-		_update_button_visibility()
+		_circle_buttons.visible = _is_renaming or _is_mouse_inside()
+		_refresh_buttons()
 
-@onready var color_rect := $ColorRect as ColorRect
-@onready var arrow_container := %ArrowContainer as Control
+@onready var _color_rect := %ColorRect as ColorRect
 @onready var _arrow_label := %ArrowLabel as Label
-@onready var username_label := %UsernameLabel as Label
-@onready var username_edit := %UsernameEdit as Control
-@onready var username_line_edit := %UsernameLineEdit as LineEdit
-@onready var _online_status := %OnlineStatus as Control
-@onready var circle_buttons := %CircleButtons as Control
-@onready var add_button := %AddButton as Control
-@onready var remove_button := %RemoveButton as Control
-@onready var rename_button := %RenameButton as Control
-@onready var confirm_button := %ConfirmButton as Control
+@onready var _username_label := %UsernameLabel as Label
+@onready var _username_edit := %UsernameEdit as Control
+@onready var _username_line_edit := %UsernameLineEdit as LineEdit
+@onready var _remote_indicator := %RemoteIndicator as Control
+@onready var _circle_buttons := %CircleButtons as Control
+@onready var _add_button := %AddButton as Control
+@onready var _remove_button := %RemoveButton as Control
+@onready var _rename_button := %RenameButton as Control
+@onready var _confirm_button := %ConfirmButton as Control
 
 
 func _ready() -> void:
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	username_label.visible = true
-	username_edit.visible = false
-	_update_turn_indicator()
-	_update_appearance()
-	_update_button_visibility()
+	_username_label.visible = true
+	_username_edit.visible = false
+	_refresh()
 
-
-func _process(_delta: float) -> void:
-	if _is_renaming and Input.is_action_just_pressed("submit"):
-		_is_renaming = false
+	multiplayer.connected_to_server.connect(_refresh)
+	multiplayer.server_disconnected.connect(_refresh)
 
 
 func _input(event: InputEvent) -> void:
-	if (not _is_renaming) or (not event is InputEventMouseButton):
+	if event.is_action_pressed(&"submit") and _is_renaming:
+		_is_renaming = false
+
+	if not _is_renaming or event is not InputEventMouseButton:
 		return
+	var event_mouse_button := event as InputEventMouseButton
 
 	if (
-			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
-			and (event as InputEventMouseButton).pressed
+			event_mouse_button.button_index == MOUSE_BUTTON_LEFT
+			and event_mouse_button.pressed
 			and not _is_mouse_inside()
 	):
 		_is_renaming = false
@@ -120,104 +106,89 @@ func init() -> void:
 	custom_minimum_size.y = ($Contents as Control).size.y
 
 
-func _update_shown_username() -> void:
-	if not player:
-		push_error("Player was not initialized")
-		username_label.text = ""
-		return
-
-	username_label.text = player.username_or_default()
-	if not player.is_human:
-		username_label.text += " (AI)"
-	if player.is_spectating():
-		username_label.text += " (Spectator)"
-
-
-func _update_turn_indicator(_country: Country = null) -> void:
+func _refresh() -> void:
 	if not is_node_ready():
 		return
 
-	if (
-			turn != null and player != null
-			and turn.playing_country() == player.playing_country
-	):
+	_refresh_username_label()
+	_refresh_turn_arrow()
+	_refresh_buttons()
+	_refresh_remote_indicator()
+
+	if player.is_human:
+		_username_label.add_theme_color_override(
+				&"font_color", username_color_human
+		)
+		_color_rect.color = bg_color_human
+	else:
+		_username_label.add_theme_color_override(
+				&"font_color", username_color_ai
+		)
+		_color_rect.color = bg_color_ai
+
+
+func _refresh_username_label() -> void:
+	if not is_node_ready():
+		return
+
+	_username_label.text = player.username_or_default()
+	if not player.is_human:
+		_username_label.text += " (AI)"
+	if player.is_spectating():
+		_username_label.text += " (Spectator)"
+
+
+func _refresh_turn_arrow() -> void:
+	if not is_node_ready():
+		return
+
+	if turn != null and turn.playing_country() == player.playing_country:
 		_arrow_label.text = "->"
 	else:
 		_arrow_label.text = ""
 
 
-func _update_appearance() -> void:
+func _refresh_buttons() -> void:
 	if not is_node_ready():
 		return
 
-	_update_shown_username()
-
-	if (not player) or player.is_human:
-		username_label.add_theme_color_override(
-				"font_color", username_color_human
-		)
-		color_rect.color = bg_color_human
-	else:
-		username_label.add_theme_color_override(
-				"font_color", username_color_ai
-		)
-		color_rect.color = bg_color_ai
-
-	_online_status.visible = (
-			player and player.player_human and player.player_human.is_remote()
-	)
-
-	_update_button_visibility()
+	_add_button.visible = not player.is_human and not _is_renaming
+	_refresh_remove_button()
+	_rename_button.visible = not _is_renaming and _can_edit()
+	_confirm_button.visible = _is_renaming
 
 
-func _update_button_visibility() -> void:
-	if not is_node_ready():
-		return
-
-	add_button.visible = (
-			player
-			and not player.is_human
-			and not _is_renaming
-	)
-	_update_remove_button_visibility()
-	rename_button.visible = (not _is_renaming) and _can_edit()
-	confirm_button.visible = _is_renaming
-
-
-func _update_remove_button_visibility() -> void:
-	if not remove_button:
-		return
-
-	remove_button.visible = (
-			player
-			and player.is_human
+func _refresh_remove_button() -> void:
+	_remove_button.visible = (
+			player.is_human
 			and _can_edit()
 			and not is_the_only_local_human
 			and not _is_renaming
 	)
 
 
+func _refresh_remote_indicator() -> void:
+	_remote_indicator.visible = (
+			player.player_human != null and player.player_human.is_remote()
+	)
+
+
 ## Returns true if you're able to edit this player.
-## When connected to a server, you only have control over local players.
-## If you're the server, you have full control over everything.
+## The server has full control over all players,
+## while clients only have control over local players.
 func _can_edit() -> bool:
 	return (
-			not MultiplayerUtils.is_online(multiplayer)
-			or multiplayer.is_server()
+			MultiplayerUtils.has_authority(multiplayer)
 			or (
-					player
-					and player.player_human
-					and (not player.player_human.is_remote())
+					player.is_human
+					and player.player_human != null
+					and not player.player_human.is_remote()
 			)
 	)
 
 
 func _submit_username_change() -> void:
-	if player == null:
-		push_error("Tried to change someone's username, but player is null!")
-		return
-
-	player.username = username_line_edit.text.strip_edges()
+	player.username = _username_line_edit.text.strip_edges()
 
 
 func _is_mouse_inside() -> bool:
@@ -225,11 +196,11 @@ func _is_mouse_inside() -> bool:
 
 
 func _on_mouse_entered() -> void:
-	circle_buttons.visible = true
+	_circle_buttons.visible = true
 
 
 func _on_mouse_exited() -> void:
-	circle_buttons.visible = _is_renaming
+	_circle_buttons.visible = _is_renaming
 
 
 func _on_username_line_edit_focus_exited() -> void:
@@ -237,29 +208,20 @@ func _on_username_line_edit_focus_exited() -> void:
 		_is_renaming = false
 
 
-func _on_username_changed(_game_player: GamePlayer) -> void:
-	_update_shown_username()
+func _on_human_status_changed() -> void:
+	_refresh()
 
-
-func _on_human_status_changed(_changed_player: GamePlayer) -> void:
 	# We are possibly dealing with a new [Player] instance,
 	# so we need to connect signals.
-	if (
-			player.is_human
-			and player.player_human != null
-			and not player.player_human.sync_finished.is_connected(
-					_on_player_sync_finished
-			)
-	):
-		player.player_human.sync_finished.connect(_on_player_sync_finished)
-
-	_update_appearance()
+	if player == null or not player.is_human or player.player_human == null:
+		return
+	if not player.player_human.sync_finished.is_connected(_refresh):
+		player.player_human.sync_finished.connect(_refresh.unbind(1))
+	if not player.player_human.multiplayer_id_changed.is_connected(_refresh):
+		player.player_human.multiplayer_id_changed.connect(_refresh.unbind(1))
 
 
 func _on_add_button_pressed() -> void:
-	if not player:
-		push_error("Tried to make a player human, but player is null!")
-		return
 	if player.is_human:
 		push_warning("Player is already human!")
 		return
@@ -268,9 +230,6 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_remove_button_pressed() -> void:
-	if not player:
-		push_error("Tried to remove human player, but player is null!")
-		return
 	if not player.is_human:
 		push_warning("Player is already not human!")
 		return
@@ -278,7 +237,7 @@ func _on_remove_button_pressed() -> void:
 		push_warning("Tried to remove the only local player.")
 		return
 
-	if player.player_human:
+	if player.player_human != null:
 		delete_pressed.emit(player)
 	else:
 		push_warning("GamePlayer's player_human is null, weird.")
@@ -301,12 +260,3 @@ func _on_confirm_button_pressed() -> void:
 		return
 
 	_is_renaming = false
-
-
-func _on_player_sync_finished(_player: Player) -> void:
-	_update_appearance()
-
-
-## After disconnecting as a client, you're able to rename AI players again
-func _on_server_disconnected() -> void:
-	_update_button_visibility()

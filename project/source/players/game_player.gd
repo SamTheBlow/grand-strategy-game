@@ -6,6 +6,7 @@ class_name GamePlayer
 signal playing_country_changed()
 signal human_status_changed(this: GamePlayer)
 signal username_changed(this: GamePlayer)
+signal player_human_changed()
 signal ai_changed(old_ai: PlayerAI, new_ai: PlayerAI)
 
 ## Unique identifier. Useful for saving/loading, networking, etc.
@@ -49,15 +50,19 @@ var username: String = "":
 ## This can intentionally be null, even after everything is set up.
 var player_human: Player:
 	set(value):
-		if player_human:
+		if player_human == value:
+			return
+
+		if player_human != null:
 			player_human.username_changed.disconnect(_on_username_changed)
 
-		if value:
+		if value != null:
 			player_human = null
 			username = value.username()
 			value.username_changed.connect(_on_username_changed)
 
 		player_human = value
+		player_human_changed.emit()
 
 ## This player's AI.
 ## It may only be used when [code]is_human[/code] is set to false.

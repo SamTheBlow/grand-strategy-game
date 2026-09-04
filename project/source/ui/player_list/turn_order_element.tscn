@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://p440ahx3w70n"]
+[gd_scene format=3 uid="uid://p440ahx3w70n"]
 
 [ext_resource type="Script" uid="uid://c0vy2wbupdj2k" path="res://source/ui/player_list/turn_order_element.gd" id="1_qvjuk"]
 [ext_resource type="Texture2D" uid="uid://d3y7j7vyu03ii" path="res://assets/remote_player_icon_256.png" id="2_w2s56"]
@@ -9,7 +9,7 @@
 [ext_resource type="Texture2D" uid="uid://c3emi5jqexqek" path="res://assets/rename_button_256.png" id="7_osjbb"]
 [ext_resource type="Texture2D" uid="uid://c4um15dj3d267" path="res://assets/confirm_button_256.png" id="8_tsu5i"]
 
-[node name="TurnOrderElement" type="Control"]
+[node name="TurnOrderElement" type="Control" unique_id=1065431180]
 clip_contents = true
 layout_mode = 3
 anchors_preset = 10
@@ -21,7 +21,8 @@ username_color_ai = Color(0.752941, 0.752941, 0.752941, 1)
 bg_color_human = Color(0, 0, 0, 0.12549)
 bg_color_ai = Color(0, 0, 0, 0.0627451)
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=129728286]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -30,7 +31,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.12549)
 
-[node name="Contents" type="HBoxContainer" parent="."]
+[node name="Contents" type="HBoxContainer" parent="." unique_id=218772721]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -38,21 +39,20 @@ offset_bottom = 23.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ArrowContainer" type="MarginContainer" parent="Contents"]
-unique_name_in_owner = true
+[node name="ArrowContainer" type="MarginContainer" parent="Contents" unique_id=2009204172]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.15
 
-[node name="ArrowLabel" type="Label" parent="Contents/ArrowContainer"]
+[node name="ArrowLabel" type="Label" parent="Contents/ArrowContainer" unique_id=113361363]
 unique_name_in_owner = true
 layout_mode = 2
 horizontal_alignment = 1
 vertical_alignment = 1
 clip_text = true
 
-[node name="UsernameLabel" type="Label" parent="Contents"]
+[node name="UsernameLabel" type="Label" parent="Contents" unique_id=494018751]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -61,7 +61,7 @@ theme_override_colors/font_color = Color(1, 1, 1, 1)
 vertical_alignment = 1
 clip_text = true
 
-[node name="UsernameEdit" type="Control" parent="Contents"]
+[node name="UsernameEdit" type="Control" parent="Contents" unique_id=888757914]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -69,7 +69,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.85
 mouse_filter = 1
 
-[node name="UsernameLineEdit" type="LineEdit" parent="Contents/UsernameEdit"]
+[node name="UsernameLineEdit" type="LineEdit" parent="Contents/UsernameEdit" unique_id=1364930434]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 9
@@ -83,7 +83,7 @@ expand_to_text_length = true
 flat = true
 caret_blink = true
 
-[node name="OnlineStatus" type="Control" parent="."]
+[node name="RemoteIndicator" type="Control" parent="." unique_id=607994072]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(32, 0)
@@ -96,7 +96,7 @@ grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="TextureRect" type="TextureRect" parent="OnlineStatus"]
+[node name="TextureRect" type="TextureRect" parent="RemoteIndicator" unique_id=256602264]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,7 +107,7 @@ texture = ExtResource("2_w2s56")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CircleButtons" type="Control" parent="."]
+[node name="CircleButtons" type="Control" parent="." unique_id=1146459015]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -119,12 +119,11 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("3_crpln")
 is_right_to_left = true
-is_node_always_square = true
 
-[node name="AddButton" type="TextureButton" parent="CircleButtons"]
+[node name="AddButton" type="TextureButton" parent="CircleButtons" unique_id=1401571601]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
+layout_mode = 0
 offset_left = 1152.0
 offset_right = 1152.0
 size_flags_stretch_ratio = 0.1
@@ -134,10 +133,10 @@ texture_click_mask = ExtResource("5_83le2")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="RemoveButton" type="TextureButton" parent="CircleButtons"]
+[node name="RemoveButton" type="TextureButton" parent="CircleButtons" unique_id=421055495]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
+layout_mode = 0
 offset_left = 1150.0
 offset_right = 1150.0
 size_flags_stretch_ratio = 0.1
@@ -147,9 +146,9 @@ texture_click_mask = ExtResource("5_83le2")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="RenameButton" type="TextureButton" parent="CircleButtons"]
+[node name="RenameButton" type="TextureButton" parent="CircleButtons" unique_id=53118604]
 unique_name_in_owner = true
-layout_mode = 2
+layout_mode = 0
 offset_left = 1152.0
 offset_right = 1152.0
 size_flags_stretch_ratio = 0.1
@@ -159,10 +158,10 @@ texture_click_mask = ExtResource("5_83le2")
 ignore_texture_size = true
 stretch_mode = 5
 
-[node name="ConfirmButton" type="TextureButton" parent="CircleButtons"]
+[node name="ConfirmButton" type="TextureButton" parent="CircleButtons" unique_id=652479177]
 unique_name_in_owner = true
 visible = false
-layout_mode = 2
+layout_mode = 0
 offset_left = 1148.0
 offset_right = 1148.0
 size_flags_stretch_ratio = 0.1
