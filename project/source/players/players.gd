@@ -65,6 +65,8 @@ func remove_player(player: Player) -> void:
 			and leader_of(player.multiplayer_id) == null
 	):
 		multiplayer.disconnect_peer(player.multiplayer_id)
+		# Strangely this does not automatically emit.
+		multiplayer.peer_disconnected.emit(player.multiplayer_id)
 		player_kicked.emit(player)
 
 
