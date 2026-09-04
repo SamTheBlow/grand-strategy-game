@@ -19,15 +19,18 @@ var game: Game:
 		game.game_over.connect(_on_game_over)
 		game.turn.started.connect(_on_game_started)
 
-## May be null. If null, the players list will not be fully initialized.
-## Please do not leave this null unless you're going to hide the UI.
-var players: Players
+## May be null.
+## If null, the player list is hidden and player assignment is disabled.
+var players: Players = null
 
 ## May be null. If null, the chat interface is hidden.
-var chat: Chat:
+var chat: Chat = null:
 	set(value):
 		chat = value
 		chat.seed_requested.connect(_on_seed_requested)
+
+## If set to false, networking features are hidden and disabled.
+var is_networking_enabled: bool = true
 
 var _player_assignment: PlayerAssignment
 
@@ -48,9 +51,6 @@ func _ready() -> void:
 			world_visuals.province_selection
 	)
 
-	_player_list.networking_interface.can_join = false
-	var game_sync := GameSync.new(game)
-
 	if chat != null:
 		_chat_interface.chat_data = chat.chat_data
 		chat.connect_chat_interface(_chat_interface)
@@ -59,21 +59,28 @@ func _ready() -> void:
 		_chat_interface.visible = false
 
 	if players != null:
+		_player_list.networking_interface.can_join = false
 		_player_list.players = players
 		_player_list.player_added.connect(_on_player_list_player_added)
 
 		_turn_order_list.player_removal_requested.connect(players.remove_player)
 
 		_player_assignment = PlayerAssignment.new(players, game.game_players)
-		var player_assignment_sync := (
-				PlayerAssignmentSync.new(_player_assignment)
-		)
-		game_sync.add_child(player_assignment_sync)
 
-		if not MultiplayerUtils.has_authority(multiplayer):
-			player_assignment_sync.sync_finished.connect(
-					_on_player_assignment_sync_finished
+		if is_networking_enabled:
+			var player_assignment_sync := (
+					PlayerAssignmentSync.new(_player_assignment)
 			)
+			if not MultiplayerUtils.has_authority(multiplayer):
+				player_assignment_sync.sync_finished.connect(
+						_on_player_assignment_sync_finished
+				)
+
+			var game_sync := GameSync.new(game)
+			game_sync.add_child(player_assignment_sync)
+			add_child(game_sync)
+		else:
+			_player_list.hide_networking()
 	else:
 		_player_list.visible = false
 
@@ -83,8 +90,6 @@ func _ready() -> void:
 	_turn_order_list.new_human_player_requested.connect(
 			_on_new_human_player_requested
 	)
-
-	add_child(game_sync)
 
 	if MultiplayerUtils.has_authority(multiplayer):
 		game.setup_for_play()

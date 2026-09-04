@@ -38,10 +38,12 @@ func start_playtest() -> void:
 	# Setup new game scene instance
 	_game_node = _GAME_SCENE.instantiate() as GameNode
 	_game_node.project = copy_result.result_project
+	_game_node.players = Players.new()
+	_game_node.players.add_new_player()
 	# TODO don't rely on main
 	var main := get_parent().get_parent()
-	_game_node.players = main.players
 	_game_node.chat = main.chat
+	_game_node.is_networking_enabled = false
 	_game_node.exited.connect(end_playtest)
 
 	# Inform user of keyboard shortcut

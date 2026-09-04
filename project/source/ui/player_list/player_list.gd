@@ -63,6 +63,11 @@ func _ready() -> void:
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
 
 
+func hide_networking() -> void:
+	networking_interface.hide()
+	_update_size()
+
+
 func _add_element(player: Player) -> void:
 	player.sync_finished.connect(_on_player_sync_finished)
 
@@ -127,12 +132,12 @@ func _update_size() -> void:
 	if _add_player_root.visible:
 		new_size += roundi(_add_player_root.size.y) + 4
 
-	# Add the size of the networking interface
-	new_size += 8 + 4
-	new_size += roundi(networking_interface.custom_minimum_size.y) + 4
-
 	if new_size > 0:
 		new_size -= 4
+
+	# Add the size of the networking interface, when it's there
+	if networking_interface.visible:
+		new_size += 16 + roundi(networking_interface.custom_minimum_size.y)
 
 	anchors_preset = PRESET_TOP_WIDE
 	offset_bottom = new_size + margin_pixels * 2
