@@ -91,6 +91,8 @@ func end_turn() -> void:
 ## When it's an AI's turn, creates a new thread for the AI
 ## and waits for the thread to be finished.
 func start() -> void:
+	var old_playing_country_id: int = _playing_country_id
+
 	# Cannot start with 0 countries.
 	# Please verify this before calling this function.
 	if _game.countries.list.is_empty():
@@ -117,6 +119,8 @@ func start() -> void:
 	# Make sure the starting country has at least one player playing it
 	_find_playing_country()
 	if _is_running:
+		if _playing_country_id != old_playing_country_id:
+			playing_country_changed.emit(playing_country())
 		_run_gameplay_loop()
 
 
