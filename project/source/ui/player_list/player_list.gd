@@ -13,15 +13,6 @@ signal player_added(player: Player)
 ## The scene's root node must extend [PlayerListElement].
 @export var _player_list_element_scene: PackedScene
 
-## Optional. When set, adds this interface at the bottom of the list.
-@export var networking_interface: NetworkingInterface:
-	set(value):
-		_disconnect_signals()
-		networking_interface = value
-		_connect_signals()
-		_setup_networking_interface()
-		_update_size()
-
 ## If true, the player list shrinks down to the size of the contents.
 ## If false, it uses the given position/anchors as usual.
 ## Please do not change this value while the game is running.
@@ -55,65 +46,21 @@ var players: Players:
 
 var _visual_players: Array[PlayerListElement] = []
 
+@onready var networking_interface := %NetworkingInterface as NetworkingInterface
+
 @onready var _margin := %MarginContainer as Control
 @onready var _container := %ElementContainer as Control
 @onready var _add_player_root := %AddPlayerRoot as Control
-
-@onready var _spacing := %Spacing as Control
-@onready var _networking_setup := %NetworkingSetup as Control
 
 
 func _ready() -> void:
 	if players == null:
 		players = Players.new()
 
-	_setup_networking_interface()
 	_update_margin_offsets()
 	_update_size()
 
 	get_viewport().size_changed.connect(_on_viewport_size_changed)
-
-
-func _setup_networking_interface() -> void:
-	if not is_node_ready():
-		return
-
-	NodeUtils.delete_all_children(_networking_setup)
-
-	# Show/hide nodes
-	var node_exists: bool = networking_interface != null
-	_spacing.visible = node_exists
-	_networking_setup.visible = node_exists
-
-	# Add child
-	if node_exists:
-		_networking_setup.add_child(networking_interface)
-
-
-func _disconnect_signals() -> void:
-	if networking_interface == null:
-		return
-
-	if (
-			networking_interface.interface_changed
-			.is_connected(_on_networking_interface_changed)
-	):
-		networking_interface.interface_changed.disconnect(
-				_on_networking_interface_changed
-		)
-
-
-func _connect_signals() -> void:
-	if networking_interface == null:
-		return
-
-	if not (
-			networking_interface.interface_changed
-			.is_connected(_on_networking_interface_changed)
-	):
-		networking_interface.interface_changed.connect(
-				_on_networking_interface_changed
-		)
 
 
 func _add_element(player: Player) -> void:
@@ -180,10 +127,9 @@ func _update_size() -> void:
 	if _add_player_root.visible:
 		new_size += roundi(_add_player_root.size.y) + 4
 
-	# Add the size of the server setup, when it's there
-	if _networking_setup.visible:
-		new_size += 8 + 4
-		new_size += roundi(_networking_setup.custom_minimum_size.y) + 4
+	# Add the size of the networking interface
+	new_size += 8 + 4
+	new_size += roundi(networking_interface.custom_minimum_size.y) + 4
 
 	if new_size > 0:
 		new_size -= 4
@@ -233,12 +179,6 @@ func _on_add_player_button_pressed() -> void:
 		_add_new_player()
 	else:
 		_receive_add_new_player.rpc_id(1)
-
-
-func _on_networking_interface_changed() -> void:
-	_networking_setup.custom_minimum_size = (
-			(_networking_setup.get_child(0) as Control).custom_minimum_size
-	)
 
 
 func _on_player_added(player: Player) -> void:

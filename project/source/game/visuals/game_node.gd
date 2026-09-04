@@ -5,8 +5,6 @@ extends Node
 
 signal exited()
 
-const _NETWORKING_SETUP_SCENE: PackedScene = preload("uid://djw1srwh1osf6")
-
 var project: GameProject:
 	set(value):
 		project = value
@@ -50,22 +48,18 @@ func _ready() -> void:
 			world_visuals.province_selection
 	)
 
-	var networking_interface := (
-			_NETWORKING_SETUP_SCENE.instantiate() as NetworkingInterface
-	)
-	networking_interface.can_join = false
+	_player_list.networking_interface.can_join = false
 	var game_sync := GameSync.new(game)
 
 	if chat != null:
 		_chat_interface.chat_data = chat.chat_data
 		chat.connect_chat_interface(_chat_interface)
-		chat.connect_networking_interface(networking_interface)
+		chat.connect_networking_interface(_player_list.networking_interface)
 	else:
 		_chat_interface.visible = false
 
 	if players != null:
 		_player_list.players = players
-		_player_list.networking_interface = networking_interface
 		_player_list.player_added.connect(_on_player_list_player_added)
 
 		_turn_order_list.player_removal_requested.connect(players.remove_player)

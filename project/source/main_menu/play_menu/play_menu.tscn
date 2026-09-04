@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://dm18hv6wm8moi"]
 
 [ext_resource type="Script" uid="uid://6v68fi70t3hh" path="res://source/main_menu/play_menu/play_menu.gd" id="1_kwhjp"]
-[ext_resource type="PackedScene" uid="uid://djw1srwh1osf6" path="res://source/networking/networking_interface.tscn" id="2_j4u0p"]
 [ext_resource type="Script" uid="uid://bs21gg44tsgyu" path="res://source/main_menu/play_menu/authority_button.gd" id="3_2wlgr"]
 [ext_resource type="PackedScene" uid="uid://bmtb3thxlc0ms" path="res://source/chat/visuals/chat_interface.tscn" id="3_uohmy"]
 [ext_resource type="PackedScene" uid="uid://d0g80dnd658x4" path="res://source/main_menu/play_menu/game_selection_menu/game_selection_menu.tscn" id="4_ibegm"]
@@ -11,7 +10,6 @@
 
 [node name="PlayMenu" type="Node" unique_id=675220256]
 script = ExtResource("1_kwhjp")
-networking_interface_scene = ExtResource("2_j4u0p")
 
 [node name="Background" type="ColorRect" parent="." unique_id=1290847771]
 anchors_preset = 15

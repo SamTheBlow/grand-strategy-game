@@ -5,8 +5,6 @@ extends Node
 signal exited()
 signal game_started(project: GameProject)
 
-@export var networking_interface_scene: PackedScene
-
 var players: Players
 var chat: Chat
 
@@ -22,16 +20,11 @@ var _is_loading: bool = false
 
 
 func _ready() -> void:
-	var networking_interface := (
-			networking_interface_scene.instantiate() as NetworkingInterface
-	)
-
 	_chat_interface.chat_data = chat.chat_data
 	chat.connect_chat_interface(_chat_interface)
-	chat.connect_networking_interface(networking_interface)
+	chat.connect_networking_interface(_player_list.networking_interface)
 
 	_player_list.players = players
-	_player_list.networking_interface = networking_interface
 
 
 func _input(event: InputEvent) -> void:
