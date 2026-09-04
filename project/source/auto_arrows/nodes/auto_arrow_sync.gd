@@ -22,6 +22,7 @@ func _ready() -> void:
 	_start_listening()
 	multiplayer.connected_to_server.connect(_start_listening)
 	multiplayer.server_disconnected.connect(_stop_listening)
+	multiplayer.peer_disconnected.connect(_remove_client)
 
 	# Clients inform the server that they are ready.
 	if not MultiplayerUtils.has_authority(multiplayer):
@@ -66,6 +67,13 @@ func _add_client() -> void:
 		return
 
 	_subscribed_clients.append(multiplayer.get_remote_sender_id())
+
+
+func _remove_client(client_id: int) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	_subscribed_clients.erase(client_id)
 
 
 ## The server sends an added arrow to all subscribed clients.

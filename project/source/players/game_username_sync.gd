@@ -22,6 +22,7 @@ func _ready() -> void:
 	_start_listening()
 	multiplayer.connected_to_server.connect(_start_listening)
 	multiplayer.server_disconnected.connect(_stop_listening)
+	multiplayer.peer_disconnected.connect(_remove_client)
 
 	# Clients inform the server that they are ready.
 	if not MultiplayerUtils.has_authority(multiplayer):
@@ -58,6 +59,13 @@ func _add_client() -> void:
 		game_player_ids.append(game_player.id)
 		usernames.append(game_player.username)
 	_receive_all.rpc_id(sender_id, game_player_ids, usernames)
+
+
+func _remove_client(client_id: int) -> void:
+	if not MultiplayerUtils.is_server(multiplayer):
+		return
+
+	_subscribed_clients.erase(client_id)
 
 
 ## The client receives all current usernames and applies them locally.
