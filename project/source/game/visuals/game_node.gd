@@ -5,7 +5,7 @@ extends Node
 
 signal exited()
 
-const _NETWORKING_SETUP_SCENE: PackedScene = preload("uid://cm37jqeqg77g7")
+const _NETWORKING_SETUP_SCENE: PackedScene = preload("uid://djw1srwh1osf6")
 
 var project: GameProject:
 	set(value):
@@ -53,6 +53,7 @@ func _ready() -> void:
 	var networking_interface := (
 			_NETWORKING_SETUP_SCENE.instantiate() as NetworkingInterface
 	)
+	networking_interface.can_join = false
 	var game_sync := GameSync.new(game)
 
 	if chat != null:

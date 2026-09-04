@@ -1,18 +1,27 @@
 [gd_scene format=3 uid="uid://djw1srwh1osf6"]
 
-[ext_resource type="Script" uid="uid://3t0ph17sfyc0" path="res://source/networking/networking_interface.gd" id="1_iuyet"]
+[ext_resource type="Script" uid="uid://3t0ph17sfyc0" path="res://source/networking/networking_interface.gd" id="1_7ofpx"]
 
-[node name="ServerSetup" type="Control" unique_id=1583522761]
+[node name="NetworkingInterface" type="Control" unique_id=1583522761]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-script = ExtResource("1_iuyet")
-autohide = false
+script = ExtResource("1_7ofpx")
 
 [node name="InterfaceDisconnected" type="Control" parent="." unique_id=1250906051]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LayoutWithJoin" type="VBoxContainer" parent="InterfaceDisconnected" unique_id=391200415]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 1
 anchors_preset = 15
@@ -21,7 +30,30 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="InterfaceDisconnected" unique_id=391200415]
+[node name="HostButton" type="Button" parent="InterfaceDisconnected/LayoutWithJoin" unique_id=1681594836]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Host Server"
+
+[node name="JoinSection" type="HBoxContainer" parent="InterfaceDisconnected/LayoutWithJoin" unique_id=2145441312]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IPAddress" type="LineEdit" parent="InterfaceDisconnected/LayoutWithJoin/JoinSection" unique_id=1007397034]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "localhost"
+
+[node name="JoinButton" type="Button" parent="InterfaceDisconnected/LayoutWithJoin/JoinSection" unique_id=2083740847]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Join"
+
+[node name="LayoutWithoutJoin" type="Control" parent="InterfaceDisconnected" unique_id=1800000001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,27 +61,19 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HostButton" type="Button" parent="InterfaceDisconnected/VBoxContainer" unique_id=1681594836]
-layout_mode = 2
+[node name="HostButton" type="Button" parent="InterfaceDisconnected/LayoutWithoutJoin" unique_id=1800000002]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.25
+anchor_right = 0.75
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 size_flags_vertical = 3
 text = "Host Server"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="InterfaceDisconnected/VBoxContainer" unique_id=2145441312]
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="IPAddress" type="LineEdit" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer" unique_id=1007397034]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "localhost"
-
-[node name="JoinButton" type="Button" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer" unique_id=2083740847]
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Join"
-
 [node name="InterfaceConnecting" type="Control" parent="." unique_id=1689049378]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = 15
@@ -70,6 +94,7 @@ size_flags_vertical = 3
 text = "Cancel"
 
 [node name="InterfaceConnected" type="Control" parent="." unique_id=1070142191]
+unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = 15
@@ -89,7 +114,8 @@ grow_vertical = 2
 size_flags_vertical = 3
 text = "Disconnect"
 
-[connection signal="pressed" from="InterfaceDisconnected/VBoxContainer/HostButton" to="." method="_on_host_pressed"]
-[connection signal="pressed" from="InterfaceDisconnected/VBoxContainer/HBoxContainer/JoinButton" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="InterfaceDisconnected/LayoutWithJoin/HostButton" to="." method="_on_host_pressed"]
+[connection signal="pressed" from="InterfaceDisconnected/LayoutWithJoin/JoinSection/JoinButton" to="." method="_on_join_pressed"]
+[connection signal="pressed" from="InterfaceDisconnected/LayoutWithoutJoin/HostButton" to="." method="_on_host_pressed"]
 [connection signal="pressed" from="InterfaceConnecting/CancelButton" to="." method="_on_cancel_button_pressed"]
 [connection signal="pressed" from="InterfaceConnected/DisconnectButton" to="." method="_on_disconnect_button_pressed"]

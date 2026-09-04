@@ -12,19 +12,25 @@ const COLOR_WARNING := Color(1.0, 0.9, 0.6)
 ## Green
 const COLOR_SUCCESS := Color(0.5, 1.0, 0.5)
 
-## If true, this interface hides itself when the user connects to a server,
-## and shows itself again when the user disconnects.
-@export var autohide: bool = true
+## If true, the user can join an existing server by entering an IP address.
+@export var can_join: bool = true:
+	set(value):
+		can_join = value
+		if is_node_ready():
+			_refresh_join_visibility()
 
 var _session: NetworkSession
 
-@onready var _interface_disconnected := $InterfaceDisconnected as Control
-@onready var _interface_connecting := $InterfaceConnecting as Control
-@onready var _interface_connected := $InterfaceConnected as Control
+@onready var _interface_disconnected := %InterfaceDisconnected as Control
+@onready var _layout_with_join := %LayoutWithJoin as Control
 @onready var _ip_address_node := %IPAddress as LineEdit
+@onready var _layout_without_join := %LayoutWithoutJoin as Control
+@onready var _interface_connecting := %InterfaceConnecting as Control
+@onready var _interface_connected := %InterfaceConnected as Control
 
 
 func _ready() -> void:
+	_refresh_join_visibility()
 	_switch_interface(NetworkSession.State.DISCONNECTED)
 
 	_session = NetworkSession.new()
@@ -33,6 +39,15 @@ func _ready() -> void:
 	_session.disconnected.connect(_on_disconnected)
 	_session.connection_failed.connect(_on_connection_failed)
 	add_child(_session)
+
+
+func _refresh_join_visibility() -> void:
+	_layout_with_join.visible = can_join
+	_layout_without_join.visible = not can_join
+	_interface_disconnected.custom_minimum_size = (
+			_layout_with_join.custom_minimum_size if can_join else
+			_layout_without_join.custom_minimum_size
+	)
 
 
 func _switch_interface(state: NetworkSession.State) -> void:
@@ -55,6 +70,8 @@ func _on_host_pressed() -> void:
 
 
 func _on_join_pressed() -> void:
+	if not can_join:
+		return
 	_session.join(_ip_address_node.text)
 
 
@@ -78,18 +95,12 @@ func _on_connected() -> void:
 	else:
 		message_sent.emit("Joined server", COLOR_SUCCESS)
 
-	if autohide:
-		hide()
-
 
 func _on_disconnected() -> void:
 	if _interface_connecting.visible:
 		message_sent.emit("Operation cancelled.", COLOR_WARNING)
 	else:
 		message_sent.emit("Disconnected from server.", COLOR_WARNING)
-
-	if autohide:
-		show()
 
 
 func _on_connection_failed(error: Error, is_joining: bool) -> void:
