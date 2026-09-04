@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://djw1srwh1osf6"]
+[gd_scene format=3 uid="uid://djw1srwh1osf6"]
 
 [ext_resource type="Script" uid="uid://3t0ph17sfyc0" path="res://source/networking/networking_interface.gd" id="1_iuyet"]
 
-[node name="ServerSetup" type="Control"]
+[node name="ServerSetup" type="Control" unique_id=1583522761]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -12,7 +12,7 @@ grow_vertical = 2
 script = ExtResource("1_iuyet")
 autohide = false
 
-[node name="InterfaceDisconnected" type="Control" parent="."]
+[node name="InterfaceDisconnected" type="Control" parent="." unique_id=1250906051]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 1
 anchors_preset = 15
@@ -21,7 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="InterfaceDisconnected"]
+[node name="VBoxContainer" type="VBoxContainer" parent="InterfaceDisconnected" unique_id=391200415]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,27 +29,27 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HostButton" type="Button" parent="InterfaceDisconnected/VBoxContainer"]
+[node name="HostButton" type="Button" parent="InterfaceDisconnected/VBoxContainer" unique_id=1681594836]
 layout_mode = 2
 size_flags_vertical = 3
 text = "Host Server"
 
-[node name="HBoxContainer" type="HBoxContainer" parent="InterfaceDisconnected/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="InterfaceDisconnected/VBoxContainer" unique_id=2145441312]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="IPAddress" type="LineEdit" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer"]
+[node name="IPAddress" type="LineEdit" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer" unique_id=1007397034]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "localhost"
 
-[node name="JoinButton" type="Button" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer"]
+[node name="JoinButton" type="Button" parent="InterfaceDisconnected/VBoxContainer/HBoxContainer" unique_id=2083740847]
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Join"
 
-[node name="InterfaceConnecting" type="Control" parent="."]
+[node name="InterfaceConnecting" type="Control" parent="." unique_id=1689049378]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = 15
@@ -58,7 +58,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="CancelButton" type="Button" parent="InterfaceConnecting"]
+[node name="CancelButton" type="Button" parent="InterfaceConnecting" unique_id=970365388]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -69,7 +69,7 @@ grow_vertical = 2
 size_flags_vertical = 3
 text = "Cancel"
 
-[node name="InterfaceConnected" type="Control" parent="."]
+[node name="InterfaceConnected" type="Control" parent="." unique_id=1070142191]
 custom_minimum_size = Vector2(0, 32)
 layout_mode = 1
 anchors_preset = 15
@@ -78,7 +78,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="DisconnectButton" type="Button" parent="InterfaceConnected"]
+[node name="DisconnectButton" type="Button" parent="InterfaceConnected" unique_id=1568903487]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
