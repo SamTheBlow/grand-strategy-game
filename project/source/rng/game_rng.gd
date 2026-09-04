@@ -9,7 +9,7 @@ signal state_changed(before: String, after: String)
 ## and instead returns the underlying hashed seed.
 var rng_seed: String = "":
 	get:
-		if _is_locked :
+		if _is_locked:
 			return str(_rng.seed)
 		return rng_seed
 	set(value):
@@ -68,6 +68,7 @@ var _rng := RandomNumberGenerator.new()
 
 ## Allows you to provide an initial seed (hashed) and state.
 func _init(
+		is_locked: bool = false,
 		has_initial_seed: bool = false,
 		initial_seed: int = 0,
 		has_initial_state: bool = false,
@@ -77,6 +78,7 @@ func _init(
 		_rng.seed = initial_seed
 		if has_initial_state:
 			_rng.state = initial_state
+	_is_locked = is_locked
 
 
 ## Exposes the internal [RandomNumberGenerator]'s method.

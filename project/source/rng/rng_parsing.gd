@@ -51,17 +51,18 @@ static func _from_raw_data_after_setup(raw_data: Variant) -> GameRNG:
 
 	if raw_data is not Dictionary:
 		push_warning(WARNING_MESSAGE)
-		return GameRNG.new()
+		return GameRNG.new(true)
 	var raw_dict: Dictionary = raw_data
 
 	# Discard state data if there is no seed data
 	if not ParseUtils.dictionary_has_number(raw_dict, _SEED_KEY):
 		push_warning(WARNING_MESSAGE)
-		return GameRNG.new()
+		return GameRNG.new(true)
 
 	# Discard state data if it isn't a number
 	if ParseUtils.dictionary_has_number(raw_dict, _STATE_KEY):
 		return GameRNG.new(
+			true,
 			true,
 			ParseUtils.dictionary_int(raw_dict, _SEED_KEY),
 			true,
@@ -69,6 +70,7 @@ static func _from_raw_data_after_setup(raw_data: Variant) -> GameRNG:
 		)
 
 	return GameRNG.new(
+			true,
 			true,
 			ParseUtils.dictionary_int(raw_dict, _SEED_KEY),
 			false
