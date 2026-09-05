@@ -66,6 +66,9 @@ func set_username(new_username: String) -> void:
 		return
 
 	if not MultiplayerUtils.has_authority(multiplayer):
+		if _is_remote:
+			push_warning("Tried to set a remote player's username.")
+			return
 		_consider_set_custom_username.rpc_id(1, new_username)
 		return
 

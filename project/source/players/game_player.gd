@@ -31,18 +31,21 @@ var is_human: bool = false:
 			player_human = null
 		human_status_changed.emit(self)
 
-## This player's username. Allows you to give AI players a username.
-## Changing this value automatically changes a human [Player]'s username.
+## This player's username. Allows giving a username to non-human players.
+## For human players, if a [Player] is assigned,
+## this property is instead a projection of the [Player]'s username.
 var username: String = "":
+	get():
+		if player_human != null:
+			return player_human.username()
+		return username
 	set(value):
+		if player_human != null:
+			player_human.set_username(value)
+			return
 		if username == value:
 			return
-
 		username = value
-
-		if is_human and player_human:
-			player_human.set_username(value)
-
 		username_changed.emit(self)
 
 ## A reference to this human player's [Player] object.
@@ -54,14 +57,15 @@ var player_human: Player:
 			return
 
 		if player_human != null:
-			player_human.username_changed.disconnect(_on_username_changed)
-
-		if value != null:
-			player_human = null
-			username = value.username()
-			value.username_changed.connect(_on_username_changed)
+			player_human.username_changed.disconnect(username_changed.emit)
 
 		player_human = value
+
+		if player_human != null:
+			player_human.username_changed.connect(
+					username_changed.emit.bind(self).unbind(1)
+			)
+
 		player_human_changed.emit()
 
 ## This player's AI.
@@ -88,7 +92,3 @@ func username_or_default() -> String:
 
 func is_spectating() -> bool:
 	return playing_country == null
-
-
-func _on_username_changed(new_username: String) -> void:
-	username = new_username

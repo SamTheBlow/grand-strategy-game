@@ -56,6 +56,9 @@ func _add_client() -> void:
 	var game_player_ids: Array = []
 	var usernames: Array = []
 	for game_player in _game_players.list():
+		# [Player] already syncs its own username
+		if game_player.player_human != null:
+			continue
 		game_player_ids.append(game_player.id)
 		usernames.append(game_player.username)
 	_receive_all.rpc_id(sender_id, game_player_ids, usernames)
@@ -76,18 +79,15 @@ func _receive_all(game_player_ids: Array, usernames: Array) -> void:
 		return
 
 	for i in game_player_ids.size():
-		var game_player: GamePlayer = (
-				_game_players.player_from_id(game_player_ids[i])
-		)
-		if game_player == null:
-			push_error("Received an invalid player id.")
-			continue
-
-		game_player.username = usernames[i]
+		_receive_one(game_player_ids[i], usernames[i])
 
 
 ## The server sends a username change to all subscribed clients.
 func _send_username_change(game_player: GamePlayer) -> void:
+	# [Player] already syncs its own username
+	if game_player.player_human != null:
+		return
+
 	for client_id in _subscribed_clients:
 		_receive_one.rpc_id(client_id, game_player.id, game_player.username)
 
@@ -97,7 +97,10 @@ func _send_username_change(game_player: GamePlayer) -> void:
 func _receive_one(game_player_id: int, new_username: String) -> void:
 	var game_player: GamePlayer = _game_players.player_from_id(game_player_id)
 	if game_player == null:
-		push_warning("Received an invalid GamePlayer id from the server.")
+		push_warning("Received an invalid player id.")
+		return
+	if game_player.player_human != null:
+		push_error("Received a human player.")
 		return
 
 	game_player.username = new_username
