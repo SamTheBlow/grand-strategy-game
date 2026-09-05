@@ -48,6 +48,8 @@ func _refresh_join_visibility() -> void:
 			_layout_with_join.custom_minimum_size if can_join else
 			_layout_without_join.custom_minimum_size
 	)
+	if _interface_disconnected.visible:
+		custom_minimum_size = _interface_disconnected.custom_minimum_size
 
 
 func _switch_interface(state: NetworkSession.State) -> void:
