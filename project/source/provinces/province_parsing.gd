@@ -9,9 +9,6 @@ const _POSITION_ARMY_HOST_Y_KEY: String = "position_army_host_y"
 const _POSITION_FORTRESS_X_KEY: String = "position_fortress_x"
 const _POSITION_FORTRESS_Y_KEY: String = "position_fortress_y"
 const _SHAPE_KEY: String = "shape"
-const _POSITION_KEY: String = "position"
-const _POS_X_KEY: String = "x"
-const _POS_Y_KEY: String = "y"
 const _OWNER_ID_KEY: String = "owner_country_id"
 const _POPULATION_KEY: String = "population"
 const _BUILDINGS_KEY: String = "buildings"
@@ -232,14 +229,6 @@ static func _load_province_from_raw(raw_data: Variant, game: Game) -> void:
 	# Buildings
 	_load_buildings_from_raw(province, raw_dict, game)
 
-	# Position offset (DEPRECATED)
-	var offset: Vector2 = (
-			_province_position_from_raw(raw_dict.get(_POSITION_KEY))
-	)
-	province.position_army_host -= offset
-	province.position_fortress -= offset
-	province.move_relative(offset)
-
 	game.world.provinces.add(province)
 
 
@@ -277,24 +266,6 @@ static func _province_shape_from_raw(raw_data: Variant) -> PackedVector2Array:
 		shape.append(Vector2(shape_x_array[i], shape_y_array[i]))
 
 	return shape
-
-
-static func _province_position_from_raw(raw_data: Variant) -> Vector2:
-	if raw_data is not Dictionary:
-		return Vector2.ZERO
-	var raw_dict: Dictionary = raw_data
-
-	var position_x_data: Variant = raw_dict.get(_POS_X_KEY)
-	var position_x: float = 0.0
-	if ParseUtils.is_number(position_x_data):
-		position_x = ParseUtils.number_as_float(position_x_data)
-
-	var position_y_data: Variant = raw_dict.get(_POS_Y_KEY)
-	var position_y: float = 0.0
-	if ParseUtils.is_number(position_y_data):
-		position_y = ParseUtils.number_as_float(position_y_data)
-
-	return Vector2(position_x, position_y)
 
 
 static func _position_army_host_from_raw(raw_dict: Dictionary) -> Vector2:

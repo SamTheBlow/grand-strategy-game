@@ -13,8 +13,6 @@ var min_value: int = 0:
 
 		var old_value: int = min_value
 		min_value = value
-		if min_item:
-			min_item.value = value
 		if max_value < min_value:
 			max_value = min_value
 		elif min_value != old_value:
@@ -28,8 +26,6 @@ var max_value: int = 0:
 
 		var old_value: int = max_value
 		max_value = value
-		if max_item:
-			max_item.value = value
 		if max_value < min_value:
 			min_value = max_value
 		elif max_value != old_value:
@@ -81,16 +77,6 @@ var maximum: int = 0:
 			max_value = mini(max_value, maximum)
 		minimum = mini(minimum, maximum)
 
-# 4.0 backwards compatibility
-var min_item: ItemInt:
-	set(value):
-		min_item = value
-		min_item.value_changed.connect(_on_min_value_changed)
-var max_item: ItemInt:
-	set(value):
-		max_item = value
-		max_item.value_changed.connect(_on_max_value_changed)
-
 
 ## Returns the value that's the same distance from min_value and max_value.
 func average() -> float:
@@ -120,11 +106,3 @@ func set_data(data: Variant) -> void:
 
 	min_value = ParseUtils.number_as_int(data_array[0])
 	max_value = ParseUtils.number_as_int(data_array[1])
-
-
-func _on_min_value_changed(new_value: int) -> void:
-	min_value = new_value
-
-
-func _on_max_value_changed(new_value: int) -> void:
-	max_value = new_value
