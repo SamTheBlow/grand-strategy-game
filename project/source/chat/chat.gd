@@ -171,24 +171,11 @@ func _on_chat_interface_input_submitted(new_text: String) -> void:
 			"help":
 				send_system_message_multiline([
 						"/help - Get a list of every command",
-						"/fs - Toggle fullscreen",
 						"/clear - Clear the chat's contents",
 						"/about - Get the game version",
 						"The commands below only work in-game:",
 						"/seed - Get this game's seed",
 				])
-			"fs":
-				var mode: int = DisplayServer.window_get_mode()
-				if mode == DisplayServer.WINDOW_MODE_FULLSCREEN:
-					DisplayServer.window_set_mode(
-							DisplayServer.WINDOW_MODE_WINDOWED
-					)
-					send_system_message("Switched to windowed")
-				else:
-					DisplayServer.window_set_mode(
-							DisplayServer.WINDOW_MODE_FULLSCREEN
-					)
-					send_system_message("Switched to fullscreen")
 			"clear":
 				chat_data.clear()
 			"about":

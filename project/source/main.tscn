@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://f5af8xum3u0l" path="res://source/networking/client_auth.gd" id="6_414lx"]
 [ext_resource type="Script" uid="uid://c46cr4v8cposh" path="res://source/main_menu/play_menu/game_selection_menu/game_select_menu_sync.gd" id="7_gmsm"]
 [ext_resource type="Resource" path="res://resources/play_menu_settings.tres" id="8_pms"]
+[ext_resource type="Script" uid="uid://0cosj4ufx6eo" path="res://source/utils/node/window_mode_input.gd" id="9_wm"]
 
 [node name="Main" type="Node" unique_id=513245806]
 script = ExtResource("1_32ieg")
@@ -17,6 +18,10 @@ main_menu_scene = ExtResource("4_sn8ov")
 play_menu_scene = ExtResource("3_sb5ma")
 game_scene = ExtResource("3_hbhxv")
 editor_scene = ExtResource("5_c0r5p")
+
+[node name="WindowMode" type="Node" parent="." unique_id=420005214]
+script = ExtResource("9_wm")
+action_name = &"toggle_fullscreen"
 
 [node name="GameSelectMenuSync" type="Node" parent="." unique_id=363008695]
 script = ExtResource("7_gmsm")
