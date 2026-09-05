@@ -1,7 +1,6 @@
 [gd_scene format=3 uid="uid://t615nfcmdn14"]
 
 [ext_resource type="Script" uid="uid://b3mrt3hvnempw" path="res://source/ui/player_list/player_list.gd" id="1_2x7vk"]
-[ext_resource type="PackedScene" uid="uid://75dgexs1e3no" path="res://source/ui/player_list/player_list_element.tscn" id="2_vdcoh"]
 [ext_resource type="PackedScene" uid="uid://djw1srwh1osf6" path="res://source/networking/networking_interface.tscn" id="3_networking"]
 
 [node name="PlayerList" type="Control" unique_id=1725897959]
@@ -12,7 +11,6 @@ offset_bottom = 90.0
 grow_horizontal = 2
 size_flags_vertical = 0
 script = ExtResource("1_2x7vk")
-_player_list_element_scene = ExtResource("2_vdcoh")
 is_shrunk = false
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=252769750]

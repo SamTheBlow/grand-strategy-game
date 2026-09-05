@@ -46,7 +46,7 @@ var _is_renaming: bool = false:
 			username_line_edit.grab_focus()
 		else:
 			_submit_username_change()
-		circle_buttons.visible = _is_renaming or _is_mouse_inside()
+		_circle_buttons.always_show = _is_renaming
 		_update_button_visibility()
 
 @onready var color_rect := $ColorRect as ColorRect
@@ -54,7 +54,7 @@ var _is_renaming: bool = false:
 @onready var username_edit := %UsernameEdit as Control
 @onready var username_line_edit := %UsernameLineEdit as LineEdit
 @onready var _online_status := %OnlineStatus as Control
-@onready var circle_buttons := %CircleButtons as Control
+@onready var _circle_buttons := %CircleButtons as CircleButtons
 @onready var remove_button := %RemoveButton as Control
 @onready var rename_button := %RenameButton as Control
 @onready var confirm_button := %ConfirmButton as Control
@@ -160,14 +160,6 @@ func _submit_username_change() -> void:
 
 func _is_mouse_inside() -> bool:
 	return get_global_rect().has_point(get_global_mouse_position())
-
-
-func _on_mouse_entered() -> void:
-	circle_buttons.visible = true
-
-
-func _on_mouse_exited() -> void:
-	circle_buttons.visible = _is_renaming
 
 
 func _on_username_line_edit_focus_exited() -> void:
