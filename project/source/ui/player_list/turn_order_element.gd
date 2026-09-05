@@ -101,11 +101,6 @@ func _input(event: InputEvent) -> void:
 		_is_renaming = false
 
 
-## To be called when this node is created.
-func init() -> void:
-	custom_minimum_size.y = ($Contents as Control).size.y
-
-
 func _refresh() -> void:
 	if not is_node_ready():
 		return
@@ -188,7 +183,10 @@ func _can_edit() -> bool:
 
 
 func _submit_username_change() -> void:
-	player.username = _username_line_edit.text.strip_edges()
+	var new_username: String = _username_line_edit.text.strip_edges()
+	if new_username == "":
+		return
+	player.username = new_username
 
 
 func _is_mouse_inside() -> bool:

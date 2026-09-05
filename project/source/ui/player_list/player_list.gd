@@ -70,7 +70,6 @@ func _add_element(player: Player) -> void:
 	var element := _ELEMENT_SCENE.instantiate() as PlayerListElement
 	element.delete_pressed.connect(_on_element_delete_pressed)
 	element.player = player
-	element.init()
 	_element_nodes[player] = element
 	_container.add_child(element)
 	_container.move_child(element, -2)

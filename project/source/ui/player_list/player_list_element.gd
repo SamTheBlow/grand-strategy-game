@@ -1,16 +1,7 @@
-@tool
 class_name PlayerListElement
 extends Control
-## Class for a [Player] as displayed in the [PlayerList] interface.
-## This interface allows the user to remove or rename the player.
-## The circular buttons only appear when the mouse hovers over the box
-## (except when renaming a player).
-## [br][br]
-## To use, you'll need to call "init()" and set the "player" property.
-## [br][br]
-## For this to work, you need to make sure that the mouse filter
-## in the scene's Control nodes is set to "Pass".
-# TODO DRY: a LOT of code here is copy/pasted from [TurnOrderElement]
+## Displays information about given [Player].
+## Allows the user to remove or rename the player.
 
 signal delete_pressed(player: Player)
 
@@ -20,140 +11,126 @@ signal delete_pressed(player: Player)
 var player: Player:
 	set(value):
 		if player != null:
-			player.multiplayer_id_changed.disconnect(_on_multiplayer_id_changed)
-			player.username_changed.disconnect(_on_username_changed)
-			player.sync_finished.disconnect(_on_player_sync_finished)
+			player.multiplayer_id_changed.disconnect(_refresh)
+			player.username_changed.disconnect(_refresh_username_label)
+			player.sync_finished.disconnect(_refresh)
+
 		player = value
-		player.multiplayer_id_changed.connect(_on_multiplayer_id_changed)
-		player.username_changed.connect(_on_username_changed)
-		player.sync_finished.connect(_on_player_sync_finished)
-		_update_appearance()
+		_refresh()
+
+		player.multiplayer_id_changed.connect(_refresh.unbind(1))
+		player.username_changed.connect(_refresh_username_label.unbind(1))
+		player.sync_finished.connect(_refresh.unbind(1))
 
 ## This is for when you want to prevent the user from removing
 ## a [Player] when it's their last local player.
 var is_the_only_local_human: bool = false:
 	set(value):
 		is_the_only_local_human = value
-		_update_remove_button_visibility()
+		if is_node_ready():
+			_refresh_remove_button()
 
 var _is_renaming: bool = false:
 	set(value):
 		_is_renaming = value
-		username_label.visible = not _is_renaming
-		username_edit.visible = _is_renaming
+		_username_label.visible = not _is_renaming
+		_username_edit.visible = _is_renaming
 		if _is_renaming:
-			username_line_edit.text = ""
-			username_line_edit.grab_focus()
+			_username_line_edit.text = ""
+			_username_line_edit.grab_focus()
 		else:
 			_submit_username_change()
 		_circle_buttons.always_show = _is_renaming
-		_update_button_visibility()
+		_refresh_buttons()
 
-@onready var color_rect := $ColorRect as ColorRect
-@onready var username_label := %UsernameLabel as Label
-@onready var username_edit := %UsernameEdit as Control
-@onready var username_line_edit := %UsernameLineEdit as LineEdit
-@onready var _online_status := %OnlineStatus as Control
+@onready var _color_rect := %ColorRect as ColorRect
+@onready var _username_label := %UsernameLabel as Label
+@onready var _username_edit := %UsernameEdit as Control
+@onready var _username_line_edit := %UsernameLineEdit as LineEdit
+@onready var _remote_indicator := %RemoteIndicator as Control
 @onready var _circle_buttons := %CircleButtons as CircleButtons
-@onready var remove_button := %RemoveButton as Control
-@onready var rename_button := %RenameButton as Control
-@onready var confirm_button := %ConfirmButton as Control
+@onready var _remove_button := %RemoveButton as Control
+@onready var _rename_button := %RenameButton as Control
+@onready var _confirm_button := %ConfirmButton as Control
 
 
 func _ready() -> void:
-	multiplayer.server_disconnected.connect(_on_server_disconnected)
-	username_label.visible = true
-	username_edit.visible = false
-	_update_appearance()
-	_update_button_visibility()
+	_username_label.visible = true
+	_username_edit.visible = false
+	_refresh()
 
-
-func _process(_delta: float) -> void:
-	if _is_renaming and Input.is_action_just_pressed("submit"):
-		_is_renaming = false
+	multiplayer.connected_to_server.connect(_refresh)
+	multiplayer.server_disconnected.connect(_refresh)
 
 
 func _input(event: InputEvent) -> void:
-	if (not _is_renaming) or (not event is InputEventMouseButton):
+	if event.is_action_pressed(&"submit") and _is_renaming:
+		_is_renaming = false
+
+	if not _is_renaming or event is not InputEventMouseButton:
 		return
+	var event_mouse_button := event as InputEventMouseButton
 
 	if (
-			(event as InputEventMouseButton).button_index == MOUSE_BUTTON_LEFT
-			and (event as InputEventMouseButton).pressed
+			event_mouse_button.button_index == MOUSE_BUTTON_LEFT
+			and event_mouse_button.pressed
 			and not _is_mouse_inside()
 	):
 		_is_renaming = false
 
 
-# TODO this is ugly, find a way to get rid of this
-# (and get rid of it in [TurnOrderElement] too)
-## To be called when this node is created.
-func init() -> void:
-	custom_minimum_size.y = ($Contents as Control).size.y
-
-
-func _update_shown_username() -> void:
-	if player == null:
-		push_error("Player was not initialized.")
-		username_label.text = ""
-		return
-
-	username_label.text = player.username()
-
-
-func _update_appearance() -> void:
+func _refresh() -> void:
 	if not is_node_ready():
 		return
 
-	_update_shown_username()
+	_refresh_username_label()
+	_refresh_buttons()
+	_refresh_remote_indicator()
 
-	username_label.add_theme_color_override(
-			"font_color", username_color_human
+	_username_label.add_theme_color_override(
+			&"font_color", username_color_human
 	)
-	color_rect.color = bg_color_human
-
-	_online_status.visible = player.is_remote()
-
-	_update_button_visibility()
+	_color_rect.color = bg_color_human
 
 
-func _update_button_visibility() -> void:
+func _refresh_username_label() -> void:
 	if not is_node_ready():
 		return
 
-	_update_remove_button_visibility()
-	rename_button.visible = (not _is_renaming) and _can_edit()
-	confirm_button.visible = _is_renaming
+	_username_label.text = player.username()
 
 
-func _update_remove_button_visibility() -> void:
-	if not remove_button:
+func _refresh_buttons() -> void:
+	if not is_node_ready():
 		return
 
-	remove_button.visible = (
+	_refresh_remove_button()
+	_rename_button.visible = not _is_renaming and _can_edit()
+	_confirm_button.visible = _is_renaming
+
+
+func _refresh_remove_button() -> void:
+	_remove_button.visible = (
 			_can_edit()
 			and not is_the_only_local_human
 			and not _is_renaming
 	)
 
 
+func _refresh_remote_indicator() -> void:
+	_remote_indicator.visible = player.is_remote()
+
+
 ## Returns true if you're able to edit this player.
-## When connected to a server, you only have control over local players.
-## If you're not a client, then you always have control over all players.
+## The server has full control over all players,
+## while clients only have control over local players.
 func _can_edit() -> bool:
-	return (
-			MultiplayerUtils.has_authority(multiplayer)
-			or (player != null and (not player.is_remote()))
-	)
+	return MultiplayerUtils.has_authority(multiplayer) or not player.is_remote()
 
 
 func _submit_username_change() -> void:
-	if player == null:
-		push_error("Tried to change someone's username, but player is null!")
-		return
-
-	var new_username: String = username_line_edit.text.strip_edges()
-	if new_username == "" or new_username == player.username():
+	var new_username: String = _username_line_edit.text.strip_edges()
+	if new_username == "":
 		return
 	player.set_username(new_username)
 
@@ -167,18 +144,7 @@ func _on_username_line_edit_focus_exited() -> void:
 		_is_renaming = false
 
 
-func _on_multiplayer_id_changed(_player: Player) -> void:
-	_update_appearance()
-
-
-func _on_username_changed(_new_username: String) -> void:
-	_update_shown_username()
-
-
 func _on_remove_button_pressed() -> void:
-	if player == null:
-		push_error("Tried to remove the player, but player is null!")
-		return
 	if is_the_only_local_human:
 		push_warning("Tried to remove the only local player.")
 		return
@@ -202,13 +168,3 @@ func _on_confirm_button_pressed() -> void:
 		return
 
 	_is_renaming = false
-
-
-func _on_player_sync_finished(_player: Player) -> void:
-	_update_appearance()
-
-
-## When disconnected, update the UI so that
-## remote players now appear as local players.
-func _on_server_disconnected() -> void:
-	_update_appearance()

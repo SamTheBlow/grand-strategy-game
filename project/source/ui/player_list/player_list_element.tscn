@@ -10,6 +10,7 @@
 
 [node name="PlayerListElement" type="Control" unique_id=623443018]
 clip_contents = true
+custom_minimum_size = Vector2(0, 23)
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
@@ -19,6 +20,7 @@ username_color_human = Color(1, 1, 1, 1)
 bg_color_human = Color(0, 0, 0, 0.12549)
 
 [node name="ColorRect" type="ColorRect" parent="." unique_id=1026800875]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -72,7 +74,7 @@ expand_to_text_length = true
 flat = true
 caret_blink = true
 
-[node name="OnlineStatus" type="Control" parent="." unique_id=2130198892]
+[node name="RemoteIndicator" type="Control" parent="." unique_id=2130198892]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(32, 0)
@@ -85,7 +87,7 @@ grow_horizontal = 0
 grow_vertical = 2
 mouse_filter = 1
 
-[node name="TextureRect" type="TextureRect" parent="OnlineStatus" unique_id=169559600]
+[node name="TextureRect" type="TextureRect" parent="RemoteIndicator" unique_id=169559600]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -146,7 +148,7 @@ ignore_texture_size = true
 stretch_mode = 5
 
 [connection signal="focus_exited" from="Contents/UsernameEdit/UsernameLineEdit" to="." method="_on_username_line_edit_focus_exited"]
-[connection signal="visibility_changed" from="CircleButtons" to="." method="_update_button_visibility"]
+[connection signal="visibility_changed" from="CircleButtons" to="." method="_refresh_buttons"]
 [connection signal="pressed" from="CircleButtons/RemoveButton" to="." method="_on_remove_button_pressed"]
 [connection signal="pressed" from="CircleButtons/RenameButton" to="." method="_on_rename_button_pressed"]
 [connection signal="pressed" from="CircleButtons/ConfirmButton" to="." method="_on_confirm_button_pressed"]

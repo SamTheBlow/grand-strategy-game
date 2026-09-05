@@ -119,7 +119,6 @@ func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 	element.delete_pressed.connect(_on_element_delete_pressed)
 	element.new_player_requested.connect(new_human_player_requested.emit)
 	element.player = player
-	element.init()
 	element.turn = game_turn
 	_element_nodes[player] = element
 	_element_container.add_child(element)
