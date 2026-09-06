@@ -3,7 +3,6 @@ class_name GamePlayerParsing
 
 const _ID_KEY: String = "id"
 const _COUNTRY_ID_KEY: String = "playing_country_id"
-const _IS_HUMAN_KEY: String = "is_human"
 const _USERNAME_KEY: String = "username"
 const _AI_TYPE_KEY: String = "ai_type"
 const _AI_PERSONALITY_KEY: String = "ai_personality_type"
@@ -71,13 +70,9 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 		if country_id >= 0:
 			player.playing_country = game.countries.map.get(country_id)
 
-	# Is human
-	if ParseUtils.dictionary_has_bool(raw_dict, _IS_HUMAN_KEY):
-		player.is_human = raw_dict[_IS_HUMAN_KEY]
-
 	# Username
 	if ParseUtils.dictionary_has_string(raw_dict, _USERNAME_KEY):
-		player.username = raw_dict[_USERNAME_KEY]
+		player.ai_username = raw_dict[_USERNAME_KEY]
 
 	# AI personality type
 	var ai_personality_type: int = 0
@@ -95,8 +90,7 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 static func _player_to_raw_dict(player: GamePlayer) -> Dictionary:
 	var output: Dictionary = {
 		_ID_KEY: player.id,
-		_IS_HUMAN_KEY: player.is_human,
-		_USERNAME_KEY: player.username,
+		_USERNAME_KEY: player.ai_username,
 		_AI_TYPE_KEY: player.player_ai.type(),
 		_AI_PERSONALITY_KEY: player.player_ai.personality.type(),
 	}

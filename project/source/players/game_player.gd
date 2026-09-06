@@ -20,38 +20,9 @@ var playing_country: Country = null:
 		playing_country = value
 		playing_country_changed.emit()
 
-## Note that if you are turning this player into a human, then
-## you might want to set the player_human property before setting this one.
-var is_human: bool = false:
-	set(value):
-		if is_human == value:
-			return
-		is_human = value
-		if not is_human:
-			player_human = null
-		human_status_changed.emit(self)
-
-## This player's username. Allows giving a username to non-human players.
-## For human players, if a [Player] is assigned,
-## this property is instead a projection of the [Player]'s username.
-var username: String = "":
-	get():
-		if player_human != null:
-			return player_human.username()
-		return username
-	set(value):
-		if player_human != null:
-			player_human.set_username(value)
-			return
-		if username == value:
-			return
-		username = value
-		username_changed.emit(self)
-
 ## A reference to this human player's [Player] object.
-## It is only relevant when [code]is_human[/code] is set to true.
-## This can intentionally be null, even after everything is set up.
-var player_human: Player:
+## May be null, in which case this player is not human.
+var player_human: Player = null:
 	set(value):
 		if player_human == value:
 			return
@@ -67,9 +38,18 @@ var player_human: Player:
 			)
 
 		player_human_changed.emit()
+		human_status_changed.emit(self)
 
-## This player's AI.
-## It may only be used when [code]is_human[/code] is set to false.
+## This player's username, when not human.
+## May be empty, in which case it doesn't have a username.
+var ai_username: String = "":
+	set(value):
+		if ai_username == value:
+			return
+		ai_username = value
+		username_changed.emit(self)
+
+## This player's AI. Should only be used when the player is not human.
 var player_ai := PlayerAI.new():
 	set(new_ai):
 		var old_ai: PlayerAI = player_ai
@@ -79,16 +59,37 @@ var player_ai := PlayerAI.new():
 		ai_changed.emit(old_ai, new_ai)
 
 
+func is_spectating() -> bool:
+	return playing_country == null
+
+
+func is_human() -> bool:
+	return player_human != null
+
+
+## For human players, returns the assigned [Player]'s username instead.
+func username() -> String:
+	if player_human != null:
+		return player_human.username()
+	else:
+		return ai_username
+
+
+## For human players, sets the assigned [Player]'s username instead.
+func set_username(value: String) -> void:
+	if player_human != null:
+		player_human.set_username(value)
+	else:
+		ai_username = value
+
+
 ## Returns the username or, if it's an empty string, returns "Spectator"
 ## when spectating, otherwise returns the playing country's name.
 func username_or_default() -> String:
-	if username != "":
-		return username
+	var current_username: String = username()
+	if current_username != "":
+		return current_username
 	elif is_spectating():
 		return "Spectator"
 	else:
 		return playing_country.name_or_default()
-
-
-func is_spectating() -> bool:
-	return playing_country == null

@@ -90,7 +90,7 @@ func id_system() -> UniqueIdSystem:
 func number_of_humans() -> int:
 	var output: int = 0
 	for player in _list:
-		if player.is_human:
+		if player.is_human():
 			output += 1
 	return output
 
@@ -99,20 +99,16 @@ func number_of_humans() -> int:
 func number_of_playing_humans() -> int:
 	var output: int = 0
 	for player in _list:
-		if player.is_human and not player.is_spectating():
+		if player.is_human() and not player.is_spectating():
 			output += 1
 	return output
 
 
-## The number of humans on this list who are not remote players
+## The number of humans on this list who are not remote players.
 func number_of_local_humans() -> int:
 	var output: int = 0
 	for player in _list:
-		if (
-				player.is_human
-				and player.player_human
-				and not player.player_human.is_remote()
-		):
+		if player.is_human() and not player.player_human.is_remote():
 			output += 1
 	return output
 
@@ -132,8 +128,7 @@ func you_control_country(multiplayer: MultiplayerAPI, country: Country) -> bool:
 func client_controls_country(multiplayer_id: int, country: Country) -> bool:
 	for player in _list:
 		if (
-				player.is_human
-				and player.player_human != null
+				player.is_human()
 				and player.player_human.multiplayer_id == multiplayer_id
 				and player.playing_country == country
 		):

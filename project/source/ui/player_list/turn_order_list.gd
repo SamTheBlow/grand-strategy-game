@@ -112,7 +112,7 @@ func _refresh_list() -> void:
 ## Leave position_index to -1 to add it to the end of the list
 func _add_element(player: GamePlayer, position_index: int = -1) -> void:
 	player.human_status_changed.connect(_on_human_status_changed)
-	if player and player.is_human and player.player_human:
+	if player and player.is_human():
 		player.player_human.sync_finished.connect(_update_elements)
 
 	var element := _ELEMENT_SCENE.instantiate() as TurnOrderElement
@@ -162,16 +162,15 @@ func _refresh_node_size() -> void:
 func _update_elements(_player: Player = null) -> void:
 	var is_the_only_local_human: bool = players.number_of_local_humans() == 1
 	for player in _element_nodes:
-		var human: Player = player.player_human
 		var element: TurnOrderElement = _element_nodes[player]
-		if player.is_human and not (human and human.is_remote()):
+		if player.is_human() and not player.player_human.is_remote():
 			element.is_the_only_local_human = is_the_only_local_human
 		else:
 			element.is_the_only_local_human = false
 
 
 func _on_element_delete_pressed(game_player: GamePlayer) -> void:
-	if not game_player.is_human or game_player.player_human == null:
+	if not game_player.is_human():
 		return
 	player_removal_requested.emit(game_player.player_human)
 
@@ -261,8 +260,7 @@ func _on_human_status_changed(game_player: GamePlayer) -> void:
 	# We are possibly dealing with a new [Player] instance,
 	# so we need to connect signals.
 	if (
-			game_player.is_human
-			and game_player.player_human != null
+			game_player.is_human()
 			and not game_player.player_human.sync_finished.is_connected(
 					_update_elements
 			)

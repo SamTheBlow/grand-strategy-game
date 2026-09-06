@@ -44,7 +44,7 @@ func _refresh_username(_game_player: GamePlayer = null) -> void:
 func _refresh_status(_game_player: GamePlayer = null) -> void:
 	if not is_node_ready():
 		return
-	if game_player.is_human:
+	if game_player.is_human():
 		_status_label.text = "Human"
 	else:
 		_status_label.text = "AI"

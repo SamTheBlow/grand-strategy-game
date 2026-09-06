@@ -81,7 +81,7 @@ func end_turn() -> void:
 
 	var player: GamePlayer = playing_players()[0]
 
-	if not player.is_human:
+	if not player.is_human():
 		return
 
 	_end_player_turn(player)
@@ -141,7 +141,7 @@ func _end_player_turn(player: GamePlayer) -> void:
 		return
 
 	# Make army movements according to [AutoArrow]s
-	if player.is_human:
+	if player.is_human():
 		player.human_status_changed.disconnect(_end_player_turn)
 		AutoArrowBehavior.apply(_game)
 
@@ -200,7 +200,7 @@ func _run_gameplay_loop() -> void:
 	var player: GamePlayer = playing_players()[0]
 
 	# If the player is an AI, play their actions in a separate thread
-	if not player.is_human:
+	if not player.is_human():
 		_ai_thread.run(_game, player, player.player_ai)
 	# Automatically end a human player's turn if they become an AI
 	else:

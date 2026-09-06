@@ -13,10 +13,16 @@ signal player_assigned(player: Player)
 var list: Dictionary[Player, GamePlayer] = {}
 
 var _game_players: GamePlayers
+var _project_assignations: Dictionary[String, int]
 
 
-func _init(players: Players, game_players: GamePlayers) -> void:
+func _init(
+		players: Players,
+		game_players: GamePlayers,
+		project_assignations: Dictionary[String, int]
+) -> void:
 	_game_players = game_players
+	_project_assignations = project_assignations
 
 	# Initialize the list. Make sure all players are a valid key.
 	for player in players.list():
@@ -42,25 +48,20 @@ func reset() -> void:
 ## given [Player] will not be assigned to any [GamePlayer].
 func assign_player_to(player: Player, game_player: GamePlayer) -> void:
 	# Check if GamePlayer can be assigned
-	if (
-			game_player != null
-			and game_player.is_human
-			and game_player.player_human != null
-	):
+	if game_player != null and game_player.is_human():
 		push_error("This GamePlayer is already assigned to a Player.")
 		return
 
 	# Erase previous assignation
 	if list.has(player) and list[player] != null:
-		var previously_assigned := list[player] as GamePlayer
-		if previously_assigned != null:
-			previously_assigned.player_human = null
-			previously_assigned.is_human = false
+		list[player].player_human = null
 
 	list[player] = game_player
 	if game_player != null:
 		game_player.player_human = player
-		game_player.is_human = true
+		_project_assignations[player.username()] = game_player.id
+	else:
+		_project_assignations.erase(player.username())
 	player_assigned.emit(player)
 
 
@@ -97,8 +98,9 @@ func assign_player(player: Player) -> void:
 
 
 ## Assigns each [Player] in given list to a [GamePlayer].
-## First tries to assigns it to a [GamePlayer] whose name matches.
-## If it fails, then it tries to assign it to a random unassigned [GamePlayer].
+## First tries to assign it as prescribed by the [GameProject] data,
+## then tries to assign it to a [GamePlayer] whose AI username matches,
+## then tries to assign it to a random unassigned [GamePlayer].
 ## If there are no unassigned [GamePlayer]s, creates a new spectator.
 ## Nothing will happen for players that were already assigned beforehand.
 func assign_players(players: Array[Player]) -> void:
@@ -118,10 +120,25 @@ func assign_players(players: Array[Player]) -> void:
 	# These will be the only valid candidates for assignation.
 	var unassigned_game_players: Array[GamePlayer] = []
 	for game_player in _game_players.list():
-		if not game_player.is_human or game_player.player_human == null:
+		if not game_player.is_human():
 			unassigned_game_players.append(game_player)
 
-	# Assign players a GamePlayer whose name matches
+	# Assign as prescribed by the project data.
+	for player in unassigned_players.duplicate() as Array[Player]:
+		if not _project_assignations.has(player.username()):
+			continue
+
+		var game_player: GamePlayer = _game_players.player_from_id(
+				_project_assignations[player.username()]
+		)
+		if game_player == null or not unassigned_game_players.has(game_player):
+			continue
+
+		assign_player_to(player, game_player)
+		unassigned_game_players.erase(game_player)
+		unassigned_players.erase(player)
+
+	# Assign a GamePlayer whose AI username matches.
 	for player in unassigned_players.duplicate() as Array[Player]:
 		for game_player in (
 				unassigned_game_players.duplicate() as Array[GamePlayer]
@@ -130,7 +147,7 @@ func assign_players(players: Array[Player]) -> void:
 			if not unassigned_game_players.has(game_player):
 				continue
 
-			if game_player.username != player.username():
+			if game_player.ai_username != player.username():
 				continue
 
 			assign_player_to(player, game_player)
@@ -168,7 +185,7 @@ func _on_player_removed(player: Player) -> void:
 	# If it was a spectator, remove it from the game entirely.
 	if game_player == null:
 		return
-	game_player.is_human = false
+	game_player.player_human = null
 	if game_player.is_spectating():
 		_game_players.remove(game_player)
 

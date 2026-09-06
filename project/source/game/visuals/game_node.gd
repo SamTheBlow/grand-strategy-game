@@ -65,7 +65,9 @@ func _ready() -> void:
 
 		_turn_order_list.player_removal_requested.connect(players.remove_player)
 
-		_player_assignment = PlayerAssignment.new(players, game.game_players)
+		_player_assignment = PlayerAssignment.new(
+				players, game.game_players, project.player_assignations
+		)
 
 		if is_networking_enabled:
 			var player_assignment_sync := (
@@ -124,7 +126,7 @@ func _add_player_and_assign(
 	if game_player == null:
 		push_warning("Invalid GamePlayer id.")
 		return
-	if game_player.is_human and game_player.player_human != null:
+	if game_player.is_human():
 		push_warning(
 				"Tried to assign a new player to a GamePlayer that "
 				+ "already has a player assigned to it."

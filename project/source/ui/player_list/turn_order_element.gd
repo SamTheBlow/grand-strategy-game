@@ -18,7 +18,7 @@ var player: GamePlayer:
 			player.human_status_changed.disconnect(_on_human_status_changed)
 			player.username_changed.disconnect(_refresh_username_label)
 			player.player_human_changed.disconnect(_on_human_status_changed)
-			if player.is_human and player.player_human != null:
+			if player.is_human():
 				player.player_human.sync_finished.disconnect(_refresh)
 				player.player_human.multiplayer_id_changed.disconnect(_refresh)
 
@@ -110,7 +110,7 @@ func _refresh() -> void:
 	_refresh_buttons()
 	_refresh_remote_indicator()
 
-	if player.is_human:
+	if player.is_human():
 		_username_label.add_theme_color_override(
 				&"font_color", username_color_human
 		)
@@ -127,7 +127,7 @@ func _refresh_username_label() -> void:
 		return
 
 	_username_label.text = player.username_or_default()
-	if not player.is_human:
+	if not player.is_human():
 		_username_label.text += " (AI)"
 	if player.is_spectating():
 		_username_label.text += " (Spectator)"
@@ -147,7 +147,7 @@ func _refresh_buttons() -> void:
 	if not is_node_ready():
 		return
 
-	_add_button.visible = not player.is_human and not _is_renaming
+	_add_button.visible = not player.is_human() and not _is_renaming
 	_refresh_remove_button()
 	_rename_button.visible = not _is_renaming and _can_edit()
 	_confirm_button.visible = _is_renaming
@@ -155,7 +155,7 @@ func _refresh_buttons() -> void:
 
 func _refresh_remove_button() -> void:
 	_remove_button.visible = (
-			player.is_human
+			player.is_human()
 			and _can_edit()
 			and not is_the_only_local_human
 			and not _is_renaming
@@ -174,19 +174,17 @@ func _refresh_remote_indicator() -> void:
 func _can_edit() -> bool:
 	return (
 			MultiplayerUtils.has_authority(multiplayer)
-			or (
-					player.is_human
-					and player.player_human != null
-					and not player.player_human.is_remote()
-			)
+			or (player.is_human() and not player.player_human.is_remote())
 	)
 
 
 func _submit_username_change() -> void:
+	# Don't allow setting a human player's username to an empty string,
+	# but do allow it for non-human players since they have default fallbacks.
 	var new_username: String = _username_line_edit.text.strip_edges()
-	if new_username == "":
+	if new_username == "" and player.player_human != null:
 		return
-	player.username = new_username
+	player.set_username(new_username)
 
 
 func _is_mouse_inside() -> bool:
@@ -203,7 +201,7 @@ func _on_human_status_changed() -> void:
 
 	# We are possibly dealing with a new [Player] instance,
 	# so we need to connect signals.
-	if player == null or not player.is_human or player.player_human == null:
+	if player == null or not player.is_human():
 		return
 	if not player.player_human.sync_finished.is_connected(_refresh):
 		player.player_human.sync_finished.connect(_refresh.unbind(1))
@@ -212,7 +210,7 @@ func _on_human_status_changed() -> void:
 
 
 func _on_add_button_pressed() -> void:
-	if player.is_human:
+	if player.is_human():
 		push_warning("Player is already human!")
 		return
 
@@ -220,18 +218,14 @@ func _on_add_button_pressed() -> void:
 
 
 func _on_remove_button_pressed() -> void:
-	if not player.is_human:
+	if not player.is_human():
 		push_warning("Player is already not human!")
 		return
 	if is_the_only_local_human:
 		push_warning("Tried to remove the only local player.")
 		return
 
-	if player.player_human != null:
-		delete_pressed.emit(player)
-	else:
-		push_warning("GamePlayer's player_human is null, weird.")
-		player.is_human = false
+	delete_pressed.emit(player)
 
 
 func _on_rename_button_pressed() -> void:

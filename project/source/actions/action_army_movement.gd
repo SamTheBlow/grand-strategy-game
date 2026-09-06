@@ -45,7 +45,7 @@ func apply_to(game: Game, player: GamePlayer) -> void:
 	if not army.can_move_to(game.world.provinces, _destination_province_id):
 		# Note that this warning is disabled when the AI plays because
 		# the AI still makes many invalid moves. (See [AIDecisionUtils])
-		if player.is_human:
+		if player.is_human():
 			push_warning("Tried to move an army to an invalid destination!")
 		return
 

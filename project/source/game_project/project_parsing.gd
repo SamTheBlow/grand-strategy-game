@@ -4,6 +4,7 @@ class_name ProjectParsing
 const METADATA_KEY: String = "meta"
 const _VERSION_KEY: String = "version"
 const _TEXTURES_KEY: String = "textures"
+const _USERS_KEY: String = "users"
 
 ## The format version. If changes need to be made in the future
 ## to how the project is saved and loaded, this will allow us to tell
@@ -50,6 +51,10 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 	)
 	if not texture_data.is_empty():
 		output.merge({ _TEXTURES_KEY: texture_data })
+
+	# [Player] assignations
+	if not project.player_assignations.is_empty():
+		output.merge({ _USERS_KEY: project.player_assignations })
 
 	# Metadata
 	var metadata_dict: Dictionary = project.metadata.to_raw_dict(true)
@@ -99,6 +104,15 @@ static func _game_project(
 	game_project.game = (
 			GameParsing.from_raw_dict(raw_dict, game_project.textures)
 	)
+
+	# [Player] assignations
+	if ParseUtils.dictionary_has_dictionary(raw_dict, _USERS_KEY):
+		var output: Dictionary[String, int] = {}
+		var raw_assignations: Dictionary = raw_dict[_USERS_KEY]
+		for key: Variant in raw_assignations:
+			if key is String and ParseUtils.is_number(raw_assignations[key]):
+				output[key] = ParseUtils.number_as_int(raw_assignations[key])
+		game_project.player_assignations = output
 
 	# Load the metadata
 	game_project.metadata = MetadataParsing.from_raw_data(

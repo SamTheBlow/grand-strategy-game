@@ -15,16 +15,16 @@ func _ready() -> void:
 
 func _load_settings(settings_item: PropertyTreeItem) -> void:
 	# Username
-	var item_username := settings_item.child_items[0] as ItemString
+	var item_username := settings_item.child_items[1] as ItemString
 	item_username.placeholder_text = game_player.username_or_default()
-	item_username.value = game_player.username
+	item_username.value = game_player.ai_username
 	item_username.value_changed.connect(_on_item_username_changed)
 	game_player.username_changed.connect(
 			_on_player_username_changed.bind(item_username).unbind(1)
 	)
 
 	# Country
-	var item_country := settings_item.child_items[1] as ItemCountry
+	var item_country := settings_item.child_items[0] as ItemCountry
 	item_country.value = game_player.playing_country
 	item_country.value_changed.connect(_on_item_country_changed)
 	item_country.change_requested.connect(country_select_pressed.emit)
@@ -32,23 +32,15 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 			_on_player_country_changed.bind(item_country, item_username)
 	)
 
-	# Is human
-	var item_is_human := settings_item.child_items[2] as ItemBool
-	item_is_human.value = game_player.is_human
-	item_is_human.value_changed.connect(_on_item_is_human_changed)
-	game_player.human_status_changed.connect(
-			_on_player_is_human_changed.bind(item_is_human).unbind(1)
-	)
-
 	# AI type
-	var item_ai_type := settings_item.child_items[3] as ItemOptions
+	var item_ai_type := settings_item.child_items[2] as ItemOptions
 	item_ai_type.selected_index = (
 			item_ai_type.index_of_value(game_player.player_ai.type())
 	)
 	item_ai_type.value_changed.connect(_on_item_ai_type_changed)
 
 	# AI personality
-	var item_ai_personality := settings_item.child_items[4] as ItemOptions
+	var item_ai_personality := settings_item.child_items[3] as ItemOptions
 	item_ai_personality.selected_index = item_ai_personality.index_of_value(
 			game_player.player_ai.personality.type()
 	)
@@ -70,9 +62,8 @@ func _delete() -> void:
 func _duplicate() -> void:
 	# Create duplicate
 	var new_player := GamePlayer.new()
-	new_player.username = game_player.username
+	new_player.ai_username = game_player.ai_username
 	new_player.playing_country = game_player.playing_country
-	new_player.is_human = game_player.is_human
 	new_player.player_ai = PlayerAI.from_type(game_player.player_ai.type())
 	new_player.player_ai.personality = (
 			AIPersonality.from_type(game_player.player_ai.personality.type())
@@ -102,8 +93,8 @@ func _on_item_username_changed(new_value: String) -> void:
 	_apply_undo_redo_property(
 			"Change player username",
 			game_player,
-			&"username",
-			game_player.username,
+			&"ai_username",
+			game_player.ai_username,
 			new_value
 	)
 
@@ -114,16 +105,6 @@ func _on_item_country_changed(new_value: Country) -> void:
 			game_player,
 			&"playing_country",
 			game_player.playing_country,
-			new_value
-	)
-
-
-func _on_item_is_human_changed(new_value: bool) -> void:
-	_apply_undo_redo_property(
-			"Toggle whether or not player is human",
-			game_player,
-			&"is_human",
-			game_player.is_human,
 			new_value
 	)
 
@@ -157,7 +138,7 @@ func _on_item_ai_personality_changed(new_value: int) -> void:
 
 func _on_player_username_changed(item: ItemString) -> void:
 	_set_setting_no_signal(
-			item, _on_item_username_changed, game_player.username
+			item, _on_item_username_changed, game_player.ai_username
 	)
 
 
@@ -170,12 +151,6 @@ func _on_player_country_changed(
 
 	# The playing country can affect the default username
 	item_username.placeholder_text = game_player.username_or_default()
-
-
-func _on_player_is_human_changed(item: ItemBool) -> void:
-	_set_setting_no_signal(
-			item, _on_item_is_human_changed, game_player.is_human
-	)
 
 
 func _on_player_ai_changed(

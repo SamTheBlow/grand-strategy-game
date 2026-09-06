@@ -51,7 +51,7 @@ static func has_authority(multiplayer: MultiplayerAPI) -> bool:
 static func has_gameplay_authority(
 		multiplayer: MultiplayerAPI, player: GamePlayer
 ) -> bool:
-	return player.is_human and not (
+	return player.is_human() and not (
 			is_online(multiplayer)
 			and player.player_human != null
 			and player.player_human.is_remote()

@@ -28,7 +28,7 @@ func _refresh(_country: Country = null) -> void:
 	var player: GamePlayer = playing_players[0]
 
 	# Only make the announcement when it's a human player's turn
-	if not player.is_human:
+	if not player.is_human():
 		return
 
 	_label.text = "It's " + player.username_or_default() + "'s turn"

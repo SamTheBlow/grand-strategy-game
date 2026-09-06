@@ -7,21 +7,15 @@
 [ext_resource type="Script" uid="uid://bk5w8y642cp21" path="res://source/utils/property_tree/items/item_string.gd" id="5_gux4t"]
 [ext_resource type="Script" uid="uid://eb11a73aevp7" path="res://source/utils/property_tree/items/item_country.gd" id="6_gbctb"]
 [ext_resource type="Script" uid="uid://vypl2yh1ival" path="res://source/utils/property_tree/items/item_options.gd" id="6_oxyjw"]
-[ext_resource type="Script" uid="uid://dmvvf6byo3wpw" path="res://source/utils/property_tree/items/item_bool.gd" id="7_ts4wm"]
-
-[sub_resource type="Resource" id="Resource_03bhr"]
-script = ExtResource("5_gux4t")
-text = "Username"
-metadata/_custom_type_script = "uid://bk5w8y642cp21"
 
 [sub_resource type="Resource" id="Resource_66vhv"]
 script = ExtResource("6_gbctb")
 metadata/_custom_type_script = "uid://eb11a73aevp7"
 
-[sub_resource type="Resource" id="Resource_as6jm"]
-script = ExtResource("7_ts4wm")
-text = "Is Human"
-metadata/_custom_type_script = "uid://dmvvf6byo3wpw"
+[sub_resource type="Resource" id="Resource_03bhr"]
+script = ExtResource("5_gux4t")
+text = "AI Username"
+metadata/_custom_type_script = "uid://bk5w8y642cp21"
 
 [sub_resource type="Resource" id="Resource_8ap11"]
 script = ExtResource("6_oxyjw")
@@ -41,7 +35,7 @@ metadata/_custom_type_script = "uid://vypl2yh1ival"
 [sub_resource type="Resource" id="Resource_mjju1"]
 script = ExtResource("4_ht5im")
 text = "Settings:"
-child_items = Array[ExtResource("4_ht5im")]([SubResource("Resource_03bhr"), SubResource("Resource_66vhv"), SubResource("Resource_as6jm"), SubResource("Resource_8ap11"), SubResource("Resource_mkbf4")])
+child_items = Array[ExtResource("4_ht5im")]([SubResource("Resource_66vhv"), SubResource("Resource_03bhr"), SubResource("Resource_8ap11"), SubResource("Resource_mkbf4")])
 metadata/_custom_type_script = "uid://dvo2mdraodovy"
 
 [node name="InterfacePlayerEdit" type="Control" unique_id=1520980993]

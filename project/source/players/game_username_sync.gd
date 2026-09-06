@@ -56,11 +56,8 @@ func _add_client() -> void:
 	var game_player_ids: Array = []
 	var usernames: Array = []
 	for game_player in _game_players.list():
-		# [Player] already syncs its own username
-		if game_player.player_human != null:
-			continue
 		game_player_ids.append(game_player.id)
-		usernames.append(game_player.username)
+		usernames.append(game_player.ai_username)
 	_receive_all.rpc_id(sender_id, game_player_ids, usernames)
 
 
@@ -89,7 +86,7 @@ func _send_username_change(game_player: GamePlayer) -> void:
 		return
 
 	for client_id in _subscribed_clients:
-		_receive_one.rpc_id(client_id, game_player.id, game_player.username)
+		_receive_one.rpc_id(client_id, game_player.id, game_player.ai_username)
 
 
 ## Clients receive a username change and apply it locally.
@@ -103,4 +100,4 @@ func _receive_one(game_player_id: int, new_username: String) -> void:
 		push_error("Received a human player.")
 		return
 
-	game_player.username = new_username
+	game_player.ai_username = new_username
