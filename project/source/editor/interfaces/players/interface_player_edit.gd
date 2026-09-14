@@ -56,7 +56,9 @@ func _load_settings(settings_item: PropertyTreeItem) -> void:
 
 
 func _delete() -> void:
-	project.game.game_players.undo_redo_remove(game_player, undo_redo)
+	project.game.game_players.undo_redo_remove(
+			game_player, undo_redo, project.player_assignations
+	)
 
 
 func _duplicate() -> void:

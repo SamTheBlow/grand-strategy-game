@@ -53,16 +53,32 @@ func remove(game_player_id: int) -> void:
 ## Removes a player, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
 func undo_redo_remove(
-		game_player: GamePlayer, undo_redo: UndoRedoResource
+		game_player: GamePlayer,
+		undo_redo: UndoRedoResource,
+		player_assignations: PlayerAssignations
 ) -> void:
 	if not map.has(game_player.id):
 		return
+
+	# Get list of all usernames currently assigned to this player
+	var assigned_usernames: Array[String] = []
+	for username in player_assignations.map:
+		if player_assignations.map[username] == game_player.id:
+			assigned_usernames.append(username)
 
 	undo_redo.create_action("Delete player")
 	undo_redo.add_do_method(remove.bind(game_player.id))
 
 	# Ensure the player's position in the list is restored on undo
 	undo_redo.add_undo_method(_add.bind(game_player, list.find(game_player)))
+
+	# Ensure player assignations are restored on undo
+	undo_redo.add_do_method(
+			player_assignations.unassign_list.bind(assigned_usernames)
+	)
+	undo_redo.add_undo_method(player_assignations.assign_list.bind(
+			assigned_usernames, game_player.id
+	))
 
 	undo_redo.commit_action()
 

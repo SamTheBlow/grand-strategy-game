@@ -53,8 +53,8 @@ static func to_raw_data(project: GameProject) -> Dictionary:
 		output.merge({ _TEXTURES_KEY: texture_data })
 
 	# [Player] assignations
-	if not project.player_assignations.is_empty():
-		output.merge({ _USERS_KEY: project.player_assignations })
+	if not project.player_assignations.map.is_empty():
+		output.merge({ _USERS_KEY: project.player_assignations.map })
 
 	# Metadata
 	var metadata_dict: Dictionary = project.metadata.to_raw_dict(true)
@@ -112,7 +112,7 @@ static func _game_project(
 		for key: Variant in raw_assignations:
 			if key is String and ParseUtils.is_number(raw_assignations[key]):
 				output[key] = ParseUtils.number_as_int(raw_assignations[key])
-		game_project.player_assignations = output
+		game_project.player_assignations.map = output
 
 	# Load the metadata
 	game_project.metadata = MetadataParsing.from_raw_data(

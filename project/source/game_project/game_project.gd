@@ -8,8 +8,7 @@ var game := Game.new()
 var textures := ProjectTextures.new(_absolute_file_path)
 var metadata := ProjectMetadata.new()
 
-## Maps a [Player]'s username to the id of the [GamePlayer] it is playing as.
-var player_assignations: Dictionary[String, int] = {}
+var player_assignations := PlayerAssignations.new()
 
 var _absolute_file_path := StringRef.new()
 

@@ -66,7 +66,7 @@ func _ready() -> void:
 		_turn_order_list.player_removal_requested.connect(players.remove_player)
 
 		_player_assignment = PlayerAssignment.new(
-				players, game.game_players, project.player_assignations
+				players, game.game_players, project.player_assignations.map
 		)
 
 		if is_networking_enabled:
