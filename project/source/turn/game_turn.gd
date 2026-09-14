@@ -68,7 +68,7 @@ func playing_players() -> Array[GamePlayer]:
 		return []
 
 	var output: Array[GamePlayer] = []
-	for player in _game.game_players.list():
+	for player in _game.game_players.list:
 		if player.playing_country == country:
 			output.append(player)
 	return output

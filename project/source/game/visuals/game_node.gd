@@ -142,7 +142,7 @@ func _add_player_and_assign(
 @rpc("any_peer", "call_remote", "reliable")
 func _receive_add_player_and_assign(game_player_id: int) -> void:
 	_add_player_and_assign(
-			game.game_players.player_from_id(game_player_id),
+			game.game_players.map.get(game_player_id),
 			multiplayer.get_remote_sender_id()
 	)
 

@@ -55,7 +55,7 @@ func _add_client() -> void:
 
 	var game_player_ids: Array = []
 	var usernames: Array = []
-	for game_player in _game_players.list():
+	for game_player in _game_players.list:
 		game_player_ids.append(game_player.id)
 		usernames.append(game_player.ai_username)
 	_receive_all.rpc_id(sender_id, game_player_ids, usernames)
@@ -92,7 +92,7 @@ func _send_username_change(game_player: GamePlayer) -> void:
 ## Clients receive a username change and apply it locally.
 @rpc("authority", "call_remote", "reliable")
 func _receive_one(game_player_id: int, new_username: String) -> void:
-	var game_player: GamePlayer = _game_players.player_from_id(game_player_id)
+	var game_player: GamePlayer = _game_players.map.get(game_player_id)
 	if game_player == null:
 		push_warning("Received an invalid player id.")
 		return

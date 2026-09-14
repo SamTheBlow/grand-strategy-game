@@ -82,7 +82,7 @@ func raw_assign_player_to(
 		)
 		return
 
-	var game_player: GamePlayer = _game_players.player_from_id(game_player_id)
+	var game_player: GamePlayer = _game_players.map.get(game_player_id)
 	if game_player == null:
 		push_error(
 				"Received player assignation, but "
@@ -119,7 +119,7 @@ func assign_players(players: Array[Player]) -> void:
 	# Get a list of all unassigned [GamePlayer]s.
 	# These will be the only valid candidates for assignation.
 	var unassigned_game_players: Array[GamePlayer] = []
-	for game_player in _game_players.list():
+	for game_player in _game_players.list:
 		if not game_player.is_human():
 			unassigned_game_players.append(game_player)
 
@@ -128,8 +128,8 @@ func assign_players(players: Array[Player]) -> void:
 		if not _project_assignations.has(player.username()):
 			continue
 
-		var game_player: GamePlayer = _game_players.player_from_id(
-				_project_assignations[player.username()]
+		var game_player: GamePlayer = (
+				_game_players.map.get(_project_assignations[player.username()])
 		)
 		if game_player == null or not unassigned_game_players.has(game_player):
 			continue
@@ -187,7 +187,7 @@ func _on_player_removed(player: Player) -> void:
 		return
 	game_player.player_human = null
 	if game_player.is_spectating():
-		_game_players.remove(game_player)
+		_game_players.remove(game_player.id)
 
 
 func _on_player_group_added(players: Array[Player]) -> void:

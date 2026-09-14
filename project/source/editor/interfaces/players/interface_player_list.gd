@@ -11,7 +11,7 @@ var _nodes: Dictionary[int, Node] = {}
 
 
 func _ready() -> void:
-	for game_player in project.game.game_players.list():
+	for game_player in project.game.game_players.list:
 		_add_element(game_player)
 
 	if _nodes.is_empty():
@@ -68,7 +68,7 @@ func _on_add_button_pressed() -> void:
 	# (don't execute it since we already added the player)
 	undo_redo.create_action("Create new player")
 	undo_redo.add_do_method(game_players.add.bind(new_player))
-	undo_redo.add_undo_method(game_players.remove.bind(new_player))
+	undo_redo.add_undo_method(game_players.remove.bind(new_player.id))
 	undo_redo.commit_action(false)
 
 
@@ -83,7 +83,7 @@ func _on_player_added(game_player: GamePlayer) -> void:
 	_add_element(game_player)
 	_element_container.move_child(
 			_nodes[game_player.id],
-			project.game.game_players.find(game_player)
+			project.game.game_players.list.find(game_player)
 	)
 
 

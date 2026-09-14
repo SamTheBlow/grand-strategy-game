@@ -93,7 +93,7 @@ func _refresh_list() -> void:
 		_players_of_country.append(PlayersOfCountry.new())
 
 	# Populate _players_of_country with players
-	for player in players.list():
+	for player in players.list:
 		if player.is_spectating():
 			continue
 		_players_of_country[

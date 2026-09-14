@@ -1,12 +1,19 @@
 class_name GamePlayers
-## An encapsulated list of [GamePlayer] nodes.
+## A list of [GamePlayer] instances.
 ## Provides useful functions and signals.
 
 signal added(game_player: GamePlayer)
 signal removed(game_player: GamePlayer)
 signal username_changed(game_player: GamePlayer)
 
-var _list: Array[GamePlayer] = []
+## The list, as an array.
+## It's exposed for performance reasons. Do not edit this list!
+var list: Array[GamePlayer] = []
+
+## The list, as a dictionary. Maps a player id to its player.
+## Use this list to quickly get a player by its id.
+## It's exposed for performance reasons. Do not edit this list!
+var map: Dictionary[int, GamePlayer] = {}
 
 var _countries: Countries
 var _unique_id_system := UniqueIdSystem.new()
@@ -17,98 +24,71 @@ func _init(countries: Countries) -> void:
 	countries.removed.connect(_on_country_removed)
 
 
-## Note that this overwrites the player's id.
-## If you want the player to use a specific id, pass it as an argument.
+## If given player's id is invalid (i.e. a negative number),
+## automatically gives it a new unique id.
 ##
-## An error will occur if given id is not available.
-## Use is_id_available first to verify (see [UniqueIdSystem]).
-func add(player: GamePlayer, specific_id: int = -1) -> void:
-	_add(player, -1, specific_id)
+## No effect if given player's id is already in use,
+## or if given player is already in the list.
+func add(game_player: GamePlayer) -> void:
+	_add(game_player)
 
 
-func remove(player: GamePlayer) -> void:
-	if not _list.has(player):
+## No effect if given player is not on the list.
+func remove(game_player_id: int) -> void:
+	if not map.has(game_player_id):
 		return
+	var game_player: GamePlayer = map[game_player_id]
 
-	player.username_changed.disconnect(_on_username_changed)
-	_list.erase(player)
-	removed.emit(player)
+	game_player.username_changed.disconnect(username_changed.emit)
+	map.erase(game_player_id)
+	list.erase(game_player)
+
+	# We have to unclaim the id because, if we want to bring this player
+	# back in the list later with the same id, the id needs to not be in use.
+	_unique_id_system.unclaim_id(game_player_id)
+
+	removed.emit(game_player)
 
 
 ## Removes a player, using given [UndoRedoResource] system.
 ## Ensures that when we undo, everything is exactly as it was before.
-func undo_redo_remove(player: GamePlayer, undo_redo: UndoRedoResource) -> void:
-	if not _list.has(player):
+func undo_redo_remove(
+		game_player: GamePlayer, undo_redo: UndoRedoResource
+) -> void:
+	if not map.has(game_player.id):
 		return
 
 	undo_redo.create_action("Delete player")
-	undo_redo.add_do_method(remove.bind(player))
+	undo_redo.add_do_method(remove.bind(game_player.id))
 
 	# Ensure the player's position in the list is restored on undo
-	undo_redo.add_undo_method(_add.bind(player, _list.find(player)))
+	undo_redo.add_undo_method(_add.bind(game_player, list.find(game_player)))
 
 	undo_redo.commit_action()
 
 
-## Returns a new copy of this list.
-func list() -> Array[GamePlayer]:
-	return _list.duplicate()
-
-
-## Returns the number of players on the list.
-func size() -> int:
-	return _list.size()
-
-
-## Returns the index of given player in the list,
-## or -1 if the player is not in the list.
-func find(player: GamePlayer) -> int:
-	return _list.find(player)
-
-
-## Returns the player at given index position.
-## If the index is not in range, returns null.
-func player_from_index(index: int) -> GamePlayer:
-	if index < 0 or index >= _list.size():
-		return null
-	return _list[index]
-
-
-## Returns the player with given id.
-## If there is no player with this id, returns null.
-func player_from_id(id: int) -> GamePlayer:
-	for game_player in _list:
-		if game_player.id == id:
-			return game_player
-	return null
-
-
-func id_system() -> UniqueIdSystem:
-	return _unique_id_system
-
-
 func number_of_humans() -> int:
 	var output: int = 0
-	for player in _list:
-		if player.is_human():
+	for game_player in list:
+		if game_player.is_human():
 			output += 1
 	return output
 
 
-## The number of humans on this list, minus the spectators.
+## The number of humans in this list, minus the spectators.
 func number_of_playing_humans() -> int:
 	var output: int = 0
-	for player in _list:
-		if player.is_human() and not player.is_spectating():
+	for game_player in list:
+		if game_player.is_human() and not game_player.is_spectating():
 			output += 1
 	return output
 
 
-## The number of humans on this list who are not remote players.
+## The number of humans in this list, minus remote players.
 func number_of_local_humans() -> int:
 	var output: int = 0
-	for player in _list:
-		if player.is_human() and not player.player_human.is_remote():
+	for game_player in list:
+		if game_player.is_human() and not game_player.player_human.is_remote():
 			output += 1
 	return output
 
@@ -126,64 +106,56 @@ func you_control_country(multiplayer: MultiplayerAPI, country: Country) -> bool:
 ## Returns true if the client (given by its unique id) has one or more
 ## players playing as the given country, otherwise returns false.
 func client_controls_country(multiplayer_id: int, country: Country) -> bool:
-	for player in _list:
+	for game_player in list:
 		if (
-				player.is_human()
-				and player.player_human.multiplayer_id == multiplayer_id
-				and player.playing_country == country
+				game_player.is_human()
+				and game_player.player_human.multiplayer_id == multiplayer_id
+				and game_player.playing_country == country
 		):
 			return true
 	return false
 
 
 ## Keeps the insertion index a private feature.
-func _add(
-		player: GamePlayer, insertion_index: int = -1, specific_id: int = -1
-) -> void:
-	if _list.has(player):
+func _add(game_player: GamePlayer, insertion_index: int = -1) -> void:
+	if map.has(game_player.id):
+		push_warning("Player is already in the list.")
 		return
 
 	if (
-			player.playing_country != null
-			and not _countries.list.has(player.playing_country)
+			game_player.playing_country != null
+			and not _countries.list.has(game_player.playing_country)
 	):
 		push_warning(
 				"Player's playing country is not in the game's list. "
 				+ "Demoting the player to a spectator."
 		)
-		player.playing_country = null
+		game_player.playing_country = null
 
-	var id: int = specific_id
-	if not _unique_id_system.is_id_valid(specific_id):
-		id = _unique_id_system.new_unique_id()
-	elif not _unique_id_system.is_id_available(specific_id):
-		push_error(
-				"Specified player id is not unique."
-				+ " (id: " + str(specific_id) + ")"
-		)
-		id = _unique_id_system.new_unique_id()
+	if not _unique_id_system.is_id_valid(game_player.id):
+		game_player.id = _unique_id_system.new_unique_id()
+	elif not _unique_id_system.is_id_available(game_player.id):
+		push_warning("Id (%s) is already in use." % game_player.id)
+		return
 	else:
-		_unique_id_system.claim_id(specific_id)
+		_unique_id_system.claim_id(game_player.id)
 
-	player.id = id
-	player.username_changed.connect(_on_username_changed)
+	map[game_player.id] = game_player
 
-	if insertion_index < 0 or insertion_index >= _list.size():
-		_list.append(player)
+	if insertion_index < 0 or insertion_index >= list.size():
+		list.append(game_player)
 	else:
-		_list.insert(insertion_index, player)
+		list.insert(insertion_index, game_player)
 
-	added.emit(player)
+	game_player.username_changed.connect(username_changed.emit)
+
+	added.emit(game_player)
 
 
 # TODO move this to a different class
 ## When a country is removed from the game,
-## any player who was controlling that country is also removed from the game.
+## any player who was controlling that country becomes a spectator.
 func _on_country_removed(country: Country) -> void:
-	for player in _list:
-		if player.playing_country == country:
-			player.playing_country = null
-
-
-func _on_username_changed(game_player: GamePlayer) -> void:
-	username_changed.emit(game_player)
+	for game_player in list:
+		if game_player.playing_country == country:
+			game_player.playing_country = null

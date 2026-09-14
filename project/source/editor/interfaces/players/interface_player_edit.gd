@@ -78,7 +78,7 @@ func _duplicate() -> void:
 	# (don't execute it since we already added the player)
 	undo_redo.create_action("Duplicate player")
 	undo_redo.add_do_method(game_players.add.bind(new_player))
-	undo_redo.add_undo_method(game_players.remove.bind(new_player))
+	undo_redo.add_undo_method(game_players.remove.bind(new_player.id))
 	undo_redo.commit_action(false)
 
 	navigator.open_player_edit_interface(new_player)

@@ -28,7 +28,7 @@ static func load_from_raw_data(raw_data: Variant, game: Game) -> void:
 static func to_raw_array(game_players: GamePlayers) -> Array:
 	var output: Array = []
 
-	for player in game_players._list:
+	for player in game_players.list:
 		output.append(_player_to_raw_dict(player))
 
 	return output
@@ -47,10 +47,11 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 	var id: int = ParseUtils.dictionary_int(raw_dict, _ID_KEY)
 
 	# The player's id must be valid and available.
-	if not game.game_players.id_system().is_id_available(id):
+	if not game.game_players._unique_id_system.is_id_available(id):
 		return
 
 	var player := GamePlayer.new()
+	player.id = id
 
 	# AI type
 	var ai_type: int = 0
@@ -84,7 +85,7 @@ static func _load_player_from_raw(raw_data: Variant, game: Game) -> void:
 			ai_personality_type = loaded_type
 	player.player_ai.personality = AIPersonality.from_type(ai_personality_type)
 
-	game.game_players.add(player, id)
+	game.game_players.add(player)
 
 
 static func _player_to_raw_dict(player: GamePlayer) -> Dictionary:

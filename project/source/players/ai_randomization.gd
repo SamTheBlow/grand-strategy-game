@@ -21,7 +21,7 @@ static func _apply(game: Game) -> void:
 	ai_perso_types.erase(AIPersonality.Type.NONE)
 	ai_perso_types.erase(AIPersonality.Type.ACCEPTS_EVERYTHING)
 
-	for player in game.game_players.list():
+	for player in game.game_players.list:
 		if player.player_ai is RandomAI:
 			var personality: AIPersonality = player.player_ai.personality
 			player.player_ai = PlayerAI.from_type(

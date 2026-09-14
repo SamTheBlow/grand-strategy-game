@@ -111,7 +111,7 @@ func start() -> void:
 		game_over.emit(_winning_country())
 
 	# Can't start a game with 0 players.
-	if game_players.size() == 0:
+	if game_players.list.is_empty():
 		error_triggered.emit("Cannot start a game with 0 players.")
 		return
 

@@ -23,11 +23,13 @@ func _apply(game: Game) -> void:
 	var country_list: Array[Country] = game.rng.shuffled(game.countries.list)
 
 	# List of players that need to be assigned a country
-	var players_to_assign: Array[GamePlayer] = game.game_players.list()
+	var players_to_assign: Array[GamePlayer] = (
+			game.game_players.list.duplicate()
+	)
 
 	# Remove already assigned countries from the list of countries
 	# Remove already assigned players from the list of players
-	for game_player in game.game_players.list():
+	for game_player in game.game_players.list:
 		if game_player.playing_country == null:
 			continue
 
