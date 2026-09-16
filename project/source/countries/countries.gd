@@ -75,7 +75,8 @@ func undo_redo_remove(
 		provinces: Provinces,
 		armies: Armies,
 		armies_of_each_country: ArmiesOfEachCountry,
-		armies_in_each_province: ArmiesInEachProvince
+		armies_in_each_province: ArmiesInEachProvince,
+		game_players: GamePlayers
 ) -> void:
 	# Save relationships state before removal
 	var raw_relationships: Array = (
@@ -112,13 +113,22 @@ func undo_redo_remove(
 	for province in provinces.list:
 		if province.owner_country == country:
 			province_id_list.append(province.id)
-	undo_redo.add_undo_method(
-			_restore_ownership.bind(country, province_id_list, provinces)
-	)
+	undo_redo.add_undo_method(_restore_province_ownership.bind(
+			country, province_id_list, provinces
+	))
 
 	# Ensure the country's armies are restored on undo
 	undo_redo.add_undo_method(armies.add_list_with_positions.bind(
 			armies_with_positions, armies_in_each_province
+	))
+
+	# Ensure player control over this country is restored on undo
+	var player_id_list: Array[int] = []
+	for game_player in game_players.list:
+		if game_player.playing_country == country:
+			player_id_list.append(game_player.id)
+	undo_redo.add_undo_method(_restore_player_control.bind(
+			country, player_id_list, game_players
 	))
 
 	undo_redo.commit_action()
@@ -145,16 +155,26 @@ func _restore_relationships(
 			other.relationships.add(country)
 
 
-## Restores province ownership after a country is re-added on undo.
-func _restore_ownership(
+func _restore_province_ownership(
 		country: Country, province_id_list: Array[int], provinces: Provinces
 ) -> void:
 	for province_id in province_id_list:
 		var province: Province = provinces.map.get(province_id)
 		if province == null:
-			push_error("Province doesn't exist")
+			push_warning("Province doesn't exist.")
 			continue
 		province.owner_country = country
+
+
+func _restore_player_control(
+		country: Country, player_id_list: Array[int], game_players: GamePlayers
+) -> void:
+	for player_id in player_id_list:
+		var game_player: GamePlayer = game_players.map.get(player_id)
+		if game_player == null:
+			push_warning("Player doesn't exist.")
+			continue
+		game_player.playing_country = country
 
 
 ## Keeps the insertion index a private feature.

@@ -60,7 +60,8 @@ func _delete() -> void:
 			project.game.world.provinces,
 			project.game.world.armies,
 			project.game.world.armies_of_each_country,
-			project.game.world.armies_in_each_province
+			project.game.world.armies_in_each_province,
+			project.game.game_players
 	)
 
 
