@@ -10,6 +10,8 @@ func _ready() -> void:
 
 	_setup_settings(%Settings as ItemVoidNode)
 
+	project.game.countries.removed.connect(_on_country_removed)
+
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.Type.COUNTRY_LIST
 	))

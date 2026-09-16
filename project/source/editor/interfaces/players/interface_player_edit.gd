@@ -8,6 +8,8 @@ var game_player := GamePlayer.new()
 func _ready() -> void:
 	_setup_settings(%Settings as ItemVoidNode)
 
+	project.game.game_players.removed.connect(_on_player_removed)
+
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.Type.PLAYER_LIST
 	))

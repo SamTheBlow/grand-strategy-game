@@ -14,6 +14,8 @@ func _ready() -> void:
 
 	_setup_settings(%Settings as ItemVoidNode)
 
+	project.game.world.provinces.removed.connect(_on_province_removed)
+
 	closed.connect(navigator.open_new_interface.bind(
 			InterfaceNavigator.Type.PROVINCE_LIST
 	))
