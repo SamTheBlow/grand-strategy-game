@@ -17,7 +17,16 @@ var username: String = "":
 			_username_edit.text = username
 		username_changed.emit(old_value, username)
 
-var game_player: GamePlayer
+var game_player: GamePlayer:
+	set(value):
+		if game_player != null:
+			game_player.playing_country_changed.disconnect(_refresh_country)
+
+		game_player = value
+		if is_node_ready():
+			_refresh_country()
+
+		game_player.playing_country_changed.connect(_refresh_country)
 
 @onready var _username_edit := %UsernameEdit as LineEdit
 @onready var _country_button := %CountryButton as CountryButton
@@ -27,6 +36,10 @@ func _ready() -> void:
 	_username_edit.text = username
 	_username_edit.text_submitted.connect(_on_username_submitted.unbind(1))
 	_username_edit.focus_exited.connect(_on_username_submitted)
+	_refresh_country()
+
+
+func _refresh_country() -> void:
 	_country_button.country = game_player.playing_country
 
 
