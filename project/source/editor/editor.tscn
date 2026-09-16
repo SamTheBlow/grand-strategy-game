@@ -32,6 +32,7 @@
 [ext_resource type="Texture2D" uid="uid://c1ve6bswthkg" path="res://assets/formkit/play.svg" id="29_kqq58"]
 [ext_resource type="Script" uid="uid://r5jofu5xjlbp" path="res://source/ui/popups/popup_container.gd" id="31_c43yy"]
 [ext_resource type="Script" uid="uid://44aw64luxxq2" path="res://source/ui/popups/country_selection_popup/country_select_popup_factory.gd" id="38_csf"]
+[ext_resource type="Script" uid="uid://cocmdsu53a3qy" path="res://source/ui/popups/player_selection_popup/player_select_popup_factory.gd" id="40_gpsf"]
 [ext_resource type="Script" uid="uid://cwo325ktis5xk" path="res://source/game_project/project_textures/project_texture_cleanup.gd" id="39_pu"]
 
 [sub_resource type="Resource" id="Resource_ai428"]
@@ -284,6 +285,10 @@ script = ExtResource("31_c43yy")
 script = ExtResource("38_csf")
 _world_visuals = NodePath("../../../WorldLayer/WorldContainer/WorldVisuals2D")
 
+[node name="PlayerSelectPopupFactory" type="Node" parent="EditorBase/UILayer/PopupContainer" unique_id=1928374704 node_paths=PackedStringArray("_world_visuals")]
+script = ExtResource("40_gpsf")
+_world_visuals = NodePath("../../../WorldLayer/WorldContainer/WorldVisuals2D")
+
 [node name="TextureSelectPopupFactory" type="Node" parent="EditorBase/UILayer/PopupContainer" unique_id=1505344166]
 script = ExtResource("8_uwkq8")
 
@@ -360,6 +365,7 @@ use_native_dialog = true
 [connection signal="country_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldBridge" method="_on_country_interface_opened"]
 [connection signal="country_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/CountryOwnershipGiver" method="set_selected_country"]
 [connection signal="country_select_pressed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/UILayer/PopupContainer/CountrySelectPopupFactory" method="create_popup"]
+[connection signal="player_select_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/UILayer/PopupContainer/PlayerSelectPopupFactory" method="create_popup"]
 [connection signal="decoration_interface_closed" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_selected_decoration"]
 [connection signal="decoration_interface_opened" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_selected_decoration"]
 [connection signal="decoration_list_item_hovered" from="EditorBase/UILayer/EditingInterface" to="EditorBase/DecorationInput" method="set_hovered_decoration"]
@@ -372,6 +378,7 @@ use_native_dialog = true
 [connection signal="province_select_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D/ProvinceInput" method="set_selected_province"]
 [connection signal="texture_popup_requested" from="EditorBase/UILayer/EditingInterface" to="EditorBase/UILayer/PopupContainer/TextureSelectPopupFactory" method="create_popup"]
 [connection signal="popup_created" from="EditorBase/UILayer/PopupContainer/CountrySelectPopupFactory" to="EditorBase/UILayer/PopupContainer" method="add_popup"]
+[connection signal="popup_created" from="EditorBase/UILayer/PopupContainer/PlayerSelectPopupFactory" to="EditorBase/UILayer/PopupContainer" method="add_popup"]
 [connection signal="popup_created" from="EditorBase/UILayer/PopupContainer/TextureSelectPopupFactory" to="EditorBase/UILayer/PopupContainer" method="add_popup"]
 [connection signal="file_selected" from="EditorBase/SaveDialog" to="EditorBase/ProjectNode" method="save_as"]
 

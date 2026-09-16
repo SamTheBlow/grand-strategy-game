@@ -27,6 +27,10 @@ func _ready() -> void:
 	var components_section := %ComponentSection as ComponentSection
 	components_section.setup(COMPONENT_KEYS, project, undo_redo)
 
+	var assignations := %InterfaceAssignations as InterfaceAssignations
+	assignations.setup(project, undo_redo)
+	assignations.player_select_requested.connect(player_select_requested.emit)
+
 	closed.connect(navigator.close_interface)
 
 

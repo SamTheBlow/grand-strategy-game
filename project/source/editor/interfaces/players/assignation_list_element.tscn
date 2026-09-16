@@ -1,0 +1,101 @@
+[gd_scene format=3 uid="uid://cq2kve5dkrs7u"]
+
+[ext_resource type="Script" uid="uid://bolut3cgv46wb" path="res://source/editor/interfaces/players/assignation_list_element.gd" id="1_assign"]
+[ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="2_oqxts"]
+[ext_resource type="Texture2D" uid="uid://gngeyd47nv8k" path="res://assets/formkit/close.svg" id="3_oqxts"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pil88"]
+bg_color = Color(0.5, 0.19999999, 0.19999999, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cjh1y"]
+bg_color = Color(0.3, 0.12, 0.12, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_poeno"]
+bg_color = Color(0.6, 0.24, 0.24, 1)
+corner_radius_top_left = 16
+corner_radius_top_right = 16
+corner_radius_bottom_right = 16
+corner_radius_bottom_left = 16
+
+[node name="AssignationListElement" type="Control" unique_id=192801890]
+custom_minimum_size = Vector2(0, 48)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+script = ExtResource("1_assign")
+
+[node name="BackgroundColor" type="ColorRect" parent="." unique_id=1008654506]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.42352942, 0.5372549, 0.6509804, 0.8784314)
+
+[node name="Control" type="Control" parent="." unique_id=1209232870]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control" unique_id=278427189]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="UsernameEdit" type="LineEdit" parent="Control/HBoxContainer" unique_id=126312275]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CountryButton" parent="Control/HBoxContainer" unique_id=632724984 instance=ExtResource("2_oqxts")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(48, 32)
+layout_mode = 2
+is_button_enabled = false
+
+[node name="ChooseButton" type="Button" parent="Control/HBoxContainer" unique_id=1163367217]
+custom_minimum_size = Vector2(88, 40)
+layout_mode = 2
+size_flags_vertical = 4
+text = "Choose..."
+
+[node name="DeleteButton" type="Button" parent="Control/HBoxContainer" unique_id=822115705]
+custom_minimum_size = Vector2(32, 32)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+focus_mode = 0
+theme_override_constants/icon_max_width = 18
+theme_override_styles/normal = SubResource("StyleBoxFlat_pil88")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cjh1y")
+theme_override_styles/hover = SubResource("StyleBoxFlat_poeno")
+icon = ExtResource("3_oqxts")
+icon_alignment = 1
+expand_icon = true
+
+[connection signal="pressed" from="Control/HBoxContainer/ChooseButton" to="." method="_on_choose_pressed"]
+[connection signal="pressed" from="Control/HBoxContainer/DeleteButton" to="." method="_on_delete_pressed"]

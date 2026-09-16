@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://c0qc73faxuh7r"]
+
+[ext_resource type="Script" uid="uid://d2gfu7e77y5aa" path="res://source/editor/interfaces/players/interface_assignations.gd" id="1_assign"]
+[ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_assign"]
+
+[node name="InterfaceAssignations" type="Control" unique_id=1257459177]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_assign")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=1210024316]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 16
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=220702576]
+layout_mode = 2
+text = "Users with given username will automatically receive given player upon joining (when possible)."
+autowrap_mode = 3
+
+[node name="ButtonSection" type="Control" parent="VBoxContainer" unique_id=892569280]
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+
+[node name="AddButton" type="Button" parent="VBoxContainer/ButtonSection" unique_id=426210724]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.2
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 12
+theme_override_styles/normal = ExtResource("2_assign")
+text = "+ Add"
+
+[node name="ItemList" type="Control" parent="VBoxContainer" unique_id=1786068358]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer/ItemList" unique_id=1331821675]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 8.0
+offset_right = -8.0
+grow_horizontal = 2
+grow_vertical = 2
+follow_focus = true
+
+[node name="ElementContainer" type="VBoxContainer" parent="VBoxContainer/ItemList/ScrollContainer" unique_id=611716489]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EmptyListLabel" type="Label" parent="VBoxContainer/ItemList/ScrollContainer/ElementContainer" unique_id=1202650544]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "(There are no assignations.)"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="pressed" from="VBoxContainer/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]

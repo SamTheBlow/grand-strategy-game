@@ -6,6 +6,7 @@ signal texture_popup_requested(
 		item_texture: ItemTexture, project_textures: ProjectTextures
 )
 signal country_select_pressed(item_country: ItemCountry)
+signal player_select_requested(callable: Callable)
 signal country_interface_opened(country: Country)
 signal country_interface_closed()
 signal province_interface_opened(province: Province)
@@ -215,6 +216,7 @@ func _open_interface(new_interface: AppEditorInterface) -> void:
 func _forward_interface_signals(interface: AppEditorInterface) -> void:
 	interface.texture_popup_requested.connect(texture_popup_requested.emit)
 	interface.country_select_pressed.connect(country_select_pressed.emit)
+	interface.player_select_requested.connect(player_select_requested.emit)
 	interface.army_list_item_hovered.connect(army_list_item_hovered.emit)
 	interface.army_list_item_unhovered.connect(army_list_item_unhovered.emit)
 	interface.army_select_requested.connect(army_select_requested.emit)

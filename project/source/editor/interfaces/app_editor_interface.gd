@@ -11,6 +11,8 @@ signal texture_popup_requested(
 )
 ## Requests the country selection popup.
 signal country_select_pressed(item_country: ItemCountry)
+## Requests the player selection popup.
+signal player_select_requested(callable: Callable)
 
 signal army_list_item_hovered(army: Army)
 signal army_list_item_unhovered()

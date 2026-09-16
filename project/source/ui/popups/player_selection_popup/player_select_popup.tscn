@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://c1rlaool50wdd"]
+
+[ext_resource type="Script" uid="uid://bjkg2mu0hgins" path="res://source/ui/popups/player_selection_popup/player_select_popup.gd" id="1_gpsp"]
+[ext_resource type="PackedScene" uid="uid://djpmpfed8itpt" path="res://source/ui/popups/player_selection_popup/game_player_list_node.tscn" id="2_gpsp"]
+
+[node name="PlayerSelectPopup" type="VBoxContainer" unique_id=1960724765]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_gpsp")
+
+[node name="Control" type="Control" parent="." unique_id=375435046]
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Control" unique_id=666841967]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+horizontal_scroll_mode = 0
+
+[node name="GamePlayerList" parent="Control/ScrollContainer" unique_id=1086836663 instance=ExtResource("2_gpsp")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3

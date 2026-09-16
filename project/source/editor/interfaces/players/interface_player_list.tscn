@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://duef483ql4jj" path="res://source/editor/interfaces/players/interface_player_list.gd" id="1_qje5o"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="4_7s6pu"]
 [ext_resource type="PackedScene" uid="uid://ctqnl5t5vkdm" path="res://source/editor/interfaces/components/component_section.tscn" id="2_cs"]
+[ext_resource type="PackedScene" uid="uid://c0qc73faxuh7r" path="res://source/editor/interfaces/players/interface_assignations.tscn" id="3_assign"]
 
 [node name="InterfacePlayerList" type="Control" unique_id=1314066723]
 layout_mode = 3
@@ -86,5 +87,15 @@ theme_override_constants/margin_bottom = 16
 
 [node name="ComponentSection" parent="VBoxContainer/Tabs/Components" instance=ExtResource("2_cs")]
 unique_name_in_owner = true
+
+[node name="Assignations" type="MarginContainer" parent="VBoxContainer/Tabs"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="InterfaceAssignations" parent="VBoxContainer/Tabs/Assignations" instance=ExtResource("3_assign")]
+unique_name_in_owner = true
+layout_mode = 2
 
 [connection signal="pressed" from="VBoxContainer/Tabs/List/Content/ButtonSection/AddButton" to="." method="_on_add_button_pressed"]
