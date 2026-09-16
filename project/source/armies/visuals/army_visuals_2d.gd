@@ -63,10 +63,10 @@ func _ready() -> void:
 		_refresh_visibilities()
 		lod.changed.connect(_refresh_visibilities)
 
+	(%ArmyColorUpdate as ArmyColorUpdate).setup(army)
+
 	_refresh_army_texture()
 	army.texture_changed.connect(_refresh_army_texture.unbind(2))
-	_refresh_army_color()
-	army.allegiance_changed.connect(_refresh_army_color)
 	_refresh_army_size()
 	army.size().changed.connect(_refresh_army_size.unbind(1))
 	_refresh_animation()
@@ -183,11 +183,6 @@ func _refresh_army_texture() -> void:
 
 	_army_sprite.scale = Vector2.ONE * scale_ratio
 	_army_sprite.offset.y = -0.5 * height
-
-
-func _refresh_army_color() -> void:
-	_army_sprite.modulate = army.owner_country.color
-	_army_size_box.color = army.owner_country.color
 
 
 func _refresh_army_size() -> void:

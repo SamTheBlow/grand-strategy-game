@@ -8,6 +8,7 @@
 [ext_resource type="Resource" uid="uid://cpywpvw4iwvdg" path="res://resources/outline_settings/outline_highlight.tres" id="6_3h66f"]
 [ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="7_3h66f"]
 [ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="8_3h66f"]
+[ext_resource type="Script" uid="uid://b6m34cr6be73d" path="res://source/armies/visuals/army_color_update.gd" id="9_color"]
 
 [node name="ArmyVisuals2D" type="Node2D" unique_id=853084620]
 z_index = 1
@@ -15,6 +16,12 @@ script = ExtResource("1_80ub2")
 _outline_none = ExtResource("5_3h66f")
 _outline_highlight = ExtResource("6_3h66f")
 _outline_selected = ExtResource("7_3h66f")
+
+[node name="ArmyColorUpdate" type="Node" parent="." unique_id=1198755449 node_paths=PackedStringArray("_army_sprite", "_army_size_box")]
+unique_name_in_owner = true
+script = ExtResource("9_color")
+_army_sprite = NodePath("../ArmySprite")
+_army_size_box = NodePath("../Control/ArmySizeBox")
 
 [node name="MovementAnimation" type="Node" parent="." unique_id=2080034549 node_paths=PackedStringArray("_army_visuals")]
 unique_name_in_owner = true

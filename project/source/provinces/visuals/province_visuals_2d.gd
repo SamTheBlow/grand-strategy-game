@@ -48,18 +48,16 @@ func _ready() -> void:
 	_input_area.mouse_exited.connect(set.bind(&"_mouse_is_inside_area", false))
 	_input_area.mouse_exited.connect(mouse_exited.emit)
 
-	_refresh_stack_position()
-	province.position_army_host_changed.connect(_refresh_stack_position)
-
-	_refresh_polygon()
-	province.polygon().changed.connect(_refresh_polygon)
-
-	var _color_update := %ColorUpdate as ProvinceColorUpdate
-	_color_update.setup(province)
-
 	if lod != null:
 		_refresh_visibility()
 		lod.changed.connect(_refresh_visibility)
+
+	(%ProvinceColorUpdate as ProvinceColorUpdate).setup(province)
+
+	_refresh_stack_position()
+	province.position_army_host_changed.connect(_refresh_stack_position)
+	_refresh_polygon()
+	province.polygon().changed.connect(_refresh_polygon)
 
 	_buildings.province = province
 

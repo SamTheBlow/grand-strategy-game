@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b2km6s1d6i40l" path="res://source/provinces/visuals/province_visuals_2d.gd" id="1_n1pxo"]
 [ext_resource type="Resource" uid="uid://clsansdbiopc6" path="res://resources/outline_settings/outline_none.tres" id="6_1nbur"]
-[ext_resource type="Script" uid="uid://cmf4o0gm1xeoy" path="res://source/provinces/visuals/color_update.gd" id="6_h6wc4"]
+[ext_resource type="Script" uid="uid://cmf4o0gm1xeoy" path="res://source/provinces/visuals/province_color_update.gd" id="6_h6wc4"]
 [ext_resource type="Script" uid="uid://muhjmx7aufla" path="res://source/armies/visuals/army_stack.gd" id="6_ivxko"]
 [ext_resource type="Resource" uid="uid://bi56vn2u78rtm" path="res://resources/outline_settings/outline_selected.tres" id="7_43ksa"]
 [ext_resource type="Script" uid="uid://ncbp1fi6mxem" path="res://source/provinces/visuals/outlined_polygon_2d.gd" id="8_csbql"]
@@ -17,7 +17,7 @@ _outline_highlight = ExtResource("8_fmvgc")
 _outline_selected = ExtResource("7_43ksa")
 _outline_target = ExtResource("9_r5b4e")
 
-[node name="ColorUpdate" type="Node" parent="." unique_id=7743774 node_paths=PackedStringArray("_polygon")]
+[node name="ProvinceColorUpdate" type="Node" parent="." unique_id=7743774 node_paths=PackedStringArray("_polygon")]
 unique_name_in_owner = true
 script = ExtResource("6_h6wc4")
 _polygon = NodePath("../Shape/Polygon")
