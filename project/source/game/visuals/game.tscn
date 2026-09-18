@@ -314,7 +314,7 @@ visible = false
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/RecruitmentPopupFactory" to="ActionInput" method="apply_action"]
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/ArmyMovementPopupFactory" to="ActionInput" method="apply_action"]
 [connection signal="action_requested" from="UILayer/GameUI/PopupContainer/NotificationInfoPopupFactory" to="ActionInput" method="apply_action"]
-[connection signal="quit_requested" from="UILayer/PauseMenu" to="." method="_on_exit_to_main_menu_requested"]
+[connection signal="quit_requested" from="UILayer/PauseMenu" to="." method="quit"]
 [connection signal="save_requested" from="UILayer/PauseMenu" to="." method="_on_save_requested"]
 
 [editable path="WorldLayer/WorldVisuals2D"]

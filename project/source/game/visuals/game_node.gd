@@ -108,6 +108,14 @@ func _exit_tree() -> void:
 		game.turn.stop()
 
 
+func quit() -> void:
+	# Disconnect client from server so that they can quit on their own
+	if not MultiplayerUtils.has_authority(multiplayer):
+		multiplayer.multiplayer_peer.close()
+
+	exited.emit()
+
+
 func set_ui_visibility(is_visible: bool) -> void:
 	(%UILayer as CanvasLayer).visible = is_visible
 
@@ -192,14 +200,6 @@ func _on_save_requested() -> void:
 
 	if chat != null:
 		chat.send_system_message("[b]Game saved[/b]")
-
-
-func _on_exit_to_main_menu_requested() -> void:
-	# Disconnect client from server so that they can quit on their own
-	if not MultiplayerUtils.has_authority(multiplayer):
-		multiplayer.multiplayer_peer.close()
-
-	exited.emit()
 
 
 ## Clients start the game when synchronization is finished.

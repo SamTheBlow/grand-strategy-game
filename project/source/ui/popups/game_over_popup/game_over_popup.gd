@@ -1,14 +1,28 @@
 class_name GameOverPopup
 extends VBoxContainer
-## Message that appears when the game is over.
+## Shows who won, if applicable.
+## Allows the user to either quit the game or continue playing.
 ##
 ## See also: [GamePopup]
 
-@export var winner_label: Label
+signal quit_requested()
+
+const _QUIT_BUTTON_ID: int = 0
+
+@export var _winner_label: Label
 
 
 func setup(country: Country) -> void:
 	if country == null:
-		winner_label.text = "Game Over!"
+		_winner_label.text = "Game Over!"
 	else:
-		winner_label.text = country.name_or_default() + " wins!"
+		_winner_label.text = country.name_or_default() + " wins!"
+
+
+func buttons() -> Array[String]:
+	return ["Quit", "Keep Playing"]
+
+
+func _on_button_pressed(button_id: int) -> void:
+	if button_id == _QUIT_BUTTON_ID:
+		quit_requested.emit()

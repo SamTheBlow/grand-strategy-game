@@ -15,4 +15,5 @@ func _ready() -> void:
 func _create_popup(winning_country: Country) -> void:
 	var popup := _GAME_OVER_SCENE.instantiate() as GameOverPopup
 	popup.setup(winning_country)
+	popup.quit_requested.connect(_game_node.quit)
 	_popup_container.add_popup(popup)
