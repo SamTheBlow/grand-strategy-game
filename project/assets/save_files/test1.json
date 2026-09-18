@@ -69,7 +69,7 @@
 	],
 	"meta": {
 		"icon": "%godot_icon",
-		"name": "Test map 1"
+		"name": "Test Map (Standard)"
 	},
 	"components": {
 		"player_creation": {

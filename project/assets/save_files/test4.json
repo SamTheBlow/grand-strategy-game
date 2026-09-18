@@ -1,0 +1,63 @@
+{
+	"meta": {
+		"icon": "%flag_icon",
+		"name": "Random World"
+	},
+	"components": {
+		"random_grid_world": {
+			"grid_width": 80,
+			"grid_height": 48,
+			"grid_shape": 0,
+			"use_noise": true,
+			"noise_frequency": 0.03,
+			"noise_threshold": -0.1
+		},
+		"country_generation": {
+			"number_of_countries": 100,
+			"starting_money": 1000
+		},
+		"country_placement_generation": {},
+		"player_creation": {
+			"default_ai_type": 2,
+			"default_ai_personality": -1
+		},
+		"player_assignment_to_country": {},
+		"army_placement": {
+			"army_size": 1000
+		},
+		"building_placement": {},
+		"population_growth": {
+			"growth_rate": 0.48
+		},
+		"population_randomization": {
+			"min_value": 0,
+			"max_value": 1000
+		},
+		"province_population_income": {
+			"per_person": 0.075
+		},
+		"army_reinforcements": {
+			"amount_per_person": 0.4
+		},
+		"province_control_goal": {
+			"province_percentage": 0.7
+		},
+		"diplomacy_settings": {
+			"auto_mutual_access": true,
+			"auto_fight_trespassers": true,
+			"auto_revoke_access": true,
+			"auto_fight_back": true
+		},
+		"relationship_preset_default": {
+			"preset_id": 2
+		},
+		"army_recruitment": {
+			"money_per_unit": 0.1,
+			"population_per_unit": 1.0
+		},
+		"combat": {
+			"global_attacker_efficiency": 0.9
+		}
+	},
+	"version": "1"
+}

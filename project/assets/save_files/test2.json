@@ -11,22 +11,16 @@
 			"country_name": "Blue Nation",
 			"id": 1.0,
 			"money": 1000
-		},
-		{
-			"color": "20ff20",
-			"country_name": "Green Nation",
-			"id": 2.0,
-			"money": 1000
 		}
 	],
 	"meta": {
 		"icon": "%godot_icon",
-		"name": "Test map 2"
+		"name": "Test Map (Duel)"
 	},
 	"components": {
 		"player_creation": {
 			"default_ai_type": 2,
-			"default_ai_personality": -1
+			"default_ai_personality": 1
 		},
 		"player_assignment_to_country": {},
 		"army_placement": {
@@ -1067,11 +1061,6 @@
 			},
 			{
 				"id": 28.0,
-				"buildings": [
-					{
-						"type": 0
-					}
-				],
 				"links": [
 					20.0,
 					21.0,
@@ -1080,7 +1069,6 @@
 					27.0,
 					29.0
 				],
-				"owner_country_id": 2.0,
 				"position_army_host_x": 979.0,
 				"position_army_host_y": 348.0,
 				"shape": {
@@ -1728,6 +1716,68 @@
 				},
 				"position_fortress_x": 3639.0,
 				"position_fortress_y": 1247.0
+			},
+			{
+				"id": 47.0,
+				"links": [
+					48.0,
+					51.0,
+					67.0
+				],
+				"position_army_host_x": 3337.0,
+				"position_army_host_y": 1911.0,
+				"shape": {
+					"x": [
+						3211.0,
+						3237.0,
+						3326.0,
+						3421.0,
+						3481.0,
+						3506.0,
+						3170.0
+					],
+					"y": [
+						1921.0,
+						1848.0,
+						1813.0,
+						1832.0,
+						1892.0,
+						1981.0,
+						1978.0
+					]
+				},
+				"position_fortress_x": 3417.0,
+				"position_fortress_y": 1967.0
+			},
+			{
+				"id": 48.0,
+				"links": [
+					47.0
+				],
+				"position_army_host_x": 3622.0,
+				"position_army_host_y": 1914.0,
+				"shape": {
+					"x": [
+						3516.0,
+						3468.0,
+						3554.0,
+						3659.0,
+						3741.0,
+						3801.0,
+						3529.0
+					],
+					"y": [
+						1892.0,
+						1839.0,
+						1861.0,
+						1870.0,
+						1902.0,
+						1971.0,
+						1969.0
+					]
+				},
+				"position_fortress_x": 3702.0,
+				"position_fortress_y": 1970.0
 			},
 			{
 				"id": 49.0,

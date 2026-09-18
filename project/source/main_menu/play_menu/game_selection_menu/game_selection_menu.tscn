@@ -74,7 +74,7 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_constants/separation = 8
 script = ExtResource("4_dld7m")
-builtin_games = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
+builtin_games = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json", "res://assets/save_files/test4.json", "res://assets/save_files/test5.json"])
 
 [node name="VSeparator" type="VSeparator" parent="HBoxContainer" unique_id=1656973077]
 layout_mode = 2
