@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://ccq7n0x7mov6s"]
+[gd_scene format=3 uid="uid://ccq7n0x7mov6s"]
 
 [ext_resource type="Script" uid="uid://r58p2sm60px6" path="res://source/utils/property_tree/nodes/item_texture_node.gd" id="1_l37pk"]
 
-[node name="ItemTexture" type="MarginContainer"]
+[node name="ItemTexture" type="MarginContainer" unique_id=31880298]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,27 +12,27 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_l37pk")
 
-[node name="Container" type="VBoxContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="." unique_id=1922883777]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ItemContainer" type="HBoxContainer" parent="Container"]
+[node name="ItemContainer" type="HBoxContainer" parent="Container" unique_id=2078941443]
 layout_mode = 2
 theme_override_constants/separation = 16
 
-[node name="Label" type="Label" parent="Container/ItemContainer"]
+[node name="Label" type="Label" parent="Container/ItemContainer" unique_id=826817275]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TextureRect" type="TextureRect" parent="Container/ItemContainer"]
+[node name="TextureRect" type="TextureRect" parent="Container/ItemContainer" unique_id=648082695]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(64, 64)
 layout_mode = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="BrowseButton" type="Button" parent="Container/ItemContainer"]
+[node name="BrowseButton" type="Button" parent="Container/ItemContainer" unique_id=381471893]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Select image..."

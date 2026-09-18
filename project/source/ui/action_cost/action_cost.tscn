@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://0xwvup7qe5f"]
+[gd_scene format=3 uid="uid://0xwvup7qe5f"]
 
 [ext_resource type="Script" uid="uid://bojumkg7endtj" path="res://source/ui/action_cost/action_cost_node.gd" id="1_e00nu"]
 
-[node name="ActionCost" type="Control"]
+[node name="ActionCost" type="Control" unique_id=1875607326]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 3
 anchors_preset = 15
@@ -13,7 +13,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_e00nu")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1539360641]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.2
@@ -28,7 +28,7 @@ grow_vertical = 2
 mouse_filter = 1
 color = Color(0.315, 0.33249998, 0.35, 1)
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="ScrollContainer" type="ScrollContainer" parent="." unique_id=983922229]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.2
@@ -38,13 +38,13 @@ grow_horizontal = 2
 grow_vertical = 2
 horizontal_scroll_mode = 0
 
-[node name="ElementContainer" type="VBoxContainer" parent="ScrollContainer"]
+[node name="ElementContainer" type="VBoxContainer" parent="ScrollContainer" unique_id=1235475812]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="NoCosts" type="Label" parent="ScrollContainer/ElementContainer"]
+[node name="NoCosts" type="Label" parent="ScrollContainer/ElementContainer" unique_id=1599115934]
 unique_name_in_owner = true
 layout_mode = 2
 text = "(There are no costs.)"

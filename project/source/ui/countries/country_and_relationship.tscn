@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://b7jj51hv4hwqq"]
+[gd_scene format=3 uid="uid://b7jj51hv4hwqq"]
 
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="1_84m4d"]
 [ext_resource type="Script" uid="uid://cmnn3qx8p8xva" path="res://source/ui/countries/country_and_relationship.gd" id="1_j5wfm"]
@@ -6,7 +6,7 @@
 [ext_resource type="Texture2D" uid="uid://d14anqvmcyar3" path="res://assets/remove_button_256.png" id="3_yqgku"]
 [ext_resource type="Script" uid="uid://baay036rblhtb" path="res://source/ui/diplomacy/relationship_preset_label_update.gd" id="4_uhlps"]
 
-[node name="CountryAndRelationship" type="Control"]
+[node name="CountryAndRelationship" type="Control" unique_id=795929133]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 3
 anchors_preset = 15
@@ -17,7 +17,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_j5wfm")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1909134356]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -29,16 +29,16 @@ offset_bottom = -8.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=691629907]
 layout_mode = 2
 
-[node name="CountryButton" parent="MarginContainer/HBoxContainer" instance=ExtResource("1_84m4d")]
+[node name="CountryButton" parent="MarginContainer/HBoxContainer" unique_id=1922712090 instance=ExtResource("1_84m4d")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 
-[node name="NoCountry" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="NoCountry" type="Control" parent="MarginContainer/HBoxContainer" unique_id=1875592905]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -46,7 +46,7 @@ size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 mouse_filter = 1
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/NoCountry"]
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/NoCountry" unique_id=2139409607]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -57,13 +57,13 @@ texture = ExtResource("3_yqgku")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="NameRoot" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="NameRoot" type="Control" parent="MarginContainer/HBoxContainer" unique_id=1333016037]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.4
 mouse_filter = 1
 
-[node name="CountryName" type="Label" parent="MarginContainer/HBoxContainer/NameRoot"]
+[node name="CountryName" type="Label" parent="MarginContainer/HBoxContainer/NameRoot" unique_id=2093495864]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -75,14 +75,14 @@ text = "Country Name"
 vertical_alignment = 1
 clip_text = true
 
-[node name="PresetRoot" type="Control" parent="MarginContainer/HBoxContainer"]
+[node name="PresetRoot" type="Control" parent="MarginContainer/HBoxContainer" unique_id=1711823393]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_stretch_ratio = 0.3
 mouse_filter = 1
 
-[node name="RelationshipPresetLabel" type="Label" parent="MarginContainer/HBoxContainer/PresetRoot"]
+[node name="RelationshipPresetLabel" type="Label" parent="MarginContainer/HBoxContainer/PresetRoot" unique_id=1379767944]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 0.7
@@ -95,7 +95,7 @@ horizontal_alignment = 2
 vertical_alignment = 1
 script = ExtResource("3_c35fe")
 
-[node name="RelationshipPresetLabelUpdate" type="Node" parent="MarginContainer/HBoxContainer/PresetRoot/RelationshipPresetLabel" node_paths=PackedStringArray("label")]
+[node name="RelationshipPresetLabelUpdate" type="Node" parent="MarginContainer/HBoxContainer/PresetRoot/RelationshipPresetLabel" unique_id=1917784802 node_paths=PackedStringArray("label")]
 unique_name_in_owner = true
 script = ExtResource("4_uhlps")
 label = NodePath("..")

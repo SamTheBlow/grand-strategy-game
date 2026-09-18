@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://4ctqqicmn2mn"]
+[gd_scene format=3 uid="uid://4ctqqicmn2mn"]
 
 [ext_resource type="Script" uid="uid://0eckxkn03e2x" path="res://source/notifications/visuals/game_notification_node.gd" id="1_2ds1f"]
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="2_iv0cq"]
@@ -39,7 +39,7 @@ Button/styles/hover = SubResource("StyleBoxFlat_d0d27")
 Button/styles/normal = SubResource("StyleBoxFlat_o5nsn")
 Button/styles/pressed = SubResource("StyleBoxFlat_fib4r")
 
-[node name="GameNotification" type="Control"]
+[node name="GameNotification" type="Control" unique_id=156049946]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,7 +48,7 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_2ds1f")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=1401310031]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -58,7 +58,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="Icon" type="TextureRect" parent="ColorRect"]
+[node name="Icon" type="TextureRect" parent="ColorRect" unique_id=174928550]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -70,7 +70,7 @@ texture = ExtResource("2_iv0cq")
 expand_mode = 1
 stretch_mode = 5
 
-[node name="Button" type="Button" parent="ColorRect"]
+[node name="Button" type="Button" parent="ColorRect" unique_id=1447027628]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

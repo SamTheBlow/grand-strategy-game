@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://liwg6fdq6hr5"]
+[gd_scene format=3 uid="uid://liwg6fdq6hr5"]
 
 [ext_resource type="Script" uid="uid://djm0juifqg77k" path="res://source/utils/property_tree/nodes/item_range_int_node.gd" id="1_3r7o3"]
 
-[node name="ItemRangeInt" type="MarginContainer"]
+[node name="ItemRangeInt" type="MarginContainer" unique_id=1501529707]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,32 +12,32 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_3r7o3")
 
-[node name="Container" type="VBoxContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="." unique_id=817573968]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ItemContainer" type="HBoxContainer" parent="Container"]
+[node name="ItemContainer" type="HBoxContainer" parent="Container" unique_id=936664666]
 layout_mode = 2
 
-[node name="FromLabel" type="Label" parent="Container/ItemContainer"]
+[node name="FromLabel" type="Label" parent="Container/ItemContainer" unique_id=1876334928]
 unique_name_in_owner = true
 layout_mode = 2
 text = "From "
 
-[node name="FromSpinBox" type="SpinBox" parent="Container/ItemContainer"]
+[node name="FromSpinBox" type="SpinBox" parent="Container/ItemContainer" unique_id=326318712]
 unique_name_in_owner = true
 layout_mode = 2
 allow_greater = true
 allow_lesser = true
 alignment = 1
 
-[node name="ToLabel" type="Label" parent="Container/ItemContainer"]
+[node name="ToLabel" type="Label" parent="Container/ItemContainer" unique_id=1032688998]
 unique_name_in_owner = true
 layout_mode = 2
 text = " to "
 
-[node name="ToSpinBox" type="SpinBox" parent="Container/ItemContainer"]
+[node name="ToSpinBox" type="SpinBox" parent="Container/ItemContainer" unique_id=1788097726]
 unique_name_in_owner = true
 layout_mode = 2
 allow_greater = true

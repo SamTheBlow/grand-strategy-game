@@ -1,10 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://dpv2or6jsyiwe"]
+[gd_scene format=3 uid="uid://dpv2or6jsyiwe"]
 
 [ext_resource type="Script" uid="uid://coygfq4aif7oi" path="res://source/editor/interfaces/provinces/province_list_element.gd" id="1_lfp47"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_6uon8"]
 [ext_resource type="Script" uid="uid://bxnkmbnd8epei" path="res://source/editor/interfaces/provinces/province_preview.gd" id="3_lfp47"]
 
-[node name="ProvinceListElement" type="Control"]
+[node name="ProvinceListElement" type="Control" unique_id=1285026347]
 custom_minimum_size = Vector2(0, 64)
 layout_mode = 3
 anchors_preset = 15
@@ -15,7 +15,7 @@ grow_vertical = 2
 size_flags_horizontal = 3
 script = ExtResource("1_lfp47")
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1990440311]
 clip_contents = true
 layout_mode = 1
 anchors_preset = 15
@@ -27,10 +27,10 @@ focus_mode = 0
 mouse_filter = 1
 theme_override_styles/normal = ExtResource("2_6uon8")
 
-[node name="ProvincePreview" type="Control" parent="Button"]
+[node name="ProvincePreview" type="Control" parent="Button" unique_id=785504753]
 unique_name_in_owner = true
-clip_contents = true
 custom_minimum_size = Vector2(48, 48)
+clip_contents = true
 layout_mode = 1
 anchor_left = 0.2
 anchor_top = 0.5
@@ -46,7 +46,7 @@ size_flags_horizontal = 3
 mouse_filter = 2
 script = ExtResource("3_lfp47")
 
-[node name="NameLabel" type="Label" parent="Button"]
+[node name="NameLabel" type="Label" parent="Button" unique_id=1086577501]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1

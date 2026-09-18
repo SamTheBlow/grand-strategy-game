@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://ci55oykyoyme1"]
+[gd_scene format=3 uid="uid://ci55oykyoyme1"]
 
 [ext_resource type="Script" uid="uid://bll085f7neukv" path="res://source/main_menu/main_menu.gd" id="1_kwhjp"]
 [ext_resource type="StyleBox" uid="uid://bmln1elnj0h8" path="res://resources/style_blueish.tres" id="2_5ja20"]
@@ -18,10 +18,10 @@ shadow_size = 16
 shadow_color = Color(0.1, 0.1, 0.1, 0.752941)
 shadow_offset = Vector2(3, 3)
 
-[node name="MainMenu" type="Node"]
+[node name="MainMenu" type="Node" unique_id=1023760588]
 script = ExtResource("1_kwhjp")
 
-[node name="Control" type="Control" parent="."]
+[node name="Control" type="Control" parent="." unique_id=1913091892]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -29,7 +29,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Background" type="Control" parent="Control"]
+[node name="Background" type="Control" parent="Control" unique_id=853397298]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -37,7 +37,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="BackgroundGame" type="SubViewportContainer" parent="Control/Background"]
+[node name="BackgroundGame" type="SubViewportContainer" parent="Control/Background" unique_id=387309282]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -48,14 +48,14 @@ stretch = true
 script = ExtResource("2_b84tg")
 _game_scene = ExtResource("3_6uenx")
 
-[node name="BackgroundViewport" type="SubViewport" parent="Control/Background/BackgroundGame"]
+[node name="BackgroundViewport" type="SubViewport" parent="Control/Background/BackgroundGame" unique_id=789263277]
 unique_name_in_owner = true
 handle_input_locally = false
 gui_disable_input = true
 size = Vector2i(1152, 648)
 render_target_update_mode = 4
 
-[node name="Blur" type="ColorRect" parent="Control/Background"]
+[node name="Blur" type="ColorRect" parent="Control/Background" unique_id=2006337349]
 material = SubResource("ShaderMaterial_r7heh")
 layout_mode = 1
 anchors_preset = 15
@@ -64,7 +64,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PlayButton" type="Button" parent="Control"]
+[node name="PlayButton" type="Button" parent="Control" unique_id=505049962]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -75,7 +75,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = ExtResource("2_5ja20")
 text = "Play"
 
-[node name="MakeButton" type="Button" parent="Control"]
+[node name="MakeButton" type="Button" parent="Control" unique_id=524875817]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.25
@@ -86,7 +86,7 @@ theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = ExtResource("2_5ja20")
 text = "Make"
 
-[node name="Title" type="Label" parent="Control"]
+[node name="Title" type="Label" parent="Control" unique_id=368067087]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.1

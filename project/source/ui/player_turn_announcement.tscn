@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmt38oflf2sjf"]
+[gd_scene format=3 uid="uid://dmt38oflf2sjf"]
 
 [ext_resource type="Script" uid="uid://c0ej17go5ouys" path="res://source/ui/player_turn_announcement.gd" id="1_3hekc"]
 
@@ -22,7 +22,7 @@ _data = {
 &"new_animation": SubResource("Animation_vqjli")
 }
 
-[node name="PlayerTurnAnnouncement" type="Control"]
+[node name="PlayerTurnAnnouncement" type="Control" unique_id=145518753]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 3
 anchors_preset = 15
@@ -33,7 +33,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_3hekc")
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=954295344]
 layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.5
@@ -44,30 +44,30 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="ColorRect" type="ColorRect" parent="MarginContainer"]
+[node name="ColorRect" type="ColorRect" parent="MarginContainer" unique_id=1076679395]
 layout_mode = 2
 mouse_filter = 2
 color = Color(0.25098, 0.25098, 0.25098, 1)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer" unique_id=208633403]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer" unique_id=496082405]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer" unique_id=1443281734]
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Control" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=682893887]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Message" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Message" type="Label" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1045799217]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 36
@@ -75,17 +75,17 @@ text = "It's AAAAAAAAAAAAAAAAAAAA's turn"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer"]
+[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer/HBoxContainer" unique_id=1985065276]
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer"]
+[node name="Control2" type="Control" parent="MarginContainer/VBoxContainer" unique_id=887186151]
 custom_minimum_size = Vector2(0, 16)
 layout_mode = 2
 mouse_filter = 2
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." unique_id=1591203702]
 libraries = {
 "": SubResource("AnimationLibrary_2ybpj")
 }

@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://bmtb3thxlc0ms"]
+[gd_scene format=3 uid="uid://bmtb3thxlc0ms"]
 
 [ext_resource type="Script" uid="uid://dsd6sai02r5ij" path="res://source/chat/visuals/chat_interface.gd" id="1_1pqug"]
 [ext_resource type="Script" uid="uid://bj8f4gdptluj0" path="res://source/chat/visuals/chat_minimize_button.gd" id="2_c1jfd"]
@@ -7,13 +7,13 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgfag"]
 bg_color = Color(0.4, 0.4, 0.4, 1)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a4ja3"]
-bg_color = Color(0.5, 0.5, 0.5, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k4cif"]
 bg_color = Color(0.3, 0.3, 0.3, 1)
 
-[node name="ChatInterface" type="Control"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a4ja3"]
+bg_color = Color(0.5, 0.5, 0.5, 1)
+
+[node name="ChatInterface" type="Control" unique_id=1401811966]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -23,7 +23,7 @@ grow_vertical = 2
 mouse_filter = 2
 script = ExtResource("1_1pqug")
 
-[node name="ChatContents" type="Control" parent="."]
+[node name="ChatContents" type="Control" parent="." unique_id=728456946]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -31,7 +31,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="ChatContents"]
+[node name="ColorRect" type="ColorRect" parent="ChatContents" unique_id=1539305808]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -40,7 +40,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 0.25098)
 
-[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect"]
+[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect" unique_id=1280457662]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -51,14 +51,14 @@ offset_right = -16.0
 offset_bottom = -16.0
 grow_horizontal = 0
 
-[node name="VBoxContainer" type="VBoxContainer" parent="ChatContents/ColorRect/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="ChatContents/ColorRect/MarginContainer" unique_id=1893207409]
 layout_mode = 2
 
-[node name="Log" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Log" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer" unique_id=1755965789]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="ColorRect" type="ColorRect" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log"]
+[node name="ColorRect" type="ColorRect" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log" unique_id=639018368]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -67,7 +67,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.85098, 0.85098, 0.85098, 0.501961)
 
-[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log"]
+[node name="MarginContainer" type="MarginContainer" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log" unique_id=2043170381]
 layout_mode = 1
 anchors_preset = -1
 anchor_right = 1.0
@@ -77,23 +77,23 @@ offset_top = 8.0
 offset_right = -8.0
 offset_bottom = -8.0
 
-[node name="ChatText" type="RichTextLabel" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer"]
+[node name="ChatText" type="RichTextLabel" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer/Log/MarginContainer" unique_id=551910301]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/default_color = Color(0, 0, 0, 1)
 bbcode_enabled = true
 scroll_following = true
 
-[node name="Spacing" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+[node name="Spacing" type="Control" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer" unique_id=45038802]
 custom_minimum_size = Vector2(0, 8)
 layout_mode = 2
 
-[node name="ChatInput" type="LineEdit" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer"]
+[node name="ChatInput" type="LineEdit" parent="ChatContents/ColorRect/MarginContainer/VBoxContainer" unique_id=131133043]
 unique_name_in_owner = true
 layout_mode = 2
 placeholder_text = "Type here"
 
-[node name="MinimizeButtonArea" type="Control" parent="ChatContents" node_paths=PackedStringArray("chat_contents", "maximize_button")]
+[node name="MinimizeButtonArea" type="Control" parent="ChatContents" unique_id=2256325 node_paths=PackedStringArray("chat_contents", "maximize_button")]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -105,7 +105,7 @@ script = ExtResource("2_c1jfd")
 chat_contents = NodePath("..")
 maximize_button = NodePath("../../MaximizeButtonArea")
 
-[node name="MinimizeButton" type="Button" parent="ChatContents/MinimizeButtonArea"]
+[node name="MinimizeButton" type="Button" parent="ChatContents/MinimizeButtonArea" unique_id=1494089267]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -115,10 +115,10 @@ grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_lgfag")
-theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_k4cif")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
 
-[node name="Label" type="Label" parent="ChatContents/MinimizeButtonArea"]
+[node name="Label" type="Label" parent="ChatContents/MinimizeButtonArea" unique_id=31244317]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -130,7 +130,7 @@ text = "-"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="MaximizeButtonArea" type="Control" parent="." node_paths=PackedStringArray("chat_contents")]
+[node name="MaximizeButtonArea" type="Control" parent="." unique_id=1145553889 node_paths=PackedStringArray("chat_contents")]
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -141,7 +141,7 @@ grow_vertical = 0
 script = ExtResource("3_qakug")
 chat_contents = NodePath("../ChatContents")
 
-[node name="MaximizeButton" type="Button" parent="MaximizeButtonArea"]
+[node name="MaximizeButton" type="Button" parent="MaximizeButtonArea" unique_id=2106800475]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -151,10 +151,10 @@ grow_horizontal = 2
 grow_vertical = 2
 focus_mode = 0
 theme_override_styles/normal = SubResource("StyleBoxFlat_lgfag")
-theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_k4cif")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a4ja3")
 
-[node name="Label" type="Label" parent="MaximizeButtonArea"]
+[node name="Label" type="Label" parent="MaximizeButtonArea" unique_id=1838948917]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

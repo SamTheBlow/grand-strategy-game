@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://dmta7gru0kbr2"]
+[gd_scene format=3 uid="uid://dmta7gru0kbr2"]
 
 [ext_resource type="Script" uid="uid://b7phel2sanbi8" path="res://source/ui/popups/recruitment_popup/recruitment_popup.gd" id="1_vaaa4"]
 [ext_resource type="PackedScene" uid="uid://0xwvup7qe5f" path="res://source/ui/action_cost/action_cost.tscn" id="2_fgo8b"]
 
-[node name="RecruitmentPopup" type="VBoxContainer"]
+[node name="RecruitmentPopup" type="VBoxContainer" unique_id=267187953]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -13,32 +13,32 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_vaaa4")
 
-[node name="SpacingTop" type="Control" parent="."]
+[node name="SpacingTop" type="Control" parent="." unique_id=857443157]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1
 
-[node name="ActionCost" parent="." instance=ExtResource("2_fgo8b")]
+[node name="ActionCost" parent="." unique_id=2035321660 instance=ExtResource("2_fgo8b")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="SpacingMiddle" type="Control" parent="."]
+[node name="SpacingMiddle" type="Control" parent="." unique_id=985955918]
 custom_minimum_size = Vector2(0, 24)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="TroopSlider" type="HSlider" parent="."]
+[node name="TroopSlider" type="HSlider" parent="." unique_id=1941165191]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="TroopLabel" type="Label" parent="."]
+[node name="TroopLabel" type="Label" parent="." unique_id=85539247]
 unique_name_in_owner = true
 layout_mode = 2
 text = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="SpacingBottom" type="Control" parent="."]
+[node name="SpacingBottom" type="Control" parent="." unique_id=1345467065]
 layout_mode = 2
 size_flags_vertical = 3
 mouse_filter = 1

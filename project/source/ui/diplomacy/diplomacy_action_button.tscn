@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://s68xdpyt6mng"]
+[gd_scene format=3 uid="uid://s68xdpyt6mng"]
 
 [ext_resource type="Script" uid="uid://dhhpl1b37g1kd" path="res://source/ui/diplomacy/diplomacy_action_button.gd" id="1_be54w"]
 
@@ -37,7 +37,7 @@ Button/styles/hover = SubResource("StyleBoxFlat_trc8c")
 Button/styles/normal = SubResource("StyleBoxFlat_ljnnk")
 Button/styles/pressed = SubResource("StyleBoxFlat_iaw8b")
 
-[node name="DiplomacyActionButton" type="Control"]
+[node name="DiplomacyActionButton" type="Control" unique_id=35169857]
 custom_minimum_size = Vector2(0, 48)
 layout_mode = 3
 anchors_preset = 15
@@ -48,7 +48,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_be54w")
 
-[node name="ColorRect" type="ColorRect" parent="."]
+[node name="ColorRect" type="ColorRect" parent="." unique_id=2106684194]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -58,7 +58,7 @@ grow_vertical = 2
 mouse_filter = 1
 color = Color(0.4, 0.433333, 0.5, 1)
 
-[node name="Button" type="Button" parent="."]
+[node name="Button" type="Button" parent="." unique_id=1079088142]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -68,7 +68,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_aprw4")
 
-[node name="NameLabel" type="Label" parent="."]
+[node name="NameLabel" type="Label" parent="." unique_id=174375019]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -80,7 +80,7 @@ grow_vertical = 2
 text = "Diplomacy Action Name"
 vertical_alignment = 1
 
-[node name="Disabled" type="Control" parent="."]
+[node name="Disabled" type="Control" parent="." unique_id=1001692013]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -89,7 +89,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="ColorRect" type="ColorRect" parent="Disabled"]
+[node name="ColorRect" type="ColorRect" parent="Disabled" unique_id=1701886320]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -98,7 +98,7 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.16, 0.173333, 0.2, 0.627451)
 
-[node name="DisabledLabel" type="Label" parent="Disabled"]
+[node name="DisabledLabel" type="Label" parent="Disabled" unique_id=542726541]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15

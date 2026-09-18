@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://dd0mqtbyhpwcg"]
+[gd_scene format=3 uid="uid://dd0mqtbyhpwcg"]
 
 [ext_resource type="Script" uid="uid://duhu4rnfdg4j2" path="res://source/utils/property_tree/nodes/item_float_node.gd" id="1_dqhxd"]
 
-[node name="ItemFloat" type="MarginContainer"]
+[node name="ItemFloat" type="MarginContainer" unique_id=357701278]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -10,20 +10,20 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_dqhxd")
 
-[node name="Container" type="VBoxContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="." unique_id=1581703094]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ItemContainer" type="HBoxContainer" parent="Container"]
+[node name="ItemContainer" type="HBoxContainer" parent="Container" unique_id=992967054]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Container/ItemContainer"]
+[node name="Label" type="Label" parent="Container/ItemContainer" unique_id=2126586085]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Float"
 
-[node name="SpinBox" type="SpinBox" parent="Container/ItemContainer"]
+[node name="SpinBox" type="SpinBox" parent="Container/ItemContainer" unique_id=1263402438]
 unique_name_in_owner = true
 layout_mode = 2
 step = 0.0

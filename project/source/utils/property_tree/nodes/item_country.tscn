@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bmfl2xa7n2g2n"]
+[gd_scene format=3 uid="uid://bmfl2xa7n2g2n"]
 
 [ext_resource type="Script" uid="uid://bsaiyxqli3rj3" path="res://source/utils/property_tree/nodes/item_country_node.gd" id="1_reqb4"]
 [ext_resource type="PackedScene" uid="uid://b7jj51hv4hwqq" path="res://source/ui/countries/country_and_relationship.tscn" id="2_1s1uy"]
 
-[node name="ItemCountry" type="MarginContainer"]
+[node name="ItemCountry" type="MarginContainer" unique_id=1377714308]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,20 +11,20 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_reqb4")
 
-[node name="Container" type="VBoxContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="." unique_id=1599117992]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ItemContainer" type="HBoxContainer" parent="Container"]
+[node name="ItemContainer" type="HBoxContainer" parent="Container" unique_id=1123264045]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Container/ItemContainer"]
+[node name="Label" type="Label" parent="Container/ItemContainer" unique_id=812683626]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Country"
 
-[node name="CountryInfo" parent="Container/ItemContainer" instance=ExtResource("2_1s1uy")]
+[node name="CountryInfo" parent="Container/ItemContainer" unique_id=1199879733 instance=ExtResource("2_1s1uy")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(192, 32)
 layout_mode = 2
@@ -32,7 +32,7 @@ size_flags_vertical = 4
 is_button_enabled = false
 button_minimum_size = Vector2(0, 32)
 
-[node name="Button" type="Button" parent="Container/ItemContainer"]
+[node name="Button" type="Button" parent="Container/ItemContainer" unique_id=452877173]
 layout_mode = 2
 size_flags_vertical = 4
 text = "Choose..."

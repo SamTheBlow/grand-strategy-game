@@ -1,9 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvxd6jpgibm68"]
+[gd_scene format=3 uid="uid://cvxd6jpgibm68"]
 
 [ext_resource type="Script" uid="uid://bkjheoh4vuk0i" path="res://source/ui/diplomacy/relationship_info_node.gd" id="1_e8d3o"]
 [ext_resource type="PackedScene" uid="uid://b2loam5g5ekg5" path="res://source/ui/countries/country_button.tscn" id="2_nh6o8"]
 
-[node name="RelationshipInfo" type="Control"]
+[node name="RelationshipInfo" type="Control" unique_id=2082131976]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -13,7 +13,7 @@ grow_vertical = 2
 mouse_filter = 1
 script = ExtResource("1_e8d3o")
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="."]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="." unique_id=1474824981]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -22,11 +22,11 @@ grow_horizontal = 2
 grow_vertical = 2
 ratio = 1.66
 
-[node name="Control" type="Control" parent="AspectRatioContainer"]
+[node name="Control" type="Control" parent="AspectRatioContainer" unique_id=1857462751]
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Country1" parent="AspectRatioContainer/Control" instance=ExtResource("2_nh6o8")]
+[node name="Country1" parent="AspectRatioContainer/Control" unique_id=645286276 instance=ExtResource("2_nh6o8")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -34,7 +34,7 @@ anchor_top = 0.25
 anchor_right = 0.4
 is_button_enabled = false
 
-[node name="Country2" parent="AspectRatioContainer/Control" instance=ExtResource("2_nh6o8")]
+[node name="Country2" parent="AspectRatioContainer/Control" unique_id=498483472 instance=ExtResource("2_nh6o8")]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -42,7 +42,7 @@ anchor_left = 0.6
 anchor_bottom = 0.75
 is_button_enabled = false
 
-[node name="Label1To2" type="Label" parent="AspectRatioContainer/Control"]
+[node name="Label1To2" type="Label" parent="AspectRatioContainer/Control" unique_id=1490419680]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1
@@ -54,7 +54,7 @@ text = "Yes"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Label2To1" type="Label" parent="AspectRatioContainer/Control"]
+[node name="Label2To1" type="Label" parent="AspectRatioContainer/Control" unique_id=17795808]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = -1

@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bccw0ghti6cmf"]
+[gd_scene format=3 uid="uid://bccw0ghti6cmf"]
 
 [ext_resource type="Script" uid="uid://0g53l4nypg1f" path="res://source/ui/action_cost/action_cost_element.gd" id="1_rf7gb"]
 
-[node name="ActionCostElement" type="HBoxContainer"]
+[node name="ActionCostElement" type="HBoxContainer" unique_id=1509425041]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -11,18 +11,18 @@ grow_vertical = 2
 size_flags_vertical = 3
 script = ExtResource("1_rf7gb")
 
-[node name="Spacing" type="Control" parent="."]
+[node name="Spacing" type="Control" parent="." unique_id=855331547]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 mouse_filter = 1
 
-[node name="Title" type="Label" parent="."]
+[node name="Title" type="Label" parent="." unique_id=1648542708]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Resource cost:"
 vertical_alignment = 1
 
-[node name="Cost" type="Label" parent="."]
+[node name="Cost" type="Label" parent="." unique_id=1331266649]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -30,7 +30,7 @@ text = "99999"
 horizontal_alignment = 2
 vertical_alignment = 1
 
-[node name="Spacing2" type="Control" parent="."]
+[node name="Spacing2" type="Control" parent="." unique_id=1715290336]
 custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
 mouse_filter = 1

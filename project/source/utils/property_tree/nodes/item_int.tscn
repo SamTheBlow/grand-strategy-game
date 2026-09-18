@@ -1,8 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://cummjubuua6yk"]
+[gd_scene format=3 uid="uid://cummjubuua6yk"]
 
 [ext_resource type="Script" uid="uid://dyv3jaddbe1cx" path="res://source/utils/property_tree/nodes/item_int_node.gd" id="1_5yheh"]
 
-[node name="ItemInt" type="MarginContainer"]
+[node name="ItemInt" type="MarginContainer" unique_id=1012726440]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -12,20 +12,20 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource("1_5yheh")
 
-[node name="Container" type="VBoxContainer" parent="."]
+[node name="Container" type="VBoxContainer" parent="." unique_id=1301941144]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="ItemContainer" type="HBoxContainer" parent="Container"]
+[node name="ItemContainer" type="HBoxContainer" parent="Container" unique_id=25341448]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="Container/ItemContainer"]
+[node name="Label" type="Label" parent="Container/ItemContainer" unique_id=2013295521]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Integer"
 
-[node name="SpinBox" type="SpinBox" parent="Container/ItemContainer"]
+[node name="SpinBox" type="SpinBox" parent="Container/ItemContainer" unique_id=1594090177]
 unique_name_in_owner = true
 layout_mode = 2
 allow_greater = true
