@@ -2,7 +2,7 @@ class_name PlayMenu
 extends Node
 ## The menu that appears when clicking "Play" on the main menu.
 
-signal exited()
+signal quit_requested()
 signal game_started(project: GameProject)
 
 var players: Players
@@ -41,7 +41,7 @@ func close() -> void:
 	# Disconnect from online play
 	multiplayer.multiplayer_peer.close()
 
-	exited.emit()
+	quit_requested.emit()
 
 
 ## Called in a separate thread.

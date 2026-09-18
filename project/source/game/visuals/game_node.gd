@@ -3,7 +3,7 @@ extends Node
 ## Visuals for a given [GameProject].
 # TODO bloated class
 
-signal exited()
+signal quit_requested()
 
 var project: GameProject:
 	set(value):
@@ -113,7 +113,7 @@ func quit() -> void:
 	if not MultiplayerUtils.has_authority(multiplayer):
 		multiplayer.multiplayer_peer.close()
 
-	exited.emit()
+	quit_requested.emit()
 
 
 func set_ui_visibility(is_visible: bool) -> void:

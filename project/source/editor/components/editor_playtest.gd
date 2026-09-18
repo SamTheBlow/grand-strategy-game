@@ -44,7 +44,7 @@ func start_playtest() -> void:
 	var main := get_parent().get_parent()
 	_game_node.chat = main.chat
 	_game_node.is_networking_enabled = false
-	_game_node.exited.connect(end_playtest)
+	_game_node.quit_requested.connect(end_playtest)
 
 	# Inform user of keyboard shortcut
 	_game_node.chat.send_system_message(

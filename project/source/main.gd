@@ -71,7 +71,7 @@ func enter_play_menu() -> void:
 	var play_menu := play_menu_scene.instantiate() as PlayMenu
 	play_menu.players = players
 	play_menu.chat = chat
-	play_menu.exited.connect(enter_main_menu)
+	play_menu.quit_requested.connect(enter_main_menu)
 	play_menu.game_started.connect(_on_game_start_requested)
 	current_scene = play_menu
 
@@ -85,7 +85,7 @@ func play_game(project: GameProject) -> void:
 	game_node.project = project
 	game_node.players = players
 	game_node.chat = chat
-	game_node.exited.connect(enter_play_menu)
+	game_node.quit_requested.connect(enter_play_menu)
 	current_scene = game_node
 
 
