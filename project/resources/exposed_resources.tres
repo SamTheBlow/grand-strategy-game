@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="ExposedResources" load_steps=10 format=3 uid="uid://doda8npdqckhw"]
+[gd_resource type="Resource" script_class="ExposedResources" format=3 uid="uid://doda8npdqckhw"]
 
 [ext_resource type="Texture2D" uid="uid://dlk4vjy5lgeuu" path="res://assets/icon.svg" id="1_hxgyo"]
 [ext_resource type="Script" uid="uid://lpvbfgejnppx" path="res://source/file_management/exposed_resources.gd" id="1_thk57"]
@@ -9,6 +9,18 @@
 [ext_resource type="Texture2D" uid="uid://c3emi5jqexqek" path="res://assets/rename_button_256.png" id="6_utkm4"]
 [ext_resource type="Texture2D" uid="uid://c4um15dj3d267" path="res://assets/confirm_button_256.png" id="7_5b6ob"]
 [ext_resource type="Texture2D" uid="uid://d3y7j7vyu03ii" path="res://assets/remote_player_icon_256.png" id="8_7pgfd"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F44D.svg" id="9_openmoji_1f44d"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F463.svg" id="10_openmoji_1f463"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F494.svg" id="11_openmoji_1f494"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F49A.svg" id="12_openmoji_1f49a"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F4A5.svg" id="13_openmoji_1f4a5"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F525.svg" id="14_openmoji_1f525"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F54A.svg" id="15_openmoji_1f54a"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F64F.svg" id="16_openmoji_1f64f"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/1F6B7.svg" id="17_openmoji_1f6b7"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/21AA.svg" id="18_openmoji_21aa"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/26D4.svg" id="19_openmoji_26d4"]
+[ext_resource type="Texture2D" path="res://assets/openmoji/images/270C.svg" id="20_openmoji_270c"]
 
 [resource]
 script = ExtResource("1_thk57")
@@ -21,5 +33,19 @@ _exposed_textures = Dictionary[String, Texture2D]({
 "online_signal": ExtResource("8_7pgfd"),
 "plus_circle": ExtResource("4_rlos7"),
 "rename_circle": ExtResource("6_utkm4")
+})
+_openmoji_textures = Dictionary[String, Texture2D]({
+"openmoji_1f44d": ExtResource("9_openmoji_1f44d"),
+"openmoji_1f463": ExtResource("10_openmoji_1f463"),
+"openmoji_1f494": ExtResource("11_openmoji_1f494"),
+"openmoji_1f49a": ExtResource("12_openmoji_1f49a"),
+"openmoji_1f4a5": ExtResource("13_openmoji_1f4a5"),
+"openmoji_1f525": ExtResource("14_openmoji_1f525"),
+"openmoji_1f54a": ExtResource("15_openmoji_1f54a"),
+"openmoji_1f64f": ExtResource("16_openmoji_1f64f"),
+"openmoji_1f6b7": ExtResource("17_openmoji_1f6b7"),
+"openmoji_21aa": ExtResource("18_openmoji_21aa"),
+"openmoji_26d4": ExtResource("19_openmoji_26d4"),
+"openmoji_270c": ExtResource("20_openmoji_270c")
 })
 metadata/_custom_type_script = "uid://lpvbfgejnppx"
