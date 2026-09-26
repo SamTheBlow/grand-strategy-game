@@ -5,6 +5,8 @@ extends Node
 signal quit_requested()
 signal game_started(project: GameProject)
 
+@export var _settings: PlayMenuSettings
+
 var players: Players
 var chat: Chat
 
@@ -13,7 +15,6 @@ var _mutex := Mutex.new()
 var _is_loading: bool = false
 
 @onready var _seed_input := %SeedInput as LineEdit
-@onready var _games_interface := %Games as GameSelectionMenu
 @onready var _player_list := %PlayerList as PlayerList
 @onready var _chat_interface := %ChatInterface as ChatInterface
 @onready var _loading_screen := %LoadingScreen as Control
@@ -106,8 +107,7 @@ func _on_start_button_pressed() -> void:
 	_loading_screen.visible = true
 
 	_load_thread.start(_setup_game.bind(
-			_games_interface.selected_game().project_absolute_path,
-			_seed_input.text
+			_settings.selected_project_file_path, _seed_input.text
 	))
 
 

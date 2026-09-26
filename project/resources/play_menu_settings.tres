@@ -1,6 +1,7 @@
-[gd_resource type="Resource" script_class="PlayMenuSettings" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="PlayMenuSettings" format=3 uid="uid://bucmib5lh3lj5"]
 
 [ext_resource type="Script" uid="uid://bcoafee2rxtvl" path="res://source/main_menu/play_menu/play_menu_settings.gd" id="1_pms"]
 
 [resource]
 script = ExtResource("1_pms")
+metadata/_custom_type_script = "uid://bcoafee2rxtvl"

@@ -1,6 +1,6 @@
 class_name GameOptionNode
 extends Control
-## Shows a game for the user to select in the [GameSelectionMenu].
+## Shows a project for the user to select in some project selection menu.
 
 signal selected(this: GameOptionNode)
 
@@ -15,8 +15,6 @@ var meta_bundle := MetadataBundle.new():
 		meta_bundle = value
 		_refresh_info()
 		_refresh_file_path_visibility()
-
-var id: int = -1
 
 @onready var _button := %Button as Button
 @onready var _icon_texture := %IconTexture as TextureRect

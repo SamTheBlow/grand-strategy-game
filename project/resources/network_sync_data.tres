@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="NetworkSyncData" format=3 uid="uid://duagnun0t7v57"]
+
+[ext_resource type="Script" uid="uid://bifee5w4b2f4j" path="res://source/networking/network_sync_data.gd" id="1_nx1ps"]
+
+[resource]
+script = ExtResource("1_nx1ps")
+metadata/_custom_type_script = "uid://bifee5w4b2f4j"

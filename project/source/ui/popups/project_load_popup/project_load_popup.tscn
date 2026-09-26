@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://df5yjnsebj5np"]
 
 [ext_resource type="Script" uid="uid://wirop5ecqfqx" path="res://source/ui/popups/project_load_popup/project_load_popup.gd" id="1_ol0qo"]
-[ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="2_pg7ao"]
+[ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/ui/popups/project_load_popup/project_import.gd" id="2_pg7ao"]
 [ext_resource type="Resource" uid="uid://jp6pkqf0gmsv" path="res://resources/imported_projects.tres" id="3_cua4n"]
 [ext_resource type="Script" uid="uid://3qlhfsucikm1" path="res://source/ui/popups/project_load_popup/project_option_container.gd" id="3_n54gi"]
 [ext_resource type="Script" uid="uid://drw167mtqrx2k" path="res://source/ui/popups/project_load_popup/builtin_project_container.gd" id="4_bu71t"]
@@ -112,7 +112,6 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_v45x7")
 title = "Imported Games"
 script = ExtResource("3_n54gi")
-select_when_added = true
 _container = NodePath("Contents")
 
 [node name="Contents" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/ImportedProjects" unique_id=2005811480]
