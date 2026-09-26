@@ -97,7 +97,7 @@ layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_v45x7")
 title = "Built-in Games"
 script = ExtResource("4_bu71t")
-_builtin_game_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json"])
+_builtin_game_file_paths = Array[String](["res://assets/save_files/test1.json", "res://assets/save_files/test2.json", "res://assets/save_files/test3.json", "res://assets/save_files/test4.json", "res://assets/save_files/test5.json"])
 _container = NodePath("Contents")
 
 [node name="Contents" type="VBoxContainer" parent="ScrollContainer/HBoxContainer/VBoxContainer/BuiltInProjects" unique_id=79803823]
