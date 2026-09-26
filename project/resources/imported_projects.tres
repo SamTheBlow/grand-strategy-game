@@ -1,0 +1,7 @@
+[gd_resource type="Resource" script_class="ImportedProjects" format=3 uid="uid://jp6pkqf0gmsv"]
+
+[ext_resource type="Script" uid="uid://bh00oyakdok43" path="res://source/file_management/imported_projects.gd" id="1"]
+
+[resource]
+script = ExtResource("1")
+metadata/_custom_type_script = "uid://bh00oyakdok43"

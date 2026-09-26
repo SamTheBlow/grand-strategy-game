@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://wirop5ecqfqx" path="res://source/ui/popups/project_load_popup/project_load_popup.gd" id="1_ol0qo"]
 [ext_resource type="Script" uid="uid://tempkcih6qn4" path="res://source/main_menu/play_menu/game_selection_menu/project_import.gd" id="2_pg7ao"]
+[ext_resource type="Resource" uid="uid://jp6pkqf0gmsv" path="res://resources/imported_projects.tres" id="3_cua4n"]
 [ext_resource type="Script" uid="uid://3qlhfsucikm1" path="res://source/ui/popups/project_load_popup/project_option_container.gd" id="3_n54gi"]
 [ext_resource type="Script" uid="uid://drw167mtqrx2k" path="res://source/ui/popups/project_load_popup/builtin_project_container.gd" id="4_bu71t"]
 
@@ -24,6 +25,7 @@ script = ExtResource("1_ol0qo")
 
 [node name="ProjectImport" type="Node" parent="." unique_id=1002445738]
 script = ExtResource("2_pg7ao")
+_imported_projects = ExtResource("3_cua4n")
 
 [node name="ImportDialog" type="FileDialog" parent="." unique_id=835494328]
 title = "Open a File or Directory"
