@@ -23,7 +23,7 @@ enum ConnectionOutcome {
 ## [b]excluding the host[/b]. Cannot exceed 4095.
 @export var max_clients: int = 4095
 
-@export var port: int = 31402
+@export var port: int = 31403
 
 var _state: State = State.DISCONNECTED:
 	set(value):
