@@ -133,7 +133,7 @@ func _on_game_over(winner_country: Country) -> void:
 
 
 func _save_game() -> void:
-	_project._absolute_file_path.value = save_file_path
+	_project.set_file_path(save_file_path)
 
 	var project_save := ProjectSave.new()
 	project_save.save_project(_project)

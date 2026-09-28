@@ -35,13 +35,15 @@ func start_playtest() -> void:
 		)
 		return
 
+	# TODO don't rely on main
+	var main := get_parent().get_parent()
+	copy_result.result_project.set_file_path(main.SAVE_FILE_PATH)
+
 	# Setup new game scene instance
 	_game_node = _GAME_SCENE.instantiate() as GameNode
 	_game_node.project = copy_result.result_project
 	_game_node.players = Players.new()
 	_game_node.players.add_new_player()
-	# TODO don't rely on main
-	var main := get_parent().get_parent()
 	_game_node.chat = main.chat
 	_game_node.is_networking_enabled = false
 	_game_node.quit_requested.connect(end_playtest)

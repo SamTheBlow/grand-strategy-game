@@ -28,3 +28,7 @@ static func path_made_relative(path_1: String, path_2: String) -> String:
 	if output == "":
 		return "."
 	return output.trim_suffix("/")
+
+
+static func is_internal_file_in_exported_build(file_path: String) -> bool:
+	return OS.has_feature("template") and file_path.begins_with("res://")

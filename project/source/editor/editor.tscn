@@ -301,7 +301,7 @@ use_native_dialog = true
 
 [connection signal="selected_province_changed" from="EditorBase/WorldBridge" to="EditorBase/UILayer/EditingInterface" method="open_province_edit_interface"]
 [connection signal="is_dirty_changed" from="EditorBase/UndoRedo" to="EditorBase/WindowTitle" method="set_is_dirty"]
-[connection signal="has_valid_file_path_changed" from="EditorBase/ProjectNode" to="EditorBase/UILayer/TopBar/MenuBar" method="_on_project_path_validity_changed"]
+[connection signal="project_file_path_changed" from="EditorBase/ProjectNode" to="EditorBase/UILayer/TopBar/MenuBar" method="_on_project_path_validity_changed"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/ProjectTextureCleanup" method="connect_project"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/ArmyDrag" method="set_project"]
 [connection signal="project_changed" from="EditorBase/ProjectNode" to="EditorBase/WorldLayer/WorldContainer/WorldVisuals2D" method="set_project"]

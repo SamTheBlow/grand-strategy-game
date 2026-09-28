@@ -45,4 +45,10 @@ func _on_button_pressed(button_id: int) -> void:
 			)
 			return
 
-		project_loaded.emit(project_parse_result.result_project)
+		var project: GameProject = project_parse_result.result_project
+		if FileUtils.is_internal_file_in_exported_build(
+				_selected_option.meta_bundle.project_absolute_path
+		):
+			project.set_file_path("")
+
+		project_loaded.emit(project)

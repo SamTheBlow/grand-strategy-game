@@ -77,7 +77,7 @@ func enter_play_menu() -> void:
 ## Sets up a new [GameNode] scene using given [GameProject].
 ## Starts the game.
 func play_game(project: GameProject) -> void:
-	project._absolute_file_path.value = SAVE_FILE_PATH
+	project.set_file_path(SAVE_FILE_PATH)
 
 	var game_node := game_scene.instantiate() as GameNode
 	game_node.project = project

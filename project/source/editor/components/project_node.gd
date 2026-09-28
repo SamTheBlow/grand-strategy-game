@@ -11,7 +11,7 @@ signal project_changed(project: GameProject)
 signal save_dialog_requested()
 signal saved()
 
-signal has_valid_file_path_changed(has_valid_file_path: bool)
+signal project_file_path_changed(has_valid_file_path: bool)
 signal project_name_changed(name: String)
 
 var project: GameProject:
@@ -74,7 +74,7 @@ func save_as(file_path: String) -> void:
 
 
 func _emit_file_path_change() -> void:
-	has_valid_file_path_changed.emit(project.has_valid_file_path())
+	project_file_path_changed.emit(project.has_valid_file_path())
 
 
 func _emit_name_change() -> void:

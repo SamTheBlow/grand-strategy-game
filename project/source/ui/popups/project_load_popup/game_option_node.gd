@@ -50,7 +50,11 @@ func _refresh_file_path_visibility() -> void:
 		return
 
 	_file_path_node.visible = (
-			is_file_path_visible and meta_bundle.project_absolute_path != ""
+			is_file_path_visible
+			and meta_bundle.project_absolute_path != ""
+			and not FileUtils.is_internal_file_in_exported_build(
+					meta_bundle.project_absolute_path
+			)
 	)
 
 
