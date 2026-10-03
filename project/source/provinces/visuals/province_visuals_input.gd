@@ -114,8 +114,6 @@ func _on_province_clicked(province: Province) -> void:
 	province_select_attempted.emit(province, outcome)
 
 	if outcome.is_selected:
-		# Deselect first (prevents crash)
-		_province_selection.selected_province = null
 		_province_selection.selected_province = province
 
 

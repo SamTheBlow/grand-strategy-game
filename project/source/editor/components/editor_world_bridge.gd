@@ -3,7 +3,8 @@ extends Node
 ## Bridges the game world and the editing interface.
 # TODO turn ProvinceSelection into a Node and then get rid of this script
 
-signal selected_province_changed(province: Province)
+signal province_selected(province: Province)
+signal province_deselected(province: Province)
 
 @export var _world_visuals: WorldVisuals2D
 
@@ -11,8 +12,11 @@ signal selected_province_changed(province: Province)
 ## Note: we do it like this because ProvinceSelection
 ## is replaced with a new instance each time a world is loaded.
 func connect_province_selection(world_visuals: WorldVisuals2D) -> void:
-	world_visuals.province_selection.selected_province_changed.connect(
-			selected_province_changed.emit
+	world_visuals.province_selection.province_selected.connect(
+			province_selected.emit
+	)
+	world_visuals.province_selection.province_deselected.connect(
+			province_deselected.emit
 	)
 
 

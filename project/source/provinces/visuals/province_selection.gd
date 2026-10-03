@@ -28,7 +28,9 @@ var selected_province: Province = null:
 			return
 
 		if selected_province != null:
-			province_deselected.emit(selected_province)
+			var old_value: Province = selected_province
+			selected_province = null
+			province_deselected.emit(old_value)
 
 		selected_province = value
 
